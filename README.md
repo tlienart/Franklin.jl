@@ -6,6 +6,8 @@
 
 # JuDocDraft
 
+Only for `0.6`, a few adaptations needed when going for `0.7` (changes for example for `replace`), will migrate to `0.7` when Juno deals with it (i.e. not yet)
+
 ## TODO / Notes
 
 ### absolute first

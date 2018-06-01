@@ -32,7 +32,8 @@ div block.
 """
 function process_div_blocks(html_string, div_b)
     for (i, (dname, content)) ∈ enumerate(div_b)
-        html_string = replace(html_string, "##DIV_BLOCK##$i", dpat(dname, content), 1)
+        html_string = replace(html_string,
+                                "##DIV_BLOCK##$i", dpat(dname, content), 1)
     end
     return html_string
 end

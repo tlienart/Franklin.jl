@@ -81,7 +81,7 @@ end
 
 Find blocks between `<!--` and `-->` and remove them.
 """
-remove_comments(md_string) = replace(md_string, COMMENTS, "\n")
+remove_comments(md_string) = replace(md_string, COMMENTS, "")
 
 
 """

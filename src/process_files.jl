@@ -1,4 +1,8 @@
-using Base.Markdown: html
+@static if VERSION < v"0.7.0-DEV.2005"
+    using Base.Markdown: html
+else
+    using Markdown: html
+end
 
 """
     set_vars!(def_dict, new_Defs)

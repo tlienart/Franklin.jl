@@ -11,7 +11,7 @@
 	-->
 	"""
 	string = JuDoc.remove_comments(string)
-	@test string == "Hello hello\n\n\nGoodbye\n\n\n"
+	@test string == "Hello hello\n\nGoodbye\n\n"
 end
 
 @testset "Asym Maths" begin
