@@ -5,5 +5,6 @@ else
     using Test
 end
 
-# write your own tests here
-@test 1 == 2
+# --- TEST ---
+include("t_find_replace.jl")
+include("t_process_files.jl")
