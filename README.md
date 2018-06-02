@@ -4,13 +4,22 @@
 
 [![codecov.io](http://codecov.io/github/tlienart/JuDoc.jl/coverage.svg?branch=master)](http://codecov.io/github/tlienart/JuDoc.jl?branch=master)
 
-# JuDocDraft
-
-Only for `0.6`, a few adaptations needed when going for `0.7` (changes for example for `replace`), will migrate to `0.7` when Juno deals with it (i.e. not yet)
+Only for `0.6`, a few adaptations needed when going for `0.7` (changes for example for `replace`), will migrate to `0.7` when Juno deals with it (i.e. not yet).
 
 ## TODO / Notes
 
-### absolute first
+### Priority
+
+#### Tests
+
+in `find_replace_md.jl`
+* [ ] `extract_page_defs`
+
+in `find_replace_html.jl`
+* [ ] `process_braces_blocks`
+* [ ] `split_params`
+* [ ] `braces_fill`
+* [ ] `braces_insert_if`
 
 ### Must do
 
