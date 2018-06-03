@@ -1,4 +1,4 @@
-@testset "Process math blocks" begin
+@testset "Proc math bl" begin
 	s = raw"""
 	This is some *markdown* with $\sin(x)=1$ some maths
 	$$ \int_0^1 x\mathrm{d}x = {1\over 2} $$
@@ -18,7 +18,7 @@
 end
 
 
-@testset "Process div blocks" begin
+@testset "Proc div bl" begin
 	t = JuDoc.dpat("blah", "content is here")
 	@test t == "<div class=\"blah\">content is here</div>\n"
 	s = raw"""
@@ -37,7 +37,7 @@ end
 end
 
 
-@testset "Process braces blocks" begin
+@testset "Proc {{.}} bl" begin
 	# split param util
 	params = "blah blih thing"
 	@test_warn "I found a 'FNAME' and expected 2 argument(s) but got 3 instead. Ignoring." JuDoc.split_params(params, "FNAME", 2)
