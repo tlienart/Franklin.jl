@@ -1,27 +1,11 @@
-@testset "Comments" begin
-	string = raw"""
-	Hello hello
-	<!--
-	this is a comment
-	blah
-	-->
-	Goodbye
-	<!--
-	blah
-	-->
-	"""
-	string = JuDoc.remove_comments(string)
-	@test string == "Hello hello\n\nGoodbye\n\n"
-end
-
 @testset "Asym Maths" begin
 	# Just \[\]
-	string = raw"""
+	s = raw"""
 		blahblah \[target\] blah
 		\[target2\] blih
 		"""
-	(string, abm) = JuDoc.asym_math_blocks(string)
-	@test string == raw"""
+	(s, abm) = JuDoc.asym_math_blocks(s)
+	@test s == raw"""
 		blahblah ##ASYM_MATH_BLOCK##1 blah
 		##ASYM_MATH_BLOCK##2 blih
 		"""
@@ -29,12 +13,12 @@ end
 	@test abm[2][2] == "target2"
 
 	# Just ALIGN
-	string = raw"""
+	s = raw"""
 		blahblah \begin{align}target\end{align} blah
 		\begin{align}target2\end{align} blih
 		"""
-	(string, abm) = JuDoc.asym_math_blocks(string)
-	@test string == raw"""
+	(s, abm) = JuDoc.asym_math_blocks(s)
+	@test s == raw"""
 		blahblah ##ASYM_MATH_BLOCK##1 blah
 		##ASYM_MATH_BLOCK##2 blih
 		"""
@@ -42,12 +26,12 @@ end
 	@test abm[2][2] == "target2"
 
 	# Just EQNARRAY
-	string = raw"""
+	s = raw"""
 		blahblah \begin{eqnarray}target\end{eqnarray} blah
 		\begin{eqnarray}target2\end{eqnarray} blih
 		"""
-	(string, abm) = JuDoc.asym_math_blocks(string)
-	@test string == raw"""
+	(s, abm) = JuDoc.asym_math_blocks(s)
+	@test s == raw"""
 		blahblah ##ASYM_MATH_BLOCK##1 blah
 		##ASYM_MATH_BLOCK##2 blih
 		"""
@@ -55,14 +39,14 @@ end
 	@test abm[2][2] == "target2"
 
 	# Mixed asymetric
-	string = raw"""
+	s = raw"""
 		blahblah \begin{eqnarray}target\end{eqnarray} blah
 		\[target2\] and \begin{align}
 		target3
 		\end{align}
 		"""
-	(string, abm) = JuDoc.asym_math_blocks(string)
-	@test string == raw"""
+	(s, abm) = JuDoc.asym_math_blocks(s)
+	@test s == raw"""
 		blahblah ##ASYM_MATH_BLOCK##3 blah
 		##ASYM_MATH_BLOCK##1 and ##ASYM_MATH_BLOCK##2
 		"""
@@ -74,12 +58,12 @@ end
 
 @testset "Sym Maths" begin
 	# Just $ ... $
-	string = raw"""
+	s = raw"""
 		blahblah $target$ blah
 		$target2$ blih
 		"""
-	(string, sbm) = JuDoc.sym_math_blocks(string)
-	@test string == raw"""
+	(s, sbm) = JuDoc.sym_math_blocks(s)
+	@test s == raw"""
 		blahblah ##SYM_MATH_BLOCK##1 blah
 		##SYM_MATH_BLOCK##2 blih
 		"""
@@ -87,12 +71,12 @@ end
 	@test sbm[2][2] == "target2"
 
 	# Just $$ ... $$
-	string = raw"""
+	s = raw"""
 		blahblah $$target$$ blah
 		$$target2$$ blih
 		"""
-	(string, sbm) = JuDoc.sym_math_blocks(string)
-	@test string == raw"""
+	(s, sbm) = JuDoc.sym_math_blocks(s)
+	@test s == raw"""
 		blahblah ##SYM_MATH_BLOCK##1 blah
 		##SYM_MATH_BLOCK##2 blih
 		"""
@@ -100,12 +84,12 @@ end
 	@test sbm[2][2] == "target2"
 
 	# Mixed sym
-	string = raw"""
+	s = raw"""
 		blahblah $target$ blah
 		$$target2$$ blih
 		"""
-	(string, sbm) = JuDoc.sym_math_blocks(string)
-	@test string == raw"""
+	(s, sbm) = JuDoc.sym_math_blocks(s)
+	@test s == raw"""
 		blahblah ##SYM_MATH_BLOCK##2 blah
 		##SYM_MATH_BLOCK##1 blih
 		"""
@@ -115,15 +99,45 @@ end
 
 
 @testset "Div Blocks" begin
-	string = raw"""
+	s = raw"""
 		Yada yada yada
 		@@warning target @@
 		"""
-	(string, db) = JuDoc.div_blocks(string)
-	@test string == raw"""
+	(s, db) = JuDoc.div_blocks(s)
+	@test s == raw"""
 		Yada yada yada
 		##DIV_BLOCK##1
 		"""
 	@test db[1][1] == "warning"
 	@test db[1][2] == " target "
+end
+
+
+@testset "Comments" begin
+	s = raw"""
+	Hello hello
+	<!--
+	this is a comment
+	blah
+	-->
+	Goodbye
+	<!--
+	blah
+	-->
+	"""
+	s = JuDoc.remove_comments(s)
+	@test s == "Hello hello\n\nGoodbye\n\n"
+end
+
+
+@testset "Page defs" begin
+	s = raw"""
+	@def hasmath = false
+	@def hascode = true
+
+	Blah etc
+	"""
+	(s, defs) = JuDoc.extract_page_defs(s)
+	@test s == "\n\n\nBlah etc\n"
+	@test defs == [("hasmath", " = false"), ("hascode", " = true")]
 end
