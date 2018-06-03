@@ -16,7 +16,8 @@ in `find_replace_md.jl`
 * [x] `extract_page_defs`
 
 in `find_replace_html.jl`
-* [ ] `dpat`
+* [x] `dpat`
+* [x] `process_math_blocks`
 * [ ] `process_braces_blocks`
 * [ ] `split_params`
 * [ ] `braces_fill`
@@ -24,6 +25,7 @@ in `find_replace_html.jl`
 
 ### Must do
 
+* * [ ] (medium) list operations in order to make sure things never clash. For example if there happens to be a `{{}}` in a math environment, make sure the maths is extracted first.
 * [ ] (medium) allow for hyper-ref using something like `{{}}` (final pass)
 	* need to understand anchors and have one anchor at each equation.
 		* need a `<a name="some_name">` (anchor)
