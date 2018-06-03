@@ -38,6 +38,11 @@ function process_div_blocks(html_string, div_b)
     return html_string
 end
 
+#=
+=#
+function process_ctrl_braces_blocks(html_string, all_vars)
+end
+
 
 #=
     {{ ... }} BLOCKS
