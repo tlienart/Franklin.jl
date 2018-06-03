@@ -56,22 +56,24 @@ end
 	@test_warn "I found a 'fill' and expected 1 argument(s) but got 2 instead. Ignoring." JuDoc.braces_fill(params2, var1)
 
 	# replacements :: braces_insert_if
-	params2 = "flag .tester"
+	temp_path = tempname()
+	write(temp_path * ".html", "This is a test page.\n")
+	params2 = "flag $temp_path"
 	vars = Dict("flag" => true)
 	r = JuDoc.braces_insert_if(params2, vars)
-	@test r == "this is a test page required by the tests, do not remove or modify.\n"
+	@test r == "This is a test page.\n"
 	params2 = "flag non-existing"
 	@test_warn "I tried to insert 'non-existing.html' but I couldn't find the file. Ignoring." JuDoc.braces_insert_if(params2, vars)
 	params2 = "flig non-existing"
 	@test_warn "I found an '{{insert_if flig ...}}' but I do not know the variable 'flig'. Ignoring." JuDoc.braces_insert_if(params2, vars)
 
 	# replacements :: general braces blocks
-	h = raw"""
+	h = """
 	blah blah {{ fill blah }} and
-	then some more stuff maybe {{ insert_if flag .tester }} etc
+	then some more stuff maybe {{ insert_if flag $temp_path }} etc
 	blah
 	"""
 	vars = Dict("blah" => 0.123, "flag" => true)
 	h = JuDoc.process_braces_blocks(h, vars)
-	@test h == "blah blah 0.123 and\nthen some more stuff maybe this is a test page required by the tests, do not remove or modify.\n etc\nblah\n"
+	@test h == "blah blah 0.123 and\nthen some more stuff maybe This is a test page.\n etc\nblah\n"
 end
