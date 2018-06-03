@@ -13,9 +13,10 @@ Only for `0.6`, a few adaptations needed when going for `0.7` (changes for examp
 #### Tests
 
 in `find_replace_md.jl`
-* [ ] `extract_page_defs`
+* [x] `extract_page_defs`
 
 in `find_replace_html.jl`
+* [ ] `dpat`
 * [ ] `process_braces_blocks`
 * [ ] `split_params`
 * [ ] `braces_fill`
