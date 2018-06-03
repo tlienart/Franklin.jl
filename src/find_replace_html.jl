@@ -59,7 +59,7 @@ function process_braces_blocks(html_string, all_vars)
         if haskey(braces_funs, fname)
             push!(replacements, braces_funs[fname](params, all_vars))
         else
-            warn("I found a {{...}} block but did not recognise the function name $fname. Ignoring.")
+            warn("I found a {{...}} block but did not recognise the function name '$fname'. Ignoring.")
         end
     end
 

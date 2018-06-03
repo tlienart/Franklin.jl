@@ -76,4 +76,8 @@ end
 	vars = Dict("blah" => 0.123, "flag" => true)
 	h = JuDoc.process_braces_blocks(h, vars)
 	@test h == "blah blah 0.123 and\nthen some more stuff maybe This is a test page.\n etc\nblah\n"
+	h = """
+	{{ unknown f f2 }}
+	"""
+	@test_warn "I found a {{...}} block but did not recognise the function name 'unknown'. Ignoring." JuDoc.process_braces_blocks(h, vars)
 end
