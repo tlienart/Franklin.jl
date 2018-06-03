@@ -39,9 +39,19 @@ end
 
 @testset "Process braces blocks" begin
 	# split param util
-	params = "blah blih bloh"
-	@test_warn "I found a FNAME and expected 2 arguments but got 3 instead. Ignoring." JuDoc.split_params(params, "FNAME", 2)
+	params = "blah blih thing"
+	@test_warn "I found a FNAME and expected 2 argument(s) but got 3 instead. Ignoring." JuDoc.split_params(params, "FNAME", 2)
 	(f, sp) = JuDoc.split_params(params, "FNAME", 3)
 	@test f == true
-	@test sp == ["blah", "blih", "bloh"]
+	@test sp == ["blah", "blih", "thing"]
+
+	# replacements :: braces_fill
+	params1 = "blah"
+	var1 = Dict("blah" => 25)
+	r = JuDoc.braces_fill(params1, var1)
+	@test r == "25"
+	params1 = "blih"
+	@test_warn "I found a fill but I do not know the variable 'blih'. Ignoring." JuDoc.braces_fill(params1, var1)
+	params2 = "blih blah"
+	@test_warn "I found a fill and expected 1 argument(s) but got 2 instead. Ignoring." JuDoc.braces_fill(params2, var1)
 end

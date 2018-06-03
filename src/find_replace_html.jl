@@ -90,7 +90,7 @@ function split_params(params, fun_name, expect_args)
     len_sparams = length(sparams)
     flag = (len_sparams == expect_args)
     if !flag
-        warn("I found a $fun_name and expected $expect_args arguments but got $len_sparams instead. Ignoring.")
+        warn("I found a $fun_name and expected $expect_args argument(s) but got $len_sparams instead. Ignoring.")
     end
     return (flag, (len_sparams == 1) ? sparams[1] : sparams)
 end
@@ -117,9 +117,9 @@ function braces_fill(params, all_vars)
                 replacement = string(tmp_repl)
             end
         else
-            warn("I found a fill but I do not know the variable $vname. Ignoring.")
+            warn("I found a fill but I do not know the variable '$vname'. Ignoring.")
         end
-    end
+    end # the case where narg is incorrect raises a warning via split_params
 
     return replacement
 end
