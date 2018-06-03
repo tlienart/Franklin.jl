@@ -12,16 +12,10 @@ Only for `0.6`, a few adaptations needed when going for `0.7` (changes for examp
 
 #### Tests
 
-in `find_replace_md.jl`
-* [x] `extract_page_defs`
-
-in `find_replace_html.jl`
-* [x] `dpat`
-* [x] `process_math_blocks`
-* [x] `process_braces_blocks`
-* [x] `split_params`
-* [x] `braces_fill`
-* [x] `braces_insert_if`
+* [ ] `set_vars!`
+* [ ] `set_paths!`
+* [ ] `convert_dir` --> that one may be annoying to test but some corner cases can be tested (no config etc)
+* [ ] `ifisdef`
 
 ### Must do
 
