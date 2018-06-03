@@ -92,8 +92,6 @@ function split_params(params, fun_name, expect_args)
     if !flag
         warn("I found a $fun_name and expected $expect_args arguments but got $len_sparams instead. Ignoring.")
     end
-    # NOTE: this annoying fuckery is to get around the Substrings...
-    # so we return a flag and a list of Strings.
     return (flag, (len_sparams == 1) ? sparams[1] : sparams)
 end
 

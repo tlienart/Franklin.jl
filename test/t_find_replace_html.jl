@@ -1,9 +1,3 @@
-@testset "Div-pattern util" begin
-	t = JuDoc.dpat("blah", "content is here")
-	@test t == "<div class=\"blah\">content is here</div>\n"
-end
-
-
 @testset "Process math blocks" begin
 	s = raw"""
 	This is some *markdown* with $\sin(x)=1$ some maths
@@ -25,6 +19,8 @@ end
 
 
 @testset "Process div blocks" begin
+	t = JuDoc.dpat("blah", "content is here")
+	@test t == "<div class=\"blah\">content is here</div>\n"
 	s = raw"""
 	This is some *markdown* followed by a div:
 	@@some_div
@@ -38,4 +34,14 @@ end
 	h = JuDoc.html(JuDoc.Markdown.parse(s));
 	h = JuDoc.process_div_blocks(h, b)
 	@test h == "<p>This is some <em>markdown</em> followed by a div: <div class=\"some_div\">\nthe content here\n</div>\n and then more markdown blah.</p>\n"
+end
+
+
+@testset "Process braces blocks" begin
+	# split param util
+	params = "blah blih bloh"
+	@test_warn "I found a FNAME and expected 2 arguments but got 3 instead. Ignoring." JuDoc.split_params(params, "FNAME", 2)
+	(f, sp) = JuDoc.split_params(params, "FNAME", 3)
+	@test f == true
+	@test sp == ["blah", "blih", "bloh"]
 end
