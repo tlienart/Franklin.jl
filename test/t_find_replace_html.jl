@@ -64,4 +64,14 @@ end
 	@test_warn "I tried to insert 'non-existing.html' but I couldn't find the file. Ignoring." JuDoc.braces_insert_if(params2, vars)
 	params2 = "flig non-existing"
 	@test_warn "I found an '{{insert_if flig ...}}' but I do not know the variable 'flig'. Ignoring." JuDoc.braces_insert_if(params2, vars)
+
+	# replacements :: general braces blocks
+	h = raw"""
+	blah blah {{ fill blah }} and
+	then some more stuff maybe {{ insert_if flag .tester }} etc
+	blah
+	"""
+	vars = Dict("blah" => 0.123, "flag" => true)
+	h = JuDoc.process_braces_blocks(h, vars)
+	@test h == "blah blah 0.123 and\nthen some more stuff maybe this is a test page required by the tests, do not remove or modify.\n etc\nblah\n"
 end

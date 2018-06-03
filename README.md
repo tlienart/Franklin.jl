@@ -18,10 +18,10 @@ in `find_replace_md.jl`
 in `find_replace_html.jl`
 * [x] `dpat`
 * [x] `process_math_blocks`
-* [ ] `process_braces_blocks`
-* [ ] `split_params`
-* [ ] `braces_fill`
-* [ ] `braces_insert_if`
+* [x] `process_braces_blocks`
+* [x] `split_params`
+* [x] `braces_fill`
+* [x] `braces_insert_if`
 
 ### Must do
 
