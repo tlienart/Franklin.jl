@@ -13,9 +13,11 @@ Only for `0.6`, a few adaptations needed when going for `0.7` (changes for examp
 #### Tests
 
 in `find_replace_md.jl`
-* [ ] `extract_page_defs`
+* [x] `extract_page_defs`
 
 in `find_replace_html.jl`
+* [x] `dpat`
+* [x] `process_math_blocks`
 * [ ] `process_braces_blocks`
 * [ ] `split_params`
 * [ ] `braces_fill`
@@ -23,6 +25,7 @@ in `find_replace_html.jl`
 
 ### Must do
 
+* * [ ] (medium) list operations in order to make sure things never clash. For example if there happens to be a `{{}}` in a math environment, make sure the maths is extracted first.
 * [ ] (medium) allow for hyper-ref using something like `{{}}` (final pass)
 	* need to understand anchors and have one anchor at each equation.
 		* need a `<a name="some_name">` (anchor)
