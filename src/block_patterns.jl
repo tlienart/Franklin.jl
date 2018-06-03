@@ -60,4 +60,3 @@ const DIV_PH = "##DIV_BLOCK##"
 
 const COMMENTS = r"<!--(.|\n)*?-->"
 const DEFS = r"@def\s+(\S+)(\s.*)"
-const BRACES_BLOCK = r"{{\s*([a-z]\S+)\s+([^}]*)}}"

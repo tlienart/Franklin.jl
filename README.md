@@ -10,6 +10,9 @@ Only for `0.6`, a few adaptations needed when going for `0.7` (changes for examp
 
 ### Priority
 
+* [ ] write somewhere that control blocks cannot be nested (because they are regexp-ed, not parsed using some grammar.) (recursive is not enough, the problem is not matching the right `end`)
+* [ ] if want to allow going over comprehension then should be able to not only access elements of the comprehension but also possibly write simple variables to dictionary. this amounts to holding a stack... `for` should maybe not be done yet.
+
 #### Tests
 
 * [ ] `set_vars!`

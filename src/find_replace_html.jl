@@ -38,39 +38,14 @@ function process_div_blocks(html_string, div_b)
     return html_string
 end
 
-#=
-=#
-function process_ctrl_braces_blocks(html_string, all_vars)
-end
-
-
-#=
-    {{ ... }} BLOCKS
-
-NOTE if adding new functionalities, don't forget to add them to the collection
-`braces_funs` at the bottom.
-=#
 """
-    process_braces_blocks(html_string, all_vars)
+    interweave_rep(html_string, splitter, replacements)
 
-Find blocks of the form `{{ fname param₁ param₂ }}`, modify `html_string`
-accordingly by calling the function `fname`.
+Finds blocks of a specific form (given by `splitter`) in the `html_string` and
+return the `html_string` with each of the `replacements` instead of the blocks.
 """
-function process_braces_blocks(html_string, all_vars)
-    replacements = String[]
-    for  m ∈ eachmatch(BRACES_BLOCK, html_string)
-        fname = m.captures[1]
-        params = m.captures[2]
-        if haskey(braces_funs, fname)
-            push!(replacements, braces_funs[fname](params, all_vars))
-        else
-            warn("I found a {{...}} block but did not recognise the function name '$fname'. Ignoring.")
-        end
-    end
-
-    # interweave the replacements
-    # NOTE: assumes that all {{...}} are closed
-    split_html_string = split(html_string, r"{{[^}]*}}")
+function interweave_rep(html_string, splitter, replacements)
+    split_html_string = split(html_string, splitter)
     cntr = 1
     html_string = split_html_string[cntr]
     for rep ∈ replacements
@@ -79,6 +54,70 @@ function process_braces_blocks(html_string, all_vars)
         cntr += 1
     end
     return html_string
+end
+
+#=
+    {{ CTRL_TOKEN VAR ... END }}
+
+NOTE:
+ - nesting is NOT allowed (it's meant to be very rudimentary so that
+blocks can just be obtained via regex. To make nesting possible, would
+need to learn how to parse... just a bit over the top for now.
+=#
+const IF_BRACES_BLOCK = r"{{\s*if\s+([a-z]\S+)((.|\n)+?)end\s*}}"
+const IF_BRACES_BLOCK_SPLIT = r"{{\s*if\s(.|\n)+?end\s*}}"
+
+"""
+    process_if_braces_blocks(html_string, all_vars)
+
+Find blocks of the form `{{ if var ... end }}` where `var` is a variable
+referenced in the `all_vars` dict corresponding to a boolean. If the bool
+is false or does not exist, the block is not reproduced. If the bool is true,
+the block is inserted (and further processed).
+"""
+function process_if_braces_blocks(html_string, all_vars)
+    replacements = String[]
+    for m ∈ eachmatch(IF_BRACES_BLOCK, html_string)
+        vname = m.captures[1]
+        block = m.captures[2]
+        if haskey(all_vars, vname)
+            push!(replacements, all_vars[vname] ? block : "")
+        else
+            warn("I found a {{if $vname ... end}} block but I don't know the variable '$vname'. Default assumption = it's false.")
+        end
+    end
+    interweave_rep(html_string, IF_BRACES_BLOCK_SPLIT, replacements)
+end
+
+
+#=
+    {{ ... }} BLOCKS
+
+NOTE if adding new functionalities, don't forget to add them to the collection
+`braces_funs` at the bottom.
+NOTE assumption that the braces blocks are closed properly...
+=#
+const BRACES_BLOCK = r"{{\s*([a-z]\S+)\s+((.|\n)+?)}}"
+const BRACES_BLOCK_SPLIT = r"{{(.|\n)+?}}"
+
+"""
+    process_braces_blocks(html_string, all_vars)
+
+Find blocks of the form `{{ fname param₁ param₂ }}`, modify `html_string`
+accordingly by calling the function `fname`.
+"""
+function process_braces_blocks(html_string, all_vars)
+    replacements = String[]
+    for m ∈ eachmatch(BRACES_BLOCK, html_string)
+        fname = m.captures[1]
+        params = m.captures[2]
+        if haskey(braces_funs, fname)
+            push!(replacements, braces_funs[fname](params, all_vars))
+        else
+            warn("I found a {{...}} block but did not recognise the function name '$fname'. Ignoring.")
+        end
+    end
+    interweave_rep(html_string, BRACES_BLOCK_SPLIT, replacements)
 end
 
 
