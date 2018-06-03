@@ -90,10 +90,8 @@ function split_params(params, fun_name, expect_args)
     len_sparams = length(sparams)
     flag = (len_sparams == expect_args)
     if !flag
-        warn("I found a $fun_name and expected $expect_args arguments but got $len_sparams instead. Ignoring.")
+        warn("I found a '$fun_name' and expected $expect_args argument(s) but got $len_sparams instead. Ignoring.")
     end
-    # NOTE: this annoying fuckery is to get around the Substrings...
-    # so we return a flag and a list of Strings.
     return (flag, (len_sparams == 1) ? sparams[1] : sparams)
 end
 
@@ -119,9 +117,9 @@ function braces_fill(params, all_vars)
                 replacement = string(tmp_repl)
             end
         else
-            warn("I found a fill but I do not know the variable $vname. Ignoring.")
+            warn("I found a '{{fill $vname}}' but I do not know the variable '$vname'. Ignoring.")
         end
-    end
+    end # the case where narg is incorrect raises a warning via split_params
 
     return replacement
 end
@@ -150,10 +148,10 @@ function braces_insert_if(params, all_vars)
             if isfile(filepath)
                 replacement = all_vars[vname][1] ? readstring(filepath) : ""
             else
-                warn("I tried to insert $filepath but I couldn't find the file. Ignoring.")
+                warn("I tried to insert '$filepath' but I couldn't find the file. Ignoring.")
             end
         else
-            warn("I found an insert_if but I do not know the variable $vname. Ignoring.")
+            warn("I found an '{{insert_if $vname ...}}' but I do not know the variable '$vname'. Ignoring.")
         end
     end
     return replacement

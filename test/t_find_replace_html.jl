@@ -1,9 +1,3 @@
-@testset "Div-pattern util" begin
-	t = JuDoc.dpat("blah", "content is here")
-	@test t == "<div class=\"blah\">content is here</div>\n"
-end
-
-
 @testset "Process math blocks" begin
 	s = raw"""
 	This is some *markdown* with $\sin(x)=1$ some maths
@@ -25,6 +19,8 @@ end
 
 
 @testset "Process div blocks" begin
+	t = JuDoc.dpat("blah", "content is here")
+	@test t == "<div class=\"blah\">content is here</div>\n"
 	s = raw"""
 	This is some *markdown* followed by a div:
 	@@some_div
@@ -38,4 +34,34 @@ end
 	h = JuDoc.html(JuDoc.Markdown.parse(s));
 	h = JuDoc.process_div_blocks(h, b)
 	@test h == "<p>This is some <em>markdown</em> followed by a div: <div class=\"some_div\">\nthe content here\n</div>\n and then more markdown blah.</p>\n"
+end
+
+
+@testset "Process braces blocks" begin
+	# split param util
+	params = "blah blih thing"
+	@test_warn "I found a 'FNAME' and expected 2 argument(s) but got 3 instead. Ignoring." JuDoc.split_params(params, "FNAME", 2)
+	(f, sp) = JuDoc.split_params(params, "FNAME", 3)
+	@test f == true
+	@test sp == ["blah", "blih", "thing"]
+
+	# replacements :: braces_fill
+	params1 = "blah"
+	var1 = Dict("blah" => 25)
+	r = JuDoc.braces_fill(params1, var1)
+	@test r == "25"
+	params1 = "blih"
+	@test_warn "I found a '{{fill blih}}' but I do not know the variable 'blih'. Ignoring." JuDoc.braces_fill(params1, var1)
+	params2 = "blih blah"
+	@test_warn "I found a 'fill' and expected 1 argument(s) but got 2 instead. Ignoring." JuDoc.braces_fill(params2, var1)
+
+	# replacements :: braces_insert_if
+	params2 = "flag .tester"
+	vars = Dict("flag" => true)
+	r = JuDoc.braces_insert_if(params2, vars)
+	@test r == "this is a test page required by the tests, do not remove or modify.\n"
+	params2 = "flag non-existing"
+	@test_warn "I tried to insert 'non-existing.html' but I couldn't find the file. Ignoring." JuDoc.braces_insert_if(params2, vars)
+	params2 = "flig non-existing"
+	@test_warn "I found an '{{insert_if flig ...}}' but I do not know the variable 'flig'. Ignoring." JuDoc.braces_insert_if(params2, vars)
 end
