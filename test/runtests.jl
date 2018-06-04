@@ -6,7 +6,9 @@ else
 end
 
 # --- TEST ---
-# include("t_misc.jl")
 include("t_find_replace_md.jl")
 include("t_find_replace_html.jl")
 include("t_process_files.jl")
+
+# NOTE must be done last as it modifies PATHS!
+include("t_misc.jl")

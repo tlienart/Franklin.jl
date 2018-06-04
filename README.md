@@ -6,10 +6,20 @@
 
 Only for `0.6`, a few adaptations needed when going for `0.7` (changes for example for `replace`), will migrate to `0.7` when Juno deals with it (i.e. not yet).
 
+## Getting started
+
+* create folder
+* in folder create subfolder `web_input` and in it copy
+  - `_html` (html templates)
+	- `_libs` (katex, prism)
+	- `_css` (css templates)
+* in folder create file `script.jl` indicating the paths
+
 ## TODO / Notes
 
 ### Priority
 
+* [ ] incorporate `process_if_braces_blocks` in pipeline. Think more about pipeline in general (order of operations, what gets escaped, and when, what files are modified (infrastructure files, markdown files etc))
 * [ ] write somewhere that control blocks cannot be nested (because they are regexp-ed, not parsed using some grammar.) (recursive is not enough, the problem is not matching the right `end`)
 * [ ] if want to allow going over comprehension then should be able to not only access elements of the comprehension but also possibly write simple variables to dictionary. this amounts to holding a stack... `for` should maybe not be done yet.
 
@@ -37,6 +47,8 @@ Only for `0.6`, a few adaptations needed when going for `0.7` (changes for examp
   - have a script in the folder that sets the variables such as the PATH (also the base-doc-vars as that would make sense?)
 	- ONGOING: cf `~/Desktop/tweb_judoc/` with the script within it. It should allow to just do `using JuDoc` set env then `convert_dir()`
 * [ ] (medium) path thing is awkward (have to do the `using JuDoc` after having all the `const...`
+* [ ] (low) need to have the templates stored somewhere, possibly a side repo. this can be done when the site is a bit established and the CSS/HTML has converged a bit.
+
 
 ### DONE
 

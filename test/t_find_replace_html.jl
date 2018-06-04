@@ -56,8 +56,10 @@ end
 	@test_warn "I found a 'fill' and expected 1 argument(s) but got 2 instead. Ignoring." JuDoc.braces_fill(params2, var1)
 
 	# replacements :: braces_insert_if
-	temp_path = tempname()
-	write(temp_path * ".html", "This is a test page.\n")
+	temp_path = joinpath(mktempdir(), "tmp")
+	open(temp_path * ".html", "w") do f
+		write(f, "This is a test page.\n")
+	end
 	params2 = "flag $temp_path"
 	vars = Dict("flag" => true)
 	r = JuDoc.braces_insert_if(params2, vars)
