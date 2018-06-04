@@ -148,8 +148,10 @@ Assume what's given will not crash everything (no sandboxing)
 
 ### special stuff
 
-* `{{ insert_if}}` goes for html, html extension is added.
+* `{{ insert_if ...}}` goes for html, html extension is added.
 * `<!-- comment -->` in markdown is a comment (no output to html)
+* `{{ fill ...}}` fill with a doc variable or page var
+* `[[if ...]]`` use block if some bool
 
 ## Design
 
