@@ -89,12 +89,12 @@ end
 Take a directory that contains markdown files (possibly in subfolders), convert
 all markdown files to html and reproduce the same structure to an output dir.
 
+* `single_pass` compiles the whole thing once (no dir watching).
 * `clear_out_dir` destroys what was previously in `out_dir` (outside of PATH_CSS
 and PATH_LIBS) before bringing new files, this can be useful if file names have
 been changed etc to get rid of stale files.
 """
-function convert_dir(clear_out_dir=true)
-
+function convert_dir(single_pass=true, clear_out_dir=true)
     ###
     # 0. PREPROCESSING OF DIRECTORIES
     # -- note that the all-caps variables are defined outside (cf. JuDoc.jl)
@@ -169,44 +169,171 @@ function convert_dir(clear_out_dir=true)
 
     length_in_dir = length(PATHS[:in])
 
-    for (root, _, files) ∈ walkdir(PATHS[:in])
-        for file ∈ files
-            fname, fext = splitext(file)
-            if fext == ".md" && fname != "config"
-                ###
-                # 1. read markdown into string
-                # 2. convert to html
-                # 3. add head / foot from template
-                # 4. write at appropriate place
-                ###
-                all_vars = merge(doc_vars, deepcopy(page_vars_default))
-                md_string = readstring(joinpath(root, file))
-                html_string = convert_md!(all_vars, md_string)
+    if single_pass
+        for (root, _, files) ∈ walkdir(PATHS[:in])
+            for file ∈ files
+                fname, fext = splitext(file)
+                if fext == ".md" && fname != "config"
+                    ###
+                    # 1. read markdown into string
+                    # 2. convert to html
+                    # 3. add head / foot from template
+                    # 4. write at appropriate place
+                    ###
+                    all_vars = merge(doc_vars, deepcopy(page_vars_default))
+                    md_string = readstring(joinpath(root, file))
+                    html_string = convert_md!(all_vars, md_string)
 
-                web_html = process_braces_blocks(head_html, all_vars)
-                web_html *= "<div class=content>\n"
-                web_html *= html_string
-                web_html *= process_braces_blocks(foot_content_html, all_vars)
-                web_html *= "\n</div>" # content
-                web_html *= process_braces_blocks(foot_html, all_vars)
+                    web_html = process_braces_blocks(head_html, all_vars)
+                    web_html *= "<div class=content>\n"
+                    web_html *= html_string
+                    web_html *= process_braces_blocks(foot_content_html, all_vars)
+                    web_html *= "\n</div>" # content
+                    web_html *= process_braces_blocks(foot_html, all_vars)
 
-                f_out_name = fname * ".html"
-                f_out_path = PATHS[:out] * root[length_in_dir+1:end] * "/"
-                if !ispath(f_out_path)
-                    mkpath(f_out_path)
+                    f_out_name = fname * ".html"
+                    f_out_path = PATHS[:out] * root[length_in_dir+1:end] * "/"
+                    if !ispath(f_out_path)
+                        mkpath(f_out_path)
+                    end
+
+                    write(f_out_path * f_out_name, web_html)
+
+                else
+                    # copy at appropriate place
+                    f_out_path = PATHS[:out] * root[length_in_dir+1:end]
+                    if !ispath(f_out_path)
+                        mkpath(f_out_path)
+                    end
+                    cp(joinpath(root, file), joinpath(f_out_path, file),
+                        remove_destination=true)
                 end
-
-                write(f_out_path * f_out_name, web_html)
-
-            else
-                # copy at appropriate place
-                f_out_path = PATHS[:out] * root[length_in_dir+1:end]
-                if !ispath(f_out_path)
-                    mkpath(f_out_path)
-                end
-                cp(joinpath(root, file), joinpath(f_out_path, file),
-                    remove_destination=true)
             end
+        end # walkdir
+    else
+        # NOTE: experimental multiple pass.
+        # Should probably go in external function
+        # 1. Should probably go through a normal single pass
+        # 2. Continuously look at EXT files
+        # NOTE
+        #  - TODO: what about new assets that get added? should be copied over
+        #  - TODO: if infra files get modif (_html/*), all files need rewrite
+
+        println("Warming up, compiling the folder once...")
+        convert_dir(true, clear_out_dir)
+
+        watched_files = Dict{String, UInt}()
+        other_files = Dict{String, UInt}()
+        for (root, _, files) ∈ walkdir(PATHS[:in])
+        	for file ∈ files
+                f = joinpath(root, file)
+                if splitext(file)[2] == ".md"
+            		watched_files[f] = stat(f).mtime
+                else
+                    other_files[f] = stat(f).mtime
+                end
+        	end
         end
-    end # walkdir
+
+        # TODO set these constants somewhere else (config)
+        START  = time()
+        MAXT   = 5000 # max number of seconds before shutting down.
+        SLEEP  = 0.1
+        NCYCL  = 20
+        CONFIG = joinpath(PATHS[:in], "config.md")
+
+        cntr = 1
+        try
+        	println("Watching input folder... press CTRL+C to stop.")
+        	while true
+                # ------------------
+        		# every NCYCL cycles, check directory for potential new files
+        		if mod(cntr, NCYCL) == 0
+        			# 1 check if some files have been deleted
+        			# note we don't do anything. we just remove from the list.
+        			# to get clean folder --> rerun the compile()
+        			for (f, _) ∈ watched_files
+        				if !isfile(f)
+        					delete!(watched_files, f)
+        				end
+        			end
+                    for (f, _) ∈ other_files
+                        if !isfile(f)
+                            delete!(other_files, f)
+                        end
+                    end
+        			# 2 check if some files have been added
+        			for (root, _, files) ∈ walkdir(PATHS[:in])
+        				for file ∈ files
+                            f = joinpath(root, file)
+                            if splitext(file)[2] == ".md"
+            					if !haskey(watched_files, f)
+            						watched_files[f] = stat(f).mtime
+            					end
+                            else
+                                if !haskey(other_files, f)
+                                    other_files[f] = stat(f).mtime
+                                end
+                            end
+        				end
+        			end
+        			cntr = 1
+                # ---------------
+                # THE NORMAL LOOP
+        		else
+        			for (f, t) ∈ watched_files
+        				cur_t = stat(f).mtime
+        				if cur_t > t
+        					watched_files[f] = cur_t
+                            # HERE ARE MODIFIED MD FILES
+                            if f == CONFIG
+                                convert_md!(doc_vars, readstring(CONFIG))
+                            else
+                                all_vars = merge(doc_vars, deepcopy(page_vars_default))
+                                md_string = readstring(f)
+                                html_string = convert_md!(all_vars, md_string)
+
+                                web_html = process_braces_blocks(head_html, all_vars)
+                                web_html *= "<div class=content>\n"
+                                web_html *= html_string
+                                web_html *= process_braces_blocks(foot_content_html, all_vars)
+                                web_html *= "\n</div>" # content
+                                web_html *= process_braces_blocks(foot_html, all_vars)
+
+                                f_out_name = splitext(basename(f))[1] * ".html"
+                                f_out_path = PATHS[:out] * dirname(f)[length_in_dir+1:end] * "/"
+                                if !ispath(f_out_path)
+                                    mkpath(f_out_path)
+                                end
+
+                                write(f_out_path * f_out_name, web_html)
+                            end
+        				end
+        			end
+                    for (f, t) ∈ other_files
+                        cur_t = stat(f).mtime
+                        if cur_t > t
+                            other_files[f] = cur_t
+                            # HERE ARE MODIFIED NON-MD FILES
+                            # COPY NEW FILE, OVERWRITE DESTINATION
+                            f_out_path = PATHS[:out] * dirname(f)[length_in_dir+1:end]
+                            if !ispath(f_out_path)
+                                mkpath(f_out_path)
+                            end
+                            cp(f, joinpath(f_out_path, basename(f)),
+                                remove_destination=true)
+                        end
+                    end
+        			cntr += 1
+        			sleep(SLEEP)
+        		end
+        	end
+        catch x
+        	if isa(x, InterruptException)
+        		println("Shutting down.")
+        	else
+        		throw(x)
+        	end
+        end
+    end
 end

@@ -25,10 +25,7 @@ Only for `0.6`, a few adaptations needed when going for `0.7` (changes for examp
 
 #### Tests
 
-* [ ] `set_vars!`
-* [x] `set_paths!`
-* [ ] `convert_dir` --> that one may be annoying to test but some corner cases can be tested (no config etc)
-* [x] `ifisdef`
+* [ ] `convert_dir` --> that one may be annoying to test. Maybe can do it partly with temporary paths.
 
 ### Must do
 
@@ -40,16 +37,10 @@ Only for `0.6`, a few adaptations needed when going for `0.7` (changes for examp
 		* need a `Click <a href="#some_name">here</a> to jump`
 	* should be easy to have an equation counter for each doc and just increment that then find `{{eqref name}}`
 * [ ] (medium) allow putting raw html maybe something like `{{ raw_html ... }}` note that this should not be parsed so it should probably be treated in much the same way as a math block.
-* [ ] (low) allow for CSS variables to be defined as well.
+* [ ] (low) allow for CSS variables to be defined as well. Possibly use the same `{{fill}}` syntax.
 * [ ] (low) think about performance of all these find and replace operations
   * maybe just benchmark the whole thing and the different elements
-  * for replacements of the HUGO form `{{ }}` maybe better to catch all of those and deal with them in one shot (gradually forming the new string) instead of going over the text multiple times...
-* [ ] (medium) in longer run, would want a repo that just has the conversion scripts etc, and then a website repo that just calls `using JuDoc`. This involves some reasoning around the paths.
-  - have a script in the folder that sets the variables such as the PATH (also the base-doc-vars as that would make sense?)
-	- ONGOING: cf `~/Desktop/tweb_judoc/` with the script within it. It should allow to just do `using JuDoc` set env then `convert_dir()`
-* [ ] (medium) path thing is awkward (have to do the `using JuDoc` after having all the `const...`
 * [ ] (low) need to have the templates stored somewhere, possibly a side repo. this can be done when the site is a bit established and the CSS/HTML has converged a bit.
-
 
 ### DONE
 
@@ -71,6 +62,12 @@ Only for `0.6`, a few adaptations needed when going for `0.7` (changes for examp
 	* the `web_md` folder actually also contains the `index.html`
 	* the `web_parts` ends up in `web_md` so maybe it's just easier to just put everything there but then the level of `css` and `cvx_opti` is the same which is a bit odd. Maybe can just also use `_css` just as for the output.
 * [x] remove possibility to modify `web_html` (should be considered immutable)
+* [x] for replacements of the HUGO form `{{ }}` maybe better to catch all of those and deal with them in one shot (gradually forming the new string) instead of going over the text multiple times...
+* [x] (medium) path thing is awkward (have to do the `using JuDoc` after having all the `const...`
+* [x] (medium) in longer run, would want a repo that just has the conversion scripts etc, and then a website repo that just calls `using JuDoc`. This involves some reasoning around the paths.
+  - have a script in the folder that sets the variables such as the PATH (also the base-doc-vars as that would make sense?)
+	- ONGOING: cf `~/Desktop/tweb_judoc/` with the script within it. It should allow to just do `using JuDoc` set env then `convert_dir()`
+
 
 #### Continuous time modif checking
 
