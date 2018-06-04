@@ -1,4 +1,4 @@
-@testset "Proc math bl" begin
+@testset "Proc math b" begin
 	s = raw"""
 	This is some *markdown* with $\sin(x)=1$ some maths
 	$$ \int_0^1 x\mathrm{d}x = {1\over 2} $$
@@ -18,7 +18,7 @@
 end
 
 
-@testset "Proc div bl" begin
+@testset "Proc div b" begin
 	t = JuDoc.dpat("blah", "content is here")
 	@test t == "<div class=\"blah\">content is here</div>\n"
 	s = raw"""
@@ -37,7 +37,7 @@ end
 end
 
 
-@testset "Proc {{.}} bl" begin
+@testset "Proc {{.}} b" begin
 	# split param util
 	params = "blah blih thing"
 	@test_warn "I found a 'FNAME' and expected 2 argument(s) but got 3 instead. Ignoring." JuDoc.split_params(params, "FNAME", 2)
@@ -84,7 +84,7 @@ end
 	@test_warn "I found a {{unknown...}} block but did not recognise the function name 'unknown'. Ignoring." JuDoc.process_braces_blocks(h, vars)
 end
 
-@testset "Proc [[if]] bl" begin
+@testset "Proc [[if]] b" begin
 	vars = Dict("flag" => true, "fflag" => false, "filler" => 245)
 	h = """
 	blah blah [[ if flag blah blah {{fill filler}} ]]
