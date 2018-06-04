@@ -31,7 +31,7 @@ function set_vars!(def_dict=Dict, new_defs=Tuple{String, String}[])
                     # try to evaluate the assignment
                     tmp = eval(tmp)
                 catch err
-                    println("Got an error trying to evaluate $tmp, fix the assignment.")
+                    warn("I got an error trying to evaluate '$tmp', fix the assignment.")
                     throw(err)
                 end
                 # if the retrieved value has the right type

@@ -11,4 +11,5 @@ include("t_find_replace_html.jl")
 include("t_process_files.jl")
 
 # NOTE must be done last as it modifies PATHS!
+# NOTE after testing, if more tests need be done, re-start
 include("t_misc.jl")
