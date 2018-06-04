@@ -33,6 +33,7 @@ Only for `0.6`, a few adaptations needed when going for `0.7` (changes for examp
 ### Must do
 
 * * [ ] (medium) list operations in order to make sure things never clash. For example if there happens to be a `{{}}` in a math environment, make sure the maths is extracted first.
+* [ ] (low) start some form of "clever" doc so that you keep track of stuff.
 * [ ] (medium) allow for hyper-ref using something like `{{}}` (final pass)
 	* need to understand anchors and have one anchor at each equation.
 		* need a `<a name="some_name">` (anchor)

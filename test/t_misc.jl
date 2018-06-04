@@ -12,11 +12,12 @@ PATH_INPUT = td
  	BBB = JuDoc.ifisdef(:BBB, 10)
  	@test BBB == 10
 
- 	JuDoc.set_paths!()
+ 	P = JuDoc.set_paths!()
  	@test JuDoc.PATHS[:in] == td
  	@test JuDoc.PATHS[:in_css] == td * "_css/"
  	@test JuDoc.PATHS[:in_libs] == td * "_libs/"
  	@test JuDoc.PATHS[:out] == "web_output/"
  	@test JuDoc.PATHS[:out_css] == "web_output/_css/"
  	@test JuDoc.PATHS[:out_libs] == "web_output/_libs/"
+    @test P == JuDoc.PATHS
 end

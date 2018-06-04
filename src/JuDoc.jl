@@ -81,6 +81,8 @@ function set_paths!()
 	PATHS[:out] 	 = ifisdef(:PATH_OUTPUT, "web_output/")
 	PATHS[:out_libs] = ifisdef(:PATH_OUTPUT_LIBS, PATHS[:out] * "_libs/")
 	PATHS[:out_css]  = ifisdef(:PATH_OUTPUT_CSS,  PATHS[:out] * "_css/")
+
+	return PATHS
 end
 
 #=
