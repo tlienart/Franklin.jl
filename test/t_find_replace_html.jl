@@ -81,18 +81,22 @@ end
 	h = """
 	{{ unknown f f2 }}
 	"""
-	@test_warn "I found a {{...}} block but did not recognise the function name 'unknown'. Ignoring." JuDoc.process_braces_blocks(h, vars)
+	@test_warn "I found a {{unknown...}} block but did not recognise the function name 'unknown'. Ignoring." JuDoc.process_braces_blocks(h, vars)
 end
 
-@testset "Proc {{if}} bl" begin
+@testset "Proc [[if]] bl" begin
 	vars = Dict("flag" => true, "fflag" => false, "filler" => 245)
 	h = """
-	blah blah {{ if flag blah blah {{fill filler}} end }}
-	and then {{ if fflag
+	blah blah [[ if flag blah blah {{fill filler}} ]]
+	and then [[ if fflag
 	nothing should
-	end }}
+	]]
 	be here
 	"""
-	h = JuDoc.process_if_braces_blocks(h, vars)
+	h = JuDoc.process_if_sqbr_blocks(h, vars)
 	@test h == "blah blah  blah blah {{fill filler}} \nand then \nbe here\n"
+	h2 = """
+	blah blah [[if noflag blih end]] bloh
+	"""
+	@test_warn "I found a [[if noflag ... ]] block but I don't know the variable 'noflag'. Default assumption = it's false." JuDoc.process_if_sqbr_blocks(h2, vars)
 end

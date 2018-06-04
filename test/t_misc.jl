@@ -1,7 +1,7 @@
 AAA = 5
-#
-# @test_throws AssertionError JuDoc.set_paths!() # PATH_INPUT undef
-#
+
+@test_throws AssertionError JuDoc.set_paths!() # PATH_INPUT undef
+
 td = mktempdir() * "/"
 PATH_INPUT = td
 #

@@ -26,9 +26,9 @@ Only for `0.6`, a few adaptations needed when going for `0.7` (changes for examp
 #### Tests
 
 * [ ] `set_vars!`
-* [ ] `set_paths!`
+* [x] `set_paths!`
 * [ ] `convert_dir` --> that one may be annoying to test but some corner cases can be tested (no config etc)
-* [ ] `ifisdef` --> see `t_misc.jl` there's something a bit hard there with TRAVIS (`Main.`) not sure if it'll work, also seems a bit dodgy here so may want to maybe skip the `set_paths!` one.
+* [x] `ifisdef`
 
 ### Must do
 
@@ -148,8 +148,10 @@ Assume what's given will not crash everything (no sandboxing)
 
 ### special stuff
 
-* `{{ insert_if}}` goes for html, html extension is added.
+* `{{ insert_if ...}}` goes for html, html extension is added.
 * `<!-- comment -->` in markdown is a comment (no output to html)
+* `{{ fill ...}}` fill with a doc variable or page var
+* `[[if ...]]`` use block if some bool
 
 ## Design
 
