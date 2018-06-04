@@ -12,7 +12,7 @@ do not match, entries are ignored and a warning message is displayed.
 
 E.g.:
 
-    d = Dict("a"=>0.5, "b"=>"hello")
+    d = Dict("a"=>[0.5, (Real,)], "b"=>["hello", (String,)])
     set_vars!(d, [("a", "=5.0"), ("b", "= \"goodbye\"")])
 
 Will return
@@ -26,23 +26,24 @@ function set_vars!(def_dict=Dict, new_defs=Tuple{String, String}[])
         # try to assign
         for (key, new_def) ∈ new_defs
             if haskey(def_dict, key)
-                tmp = nothing
+                tmp = parse("__tmp__" * new_def)
                 try
                     # try to evaluate the assignment
-                    tmp = eval(parse("__tmp__" * new_def))
+                    tmp = eval(tmp)
                 catch err
                     println("Got an error trying to evaluate $tmp, fix the assignment.")
                     throw(err)
                 end
                 # if the retrieved value has the right type
                 # assign it to the corresponding value
-                if typeof(tmp) ∈ def_dict[key][2]
+                ttmp = typeof(tmp)
+                if any(issubtype(ttmp, tᵢ) for tᵢ ∈ def_dict[key][2])
                     def_dict[key][1] = tmp
                 else
-                    warn("Doc var $key (type: $(typeof(def_dict[key]))) can't be set to value $tmp (type: $(typeof(tmp))). Assignment ignored.")
+                    warn("Doc var '$key' (types: $(def_dict[key][2])) can't be set to value '$tmp' (type: $ttmp). Assignment ignored.")
                 end
             else
-                warn("Doc var name $key is unknown. Assignment ignored.")
+                warn("Doc var name '$key' is unknown. Assignment ignored.")
             end
         end
     end
