@@ -57,36 +57,36 @@ function interweave_rep(html_string, splitter, replacements)
 end
 
 #=
-    {{ CTRL_TOKEN VAR ... END }}
+    [[ CTRL_TOKEN VAR ... ]]
 
 NOTE:
  - nesting is NOT allowed (it's meant to be very rudimentary so that
 blocks can just be obtained via regex. To make nesting possible, would
 need to learn how to parse... just a bit over the top for now.
 =#
-const IF_BRACES_BLOCK = r"{{\s*if\s+([a-z]\S+)((.|\n)+?)end\s*}}"
-const IF_BRACES_BLOCK_SPLIT = r"{{\s*if\s(.|\n)+?end\s*}}"
+const IF_SQBR_BLOCK = r"\[\[\s*if\s+([a-z]\S+)((.|\n)+?)\]\]"
+const IF_SQBR_BLOCK_SPLIT = r"\[\[\s*if\s(.|\n)+?\]\]"
 
 """
-    process_if_braces_blocks(html_string, all_vars)
+    process_if_sqbr_blocks(html_string, all_vars)
 
-Find blocks of the form `{{ if var ... end }}` where `var` is a variable
+Find blocks of the form `[[ if var ... ]]` where `var` is a variable
 referenced in the `all_vars` dict corresponding to a boolean. If the bool
 is false or does not exist, the block is not reproduced. If the bool is true,
 the block is inserted (and further processed).
 """
-function process_if_braces_blocks(html_string, all_vars)
+function process_if_sqbr_blocks(html_string, all_vars)
     replacements = String[]
-    for m ∈ eachmatch(IF_BRACES_BLOCK, html_string)
+    for m ∈ eachmatch(IF_SQBR_BLOCK, html_string)
         vname = m.captures[1]
         block = m.captures[2]
         if haskey(all_vars, vname)
             push!(replacements, all_vars[vname] ? block : "")
         else
-            warn("I found a {{if $vname ... end}} block but I don't know the variable '$vname'. Default assumption = it's false.")
+            warn("I found a [[if $vname ... ]] block but I don't know the variable '$vname'. Default assumption = it's false.")
         end
     end
-    interweave_rep(html_string, IF_BRACES_BLOCK_SPLIT, replacements)
+    interweave_rep(html_string, IF_SQBR_BLOCK_SPLIT, replacements)
 end
 
 
@@ -114,7 +114,7 @@ function process_braces_blocks(html_string, all_vars)
         if haskey(braces_funs, fname)
             push!(replacements, braces_funs[fname](params, all_vars))
         else
-            warn("I found a {{...}} block but did not recognise the function name '$fname'. Ignoring.")
+            warn("I found a {{$fname...}} block but did not recognise the function name '$fname'. Ignoring.")
         end
     end
     interweave_rep(html_string, BRACES_BLOCK_SPLIT, replacements)
