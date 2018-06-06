@@ -176,7 +176,7 @@ Replacement for a block of the form `{{ insert_if boolvar filename }}`.
 The `params` string is assumed to be composed of `vname` and `fname`.
 The `vname` variable is the name of a boolean variable stored in the `all_vars`
 dictionary indicating whether or not to insert and `fname` is the name
-of the file to insert (note that the base path is PATHS[:in_html]).
+of the file to insert (note that the base path is JD_PATHS[:in_html]).
 """
 function braces_insert_if(params, all_vars)
     replacement = ""
@@ -188,7 +188,7 @@ function braces_insert_if(params, all_vars)
     # correct number of arguments
     if ok_nargs
         if haskey(all_vars, vname)
-            filepath = PATHS[:in_html] * fname * ".html"
+            filepath = JD_PATHS[:in_html] * fname * ".html"
             if isfile(filepath)
                 replacement = all_vars[vname][1] ? readstring(filepath) : ""
             else

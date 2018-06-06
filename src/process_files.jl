@@ -4,68 +4,23 @@ else
     using Markdown: html
 end
 
-"""
-    set_vars!(def_dict, new_Defs)
-
-Given a set of definitions `defs`, update a dictionary `def_dict`. If the keys
-do not match, entries are ignored and a warning message is displayed.
-
-E.g.:
-
-    d = Dict("a"=>[0.5, (Real,)], "b"=>["hello", (String,)])
-    set_vars!(d, [("a", "=5.0"), ("b", "= \"goodbye\"")])
-
-Will return
-
-    Dict{String,Any} with 2 entries:
-      "b" => "goodbye"
-      "a" => 5.0
-"""
-function set_vars!(def_dict=Dict, new_defs=Tuple{String, String}[])
-    if !isempty(new_defs)
-        # try to assign
-        for (key, new_def) ∈ new_defs
-            if haskey(def_dict, key)
-                tmp = parse("__tmp__" * new_def)
-                try
-                    # try to evaluate the assignment
-                    tmp = eval(tmp)
-                catch err
-                    warn("I got an error trying to evaluate '$tmp', fix the assignment.")
-                    throw(err)
-                end
-                # if the retrieved value has the right type
-                # assign it to the corresponding value
-                ttmp = typeof(tmp)
-                if any(issubtype(ttmp, tᵢ) for tᵢ ∈ def_dict[key][2])
-                    def_dict[key][1] = tmp
-                else
-                    warn("Doc var '$key' (types: $(def_dict[key][2])) can't be set to value '$tmp' (type: $ttmp). Assignment ignored.")
-                end
-            else
-                warn("Doc var name '$key' is unknown. Assignment ignored.")
-            end
-        end
-    end
-end
-
 
 """
-    convert_md!(dict_vars, md_string)
+    convert_md!(jd_vars, md_string)
 
 Take a raw MD string, process (and put away) the blocks, then parse the rest
 using the default html parser. Finally, plug back in the processed content that
 was put away and return the corresponding HTML string.
-The dictionary `dict_vars` containing the document and the page variables is
-updated once the local definitions have been read.
+The dictionary `jd_vars` containing the document and/or the page variables is
+updated once the local definitions have been read (see `jd_vars.jl`)
 """
-function convert_md!(dict_vars, md_string)
+function convert_md!(jd_vars, md_string)
     # -- Comments
     md_string = remove_comments(md_string)
 
     # -- Variables
     (md_string, defs) = extract_page_defs(md_string)
-    set_vars!(dict_vars, defs)
+    set_vars!(jd_vars, defs)
 
     # -- Maths & Div blocks --
     (md_string, asym_bm) = asym_math_blocks(md_string)
@@ -84,74 +39,55 @@ end
 
 
 """
-    convert_dir(clear_out_dir, rewrite_css)
+    prepare_output_dir(clear_out_dir)
 
-Take a directory that contains markdown files (possibly in subfolders), convert
-all markdown files to html and reproduce the same structure to an output dir.
+Prepare the output directory `JD_PATHS[:out]`.
 
-* `single_pass` compiles the whole thing once (no dir watching).
-* `clear_out_dir` destroys what was previously in `out_dir` (outside of PATH_CSS
-and PATH_LIBS) before bringing new files, this can be useful if file names have
-been changed etc to get rid of stale files.
+* `clear_out_dir` removes the content of the output directory if it exists to
+start from a blank slate
 """
-function convert_dir(single_pass=true, clear_out_dir=true)
-    ###
-    # 0. PREPROCESSING OF DIRECTORIES
-    # -- note that the all-caps variables are defined outside (cf. JuDoc.jl)
-    # -- adjusting given strings
-    # -- adding LIBS and CSS
-    # -- cleaning up past files if necessary
-    ###
-
+function prepare_output_dir(clear_out_dir=true)
     # read path variables from Main environment (see JuDoc.jl)
     set_paths!()
 
     # if required to start from a blank slate, we remove everything in
     # the output dir
-    if clear_out_dir && isdir(PATHS[:out])
-        rm(PATHS[:out], recursive=true)
+    if clear_out_dir && isdir(JD_PATHS[:out])
+        rm(JD_PATHS[:out], recursive=true)
+    elseif !isdir(JD_PATHS[:out])
+        mkdir(JD_PATHS[:out])
     end
 
-    if !isdir(PATHS[:out])
-        mkdir(PATHS[:out])
-    end
-
-    # the two `if` blocks are executed only when starting from a blank slate
-    # so, in theory, one may one to do some direct adjustments in the output
-    # dir and those wouldn't get overwritten provided clear_out_dir=false
-    # this is NOT RECOMMENDED but possible.
-    if !isdir(PATHS[:out_css])
+    if !isdir(JD_PATHS[:out_css])
         # copying template CSS files
-        cp(PATHS[:in_css], PATHS[:out_css])
+        cp(JD_PATHS[:in_css], JD_PATHS[:out_css])
     end
-    if !isdir(PATHS[:out_libs])
+
+    if !isdir(JD_PATHS[:out_libs])
         # copying libs
-        cp(PATHS[:in_libs], PATHS[:out_libs])
+        cp(JD_PATHS[:in_libs], JD_PATHS[:out_libs])
     end
+end
 
-    ###
-    # 1. DEFAULT VAR DICTIONARIES
-    # -- create default dictionaries of variables for the website and the pages
-    # -- NOTE: the dictionaries are merged on pages, so the keys cannot clash
-    # -- the values are of the form [default, (type1, type2)] where the tuple
-    #    contains the types for this key that will be accepted.
-    ###
-    # doc_vars is a fixed dictionary (for the entire website)
-    doc_vars = Dict(
-        "author" => ["THE AUTHOR", (String, Void)])
 
-    # default page vars (copied and, potentially, modified by each page)
-    page_vars_default = Dict(
-        "hasmath" => [true, (Bool,)],
-        "hascode" => [true, (Bool,)],
-        "isnotes" => [true, (Bool,)],
-        "title"   => ["THE TITLE", (String,)],
-        "date"    => [Date(), (String, Date, Void)])
+"""
+    convert_dir(single_pass, clear_out_dir)
+
+Take a directory that contains markdown files (possibly in subfolders), convert
+all markdown files to html and reproduce the same structure to an output dir.
+
+* `single_pass` compiles the whole thing once (no dir watching).
+* `clear_out_dir` destroys what was previously in `out_dir` this can be useful
+if file names have been changed etc to get rid of stale files.
+"""
+function convert_dir(single_pass=true, clear_out_dir=true)
+
+    prepare_output_dir()
 
     # read the config.md file if it is present
-    config_path = joinpath(PATHS[:in], "config.md")
+    config_path = joinpath(JD_PATHS[:in], "config.md")
     if isfile(config_path)
-        convert_md!(doc_vars, readstring(config_path))
+        convert_md!(JD_GLOB_VARS, readstring(config_path))
     else
         warn("I didn't find a config file. Ignoring.")
     end
@@ -163,14 +99,14 @@ function convert_dir(single_pass=true, clear_out_dir=true)
     # -- writing / copying them at right place
     ###
 
-    head_html = readstring(PATHS[:in_html] * "head.html")
-    foot_html = readstring(PATHS[:in_html] * "foot.html")
-    foot_content_html = readstring(PATHS[:in_html] * "foot_content.html")
+    head_html = readstring(JD_PATHS[:in_html] * "head.html")
+    foot_html = readstring(JD_PATHS[:in_html] * "foot.html")
+    foot_content_html = readstring(JD_PATHS[:in_html] * "foot_content.html")
 
-    length_in_dir = length(PATHS[:in])
+    length_in_dir = length(JD_PATHS[:in])
 
     if single_pass
-        for (root, _, files) ∈ walkdir(PATHS[:in])
+        for (root, _, files) ∈ walkdir(JD_PATHS[:in])
             for file ∈ files
                 fname, fext = splitext(file)
                 if fext == ".md" && fname != "config"
@@ -180,19 +116,19 @@ function convert_dir(single_pass=true, clear_out_dir=true)
                     # 3. add head / foot from template
                     # 4. write at appropriate place
                     ###
-                    all_vars = merge(doc_vars, deepcopy(page_vars_default))
+                    jd_vars = merge(JD_GLOB_VARS, copy(JD_LOC_VARS))
                     md_string = readstring(joinpath(root, file))
-                    html_string = convert_md!(all_vars, md_string)
+                    html_string = convert_md!(jd_vars, md_string)
 
-                    web_html = process_braces_blocks(head_html, all_vars)
+                    web_html = process_braces_blocks(head_html, jd_vars)
                     web_html *= "<div class=content>\n"
                     web_html *= html_string
-                    web_html *= process_braces_blocks(foot_content_html, all_vars)
+                    web_html *= process_braces_blocks(foot_content_html, jd_vars)
                     web_html *= "\n</div>" # content
-                    web_html *= process_braces_blocks(foot_html, all_vars)
+                    web_html *= process_braces_blocks(foot_html, jd_vars)
 
                     f_out_name = fname * ".html"
-                    f_out_path = PATHS[:out] * root[length_in_dir+1:end] * "/"
+                    f_out_path = JD_PATHS[:out] * root[length_in_dir+1:end] * "/"
                     if !ispath(f_out_path)
                         mkpath(f_out_path)
                     end
@@ -201,7 +137,7 @@ function convert_dir(single_pass=true, clear_out_dir=true)
 
                 else
                     # copy at appropriate place
-                    f_out_path = PATHS[:out] * root[length_in_dir+1:end]
+                    f_out_path = JD_PATHS[:out] * root[length_in_dir+1:end]
                     if !ispath(f_out_path)
                         mkpath(f_out_path)
                     end
@@ -224,7 +160,7 @@ function convert_dir(single_pass=true, clear_out_dir=true)
 
         watched_files = Dict{String, UInt}()
         other_files = Dict{String, UInt}()
-        for (root, _, files) ∈ walkdir(PATHS[:in])
+        for (root, _, files) ∈ walkdir(JD_PATHS[:in])
         	for file ∈ files
                 f = joinpath(root, file)
                 if splitext(file)[2] == ".md"
@@ -240,7 +176,7 @@ function convert_dir(single_pass=true, clear_out_dir=true)
         MAXT   = 5000 # max number of seconds before shutting down.
         SLEEP  = 0.1
         NCYCL  = 20
-        CONFIG = joinpath(PATHS[:in], "config.md")
+        CONFIG = joinpath(JD_PATHS[:in], "config.md")
 
         cntr = 1
         try
@@ -263,7 +199,7 @@ function convert_dir(single_pass=true, clear_out_dir=true)
                         end
                     end
         			# 2 check if some files have been added
-        			for (root, _, files) ∈ walkdir(PATHS[:in])
+        			for (root, _, files) ∈ walkdir(JD_PATHS[:in])
         				for file ∈ files
                             f = joinpath(root, file)
                             if splitext(file)[2] == ".md"
@@ -287,21 +223,21 @@ function convert_dir(single_pass=true, clear_out_dir=true)
         					watched_files[f] = cur_t
                             # HERE ARE MODIFIED MD FILES
                             if f == CONFIG
-                                convert_md!(doc_vars, readstring(CONFIG))
+                                convert_md!(JD_GLOB_VARS, readstring(CONFIG))
                             else
-                                all_vars = merge(doc_vars, deepcopy(page_vars_default))
+                                jd_vars = merge(JD_GLOB_VARS, copy(JD_LOC_VARS))
                                 md_string = readstring(f)
-                                html_string = convert_md!(all_vars, md_string)
+                                html_string = convert_md!(jd_vars, md_string)
 
-                                web_html = process_braces_blocks(head_html, all_vars)
+                                web_html = process_braces_blocks(head_html, jd_vars)
                                 web_html *= "<div class=content>\n"
                                 web_html *= html_string
-                                web_html *= process_braces_blocks(foot_content_html, all_vars)
+                                web_html *= process_braces_blocks(foot_content_html, jd_vars)
                                 web_html *= "\n</div>" # content
-                                web_html *= process_braces_blocks(foot_html, all_vars)
+                                web_html *= process_braces_blocks(foot_html, jd_vars)
 
                                 f_out_name = splitext(basename(f))[1] * ".html"
-                                f_out_path = PATHS[:out] * dirname(f)[length_in_dir+1:end] * "/"
+                                f_out_path = JD_PATHS[:out] * dirname(f)[length_in_dir+1:end] * "/"
                                 if !ispath(f_out_path)
                                     mkpath(f_out_path)
                                 end
@@ -316,7 +252,7 @@ function convert_dir(single_pass=true, clear_out_dir=true)
                             other_files[f] = cur_t
                             # HERE ARE MODIFIED NON-MD FILES
                             # COPY NEW FILE, OVERWRITE DESTINATION
-                            f_out_path = PATHS[:out] * dirname(f)[length_in_dir+1:end]
+                            f_out_path = JD_PATHS[:out] * dirname(f)[length_in_dir+1:end]
                             if !ispath(f_out_path)
                                 mkpath(f_out_path)
                             end

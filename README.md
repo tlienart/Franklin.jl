@@ -29,7 +29,8 @@ Only for `0.6`, a few adaptations needed when going for `0.7` (changes for examp
 
 ### Must do
 
-* * [ ] (medium) list operations in order to make sure things never clash. For example if there happens to be a `{{}}` in a math environment, make sure the maths is extracted first.
+* [ ] (medium) it may be a good idea to not systematically `rm` the output dir. In particular this is true for the assets. Assets should just be diff-ed. Some thoughts on stale files (files that have changed names). Basis should always be that `web_output` is a compiled version of `input` and therefore anything that doesn't match something in `input` should be `rm`-d.
+* [ ] (medium) list operations in order to make sure things never clash. For example if there happens to be a `{{}}` in a math environment, make sure the maths is extracted first.
 * [ ] (low) start some form of "clever" doc so that you keep track of stuff.
 * [ ] (medium) allow for hyper-ref using something like `{{}}` (final pass)
 	* need to understand anchors and have one anchor at each equation.
