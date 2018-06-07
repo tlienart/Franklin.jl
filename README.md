@@ -19,20 +19,20 @@ Only for `0.6`, a few adaptations needed when going for `0.7` (changes for examp
 
 ### Priority
 
-* [ ] incorporate `process_if_braces_blocks` in pipeline. Think more about pipeline in general (order of operations, what gets escaped, and when, what files are modified (infrastructure files, markdown files etc))
+* [ ] functionalise even more the convert_dir, going over files should be a function. The core part when you go over each of the dict should also be a function.
+* [ ] add some verbosity when an action is seen in the continuous checking (e.g.: filename "blah" was modified/added.)
 * [ ] write somewhere that control blocks cannot be nested (because they are regexp-ed, not parsed using some grammar.) (recursive is not enough, the problem is not matching the right `end`)
 * [ ] if want to allow going over comprehension then should be able to not only access elements of the comprehension but also possibly write simple variables to dictionary. this amounts to holding a stack... `for` should maybe not be done yet.
 
 #### Tests
 
-* [ ] `set_vars!`
-* [x] `set_paths!`
-* [ ] `convert_dir` --> that one may be annoying to test but some corner cases can be tested (no config etc)
-* [x] `ifisdef`
+* [ ] `convert_dir` --> that one may be annoying to test. Maybe can do it partly with temporary paths.
+  - [ ] started extracting bits that were more repetitive and adding tests (ONGOING.)
 
 ### Must do
 
-* * [ ] (medium) list operations in order to make sure things never clash. For example if there happens to be a `{{}}` in a math environment, make sure the maths is extracted first.
+* [ ] (medium) it may be a good idea to not systematically `rm` the output dir. In particular this is true for the assets. Assets should just be diff-ed. Some thoughts on stale files (files that have changed names). Basis should always be that `web_output` is a compiled version of `input` and therefore anything that doesn't match something in `input` should be `rm`-d.
+* [ ] (medium) list operations in order to make sure things never clash. For example if there happens to be a `{{}}` in a math environment, make sure the maths is extracted first.
 * [ ] (low) start some form of "clever" doc so that you keep track of stuff.
 * [ ] (medium) allow for hyper-ref using something like `{{}}` (final pass)
 	* need to understand anchors and have one anchor at each equation.
@@ -40,16 +40,10 @@ Only for `0.6`, a few adaptations needed when going for `0.7` (changes for examp
 		* need a `Click <a href="#some_name">here</a> to jump`
 	* should be easy to have an equation counter for each doc and just increment that then find `{{eqref name}}`
 * [ ] (medium) allow putting raw html maybe something like `{{ raw_html ... }}` note that this should not be parsed so it should probably be treated in much the same way as a math block.
-* [ ] (low) allow for CSS variables to be defined as well.
+* [ ] (low) allow for CSS variables to be defined as well. Possibly use the same `{{fill}}` syntax.
 * [ ] (low) think about performance of all these find and replace operations
   * maybe just benchmark the whole thing and the different elements
-  * for replacements of the HUGO form `{{ }}` maybe better to catch all of those and deal with them in one shot (gradually forming the new string) instead of going over the text multiple times...
-* [ ] (medium) in longer run, would want a repo that just has the conversion scripts etc, and then a website repo that just calls `using JuDoc`. This involves some reasoning around the paths.
-  - have a script in the folder that sets the variables such as the PATH (also the base-doc-vars as that would make sense?)
-	- ONGOING: cf `~/Desktop/tweb_judoc/` with the script within it. It should allow to just do `using JuDoc` set env then `convert_dir()`
-* [ ] (medium) path thing is awkward (have to do the `using JuDoc` after having all the `const...`
 * [ ] (low) need to have the templates stored somewhere, possibly a side repo. this can be done when the site is a bit established and the CSS/HTML has converged a bit.
-
 
 ### DONE
 
@@ -71,6 +65,13 @@ Only for `0.6`, a few adaptations needed when going for `0.7` (changes for examp
 	* the `web_md` folder actually also contains the `index.html`
 	* the `web_parts` ends up in `web_md` so maybe it's just easier to just put everything there but then the level of `css` and `cvx_opti` is the same which is a bit odd. Maybe can just also use `_css` just as for the output.
 * [x] remove possibility to modify `web_html` (should be considered immutable)
+* [x] for replacements of the HUGO form `{{ }}` maybe better to catch all of those and deal with them in one shot (gradually forming the new string) instead of going over the text multiple times...
+* [x] (medium) path thing is awkward (have to do the `using JuDoc` after having all the `const...`
+* [x] (medium) in longer run, would want a repo that just has the conversion scripts etc, and then a website repo that just calls `using JuDoc`. This involves some reasoning around the paths.
+  - have a script in the folder that sets the variables such as the PATH (also the base-doc-vars as that would make sense?)
+	- ONGOING: cf `~/Desktop/tweb_judoc/` with the script within it. It should allow to just do `using JuDoc` set env then `convert_dir()`
+* [x] incorporate `process_if_braces_blocks` in pipeline. Think more about pipeline in general (order of operations, what gets escaped, and when, what files are modified (infrastructure files, markdown files etc))
+
 
 #### Continuous time modif checking
 

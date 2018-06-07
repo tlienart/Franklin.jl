@@ -4,209 +4,293 @@ else
     using Markdown: html
 end
 
+
 """
-    set_vars!(def_dict, new_Defs)
+    prepare_output_dir(clear_out_dir)
 
-Given a set of definitions `defs`, update a dictionary `def_dict`. If the keys
-do not match, entries are ignored and a warning message is displayed.
+Prepare the output directory `JD_PATHS[:out]`.
 
-E.g.:
-
-    d = Dict("a"=>[0.5, (Real,)], "b"=>["hello", (String,)])
-    set_vars!(d, [("a", "=5.0"), ("b", "= \"goodbye\"")])
-
-Will return
-
-    Dict{String,Any} with 2 entries:
-      "b" => "goodbye"
-      "a" => 5.0
+* `clear_out_dir` removes the content of the output directory if it exists to
+start from a blank slate
 """
-function set_vars!(def_dict=Dict, new_defs=Tuple{String, String}[])
-    if !isempty(new_defs)
-        # try to assign
-        for (key, new_def) ∈ new_defs
-            if haskey(def_dict, key)
-                tmp = parse("__tmp__" * new_def)
-                try
-                    # try to evaluate the assignment
-                    tmp = eval(tmp)
-                catch err
-                    warn("I got an error trying to evaluate '$tmp', fix the assignment.")
-                    throw(err)
-                end
-                # if the retrieved value has the right type
-                # assign it to the corresponding value
-                ttmp = typeof(tmp)
-                if any(issubtype(ttmp, tᵢ) for tᵢ ∈ def_dict[key][2])
-                    def_dict[key][1] = tmp
-                else
-                    warn("Doc var '$key' (types: $(def_dict[key][2])) can't be set to value '$tmp' (type: $ttmp). Assignment ignored.")
-                end
-            else
-                warn("Doc var name '$key' is unknown. Assignment ignored.")
-            end
-        end
+function prepare_output_dir(clear_out_dir=true)
+    # if required to start from a blank slate, we remove everything in
+    # the output dir
+    if clear_out_dir && isdir(JD_PATHS[:out])
+        rm(JD_PATHS[:out], recursive=true)
+    end
+    !isdir(JD_PATHS[:out]) && mkdir(JD_PATHS[:out])
+
+    # check if the css and libs folder need to be added or not.
+    if !isdir(JD_PATHS[:out_css])
+        # copying template CSS files
+        cp(JD_PATHS[:in_css], JD_PATHS[:out_css])
+    end
+    if !isdir(JD_PATHS[:out_libs])
+        # copying libs
+        cp(JD_PATHS[:in_libs], JD_PATHS[:out_libs])
     end
 end
 
 
 """
-    convert_md!(dict_vars, md_string)
+    process_config()
+
+Checks for a `config.md` file in `JD_PATHS[:in]` and uses it to set the global
+variables referenced in `JD_GLOB_VARS`. If the configuration file is not found
+a warning is shown.
+"""
+function process_config()
+    # read the config.md file if it is present
+    config_path = joinpath(JD_PATHS[:in], "config.md")
+    if isfile(config_path)
+        _, config_defs = convert_md(readstring(config_path))
+        set_vars!(JD_GLOB_VARS, config_defs)
+    else
+        warn("I didn't find a config file. Ignoring.")
+    end
+end
+
+
+"""
+    convert_md(md_string)
 
 Take a raw MD string, process (and put away) the blocks, then parse the rest
 using the default html parser. Finally, plug back in the processed content that
 was put away and return the corresponding HTML string.
-The dictionary `dict_vars` containing the document and the page variables is
-updated once the local definitions have been read.
+Definitions present in the `md_string` are extracted and returned for further
+processing.
 """
-function convert_md!(dict_vars, md_string)
-    # -- Comments
+function convert_md(md_string)
+    # Comments and variables
     md_string = remove_comments(md_string)
-
-    # -- Variables
     (md_string, defs) = extract_page_defs(md_string)
-    set_vars!(dict_vars, defs)
 
-    # -- Maths & Div blocks --
+    # Maths & Div blocks
     (md_string, asym_bm) = asym_math_blocks(md_string)
     (md_string, sym_bm) = sym_math_blocks(md_string)
     (md_string, div_b) = div_blocks(md_string)
 
-    # -- Standard Markdown parsing --
+    # Standard Markdown parsing on the rest
     html_string = html(Markdown.parse(md_string))
 
-    # -- MATHS & DIV REPLACES --
+    # Process blocks and plug back in what is needed
     html_string = process_math_blocks(html_string, asym_bm, sym_bm)
     html_string = process_div_blocks(html_string, div_b)
 
-    return html_string
+    return (html_string, defs)
 end
 
 
 """
-    convert_dir(clear_out_dir, rewrite_css)
+    out_path(root)
+
+Take a `root` path to an input file and convert to output path. If the output
+path does not exist, create it.
+"""
+function out_path(root)
+    f_out_path = JD_PATHS[:out] * root[length(JD_PATHS[:in])+1:end]
+    !ispath(f_out_path) && mkpath(f_out_path)
+    return f_out_path
+end
+
+
+"""
+    write_page(root, file, head, page_foot, foot)
+
+Take a path to an input markdown file (via `root` and `file`), then construct
+the appropriate HTML page (inserting `head`, `page_foot` and `foot`) and
+finally write it at the appropriate place.
+"""
+function write_page(root, file, head, page_foot, foot)
+    ###
+    # 0. create a dictionary with all the variables available to the page
+    # 1. read the markdown into string, convert it and extract definitions
+    # 2. eval the definitions and update the variable dictionary
+    ###
+    jd_vars = merge(JD_GLOB_VARS, copy(JD_LOC_VARS))
+    (content, defs) = convert_md(readstring(joinpath(root, file)))
+    set_vars!(jd_vars, defs)
+    ###
+    # 3. process blocks in the html infra elements based on `jd_vars` (e.g.:
+    # add the date in the footer)
+    ###
+    head, page_foot, foot = (process_html_blocks(e, jd_vars)
+                                for e ∈ [head, page_foot, foot])
+    ###
+    # 4. construct the page proper
+    ###
+    pg = head * "<div class=content>\n" * content * page_foot * "</div>" * foot
+    ###
+    # 5. write the html file where appropriate
+    ###
+    write(out_path(root) * change_ext(file), pg)
+end
+
+
+"""
+    convert_dir(single_pass, clear_out_dir)
 
 Take a directory that contains markdown files (possibly in subfolders), convert
 all markdown files to html and reproduce the same structure to an output dir.
 
-* `clear_out_dir` destroys what was previously in `out_dir` (outside of PATH_CSS
-and PATH_LIBS) before bringing new files, this can be useful if file names have
-been changed etc to get rid of stale files.
+* `single_pass` compiles the whole thing once (no dir watching).
+* `clear_out_dir` destroys what was previously in `out_dir` this can be useful
+if file names have been changed etc to get rid of stale files.
 """
-function convert_dir(clear_out_dir=true)
+function convert_dir(;single_pass=true, clear_out_dir=true)
 
-    ###
-    # 0. PREPROCESSING OF DIRECTORIES
-    # -- note that the all-caps variables are defined outside (cf. JuDoc.jl)
-    # -- adjusting given strings
-    # -- adding LIBS and CSS
-    # -- cleaning up past files if necessary
-    ###
-
-    # read path variables from Main environment (see JuDoc.jl)
     set_paths!()
-
-    # if required to start from a blank slate, we remove everything in
-    # the output dir
-    if clear_out_dir && isdir(PATHS[:out])
-        rm(PATHS[:out], recursive=true)
-    end
-
-    if !isdir(PATHS[:out])
-        mkdir(PATHS[:out])
-    end
-
-    # the two `if` blocks are executed only when starting from a blank slate
-    # so, in theory, one may one to do some direct adjustments in the output
-    # dir and those wouldn't get overwritten provided clear_out_dir=false
-    # this is NOT RECOMMENDED but possible.
-    if !isdir(PATHS[:out_css])
-        # copying template CSS files
-        cp(PATHS[:in_css], PATHS[:out_css])
-    end
-    if !isdir(PATHS[:out_libs])
-        # copying libs
-        cp(PATHS[:in_libs], PATHS[:out_libs])
-    end
+    prepare_output_dir(clear_out_dir)
+    process_config()
 
     ###
-    # 1. DEFAULT VAR DICTIONARIES
-    # -- create default dictionaries of variables for the website and the pages
-    # -- NOTE: the dictionaries are merged on pages, so the keys cannot clash
-    # -- the values are of the form [default, (type1, type2)] where the tuple
-    #    contains the types for this key that will be accepted.
-    ###
-    # doc_vars is a fixed dictionary (for the entire website)
-    doc_vars = Dict(
-        "author" => ["THE AUTHOR", (String, Void)])
-
-    # default page vars (copied and, potentially, modified by each page)
-    page_vars_default = Dict(
-        "hasmath" => [true, (Bool,)],
-        "hascode" => [true, (Bool,)],
-        "isnotes" => [true, (Bool,)],
-        "title"   => ["THE TITLE", (String,)],
-        "date"    => [Date(), (String, Date, Void)])
-
-    # read the config.md file if it is present
-    config_path = joinpath(PATHS[:in], "config.md")
-    if isfile(config_path)
-        convert_md!(doc_vars, readstring(config_path))
-    else
-        warn("I didn't find a config file. Ignoring.")
-    end
-
-    ###
-    # 2. CONVERSION & WRITING FILES
-    # -- finding the files
-    # -- converting them if required
-    # -- writing / copying them at right place
+    # 0. recovering the list of files in the input dir we actually care about
+    # -- we store these in dictionaries, the key is the full path, the value
+    # is the time of last change (useful for continuous monitoring)
     ###
 
-    head_html = readstring(PATHS[:in_html] * "head.html")
-    foot_html = readstring(PATHS[:in_html] * "foot.html")
-    foot_content_html = readstring(PATHS[:in_html] * "foot_content.html")
+    IGNORE_DIRS = [JD_PATHS[i] for i ∈ [:in_libs, :in_css, :in_html]]
 
-    length_in_dir = length(PATHS[:in])
+    md_files = Dict{Pair{String, String}, UInt}()
+    html_files = Dict{Pair{String, String}, UInt}()
+    other_files = Dict{Pair{String, String}, UInt}()
 
-    for (root, _, files) ∈ walkdir(PATHS[:in])
-        for file ∈ files
-            fname, fext = splitext(file)
-            if fext == ".md" && fname != "config"
-                ###
-                # 1. read markdown into string
-                # 2. convert to html
-                # 3. add head / foot from template
-                # 4. write at appropriate place
-                ###
-                all_vars = merge(doc_vars, deepcopy(page_vars_default))
-                md_string = readstring(joinpath(root, file))
-                html_string = convert_md!(all_vars, md_string)
-
-                web_html = process_braces_blocks(head_html, all_vars)
-                web_html *= "<div class=content>\n"
-                web_html *= html_string
-                web_html *= process_braces_blocks(foot_content_html, all_vars)
-                web_html *= "\n</div>" # content
-                web_html *= process_braces_blocks(foot_html, all_vars)
-
-                f_out_name = fname * ".html"
-                f_out_path = PATHS[:out] * root[length_in_dir+1:end] * "/"
-                if !ispath(f_out_path)
-                    mkpath(f_out_path)
+    for (root, _, files) ∈ walkdir(JD_PATHS[:in])
+        nroot = normpath(root * "/")
+        if !any(contains(nroot, dir) for dir ∈ IGNORE_DIRS)
+            for file ∈ files
+                fname, fext = splitext(file)
+                if fext == ".md"
+                    if fname != "config"
+                        md_files[nroot=>file] = stat(nroot * file).mtime
+                    end
+                elseif fext == ".html"
+                    html_files[nroot=>file] = stat(nroot * file).mtime
+                else
+                    other_files[nroot=>file] = stat(nroot * file).mtime
                 end
-
-                write(f_out_path * f_out_name, web_html)
-
-            else
-                # copy at appropriate place
-                f_out_path = PATHS[:out] * root[length_in_dir+1:end]
-                if !ispath(f_out_path)
-                    mkpath(f_out_path)
-                end
-                cp(joinpath(root, file), joinpath(f_out_path, file),
-                    remove_destination=true)
             end
         end
-    end # walkdir
+    end
+
+    ###
+    # 1. finding and reading the infrastructure files now that paths are set
+    ###
+    head = readstring(JD_PATHS[:in_html] * "head.html")
+    page_foot = readstring(JD_PATHS[:in_html] * "page_foot.html")
+    foot = readstring(JD_PATHS[:in_html] * "foot.html")
+
+    if single_pass
+        for (fpair, _) ∈ md_files
+            # fpair.first = root path; fpair.second = fname
+            write_page(fpair.first, fpair.second, head, page_foot, foot)
+        end
+        for (fpair, _) ∈ html_files
+            raw_html = readstring(joinpath(fpair...))
+            proc_html = process_html_blocks(raw_html, JD_GLOB_VARS)
+            write(out_path(fpair.first) * fpair.second, proc_html)
+        end
+        for (fpair, t) ∈ other_files
+            opath = out_path(fpair.first) * fpair.second
+            if clear_out_dir || !isfile(opath) || stat(opath).mtime < t
+                    cp(joinpath(fpair...), opath, remove_destination=true)
+            end
+        end
+    else
+        # NOTE: experimental multiple pass.
+        # Should probably go in external function
+        # 1. Should probably go through a normal single pass
+        # 2. Continuously look at EXT files
+        # NOTE
+        #  - TODO: what about new assets that get added? should be copied over
+        #  - TODO: if infra files get modif (_html/*), all files need rewrite
+
+        println("Warming up, compiling the full folder once...")
+        convert_dir(single_pass=true, clear_out_dir=false)
+
+        watched_files = merge(md_files, html_files)
+
+        # TODO set these constants somewhere else (config)
+        START  = time()
+        MAXT   = 5000 # max number of seconds before shutting down.
+        SLEEP  = 0.1
+        NCYCL  = 20
+        CONFIG = joinpath(JD_PATHS[:in], "config.md")
+
+        cntr = 1
+        try
+        	println("Watching input folder... press CTRL+C to stop.")
+        	while true
+                # ------------------
+        		# every NCYCL cycles, check directory for potential new files
+        		if mod(cntr, NCYCL) == 0
+        			# 1 check if some files have been deleted
+        			# note we don't do anything. we just remove from the dict.
+        			# to get clean folder --> rerun the compile() from blank
+                    for dict ∈ [md_files, html_files, other_files]
+                        for (fpair, _) ∈ dict
+                            !isfile(joinpath(fpair...)) && delete!(dict, fpair)
+                        end
+                    end
+        			# 2 check if some files have been added
+                    # if so, add them to relevant dictionary
+        			for (root, _, files) ∈ walkdir(JD_PATHS[:in])
+                        nroot = normpath(root * "/")
+                        if !any(contains(nroot, dir) for dir ∈ IGNORE_DIRS)
+                            for file ∈ files
+                                fname, fext = splitext(file)
+                                fpair = nroot=>file
+                                if fext == ".md"
+                                    if !haskey(md_files, fpair) && fname != "config"
+                                        md_files[fpair] = stat(nroot * file).mtime
+                                    end
+                                elseif fext == ".html" && !haskey(html_files, fpair)
+                                    html_files[fpair] = stat(nroot * file).mtime
+                                elseif !haskey(other_files, fpair)
+                                    other_files[fpair] = stat(nroot * file).mtime
+                                end
+                            end
+                        end
+        			end
+        			cntr = 1
+                # ---------------
+                # THE NORMAL LOOP
+        		else
+                    for (fpair, t) ∈ md_files
+                        cur_t = stat(joinpath(fpair...)).mtime
+                        if cur_t > t
+                            md_files[fpair] = cur_t
+                            write_page(fpair.first, fpair.second, head, page_foot, foot)
+                        end
+                    end
+                    for (fpair, t) ∈ html_files
+                        cur_t = stat(joinpath(fpair...)).mtime
+                        if cur_t > t
+                            html_files[fpair] = cur_t
+                            raw_html = readstring(joinpath(fpair...))
+                            proc_html = process_html_blocks(raw_html, JD_GLOB_VARS)
+                            write(out_path(fpair.first) * fpair.second, proc_html)
+                        end
+                    end
+                    for (fpair, t) ∈ other_files
+                        cur_t = stat(joinpath(fpair...)).mtime
+                        if cur_t > t
+                            other_files[fpair] = cur_t
+                            cp(joinpath(fpair...), out_path(fpair.first) * fpair.second, remove_destination=true)
+                        end
+                    end
+                    # increase the loop counter
+        			cntr += 1
+        			sleep(SLEEP)
+        		end
+        	end
+        catch x
+        	if isa(x, InterruptException)
+        		println("Shutting down.")
+        	else
+        		throw(x)
+        	end
+        end
+    end
 end

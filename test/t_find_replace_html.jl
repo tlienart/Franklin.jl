@@ -47,7 +47,7 @@ end
 
 	# replacements :: braces_fill
 	params1 = "blah"
-	var1 = Dict("blah" => 25)
+	var1 = Dict("blah" => 25=>(Int,))
 	r = JuDoc.braces_fill(params1, var1)
 	@test r == "25"
 	params1 = "blih"
@@ -55,27 +55,25 @@ end
 	params2 = "blih blah"
 	@test_warn "I found a 'fill' and expected 1 argument(s) but got 2 instead. Ignoring." JuDoc.braces_fill(params2, var1)
 
-	# replacements :: braces_insert_if
+	# replacements :: braces_insert
 	temp_path = joinpath(mktempdir(), "tmp")
 	open(temp_path * ".html", "w") do f
 		write(f, "This is a test page.\n")
 	end
-	params2 = "flag $temp_path"
-	vars = Dict("flag" => true)
-	r = JuDoc.braces_insert_if(params2, vars)
+	params2 = " $temp_path "
+	vars = Dict("flag" => true=>(Bool,))
+	r = JuDoc.braces_insert(params2, vars)
 	@test r == "This is a test page.\n"
-	params2 = "flag non-existing"
-	@test_warn "I tried to insert 'non-existing.html' but I couldn't find the file. Ignoring." JuDoc.braces_insert_if(params2, vars)
-	params2 = "flig non-existing"
-	@test_warn "I found an '{{insert_if flig ...}}' but I do not know the variable 'flig'. Ignoring." JuDoc.braces_insert_if(params2, vars)
+	params2 = "non-existing"
+	@test_warn "I tried to insert 'non-existing.html' but I couldn't find the file. Ignoring." JuDoc.braces_insert(params2, vars)
 
 	# replacements :: general braces blocks
 	h = """
 	blah blah {{ fill blah }} and
-	then some more stuff maybe {{ insert_if flag $temp_path }} etc
+	then some more stuff maybe {{ insert $temp_path }} etc
 	blah
 	"""
-	vars = Dict("blah" => 0.123, "flag" => true)
+	vars = Dict("blah" => 0.123=>(Float64,), "flag" => true=>(Bool,))
 	h = JuDoc.process_braces_blocks(h, vars)
 	@test h == "blah blah 0.123 and\nthen some more stuff maybe This is a test page.\n etc\nblah\n"
 	h = """
@@ -85,7 +83,10 @@ end
 end
 
 @testset "Proc [[if]] b" begin
-	vars = Dict("flag" => true, "fflag" => false, "filler" => 245)
+	vars = Dict(
+		"flag" => true=>(Bool,),
+		"fflag" => false=>(Bool,),
+		"filler" => 245=>(Int,))
 	h = """
 	blah blah [[ if flag blah blah {{fill filler}} ]]
 	and then [[ if fflag
@@ -93,10 +94,12 @@ end
 	]]
 	be here
 	"""
-	h = JuDoc.process_if_sqbr_blocks(h, vars)
-	@test h == "blah blah  blah blah {{fill filler}} \nand then \nbe here\n"
+	h′ = JuDoc.process_if_sqbr_blocks(h, vars)
+	@test h′ == "blah blah  blah blah {{fill filler}} \nand then \nbe here\n"
 	h2 = """
 	blah blah [[if noflag blih end]] bloh
 	"""
 	@test_warn "I found a [[if noflag ... ]] block but I don't know the variable 'noflag'. Default assumption = it's false." JuDoc.process_if_sqbr_blocks(h2, vars)
+	h′ = JuDoc.process_html_blocks(h, vars)
+	h′ == "blah blah  blah blah 245 \nand then \nbe here\n"
 end

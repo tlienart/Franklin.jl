@@ -91,10 +91,10 @@ Capture lines of the form `@def VARNAME VALUE`
 """
 function extract_page_defs(md_string)
     # container for recovered definitions
-    defs = Tuple{String, String}[]
+    defs = Pair{String, String}[]
     for m ∈ eachmatch(DEFS, md_string)
         # extract and store recovered definition
-        push!(defs, (String(m.captures[1]), String(m.captures[2])))
+        push!(defs, String(m.captures[1])=>String(m.captures[2]))
     end
     md_string = replace(md_string, DEFS, "")
     return (md_string, defs)
