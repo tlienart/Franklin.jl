@@ -91,7 +91,7 @@ path does not exist, create it.
 function out_path(root)
     f_out_path = JD_PATHS[:out] * root[length(JD_PATHS[:in])+1:end]
     !ispath(f_out_path) && mkpath(f_out_path)
-    return normpath(f_out_path * "/")
+    return f_out_path
 end
 
 
@@ -138,13 +138,41 @@ all markdown files to html and reproduce the same structure to an output dir.
 * `clear_out_dir` destroys what was previously in `out_dir` this can be useful
 if file names have been changed etc to get rid of stale files.
 """
-function convert_dir(single_pass=true, clear_out_dir=true)
+function convert_dir(;single_pass=true, clear_out_dir=true)
 
     set_paths!()
-    prepare_output_dir()
+    prepare_output_dir(clear_out_dir)
     process_config()
 
+    ###
+    # 0. recovering the list of files in the input dir we actually care about
+    # -- we store these in dictionaries, the key is the full path, the value
+    # is the time of last change (useful for continuous monitoring)
+    ###
+
     IGNORE_DIRS = [JD_PATHS[i] for i ∈ [:in_libs, :in_css, :in_html]]
+
+    md_files = Dict{Pair{String, String}, UInt}()
+    html_files = Dict{Pair{String, String}, UInt}()
+    other_files = Dict{Pair{String, String}, UInt}()
+
+    for (root, _, files) ∈ walkdir(JD_PATHS[:in])
+        nroot = normpath(root * "/")
+        if !any(contains(nroot, dir) for dir ∈ IGNORE_DIRS)
+            for file ∈ files
+                fname, fext = splitext(file)
+                if fext == ".md"
+                    if fname != "config"
+                        md_files[nroot=>file] = stat(nroot * file).mtime
+                    end
+                elseif fext == ".html"
+                    html_files[nroot=>file] = stat(nroot * file).mtime
+                else
+                    other_files[nroot=>file] = stat(nroot * file).mtime
+                end
+            end
+        end
+    end
 
     ###
     # 1. finding and reading the infrastructure files now that paths are set
@@ -154,30 +182,21 @@ function convert_dir(single_pass=true, clear_out_dir=true)
     foot = readstring(JD_PATHS[:in_html] * "foot.html")
 
     if single_pass
-        for (root, _, files) ∈ walkdir(JD_PATHS[:in])
-            nroot = normpath(root * "/")
-            # the libs, css and html should be ignored.
-            # NOTE: the css may be incorporated later on with processing.
-            if !any(contains(nroot, dir) for dir ∈ IGNORE_DIRS)
-                for file ∈ files
-                    fname, fext = splitext(file)
-                    if fext == ".md"
-                        # the file config.md should be ignored
-                        if fname != "config"
-                            write_page(root, file, head, page_foot, foot)
-                        end
-                    elseif fext == ".html"
-                        raw_html = readstring(joinpath(root, file))
-                        proc_html = process_html_blocks(raw_html, JD_GLOB_VARS)
-                        write(out_path(root) * file, proc_html)
-                    elseif !contains(file, ".DS_Store")
-                        # copy file at appropriate place
-                        cp(joinpath(root, file), out_path(root) * file,
-                            remove_destination=true)
-                    end
-                end
+        for (fpair, _) ∈ md_files
+            # fpair.first = root path; fpair.second = fname
+            write_page(fpair.first, fpair.second, head, page_foot, foot)
+        end
+        for (fpair, _) ∈ html_files
+            raw_html = readstring(joinpath(fpair...))
+            proc_html = process_html_blocks(raw_html, JD_GLOB_VARS)
+            write(out_path(fpair.first) * fpair.second, proc_html)
+        end
+        for (fpair, t) ∈ other_files
+            opath = out_path(fpair.first) * fpair.second
+            if clear_out_dir || !isfile(opath) || stat(opath).mtime < t
+                    cp(joinpath(fpair...), opath, remove_destination=true)
             end
-        end # walkdir
+        end
     else
         # NOTE: experimental multiple pass.
         # Should probably go in external function
@@ -187,21 +206,10 @@ function convert_dir(single_pass=true, clear_out_dir=true)
         #  - TODO: what about new assets that get added? should be copied over
         #  - TODO: if infra files get modif (_html/*), all files need rewrite
 
-        println("Warming up, compiling the folder once...")
-        convert_dir(true, clear_out_dir)
+        println("Warming up, compiling the full folder once...")
+        convert_dir(single_pass=true, clear_out_dir=false)
 
-        watched_files = Dict{String, UInt}()
-        other_files = Dict{String, UInt}()
-        for (root, _, files) ∈ walkdir(JD_PATHS[:in])
-        	for file ∈ files
-                f = joinpath(root, file)
-                if splitext(file)[2] == ".md"
-            		watched_files[f] = stat(f).mtime
-                else
-                    other_files[f] = stat(f).mtime
-                end
-        	end
-        end
+        watched_files = merge(md_files, html_files)
 
         # TODO set these constants somewhere else (config)
         START  = time()
@@ -218,80 +226,61 @@ function convert_dir(single_pass=true, clear_out_dir=true)
         		# every NCYCL cycles, check directory for potential new files
         		if mod(cntr, NCYCL) == 0
         			# 1 check if some files have been deleted
-        			# note we don't do anything. we just remove from the list.
-        			# to get clean folder --> rerun the compile()
-        			for (f, _) ∈ watched_files
-        				if !isfile(f)
-        					delete!(watched_files, f)
-        				end
-        			end
-                    for (f, _) ∈ other_files
-                        if !isfile(f)
-                            delete!(other_files, f)
+        			# note we don't do anything. we just remove from the dict.
+        			# to get clean folder --> rerun the compile() from blank
+                    for dict ∈ [md_files, html_files, other_files]
+                        for (fpair, _) ∈ dict
+                            !isfile(joinpath(fpair...)) && delete!(dict, fpair)
                         end
                     end
         			# 2 check if some files have been added
+                    # if so, add them to relevant dictionary
         			for (root, _, files) ∈ walkdir(JD_PATHS[:in])
-        				for file ∈ files
-                            f = joinpath(root, file)
-                            if splitext(file)[2] == ".md"
-            					if !haskey(watched_files, f)
-            						watched_files[f] = stat(f).mtime
-            					end
-                            else
-                                if !haskey(other_files, f)
-                                    other_files[f] = stat(f).mtime
+                        nroot = normpath(root * "/")
+                        if !any(contains(nroot, dir) for dir ∈ IGNORE_DIRS)
+                            for file ∈ files
+                                fname, fext = splitext(file)
+                                fpair = nroot=>file
+                                if fext == ".md"
+                                    if !haskey(md_files, fpair) && fname != "config"
+                                        md_files[fpair] = stat(nroot * file).mtime
+                                    end
+                                elseif fext == ".html" && !haskey(html_files, fpair)
+                                    html_files[fpair] = stat(nroot * file).mtime
+                                elseif !haskey(other_files, fpair)
+                                    other_files[fpair] = stat(nroot * file).mtime
                                 end
                             end
-        				end
+                        end
         			end
         			cntr = 1
                 # ---------------
                 # THE NORMAL LOOP
         		else
-        			for (f, t) ∈ watched_files
-        				cur_t = stat(f).mtime
-        				if cur_t > t
-        					watched_files[f] = cur_t
-                            # HERE ARE MODIFIED MD FILES
-                            if f == CONFIG
-                                convert_md!(JD_GLOB_VARS, readstring(CONFIG))
-                            else
-                                jd_vars = merge(JD_GLOB_VARS, copy(JD_LOC_VARS))
-                                md_string = readstring(f)
-                                html_string = convert_md!(jd_vars, md_string)
-
-                                web_html = process_html_blocks(head_html, jd_vars)
-                                web_html *= "<div class=content>\n"
-                                web_html *= html_string
-                                web_html *= process_html_blocks(page_foot, jd_vars)
-                                web_html *= "\n</div>" # content
-                                web_html *= process_html_blocks(foot_html, jd_vars)
-
-                                f_out_name = change_ext(f)
-                                f_out_path = JD_PATHS[:out] * dirname(f)[length_in_dir+1:end] * "/"
-                                if !ispath(f_out_path)
-                                    mkpath(f_out_path)
-                                end
-
-                                write(f_out_path * f_out_name, web_html)
-                            end
-        				end
-        			end
-                    for (f, t) ∈ other_files
-                        cur_t = stat(f).mtime
+                    for (fpair, t) ∈ md_files
+                        cur_t = stat(joinpath(fpair...)).mtime
                         if cur_t > t
-                            other_files[f] = cur_t
-                            # HERE ARE MODIFIED NON-MD FILES
-                            # COPY NEW FILE, OVERWRITE DESTINATION
-                            f_out_path = JD_PATHS[:out] * dirname(f)[length_in_dir+1:end]
-                            if !ispath(f_out_path)
-                                mkpath(f_out_path)
-                            end
-                            cp(f, joinpath(f_out_path, basename(f)),
-                                remove_destination=true)
+                            md_files[fpair] = cur_t
+                            write_page(fpair.first, fpair.second, head, page_foot, foot)
                         end
                     end
+                    for (fpair, t) ∈ html_files
+                        cur_t = stat(joinpath(fpair...)).mtime
+                        if cur_t > t
+                            html_files[fpair] = cur_t
+                            raw_html = readstring(joinpath(fpair...))
+                            proc_html = process_html_blocks(raw_html, JD_GLOB_VARS)
+                            write(out_path(fpair.first) * fpair.second, proc_html)
+                        end
+                    end
+                    for (fpair, t) ∈ other_files
+                        cur_t = stat(joinpath(fpair...)).mtime
+                        if cur_t > t
+                            other_files[fpair] = cur_t
+                            cp(joinpath(fpair...), out_path(fpair.first) * fpair.second, remove_destination=true)
+                        end
+                    end
+                    # increase the loop counter
         			cntr += 1
         			sleep(SLEEP)
         		end
