@@ -12,8 +12,7 @@
 		1 + 1 &=& 2
 	\end{eqnarray}
 	"""
-	ed = Dict{String, Pair{Any, Tuple}}()
-	md_html = JuDoc.convert_md!(ed, md_string)
+	md_html, defs = JuDoc.convert_md(md_string)
 	@test md_html == raw"""
 	<h1>Title</h1>
 	<p>This is some <em>markdown</em> with \(\sin^2(x)+\cos^2(x)=1\) and also $$\sin^2(x)+\cos^2(x)\quad\!\!=\quad\!\!1 $$ and maybe <div class="theorem">

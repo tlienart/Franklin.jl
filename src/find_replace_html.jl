@@ -81,7 +81,7 @@ function process_if_sqbr_blocks(html_string, all_vars)
         vname = m.captures[1]
         block = m.captures[2]
         if haskey(all_vars, vname)
-            push!(replacements, all_vars[vname] ? block : "")
+            push!(replacements, all_vars[vname].first ? block : "")
         else
             warn("I found a [[if $vname ... ]] block but I don't know the variable '$vname'. Default assumption = it's false.")
         end
@@ -156,7 +156,7 @@ function braces_fill(params, all_vars)
     # correct number of arguments
     if ok_nargs
         if haskey(all_vars, vname)
-            tmp_repl = all_vars[vname][1] # get the value stored
+            tmp_repl = all_vars[vname].first # get the value stored
             if !(tmp_repl == nothing)
                 replacement = string(tmp_repl)
             end
@@ -164,38 +164,32 @@ function braces_fill(params, all_vars)
             warn("I found a '{{fill $vname}}' but I do not know the variable '$vname'. Ignoring.")
         end
     end # the case where narg is incorrect raises a warning via split_params
-
     return replacement
 end
 
 
 """
-    braces_insert_if(params, all_vars)
+    braces_insert(params, all_vars)
 
-Replacement for a block of the form `{{ insert_if boolvar filename }}`.
-The `params` string is assumed to be composed of `vname` and `fname`.
-The `vname` variable is the name of a boolean variable stored in the `all_vars`
-dictionary indicating whether or not to insert and `fname` is the name
-of the file to insert (note that the base path is JD_PATHS[:in_html]).
+Replacement for a block of the form `{{ insert filename }}`. The `params`
+string is assumed to be composed of `fname`;  the name of the html file
+(without extension) to insert (note that the base path is assumed to be
+`JD_PATHS[:in_html]` so paths have to be expressed relative to that).
 """
-function braces_insert_if(params, all_vars)
+function braces_insert(params, all_vars)
     replacement = ""
 
     # checking that got appropriate numbers of parameters
-    ok_nargs, sparams = split_params(params, "insert_if", 2)
-    vname, fname = ok_nargs ? sparams : ["", ""]
+    ok_nargs, sparams = split_params(params, "insert", 1)
+    fname = ok_nargs ? sparams : ""
 
     # correct number of arguments
     if ok_nargs
-        if haskey(all_vars, vname)
-            filepath = JD_PATHS[:in_html] * fname * ".html"
-            if isfile(filepath)
-                replacement = all_vars[vname][1] ? readstring(filepath) : ""
-            else
-                warn("I tried to insert '$filepath' but I couldn't find the file. Ignoring.")
-            end
+        filepath = JD_PATHS[:in_html] * fname * ".html"
+        if isfile(filepath)
+            replacement = readstring(filepath)
         else
-            warn("I found an '{{insert_if $vname ...}}' but I do not know the variable '$vname'. Ignoring.")
+            warn("I tried to insert '$filepath' but I couldn't find the file. Ignoring.")
         end
     end
     return replacement
@@ -205,5 +199,23 @@ end
 # NOTE this has to come after the definitions otherwise ill posed.
 const braces_funs = Dict(
     "fill" => braces_fill, # fill value contained in vars
-    "insert_if" => braces_insert_if # insert file if condition is met
+    "insert" => braces_insert # insert file
     )
+
+
+"""
+    ⊙(f, g)
+
+Partial composition of two functions of two variables.
+Amounts to f(g(x, y), y). This is just for convenience and not very useful.
+"""
+⊙(f::Function, g::Function) = (x, y)->f(g(x, y), y)
+
+
+"""
+    process_html_blocks(html_string, all_vars)
+
+Find `[[...]]` and `{{...}}` blocks and modify `html_string`
+accordingly. `[[...]]` are processed first.
+"""
+process_html_blocks = process_braces_blocks ⊙ process_if_sqbr_blocks

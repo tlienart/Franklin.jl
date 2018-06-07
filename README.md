@@ -26,6 +26,7 @@ Only for `0.6`, a few adaptations needed when going for `0.7` (changes for examp
 #### Tests
 
 * [ ] `convert_dir` --> that one may be annoying to test. Maybe can do it partly with temporary paths.
+  - [ ] started extracting bits that were more repetitive and adding tests (ONGOING.)
 
 ### Must do
 

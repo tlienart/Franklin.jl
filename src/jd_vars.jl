@@ -75,8 +75,8 @@ function set_vars!(
                     warn("I got an error trying to evaluate '$tmp', fix the assignment.")
                     throw(err)
                 end
-                # if the retrieved value has the right type, assign it to the
-                # corresponding key
+                # if the retrieved value has the right type, assign it to
+                # the corresponding key
                 type_tmp = typeof(tmp)
                 acc_types = jd_vars[key].second
                 if is_ok_type(type_tmp, acc_types)
