@@ -19,7 +19,8 @@ Only for `0.6`, a few adaptations needed when going for `0.7` (changes for examp
 
 ### Priority
 
-* [ ] incorporate `process_if_braces_blocks` in pipeline. Think more about pipeline in general (order of operations, what gets escaped, and when, what files are modified (infrastructure files, markdown files etc))
+* [ ] functionalise even more the convert_dir, going over files should be a function. The core part when you go over each of the dict should also be a function.
+* [ ] add some verbosity when an action is seen in the continuous checking (e.g.: filename "blah" was modified/added.)
 * [ ] write somewhere that control blocks cannot be nested (because they are regexp-ed, not parsed using some grammar.) (recursive is not enough, the problem is not matching the right `end`)
 * [ ] if want to allow going over comprehension then should be able to not only access elements of the comprehension but also possibly write simple variables to dictionary. this amounts to holding a stack... `for` should maybe not be done yet.
 
@@ -69,6 +70,7 @@ Only for `0.6`, a few adaptations needed when going for `0.7` (changes for examp
 * [x] (medium) in longer run, would want a repo that just has the conversion scripts etc, and then a website repo that just calls `using JuDoc`. This involves some reasoning around the paths.
   - have a script in the folder that sets the variables such as the PATH (also the base-doc-vars as that would make sense?)
 	- ONGOING: cf `~/Desktop/tweb_judoc/` with the script within it. It should allow to just do `using JuDoc` set env then `convert_dir()`
+* [x] incorporate `process_if_braces_blocks` in pipeline. Think more about pipeline in general (order of operations, what gets escaped, and when, what files are modified (infrastructure files, markdown files etc))
 
 
 #### Continuous time modif checking
