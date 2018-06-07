@@ -18,9 +18,8 @@ function prepare_output_dir(clear_out_dir=true)
     # the output dir
     if clear_out_dir && isdir(JD_PATHS[:out])
         rm(JD_PATHS[:out], recursive=true)
-    elseif !isdir(JD_PATHS[:out])
-        mkdir(JD_PATHS[:out])
     end
+    !isdir(JD_PATHS[:out]) && mkdir(JD_PATHS[:out])
 
     # check if the css and libs folder need to be added or not.
     if !isdir(JD_PATHS[:out_css])
@@ -91,8 +90,8 @@ path does not exist, create it.
 """
 function out_path(root)
     f_out_path = JD_PATHS[:out] * root[length(JD_PATHS[:in])+1:end]
-    !ispath(f_out_path) ? mkpath(f_out_path) : nothing
-    return f_out_path
+    !ispath(f_out_path) && mkpath(f_out_path)
+    return normpath(f_out_path * "/")
 end
 
 
@@ -125,7 +124,7 @@ function write_page(root, file, head, page_foot, foot)
     ###
     # 5. write the html file where appropriate
     ###
-    write(out_path(root) * basename(file) * ".html", pg)
+    write(out_path(root) * change_ext(file), pg)
 end
 
 
@@ -145,6 +144,8 @@ function convert_dir(single_pass=true, clear_out_dir=true)
     prepare_output_dir()
     process_config()
 
+    IGNORE_DIRS = [JD_PATHS[i] for i ∈ [:in_libs, :in_css, :in_html]]
+
     ###
     # 1. finding and reading the infrastructure files now that paths are set
     ###
@@ -154,18 +155,26 @@ function convert_dir(single_pass=true, clear_out_dir=true)
 
     if single_pass
         for (root, _, files) ∈ walkdir(JD_PATHS[:in])
-            for file ∈ files
-                fname, fext = splitext(file)
-                if fext == ".md" && fname != "config"
-                    write_page(root, file, head, page_foot, foot)
-                elseif fext == ".html"
-                    raw_html = readstring(joinpath(root, file))
-                    proc_html = process_html_blocks(raw_html, JD_GLOB_VARS)
-                    write(out_path(root) * file, proc_html)
-                else
-                    # copy file at appropriate place
-                    cp(joinpath(root, file), out_path(root) * file,
-                        remove_destination=true)
+            nroot = normpath(root * "/")
+            # the libs, css and html should be ignored.
+            # NOTE: the css may be incorporated later on with processing.
+            if !any(contains(nroot, dir) for dir ∈ IGNORE_DIRS)
+                for file ∈ files
+                    fname, fext = splitext(file)
+                    if fext == ".md"
+                        # the file config.md should be ignored
+                        if fname != "config"
+                            write_page(root, file, head, page_foot, foot)
+                        end
+                    elseif fext == ".html"
+                        raw_html = readstring(joinpath(root, file))
+                        proc_html = process_html_blocks(raw_html, JD_GLOB_VARS)
+                        write(out_path(root) * file, proc_html)
+                    elseif !contains(file, ".DS_Store")
+                        # copy file at appropriate place
+                        cp(joinpath(root, file), out_path(root) * file,
+                            remove_destination=true)
+                    end
                 end
             end
         end # walkdir
@@ -259,7 +268,7 @@ function convert_dir(single_pass=true, clear_out_dir=true)
                                 web_html *= "\n</div>" # content
                                 web_html *= process_html_blocks(foot_html, jd_vars)
 
-                                f_out_name = splitext(basename(f))[1] * ".html"
+                                f_out_name = change_ext(f)
                                 f_out_path = JD_PATHS[:out] * dirname(f)[length_in_dir+1:end] * "/"
                                 if !ispath(f_out_path)
                                     mkpath(f_out_path)

@@ -51,6 +51,8 @@ export convert_dir
 	1. IMPORTING SOURCE
 =#
 
+change_ext(fname, ext=".html") = splitext(fname)[1] * ext
+
 include("jd_paths.jl")
 include("jd_vars.jl")
 include("block_patterns.jl")
