@@ -96,8 +96,10 @@ end
 	@test readstring(out_file) == "head<div class=content>\n<p>blah blah</p>\npage_foot</div>foot  Stefan Zweig"
 end
 
+temp_config = joinpath(PATH_INPUT, "config.md")
+write(temp_config, "@def author = \"Stefan Zweig\"")
+
 @testset "Part convert" begin
-	JuDoc.set_paths!()
 	write(JuDoc.JD_PATHS[:in_html] * "head.html", raw"""
 	<!doctype html>
 	<html lang="en-UK">
