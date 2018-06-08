@@ -54,6 +54,19 @@ end
 
 
 """
+    out_path(root)
+
+Take a `root` path to an input file and convert to output path. If the output
+path does not exist, create it.
+"""
+function out_path(root)
+    f_out_path = JD_PATHS[:out] * root[length(JD_PATHS[:in])+1:end]
+    !ispath(f_out_path) && mkpath(f_out_path)
+    return f_out_path
+end
+
+
+"""
     convert_md(md_string)
 
 Take a raw MD string, process (and put away) the blocks, then parse the rest
@@ -80,19 +93,6 @@ function convert_md(md_string)
     html_string = process_div_blocks(html_string, div_b)
 
     return (html_string, defs)
-end
-
-
-"""
-    out_path(root)
-
-Take a `root` path to an input file and convert to output path. If the output
-path does not exist, create it.
-"""
-function out_path(root)
-    f_out_path = JD_PATHS[:out] * root[length(JD_PATHS[:in])+1:end]
-    !ispath(f_out_path) && mkpath(f_out_path)
-    return f_out_path
 end
 
 
