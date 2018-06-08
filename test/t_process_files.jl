@@ -30,9 +30,6 @@ end
 	making a playground to test dirs and co
 =#
 
-#XXX remove this after
-using JuDoc, Base.Test
-
 PATH_INPUT = mktempdir() * "/"
 PATH_OUTPUT = mktempdir() * "/"
 mkdir(PATH_INPUT * "_css/")
@@ -49,7 +46,6 @@ write(temp_html, "some html")
 temp_rnd = joinpath(PATH_INPUT, "temp.rnd")
 write(temp_rnd, "some random")
 
-#XXX cleaned up ones (remove)
 
 @testset "Prep outdir" begin
 	# if PATH_OUTPUT doesn't exist, it is created
