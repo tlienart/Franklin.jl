@@ -71,7 +71,7 @@ end
 
 @testset "Scan dir" begin
 	# it also tests add_if_new_file and last
-	md_files = Dict{Pair{String, String}, UInt}()
+	md_files = Dict{Pair{String, String}, Float64}()
 	html_files = other_files = similar(md_files)
 	watched_files = [md_files, html_files, other_files]
 	JuDoc.scan_input_dir!(md_files, html_files, other_files, true)
