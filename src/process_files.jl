@@ -229,7 +229,6 @@ function convert_dir(;single_pass=true, clear_out_dir=true, verb=true)
         elseif name == "html"
             raw_html = readstring(joinpath(fpair...))
             proc_html = process_html_blocks(raw_html, JD_GLOB_VARS)
-            @show out_path(fpair.first) * fpair.second
             write(out_path(fpair.first) * fpair.second, proc_html)
         else # name == "other"
             opath = out_path(fpair.first) * fpair.second
@@ -333,5 +332,6 @@ function time_it_took(start)
     mess = comp_time > 60 ? "$(round(comp_time/60, 1))m" :
            comp_time > 1 ? "$(round(comp_time, 1))s" :
            "$(round(comp_time*1000, 1))μs"
-    println("[done $mess]")
+    mess = "[done $mess]"
+    println(mess)
 end

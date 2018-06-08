@@ -95,3 +95,27 @@ end
 	@test isfile(out_file)
 	@test readstring(out_file) == "head<div class=content>\n<p>blah blah</p>\npage_foot</div>foot  Stefan Zweig"
 end
+
+@testset "Part convert" begin
+	JuDoc.set_paths!()
+	write(JuDoc.JD_PATHS[:in_html] * "head.html", raw"""
+	<!doctype html>
+	<html lang="en-UK">
+		<head>
+			<meta charset="UTF-8">
+			<link rel="stylesheet" href="/_css/main.css">
+		</head>
+	<body>""")
+	write(JuDoc.JD_PATHS[:in_html] * "page_foot.html", raw"""
+	<div class="page-foot">
+			<div class="copyright">
+					&copy; All rights reserved.
+			</div>
+	</div>""")
+	write(JuDoc.JD_PATHS[:in_html] * "foot.html", raw"""
+	    </body>
+	</html>""")
+	JuDoc.convert_dir()
+	@test ["_css", "_libs", "index.html", "temp.html", "temp.rnd"] == readdir(JuDoc.JD_PATHS[:out])
+	@test readstring(JuDoc.JD_PATHS[:out] * "index.html") == "<!doctype html>\n<html lang=\"en-UK\">\n\t<head>\n\t\t<meta charset=\"UTF-8\">\n\t\t<link rel=\"stylesheet\" href=\"/_css/main.css\">\n\t</head>\n<body><div class=content>\n<p>blah blah</p>\n<div class=\"page-foot\">\n\t\t<div class=\"copyright\">\n\t\t\t\t&copy; All rights reserved.\n\t\t</div>\n</div></div>    </body>\n</html>"
+end
