@@ -1,5 +1,5 @@
 """
-	`JD_PATHS`
+	JD_PATHS
 
 Dictionary for the paths of the input folders and the output folders. The
 simpler case only requires the main input folder to be defined i.e.
@@ -13,6 +13,25 @@ JD_PATHS = Dict{Symbol, String}(
 	:out 	  => "",
 	:out_libs => "",
 	:out_css  => "")
+
+
+"""
+	PASSIVE_DIRS
+
+Collection of elements from `JD_PATHS[:in*]` which will be ignored at
+compile time. For example `:in_html` will be ignored as the elements will
+have been incorporated in other output files, and the files do not need
+to be copied to the output dir, same with the `:in_libs`.
+"""
+PASSIVE_DIRS = String[]
+
+
+"""
+	IGNORE_FILES
+
+Collection of file names that will be ignored at compile time.
+"""
+const IGNORE_FILES = ["config.md", ".DS_Store"]
 
 
 """
@@ -32,7 +51,7 @@ Queries the `Main` module to see if the different path variables are defined.
 `Main.PATH_INPUT` must be defined (and valid), the others have a default value.
 """
 function set_paths!()
-	global JD_PATHS
+	global JD_PATHS, PASSIVE_DIRS
 
 	@assert isdefined(Main, :PATH_INPUT) "PATH_INPUT undefined"
 	JD_PATHS[:in] = Main.PATH_INPUT
@@ -45,6 +64,8 @@ function set_paths!()
 	JD_PATHS[:out] 		= ifisdef(:PATH_OUTPUT, "web_output/")
 	JD_PATHS[:out_libs] = ifisdef(:PATH_OUTPUT_LIBS, JD_PATHS[:out] * "_libs/")
 	JD_PATHS[:out_css]  = ifisdef(:PATH_OUTPUT_CSS,  JD_PATHS[:out] * "_css/")
+
+	PASSIVE_DIRS = [JD_PATHS[i] for i ∈ [:in_libs, :in_css, :in_html]]
 
 	return JD_PATHS
 end

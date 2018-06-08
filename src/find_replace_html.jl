@@ -56,16 +56,16 @@ function interweave_rep(html_string, splitter, replacements)
     return html_string
 end
 
+
 #=
     [[ CTRL_TOKEN VAR ... ]]
 
-NOTE:
- - nesting is NOT allowed (it's meant to be very rudimentary so that
-blocks can just be obtained via regex. To make nesting possible, would
-need to learn how to parse... just a bit over the top for now.
+NOTE: nesting is NOT allowed (it's meant to be rudimentary so that blocks can
+just be obtained via simple regex.
 =#
 const IF_SQBR_BLOCK = r"\[\[\s*if\s+([a-z]\S+)((.|\n)+?)\]\]"
 const IF_SQBR_BLOCK_SPLIT = r"\[\[\s*if\s(.|\n)+?\]\]"
+
 
 """
     process_if_sqbr_blocks(html_string, all_vars)
@@ -93,12 +93,11 @@ end
 #=
     {{ ... }} BLOCKS
 
-NOTE if adding new functionalities, don't forget to add them to the collection
-`braces_funs` at the bottom.
 NOTE assumption that the braces blocks are closed properly...
 =#
 const BRACES_BLOCK = r"{{\s*([a-z]\S+)\s+((.|\n)+?)}}"
 const BRACES_BLOCK_SPLIT = r"{{(.|\n)+?}}"
+
 
 """
     process_braces_blocks(html_string, all_vars)
@@ -111,8 +110,8 @@ function process_braces_blocks(html_string, all_vars)
     for m ∈ eachmatch(BRACES_BLOCK, html_string)
         fname = m.captures[1]
         params = m.captures[2]
-        if haskey(braces_funs, fname)
-            push!(replacements, braces_funs[fname](params, all_vars))
+        if haskey(BRACES_FUNS, fname)
+            push!(replacements, BRACES_FUNS[fname](params, all_vars))
         else
             warn("I found a {{$fname...}} block but did not recognise the function name '$fname'. Ignoring.")
         end
@@ -138,6 +137,13 @@ function split_params(params, fun_name, expect_args)
     end
     return (flag, (len_sparams == 1) ? sparams[1] : sparams)
 end
+
+
+#=
+    Braces functions
+
+If extending, add the function in the BRACES_FUNS further below.
+=#
 
 
 """
@@ -197,10 +203,17 @@ end
 
 
 # NOTE this has to come after the definitions otherwise ill posed.
-const braces_funs = Dict(
+const BRACES_FUNS = Dict(
     "fill" => braces_fill, # fill value contained in vars
     "insert" => braces_insert # insert file
     )
+
+
+#=
+    Processing html blocks
+
+Chaining operations.
+=#
 
 
 """
