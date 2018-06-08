@@ -118,6 +118,6 @@ write(temp_config, "@def author = \"Stefan Zweig\"")
 	    </body>
 	</html>""")
 	JuDoc.convert_dir()
-	@test ["_css", "_libs", "index.html", "temp.html", "temp.rnd"] == readdir(JuDoc.JD_PATHS[:out])
+	@test issubset(["_css", "_libs", "index.html", "temp.html", "temp.rnd"], readdir(JuDoc.JD_PATHS[:out]))
 	@test readstring(JuDoc.JD_PATHS[:out] * "index.html") == "<!doctype html>\n<html lang=\"en-UK\">\n\t<head>\n\t\t<meta charset=\"UTF-8\">\n\t\t<link rel=\"stylesheet\" href=\"/_css/main.css\">\n\t</head>\n<body><div class=content>\n<p>blah blah</p>\n<div class=\"page-foot\">\n\t\t<div class=\"copyright\">\n\t\t\t\t&copy; All rights reserved.\n\t\t</div>\n</div></div>    </body>\n</html>"
 end
