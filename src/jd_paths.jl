@@ -27,6 +27,14 @@ PASSIVE_DIRS = String[]
 
 
 """
+	IGNORE_FILES
+
+Collection of file names that will be ignored at compile time.
+"""
+const IGNORE_FILES = ["config.md", ".DS_Store"]
+
+
+"""
 	ifisdef(symb, def)
 
 Short helper function to check if the symbol `symb` is defined in the `Main`

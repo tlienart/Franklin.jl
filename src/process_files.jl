@@ -143,7 +143,7 @@ function scan_input_dir!(md_files, html_files, other_files, verb=false)
         any(contains(nroot, dir) for dir ∈ PASSIVE_DIRS) && continue
         for file ∈ files
             # skip if it's the config file
-            file == "config.md" && continue
+            file ∈ IGNORE_FILES && continue
             fname, fext = splitext(file)
             fpair = nroot=>file
             if fext == ".md"
@@ -222,13 +222,14 @@ function convert_dir(;single_pass=true, clear_out_dir=true, verb=true)
 
     verb && print("Compiling the full folder once... ")
     start = time()
-    for (d, name) ∈ watched, (fpair, t) ∈ d
+    for (name, dict) ∈ watched, (fpair, t) ∈ dict
         if name == "md"
             # fpair.first = root path; fpair.second = fname
             write_page(fpair..., head, pg_foot, foot)
         elseif name == "html"
             raw_html = readstring(joinpath(fpair...))
             proc_html = process_html_blocks(raw_html, JD_GLOB_VARS)
+            @show out_path(fpair.first) * fpair.second
             write(out_path(fpair.first) * fpair.second, proc_html)
         else # name == "other"
             opath = out_path(fpair.first) * fpair.second
@@ -259,7 +260,7 @@ function convert_dir(;single_pass=true, clear_out_dir=true, verb=true)
                 scan_input_dir!(watched_files..., verb)
     			cntr = 1
     		else
-                for (d, name) ∈ watched, (fpair, t) ∈ d
+                for (name, dict) ∈ watched, (fpair, t) ∈ dict
                     fpath = joinpath(fpair...)
                     cur_t = last(fpath)
                     cur_t <= t && continue
@@ -269,7 +270,7 @@ function convert_dir(;single_pass=true, clear_out_dir=true, verb=true)
                     # modified and should be re-processed + copied
                     verb && print("file $fpath was modified... ")
                     start = time()
-                    d[fpair] = cur_t
+                    dict[fpair] = cur_t
                     if name == "md"
                         write_page(fpair..., head, pg_foot, foot)
                     elseif name =="html"
