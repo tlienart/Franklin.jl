@@ -196,7 +196,7 @@ function convert_dir(;single_pass=true, clear_out_dir=true, verb=true)
     # monitoring)
     ###
 
-    md_files = Dict{Pair{String, String}, UInt}()
+    md_files = Dict{Pair{String, String}, Float64}()
     html_files = other_files = similar(md_files)
     watched_files = [md_files, html_files, other_files]
     watched_names = ["md", "html", "other"]
