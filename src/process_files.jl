@@ -22,6 +22,7 @@ function prepare_output_dir(clear_out_dir=true)
     !isdir(JD_PATHS[:out]) && mkdir(JD_PATHS[:out])
 
     # check if the css and libs folder need to be added or not.
+    # NOTE if processing CSS later, this may have to change
     if !isdir(JD_PATHS[:out_css])
         # copying template CSS files
         cp(JD_PATHS[:in_css], JD_PATHS[:out_css])
@@ -129,20 +130,6 @@ end
 
 
 """
-    add_if_new_file!(dict, fpair)
-
-Helper function, if `fpair` is not referenced in the dictionary (new file)
-add the entry to the dictionary with the time of last modification as val.
-"""
-function add_if_new_file!(dict, fpair, verb)
-    if !haskey(dict, fpair)
-        verb && println("tracking new file '$(fpair.second)'.")
-        dict[fpair] = last(joinpath(fpair...))
-    end
-end
-
-
-"""
     scan_input_dir!(md_files, html_files, other_files)
 
 Update the dictionaries referring to input files and their time of last
@@ -168,28 +155,6 @@ function scan_input_dir!(md_files, html_files, other_files, verb=false)
             end
         end
     end
-end
-
-
-"""
-    last(f)
-
-Convenience function to get the time of last modification of a file.
-"""
-last(f::String) = stat(f).mtime
-
-
-"""
-    time_it_took(start)
-
-Convenience function to display a time since `start`.
-"""
-function time_it_took(start)
-    comp_time = time() - start
-    mess = comp_time > 60 ? "$(round(comp_time/60, 1))m" :
-           comp_time > 1 ? "$(round(comp_time, 1))s" :
-           "$(round(comp_time*1000, 1))μs"
-    println("[done $mess]")
 end
 
 
@@ -281,7 +246,7 @@ function convert_dir(;single_pass=true, clear_out_dir=true, verb=true)
         # this will go on until interrupted by the user (see catch)
         cntr = 1
         try while true
-    		# every NCYCL cycles, scan directory
+    		# every NCYCL cycles, scan directory, update dictionaries
     		if mod(cntr, NCYCL) == 0
     			# 1 check if some files have been deleted
     			# note we don't do anything. we just remove from the dict.
@@ -319,14 +284,53 @@ function convert_dir(;single_pass=true, clear_out_dir=true, verb=true)
                 # increase the loop counter
     			cntr += 1
     			sleep(SLEEP)
-    		end
-        	end
+    		end # if mod(cntr, NCYCL)
+            end # try while
         catch x
-        	if isa(x, InterruptException)
-        		println("Shutting down.")
-        	else
-        		throw(x)
-        	end
+        	isa(x, InterruptException) ? println("Shutting down.") : throw(x)
         end
     end
+end
+
+
+#=
+    Helper functions
+
+Small functions defined to de-clutter the code of `convert_dir`.
+=#
+
+
+"""
+    add_if_new_file!(dict, fpair)
+
+Helper function, if `fpair` is not referenced in the dictionary (new file)
+add the entry to the dictionary with the time of last modification as val.
+"""
+function add_if_new_file!(dict, fpair, verb)
+    if !haskey(dict, fpair)
+        verb && println("tracking new file '$(fpair.second)'.")
+        dict[fpair] = last(joinpath(fpair...))
+    end
+end
+
+
+"""
+    last(f)
+
+Convenience function to get the time of last modification of a file.
+"""
+last(f::String) = stat(f).mtime
+
+
+"""
+    time_it_took(start)
+
+Convenience function to display a time since `start`.
+"""
+function time_it_took(start)
+    comp_time = time() - start
+    mess = comp_time > 60 ? "$(round(comp_time/60, 1))m" :
+           comp_time > 1 ? "$(round(comp_time, 1))s" :
+           "$(round(comp_time*1000, 1))μs"
+    println("[done $mess]")
 end
