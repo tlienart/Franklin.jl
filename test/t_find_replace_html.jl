@@ -30,7 +30,7 @@ end
 	"""
 	s, b = JuDoc.div_blocks(s)
 	@test s == "This is some *markdown* followed by a div:\n##DIV_BLOCK##1 and then more markdown\nblah.\n"
-	@test b == [("some_div", "\nthe content here\n")]
+	@test b == ["some_div"=>"\nthe content here\n"]
 	h = JuDoc.html(JuDoc.Markdown.parse(s));
 	h = JuDoc.process_div_blocks(h, b)
 	@test h == "<p>This is some <em>markdown</em> followed by a div: <div class=\"some_div\">\nthe content here\n</div>\n and then more markdown blah.</p>\n"
