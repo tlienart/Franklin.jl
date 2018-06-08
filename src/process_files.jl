@@ -96,13 +96,13 @@ end
 
 
 """
-    write_page(root, file, head, page_foot, foot)
+    write_page(root, file, head, pg_foot, foot)
 
 Take a path to an input markdown file (via `root` and `file`), then construct
-the appropriate HTML page (inserting `head`, `page_foot` and `foot`) and
+the appropriate HTML page (inserting `head`, `pg_foot` and `foot`) and
 finally write it at the appropriate place.
 """
-function write_page(root, file, head, page_foot, foot)
+function write_page(root, file, head, pg_foot, foot)
     ###
     # 0. create a dictionary with all the variables available to the page
     # 1. read the markdown into string, convert it and extract definitions
@@ -115,16 +115,81 @@ function write_page(root, file, head, page_foot, foot)
     # 3. process blocks in the html infra elements based on `jd_vars` (e.g.:
     # add the date in the footer)
     ###
-    head, page_foot, foot = (process_html_blocks(e, jd_vars)
-                                for e ∈ [head, page_foot, foot])
+    head, pg_foot, foot = (process_html_blocks(e, jd_vars)
+                                for e ∈ [head, pg_foot, foot])
     ###
     # 4. construct the page proper
     ###
-    pg = head * "<div class=content>\n" * content * page_foot * "</div>" * foot
+    pg = head * "<div class=content>\n" * content * pg_foot * "</div>" * foot
     ###
     # 5. write the html file where appropriate
     ###
     write(out_path(root) * change_ext(file), pg)
+end
+
+
+"""
+    add_if_new_file!(dict, fpair)
+
+Helper function, if `fpair` is not referenced in the dictionary (new file)
+add the entry to the dictionary with the time of last modification as val.
+"""
+function add_if_new_file!(dict, fpair, verb)
+    if !haskey(dict, fpair)
+        verb && println("tracking new file '$(fpair.second)'.")
+        dict[fpair] = last(joinpath(fpair...))
+    end
+end
+
+
+"""
+    scan_input_dir!(md_files, html_files, other_files)
+
+Update the dictionaries referring to input files and their time of last
+change.
+"""
+function scan_input_dir!(md_files, html_files, other_files, verb=false)
+    for (root, _, files) ∈ walkdir(JD_PATHS[:in])
+        # ensure there's a "/" at the end of the path
+        nroot = normpath(root * "/")
+        # skip if the root leads to a passive dir
+        any(contains(nroot, dir) for dir ∈ PASSIVE_DIRS) && continue
+        for file ∈ files
+            # skip if it's the config file
+            file == "config.md" && continue
+            fname, fext = splitext(file)
+            fpair = nroot=>file
+            if fext == ".md"
+                add_if_new_file!(md_files, fpair, verb)
+            elseif fext == ".html"
+                add_if_new_file!(html_files, fpair, verb)
+            else
+                add_if_new_file!(other_files, fpair, verb)
+            end
+        end
+    end
+end
+
+
+"""
+    last(f)
+
+Convenience function to get the time of last modification of a file.
+"""
+last(f::String) = stat(f).mtime
+
+
+"""
+    time_it_took(start)
+
+Convenience function to display a time since `start`.
+"""
+function time_it_took(start)
+    comp_time = time() - start
+    mess = comp_time > 60 ? "$(round(comp_time/60, 1))m" :
+           comp_time > 1 ? "$(round(comp_time, 1))s" :
+           "$(round(comp_time*1000, 1))μs"
+    println("[done $mess]")
 end
 
 
@@ -138,152 +203,123 @@ all markdown files to html and reproduce the same structure to an output dir.
 * `clear_out_dir` destroys what was previously in `out_dir` this can be useful
 if file names have been changed etc to get rid of stale files.
 """
-function convert_dir(;single_pass=true, clear_out_dir=true)
+function convert_dir(;single_pass=true, clear_out_dir=true, verb=true)
+
+    ###
+    # . setting up:
+    # -- reading and storing the path variables
+    # -- setting up the output directory (potentially erasing it if
+    # `clear_out_dir`)
+    # -- read the configuration file
+    ###
 
     set_paths!()
     prepare_output_dir(clear_out_dir)
     process_config()
 
-    ###
-    # 0. recovering the list of files in the input dir we actually care about
-    # -- we store these in dictionaries, the key is the full path, the value
-    # is the time of last change (useful for continuous monitoring)
-    ###
+    # variables useful when using continuous_checking
+    # TODO this could be set externally (e.g. in config file)
+    START = time()
+    MAXT = 5000 # max number of seconds before shutting down.
+    SLEEP = 0.1
+    NCYCL = 20
 
-    IGNORE_DIRS = [JD_PATHS[i] for i ∈ [:in_libs, :in_css, :in_html]]
+    ###
+    # . recovering the list of files in the input dir we care about
+    # -- these are stored in dictionaries, the key is the full path,
+    # the value is the time of last change (useful for continuous
+    # monitoring)
+    ###
 
     md_files = Dict{Pair{String, String}, UInt}()
-    html_files = Dict{Pair{String, String}, UInt}()
-    other_files = Dict{Pair{String, String}, UInt}()
+    html_files = other_files = similar(md_files)
+    watched_files = [md_files, html_files, other_files]
+    watched_names = ["md", "html", "other"]
+    watched = zip(watched_names, watched_files)
 
-    for (root, _, files) ∈ walkdir(JD_PATHS[:in])
-        nroot = normpath(root * "/")
-        if !any(contains(nroot, dir) for dir ∈ IGNORE_DIRS)
-            for file ∈ files
-                fname, fext = splitext(file)
-                if fext == ".md"
-                    if fname != "config"
-                        md_files[nroot=>file] = stat(nroot * file).mtime
-                    end
-                elseif fext == ".html"
-                    html_files[nroot=>file] = stat(nroot * file).mtime
-                else
-                    other_files[nroot=>file] = stat(nroot * file).mtime
-                end
-            end
-        end
-    end
+    scan_input_dir!(watched_files...)
 
     ###
-    # 1. finding and reading the infrastructure files now that paths are set
+    # . finding and reading the infrastructure files (used in write_page)
     ###
+
     head = readstring(JD_PATHS[:in_html] * "head.html")
-    page_foot = readstring(JD_PATHS[:in_html] * "page_foot.html")
+    pg_foot = readstring(JD_PATHS[:in_html] * "page_foot.html")
     foot = readstring(JD_PATHS[:in_html] * "foot.html")
 
-    if single_pass
-        for (fpair, _) ∈ md_files
+    ###
+    # . main part
+    # -- if `single_pass` then the files are processed only once before
+    # terminating
+    # -- if `!single_pass` then the directory is monitored for file
+    # changes until the user interrupts the session.
+    ###
+
+    verb && print("Compiling the full folder once... ")
+    start = time()
+    for (d, name) ∈ watched, (fpair, t) ∈ d
+        if name == "md"
             # fpair.first = root path; fpair.second = fname
-            write_page(fpair.first, fpair.second, head, page_foot, foot)
-        end
-        for (fpair, _) ∈ html_files
+            write_page(fpair..., head, pg_foot, foot)
+        elseif name == "html"
             raw_html = readstring(joinpath(fpair...))
             proc_html = process_html_blocks(raw_html, JD_GLOB_VARS)
             write(out_path(fpair.first) * fpair.second, proc_html)
-        end
-        for (fpair, t) ∈ other_files
+        else # name == "other"
             opath = out_path(fpair.first) * fpair.second
-            if clear_out_dir || !isfile(opath) || stat(opath).mtime < t
-                    cp(joinpath(fpair...), opath, remove_destination=true)
+            # only copy it again if necessary (particularly relevant)
+            # when the asset files take quite a bit of space.
+            if clear_out_dir || !isfile(opath) || last(opath) < t
+                cp(joinpath(fpair...), opath, remove_destination=true)
             end
         end
-    else
-        # NOTE: experimental multiple pass.
-        # Should probably go in external function
-        # 1. Should probably go through a normal single pass
-        # 2. Continuously look at EXT files
-        # NOTE
-        #  - TODO: what about new assets that get added? should be copied over
-        #  - TODO: if infra files get modif (_html/*), all files need rewrite
+    end
+    verb && time_it_took(start)
 
-        println("Warming up, compiling the full folder once...")
-        convert_dir(single_pass=true, clear_out_dir=false)
-
-        watched_files = merge(md_files, html_files)
-
-        # TODO set these constants somewhere else (config)
-        START  = time()
-        MAXT   = 5000 # max number of seconds before shutting down.
-        SLEEP  = 0.1
-        NCYCL  = 20
-        CONFIG = joinpath(JD_PATHS[:in], "config.md")
-
+    if !single_pass
+        println("Watching input folder... press CTRL+C to stop.")
+        # this will go on until interrupted by the user (see catch)
         cntr = 1
-        try
-        	println("Watching input folder... press CTRL+C to stop.")
-        	while true
-                # ------------------
-        		# every NCYCL cycles, check directory for potential new files
-        		if mod(cntr, NCYCL) == 0
-        			# 1 check if some files have been deleted
-        			# note we don't do anything. we just remove from the dict.
-        			# to get clean folder --> rerun the compile() from blank
-                    for dict ∈ [md_files, html_files, other_files]
-                        for (fpair, _) ∈ dict
-                            !isfile(joinpath(fpair...)) && delete!(dict, fpair)
-                        end
+        try while true
+    		# every NCYCL cycles, scan directory
+    		if mod(cntr, NCYCL) == 0
+    			# 1 check if some files have been deleted
+    			# note we don't do anything. we just remove from the dict.
+    			# to get clean folder --> rerun the compile() from blank
+                for d ∈ watched_files, (fpair, _) ∈ d
+                    !isfile(joinpath(fpair...)) && delete!(d, fpair)
+                end
+                # 2 scan the input folder, if new files have been
+                # added then this will update the dictionaries
+                scan_input_dir!(watched_files..., verb)
+    			cntr = 1
+    		else
+                for (d, name) ∈ watched, (fpair, t) ∈ d
+                    fpath = joinpath(fpair...)
+                    cur_t = last(fpath)
+                    cur_t <= t && continue
+                    # if the time of last modification is
+                    # greater (more recent) than the one stored in
+                    # the dict then it means the file has been
+                    # modified and should be re-processed + copied
+                    verb && print("file $fpath was modified... ")
+                    start = time()
+                    d[fpair] = cur_t
+                    if name == "md"
+                        write_page(fpair..., head, pg_foot, foot)
+                    elseif name =="html"
+                        raw_html = readstring(fpath)
+                        proc_html = process_html_blocks(raw_html, JD_GLOB_VARS)
+                        write(out_path(fpair.first) * fpair.second, proc_html)
+                    else # name == "other"
+                        cp(fpath, out_path(fpair.first) * fpair.second, remove_destination=true)
                     end
-        			# 2 check if some files have been added
-                    # if so, add them to relevant dictionary
-        			for (root, _, files) ∈ walkdir(JD_PATHS[:in])
-                        nroot = normpath(root * "/")
-                        if !any(contains(nroot, dir) for dir ∈ IGNORE_DIRS)
-                            for file ∈ files
-                                fname, fext = splitext(file)
-                                fpair = nroot=>file
-                                if fext == ".md"
-                                    if !haskey(md_files, fpair) && fname != "config"
-                                        md_files[fpair] = stat(nroot * file).mtime
-                                    end
-                                elseif fext == ".html" && !haskey(html_files, fpair)
-                                    html_files[fpair] = stat(nroot * file).mtime
-                                elseif !haskey(other_files, fpair)
-                                    other_files[fpair] = stat(nroot * file).mtime
-                                end
-                            end
-                        end
-        			end
-        			cntr = 1
-                # ---------------
-                # THE NORMAL LOOP
-        		else
-                    for (fpair, t) ∈ md_files
-                        cur_t = stat(joinpath(fpair...)).mtime
-                        if cur_t > t
-                            md_files[fpair] = cur_t
-                            write_page(fpair.first, fpair.second, head, page_foot, foot)
-                        end
-                    end
-                    for (fpair, t) ∈ html_files
-                        cur_t = stat(joinpath(fpair...)).mtime
-                        if cur_t > t
-                            html_files[fpair] = cur_t
-                            raw_html = readstring(joinpath(fpair...))
-                            proc_html = process_html_blocks(raw_html, JD_GLOB_VARS)
-                            write(out_path(fpair.first) * fpair.second, proc_html)
-                        end
-                    end
-                    for (fpair, t) ∈ other_files
-                        cur_t = stat(joinpath(fpair...)).mtime
-                        if cur_t > t
-                            other_files[fpair] = cur_t
-                            cp(joinpath(fpair...), out_path(fpair.first) * fpair.second, remove_destination=true)
-                        end
-                    end
-                    # increase the loop counter
-        			cntr += 1
-        			sleep(SLEEP)
-        		end
+                    verb && time_it_took(start)
+                end
+                # increase the loop counter
+    			cntr += 1
+    			sleep(SLEEP)
+    		end
         	end
         catch x
         	if isa(x, InterruptException)

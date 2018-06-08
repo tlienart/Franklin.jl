@@ -153,7 +153,8 @@ Assume what's given will not crash everything (no sandboxing)
 * `{{ insert_if ...}}` goes for html, html extension is added.
 * `<!-- comment -->` in markdown is a comment (no output to html)
 * `{{ fill ...}}` fill with a doc variable or page var
-* `[[if ...]]`` use block if some bool
+* `[[if ...]]` use block if some bool
+* no input file should be named `config.md` apart from the one and only file containing the global configuration for the full website.
 
 ## Design
 

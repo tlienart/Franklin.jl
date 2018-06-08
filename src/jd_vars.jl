@@ -13,7 +13,7 @@ const JD_GLOB_VARS = Dict{String, Pair{Any, Tuple}}(
 
 
 """
-        JD_LOC_VARS
+    JD_LOC_VARS
 
 Dictionary of variables copied and then set for each page (through definitions).
 Entries have the same format as for `JD_GLOB_VARS`.
