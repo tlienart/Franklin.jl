@@ -56,21 +56,19 @@ end
 	@test_warn "I found a 'fill' and expected 1 argument(s) but got 2 instead. Ignoring." JuDoc.braces_fill(params2, var1)
 
 	# replacements :: braces_insert
-	temp_path = joinpath(mktempdir(), "tmp")
-	open(temp_path * ".html", "w") do f
-		write(f, "This is a test page.\n")
-	end
-	params2 = " $temp_path "
+	temp_path = joinpath(JuDoc.JD_PATHS[:in_html], "tmp")
+	write(temp_path * ".html", "This is a test page.\n")
+	params2 = " tmp "
 	vars = Dict("flag" => true=>(Bool,))
 	r = JuDoc.braces_insert(params2, vars)
 	@test r == "This is a test page.\n"
 	params2 = "non-existing"
-	@test_warn "I tried to insert 'non-existing.html' but I couldn't find the file. Ignoring." JuDoc.braces_insert(params2, vars)
+	@test_warn "I tried to insert '$(JuDoc.JD_PATHS[:in_html])non-existing.html' but I couldn't find the file. Ignoring." JuDoc.braces_insert(params2, vars)
 
 	# replacements :: general braces blocks
 	h = """
 	blah blah {{ fill blah }} and
-	then some more stuff maybe {{ insert $temp_path }} etc
+	then some more stuff maybe {{ insert tmp }} etc
 	blah
 	"""
 	vars = Dict("blah" => 0.123=>(Float64,), "flag" => true=>(Bool,))
