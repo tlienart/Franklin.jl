@@ -199,7 +199,7 @@ all markdown files to html and reproduce the same structure to an output dir.
 if file names have been changed etc to get rid of stale files.
 * `verb` whether to display things
 """
-function judoc(;single_pass=true, clear_out_dir=true, verb=true)
+function judoc(;single_pass=true, clear_out_dir=false, verb=true)
 
     ###
     # . setting up:
@@ -298,17 +298,9 @@ function judoc(;single_pass=true, clear_out_dir=true, verb=true)
                     # the dict then it means the file has been
                     # modified and should be re-processed + copied
                     verb && print("file $fpath was modified... ")
-                    start = time()
                     dict[fpair] = cur_t
-                    if name == "md"
-                        write_page(fpair..., head, pg_foot, foot)
-                    elseif name =="html"
-                        raw_html = readstring(fpath)
-                        proc_html = process_html_blocks(raw_html, JD_GLOB_VARS)
-                        write(out_path(fpair.first) * fpair.second, proc_html)
-                    else # name == "other"
-                        cp(fpath, out_path(fpair.first) * fpair.second, remove_destination=true)
-                    end
+                    start = time()
+                    process_file(name, fpair, false, head, pg_foot, foot, cur_t)
                     verb && time_it_took(start)
                 end
                 # increase the loop counter

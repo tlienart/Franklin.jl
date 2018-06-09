@@ -19,15 +19,9 @@ Only for `0.6`, a few adaptations needed when going for `0.7` (changes for examp
 
 ### Priority
 
-* [ ] functionalise even more the convert_dir, going over files should be a function. The core part when you go over each of the dict should also be a function.
-* [ ] add some verbosity when an action is seen in the continuous checking (e.g.: filename "blah" was modified/added.)
-* [ ] write somewhere that control blocks cannot be nested (because they are regexp-ed, not parsed using some grammar.) (recursive is not enough, the problem is not matching the right `end`)
-* [ ] if want to allow going over comprehension then should be able to not only access elements of the comprehension but also possibly write simple variables to dictionary. this amounts to holding a stack... `for` should maybe not be done yet.
+* [ ] if an infra file is modified (html part) then this should trigger a re-build for all md files.
 
 #### Tests
-
-* [ ] `convert_dir` --> that one may be annoying to test. Maybe can do it partly with temporary paths.
-  - [ ] started extracting bits that were more repetitive and adding tests (ONGOING.)
 
 ### Must do
 
@@ -49,34 +43,6 @@ Only for `0.6`, a few adaptations needed when going for `0.7` (changes for examp
 * [ ] (low) think about performance of all these find and replace operations
   * maybe just benchmark the whole thing and the different elements
 * [ ] (low) need to have the templates stored somewhere, possibly a side repo. this can be done when the site is a bit established and the CSS/HTML has converged a bit.
-
-### DONE
-
-* [x] modularise head: base part that all pages should have, then KATEX should only be there if some HASMATH flag is on, same with PRISM
-* [x] allow for comments in Markdown, things between <-- and -->
-* [x] finish the removal of exclamation mark + deal with the renaming of folders.
-* [x] go from `process_insert_if_blocks` which are always applied to html strings to a more general `process_html_blocks` to deal with more than just `{{ insert_if }}` but in fact a whole score of stuff (HUGO style)
-  * [x] some of the doc vars should be assigned once and for all (e.g. author name) this could be done in a `config` file.
-  * [x] resolve date
-* [x] _see decision_ allow conditionals based on value. `{{ if value block }}` and just parse `block` if value is not empty or something like that. (e.g.: if don't want date on a page)
-  - it's already possible to fill in void in some stuff (and use that as default).
-  - nesting could be an issue (but who cares...)
-  - DECISION: no need for that now, can just remove the offending part in the template directly, easier.
-* [x] (medium) there's an `{{ insert_if ... }}` there should be an `{{ insert }}`
-  - DECISION: there's now a `{{ fill ... }}`
-* [x] (medium) have a way to add date of last major modification (add a variable for this)
-  - DECISION: there's now something to fill a date via `@def date`
-* [x] (low) sort out naming of folders `web_html`, `web_md`, `web_parts` is actually all a bit shit, really there should be an input folder and an output folder or something.
-	* the `web_md` folder actually also contains the `index.html`
-	* the `web_parts` ends up in `web_md` so maybe it's just easier to just put everything there but then the level of `css` and `cvx_opti` is the same which is a bit odd. Maybe can just also use `_css` just as for the output.
-* [x] remove possibility to modify `web_html` (should be considered immutable)
-* [x] for replacements of the HUGO form `{{ }}` maybe better to catch all of those and deal with them in one shot (gradually forming the new string) instead of going over the text multiple times...
-* [x] (medium) path thing is awkward (have to do the `using JuDoc` after having all the `const...`
-* [x] (medium) in longer run, would want a repo that just has the conversion scripts etc, and then a website repo that just calls `using JuDoc`. This involves some reasoning around the paths.
-  - have a script in the folder that sets the variables such as the PATH (also the base-doc-vars as that would make sense?)
-	- ONGOING: cf `~/Desktop/tweb_judoc/` with the script within it. It should allow to just do `using JuDoc` set env then `convert_dir()`
-* [x] incorporate `process_if_braces_blocks` in pipeline. Think more about pipeline in general (order of operations, what gets escaped, and when, what files are modified (infrastructure files, markdown files etc))
-
 
 #### Continuous time modif checking
 

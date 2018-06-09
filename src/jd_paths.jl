@@ -8,17 +8,6 @@ simpler case only requires the main input folder to be defined i.e.
 JD_PATHS = Dict{Symbol, String}()
 
 
-# """
-# 	PASSIVE_DIRS
-#
-# Collection of elements from `JD_PATHS[:in*]` which will be ignored at
-# compile time. For example `:in_html` will be ignored as the elements will
-# have been incorporated in other output files, and the files do not need
-# to be copied to the output dir, same with the `:in_libs`.
-# """
-# PASSIVE_DIRS = String[]
-
-
 """
 	IGNORE_FILES
 
@@ -33,16 +22,6 @@ const IGNORE_FILES = ["config.md", ".DS_Store"]
 Collection of file extensions considered for infrastructure files.
 """
 const INFRA_EXT = [".html", ".css"]
-
-
-# """
-# 	ifisdef(symb, def)
-#
-# Short helper function to check if the symbol `symb` is defined in the `Main`
-# module (current environment). If it is, it returns the value of the symbol.
-# Otherwise it returns the `def` value (default value).
-# """
-# ifisdef(symb, def) = isdefined(Main, symb) ? eval(:(Main.$symb)) : def
 
 
 """

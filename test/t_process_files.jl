@@ -30,55 +30,44 @@ end
 	making a playground to test dirs and co
 =#
 
-PATH_INPUT = mktempdir() * "/"
-PATH_OUTPUT = mktempdir() * "/"
-mkdir(PATH_INPUT * "_css/")
-mkdir(PATH_INPUT * "_libs/")
-mkdir(PATH_INPUT * "_html_parts/")
-JuDoc.set_paths!()
-
-temp_index = joinpath(PATH_INPUT, "index.md")
-write(temp_index, "blah blah")
-temp_config = joinpath(PATH_INPUT, "config.md")
+temp_config = joinpath(JuDoc.JD_PATHS[:in], "config.md")
 write(temp_config, "@def author = \"Stefan Zweig\"")
-temp_html = joinpath(PATH_INPUT, "temp.html")
+temp_index = joinpath(JuDoc.JD_PATHS[:in], "index.md")
+write(temp_index, "blah blah")
+temp_blah = joinpath(JuDoc.JD_PATHS[:in_pages], "blah.md")
+write(temp_blah, "blah blah")
+temp_html = joinpath(JuDoc.JD_PATHS[:in_pages], "temp.html")
 write(temp_html, "some html")
-temp_rnd = joinpath(PATH_INPUT, "temp.rnd")
+temp_rnd = joinpath(JuDoc.JD_PATHS[:in_pages], "temp.rnd")
 write(temp_rnd, "some random")
 
 
 @testset "Prep outdir" begin
-	# if PATH_OUTPUT doesn't exist, it is created
-	rm(PATH_OUTPUT, recursive=true)
 	JuDoc.prepare_output_dir()
-	@test isdir(PATH_OUTPUT)
+	@test isdir(JuDoc.JD_PATHS[:out])
 	@test isdir(JuDoc.JD_PATHS[:out_css])
-	@test isdir(JuDoc.JD_PATHS[:out_libs])
-	temp_out = joinpath(PATH_OUTPUT, "tmp.html")
-	open(temp_out, "w") do f
-		write(f, "This is a test page.\n")
-	end
+	temp_out = joinpath(JuDoc.JD_PATHS[:out], "tmp.html")
+	write(temp_out, "This is a test page.\n")
 	# clear_out_dir is false => file should remain
 	JuDoc.prepare_output_dir(false)
 	@test isfile(temp_out)
 	# clear_out_dir is true => file should go
 	JuDoc.prepare_output_dir(true)
 	@test !isfile(temp_out)
-	# testing out_path while we're at it
-	out_path = JuDoc.out_path(temp_index)
-	@test ispath(out_path)
 end
 
 @testset "Scan dir" begin
 	# it also tests add_if_new_file and last
 	md_files = Dict{Pair{String, String}, Float64}()
-	html_files = other_files = similar(md_files)
-	watched_files = [md_files, html_files, other_files]
-	JuDoc.scan_input_dir!(md_files, html_files, other_files, true)
-	@test haskey(md_files, PATH_INPUT=>"index.md")
-	@test md_files[PATH_INPUT=>"index.md"] == JuDoc.last(temp_index) == stat(temp_index).mtime
-	@test html_files[PATH_INPUT=>"temp.html"] == JuDoc.last(temp_html)
-	@test other_files[PATH_INPUT=>"temp.rnd"] == JuDoc.last(temp_rnd)
+	html_files = similar(md_files)
+	other_files = similar(md_files)
+	infra_files = similar(md_files)
+	watched_files = [md_files, html_files, other_files, infra_files]
+	JuDoc.scan_input_dir!(md_files, html_files, other_files, infra_files, true)
+	@test haskey(md_files, JuDoc.JD_PATHS[:in_pages]=>"blah.md")
+	@test md_files[JuDoc.JD_PATHS[:in_pages]=>"blah.md"] == JuDoc.last(temp_blah) == stat(temp_blah).mtime
+	@test html_files[JuDoc.JD_PATHS[:in_pages]=>"temp.html"] == JuDoc.last(temp_html)
+	@test other_files[JuDoc.JD_PATHS[:in_pages]=>"temp.rnd"] == JuDoc.last(temp_rnd)
 end
 
 @testset "Config+write" begin
@@ -90,34 +79,35 @@ end
 	head = "head"
 	pg_foot = "page_foot"
 	foot = "foot [[if isnotes {{fill author}}]]"
-	JuDoc.write_page(PATH_INPUT, "index.md", head, pg_foot, foot)
-	out_file = JuDoc.out_path(PATH_INPUT) * "index.html"
+	JuDoc.write_page(JuDoc.JD_PATHS[:in], "index.md", head, pg_foot, foot)
+	out_file = JuDoc.out_path(JuDoc.JD_PATHS[:f]) * "index.html"
 	@test isfile(out_file)
 	@test readstring(out_file) == "head<div class=content>\n<p>blah blah</p>\npage_foot</div>foot  Stefan Zweig"
 end
 
-temp_config = joinpath(PATH_INPUT, "config.md")
+temp_config = joinpath(JuDoc.JD_PATHS[:in], "config.md")
 write(temp_config, "@def author = \"Stefan Zweig\"")
 
 @testset "Part convert" begin
 	write(JuDoc.JD_PATHS[:in_html] * "head.html", raw"""
-	<!doctype html>
-	<html lang="en-UK">
-		<head>
-			<meta charset="UTF-8">
-			<link rel="stylesheet" href="/_css/main.css">
-		</head>
-	<body>""")
+		<!doctype html>
+		<html lang="en-UK">
+			<head>
+				<meta charset="UTF-8">
+				<link rel="stylesheet" href="/css/main.css">
+			</head>
+		<body>""")
 	write(JuDoc.JD_PATHS[:in_html] * "page_foot.html", raw"""
-	<div class="page-foot">
-			<div class="copyright">
-					&copy; All rights reserved.
-			</div>
-	</div>""")
+		<div class="page-foot">
+				<div class="copyright">
+						&copy; All rights reserved.
+				</div>
+		</div>""")
 	write(JuDoc.JD_PATHS[:in_html] * "foot.html", raw"""
-	    </body>
-	</html>""")
-	JuDoc.convert_dir()
-	@test issubset(["_css", "_libs", "index.html", "temp.html", "temp.rnd"], readdir(JuDoc.JD_PATHS[:out]))
-	@test readstring(JuDoc.JD_PATHS[:out] * "index.html") == "<!doctype html>\n<html lang=\"en-UK\">\n\t<head>\n\t\t<meta charset=\"UTF-8\">\n\t\t<link rel=\"stylesheet\" href=\"/_css/main.css\">\n\t</head>\n<body><div class=content>\n<p>blah blah</p>\n<div class=\"page-foot\">\n\t\t<div class=\"copyright\">\n\t\t\t\t&copy; All rights reserved.\n\t\t</div>\n</div></div>    </body>\n</html>"
+		    </body>
+		</html>""")
+	JuDoc.judoc()
+	@test issubset(["css", "libs", "index.html"], readdir(JuDoc.JD_PATHS[:f]))
+	@test issubset(["temp.html", "temp.rnd"], readdir(JuDoc.JD_PATHS[:out]))
+	@test readstring(JuDoc.JD_PATHS[:f] * "index.html") == "<!doctype html>\n<html lang=\"en-UK\">\n\t<head>\n\t\t<meta charset=\"UTF-8\">\n\t\t<link rel=\"stylesheet\" href=\"/css/main.css\">\n\t</head>\n<body><div class=content>\n<p>blah blah</p>\n<div class=\"page-foot\">\n\t\t<div class=\"copyright\">\n\t\t\t\t&copy; All rights reserved.\n\t\t</div>\n</div></div>    </body>\n</html>"
 end
