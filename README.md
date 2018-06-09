@@ -8,12 +8,45 @@ Only for `0.6`, a few adaptations needed when going for `0.7` (changes for examp
 
 ## Getting started
 
-* create folder
-* in folder create subfolder `web_input` and in it copy
-  - `_html` (html templates)
-	- `_libs` (katex, prism)
-	- `_css` (css templates)
-* in folder create file `script.jl` indicating the paths
+must start with something like (the folders/files marked with a star *must* be there)
+
+```
+site
++-- libs (*)
+|   +-- katex
+|   +-- prism
++-- src (*)
+|   +-- _css (*)
+|   +-- _html_parts (*)
+|   +-- pages (*)
+|   |   +-- folder1 ...
+|   |   +-- folder2 ...
+|   +-- config.md
+|   +-- index.md
++-- run_jdoc.jl (*)
+```
+
+where `run_jdoc.jl` is something like
+
+```julia
+using JuDoc
+FOLDER_PATH = @__DIR__
+judoc(single_pass=false)
+```
+
+this leads to (files/folders marked with a † are generated)
+
+```
+site
++-- css (†)
++-- libs
++-- pub (†)
+|   +-- folder1 ...
+|   +-- folder2 ...
++-- src
++-- index.html (†)
++-- run_jdoc.jl
+```
 
 ## TODO / Notes
 
