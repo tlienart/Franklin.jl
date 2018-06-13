@@ -8,7 +8,8 @@ the format KEY => PAIR where
 and the second is a tuple of accepted possible (super)types for that value. (e.g.: "THE AUTHOR" => (String, Void))
 """
 const JD_GLOB_VARS = Dict{String, Pair{Any, Tuple}}(
-	"author" => Pair("THE AUTHOR", (String, Void))
+	"author" => Pair("THE AUTHOR", (String, Void)),
+    "date_format" => Pair("U dd, yyyy", (String,))
     )
 
 
@@ -19,12 +20,23 @@ Dictionary of variables copied and then set for each page (through definitions).
 Entries have the same format as for `JD_GLOB_VARS`.
 """
 const JD_LOC_VARS = Dict{String, Pair{Any, Tuple}}(
-    "hasmath" => Pair(true, (Bool,)),
-    "hascode" => Pair(true, (Bool,)),
-    "isnotes" => Pair(true, (Bool,)),
-    "title"   => Pair("THE TITLE", (String,)),
-    "date"    => Pair(Date(), (String, Date, Void))
+    "hasmath"  => Pair(true, (Bool,)),
+    "hascode"  => Pair(false, (Bool,)),
+    "isnotes"  => Pair(true, (Bool,)),
+    "title"    => Pair("THE TITLE", (String,)),
+    "date"     => Pair(Date(), (String, Date, Void)),
+    "jd_ctime" => Pair(Date(), (Date,)),
+    "jd_mtime" => Pair(Date(), (Date,)),
     )
+
+
+"""
+    jd_date(d)
+
+Convenience function taking a `DateTime` object and returning the corresponding
+formatted string with the format contained in `JD_GLOB_VARS["date_format"]`.
+"""
+jd_date(d::DateTime) = Dates.format(d, JD_GLOB_VARS["date_format"].first)
 
 
 """
@@ -33,6 +45,18 @@ const JD_LOC_VARS = Dict{String, Pair{Any, Tuple}}(
 Checks if a data type `t` is a subtype of a tuple of accepted types `tt`.
 """
 is_ok_type(t, tt) = any(issubtype(t, tᵢ) for tᵢ ∈ tt)
+
+
+"""
+    set_var(dict, key, val)
+
+Take a var dictionary `dict` and update the corresponding pair. This should
+only be used internally as it does not check the validity of `val`.
+See `write_page` where it is used to store a file's creation and last
+modification time.
+"""
+set_var!(dict, key, val) = (dict[key] = Pair(val, dict[key].second))
+
 
 
 """

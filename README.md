@@ -50,6 +50,16 @@ site
 
 ## TODO / Notes
 
+### Bugs
+
+* [x] does not seem to be tracking changes on `index.md`
+* [x] does not seem to be tracking new files
+* [ ] does not seem to deal with maths within a DIV. check order.
+* [ ] deal with image insertion
+* [ ] handle numbering of equations (nonumber, labels...)
+* [ ] allow for simple latex definitions
+* [ ] extract default title from first h1 element
+
 ### Priority
 
 * [ ] if an infra file is modified (html part) then this should trigger a re-build for all md files.
@@ -58,6 +68,46 @@ site
 
 ### Must do
 
+**IF**
+* [ ] (low) should allow either a variable key referencing a bool or fall back and try to interpret as a bool? Ideally would want to be able to do something like
+
+```
+[[ if !date==nothing {{fill date}} ]]
+```
+
+the difficulty being that we'd now need to parse `!date==nothing`, work out where the variable is, look it up the dictionary then interpret the condition... Maybe:
+
+```
+[[ if var ... ]] # amounts to if true(var, identity)
+[[ if ==(var, expr) ... ]] # also eq(var, expr)
+[[ if !=(var, expr) ... ]] # also neq(var, expr)
+[[ if ∈(var, expr) ... ]] # also in(var, expr)
+[[ if ∉(var, expr) ... ]] # also notin(var, expr)
+[[ if true(var, fun) ... ]]
+[[ if false(var, fun) ... ]]
+```
+
+difficulty is capturing all of those especially if `expr` can be arbitrarily complex. This may require actually building a stack for parens matching etc.
+
+* [ ] (low) allow for an **else** statement? maybe `[[ if v ... ][ else ... ]]` can do elseif as well same way I guess.
+
+**DATES**
+* [ ] (low) dates management, `Dates.today()` is no good, every time the file is recompiled (often). Or should just not re-interpret if there's no diff. The latter would require keeping track of the files + time of last modification in a hidden file that is gitignored.
+* [ ] (low) dates (and else), if empty, nothing should appear.
+* [ ] (low) dates, all dates should have the same format (atm, it could be different).
+
+```julia
+Dates.format(now(), "U dd, yyyy")
+Dates.format(Date(2018, 5, 15), "dd U yyyy")
+```
+
+See also [formats](https://en.wikibooks.org/wiki/Introducing_Julia/Working_with_dates_and_times).
+
+**HTML**
+* [ ] (low) remove all comments from HTML
+
+**DRAFT**
+* [ ] (low) allow for **draft** files (should be visible locally but not globally or something)
 * [ ] (medium) dealing with CSS processing
   - `_css` folder now needs to be tracked too (in any case that's a good idea)
   - `_css` files now need to be processed like html
@@ -77,39 +127,17 @@ site
   * maybe just benchmark the whole thing and the different elements
 * [ ] (low) need to have the templates stored somewhere, possibly a side repo. this can be done when the site is a bit established and the CSS/HTML has converged a bit.
 
-#### Continuous time modif checking
+**Counters**
+* [ ] (low) counters for sections + references (similar to hyperref)
 
-Code below "works". Another possibility would be that, when cycling through files, checking what's the last recorded time
-
-See [question on SO](https://stackoverflow.com/questions/50423135/monitoring-files-for-modifications)
+**Exit**
+* [ ] (low) in running script need
 
 ```julia
-files_and_times = Dict{String, Int}()
-for (root, _, files) ∈ walkdir("web_md")
-    for f ∈ files
-        fpath = joinpath(root, f)
-        files_and_times[fpath] = stat(fpath).mtime
-    end
-end
-try
-    while true
-        for (f, t) ∈ files_and_times
-            cur_t = stat(f).mtime
-            if cur_t > t
-                files_and_times[f] = cur_t
-                println("file $f was modified")
-            end
-        end
-        sleep(0.5)
-    end
-catch x
-    if isa(x, InterruptException)
-        println("Shutting down.")
-    else
-        throw(x)
-    end
-end
+ccall(:jl_exit_on_sigint, Void, (Cint,), 0)
 ```
+
+otherwise segfault on CTRL+C (outside of REPL). Should encourage doing stuff in the REPL (not like Hugo). For productionised version can have a small shell script or something that launches Julia with appropriate first few lines or something.
 
 ### Thoughts
 
@@ -160,8 +188,32 @@ Assume what's given will not crash everything (no sandboxing)
 * `[[if ...]]` use block if some bool
 * no input file should be named `config.md` apart from the one and only file containing the global configuration for the full website.
 
+## Jd vars
+
+* `jd_ctime` file creation (for md file)
+* `jd_mtime` last modif (for md file)
+
 ## Design
 
 ### nice layouts
 
 * https://retractionwatch.com/
+
+
+### Variables
+
+JD_GLOB_VARS    Def. Val        Note
+---             ---             ---
+author          "THE AUTHOR"      (String, Void)
+date_format     "U dd, yyyy"    Jan 01, 2011 (String,)
+
+
+JD_LOC_VARS     Def. Val        Note
+---             ---             ---
+hasmath         true            (Bool,)
+hascode         false           (Bool,)
+isnotes (†)     true            (Bool,)
+title           "THE TITLE"     (String,)
+date            Date()          (String, Date, Void)
+jd_ctime ⭒      Date()          (Date,)
+jd_mtime ⭒      Date()          (Date,)

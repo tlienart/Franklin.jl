@@ -87,7 +87,8 @@ remove_comments(md_string) = replace(md_string, COMMENTS, "")
 """
     extract_page_defs(md_string, var_dict)
 
-Capture lines of the form `@def VARNAME VALUE`
+Capture lines of the form `@def VARNAME VALUE`. They are then further processed
+through `set_vars!` (see `jd_vars.jl`).
 """
 function extract_page_defs(md_string)
     # container for recovered definitions

@@ -101,11 +101,18 @@ function write_page(root, file, head, pg_foot, foot)
     ###
     # 0. create a dictionary with all the variables available to the page
     # 1. read the markdown into string, convert it and extract definitions
-    # 2. eval the definitions and update the variable dictionary
+    # 2. eval the definitions and update the variable dictionary, also retrieve
+    # document variables (time of creation, time of last modif) and add those
+    # to the dictionary.
     ###
     jd_vars = merge(JD_GLOB_VARS, copy(JD_LOC_VARS))
-    (content, defs) = convert_md(readstring(joinpath(root, file)))
+    fpath = joinpath(root, file)
+    (content, defs) = convert_md(readstring(fpath))
     set_vars!(jd_vars, defs)
+    # adding document variables to the dictionary
+    s = stat(fpath)
+    set_var!(jd_vars, "jd_ctime", jd_date(Dates.unix2datetime(s.ctime)))
+    set_var!(jd_vars, "jd_mtime", jd_date(Dates.unix2datetime(s.mtime)))
     ###
     # 3. process blocks in the html infra elements based on `jd_vars` (e.g.:
     # add the date in the footer)
@@ -131,6 +138,17 @@ change. The variable `verb` propagates verbosity.
 """
 function scan_input_dir!(md_files, html_files, other_files,
                          infra_files, verb=false)
+    # Top level files: only allowed: `index.md` or `index.html` and config.md
+    for file ∈ readdir(JD_PATHS[:in])
+        file ∉ ["index.md", "index.html", "config.md"] && continue
+        fname, fext = splitext(file)
+        fpair = normpath(JD_PATHS[:in] * "/")=>file
+        if fext == ".md"
+            add_if_new_file!(md_files, fpair, verb)
+        else
+            add_if_new_file!(html_files, fpair, verb)
+        end
+    end
     # Pages
     for (root, _, files) ∈ walkdir(JD_PATHS[:in_pages])
         # ensure there's a "/" at the end of the root
@@ -309,7 +327,7 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
     		end # if mod(cntr, NCYCL)
             end # try while
         catch x
-        	isa(x, InterruptException) ? println("Shutting down.") : throw(x)
+        	isa(x, InterruptException) ? println("\nShutting down.") : throw(x)
         end
     end
 end

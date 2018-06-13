@@ -38,6 +38,7 @@ function process_div_blocks(html_string, div_b)
     return html_string
 end
 
+
 """
     interweave_rep(html_string, splitter, replacements)
 
@@ -155,11 +156,11 @@ in the `all_vars` dict assumed to be contained in `params`.
 function braces_fill(params, all_vars)
     replacement = ""
 
-    # checking that got appropriate numbers of parameters
+    # checking that got single parameter (1)
     ok_nargs, sparams = split_params(params, "fill", 1)
     vname = ok_nargs ? sparams : ""
 
-    # correct number of arguments
+    # provided there's 1 and only 1 arg
     if ok_nargs
         if haskey(all_vars, vname)
             tmp_repl = all_vars[vname].first # get the value stored
