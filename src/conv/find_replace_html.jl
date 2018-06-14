@@ -2,7 +2,13 @@
     MATHS + DIV BLOCKS
 =#
 
-dpat(div_name, content) = "<div class=\"$div_name\">$content</div>\n"
+"""
+    div_replace(div_name, content)
+
+Convenience function to return the HTML corresponding to a div block with name
+`div` and content `content`.
+"""
+div_replace(div_name, content) = "<div class=\"$div_name\">$content</div>\n"
 
 
 """
@@ -33,7 +39,7 @@ div block.
 function process_div_blocks(html_string, div_b)
     for (i, (dname, content)) ∈ enumerate(div_b)
         html_string = replace(html_string,
-                                "##DIV_BLOCK##$i", dpat(dname, content), 1)
+                                "##DIV_BLOCK##$i", div_replace(dname, content), 1)
     end
     return html_string
 end

@@ -80,8 +80,11 @@ function convert_md(md_string)
     html_string = html(Markdown.parse(md_string))
 
     # Process blocks and plug back in what is needed
-    html_string = process_math_blocks(html_string, asym_bm, sym_bm)
+    # NOTE: ordering matters, should go from outside to inside so
+    # 1. div blocks
+    # 2. whatever may be within the div blocks
     html_string = process_div_blocks(html_string, div_b)
+    html_string = process_math_blocks(html_string, asym_bm, sym_bm)
 
     return (html_string, defs)
 end

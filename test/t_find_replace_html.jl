@@ -19,7 +19,7 @@ end
 
 
 @testset "Proc div b" begin
-	t = JuDoc.dpat("blah", "content is here")
+	t = JuDoc.div_replace("blah", "content is here")
 	@test t == "<div class=\"blah\">content is here</div>\n"
 	s = raw"""
 	This is some *markdown* followed by a div:
