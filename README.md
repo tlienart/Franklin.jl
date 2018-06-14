@@ -54,7 +54,7 @@ site
 
 * [x] does not seem to be tracking changes on `index.md`
 * [x] does not seem to be tracking new files
-* [ ] does not seem to deal with maths within a DIV. check order.
+* [x] does not seem to deal with maths within a DIV. check order.
 * [ ] deal with image insertion
 * [ ] handle numbering of equations (nonumber, labels...)
 * [ ] allow for simple latex definitions
@@ -105,6 +105,8 @@ See also [formats](https://en.wikibooks.org/wiki/Introducing_Julia/Working_with_
 
 **HTML**
 * [ ] (low) remove all comments from HTML
+* [ ] (low) div block nesting would not be handled well (would need recursive call of `div_blocks`, might be reasonably easy to do though)
+* [ ] (low) raw html
 
 **DRAFT**
 * [ ] (low) allow for **draft** files (should be visible locally but not globally or something)
@@ -198,7 +200,7 @@ Assume what's given will not crash everything (no sandboxing)
 ### nice layouts
 
 * https://retractionwatch.com/
-
+* http://arrgh.tim-smith.us/
 
 ### Variables
 

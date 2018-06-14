@@ -13,17 +13,7 @@
 	\end{eqnarray}
 	"""
 	md_html, defs = JuDoc.convert_md(md_string)
-	@test md_html == raw"""
-	<h1>Title</h1>
-	<p>This is some <em>markdown</em> with \(\sin^2(x)+\cos^2(x)=1\) and also $$\sin^2(x)+\cos^2(x)\quad\!\!=\quad\!\!1 $$ and maybe <div class="theorem">
-	dis a theorem with ##SYM_MATH_BLOCK##2 and
-	</div>
-	 maybe just some more text $$
-	\begin{array}{c}
-		1 + 1 &=& 2
-	\end{array}
-	$$</p>
-	"""
+	@test md_html =="<h1>Title</h1>\n<p>This is some <em>markdown</em> with \\(\\sin^2(x)+\\cos^2(x)=1\\) and also \$\$\\sin^2(x)+\\cos^2(x)\\quad\\!\\!=\\quad\\!\\!1 \$\$ and maybe <div class=\"theorem\">\ndis a theorem with \$\$\\exp(i\\pi)+1=0\$\$ and\n</div>\n maybe just some more text \$\$\n\\begin{array}{c}\n\t1 + 1 &=& 2\n\\end{array}\n\$\$</p>\n"
 end
 
 #=
@@ -34,12 +24,16 @@ temp_config = joinpath(JuDoc.JD_PATHS[:in], "config.md")
 write(temp_config, "@def author = \"Stefan Zweig\"")
 temp_index = joinpath(JuDoc.JD_PATHS[:in], "index.md")
 write(temp_index, "blah blah")
+temp_index2 = joinpath(JuDoc.JD_PATHS[:in], "index.html")
+write(temp_index2, "blah blih")
 temp_blah = joinpath(JuDoc.JD_PATHS[:in_pages], "blah.md")
 write(temp_blah, "blah blah")
 temp_html = joinpath(JuDoc.JD_PATHS[:in_pages], "temp.html")
 write(temp_html, "some html")
 temp_rnd = joinpath(JuDoc.JD_PATHS[:in_pages], "temp.rnd")
 write(temp_rnd, "some random")
+temp_css = joinpath(JuDoc.JD_PATHS[:in_css], "temp.css")
+write(temp_css, "some css")
 
 
 @testset "Prep outdir" begin
@@ -87,6 +81,7 @@ end
 
 temp_config = joinpath(JuDoc.JD_PATHS[:in], "config.md")
 write(temp_config, "@def author = \"Stefan Zweig\"")
+rm(temp_index2)
 
 @testset "Part convert" begin
 	write(JuDoc.JD_PATHS[:in_html] * "head.html", raw"""
@@ -110,4 +105,6 @@ write(temp_config, "@def author = \"Stefan Zweig\"")
 	@test issubset(["css", "libs", "index.html"], readdir(JuDoc.JD_PATHS[:f]))
 	@test issubset(["temp.html", "temp.rnd"], readdir(JuDoc.JD_PATHS[:out]))
 	@test readstring(JuDoc.JD_PATHS[:f] * "index.html") == "<!doctype html>\n<html lang=\"en-UK\">\n\t<head>\n\t\t<meta charset=\"UTF-8\">\n\t\t<link rel=\"stylesheet\" href=\"/css/main.css\">\n\t</head>\n<body><div class=content>\n<p>blah blah</p>\n<div class=\"page-foot\">\n\t\t<div class=\"copyright\">\n\t\t\t\t&copy; All rights reserved.\n\t\t</div>\n</div></div>    </body>\n</html>"
+	rm(temp_index)
+	@test_warn "I didn't find an index.[md|html], there should be one. Ignoring." JuDoc.judoc()
 end
