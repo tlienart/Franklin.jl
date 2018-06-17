@@ -1,5 +1,5 @@
 #=
-    MATHS
+    PROCESS MATH BLOCKS
 =#
 
 """
@@ -21,24 +21,15 @@ function process_math_blocks(html_string, asym_bm, sym_bm)
 end
 
 
-"""
-    process_div_blocks(html_string, div_b)
-
-Same as for math block with the difference that it processes the name of the
-div block.
-"""
-function process_div_blocks(html_string, div_b)
-    for (i, (dname, content)) ∈ enumerate(div_b)
-        html_string = replace(html_string,
-                                "##DIV_BLOCK##$i", div_replace(dname, content), 1)
-    end
-    return html_string
-end
-
-
 #=
-    DIV TOKENS (simple replace)
+    PROCESS DIV BLOCKS
+
+simple replacement of the tokens:
+
+* `@@name` --> `<div class="name">`
+* `@@` --> `</div>`
 =#
+
 const DIV_OPEN = r"@@([a-zA-Z]\S*)"
 const DIV_CLOSE = r"@@(\s|\n|$)"
 
