@@ -69,23 +69,20 @@ processing.
 function convert_md(md_string)
     # Comments and variables
     md_string = remove_comments(md_string)
-    (md_string, defs) = extract_page_defs(md_string)
+    (md_string, defs) = extract_page_vars_defs(md_string)
 
     # Maths & Div blocks
-    (md_string, asym_bm) = asym_math_blocks(md_string)
-    (md_string, sym_bm) = sym_math_blocks(md_string)
-    (md_string, div_b) = div_blocks(md_string)
+    (md_string, asym_bm) = extract_asym_math_blocks(md_string)
+    (md_string, sym_bm) = extract_sym_math_blocks(md_string)
 
     # Standard Markdown parsing on the rest
     html_string = html(Markdown.parse(md_string))
 
-    # Process blocks and plug back in what is needed
-    # NOTE: ordering matters, should go from outside to inside so
-    # 1. div blocks
-    # 2. whatever may be within the div blocks
-    html_string = process_div_blocks(html_string, div_b)
+    # Process left-over blocks / plug things back in
+    html_string = div_replace(html_string)
     html_string = process_math_blocks(html_string, asym_bm, sym_bm)
 
+    # return transformed html and extracted page variables definitions
     return (html_string, defs)
 end
 

@@ -5,7 +5,8 @@ else
     using Test
 end
 
-include("t_jd_paths.jl") # MUST BE RUN FIRST AND ONLY ONCE
+# NOTE: must be run 1st and *only once*
+include("t_jd_paths.jl")
 
 # --- CORE TESTS ---
 
