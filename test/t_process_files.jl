@@ -9,11 +9,11 @@
 	@@
 	maybe just some more text
 	\begin{eqnarray}
-		1 + 1 &=& 2
+	1 + 1 &=& 2
 	\end{eqnarray}
 	"""
 	md_html, defs = JuDoc.convert_md(md_string)
-	@test md_html =="<h1>Title</h1>\n<p>This is some <em>markdown</em> with \\(\\sin^2(x)+\\cos^2(x)=1\\) and also \$\$\\sin^2(x)+\\cos^2(x)\\quad\\!\\!=\\quad\\!\\!1 \$\$ and maybe <div class=\"theorem\">\ndis a theorem with \$\$\\exp(i\\pi)+1=0\$\$ and\n</div>\n maybe just some more text \$\$\n\\begin{array}{c}\n\t1 + 1 &=& 2\n\\end{array}\n\$\$</p>\n"
+	@test md_html == "<h1>Title</h1>\n<p>This is some <em>markdown</em> with \\(\\sin^2(x)+\\cos^2(x)=1\\) and also \$\$\\sin^2(x)+\\cos^2(x)\\quad\\!\\!=\\quad\\!\\!1 \$\$ and maybe <div class=\"theorem\"> dis a theorem with \$\$\\exp(i\\pi)+1=0\$\$ and </div>maybe just some more text \$\$\n\\begin{array}{c}\n1 + 1 &=& 2\n\\end{array}\n\$\$</p>\n"
 end
 
 #=
@@ -50,6 +50,7 @@ write(temp_css, "some css")
 	@test !isfile(temp_out)
 end
 
+
 @testset "Scan dir" begin
 	# it also tests add_if_new_file and last
 	md_files = Dict{Pair{String, String}, Float64}()
@@ -63,6 +64,7 @@ end
 	@test html_files[JuDoc.JD_PATHS[:in_pages]=>"temp.html"] == JuDoc.last(temp_html)
 	@test other_files[JuDoc.JD_PATHS[:in_pages]=>"temp.rnd"] == JuDoc.last(temp_rnd)
 end
+
 
 @testset "Config+write" begin
 	JuDoc.process_config()

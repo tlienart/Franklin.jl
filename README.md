@@ -160,6 +160,9 @@ otherwise segfault on CTRL+C (outside of REPL). Should encourage doing stuff in 
 npm install -g local-web-server
 ```
 
+actually [this](https://medium.com/@svinkle/start-a-local-live-reload-web-server-with-one-command-72f99bc6e855) is even better with live reload.
+It looks like it may be possible to do this with a combination of `WebSockets.jl` and `HTTP.jl` but haven't figured out how yet. Package `Pages.jl` may offer some (out of date) help.
+
 ### Running
 
 ```

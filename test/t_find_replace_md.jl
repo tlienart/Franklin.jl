@@ -4,7 +4,7 @@
 		blahblah \[target\] blah
 		\[target2\] blih
 		"""
-	(s, abm) = JuDoc.asym_math_blocks(s)
+	(s, abm) = JuDoc.extract_asym_math_blocks(s)
 	@test s == raw"""
 		blahblah ##ASYM_MATH_BLOCK##1 blah
 		##ASYM_MATH_BLOCK##2 blih
@@ -17,7 +17,7 @@
 		blahblah \begin{align}target\end{align} blah
 		\begin{align}target2\end{align} blih
 		"""
-	(s, abm) = JuDoc.asym_math_blocks(s)
+	(s, abm) = JuDoc.extract_asym_math_blocks(s)
 	@test s == raw"""
 		blahblah ##ASYM_MATH_BLOCK##1 blah
 		##ASYM_MATH_BLOCK##2 blih
@@ -30,7 +30,7 @@
 		blahblah \begin{eqnarray}target\end{eqnarray} blah
 		\begin{eqnarray}target2\end{eqnarray} blih
 		"""
-	(s, abm) = JuDoc.asym_math_blocks(s)
+	(s, abm) = JuDoc.extract_asym_math_blocks(s)
 	@test s == raw"""
 		blahblah ##ASYM_MATH_BLOCK##1 blah
 		##ASYM_MATH_BLOCK##2 blih
@@ -45,7 +45,7 @@
 		target3
 		\end{align}
 		"""
-	(s, abm) = JuDoc.asym_math_blocks(s)
+	(s, abm) = JuDoc.extract_asym_math_blocks(s)
 	@test s == raw"""
 		blahblah ##ASYM_MATH_BLOCK##3 blah
 		##ASYM_MATH_BLOCK##1 and ##ASYM_MATH_BLOCK##2
@@ -62,7 +62,7 @@ end
 		blahblah $target$ blah
 		$target2$ blih
 		"""
-	(s, sbm) = JuDoc.sym_math_blocks(s)
+	(s, sbm) = JuDoc.extract_sym_math_blocks(s)
 	@test s == raw"""
 		blahblah ##SYM_MATH_BLOCK##1 blah
 		##SYM_MATH_BLOCK##2 blih
@@ -75,7 +75,7 @@ end
 		blahblah $$target$$ blah
 		$$target2$$ blih
 		"""
-	(s, sbm) = JuDoc.sym_math_blocks(s)
+	(s, sbm) = JuDoc.extract_sym_math_blocks(s)
 	@test s == raw"""
 		blahblah ##SYM_MATH_BLOCK##1 blah
 		##SYM_MATH_BLOCK##2 blih
@@ -88,28 +88,13 @@ end
 		blahblah $target$ blah
 		$$target2$$ blih
 		"""
-	(s, sbm) = JuDoc.sym_math_blocks(s)
+	(s, sbm) = JuDoc.extract_sym_math_blocks(s)
 	@test s == raw"""
 		blahblah ##SYM_MATH_BLOCK##2 blah
 		##SYM_MATH_BLOCK##1 blih
 		"""
 	@test sbm[1][2] == "target2"
 	@test sbm[2][2] == "target"
-end
-
-
-@testset "Div Blocks" begin
-	s = raw"""
-		Yada yada yada
-		@@warning target @@
-		"""
-	(s, db) = JuDoc.div_blocks(s)
-	@test s == raw"""
-		Yada yada yada
-		##DIV_BLOCK##1
-		"""
-	@test db[1][1] == "warning"
-	@test db[1][2] == " target "
 end
 
 
@@ -137,7 +122,7 @@ end
 
 	Blah etc
 	"""
-	(s, defs) = JuDoc.extract_page_defs(s)
+	(s, defs) = JuDoc.extract_page_vars_defs(s)
 	@test s == "\n\n\nBlah etc\n"
 	@test defs == ["hasmath"=>" = false", "hascode"=>" = true"]
 end
