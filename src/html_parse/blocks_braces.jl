@@ -28,25 +28,6 @@ function process_braces_blocks(html_string, all_vars)
 end
 
 
-"""
-    split_params(params, fun_name, expect_args)
-
-Helper function to split a string `params` expected to contain references to
-parameters for `fun_name` in number `expect_args`. If that's not the case,
-with either too few or too many arguments, a warning is returned and the action
-will be ignored.
-"""
-function split_params(params, fun_name, expect_args)
-    sparams = split(params)
-    len_sparams = length(sparams)
-    flag = (len_sparams == expect_args)
-    if !flag
-        warn("I found a '$fun_name' and expected $expect_args argument(s) but got $len_sparams instead. Ignoring.")
-    end
-    return (flag, (len_sparams == 1) ? sparams[1] : sparams)
-end
-
-
 #=
     Braces functions
 
@@ -115,28 +96,3 @@ const BRACES_FUNS = Dict(
     "fill" => braces_fill, # fill value contained in vars
     "insert" => braces_insert # insert file
     )
-
-
-#=
-    Processing html blocks
-
-Chaining operations.
-=#
-
-
-"""
-    ⊙(f, g)
-
-Partial composition of two functions of two variables.
-Amounts to f(g(x, y), y). This is just for convenience and not very useful.
-"""
-⊙(f::Function, g::Function) = (x, y)->f(g(x, y), y)
-
-
-"""
-    process_html_blocks(html_string, all_vars)
-
-Find `[[...]]` and `{{...}}` blocks and modify `html_string`
-accordingly. `[[...]]` are processed first.
-"""
-process_html_blocks = process_braces_blocks ⊙ process_if_sqbr_blocks

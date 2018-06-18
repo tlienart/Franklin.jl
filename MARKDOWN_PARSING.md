@@ -1,28 +1,5 @@
 # Markdown Parsing
 
-## Todo
-
-* [ ] make the extended markdown parsing a standalone thing separated from the html parsing to make code easier to navigate
-* [x] ~~rename `extract_page_defs` into `get_page_vars_defs`~~
-* [x] rename `asym_math_blocks` into `extract_asym_math_blocks`
-* [x] rename `sym_math_blocks` into `extract_sym_math_blocks`
-* [ ] rename `div_blocks` into `get_div_blocks`
-* [ ] make `@def` blocks have an equal sign.
-* [ ] change way div are processed --> it should just be a simple replacement, no need for processing in fact. this means that nesting is then not necessary.
-    * `@@name` --> `##DIV:name##` (so that not translated)
-    * `@@` --? `##ENDDIV##`
-    * then after html conversion: `##DIV:name##` --> `<div class="name">` and `##ENDDIV##` --> `</div>`.
-
-**NOTE**
-
-- block patterns are only used for markdown parsing
-
-## Currently allowed
-
-### Order of operations
-
-#### extraction (parsing)
-
 1. Removal of comments `<!-- ... -->` via `remove_comments`
     * return a `mdstring` without comments
 1. Extraction of local page variables definitions `@def hasmath = true` via `extract_page_defs`
