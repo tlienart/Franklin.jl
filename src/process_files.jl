@@ -217,7 +217,7 @@ all markdown files to html and reproduce the same structure to an output dir.
 if file names have been changed etc to get rid of stale files.
 * `verb` whether to display things
 """
-function judoc(single_pass=true, clear_out_dir=false, verb=true)
+function judoc(;single_pass=true, clear_out_dir=false, verb=true)
 
     ###
     # . setting up:
