@@ -18,7 +18,6 @@ function process_math_blocks(html_string, asym_bm, sym_bm)
     return html_string
 end
 
-
 const DIV_OPEN = r"@@([a-zA-Z]\S*)"
 const DIV_CLOSE = r"@@(\s|\n|$)"
 

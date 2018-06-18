@@ -3,9 +3,9 @@
 
 NOTE assumption that the braces blocks are closed properly...
 =#
+
 const BRACES_BLOCK = r"{{\s*([a-z]\S+)\s+((.|\n)+?)}}"
 const BRACES_BLOCK_SPLIT = r"{{(.|\n)+?}}"
-
 
 """
     process_braces_blocks(html_string, all_vars)

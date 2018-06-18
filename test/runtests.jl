@@ -10,7 +10,12 @@ include("t_jd_paths.jl")
 
 # --- CORE TESTS ---
 
-include("t_find_replace_md.jl")
-include("t_find_replace_html.jl")
+include("t_md_maths.jl")
+include("t_md_misc.jl")
+
+include("t_html_maths_divs.jl")
+include("t_html_blocks_sqbr.jl")
+include("t_html_blocks_braces.jl")
+
 include("t_jd_vars.jl")
 include("t_process_files.jl")

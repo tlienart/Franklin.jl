@@ -1,12 +1,13 @@
 #=
     [[ CTRL_TOKEN VAR ... ]]
 
-NOTE: nesting is NOT allowed (it's meant to be rudimentary so that blocks can
-just be obtained via simple regex.
+NOTE: nesting is not (yet) allowed (it's meant to be rudimentary so that blocks
+can just be obtained via simple regex). There's not yet a clear use case for
+nesting.
 =#
+
 const IF_SQBR_BLOCK = r"\[\[\s*if\s+([a-z]\S+)((.|\n)+?)\]\]"
 const IF_SQBR_BLOCK_SPLIT = r"\[\[\s*if\s(.|\n)+?\]\]"
-
 
 """
     process_if_sqbr_blocks(html_string, all_vars)
