@@ -83,3 +83,4 @@ It looks like it may be possible to do this with a combination of `WebSockets.jl
 
 * https://retractionwatch.com/
 * http://arrgh.tim-smith.us/
+* https://amol9.github.io/2017/02/21/Making-Asynchronous-Http-Requests-With-Julia/ clean menu hidden always unless clicked. same behaviour for mobile.
