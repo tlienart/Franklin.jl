@@ -91,7 +91,7 @@ function set_vars!(
     if !isempty(assignments)
         for (key, assign) ∈ assignments
             if haskey(jd_vars, key)
-                tmp = parse("__tmp__" * assign)
+                tmp = parse("__tmp__ = " * assign)
                 # try to evaluate the parsed assignment
                 try
                     tmp = eval(tmp)

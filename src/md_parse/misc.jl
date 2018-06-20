@@ -1,7 +1,8 @@
 const COMMENTS = r"<!--(.|\n)*?-->"
-const DEFS = r"@def\s+(\S+)(\s.*)"
+const DEFS = r"@def\s+(\S+)\s*?=\s*?(\S.*)"
 const ESCAPED = r"(\n|^)~~~\n((.|\n)*?)\n~~~(\n|$)"
 const ESCAPED_PH = "##ESCAPED_BLOCK##"
+
 
 """
     remove_comments(md_string)

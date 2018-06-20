@@ -24,5 +24,5 @@ end
 	"""
 	(s, defs) = JuDoc.extract_page_vars_defs(s)
 	@test s == "\n\n\nBlah etc\n"
-	@test defs == ["hasmath"=>" = false", "hascode"=>" = true"]
+	@test defs == ["hasmath"=>"false", "hascode"=>"true"]
 end
