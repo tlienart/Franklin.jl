@@ -23,5 +23,18 @@ end
 	blah
 	@@d1 is blah @@d2
 	and etc blah @@ and @@"""
-	@test JuDoc.div_replace(t) == "blah\n<div class=\"d1\"> is blah <div class=\"d2\">\nand etc blah </div>and </div>"
+	@test JuDoc.process_div_blocks(t) == "blah\n<div class=\"d1\"> is blah <div class=\"d2\">\nand etc blah </div>and </div>"
+end
+
+
+@testset "Proc esc" begin
+	t = raw"""
+	Hello
+	~~~
+	this should be escaped @@ ϵ π
+	~~~
+	Not **this**
+	"""
+	(h, eb) = JuDoc.extract_escaped_blocks(t)
+	@test JuDoc.process_escaped_blocks(h, eb) == "Hello\nthis should be escaped @@ ϵ π\nNot **this**\n"
 end

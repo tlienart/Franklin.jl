@@ -13,7 +13,7 @@ include("t_jd_paths.jl")
 include("t_md_maths.jl")
 include("t_md_misc.jl")
 
-include("t_html_maths_divs.jl")
+include("t_html_process_blocks.jl")
 include("t_html_blocks_sqbr.jl")
 include("t_html_blocks_braces.jl")
 

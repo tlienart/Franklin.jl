@@ -25,9 +25,22 @@ div_replace_open(hs) = replace(hs, DIV_OPEN, s"<div class=\"\1\">")
 div_replace_close(hs) = replace(hs, DIV_CLOSE, "</div>")
 
 """
-    div_replace(html_string)
+    process_div_blocks(html_string)
 
 Find tokens of the form `@@name` and `@@`, delimiters of div blocks in the
 Markdown notes and replace them by the html equivalent.
 """
-div_replace(html_string) = (div_replace_close ∘ div_replace_open)(html_string)
+process_div_blocks = div_replace_close ∘ div_replace_open
+
+
+"""
+    process_escaped_blocks(html_string, eb)
+
+Plug blocks that were escaped back in the `html_string` given the placeholder.
+"""
+function process_escaped_blocks(html_string, eb)
+    for (i, inner) ∈ enumerate(eb)
+        html_string = replace(html_string, ESCAPED_PH * "$i", inner, 1)
+    end
+    return html_string
+end
