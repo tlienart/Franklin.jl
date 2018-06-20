@@ -70,6 +70,7 @@ function convert_md(md_string)
     # Comments and variables
     md_string = remove_comments(md_string)
     (md_string, defs) = extract_page_vars_defs(md_string)
+    (md_string, eb) = extract_escaped_blocks(md_string)
 
     # Maths & Div blocks
     (md_string, asym_bm) = extract_asym_math_blocks(md_string)
@@ -79,8 +80,9 @@ function convert_md(md_string)
     html_string = html(Markdown.parse(md_string))
 
     # Process left-over blocks / plug things back in
-    html_string = div_replace(html_string)
+    html_string = process_div_blocks(html_string)
     html_string = process_math_blocks(html_string, asym_bm, sym_bm)
+    html_string = process_escaped_blocks(html_string, eb)
 
     # return transformed html and extracted page variables definitions
     return (html_string, defs)
