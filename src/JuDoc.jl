@@ -1,19 +1,23 @@
 module JuDoc
 
-export judoc
+using Markdown: html
 
-include("jd_paths.jl")
-include("jd_vars.jl")
+const BIG_INT = 100_000_000
 
-include("md_parse/MDBlock.jl")
-include("md_parse/maths.jl")
-include("md_parse/misc.jl")
+include("parser/tokens.jl")
+include("parser/find_tokens.jl")
 
-include("html_parse/process_blocks.jl")
-include("html_parse/blocks_sqbr.jl")
-include("html_parse/blocks_braces.jl")
-include("html_parse/tools.jl")
+include("parser/latex/patterns.jl")
+include("parser/latex/tokens.jl")
+include("parser/latex/resolve_latex.jl")
 
-include("process_files.jl")
+include("parser/markdown/patterns.jl")
+include("parser/markdown/tokens.jl")
+include("parser/markdown/find_blocks.jl")
+
+include("parser/html/tokens.jl")
+include("parser/html/find_blocks.jl")
+
+include("converter/markdown.jl")
 
 end # module
