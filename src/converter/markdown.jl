@@ -1,21 +1,54 @@
+"""
+    stripp(s)
+
+Convenience function to remove `<p>` and `</p>` added by the Base markdown to
+html converter.
+"""
+function stripp(s::AbstractString)
+    ts = ifelse(startswith(s, "<p>"), s[4:end], s)
+    ts = ifelse(endswith(s, "</p>\n"), ts[1:end-5], ts)
+    return ts
+end
+
+"""
+    md2html(s, ismaths)
+
+Convenience function to call the base markdown to html converter on "simple"
+strings (i.e. strings that don't need to be further considered and don't
+contain anything else than markdown tokens).
+"""
+function md2html(s::AbstractString, ismaths::Bool=false)
+    isempty(s) && return s
+    ismaths && return s
+    pre = ifelse(s[1] == ' ', " ", "")
+    post = ifelse(s[end] == '\n', "\n", "")
+    return pre * stripp(html(Markdown.parse(s))) * post
+end
+
+
+"""
+    convert_md(mds, pre_lxdefs; isconfig, has_mddefs)
+
+Convert a judoc markdown file into a html.
+"""
 function convert_md(mds, pre_lxdefs=Vector{LxDef}();
                      isconfig=false, has_mddefs=true)
     # Tokenize
     tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
     # Get rid of tokens within code blocks
-    tokens = deactivate_md_xblocks(mds)
+    tokens = deactivate_md_xblocks(tokens)
     # Find brace blocks
     bblocks, tokens = find_md_bblocks(tokens)
     # Find newcommands (latex definitions)
-    lxdefs, tokens = find_md_lxdefs(st, tokens, bblocks)
+    lxdefs, tokens = find_md_lxdefs(mds, tokens, bblocks)
     # Find blocks to extract
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     # Kill trivial tokens that may remain
     tokens = filter(τ -> (τ.name != :LINE_RETURN), tokens)
     # figure out where the remaining blocks are.
-    allblocks = JuDoc.get_allblocks(xblocks, lxdefs, endof(st) - 1)
+    allblocks = JuDoc.get_allblocks(xblocks, lxdefs, endof(mds) - 1)
     # filter out trivial blocks
-    allblocks = filter(β -> (st[β.from:β.to] != "\n"), allblocks)
+    allblocks = filter(β -> (mds[β.from:β.to] != "\n"), allblocks)
 
     # if any lxdefs are given in the context, merge them. `pastdef!` specifies
     # that the definitions appear "earlier" by marking the `.from` at 0
@@ -71,9 +104,8 @@ function convert_md__procblock(β::Block, mds, coms, lxdefs, bblocks)
     that will be processed by the default html converter.
     =#
     if β.name == :REMAIN
-        tempstring = resolve_latex(mds, β.from, β.to, false,
-                                   coms, lxdefs, bblocks)
-        ts = html(Markdown.parse(tempstring))
+        ts = resolve_latex(mds, β.from, β.to, false,
+                           coms, lxdefs, bblocks)
         #= HACK: the base markdown converter adds <p> ... </p> around what
         it converts. Since we convert by blocks, this adds too many of
         those. This should be fine most of the time but there may be
@@ -95,7 +127,7 @@ function convert_md__procblock(β::Block, mds, coms, lxdefs, bblocks)
     trigger further processing.
     =#
     elseif β.name ∈ [:CODE_SINGLE, :CODE]
-        return html(Markdown.parse(mds[β.from:β.to]))
+        return md2html(mds[β.from:β.to])
     #=
     MATH BLOCKS:
     These blocks may contain user-defined latex commands that need to be

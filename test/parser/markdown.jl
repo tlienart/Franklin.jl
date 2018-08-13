@@ -110,23 +110,6 @@
     @test stest[bblocks[2].from:bblocks[2].to] == "{blah}"
 end
 
-@testset "Lx newcom" begin
-    st = raw"""
-        part A \newcommand{\com}{blah} part B \com and
-        \newcommand{\comb}[ 1]{\mathrm{#1}} blah
-        """
-    tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    xblocks, tokens = JuDoc.find_md_xblocks(tokens)
-    allblocks = JuDoc.get_allblocks(xblocks, endof(st) - 1)
-    bblocks, tokens = JuDoc.find_md_bblocks(tokens)
-    lxdefs, allblocks = JuDoc.find_md_lxdefs(st, tokens, allblocks, bblocks)
-    @test lxdefs[1].name == "\\com" && lxdefs[1].narg == 0 &&
-            lxdefs[1].def == "blah"
-    @test lxdefs[2].name == "\\comb" && lxdefs[2].narg == 1 &&
-            lxdefs[2].def == "\\mathrm{#1}"
-end
-
-
 @testset "MD Blocks" begin
     st = raw"""
         \newcommand{\E}[1]{\mathbb E\left[#1\right]}blah de blah

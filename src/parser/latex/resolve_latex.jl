@@ -1,7 +1,6 @@
 #=
 NOTE if ismaths -> don't fail when unknown command (let KaTeX fail)
 =#
-
 """
     resolve_latex(str, bfrom, bto, ismaths, lxtokens, lxdefs, bblocks)
 
@@ -20,11 +19,12 @@ been appropriately replaced and processed.
 """
 function resolve_latex(str::String, bfrom::Int, bto::Int, ismaths::Bool,
                        lxtokens::Vector{Token}, lxdefs::Vector{LxDef},
-                       blocks::Vector{Block})
+                       bblocks::Vector{Block})
 
     # filter lxtokens in the given range (bfrom-bto)
     lxtokens_in = filter(τ -> (τ.from >= bfrom) & (τ.to <= bto), lxtokens)
     active_lxt_in = [true for τ ∈ lxtokens_in]
+
     # no commands? just return the string over the given range
     isempty(lxtokens_in) && return str[bfrom:bto]
     # otherwise, get braces in given range
@@ -34,10 +34,12 @@ function resolve_latex(str::String, bfrom::Int, bto::Int, ismaths::Bool,
     # go over the commands in the block
     offset = bfrom
     pieces = Vector{String}()
+    flags = Vector{Bool}()
     for (i, lxtoken) ∈ enumerate(lxtokens_in)
         active_lxt_in[i] || continue
         # store what's before the first command (if there is anything)
-        (offset < lxtoken.from) && push!(pieces, str[offset:lxtoken.from-1])
+        (offset < lxtoken.from) &&
+            push!(pieces, md2html(str[offset:lxtoken.from-1], ismaths))
         # get the range of the command
         # 1. look for the definition given its name
         lxname = str[lxtoken.from:lxtoken.to]
@@ -79,7 +81,10 @@ function resolve_latex(str::String, bfrom::Int, bto::Int, ismaths::Bool,
             lxnarg = lxdefs[k].narg
             # ==> if zero argument, just plug the definition in.
             if iszero(lxnarg)
-                push!(pieces, lxdefs[k].def)
+                # the def may contain stuff that need to be converted
+                partial, _ = convert_md(lxdefs[k].def * EOS, lxdefs,
+                                        isconfig=false, has_mddefs=false)
+                push!(pieces, partial)
                 offset = lxtoken.to + 1
                 continue
             end
@@ -126,7 +131,8 @@ function resolve_latex(str::String, bfrom::Int, bto::Int, ismaths::Bool,
         end
     end
     # store what's left after the last command (if anything)
-    (offset <= bto) && push!(pieces, str[offset:bto])
+    (offset <= bto) &&
+        push!(pieces, md2html(str[offset:bto], ismaths))
     # assemble the pieces and return the string
     return prod(pieces)
 end

@@ -36,4 +36,4 @@ end
 Convenience function to mark a definition as having been defined in the context
 i.e.: earlier than any other definition appearing in the current page.
 """
-pastdef!(λ::LxDef) = (shift = λ.from; λ.from = 0; λ.to -= shift)
+pastdef!(λ::LxDef) = (shift = λ.from; λ.from = 0; λ.to -= shift; λ)
