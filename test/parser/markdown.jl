@@ -127,7 +127,7 @@ end
         """ * JuDoc.EOS
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
 
-    tokens = JuDoc.deactivate_md_xblocks(tokens)
+    tokens = JuDoc.deactivate_xblocks(tokens, JuDoc.MD_EXTRACT)
     bblocks, tokens = JuDoc.find_md_bblocks(tokens)
     lxdefs, tokens = JuDoc.find_md_lxdefs(st, tokens, bblocks)
 
@@ -150,7 +150,7 @@ end
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
 
     # figure out where the remaining blocks are.
-    allblocks = JuDoc.get_allblocks(xblocks, lxdefs, endof(st) - 1)
+    allblocks = JuDoc.get_md_allblocks(xblocks, lxdefs, endof(st) - 1)
 
     # filter out trivial blocks
     allblocks = filter(β -> (st[β.from:β.to] != "\n"), allblocks)

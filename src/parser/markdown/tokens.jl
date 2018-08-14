@@ -70,7 +70,7 @@ marking it as a potential open brace, same for the close brace.
     MD_EXTRACT
 
 Dictionary to store opening tokens, their corresponding closing tokens and how
-a block surrounded by such tokens should be referred to as.
+a block surrounded by such tokens should be referred to as (md context).
 """
 const MD_EXTRACT = Dict(
     # opening token  # closing token   # name of the block

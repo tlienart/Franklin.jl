@@ -31,9 +31,18 @@ possibilities to consider in which case the order is important: the first
 case that works will be taken.
 """
 const HTML_TOKENS = Dict{Char, Vector{Pair{Tuple{Int, Bool, Function}, Symbol}}}(
-    '{' => [ isexactly("{{") => :FUN_OPEN    ],  # {{
-    '}' => [ isexactly("}}") => :FUN_CLOSE   ],  # }}
-    '[' => [ isexactly("[[") => :CTRL_OPEN   ],  # [[
-    ']' => [ isexactly("]]") => :CTRL_CLOSE  ],  # ]]
-    ']' => [ isexactly("][") => :CTRL_CLOPEN ],  # ][
+    '{' => [ isexactly("{{") => :H_BLOCK_OPEN    ],  # {{
+    '}' => [ isexactly("}}") => :H_BLOCK_CLOSE   ],  # }}
     ) # end dict
+
+
+"""
+    HTML_EXTRACT
+
+Dictionary to store opening tokens, their corresponding closing tokens and how
+a block surrounded by such tokens should be referred to as (html context).
+"""
+const HTML_EXTRACT = Dict(
+    # opening token    # closing token  # name of the block
+    :H_BLOCK_OPEN   => :H_BLOCK_CLOSE  => :H_BLOCK,
+)

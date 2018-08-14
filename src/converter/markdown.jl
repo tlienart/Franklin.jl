@@ -29,14 +29,14 @@ end
 """
     convert_md(mds, pre_lxdefs; isconfig, has_mddefs)
 
-Convert a judoc markdown file into a html.
+Convert a judoc markdown file into a judoc html.
 """
 function convert_md(mds, pre_lxdefs=Vector{LxDef}();
                      isconfig=false, has_mddefs=true)
     # Tokenize
     tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
-    # Get rid of tokens within code blocks
-    tokens = deactivate_md_xblocks(tokens)
+    # Deactivate tokens within code blocks
+    tokens = deactivate_xblocks(tokens, MD_EXTRACT)
     # Find brace blocks
     bblocks, tokens = find_md_bblocks(tokens)
     # Find newcommands (latex definitions)
@@ -46,7 +46,7 @@ function convert_md(mds, pre_lxdefs=Vector{LxDef}();
     # Kill trivial tokens that may remain
     tokens = filter(τ -> (τ.name != :LINE_RETURN), tokens)
     # figure out where the remaining blocks are.
-    allblocks = get_allblocks(xblocks, lxdefs, endof(mds) - 1)
+    allblocks = get_md_allblocks(xblocks, lxdefs, endof(mds) - 1)
     # filter out trivial blocks
     allblocks = filter(β -> (mds[β.from:β.to] != "\n"), allblocks)
 

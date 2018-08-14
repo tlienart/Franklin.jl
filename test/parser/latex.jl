@@ -7,7 +7,7 @@
         \newcommand{\comb}[ 1]{\mathrm{#1}} text C1 $\comb{b}$ text C2
         """ * JuDoc.EOS
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    tokens = JuDoc.deactivate_md_xblocks(tokens)
+    tokens = JuDoc.deactivate_xblocks(tokens, JuDoc.MD_EXTRACT)
     bblocks, tokens = JuDoc.find_md_bblocks(tokens)
     lxdefs, tokens = JuDoc.find_md_lxdefs(st, tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
@@ -35,12 +35,12 @@ end
     st = raw"""a\newcommand{\eqa}[1]{\begin{eqnarray}#1\end{eqnarray}}b
         \eqa{\sin^2(x)+\cos^2(x) &=& 1}""" * JuDoc.EOS
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    tokens = JuDoc.deactivate_md_xblocks(tokens)
+    tokens = JuDoc.deactivate_xblocks(tokens, JuDoc.MD_EXTRACT)
     bblocks, tokens = JuDoc.find_md_bblocks(tokens)
     lxdefs, tokens = JuDoc.find_md_lxdefs(st, tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
-    allblocks = JuDoc.get_allblocks(xblocks, lxdefs, endof(st) - 1)
+    allblocks = JuDoc.get_md_allblocks(xblocks, lxdefs, endof(st) - 1)
     allblocks = filter(β -> (st[β.from:β.to] != "\n"), allblocks)
     coms = filter(τ -> τ.name == :LX_COMMAND, tokens)
     # only the third block will need latex processing
@@ -58,7 +58,7 @@ end
         Then \coma{auth1} and \comb{auth2}{voila} and \coma{auth3}
         """ * JuDoc.EOS
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    tokens = JuDoc.deactivate_md_xblocks(tokens)
+    tokens = JuDoc.deactivate_xblocks(tokens, JuDoc.MD_EXTRACT)
     bblocks, tokens = JuDoc.find_md_bblocks(tokens)
     lxdefs, tokens = JuDoc.find_md_lxdefs(st, tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
@@ -82,7 +82,7 @@ end
         \eqa{ \E{f(X)} \in \R &\text{if}& f:\R\maptso\R }
         """ * JuDoc.EOS
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    tokens = JuDoc.deactivate_md_xblocks(tokens)
+    tokens = JuDoc.deactivate_xblocks(tokens, JuDoc.MD_EXTRACT)
     bblocks, tokens = JuDoc.find_md_bblocks(tokens)
     lxdefs, tokens = JuDoc.find_md_lxdefs(st, tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)

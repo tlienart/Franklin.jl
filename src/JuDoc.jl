@@ -8,6 +8,7 @@ const BIG_INT = 100_000_000
 
 include("parser/tokens.jl")
 include("parser/find_tokens.jl")
+include("parser/block_utils.jl")
 
 include("parser/latex/patterns.jl")
 include("parser/latex/tokens.jl")

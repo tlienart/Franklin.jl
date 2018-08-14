@@ -1,44 +1,4 @@
 """
-    deactivate_md_xblocks(tokens)
-
-Find blocks in the text that will be extracted and mark all tokens within these blocks as inactive in order to avoid them being processed further.
-This allows, for example, to ignore any braces that appear in xblocks.
-"""
-function deactivate_md_xblocks(tokens::Vector{Token})
-    # mark all tokens as active to begin with
-    active_tokens = ones(Bool, length(tokens))
-    bracket_tokens = zeros(Bool, length(tokens))
-    # go over tokens and process the ones announcing a code block
-    for (i, τ) ∈ enumerate(tokens)
-        active_tokens[i] || continue
-        if haskey(MD_EXTRACT, τ.name)
-            close_τ, _ = MD_EXTRACT[τ.name]
-        else
-            # ignore the token (does not announce an code block)
-            continue
-        end
-        # seek forward to find the first closing token
-        k = findfirst(cτ -> (cτ.name == close_τ), tokens[i+1:end])
-        (k == nothing) && error("Found the opening token '$(τ.name)' at '$(τ.from:τ.to)' but not the corresponding closing token. Verify.")
-        # mark tokens within the block as inactive
-        active_tokens[i:i+k] = false
-        bracket_tokens[[i, i+k]] = true
-    end
-    return tokens[active_tokens .| bracket_tokens]
-end
-
-
-"""
-bbalance(token)
-
-Helper function to update the inbalance counter when looking for the closing
-brace of a brace block. Adds 1 if the token corresponds to an opening brace,
-removes 1 if it's a closing brace, adds nothing otherwise.
-"""
-bbalance(τ::Token) = dot(τ.name .== [:LX_BRACE_OPEN, :LX_BRACE_CLOSE], [1, -1])
-
-
-"""
     find_md_bblocks(tokens)
 
 Find active open brace characters `{` and their matching closing braces. Return
@@ -71,7 +31,7 @@ end
 
 
 """
-        find_md_lxdefs(str, tokens, blocks, bblocks)
+    find_md_lxdefs(str, tokens, blocks, bblocks)
 
 Find `\\newcommand` elements and try to parse what follows to form a proper
 Latex command. Return a list of such elements.
@@ -172,9 +132,10 @@ function find_md_xblocks(tokens::Vector{Token})
             continue
         end
         # seek forward to find the first closing token
-        k = findfirst(cτ->(cτ.name == close_τ), tokens[i+1:end]) + i
+        k = findfirst(cτ->(cτ.name == close_τ), tokens[i+1:end])
         (k == nothing) && error("Found the opening token '$(τ.name)' but not the corresponding closing token. Verify.")
         # store the block
+        k += i
         push!(xblocks, Block(bname, τ.from, tokens[k].to))
         # mark tokens within the block as inactive (extracted blocks are not
         # further processed unless they're math blocks where potential
@@ -186,13 +147,13 @@ end
 
 
 """
-    get_allblocks(blocks, strlen)
+    get_md_allblocks(xblocks, lxdefs, strlen)
 
 Given a list of blocks, find the interstitial blocks, tag them as `:REMAIN`
 blocks and return a full list of blocks spanning the string.
 """
-function get_allblocks(xblocks::Vector{Block}, lxdefs::Vector{LxDef},
-                        strlen::Int)
+function get_md_allblocks(xblocks::Vector{Block}, lxdefs::Vector{LxDef},
+                          strlen::Int)
 
     allblocks = Vector{Block}()
     lenxblocks = length(xblocks)

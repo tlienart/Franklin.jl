@@ -25,13 +25,31 @@ the readability of the code to distinguish delimiters (tokens) from segments
 """
 const Block = Token
 
-# convenience constructor for a ':REMAIN' block (blocks that may need further
-# parsing)
+
+"""
+    remain(i, j)
+
+Convenience constructor for a `:REMAIN` block (blocks that may need further
+parsing)
+"""
 remain(i::Int, j::Int) = Block(:REMAIN, i, j)
 
-# convenience constructor for a `LXB` block (latex brackets block i.e. an
-# opening brace, the matching closing brace and the span between them)
+
+"""
+    braces(from, to)
+
+Convenience constructor for a `:LXB` block (latex brackets block i.e. an
+opening brace, the matching closing brace and the span between.)
+"""
 braces(from::Int, to::Int) = Block(:LXB, from, to)
+
+
+"""
+    hblock(from, to)
+
+Convenience constructor for a `:H_BLOCK` block (html block {{...}}).
+"""
+hblock(from::Int, to::Int) = Block(:H_BLOCK, from, to)
 
 
 """
@@ -42,7 +60,14 @@ For a brace block, retrieve the span of what's inside the matching braces.
 brange(block::Block) = block.from+1:block.to-1
 
 
-# return the span from block i to block i+1
+"""
+    hrange(block)
+
+For a hblock, retrieve the span of what's inside the matching braces.
+"""
+hrange(block::Block) = block.from+2:block.to-2
+
+
 """
     span_after(blocks, i)
 
