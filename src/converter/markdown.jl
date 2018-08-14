@@ -86,7 +86,7 @@ function convert_md(mds, pre_lxdefs=Vector{LxDef}();
     hstring = prod(convert_md__procblock(β, context...) for β ∈ allblocks)
 
     # Return the string + judoc variables if relevant
-    return hstring, (has_mddefs ? jd_vars : nothing)
+    return div_replace(hstring), (has_mddefs ? jd_vars : nothing)
 end
 
 

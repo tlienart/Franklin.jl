@@ -7,6 +7,16 @@ function convert_html(hs)
     # Tokenize
     tokens = find_tokens(hs, HTML_TOKENS, HTML_1C_TOKENS)
     # Find hblocks
-    blocks, tokens = find_html_hblocks(hs, tokens)
+    hblocks, tokens = find_html_hblocks(hs, tokens)
+    allblocks = JuDoc.get_html_allblocks(hblocks, endof(st))
+end
+
+
+"""
+    convert_html__procblock(β)
+
+Helper function to process an individual block.
+"""
+function convert_html__procblock(β::Block)
 
 end
