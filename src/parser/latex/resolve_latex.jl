@@ -82,8 +82,10 @@ function resolve_latex(str::String, bfrom::Int, bto::Int, ismaths::Bool,
             # ==> if zero argument, just plug the definition in.
             if iszero(lxnarg)
                 # the def may contain stuff that need to be converted
-                partial, _ = convert_md(lxdefs[k].def * EOS, lxdefs,
-                                        isconfig=false, has_mddefs=false)
+                partial = lxdefs[k].def
+                partial = ifelse(ismaths, mathenv(partial), partial) * EOS
+                partial, _ = convert_md(partial, lxdefs, isconfig=false,
+                                        has_mddefs=false)
                 push!(pieces, partial)
                 offset = lxtoken.to + 1
                 continue
@@ -110,7 +112,7 @@ function resolve_latex(str::String, bfrom::Int, bto::Int, ismaths::Bool,
             # re-parsing is necessary to deal with whatever the definition
             # may bring (including commands / tokens)
             # if we're currently in mathmode, we need to keep track of that
-            partial = ifelse(ismaths, "_\$>_" *partial* "_\$<_", partial) * EOS
+            partial = ifelse(ismaths, mathenv(partial), partial) * EOS
             partial, _ = convert_md(partial, lxdefs,
                                      isconfig=false, has_mddefs=false)
             push!(pieces, partial)

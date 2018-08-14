@@ -115,3 +115,14 @@ const MD_MATHS = Dict(
 List of names of maths environments.
 """
 const MD_MATHS_NAMES = [η for (_, (⎵, η)) ∈ MD_MATHS]
+
+
+"""
+    mathenv(s)
+
+Convenience function to denote a string as being in a math context in a
+recursive parsing situation. These blocks will be processed as math blocks
+but without adding KaTeX elements to it given that they are part of a larger
+context that already has KaTeX elements.
+"""
+mathenv(s) = "_\$>_" * s * "_\$<_"

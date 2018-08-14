@@ -93,4 +93,5 @@ end
     # construct the string
     context = (st, coms, lxdefs, bblocks)
     s = prod(JuDoc.convert_md__procblock(β, context...) for β ∈ allblocks)
+    @test s == "Then something like\n\$\$\\begin{array}{c} \\mathbb E\\left[f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R \\end{array}\$\$\n"
 end

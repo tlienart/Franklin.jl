@@ -42,11 +42,11 @@ function convert_md(mds, pre_lxdefs=Vector{LxDef}();
     # Find newcommands (latex definitions)
     lxdefs, tokens = find_md_lxdefs(mds, tokens, bblocks)
     # Find blocks to extract
-    xblocks, tokens = JuDoc.find_md_xblocks(tokens)
+    xblocks, tokens = find_md_xblocks(tokens)
     # Kill trivial tokens that may remain
     tokens = filter(τ -> (τ.name != :LINE_RETURN), tokens)
     # figure out where the remaining blocks are.
-    allblocks = JuDoc.get_allblocks(xblocks, lxdefs, endof(mds) - 1)
+    allblocks = get_allblocks(xblocks, lxdefs, endof(mds) - 1)
     # filter out trivial blocks
     allblocks = filter(β -> (mds[β.from:β.to] != "\n"), allblocks)
 
@@ -103,46 +103,36 @@ function convert_md__procblock(β::Block, mds, coms, lxdefs, bblocks)
     user-defined latex that needs to be resolved as well as basic markdown
     that will be processed by the default html converter.
     =#
-    if β.name == :REMAIN
-        ts = resolve_latex(mds, β.from, β.to, false,
-                           coms, lxdefs, bblocks)
-        #= HACK: the base markdown converter adds <p> ... </p> around what
-        it converts. Since we convert by blocks, this adds too many of
-        those. This should be fine most of the time but there may be
-        edge cases that will need to be processed further. =#
-        tts = startswith(ts, "<p>") ? ts[4:end] : ts
-        tts = endswith(ts, "</p>\n") ? tts[1:end-5] : tts
-        return tts
+    β.name == :REMAIN && return resolve_latex(mds, β.from, β.to, false,
+                                              coms, lxdefs, bblocks)
     #=
     ESCAPE BLOCKS:
     These blocks are just plugged "as is", removing the '~~~' that
     surround them.
     =#
-    elseif β.name == :ESCAPE
-        return mds[β.from+3:β.to-3]
+    β.name == :ESCAPE && return mds[β.from+3:β.to-3]
     #=
     CODE BLOCKS:
     These blocks are just given to the html engine to be parsed, they are
     parsed separately so that any symbols that they may contain does not
     trigger further processing.
     =#
-    elseif β.name ∈ [:CODE_SINGLE, :CODE]
-        return md2html(mds[β.from:β.to])
+    β.name ∈ [:CODE_SINGLE, :CODE] && return md2html(mds[β.from:β.to])
     #=
     MATH BLOCKS:
     These blocks may contain user-defined latex commands that need to be
     processed. Then, depending on the case, they are plugged in with their
     appropriate KaTeX markers.
     =#
-    elseif β.name ∈ MD_MATHS_NAMES
+    if β.name ∈ MD_MATHS_NAMES
         pmath = convert_md__procmath(β)
         tmpst = resolve_latex(mds, pmath[1], pmath[2], true, coms,
-                             lxdefs, bblocks)
+                              lxdefs, bblocks)
         # add the relevant KaTeX brackets
         return pmath[3] * tmpst * pmath[4]
-   else
-       return ""
    end
+   # default case, unlikely to happen
+   return ""
 end
 
 
