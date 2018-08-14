@@ -18,5 +18,8 @@ end
 Helper function to process an individual block.
 """
 function convert_html__procblock(β::Block)
+    # check if it is an if block?
+    match(HBLOCK_IF, )
+
 
 end

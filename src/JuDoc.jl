@@ -18,6 +18,7 @@ include("parser/markdown/patterns.jl")
 include("parser/markdown/tokens.jl")
 include("parser/markdown/find_blocks.jl")
 
+include("parser/html/patterns.jl")
 include("parser/html/tokens.jl")
 include("parser/html/find_blocks.jl")
 
