@@ -35,3 +35,37 @@ end
     @test typeof(qblocks[4]) == JuDoc.HElse
     @test typeof(qblocks[5]) == JuDoc.HEnd
 end
+
+
+@testset "Cond block" begin
+    st = raw"""
+        Some text then {{ fill v1 }} and
+        {{ if b1 }}
+        show stuff here {{ fill v2 }}
+        {{ else if b2 }}
+        other stuff
+        {{ else }}
+        show other stuff
+        {{ end }}
+        final text
+        """
+    tokens = JuDoc.find_tokens(st, JuDoc.HTML_TOKENS, JuDoc.HTML_1C_TOKENS)
+    hblocks, tokens = JuDoc.find_html_hblocks(tokens)
+    qblocks = JuDoc.qualify_html_hblocks(hblocks, st)
+
+    cblocks = JuDoc.find_html_cblocks(qblocks)
+
+    @test cblocks[1].vcond1 == "b1"
+    @test cblocks[1].vconds == ["b2"]
+    @test st[cblocks[1].dofrom[1]:cblocks[1].doto[1]] ==
+        "\nshow stuff here {{ fill v2 }}\n"
+    @test st[cblocks[1].dofrom[2]:cblocks[1].doto[2]] ==
+        "\nother stuff\n"
+    @test st[cblocks[1].dofrom[3]:cblocks[1].doto[3]] ==
+        "\nshow other stuff\n"
+
+    allblocks = JuDoc.get_html_allblocks(cblocks, endof(st))
+
+end
+
+# allblocks = JuDoc.get_html_allblocks(hblocks, endof(st))

@@ -25,11 +25,10 @@ const HBLOCK_END = r"{{\s*end\s*}}"
 struct HCond
     vcond1::String
     vconds::Vector{String}
-    actionsfrom::Vector{Int}
-    actionsto::Vector{Int}
-    # 1 (initial condition)
-    # 2...k (subsequent conditions)
-    # end (else)
+    dofrom::Vector{Int}
+    doto::Vector{Int}
+    from::Int
+    to::Int
 end
 
 

@@ -1,3 +1,14 @@
+#= NOTE / TODO
+* in a conditional block, should make sure else is not followed by elseif
+* no nesting of conditional blocks is allowed at the moment. This could
+be done at later stage (needs balancing) or something but seems a bit overkill
+at this point. This second point might fix the first one by making sure that
+    HIf -> HElseIf / HElse / HEnd
+    HElseIf -> HElseIf / HElse / HEnd
+    HElse -> HEnd
+=#
+
+
 """
     find_html_hblocks(tokens)
 
@@ -31,6 +42,12 @@ function find_html_hblocks(tokens::Vector{Token})
 end
 
 
+"""
+    qualify_html_hblocks(blocks, s)
+
+Given `{{ ... }}` blocks, identify what blocks they are and return a vector
+of qualified blocks of type `<:HBlock`.
+"""
 function qualify_html_hblocks(blocks::Vector{Block}, s::String)
     qb = Vector{HBlock}(length(blocks))
     for (i, β) ∈ enumerate(blocks)
@@ -63,14 +80,62 @@ end
 
 
 """
-    get_html_allblocks(blocks, strlen)
+    find_html_cblocks(qblocks)
+
+Given qualified blocks `HIf`, `HElse` etc, construct a vector of the
+conditional blocks which contain the list of conditions etc.
+No nesting is allowed at the moment.
+"""
+function find_html_cblocks(qblocks::Vector{<:HBlock})
+    cblocks = Vector{HCond}()
+    i = 0
+    while i < length(qblocks)
+        i += 1
+        β = qblocks[i]
+        typeof(β) == HIf || continue
+
+        # look forward until the next `{{ end }}` block
+        k = findfirst(cβ -> (typeof(cβ) == HEnd), qblocks[i+1:end])
+        (k == nothing) && error("Found an {{ if ... }} block but no matching {{ end }} block. Verify.")
+        n_between = k - 1
+        k += i
+
+        vcond1 = β.vname
+        vconds = Vector{String}()
+        dofrom, doto = Vector{Int}(), Vector{Int}()
+        from = β.from
+        push!(dofrom, β.to + 1)
+
+        for bi = 1:n_between
+            β = qblocks[i+bi]
+            if typeof(β) == HElseIf
+                push!(doto, β.from - 1)
+                push!(dofrom, β.to + 1)
+                push!(vconds, β.vname)
+            elseif typeof(β) == HElse
+                # TODO, should check that there are no other HElseIf etc after
+                push!(doto, β.from - 1)
+                push!(dofrom, β.to + 1)
+            end
+        end
+        endβ = qblocks[k]
+        push!(doto, endβ.from - 1)
+        push!(cblocks, HCond(vcond1, vconds, dofrom, doto, from, endβ.to))
+        i = k
+    end
+    return cblocks
+end
+
+
+"""
+    get_html_allblocks(cblocks, strlen)
 
 Given a list of blocks, find the interstitial blocks, tag them as `:REMAIN`
 blocks and return a full list of blocks spanning the string.
 """
-function get_html_allblocks(hblocks::Vector{<:HBlock}, strlen::Int)
+function get_html_allblocks(hblocks::Vector{HCond}, strlen::Int)
 
-    allblocks = Vector{Block}()
+    allblocks = Vector{Union{Block, HCond}}()
     lenhblocks = length(hblocks)
     next_hblock = iszero(lenhblocks) ? BIG_INT : hblocks[1].from
 
