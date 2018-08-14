@@ -1,3 +1,16 @@
+# ONGOING
+
+* solving of HTML blocks --> see `src/converter/html.jl`, `src/parser/html/...`
+    * add `insert` function
+* finish file processing checking
+* check that everything "works"
+* merge with master
+* go through github issues and remove irrelevant ones
+* add future issues
+    * nesting of conditions in HTML setting
+    * much more testing
+    * (eventually) benchmarking, though should be quite quick
+
 # JuDoc
 
 [![Build Status](https://travis-ci.org/tlienart/JuDoc.jl.svg?branch=master)](https://travis-ci.org/tlienart/JuDoc.jl)
