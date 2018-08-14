@@ -88,6 +88,7 @@ No nesting is allowed at the moment.
 """
 function find_html_cblocks(qblocks::Vector{<:HBlock})
     cblocks = Vector{HCond}()
+    active_qblocks = ones(Bool, length(qblocks))
     i = 0
     while i < length(qblocks)
         i += 1
@@ -121,9 +122,10 @@ function find_html_cblocks(qblocks::Vector{<:HBlock})
         endβ = qblocks[k]
         push!(doto, endβ.from - 1)
         push!(cblocks, HCond(vcond1, vconds, dofrom, doto, from, endβ.to))
+        active_qblocks[i:k] = false
         i = k
     end
-    return cblocks
+    return cblocks, qblocks[active_qblocks]
 end
 
 
@@ -133,22 +135,42 @@ end
 Given a list of blocks, find the interstitial blocks, tag them as `:REMAIN`
 blocks and return a full list of blocks spanning the string.
 """
-function get_html_allblocks(hblocks::Vector{HCond}, strlen::Int)
+function get_html_allblocks(qblocks::Vector{<:HBlock}, hblocks::Vector{HCond},
+                            strlen::Int)
 
-    allblocks = Vector{Union{Block, HCond}}()
+    allblocks = Vector{Union{Block, <:HBlock, HCond}}()
+    lenqblocks = length(qblocks)
     lenhblocks = length(hblocks)
+
+    next_qblock = iszero(lenqblocks) ? BIG_INT : qblocks[1].from
     next_hblock = iszero(lenhblocks) ? BIG_INT : hblocks[1].from
 
-    head, hb_idx = 1, 1
-    while (next_hblock < BIG_INT) & (head < strlen)
-        # check if there's anything before head and next block and push
-        (head < next_hblock) && push!(allblocks, remain(head, next_hblock-1))
+    # check which block is next
+    qb_or_hb = (next_qblock < next_hblock)
+    next_idx = min(next_qblock, next_hblock)
 
-        β = hblocks[hb_idx]
-        push!(allblocks, β)
-        head = β.to + 1
-        hb_idx += 1
-        next_hblock = (hb_idx > lenhblocks) ? BIG_INT : hblocks[hb_idx].from
+    head, qb_idx, hb_idx = 1, 1, 1
+    while (next_idx < BIG_INT) & (head < strlen)
+        # check if there's anything before head and next block and push
+        (head < next_idx) && push!(allblocks, remain(head, next_idx-1))
+
+        if qb_or_hb # next block is qblock
+            β = qblocks[qb_idx]
+            push!(allblocks, β)
+            head = β.to + 1
+            qb_idx += 1
+            next_qblock = (qb_idx > lenqblocks)?BIG_INT : qblocks[qb_idx].from
+        else # next block is hblock
+            β = hblocks[hb_idx]
+            push!(allblocks, β)
+            head = β.to + 1
+            hb_idx += 1
+            next_hblock = (hb_idx > lenhblocks)?BIG_INT : hblocks[hb_idx].from
+        end
+
+        # check which block is next
+        qb_or_hb = (next_qblock < next_hblock)
+        next_idx = min(next_qblock, next_hblock)
     end
     # add final one if exists
     (head < strlen) && push!(allblocks, remain(head, strlen))

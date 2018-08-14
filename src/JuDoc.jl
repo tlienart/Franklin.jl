@@ -25,6 +25,7 @@ include("parser/html/find_blocks.jl")
 # CONVERSION
 
 include("converter/markdown.jl")
+include("converter/html.jl")
 
 # FILE PROCESSING
 
