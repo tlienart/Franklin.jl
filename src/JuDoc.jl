@@ -29,4 +29,10 @@ include("converter/markdown.jl")
 include("jd_paths.jl")
 include("jd_vars.jl")
 
+# FILE AND DIR MANAGEMENT
+
+include("manager/misc_utils.jl")
+include("manager/dir_utils.jl")
+include("manager/file_utils.jl")
+
 end # module

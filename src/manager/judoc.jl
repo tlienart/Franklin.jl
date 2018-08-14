@@ -30,10 +30,11 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
     # monitoring)
     ###
 
-    md_files = Dict{Pair{String, String}, Float64}()
-    html_files = Dict{Pair{String, String}, Float64}()
+    md_files    = Dict{Pair{String, String}, Float64}()
+    html_files  = Dict{Pair{String, String}, Float64}()
     other_files = Dict{Pair{String, String}, Float64}()
     infra_files = Dict{Pair{String, String}, Float64}()
+
     watched_files = [md_files, html_files, other_files, infra_files]
     watched_names = ["md", "html", "other", "infra"]
     watched = zip(watched_names, watched_files)
@@ -44,9 +45,9 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
     # . finding and reading the infrastructure files (used in write_page)
     ###
 
-    head = readstring(JD_PATHS[:in_html] * "head.html")
+    head    = readstring(JD_PATHS[:in_html] * "head.html")
     pg_foot = readstring(JD_PATHS[:in_html] * "page_foot.html")
-    foot = readstring(JD_PATHS[:in_html] * "foot.html")
+    foot    = readstring(JD_PATHS[:in_html] * "foot.html")
 
     ###
     # . main part
@@ -58,6 +59,7 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
 
     verb && print("Compiling the full folder once... ")
     start = time()
+    
     # looking for an index file to process
     indexmd = JD_PATHS[:in]=>"index.md"
     indexhtml = JD_PATHS[:in]=>"index.html"

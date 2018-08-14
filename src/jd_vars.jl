@@ -1,3 +1,5 @@
+using Dates
+
 """
 	JD_GLOB_VARS
 
@@ -94,9 +96,8 @@ Will return
       "a" => 5.0
     ```
 """
-function set_vars!(
-    jd_vars::Dict{String, Pair{Any, Tuple}},
-    assignments::Vector{Pair{String, String}})
+function set_vars!(jd_vars::Dict{String, Pair{Any, Tuple}},
+                   assignments::Vector{Pair{String, String}})
 
     if !isempty(assignments)
         for (key, assign) ∈ assignments
