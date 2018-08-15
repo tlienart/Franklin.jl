@@ -1,9 +1,7 @@
 # ONGOING
 
-* [x] solving of HTML blocks --> see `src/converter/html.jl`, `src/parser/html/...`
-    * [x] add `insert` function
 * finish file processing checking
-    * add `judoc`
+    * add `judoc` --> test failing in `test/manager/utils.jl` (bottom)
 * check that everything "works"
 * merge with master
 * go through github issues and remove irrelevant ones
