@@ -69,7 +69,7 @@ function process_file(case, fpair, clear_out_dir,
         write_page(fpair..., head, pg_foot, foot)
     elseif case == "html"
         raw_html = readstring(joinpath(fpair...))
-        proc_html = process_html_blocks(raw_html, JD_GLOB_VARS)
+        proc_html = convert_html(raw_html, JD_GLOB_VARS)
         write(out_path(fpair.first) * fpair.second, proc_html)
     elseif case == "other"
         opath = out_path(fpair.first) * fpair.second

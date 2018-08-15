@@ -1,8 +1,9 @@
 # ONGOING
 
-* solving of HTML blocks --> see `src/converter/html.jl`, `src/parser/html/...`
-    * add `insert` function
+* [x] solving of HTML blocks --> see `src/converter/html.jl`, `src/parser/html/...`
+    * [x] add `insert` function
 * finish file processing checking
+    * add `judoc`
 * check that everything "works"
 * merge with master
 * go through github issues and remove irrelevant ones
@@ -17,6 +18,7 @@
     * insert content that does also need to be processed? (e.g. html). it's unclear there's a usecase for this so maybe wait until there is one...
         * one parallel situation could be to insert the content of a code file
         and display it as such. This could be done within the markdown or, in fact could leak through by writing directly in the markdown `'''julia{{ insert path_to_code.jl}}'''` which would permeate through the html conversion then bring in the jl code and display it. (could also think about inserting CSV etc.)
+    * css pre-processing (variables)
 
 # JuDoc
 

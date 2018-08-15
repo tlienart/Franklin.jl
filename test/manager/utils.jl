@@ -63,3 +63,35 @@ end
 	@test isfile(out_file)
 	@test readstring(out_file) == "head<div class=content>\nblah blah\npage_foot</div>foot  Stefan Zweig"
 end
+
+
+temp_config = joinpath(JuDoc.JD_PATHS[:in], "config.md")
+write(temp_config, "@def author = \"Stefan Zweig\"")
+rm(temp_index2)
+
+
+@testset "Part convert" begin
+	write(JuDoc.JD_PATHS[:in_html] * "head.html", raw"""
+		<!doctype html>
+		<html lang="en-UK">
+			<head>
+				<meta charset="UTF-8">
+				<link rel="stylesheet" href="/css/main.css">
+			</head>
+		<body>""")
+	write(JuDoc.JD_PATHS[:in_html] * "page_foot.html", raw"""
+		<div class="page-foot">
+				<div class="copyright">
+						&copy; All rights reserved.
+				</div>
+		</div>""")
+	write(JuDoc.JD_PATHS[:in_html] * "foot.html", raw"""
+		    </body>
+		</html>""")
+	JuDoc.judoc()
+	@test issubset(["css", "libs", "index.html"], readdir(JuDoc.JD_PATHS[:f]))
+	@test issubset(["temp.html", "temp.rnd"], readdir(JuDoc.JD_PATHS[:out]))
+	@test readstring(JuDoc.JD_PATHS[:f] * "index.html") == "<!doctype html>\n<html lang=\"en-UK\">\n\t<head>\n\t\t<meta charset=\"UTF-8\">\n\t\t<link rel=\"stylesheet\" href=\"/css/main.css\">\n\t</head>\n<body><div class=content>\n<p>blah blah</p>\n<div class=\"page-foot\">\n\t\t<div class=\"copyright\">\n\t\t\t\t&copy; All rights reserved.\n\t\t</div>\n</div></div>    </body>\n</html>"
+	rm(temp_index)
+	@test_warn "I didn't find an index.[md|html], there should be one. Ignoring." JuDoc.judoc()
+end
