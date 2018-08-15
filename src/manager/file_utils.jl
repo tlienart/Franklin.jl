@@ -10,8 +10,9 @@ last(f::String) = stat(f).mtime
     process_config()
 
 Checks for a `config.md` file in `JD_PATHS[:in]` and uses it to set the global
-variables referenced in `JD_GLOB_VARS`. If the configuration file is not found
-a warning is shown.
+variables referenced in `JD_GLOB_VARS` it also sets the global latex commands
+via `JD_GLOB_LXDEFS`. If the configuration file is not found a warning is
+shown.
 """
 function process_config()
     # read the config.md file if it is present
@@ -50,8 +51,7 @@ function write_page(root, file, head, pg_foot, foot)
     # 3. process blocks in the html infra elements based on `jd_vars` (e.g.:
     # add the date in the footer)
     ###
-    head, pg_foot, foot = (process_html_blocks(e, jd_vars)
-                                for e ∈ [head, pg_foot, foot])
+    head, pg_foot, foot = (e->convert_html(e, jd_vars)).([head, pg_foot, foot])
     ###
     # 4. construct the page proper
     ###

@@ -18,7 +18,7 @@ temp_css = joinpath(JuDoc.JD_PATHS[:in_css], "temp.css")
 write(temp_css, "some css")
 
 
-@testset "Prep outdir" begin
+@testset "Prep outdir" begin # ✅ aug 15, 2018
 	JuDoc.prepare_output_dir()
 	@test isdir(JuDoc.JD_PATHS[:out])
 	@test isdir(JuDoc.JD_PATHS[:out_css])
@@ -33,7 +33,7 @@ write(temp_css, "some css")
 end
 
 
-@testset "Scan dir" begin
+@testset "Scan dir" begin # ✅ aug 15, 2018
 	# it also tests add_if_new_file and last
 	md_files = Dict{Pair{String, String}, Float64}()
 	html_files = similar(md_files)
@@ -48,17 +48,18 @@ end
 end
 
 
-# @testset "Config+write" begin
-# 	JuDoc.process_config()
-# 	@test JuDoc.JD_GLOB_VARS["author"].first == "Stefan Zweig"
-# 	rm(temp_config)
-# 	@test_warn "I didn't find a config file. Ignoring." JuDoc.process_config()
-# 	# testing write
-# 	head = "head"
-# 	pg_foot = "\npage_foot"
-# 	foot = "foot [[if isnotes {{fill author}}]]"
-# 	JuDoc.write_page(JuDoc.JD_PATHS[:in], "index.md", head, pg_foot, foot)
-# 	out_file = JuDoc.out_path(JuDoc.JD_PATHS[:f]) * "index.html"
-# 	@test isfile(out_file)
-# 	@test readstring(out_file) == "head<div class=content>\nblah blah\npage_foot</div>foot  Stefan Zweig"
-# end
+@testset "Config+write" begin
+	JuDoc.process_config()
+	@test JuDoc.JD_GLOB_VARS["author"].first == "Stefan Zweig"
+	rm(temp_config)
+	@test_warn "I didn't find a config file. Ignoring." JuDoc.process_config()
+	# testing write
+	head = "head"
+	pg_foot = "\npage_foot"
+	foot = "foot {{if isnotes}} {{fill author}}{{end}}"
+
+	JuDoc.write_page(JuDoc.JD_PATHS[:in], "index.md", head, pg_foot, foot)
+	out_file = JuDoc.out_path(JuDoc.JD_PATHS[:f]) * "index.html"
+	@test isfile(out_file)
+	@test readstring(out_file) == "head<div class=content>\nblah blah\npage_foot</div>foot  Stefan Zweig"
+end

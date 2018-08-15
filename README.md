@@ -6,6 +6,10 @@
 * check that everything "works"
 * merge with master
 * go through github issues and remove irrelevant ones
+* add doc
+    * `process_file` in `manager/file_utils.jl`
+* add tests
+    * definition of global latex commands via config
 * add future issues
     * nesting of conditions in HTML setting
     * much more testing
