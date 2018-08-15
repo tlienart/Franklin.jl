@@ -1,21 +1,16 @@
-using JuDoc
-@static if VERSION < v"0.7.0-DEV.2005"
-    using Base.Test
-else
-    using Test
-end
+using JuDoc, Test
 
-# NOTE: must be run 1st and *only once*
-include("t_jd_paths.jl")
+include("jd_paths.jl") # ✅ aug 14, 2018 // RUN ONLY ONCE
+include("jd_vars.jl")  # ✅ aug 14, 2018
 
-# --- CORE TESTS ---
+# MANAGER folder
+include("manager/utils.jl") # 🚫 (needs process html)
 
-include("t_md_maths.jl")
-include("t_md_misc.jl")
+# PARSER folder
+# >> MARKDOWN
 
-include("t_html_process_blocks.jl")
-include("t_html_blocks_sqbr.jl")
-include("t_html_blocks_braces.jl")
+include("parser/markdown.jl") # ✅ aug 13, 2018
+include("parser/latex.jl")    # ✅ aug 14, 2018
 
-include("t_jd_vars.jl")
-include("t_process_files.jl")
+# >> HTML
+include("parser/html.jl") # ✅ aug 15, 2018

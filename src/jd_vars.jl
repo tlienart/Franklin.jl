@@ -1,3 +1,5 @@
+using Dates
+
 """
 	JD_GLOB_VARS
 
@@ -6,8 +8,9 @@ the format KEY => PAIR where
 * KEY is a string (e.g.: "author")
 * PAIR is an pair where the first element is the default value for the variable
 and the second is a tuple of accepted possible (super)types for that value. (e.g.: "THE AUTHOR" => (String, Void))
+It is a global that gets modified having an impact on all pages.
 """
-const JD_GLOB_VARS = Dict{String, Pair{Any, Tuple}}(
+global JD_GLOB_VARS = Dict{String, Pair{Any, Tuple}}(
 	"author" => Pair("THE AUTHOR", (String, Void)),
     "date_format" => Pair("U dd, yyyy", (String,))
     )
@@ -18,6 +21,7 @@ const JD_GLOB_VARS = Dict{String, Pair{Any, Tuple}}(
 
 Dictionary of variables copied and then set for each page (through definitions).
 Entries have the same format as for `JD_GLOB_VARS`.
+It is a constant that gets copied for every page that is being looked at.
 """
 const JD_LOC_VARS = Dict{String, Pair{Any, Tuple}}(
     "hasmath"  => Pair(true, (Bool,)),
@@ -28,6 +32,14 @@ const JD_LOC_VARS = Dict{String, Pair{Any, Tuple}}(
     "jd_ctime" => Pair(Date(), (Date,)),
     "jd_mtime" => Pair(Date(), (Date,)),
     )
+
+
+"""
+    JD_GLOB_LXDEFS
+
+List of latex definitions accessible to all pages.
+"""
+global JD_GLOB_LXDEFS = Vector{LxDef}()
 
 
 """
@@ -84,9 +96,8 @@ Will return
       "a" => 5.0
     ```
 """
-function set_vars!(
-    jd_vars::Dict{String, Pair{Any, Tuple}},
-    assignments::Vector{Pair{String, String}})
+function set_vars!(jd_vars::Dict{String, Pair{Any, Tuple}},
+                   assignments::Vector{Pair{String, String}})
 
     if !isempty(assignments)
         for (key, assign) ∈ assignments
