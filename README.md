@@ -1,7 +1,5 @@
 # ONGOING
 
-* finish file processing checking
-    * add `judoc` --> test failing in `test/manager/utils.jl` (bottom)
 * check that everything "works"
 * merge with master
 * go through github issues and remove irrelevant ones
