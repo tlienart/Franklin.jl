@@ -18,7 +18,6 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
     # `clear_out_dir`)
     # -- read the configuration file
     ###
-
     set_paths!()
     prepare_output_dir(clear_out_dir)
     process_config()
@@ -29,12 +28,10 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
     # the value is the time of last change (useful for continuous
     # monitoring)
     ###
-
     md_files    = Dict{Pair{String, String}, Float64}()
     html_files  = Dict{Pair{String, String}, Float64}()
     other_files = Dict{Pair{String, String}, Float64}()
     infra_files = Dict{Pair{String, String}, Float64}()
-
     watched_files = [md_files, html_files, other_files, infra_files]
     watched_names = ["md", "html", "other", "infra"]
     watched = zip(watched_names, watched_files)
@@ -56,13 +53,12 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
     # -- if `!single_pass` then the directory is monitored for file
     # changes until the user interrupts the session.
     ###
-
     verb && print("Compiling the full folder once... ")
     start = time()
-    
+
     # looking for an index file to process
-    indexmd = JD_PATHS[:in]=>"index.md"
-    indexhtml = JD_PATHS[:in]=>"index.html"
+    indexmd   = JD_PATHS[:in] => "index.md"
+    indexhtml = JD_PATHS[:in] => "index.html"
     if isfile(joinpath(indexmd...))
         process_file("md", indexmd, clear_out_dir, head, pg_foot, foot)
     elseif isfile(joinpath(indexhtml...))
@@ -79,7 +75,7 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
     # variables useful when using continuous_checking
     # TODO this could be set externally (e.g. in config file)
     START = time()
-    MAXT = 5000 # max number of seconds before shutting down.
+    MAXT  = 5000 # max number of seconds before shutting down.
     SLEEP = 0.1
     NCYCL = 20
 
