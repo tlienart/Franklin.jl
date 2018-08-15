@@ -3,15 +3,14 @@ os:
   - linux
 julia:
   - 0.7
+  - nightly
 notifications:
   email: false
-git:
-  depth: 99999999
 matrix:
  allow_failures:
  - julia: nightly
 script:
-  - julia -e 'using Pkg; Pkg.clone(pwd()); Pkg.build("JuDoc"); Pkg.test("JuDoc"; coverage=true)'
+  - julia -e 'using Pkg; Pkg.add(pwd()); Pkg.build("JuDoc"); Pkg.test("JuDoc"; coverage=true)'
 after_success:
   # push coverage results to Codecov
   - julia -e 'using Pkg; cd(Pkg.dir("JuDoc")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
