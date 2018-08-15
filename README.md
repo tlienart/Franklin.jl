@@ -1,7 +1,7 @@
 # ONGOING
 
+* FIX DEPRECATION WARNINGS
 * check that everything "works"
-* merge with master
 * go through github issues and remove irrelevant ones
 * add doc
     * `process_file` in `manager/file_utils.jl`
