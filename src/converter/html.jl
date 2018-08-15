@@ -46,26 +46,11 @@ function convert_html__procblock(β::Union{Block, <:HBlock, HCond}, hs::String,
         return convert_html(partial, allvars)
     # function block
     elseif typeof(β) == HFun
-        if lowercase(β.fname) == "fill"
-            return hfun_fill(β.params, allvars)
-        else
-            # TODO TODO TODO TODO TODO
-            return hs[β.from:β.to]
-            # TODO TODO TODO TODO TODO
-        end
+        fname = lowercase(β.fname)
+        fname == "fill"     && return hfun_fill(β.params, allvars)
+        fname == "insert"   && return hfun_insert(β.params)
+        # unknown function
+        warn("I found a function block '{{$(lowercase(β.fname)) ...}}' but I don't know this function name. Ignoring.")
+        return hs[β.from:β.to]
     end
-end
-
-
-function hfun_fill(params::Vector{String}, allvars)
-    length(params) == 1 || error("I found a {{fill ...}} with more than one parameter. Verify.")
-    replacement = ""
-    vname = params[1]
-    if haskey(allvars, vname)
-        tmp_repl = allvars[vname].first # retrieve the value stored
-        (tmp_repl == nothing) || (replacement = string(tmp_repl))
-    else
-        warn("I found a '{{fill $vname}}' but I do not know the variable '$vname'. Ignoring.")
-    end
-    return replacement
 end

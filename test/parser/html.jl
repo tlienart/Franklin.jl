@@ -54,8 +54,7 @@ end
 end
 
 
-@testset "Cond block 2"
-begin
+@testset "Cblock+h-fill" begin
     allvars = Dict{String, Pair{Any, Tuple}}(
         "v1" => "INPUT1" => (String,),
         "b1" => false => (Bool,),
@@ -73,4 +72,16 @@ begin
         final text
         """
     @test JuDoc.convert_html(hs, allvars) == "Some text then INPUT1 and\n\nother stuff\n\nfinal text\n"
+end
+
+
+@testset "h-insert" begin
+    # NOTE: the test/jd_paths.jl must have been run before
+    temp_rnd = joinpath(JuDoc.JD_PATHS[:in_html], "temp.rnd")
+    write(temp_rnd, "some random text to insert")
+    hs = raw"""
+        Trying to insert: {{ insert temp.rnd }} and see.
+        """
+    allvars = Dict()
+    @test JuDoc.convert_html(hs, allvars) == "Trying to insert: some random text to insert and see.\n"
 end
