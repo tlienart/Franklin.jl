@@ -1,7 +1,7 @@
 @testset "Set vars" begin
 	d = Dict{String, Pair{Any, Tuple}}(
 		"a" => 0.5 => (Real,),
-		"b" => "hello" => (String, Void))
+		"b" => "hello" => (String, Nothing))
 	JuDoc.set_vars!(d, ["a"=>"5", "b"=>"nothing"])
 	@test d["a"].first == 5
 	@test d["b"].first == nothing

@@ -156,11 +156,11 @@ function get_md_allblocks(xblocks::Vector{Block}, lxdefs::Vector{LxDef},
                           strlen::Int)
 
     allblocks = Vector{Block}()
-    lenxblocks = length(xblocks)
-    lenlxdefs = length(lxdefs)
+    lenxb = length(xblocks)
+    lenlx = length(lxdefs)
 
-    next_xblock = iszero(lenxblocks) ? BIG_INT : xblocks[1].from
-    next_lxdef = iszero(lenlxdefs) ? BIG_INT : lxdefs[1].from
+    next_xblock = iszero(lenxb) ? BIG_INT : xblocks[1].from
+    next_lxdef = iszero(lenlx) ? BIG_INT : lxdefs[1].from
 
     # check which block is next
     xb_or_lx = (next_xblock < next_lxdef)
@@ -176,11 +176,11 @@ function get_md_allblocks(xblocks::Vector{Block}, lxdefs::Vector{LxDef},
             push!(allblocks, β)
             head = β.to + 1
             xb_idx += 1
-            next_xblock = (xb_idx > lenxblocks)? BIG_INT : xblocks[xb_idx].from
+            next_xblock = (xb_idx > lenxb) ? BIG_INT : xblocks[xb_idx].from
         else # next block is newcommand, no push
             head = lxdefs[lx_idx].to + 1
             lx_idx += 1
-            next_lxdef = (lx_idx > lenlxdefs)? BIG_INT : lxdefs[lx_idx].from
+            next_lxdef = (lx_idx > lenlx) ? BIG_INT : lxdefs[lx_idx].from
         end
 
         # check which block is next
