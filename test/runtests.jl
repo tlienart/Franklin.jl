@@ -4,7 +4,7 @@ include("jd_paths.jl") # ✅ aug 14, 2018 // RUN ONLY ONCE
 include("jd_vars.jl")  # ✅ aug 14, 2018
 
 # MANAGER folder
-include("manager/utils.jl") # 🚫 (needs process html)
+include("manager/utils.jl") # ✅ (needs process html)
 
 # PARSER folder
 # >> MARKDOWN
