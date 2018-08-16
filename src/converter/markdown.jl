@@ -22,7 +22,7 @@ function md2html(s::AbstractString, ismaths::Bool=false)
     ismaths && return s
     pre = ifelse(s[1] == ' ', " ", "")
     post = ifelse(s[end] == '\n', "\n", "")
-    return pre * stripp(html(Markdown.parse(s))) * post
+    return pre * stripp(Markdown.html(Markdown.parse(s))) * post
 end
 
 

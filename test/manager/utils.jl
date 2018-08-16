@@ -48,7 +48,7 @@ end
 end
 
 
-@testset "Config+write" begin # 🚫 16 August, 2018
+@testset "Config+write" begin # ✅ 16 August, 2018
 	JuDoc.process_config()
 	@test JuDoc.JD_GLOB_VARS["author"].first == "Stefan Zweig"
 	rm(temp_config)
@@ -70,7 +70,7 @@ write(temp_config, "@def author = \"Stefan Zweig\"\n")
 rm(temp_index2)
 
 
-@testset "Part convert" begin
+@testset "Part convert" begin # ✅ 16 aug 2018
 	write(JuDoc.JD_PATHS[:in_html] * "head.html", raw"""
 		<!doctype html>
 		<html lang="en-UK">
@@ -93,7 +93,5 @@ rm(temp_index2)
 
 	@test issubset(["css", "libs", "index.html"], readdir(JuDoc.JD_PATHS[:f]))
 	@test issubset(["temp.html", "temp.rnd"], readdir(JuDoc.JD_PATHS[:out]))
-	@test readstring(JuDoc.JD_PATHS[:f] * "index.html") == "<!doctype html>\n<html lang=\"en-UK\">\n\t<head>\n\t\t<meta charset=\"UTF-8\">\n\t\t<link rel=\"stylesheet\" href=\"/css/main.css\">\n\t</head>\n<body><div class=content>\nblah blah<div class=\"page-foot\">\n\t\t<div class=\"copyright\">\n\t\t\t\t&copy; All rights reserved.\n\t\t</div>\n</div></div>    </body>\n</html>"
-	rm(temp_index)
-	@test (@test_logs (:warn, "I didn't find an index.[md|html], there should be one. Ignoring.") JuDoc.judoc()) == nothing
+	@test read(JuDoc.JD_PATHS[:f] * "index.html", String) == "<!doctype html>\n<html lang=\"en-UK\">\n\t<head>\n\t\t<meta charset=\"UTF-8\">\n\t\t<link rel=\"stylesheet\" href=\"/css/main.css\">\n\t</head>\n<body><div class=content>\nblah blah<div class=\"page-foot\">\n\t\t<div class=\"copyright\">\n\t\t\t\t&copy; All rights reserved.\n\t\t</div>\n</div></div>    </body>\n</html>"
 end
