@@ -107,7 +107,7 @@ function set_vars!(jd_vars::Dict{String, Pair{Any, Tuple}},
                 try
                     tmp = eval(tmp)
                 catch err
-                    warn("I got an error trying to evaluate '$tmp', fix the assignment.")
+                    @warn "I got an error trying to evaluate '$tmp', fix the assignment."
                     throw(err)
                 end
                 # if the retrieved value has the right type, assign it to
@@ -117,10 +117,10 @@ function set_vars!(jd_vars::Dict{String, Pair{Any, Tuple}},
                 if is_ok_type(type_tmp, acc_types)
                     jd_vars[key] = Pair(tmp, acc_types)
                 else
-                    warn("Doc var '$key' (type(s): $acc_types) can't be set to value '$tmp' (type: $type_tmp). Assignment ignored.")
+                    @warn "Doc var '$key' (type(s): $acc_types) can't be set to value '$tmp' (type: $type_tmp). Assignment ignored."
                 end
             else
-                warn("Doc var name '$key' is unknown. Assignment ignored.")
+                @warn "Doc var name '$key' is unknown. Assignment ignored."
             end
         end
     end

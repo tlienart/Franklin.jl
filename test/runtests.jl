@@ -1,4 +1,5 @@
 using JuDoc, Test
+import  Base.CoreLogging: Warn
 
 include("jd_paths.jl") # ✅ aug 14, 2018 // RUN ONLY ONCE
 include("jd_vars.jl")  # ✅ aug 14, 2018
