@@ -5,7 +5,6 @@
 [![codecov.io](http://codecov.io/github/tlienart/JuDoc.jl/coverage.svg?branch=master)](http://codecov.io/github/tlienart/JuDoc.jl?branch=master)
 
 
-* FIX DEPRECATION WARNINGS
 * check that everything "works"
 * go through github issues and remove irrelevant ones
 * add doc
