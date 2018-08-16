@@ -53,7 +53,7 @@ function convert_md(mds, pre_lxdefs=Vector{LxDef}();
     # if any lxdefs are given in the context, merge them. `pastdef!` specifies
     # that the definitions appear "earlier" by marking the `.from` at 0
     lprelx = length(pre_lxdefs)
-    (lprelx > 0) && (lxdefs = cat(1, pastdef!.(pre_lxdefs), lxdefs))
+    (lprelx > 0) && (lxdefs = cat(pastdef!.(pre_lxdefs), lxdefs, dims=1))
 
     # find commands
     coms = filter(τ -> (τ.name == :LX_COMMAND), tokens)

@@ -76,14 +76,14 @@ function process_file(case, fpair, clear_out_dir,
         # only copy it again if necessary (particularly relevant)
         # when the asset files take quite a bit of space.
         if clear_out_dir || !isfile(opath) || last(opath) < t
-            cp(joinpath(fpair...), opath, remove_destination=true)
+            cp(joinpath(fpair...), opath, force=true)
         end
     else # case == "infra"
         # copy over css files
         # NOTE some processing may be further added here later on.
         if splitext(fpair.second)[2] == ".css"
             cp(joinpath(fpair...), JD_PATHS[:out_css] * fpair.second,
-                remove_destination=true)
+                force=true)
         end
     end
 end

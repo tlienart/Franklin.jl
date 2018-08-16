@@ -134,7 +134,7 @@ end
 
 Syntactic sugar for `isalpha(c)`.
 """
-α(c::Char) = isalpha(c)
+α(c::Char) = isletter(c)
 
 
 """

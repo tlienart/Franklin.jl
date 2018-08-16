@@ -150,7 +150,7 @@ end
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
 
     # figure out where the remaining blocks are.
-    allblocks = JuDoc.get_md_allblocks(xblocks, lxdefs, endof(st) - 1)
+    allblocks = JuDoc.get_md_allblocks(xblocks, lxdefs, lastindex(st) - 1)
 
     # filter out trivial blocks
     allblocks = filter(β -> (st[β.from:β.to] != "\n"), allblocks)

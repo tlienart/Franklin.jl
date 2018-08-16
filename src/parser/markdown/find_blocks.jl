@@ -24,7 +24,7 @@ function find_md_bblocks(tokens::Vector{Token})
         (inbalance > 0) && error("I found at least one open curly brace that is not closed properly. Verify.")
         push!(bblocks, braces(τ.from, tokens[j].to))
         # remove processed tokens
-        active_tokens[[i, j]] = false
+        active_tokens[[i, j]] .= false
     end
     return bblocks, tokens[active_tokens]
 end
@@ -86,13 +86,13 @@ function find_md_lxdefs(str::String, tokens::Vector{Token},
 
         # mark newcommand token as processed as well as the next token
         # which is necessarily the command name (braces are inactive)
-        active_tokens[[i, i+1]] = false
+        active_tokens[[i, i+1]] .= false
         # mark any token in the definition as inactive
         deactivate_until = findfirst(τ->(τ.from > δ.stop+1), tokens[i+2:end])
         if deactivate_until == nothing
             active_tokens[i+2:end] = false
         else
-            active_tokens[i+2:i+deactivate_until] = false
+            active_tokens[i+2:i+deactivate_until] .= false
         end
     end # tokens
     return lxdefs, tokens[active_tokens]

@@ -106,7 +106,7 @@ function resolve_latex(str::String, bfrom::Int, bto::Int, ismaths::Bool,
             # then apply the definition of the command
             partial = lxdefs[k].def
             for (argnum, b) ∈ enumerate(cand_braces)
-                partial = replace(partial, "#$argnum", str[b.from+1:b.to-1])
+                partial = replace(partial, "#$argnum" => str[b.from+1:b.to-1])
             end
 
             # re-parsing is necessary to deal with whatever the definition
@@ -124,9 +124,9 @@ function resolve_latex(str::String, bfrom::Int, bto::Int, ismaths::Bool,
             deactivate_until = findfirst(τ -> τ.from > com_end,
                                          lxtokens_in[i+1:end])
             if deactivate_until == nothing
-                active_lxt_in[i+1:end] = false
+                active_lxt_in[i+1:end] .= false
             elseif deactivate_until > 1
-                active_lxt_in[i+1:i+deactivate_until] = false
+                active_lxt_in[i+1:i+deactivate_until] .= false
             end
             # move the head to after the command and its braces
             offset = cand_braces[end].to + 1
