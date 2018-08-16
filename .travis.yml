@@ -14,9 +14,9 @@ notifications:
 env:
    - PYTHON=""
 script:
-  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-  - julia -e 'Pkg.clone(pwd())'
-  - julia -e 'Pkg.test("JuDoc")'
+  # - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
+  # - julia -e 'Pkg.clone(pwd())'
+  # - julia -e 'Pkg.test("JuDoc")'
 after_success:
   # push coverage results to Codecov
-  - julia --project -e 'import Pkg; Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
+  - julia -e 'cd(Pkg.dir("JuDoc")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
