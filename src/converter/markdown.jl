@@ -46,7 +46,7 @@ function convert_md(mds, pre_lxdefs=Vector{LxDef}();
     # Kill trivial tokens that may remain
     tokens = filter(τ -> (τ.name != :LINE_RETURN), tokens)
     # figure out where the remaining blocks are.
-    allblocks = get_md_allblocks(xblocks, lxdefs, endof(mds) - 1)
+    allblocks = get_md_allblocks(xblocks, lxdefs, lastindex(mds) - 1)
     # filter out trivial blocks
     allblocks = filter(β -> (mds[β.from:β.to] != "\n"), allblocks)
 
@@ -61,7 +61,7 @@ function convert_md(mds, pre_lxdefs=Vector{LxDef}();
     if has_mddefs
         # Process MD_DEF blocks
         mdd = filter(b -> (b.name == :MD_DEF), allblocks)
-        assignments = Vector{Pair{String, String}}(length(mdd))
+        assignments = Vector{Pair{String, String}}(undef, length(mdd))
         for i ∈ eachindex(mdd)
             m = match(MD_DEF_PAT, mds[mdd[i].from:mdd[i].to])
             m == nothing && warn("Found delimiters for an @def environment but I couldn't match it, verify $(mds[mdd[i].from:mdd[i].to]). Ignoring.")

@@ -1,6 +1,7 @@
 module JuDoc
 
 using Markdown: html
+using LinearAlgebra: dot
 
 const BIG_INT = 100_000_000
 

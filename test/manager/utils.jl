@@ -33,12 +33,12 @@ write(temp_css, "some css")
 end
 
 
-@testset "Scan dir" begin # ✅ aug 15, 2018
+@testset "Scan dir" begin # ✅ aug 16, 2018
 	# it also tests add_if_new_file and last
 	md_files = Dict{Pair{String, String}, Float64}()
-	html_files = similar(md_files)
-	other_files = similar(md_files)
-	infra_files = similar(md_files)
+	html_files = empty(md_files)
+	other_files = empty(md_files)
+	infra_files = empty(md_files)
 	watched_files = [md_files, html_files, other_files, infra_files]
 	JuDoc.scan_input_dir!(md_files, html_files, other_files, infra_files, true)
 	@test haskey(md_files, JuDoc.JD_PATHS[:in_pages]=>"blah.md")
@@ -48,11 +48,11 @@ end
 end
 
 
-@testset "Config+write" begin
+@testset "Config+write" begin # 🚫 16 August, 2018
 	JuDoc.process_config()
 	@test JuDoc.JD_GLOB_VARS["author"].first == "Stefan Zweig"
 	rm(temp_config)
-	@test_warn "I didn't find a config file. Ignoring." JuDoc.process_config()
+	@test (@test_logs (:warn, "I didn't find a config file. Ignoring.")  JuDoc.process_config()) == nothing
 	# testing write
 	head = "head"
 	pg_foot = "\npage_foot"
@@ -61,7 +61,7 @@ end
 	JuDoc.write_page(JuDoc.JD_PATHS[:in], "index.md", head, pg_foot, foot)
 	out_file = JuDoc.out_path(JuDoc.JD_PATHS[:f]) * "index.html"
 	@test isfile(out_file)
-	@test readstring(out_file) == "head<div class=content>\nblah blah\npage_foot</div>foot  Stefan Zweig"
+	@test read(out_file, String) == "head<div class=content>\nblah blah\npage_foot</div>foot  Stefan Zweig"
 end
 
 
@@ -95,5 +95,5 @@ rm(temp_index2)
 	@test issubset(["temp.html", "temp.rnd"], readdir(JuDoc.JD_PATHS[:out]))
 	@test readstring(JuDoc.JD_PATHS[:f] * "index.html") == "<!doctype html>\n<html lang=\"en-UK\">\n\t<head>\n\t\t<meta charset=\"UTF-8\">\n\t\t<link rel=\"stylesheet\" href=\"/css/main.css\">\n\t</head>\n<body><div class=content>\nblah blah<div class=\"page-foot\">\n\t\t<div class=\"copyright\">\n\t\t\t\t&copy; All rights reserved.\n\t\t</div>\n</div></div>    </body>\n</html>"
 	rm(temp_index)
-	@test_warn "I didn't find an index.[md|html], there should be one. Ignoring." JuDoc.judoc()
+	@test (@test_logs (:warn, "I didn't find an index.[md|html], there should be one. Ignoring.") JuDoc.judoc()) == nothing
 end

@@ -107,8 +107,8 @@ function set_vars!(jd_vars::Dict{String, Pair{Any, Tuple}},
                 try
                     tmp = eval(tmp)
                 catch err
-                    @warn "I got an error trying to evaluate '$tmp', fix the assignment."
-                    throw(err)
+                    @error "I got an error (of type '$(typeof(err))') trying to evaluate '$tmp', fix the assignment."
+                    break
                 end
                 # if the retrieved value has the right type, assign it to
                 # the corresponding key

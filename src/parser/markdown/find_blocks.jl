@@ -140,7 +140,7 @@ function find_md_xblocks(tokens::Vector{Token})
         # mark tokens within the block as inactive (extracted blocks are not
         # further processed unless they're math blocks where potential
         # user-defined latex commands will be further processed)
-        active_tokens[i:k] = ifelse(ismaths, map(islatex, tokens[i:k]), false)
+        active_tokens[i:k] .= ifelse(ismaths, map(islatex, tokens[i:k]), false)
     end
     return xblocks, tokens[active_tokens]
 end

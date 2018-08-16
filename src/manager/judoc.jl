@@ -42,9 +42,9 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
     # . finding and reading the infrastructure files (used in write_page)
     ###
 
-    head    = readstring(JD_PATHS[:in_html] * "head.html")
-    pg_foot = readstring(JD_PATHS[:in_html] * "page_foot.html")
-    foot    = readstring(JD_PATHS[:in_html] * "foot.html")
+    head    = read(JD_PATHS[:in_html] * "head.html", String)
+    pg_foot = read(JD_PATHS[:in_html] * "page_foot.html", String)
+    foot    = read(JD_PATHS[:in_html] * "foot.html", String)
 
     ###
     # . main part
@@ -64,7 +64,7 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
     elseif isfile(joinpath(indexhtml...))
         process_file("html", indexhtml, clear_out_dir)
     else
-        warn("I didn't find an index.[md|html], there should be one. Ignoring.")
+        @warn "I didn't find an index.[md|html], there should be one. Ignoring."
     end
     # looking at the rest of the files
     for (name, dict) ∈ watched, (fpair, t) ∈ dict

@@ -10,7 +10,7 @@ function find_tokens(str::String, tokens_dict::Dict, stokens_dict::Dict)
     tokens = Token[]
     # head_idx will travel over the valid characters from first to final one
     # excluding it (the EOS character).
-    head_idx, EOS_idx = 1, endof(str)
+    head_idx, EOS_idx = 1, lastindex(str)
     while head_idx < EOS_idx
         # read the character and check if corresponds to start of token
         head = str[head_idx]

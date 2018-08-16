@@ -13,7 +13,7 @@ function convert_html(hs::String, allvars::Dict)
     # Find overall conditional blocks (if ... elseif ... else ...  end)
     cblocks, qblocks = find_html_cblocks(qblocks)
     # Get the list of blocks to process
-    allblocks = get_html_allblocks(qblocks, cblocks, endof(hs))
+    allblocks = get_html_allblocks(qblocks, cblocks, lastindex(hs))
 
     hs = prod(convert_html__procblock(β, hs, allvars) for β ∈ allblocks)
 end
