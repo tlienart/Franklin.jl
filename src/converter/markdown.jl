@@ -22,7 +22,7 @@ function md2html(s::AbstractString, ismaths::Bool=false)
     ismaths && return s
     pre = ifelse(s[1] == ' ', " ", "")
     post = ifelse(s[end] == '\n', "\n", "")
-    return pre * stripp(html(Markdown.parse(s))) * post
+    return pre * stripp(Markdown.html(Markdown.parse(s))) * post
 end
 
 
@@ -46,14 +46,14 @@ function convert_md(mds, pre_lxdefs=Vector{LxDef}();
     # Kill trivial tokens that may remain
     tokens = filter(τ -> (τ.name != :LINE_RETURN), tokens)
     # figure out where the remaining blocks are.
-    allblocks = get_md_allblocks(xblocks, lxdefs, endof(mds) - 1)
+    allblocks = get_md_allblocks(xblocks, lxdefs, lastindex(mds) - 1)
     # filter out trivial blocks
     allblocks = filter(β -> (mds[β.from:β.to] != "\n"), allblocks)
 
     # if any lxdefs are given in the context, merge them. `pastdef!` specifies
     # that the definitions appear "earlier" by marking the `.from` at 0
     lprelx = length(pre_lxdefs)
-    (lprelx > 0) && (lxdefs = cat(1, pastdef!.(pre_lxdefs), lxdefs))
+    (lprelx > 0) && (lxdefs = cat(pastdef!.(pre_lxdefs), lxdefs, dims=1))
 
     # find commands
     coms = filter(τ -> (τ.name == :LX_COMMAND), tokens)
@@ -61,7 +61,7 @@ function convert_md(mds, pre_lxdefs=Vector{LxDef}();
     if has_mddefs
         # Process MD_DEF blocks
         mdd = filter(b -> (b.name == :MD_DEF), allblocks)
-        assignments = Vector{Pair{String, String}}(length(mdd))
+        assignments = Vector{Pair{String, String}}(undef, length(mdd))
         for i ∈ eachindex(mdd)
             m = match(MD_DEF_PAT, mds[mdd[i].from:mdd[i].to])
             m == nothing && warn("Found delimiters for an @def environment but I couldn't match it, verify $(mds[mdd[i].from:mdd[i].to]). Ignoring.")

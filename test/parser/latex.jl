@@ -12,7 +12,7 @@
     lxdefs, tokens = JuDoc.find_md_lxdefs(st, tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
-    allblocks = JuDoc.get_md_allblocks(xblocks, lxdefs, endof(st) - 1)
+    allblocks = JuDoc.get_md_allblocks(xblocks, lxdefs, lastindex(st) - 1)
     allblocks = filter(β -> (st[β.from:β.to] != "\n"), allblocks)
 
     coms = filter(τ -> τ.name == :LX_COMMAND, tokens)
@@ -40,7 +40,7 @@ end
     lxdefs, tokens = JuDoc.find_md_lxdefs(st, tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
-    allblocks = JuDoc.get_md_allblocks(xblocks, lxdefs, endof(st) - 1)
+    allblocks = JuDoc.get_md_allblocks(xblocks, lxdefs, lastindex(st) - 1)
     allblocks = filter(β -> (st[β.from:β.to] != "\n"), allblocks)
     coms = filter(τ -> τ.name == :LX_COMMAND, tokens)
     # only the third block will need latex processing
@@ -63,7 +63,7 @@ end
     lxdefs, tokens = JuDoc.find_md_lxdefs(st, tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
-    allblocks = JuDoc.get_md_allblocks(xblocks, lxdefs, endof(st) - 1)
+    allblocks = JuDoc.get_md_allblocks(xblocks, lxdefs, lastindex(st) - 1)
     allblocks = filter(β -> (st[β.from:β.to] != "\n"), allblocks)
     coms = filter(τ -> τ.name == :LX_COMMAND, tokens)
     # construct the string
@@ -87,7 +87,7 @@ end
     lxdefs, tokens = JuDoc.find_md_lxdefs(st, tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
-    allblocks = JuDoc.get_md_allblocks(xblocks, lxdefs, endof(st) - 1)
+    allblocks = JuDoc.get_md_allblocks(xblocks, lxdefs, lastindex(st) - 1)
     allblocks = filter(β -> (st[β.from:β.to] != "\n"), allblocks)
     coms = filter(τ -> τ.name == :LX_COMMAND, tokens)
     # construct the string

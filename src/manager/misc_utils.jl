@@ -13,9 +13,9 @@ Convenience function to display a time since `start`.
 """
 function time_it_took(start)
     comp_time = time() - start
-    mess = comp_time > 60 ? "$(round(comp_time/60, 1))m" :
-           comp_time > 1 ? "$(round(comp_time, 1))s" :
-           "$(round(comp_time*1000, 1))ms"
+    mess = comp_time > 60 ? "$(round(comp_time/60; digits=1))m" :
+           comp_time > 1 ? "$(round(comp_time; digits=1))s" :
+           "$(round(comp_time*1000; digits=1))ms"
     mess = "[done $mess]"
     println(mess)
 end

@@ -46,7 +46,7 @@ end
     @test st[cblocks[1].dofrom[3]:cblocks[1].doto[3]] ==
         "\nshow other stuff\n"
 
-    allblocks = JuDoc.get_html_allblocks(qblocks, cblocks, endof(st))
+    allblocks = JuDoc.get_html_allblocks(qblocks, cblocks, lastindex(st))
     @test allblocks[1].name == :REMAIN
     @test typeof(allblocks[2]) == JuDoc.HFun
     @test allblocks[2].fname == "fill"
@@ -77,6 +77,7 @@ end
 
 @testset "h-insert" begin
     # NOTE: the test/jd_paths.jl must have been run before
+    global temp_rnd
     temp_rnd = joinpath(JuDoc.JD_PATHS[:in_html], "temp.rnd")
     write(temp_rnd, "some random text to insert")
     hs = raw"""

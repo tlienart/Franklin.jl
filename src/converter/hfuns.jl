@@ -35,7 +35,7 @@ function hfun_insert(params::Vector{String})
     replacement = ""
     fpath = JD_PATHS[:in_html] * params[1]
     if isfile(fpath)
-        replacement = readstring(fpath)
+        replacement = read(fpath, String)
     else
         warn("I found an {{insert ...}} block and tried to insert '$fpath' but I couldn't find the file. Ignoring.")
     end

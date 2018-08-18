@@ -1,9 +1,12 @@
 # ONGOING
 
-* finish file processing checking
-    * add `judoc` --> test failing in `test/manager/utils.jl` (bottom)
+[![Build Status](https://travis-ci.org/tlienart/JuDoc.jl.svg?branch=master)](https://travis-ci.org/tlienart/JuDoc.jl)
+
+[![codecov.io](http://codecov.io/github/tlienart/JuDoc.jl/coverage.svg?branch=master)](http://codecov.io/github/tlienart/JuDoc.jl?branch=master)
+
+
 * check that everything "works"
-* merge with master
+    * fix bug with list element starting with some maths
 * go through github issues and remove irrelevant ones
 * add doc
     * `process_file` in `manager/file_utils.jl`
@@ -19,12 +22,6 @@
     * css pre-processing (variables)
 
 # JuDoc
-
-[![Build Status](https://travis-ci.org/tlienart/JuDoc.jl.svg?branch=master)](https://travis-ci.org/tlienart/JuDoc.jl)
-
-[![codecov.io](http://codecov.io/github/tlienart/JuDoc.jl/coverage.svg?branch=master)](http://codecov.io/github/tlienart/JuDoc.jl?branch=master)
-
-Only for `0.6`, a few adaptations needed when going for `0.7` (changes for example for `replace`), will migrate to `0.7` when Juno deals with it (i.e. not yet).
 
 ## Getting started
 

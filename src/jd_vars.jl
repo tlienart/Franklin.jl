@@ -7,11 +7,11 @@ Dictionary of variables assumed to be set for the entire website. Entries have
 the format KEY => PAIR where
 * KEY is a string (e.g.: "author")
 * PAIR is an pair where the first element is the default value for the variable
-and the second is a tuple of accepted possible (super)types for that value. (e.g.: "THE AUTHOR" => (String, Void))
+and the second is a tuple of accepted possible (super)types for that value. (e.g.: "THE AUTHOR" => (String, Nothing))
 It is a global that gets modified having an impact on all pages.
 """
 global JD_GLOB_VARS = Dict{String, Pair{Any, Tuple}}(
-	"author" => Pair("THE AUTHOR", (String, Void)),
+	"author" => Pair("THE AUTHOR", (String, Nothing)),
     "date_format" => Pair("U dd, yyyy", (String,))
     )
 
@@ -28,9 +28,9 @@ const JD_LOC_VARS = Dict{String, Pair{Any, Tuple}}(
     "hascode"  => Pair(false, (Bool,)),
     "isnotes"  => Pair(true, (Bool,)),
     "title"    => Pair("THE TITLE", (String,)),
-    "date"     => Pair(Date(), (String, Date, Void)),
-    "jd_ctime" => Pair(Date(), (Date,)),
-    "jd_mtime" => Pair(Date(), (Date,)),
+    "date"     => Pair(Date(1), (String, Date, Nothing)),
+    "jd_ctime" => Pair(Date(1), (Date,)),
+    "jd_mtime" => Pair(Date(1), (Date,)),
     )
 
 
@@ -56,7 +56,7 @@ jd_date(d::DateTime) = Dates.format(d, JD_GLOB_VARS["date_format"].first)
 
 Checks if a data type `t` is a subtype of a tuple of accepted types `tt`.
 """
-is_ok_type(t, tt) = any(issubtype(t, tᵢ) for tᵢ ∈ tt)
+is_ok_type(t, tt) = any(<:(t, tᵢ) for tᵢ ∈ tt)
 
 
 """
@@ -102,13 +102,13 @@ function set_vars!(jd_vars::Dict{String, Pair{Any, Tuple}},
     if !isempty(assignments)
         for (key, assign) ∈ assignments
             if haskey(jd_vars, key)
-                tmp = parse("__tmp__ = " * assign)
+                tmp = Meta.parse("__tmp__ = " * assign)
                 # try to evaluate the parsed assignment
                 try
                     tmp = eval(tmp)
                 catch err
-                    warn("I got an error trying to evaluate '$tmp', fix the assignment.")
-                    throw(err)
+                    @error "I got an error (of type '$(typeof(err))') trying to evaluate '$tmp', fix the assignment."
+                    break
                 end
                 # if the retrieved value has the right type, assign it to
                 # the corresponding key
@@ -117,10 +117,10 @@ function set_vars!(jd_vars::Dict{String, Pair{Any, Tuple}},
                 if is_ok_type(type_tmp, acc_types)
                     jd_vars[key] = Pair(tmp, acc_types)
                 else
-                    warn("Doc var '$key' (type(s): $acc_types) can't be set to value '$tmp' (type: $type_tmp). Assignment ignored.")
+                    @warn "Doc var '$key' (type(s): $acc_types) can't be set to value '$tmp' (type: $type_tmp). Assignment ignored."
                 end
             else
-                warn("Doc var name '$key' is unknown. Assignment ignored.")
+                @warn "Doc var name '$key' is unknown. Assignment ignored."
             end
         end
     end

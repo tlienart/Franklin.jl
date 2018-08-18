@@ -36,7 +36,7 @@ function find_html_hblocks(tokens::Vector{Token})
          push!(hblocks, hblock(τ.from, tokens[j].to))
          # remove processed tokens and mark inner tokens as inactive!
          # these will be re-processed in recursion
-         active_tokens[i:j] = false
+         active_tokens[i:j] .= false
     end
     return hblocks, tokens[active_tokens]
 end
@@ -49,7 +49,7 @@ Given `{{ ... }}` blocks, identify what blocks they are and return a vector
 of qualified blocks of type `<:HBlock`.
 """
 function qualify_html_hblocks(blocks::Vector{Block}, s::String)
-    qb = Vector{HBlock}(length(blocks))
+    qb = Vector{HBlock}(undef, length(blocks))
     for (i, β) ∈ enumerate(blocks)
         ts = s[β.from:β.to]
         # if block {{ if v }}
@@ -122,7 +122,7 @@ function find_html_cblocks(qblocks::Vector{<:HBlock})
         endβ = qblocks[k]
         push!(doto, endβ.from - 1)
         push!(cblocks, HCond(vcond1, vconds, dofrom, doto, from, endβ.to))
-        active_qblocks[i:k] = false
+        active_qblocks[i:k] .= false
         i = k
     end
     return cblocks, qblocks[active_qblocks]
@@ -139,11 +139,11 @@ function get_html_allblocks(qblocks::Vector{<:HBlock}, hblocks::Vector{HCond},
                             strlen::Int)
 
     allblocks = Vector{Union{Block, <:HBlock, HCond}}()
-    lenqblocks = length(qblocks)
-    lenhblocks = length(hblocks)
+    lenqb = length(qblocks)
+    lenhb = length(hblocks)
 
-    next_qblock = iszero(lenqblocks) ? BIG_INT : qblocks[1].from
-    next_hblock = iszero(lenhblocks) ? BIG_INT : hblocks[1].from
+    next_qblock = iszero(lenqb) ? BIG_INT : qblocks[1].from
+    next_hblock = iszero(lenhb) ? BIG_INT : hblocks[1].from
 
     # check which block is next
     qb_or_hb = (next_qblock < next_hblock)
@@ -159,13 +159,13 @@ function get_html_allblocks(qblocks::Vector{<:HBlock}, hblocks::Vector{HCond},
             push!(allblocks, β)
             head = β.to + 1
             qb_idx += 1
-            next_qblock = (qb_idx > lenqblocks)?BIG_INT : qblocks[qb_idx].from
+            next_qblock = (qb_idx > lenqb) ? BIG_INT : qblocks[qb_idx].from
         else # next block is hblock
             β = hblocks[hb_idx]
             push!(allblocks, β)
             head = β.to + 1
             hb_idx += 1
-            next_hblock = (hb_idx > lenhblocks)?BIG_INT : hblocks[hb_idx].from
+            next_hblock = (hb_idx > lenhb) ? BIG_INT : hblocks[hb_idx].from
         end
 
         # check which block is next

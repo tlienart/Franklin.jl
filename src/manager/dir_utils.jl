@@ -23,7 +23,7 @@ path does not exist, create it.
 """
 function out_path(root::String)
     f_out_path = JD_PATHS[:f] * root[length(JD_PATHS[:in])+1:end]
-    f_out_path = replace(f_out_path, "/pages/", "/pub/")
+    f_out_path = replace(f_out_path, "/pages/" => "/pub/")
     !ispath(f_out_path) && mkpath(f_out_path)
     return f_out_path
 end

@@ -24,7 +24,7 @@ function find_md_bblocks(tokens::Vector{Token})
         (inbalance > 0) && error("I found at least one open curly brace that is not closed properly. Verify.")
         push!(bblocks, braces(τ.from, tokens[j].to))
         # remove processed tokens
-        active_tokens[[i, j]] = false
+        active_tokens[[i, j]] .= false
     end
     return bblocks, tokens[active_tokens]
 end
@@ -86,13 +86,13 @@ function find_md_lxdefs(str::String, tokens::Vector{Token},
 
         # mark newcommand token as processed as well as the next token
         # which is necessarily the command name (braces are inactive)
-        active_tokens[[i, i+1]] = false
+        active_tokens[[i, i+1]] .= false
         # mark any token in the definition as inactive
         deactivate_until = findfirst(τ->(τ.from > δ.stop+1), tokens[i+2:end])
         if deactivate_until == nothing
             active_tokens[i+2:end] = false
         else
-            active_tokens[i+2:i+deactivate_until] = false
+            active_tokens[i+2:i+deactivate_until] .= false
         end
     end # tokens
     return lxdefs, tokens[active_tokens]
@@ -140,7 +140,7 @@ function find_md_xblocks(tokens::Vector{Token})
         # mark tokens within the block as inactive (extracted blocks are not
         # further processed unless they're math blocks where potential
         # user-defined latex commands will be further processed)
-        active_tokens[i:k] = ifelse(ismaths, map(islatex, tokens[i:k]), false)
+        active_tokens[i:k] .= ifelse(ismaths, map(islatex, tokens[i:k]), false)
     end
     return xblocks, tokens[active_tokens]
 end
@@ -156,11 +156,11 @@ function get_md_allblocks(xblocks::Vector{Block}, lxdefs::Vector{LxDef},
                           strlen::Int)
 
     allblocks = Vector{Block}()
-    lenxblocks = length(xblocks)
-    lenlxdefs = length(lxdefs)
+    lenxb = length(xblocks)
+    lenlx = length(lxdefs)
 
-    next_xblock = iszero(lenxblocks) ? BIG_INT : xblocks[1].from
-    next_lxdef = iszero(lenlxdefs) ? BIG_INT : lxdefs[1].from
+    next_xblock = iszero(lenxb) ? BIG_INT : xblocks[1].from
+    next_lxdef = iszero(lenlx) ? BIG_INT : lxdefs[1].from
 
     # check which block is next
     xb_or_lx = (next_xblock < next_lxdef)
@@ -176,11 +176,11 @@ function get_md_allblocks(xblocks::Vector{Block}, lxdefs::Vector{LxDef},
             push!(allblocks, β)
             head = β.to + 1
             xb_idx += 1
-            next_xblock = (xb_idx > lenxblocks)? BIG_INT : xblocks[xb_idx].from
+            next_xblock = (xb_idx > lenxb) ? BIG_INT : xblocks[xb_idx].from
         else # next block is newcommand, no push
             head = lxdefs[lx_idx].to + 1
             lx_idx += 1
-            next_lxdef = (lx_idx > lenlxdefs)? BIG_INT : lxdefs[lx_idx].from
+            next_lxdef = (lx_idx > lenlx) ? BIG_INT : lxdefs[lx_idx].from
         end
 
         # check which block is next

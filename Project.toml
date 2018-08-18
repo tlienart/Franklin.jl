@@ -1,8 +1,0 @@
-name = "JuDoc"
-uuid = "499aec8e-9e40-11e8-2bbb-3388edf9f8ff"
-authors = ["Thibaut Lienart <tlienart@me.com>"]
-version = "0.1.0"
-
-[deps]
-Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
-Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
