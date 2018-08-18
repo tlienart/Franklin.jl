@@ -6,6 +6,7 @@
 
 
 * check that everything "works"
+    * fix bug with list element starting with some maths
 * go through github issues and remove irrelevant ones
 * add doc
     * `process_file` in `manager/file_utils.jl`
