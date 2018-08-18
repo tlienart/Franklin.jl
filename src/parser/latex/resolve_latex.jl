@@ -26,7 +26,7 @@ function resolve_latex(str::String, bfrom::Int, bto::Int, ismaths::Bool,
     active_lxt_in = [true for τ ∈ lxtokens_in]
 
     # no commands? just return the string over the given range
-    isempty(lxtokens_in) && return str[bfrom:bto]
+    isempty(lxtokens_in) && return md2html(str[bfrom:bto], ismaths)
     # otherwise, get braces in given range
     braces_in = filter(b -> (b.from >= bfrom) & (b.to <= bto), bblocks)
     nbraces_in = length(braces_in)
