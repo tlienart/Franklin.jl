@@ -23,7 +23,7 @@ function resolve_latex(str::String, bfrom::Int, bto::Int, ismaths::Bool,
 
     # filter lxtokens in the given range (bfrom-bto)
     lxtokens_in = filter(τ -> (τ.from >= bfrom) & (τ.to <= bto), lxtokens)
-    active_lxt_in = [true for τ ∈ lxtokens_in]
+    active_lxt_in = ones(Bool, length(lxtokens_in))
 
     # no commands? just return the string over the given range
     isempty(lxtokens_in) && return md2html(str[bfrom:bto], ismaths)

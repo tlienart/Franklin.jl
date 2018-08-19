@@ -21,6 +21,18 @@
         and display it as such. This could be done within the markdown or, in fact could leak through by writing directly in the markdown `'''julia{{ insert path_to_code.jl}}'''` which would permeate through the html conversion then bring in the jl code and display it. (could also think about inserting CSV etc.)
     * css pre-processing (variables)
 
+## Context project
+
+* [x] find lxcommands with right number of braces early, mark as XBLOCK
+* after get allblocks, reconstitute a partial MD plugging in stoppers at right place `##JD_INSERT##`
+* parse the partial MD using base markdown parser, the stoppers will be at the right place
+* tokenize the resulting partial HTML with the tokens `##JD_INSERT##`, `@@dname`, `@@`
+    * read the partial HTML until the next token
+    * resolve token
+        * `##JD_INSERT##` --> resolve the block or resolve latex or resolve maths
+        * `@@*` --> write the appropriate replacement
+    * keep writing
+
 # JuDoc
 
 ## Getting started

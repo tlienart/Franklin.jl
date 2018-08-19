@@ -99,6 +99,68 @@ function find_md_lxdefs(str::String, tokens::Vector{Token},
 end
 
 
+"""
+    find_md_lxcoms(lxtokens, lxdefs, bblocks)
+
+Find `\\command{arg1}{arg2}...` in `:REMAIN` blocks only.
+"""
+function find_md_lxcoms(str::String, tokens::Vector{Token},
+                        lxdefs::Vector{LxDef}, bblocks::Vector{Block})
+
+    lxcoms = Vector{Block}()
+    active_τ = ones(Bool, length(tokens))
+    nbraces = length(bblocks)
+
+    for (i, τ) ∈ enumerate(tokens)
+        active_τ[i] || continue
+        (τ.name == :LX_COMMAND) || continue
+        # get the range of the command
+        # > 1. look for the definition given its name
+        lxname = str[τ.from:τ.to]
+        k = findfirst(δ -> (δ.name == lxname), lxdefs)
+
+        # couldn't find the definition or definition was not early enough
+        if ((k == nothing) || τ.from < lxdefs[k].from)
+            # command is not found
+            error("Command '$lxname' was not defined before it was used. Verify.")
+        end
+        # there is a definition
+        # > 1. retrieve narg
+        lxnarg = lxdefs[k].narg
+        # >> there are no arguments
+        if lxnarg == 0
+            push!(lxcoms, Block(:LX_COM_NOARG, τ.from, τ.to))
+            active_τ[i] = false
+        # >> there is at least one argument
+        else
+            b1_idx = findfirst(b -> (b.from == τ.to + 1), bblocks)
+            # --> it needs to exist + there should be enough left
+            if (b1_idx == nothing) || (b1_idx + lxnarg - 1 > nbraces)
+                error("Command '$lxname' expects $lxnarg arguments and there should be no spaces between the command name and the first brace: \\com{arg1}... Verify.")
+            end
+            # --> retrieve the candidate braces
+            cand_braces = bblocks[b1_idx:b1_idx+lxnarg-1]
+            # --> there should be no spaces between braces to avoid ambiguities
+            for bidx ∈ 1:lxnarg-1
+                (cand_braces[bidx].to+1 == cand_braces[bidx+1].from) || error("Argument braces should not be separated by spaces: \\com{arg1}{arg2}... Verify a '$lxname' command.")
+            end
+            # all good, can mark it
+            com_end = cand_braces[end].to
+            push!(lxcoms, Block(:LX_COM_WARGS, τ.from, com_end))
+            # deactivate tokens in the span of the command (will be
+            # reparsed later)
+            deactivate_until = findfirst(τ -> (τ.from > com_end),
+                                                tokens[i+1:end])
+            if deactivate_until == nothing
+                active_τ[i+1:end] .= false
+            elseif deactivate_until > 1
+                active_τ[i+1:i+deactivate_until] .= false
+            end
+        end
+    end
+    return lxcoms, tokens[active_τ]
+end
+
 
 """
     find_md_xblocks(tokens)

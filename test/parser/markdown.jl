@@ -110,6 +110,7 @@
     @test stest[bblocks[2].from:bblocks[2].to] == "{blah}"
 end
 
+
 @testset "MD Blocks" begin
     st = raw"""
         \newcommand{\E}[1]{\mathbb E\left[#1\right]}blah de blah
@@ -159,4 +160,25 @@ end
     @test allblocks[2].name == :ESCAPE
     @test allblocks[3].name == :REMAIN
     @test allblocks[4].name == :CODE
+end
+
+
+@testset "MD Blocks" begin
+    st = raw"""
+        \newcommand{\com}{HH}
+        \newcommand{\comb}[1]{HH#1HH}
+        Blah \com and \comb{blah} etc
+        """ * JuDoc.EOS
+
+    # Tokenization and Markdown conversion
+    tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
+    tokens = JuDoc.deactivate_xblocks(tokens, JuDoc.MD_EXTRACT)
+    bblocks, tokens = JuDoc.find_md_bblocks(tokens)
+    lxdefs, tokens = JuDoc.find_md_lxdefs(st, tokens, bblocks)
+    lxcoms, tokens = JuDoc.find_md_lxcoms(st, tokens, lxdefs, bblocks)
+
+    @test lxcoms[1].name == :LX_COM_NOARG
+    @test st[lxcoms[1].from:lxcoms[1].to] == "\\com"
+    @test lxcoms[2].name == :LX_COM_WARGS
+    @test st[lxcoms[2].from:lxcoms[2].to] == "\\comb{blah}"
 end

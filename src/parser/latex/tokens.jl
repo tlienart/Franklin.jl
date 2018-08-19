@@ -19,6 +19,8 @@ islatex(τ::Token) = τ.name ∈ LX_TOKENS
 
 Structure to keep track of the definition of a latex command declared via a
 `\newcommand{\name}[narg]{def}`.
+NOTE: mutable so that we can modify the `from` element to mark it as zero when
+the command has been defined in the context of what we're currently parsing.
 """
 mutable struct LxDef
     name::String
