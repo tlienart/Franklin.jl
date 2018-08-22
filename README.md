@@ -24,16 +24,21 @@
 ## Context project
 
 * [x] find lxcommands with right number of braces early, mark as XBLOCK
-* add `:LX_COMS_*` in the xblocks.
+* [x] add `:LX_COMS_*` in the xblocks.
 * after get allblocks, reconstitute a partial MD plugging in stoppers at right place `##JD_INSERT##`
-* remove redundancy of finding braces etc in `find_md_lxcoms` and also in `resolve_latex`. Maybe some parts need to be there still.
+    * [x] rewrite an alternative get_allblocks which forms the intermediate md
+    * [x] test it
+    * TODO remove all calls to allblocks
 * parse the partial MD using base markdown parser, the stoppers will be at the right place
-* tokenize the resulting partial HTML with the tokens `##JD_INSERT##`, `@@dname`, `@@`
+    * update `convert_md` to use `form_interm_md` and process stoppers appropriately
+* tokenize the resulting partial HTML with the tokens `##JD_INSERT##` and process considering the matching `xblocks` (for each `##JD_INSERT##` there is a `xblock`)
     * read the partial HTML until the next token
     * resolve token
         * `##JD_INSERT##` --> resolve the block or resolve latex or resolve maths
         * `@@*` --> write the appropriate replacement
     * keep writing
+* (after) remove redundancy of finding braces etc in `find_md_lxcoms` and also in `resolve_latex`. Maybe some parts need to be there still.
+
 
 # JuDoc
 

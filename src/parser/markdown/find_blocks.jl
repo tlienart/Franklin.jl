@@ -57,6 +57,9 @@ function find_md_xblocks(tokens::Vector{Token})
             =#
             close_τ, bname = MD_MATHS[τ.name]
             ismaths = true
+        elseif τ.name ∈ [:DIV_OPEN, :DIV_CLOSE]
+            push!(xblocks, τ)
+            continue
         else
             # ignore the token (does not announce an extract block)
             continue
@@ -77,7 +80,6 @@ end
 
 #=
 TODO TODO
-* test
 * add DOC !
 =#
 function merge_xblocks_lxcoms(xb::Vector{Block}, lxc::Vector{Block})

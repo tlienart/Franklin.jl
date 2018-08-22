@@ -173,7 +173,8 @@ end
         ```julia
         f(x) = x^2
         ```
-        etc \comb{blah}
+        etc \comb{blah} then maybe
+        @@adiv inner part @@ final.
         """ * JuDoc.EOS
 
     # Tokenization and Markdown conversion
@@ -197,4 +198,8 @@ end
     @test xblocks[3].name == :CODE
     @test xblocks[4].name == :LX_COM_WARGS
     @test st[xblocks[4].from:xblocks[4].to] == "\\comb{blah}"
+    @test xblocks[5].name == :DIV_OPEN
+    @test xblocks[6].name == :DIV_CLOSE
+
+    @test JuDoc.form_interm_md(st, xblocks, lxdefs) == "\n\nBlah ##JD_INSERT## and ##JD_INSERT## etc\n##JD_INSERT##\netc ##JD_INSERT## then maybe\n##JD_INSERT## inner part ##JD_INSERT## final.\n"
 end

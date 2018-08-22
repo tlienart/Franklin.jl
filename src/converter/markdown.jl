@@ -4,11 +4,12 @@
 Convenience function to remove `<p>` and `</p>` added by the Base markdown to
 html converter.
 """
-function stripp(s::AbstractString)
+function stripp(s::String)
     ts = ifelse(startswith(s, "<p>"), s[4:end], s)
     ts = ifelse(endswith(s, "</p>\n"), ts[1:end-5], ts)
     return ts
 end
+
 
 """
     md2html(s, ismaths)
@@ -17,7 +18,7 @@ Convenience function to call the base markdown to html converter on "simple"
 strings (i.e. strings that don't need to be further considered and don't
 contain anything else than markdown tokens).
 """
-function md2html(s::AbstractString, ismaths::Bool=false)
+function md2html(s::String, ismaths::Bool=false)
     isempty(s) && return s
     ismaths && return s
     pre = ifelse(s[1] == ' ', " ", "")
@@ -26,12 +27,63 @@ function md2html(s::AbstractString, ismaths::Bool=false)
 end
 
 
+const JD_INSERT = "##JD_INSERT##"
+
+
+"""
+    form_interm_md(mds, xblocks, lxdefs)
+
+Form an intermediate MD file where special blocks are replaced by a marker
+indicating that a piece will need to be plugged in there later on
+"""
+function form_interm_md(mds::String, xblocks::Vector{Block},
+                        lxdefs::Vector{LxDef})
+
+    strlen = lastindex(mds) - 1
+    pieces = Vector{String}()
+
+    lenxb = length(xblocks)
+    lenlx = length(lxdefs)
+
+    next_xblock = iszero(lenxb) ? BIG_INT : xblocks[1].from
+    next_lxdef = iszero(lenlx) ? BIG_INT : lxdefs[1].from
+
+    # check which block is next
+    xb_or_lx = (next_xblock < next_lxdef)
+    next_idx = min(next_xblock, next_lxdef)
+
+    head, xb_idx, lx_idx = 1, 1, 1
+    while (next_idx < BIG_INT) & (head < strlen)
+        # check if there's anything before head and next block and push
+        (head < next_idx) && push!(pieces, mds[head:next_idx-1])
+
+        if xb_or_lx # next block is xblock
+            push!(pieces, JD_INSERT)
+            head = xblocks[xb_idx].to + 1
+            xb_idx += 1
+            next_xblock = (xb_idx > lenxb) ? BIG_INT : xblocks[xb_idx].from
+        else # next block is newcommand, no push
+            head = lxdefs[lx_idx].to + 1
+            lx_idx += 1
+            next_lxdef = (lx_idx > lenlx) ? BIG_INT : lxdefs[lx_idx].from
+        end
+
+        # check which block is next
+        xb_or_lx = (next_xblock < next_lxdef)
+        next_idx = min(next_xblock, next_lxdef)
+    end
+    # add final one if exists
+    (head < strlen) && push!(pieces, mds[head:strlen])
+    return prod(pieces)
+end
+
+
 """
     convert_md(mds, pre_lxdefs; isconfig, has_mddefs)
 
 Convert a judoc markdown file into a judoc html.
 """
-function convert_md(mds, pre_lxdefs=Vector{LxDef}();
+function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
                      isconfig=false, has_mddefs=true)
     # Tokenize
     tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
