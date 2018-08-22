@@ -188,5 +188,13 @@ end
     @test lxcoms[2].name == :LX_COM_WARGS
     @test st[lxcoms[2].from:lxcoms[2].to] == "\\comb{blah}"
 
+    xblocks, tokens = JuDoc.find_md_xblocks(tokens)
+    tokens = filter(τ -> (τ.name != :LINE_RETURN), tokens)
+    xblocks = JuDoc.merge_xblocks_lxcoms(xblocks, lxcoms)
 
+    @test xblocks[1].name == :LX_COM_NOARG
+    @test xblocks[2].name == :LX_COM_WARGS
+    @test xblocks[3].name == :CODE
+    @test xblocks[4].name == :LX_COM_WARGS
+    @test st[xblocks[4].from:xblocks[4].to] == "\\comb{blah}"
 end
