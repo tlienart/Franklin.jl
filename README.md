@@ -24,7 +24,9 @@
 ## Context project
 
 * [x] find lxcommands with right number of braces early, mark as XBLOCK
+* add `:LX_COMS_*` in the xblocks.
 * after get allblocks, reconstitute a partial MD plugging in stoppers at right place `##JD_INSERT##`
+* remove redundancy of finding braces etc in `find_md_lxcoms` and also in `resolve_latex`. Maybe some parts need to be there still.
 * parse the partial MD using base markdown parser, the stoppers will be at the right place
 * tokenize the resulting partial HTML with the tokens `##JD_INSERT##`, `@@dname`, `@@`
     * read the partial HTML until the next token

@@ -17,6 +17,7 @@ include("parser/latex/resolve_latex.jl")
 include("parser/markdown/patterns.jl")
 include("parser/markdown/tokens.jl")
 include("parser/markdown/find_blocks.jl")
+include("parser/markdown/find_lxblocks.jl")
 # > html
 include("parser/html/patterns.jl")
 include("parser/html/tokens.jl")

@@ -163,11 +163,17 @@ end
 end
 
 
-@testset "MD Blocks" begin
+# TODO TODO
+# finish test, make sure JuDoc.merge_xblocks_lxcoms works.
+@testset "Find LxComs" begin
     st = raw"""
         \newcommand{\com}{HH}
         \newcommand{\comb}[1]{HH#1HH}
         Blah \com and \comb{blah} etc
+        ```julia
+        f(x) = x^2
+        ```
+        etc \comb{blah}
         """ * JuDoc.EOS
 
     # Tokenization and Markdown conversion
@@ -181,4 +187,6 @@ end
     @test st[lxcoms[1].from:lxcoms[1].to] == "\\com"
     @test lxcoms[2].name == :LX_COM_WARGS
     @test st[lxcoms[2].from:lxcoms[2].to] == "\\comb{blah}"
+
+
 end
