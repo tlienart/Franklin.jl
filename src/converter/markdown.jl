@@ -4,9 +4,9 @@
 Convenience function to remove `<p>` and `</p>` added by the Base markdown to
 html converter.
 """
-function stripp(s::String)
-    ts = ifelse(startswith(s, "<p>"), s[4:end], s)
-    ts = ifelse(endswith(s, "</p>\n"), ts[1:end-5], ts)
+function stripp(s::AbstractString)
+    ts = ifelse(startswith(s, "<p>"), chop(s, 4, tail=0), s)
+    ts = ifelse(endswith(s, "</p>\n"), chop(s, tail=5), ts)
     return ts
 end
 
@@ -17,30 +17,32 @@ end
 Convenience function to call the base markdown to html converter on "simple"
 strings (i.e. strings that don't need to be further considered and don't
 contain anything else than markdown tokens).
+Note: it may get fed with a `SubString` whence the use of `AbstractString`.
 """
-function md2html(s::String, ismaths::Bool=false)
+function md2html(s::AbstractString, ismaths::Bool=false)
     isempty(s) && return s
     ismaths && return s
-    pre = ifelse(s[1] == ' ', " ", "")
-    post = ifelse(s[end] == '\n', "\n", "")
+    pre = ifelse(startswith(s, ' '), " ", "")
+    post = ifelse(endswith(s, '\n'), "\n", "")
     return pre * stripp(Markdown.html(Markdown.parse(s))) * post
 end
 
 
-const JD_INSERT = "##JD_INSERT##"
-
+const JD_INSERT = "##JDINSERT##"
+const PAT_JD_INSERT = Regex(JD_INSERT)
+const LEN_JD_INSERT = length(JD_INSERT)
 
 """
     form_interm_md(mds, xblocks, lxdefs)
 
 Form an intermediate MD file where special blocks are replaced by a marker
-indicating that a piece will need to be plugged in there later on
+(`JD_INSERT`) indicating that a piece will need to be plugged in there later.
 """
 function form_interm_md(mds::String, xblocks::Vector{Block},
                         lxdefs::Vector{LxDef})
 
     strlen = lastindex(mds) - 1
-    pieces = Vector{String}()
+    pieces = Vector{Union{String, SubString}}()
 
     lenxb = length(xblocks)
     lenlx = length(lxdefs)
@@ -55,7 +57,7 @@ function form_interm_md(mds::String, xblocks::Vector{Block},
     head, xb_idx, lx_idx = 1, 1, 1
     while (next_idx < BIG_INT) & (head < strlen)
         # check if there's anything before head and next block and push
-        (head < next_idx) && push!(pieces, mds[head:next_idx-1])
+        (head < next_idx) && push!(pieces, SubString(mds, head, next_idx-1))
 
         if xb_or_lx # next block is xblock
             push!(pieces, JD_INSERT)
@@ -73,7 +75,7 @@ function form_interm_md(mds::String, xblocks::Vector{Block},
         next_idx = min(next_xblock, next_lxdef)
     end
     # add final one if exists
-    (head < strlen) && push!(pieces, mds[head:strlen])
+    (head < strlen) && push!(pieces, chop(mds, head=head, tail=1))
     return prod(pieces)
 end
 
@@ -97,10 +99,13 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
     xblocks, tokens = find_md_xblocks(tokens)
     # Kill trivial tokens that may remain
     tokens = filter(τ -> (τ.name != :LINE_RETURN), tokens)
-    # figure out where the remaining blocks are.
-    allblocks = get_md_allblocks(xblocks, lxdefs, lastindex(mds) - 1)
-    # filter out trivial blocks
-    allblocks = filter(β -> (mds[β.from:β.to] != "\n"), allblocks)
+
+    # >>HACK
+    # # figure out where the remaining blocks are.
+    # allblocks = get_md_allblocks(xblocks, lxdefs, lastindex(mds) - 1)
+    # # filter out trivial blocks
+    # allblocks = filter(β -> (mds[β.from:β.to] != "\n"), allblocks)
+    # <<HACK
 
     # if any lxdefs are given in the context, merge them. `pastdef!` specifies
     # that the definitions appear "earlier" by marking the `.from` at 0
@@ -119,7 +124,6 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
             m == nothing && warn("Found delimiters for an @def environment but I couldn't match it, verify $(mds[mdd[i].from:mdd[i].to]). Ignoring.")
             assignments[i] = String(m.captures[1]) => String(m.captures[2])
         end
-
         # Assign as appropriate
         if isconfig
             isempty(assignments) || set_vars!(JD_GLOB_VARS, assignments)
@@ -127,18 +131,62 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
             # no more processing required
             return nothing
         end
-
         # create variable dictionary for the page
         jd_vars = merge(JD_GLOB_VARS, copy(JD_LOC_VARS))
         set_vars!(jd_vars, assignments)
     end
 
-    # Form the string by converting each block given the latex context
-    context = (mds, coms, lxdefs, bblocks)
-    hstring = prod(convert_md__procblock(β, context...) for β ∈ allblocks)
+    inter_md = form_interm_md(mds, xblocks, lxdefs)
+    interm_html = md2html(inter_md)
+
+    # >>HACK
+    # # Form the string by converting each block given the latex context
+    # context = (mds, coms, lxdefs, bblocks)
+    # hstring = prod(convert_md__procblock(β, context...) for β ∈ allblocks)
+    # <<HACK
 
     # Return the string + judoc variables if relevant
     return div_replace(hstring), (has_mddefs ? jd_vars : nothing)
+end
+
+
+"""
+    insert_proc_xblocks(pmd, xblocks, lxdefs)
+
+Take a partial markdown string with the `JD_INSERT` marker and plug in the --
+appropriately processed -- block.
+"""
+function insert_proc_xblocks(pmd::String, xblocks::Vector{Block},
+                             lxdefs::Vector{LxDef}, bblocks::Vector{Block})
+
+    allmatches = collect(eachmatch(PAT_JD_INSERT, pmd))
+    pieces = Vector{Union{SubString, String}}()
+    strlen = lastindex(pmd)
+
+    head = 1
+    for (i, m) ∈ enumerate(allmatches)
+        (head < m.offset) && push!(pieces, SubString(pmd, head, m.offset-1))
+        head = m.offset + LEN_JD_INSERT
+        # push! the resolved block
+        push!(pieces, process_xblock(xblocks[i], lxdefs, bblocks))
+    end
+    (head < strlen) && push!(pieces, head => strlen)
+end
+
+
+"""
+"""
+function process_xblock(β::Block, lxdefs::Vector{LxDef},
+                        bblocks::Vector{Block})
+
+    # TODO
+    # β.name == DIV_OPEN
+    # β.name == DIV_CLOSE
+    # β.name == CODE_SINGLE, CODE ==> just md2html
+    # β.name == ESCAPE ==> no processing
+    # β.name ∈ MD_MATHS_NAMES
+
+    # default (& COMMENT): ""
 end
 
 
@@ -148,7 +196,7 @@ end
 Helper function to process an individual block given its context and convert it
 to the appropriate html string.
 """
-function convert_md__procblock(β::Block, mds, coms, lxdefs, bblocks)
+function convert_md__procblock(β::Block, mds::String, coms, lxdefs, bblocks)
     #=
     REMAIN BLOCKS: (most common block)
     These are interstitial blocks (typically text) that may contain
@@ -183,7 +231,7 @@ function convert_md__procblock(β::Block, mds, coms, lxdefs, bblocks)
         # add the relevant KaTeX brackets
         return pmath[3] * tmpst * pmath[4]
    end
-   # default case, unlikely to happen
+   # default case: comment and co
    return ""
 end
 

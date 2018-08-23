@@ -28,7 +28,16 @@
 * after get allblocks, reconstitute a partial MD plugging in stoppers at right place `##JD_INSERT##`
     * [x] rewrite an alternative get_allblocks which forms the intermediate md
     * [x] test it
-    * TODO remove all calls to allblocks
+    * **TODO** remove all calls to allblocks
+* update `convert_md`
+    * add `convert_md__plugblocks(...)`
+    * `_procblock` qualify the arguments of the function
+    * remove calls to `coms`, this impacts `resolve_latex` as well potentially
+    need to think about this...
+    * cleanup functions that are not used / have been replaced. Potential functions
+        * `convert_md__procblock`
+        * `resolve_latex`
+        * resolve doc of `insert_proc_xblocks` + arguments
 * parse the partial MD using base markdown parser, the stoppers will be at the right place
     * update `convert_md` to use `form_interm_md` and process stoppers appropriately
 * tokenize the resulting partial HTML with the tokens `##JD_INSERT##` and process considering the matching `xblocks` (for each `##JD_INSERT##` there is a `xblock`)

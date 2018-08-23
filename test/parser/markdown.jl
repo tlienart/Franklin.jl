@@ -200,6 +200,32 @@ end
     @test st[xblocks[4].from:xblocks[4].to] == "\\comb{blah}"
     @test xblocks[5].name == :DIV_OPEN
     @test xblocks[6].name == :DIV_CLOSE
+end
 
-    @test JuDoc.form_interm_md(st, xblocks, lxdefs) == "\n\nBlah ##JD_INSERT## and ##JD_INSERT## etc\n##JD_INSERT##\netc ##JD_INSERT## then maybe\n##JD_INSERT## inner part ##JD_INSERT## final.\n"
+
+@testset "Partial MD" begin
+    st = raw"""
+        \newcommand{\com}{HH}
+        \newcommand{\comb}[1]{HH#1HH}
+        A list
+        * \com and \comb{blah}
+        * $f$ is a function
+        * a last elemnt
+        """ * JuDoc.EOS
+
+    # Tokenization and Markdown conversion
+    tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
+    tokens = JuDoc.deactivate_xblocks(tokens, JuDoc.MD_EXTRACT)
+    bblocks, tokens = JuDoc.find_md_bblocks(tokens)
+    lxdefs, tokens = JuDoc.find_md_lxdefs(st, tokens, bblocks)
+    lxcoms, tokens = JuDoc.find_md_lxcoms(st, tokens, lxdefs, bblocks)
+
+    xblocks, tokens = JuDoc.find_md_xblocks(tokens)
+    tokens = filter(τ -> (τ.name != :LINE_RETURN), tokens)
+    xblocks = JuDoc.merge_xblocks_lxcoms(xblocks, lxcoms)
+
+    inter_md = JuDoc.form_interm_md(st, xblocks, lxdefs)
+    @test inter_md == "\n\nA list\n* ##JDINSERT## and ##JDINSERT##\n* ##JDINSERT## is a function\n* a last elemnt\n"
+    inter_html = JuDoc.md2html(inter_md)
+    @test inter_html == "A list</p>\n<ul>\n<li><p>##JDINSERT## and ##JDINSERT##</p>\n</li>\n<li><p>##JDINSERT## is a function</p>\n</li>\n<li><p>a last elemnt</p>\n</li>\n</ul>\n\n"
 end
