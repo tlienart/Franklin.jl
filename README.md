@@ -38,6 +38,7 @@
         * `convert_md__procblock`
         * `resolve_latex`
         * resolve doc of `insert_proc_xblocks` + arguments
+        * [x] remove the `stripp`
 * parse the partial MD using base markdown parser, the stoppers will be at the right place
     * update `convert_md` to use `form_interm_md` and process stoppers appropriately
 * tokenize the resulting partial HTML with the tokens `##JD_INSERT##` and process considering the matching `xblocks` (for each `##JD_INSERT##` there is a `xblock`)

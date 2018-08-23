@@ -1,16 +1,14 @@
-"""
-    stripp(s)
-
-Convenience function to remove `<p>` and `</p>` added by the Base markdown to
-html converter.
-"""
-function stripp(s::AbstractString)
-    ts = ifelse(startswith(s, "<p>"), chop(s, 4, tail=0), s)
-    ts = ifelse(endswith(s, "</p>\n"), chop(s, tail=5), ts)
-    return ts
-end
-
-
+# """
+#     stripp(s)
+#
+# Convenience function to remove `<p>` and `</p>` added by the Base markdown to
+# html converter.
+# """
+# function stripp(s::AbstractString)
+#     ts = ifelse(startswith(s, "<p>"), chop(s, 4, tail=0), s)
+#     ts = ifelse(endswith(s, "</p>\n"), chop(s, tail=5), ts)
+#     return ts
+# end
 """
     md2html(s, ismaths)
 
@@ -19,12 +17,9 @@ strings (i.e. strings that don't need to be further considered and don't
 contain anything else than markdown tokens).
 Note: it may get fed with a `SubString` whence the use of `AbstractString`.
 """
-function md2html(s::AbstractString, ismaths::Bool=false)
+function md2html(s::AbstractString)
     isempty(s) && return s
-    ismaths && return s
-    pre = ifelse(startswith(s, ' '), " ", "")
-    post = ifelse(endswith(s, '\n'), "\n", "")
-    return pre * stripp(Markdown.html(Markdown.parse(s))) * post
+    return Markdown.html(Markdown.parse(s))
 end
 
 
@@ -151,12 +146,12 @@ end
 
 
 """
-    insert_proc_xblocks(pmd, xblocks, lxdefs)
+    insert_proc_xblocks(pmd, mds, xblocks, lxdefs)
 
 Take a partial markdown string with the `JD_INSERT` marker and plug in the --
 appropriately processed -- block.
 """
-function insert_proc_xblocks(pmd::String, xblocks::Vector{Block},
+function insert_proc_xblocks(pmd::String, mds::String, xblocks::Vector{Block},
                              lxdefs::Vector{LxDef}, bblocks::Vector{Block})
 
     allmatches = collect(eachmatch(PAT_JD_INSERT, pmd))
@@ -168,7 +163,7 @@ function insert_proc_xblocks(pmd::String, xblocks::Vector{Block},
         (head < m.offset) && push!(pieces, SubString(pmd, head, m.offset-1))
         head = m.offset + LEN_JD_INSERT
         # push! the resolved block
-        push!(pieces, process_xblock(xblocks[i], lxdefs, bblocks))
+        push!(pieces, process_xblock(xblocks[i], mds, lxdefs, bblocks))
     end
     (head < strlen) && push!(pieces, head => strlen)
 end
@@ -176,17 +171,25 @@ end
 
 """
 """
-function process_xblock(β::Block, lxdefs::Vector{LxDef},
+function process_xblock(β::Block, s::String, lxdefs::Vector{LxDef},
                         bblocks::Vector{Block})
 
     # TODO
     # β.name == DIV_OPEN
     # β.name == DIV_CLOSE
-    # β.name == CODE_SINGLE, CODE ==> just md2html
+    # β.name == CODE ==> just md2html
     # β.name == ESCAPE ==> no processing
     # β.name ∈ MD_MATHS_NAMES
-
     # default (& COMMENT): ""
+
+    β.name == DIV_OPEN && # TODO
+    β.name == DIV_CLOSE && return "</div>"
+    β.name == :CODE && return md2html(SubString(s, ))
+
+    if β.name ∈ MD_MATHS_NAMES
+    else
+
+    return ""
 end
 
 

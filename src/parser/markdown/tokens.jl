@@ -77,7 +77,7 @@ const MD_EXTRACT = Dict(
     :COMMENT_OPEN => :COMMENT_CLOSE => :COMMENT,
     :ESCAPE       => :ESCAPE        => :ESCAPE,
     :MD_DEF_OPEN  => :LINE_RETURN   => :MD_DEF,         # See note [^3]
-    :CODE_SINGLE  => :CODE_SINGLE   => :CODE_SINGLE,
+    :CODE_SINGLE  => :CODE_SINGLE   => :CODE,
     :CODE_L       => :CODE          => :CODE,
     :CODE         => :CODE          => :CODE,
     ) # end dict
