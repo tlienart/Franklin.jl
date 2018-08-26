@@ -1,4 +1,31 @@
 #=
+SubString(s, β.from, β.to) --> make this into function
+`\\com` --> `def`
+
+=#
+function resolve_lx_noarg(lxname::SubString, lxdefs::Vector{LxDef},
+                          inmath::Bool=false)
+
+    k = findfirst(δ -> (δ.name == lxname), lxdefs)
+    if (k == nothing)
+        # e.g.: \sin --> let KaTex deal with it (and possibly error)
+        inmath && return lxname
+        # otherwise it's a command that should have been defined -> error
+        (lxname.offset < lxdefs[k].from) && error("Command '$lxname' was not defined before it was used.")
+    end
+    # retrieve the definition
+    partial = lxdefs[k].def
+    # apply the def resulting in a partial string that will be reprocessed
+    partial = ifelse(inmath, mathenv(partial), partial) * EOS
+
+    # reprocess
+    plug, _ = convert_md(partial, lxdefs, isconfig=false,
+                            has_mddefs=false)
+    return plug
+end
+
+
+#=
 NOTE if ismaths -> don't fail when unknown command (let KaTeX fail)
 =#
 """

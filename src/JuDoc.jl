@@ -13,7 +13,7 @@ include("parser/block_utils.jl")
 include("parser/latex/patterns.jl")
 include("parser/latex/tokens.jl")
 include("parser/latex/resolve_latex.jl")
-include("parser/markdown/find_blocks.jl")
+include("parser/latex/find_blocks.jl")
 # > markdown
 include("parser/markdown/patterns.jl")
 include("parser/markdown/tokens.jl")

@@ -70,7 +70,7 @@ end
 """
     find_md_lxcoms(lxtokens, lxdefs, bblocks)
 
-Find `\\command{arg1}{arg2}...` in `:REMAIN` blocks only.
+Find `\\command{arg1}{arg2}...` outside of `xblocks` and `lxdefs`.
 """
 function find_md_lxcoms(str::String, tokens::Vector{Token},
                         lxdefs::Vector{LxDef}, bblocks::Vector{Block})

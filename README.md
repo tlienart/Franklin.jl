@@ -39,6 +39,7 @@
         * `resolve_latex`
         * resolve doc of `insert_proc_xblocks` + arguments
         * [x] remove the `stripp`
+        * remove in `markdown/patterns.jl` the lines on div replace
 * parse the partial MD using base markdown parser, the stoppers will be at the right place
     * update `convert_md` to use `form_interm_md` and process stoppers appropriately
 * tokenize the resulting partial HTML with the tokens `##JD_INSERT##` and process considering the matching `xblocks` (for each `##JD_INSERT##` there is a `xblock`)
@@ -49,6 +50,18 @@
     * keep writing
 * (after) remove redundancy of finding braces etc in `find_md_lxcoms` and also in `resolve_latex`. Maybe some parts need to be there still.
 
+* **Fixing of resolve_latex** now with the context thing two cases appear: first one = `LX_COM_NOARG` or `LX_COM_WARGS`, second one = math env
+    * first case:
+        * `LX_COM_NOARG`: `>>\com<<`: need to just find the appropriate def, convert the plug using the full conversion (*result could be cached after first call*) and plug the result in.
+        * `LX_COM_WARGS`: `>>\comb{a}{b}<<`: need to find the appropriate def and the braces (that we know have already been found), check the number, apply the definition, use the full conversion machinery on the definition and plug the result in.
+    * second case: math env
+        * inside: `\sin^2(x)+\com = 1-\cos^2(x)+\com`
+    * **>> probably you need to keep resolve latex as it is. just using SubString where appropriate and maybe develop helper functions for the first two cases which would be called in when needed**
+
+
+**NOTED**
+* [x] maybe verify // discrepancy between `coms` (in `convert_md` after filtering for `LX_COMMAND`) and `lxtokens` in `resolve_latex`. Should just be `lxtokens`.
+* convert_md could take a note saying that it can't contain newcommands and so `has_lxdefs=false`
 
 # JuDoc
 

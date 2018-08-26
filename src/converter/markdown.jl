@@ -36,41 +36,46 @@ Form an intermediate MD file where special blocks are replaced by a marker
 function form_interm_md(mds::String, xblocks::Vector{Block},
                         lxdefs::Vector{LxDef})
 
-    strlen = lastindex(mds) - 1
-    pieces = Vector{Union{String, SubString}}()
+    strlen = lastindex(mds) - 1 # final character is the EOS character
+    pieces = Vector{AbstractString}()
 
     lenxb = length(xblocks)
     lenlx = length(lxdefs)
 
+    # check when the next xblock is
     next_xblock = iszero(lenxb) ? BIG_INT : xblocks[1].from
-    next_lxdef = iszero(lenlx) ? BIG_INT : lxdefs[1].from
+
+    # check when the next lxblock is, extra work because there may be lxdefs
+    # passed through in *context* (i.e. that do not appear in mds) therefore
+    # searcg first lxdef actually in mds (nothing if lxdefs is empty)
+    first_lxd = findfirst(δ -> (δ.from > 0), lxdefs)
+    next_lxdef = (first_lxd == nothing) ? BIG_INT : lxdefs[first_lxd].from
 
     # check which block is next
     xb_or_lx = (next_xblock < next_lxdef)
     next_idx = min(next_xblock, next_lxdef)
 
-    head, xb_idx, lx_idx = 1, 1, 1
+    head, xb_idx, lx_idx = 1, 1, first_lxd
     while (next_idx < BIG_INT) & (head < strlen)
         # check if there's anything before head and next block and push
         (head < next_idx) && push!(pieces, SubString(mds, head, next_idx-1))
-
-        if xb_or_lx # next block is xblock
+        # check whether it's a xblock first or a newcommand first
+        if xb_or_lx # it's a xblock --> push
             push!(pieces, JD_INSERT)
             head = xblocks[xb_idx].to + 1
             xb_idx += 1
             next_xblock = (xb_idx > lenxb) ? BIG_INT : xblocks[xb_idx].from
-        else # next block is newcommand, no push
+        else # it's a newcommand --> no push
             head = lxdefs[lx_idx].to + 1
             lx_idx += 1
             next_lxdef = (lx_idx > lenlx) ? BIG_INT : lxdefs[lx_idx].from
         end
-
         # check which block is next
         xb_or_lx = (next_xblock < next_lxdef)
         next_idx = min(next_xblock, next_lxdef)
     end
     # add final one if exists
-    (head < strlen) && push!(pieces, chop(mds, head=head, tail=1))
+    (head <= strlen) && push!(pieces, chop(mds, head=head-1, tail=1))
     return prod(pieces)
 end
 
@@ -95,20 +100,13 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
     # Kill trivial tokens that may remain
     tokens = filter(τ -> (τ.name != :LINE_RETURN), tokens)
 
-    # >>HACK
-    # # figure out where the remaining blocks are.
-    # allblocks = get_md_allblocks(xblocks, lxdefs, lastindex(mds) - 1)
-    # # filter out trivial blocks
-    # allblocks = filter(β -> (mds[β.from:β.to] != "\n"), allblocks)
-    # <<HACK
-
     # if any lxdefs are given in the context, merge them. `pastdef!` specifies
     # that the definitions appear "earlier" by marking the `.from` at 0
     lprelx = length(pre_lxdefs)
     (lprelx > 0) && (lxdefs = cat(pastdef!.(pre_lxdefs), lxdefs, dims=1))
 
     # find commands
-    coms = filter(τ -> (τ.name == :LX_COMMAND), tokens)
+    lxcoms = filter(τ -> (τ.name == :LX_COMMAND), tokens)
 
     if has_mddefs
         # Process MD_DEF blocks
@@ -131,112 +129,116 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
         set_vars!(jd_vars, assignments)
     end
 
+    # form intermediate markdown + html
     inter_md = form_interm_md(mds, xblocks, lxdefs)
-    interm_html = md2html(inter_md)
-
-    # >>HACK
-    # # Form the string by converting each block given the latex context
-    # context = (mds, coms, lxdefs, bblocks)
-    # hstring = prod(convert_md__procblock(β, context...) for β ∈ allblocks)
-    # <<HACK
-
+    # plug resolved blocks in partial html to form the final html
+    hstring = insert_proc_xblocks(md2html(inter_md), mds, xblocks,
+                                  lxcoms, lxdefs, bblocks)
     # Return the string + judoc variables if relevant
-    return div_replace(hstring), (has_mddefs ? jd_vars : nothing)
+    return hstring, (has_mddefs ? jd_vars : nothing)
 end
 
 
 """
-    insert_proc_xblocks(pmd, mds, xblocks, lxdefs)
+    insert_proc_xblocks(pmd, mds, xblocks, coms, lxdefs, bblocks)
 
 Take a partial markdown string with the `JD_INSERT` marker and plug in the --
 appropriately processed -- block.
 """
-function insert_proc_xblocks(pmd::String, mds::String, xblocks::Vector{Block},
-                             lxdefs::Vector{LxDef}, bblocks::Vector{Block})
+function insert_proc_xblocks(phs::String, mds::String, xblocks::Vector{Block},
+                             lxcoms::Vector{Token}, lxdefs::Vector{LxDef},
+                             bblocks::Vector{Block})
 
-    allmatches = collect(eachmatch(PAT_JD_INSERT, pmd))
-    pieces = Vector{Union{SubString, String}}()
-    strlen = lastindex(pmd)
+    allmatches = collect(eachmatch(PAT_JD_INSERT, phs))
+    pieces = Vector{AbstractString}()
+    strlen = lastindex(phs)
 
     head = 1
     for (i, m) ∈ enumerate(allmatches)
-        (head < m.offset) && push!(pieces, SubString(pmd, head, m.offset-1))
+        (head < m.offset) && push!(pieces, SubString(phs, head, m.offset-1))
         head = m.offset + LEN_JD_INSERT
         # push! the resolved block
-        push!(pieces, process_xblock(xblocks[i], mds, lxdefs, bblocks))
+        push!(pieces, process_xblock(xblocks[i], mds, lxcoms, lxdefs, bblocks))
     end
-    (head < strlen) && push!(pieces, head => strlen)
+    (head < strlen) && push!(pieces, SubString(phs, head, strlen))
+    return prod(pieces)
 end
 
 
-"""
-"""
+
+# TODO TODO TODO complete doc
 function process_xblock(β::Block, s::String, lxdefs::Vector{LxDef},
-                        bblocks::Vector{Block})
+                        lxcoms::Vector{Token}, bblocks::Vector{Block})
 
-    # TODO
-    # β.name == DIV_OPEN
-    # β.name == DIV_CLOSE
-    # β.name == CODE ==> just md2html
-    # β.name == ESCAPE ==> no processing
-    # β.name ∈ MD_MATHS_NAMES
-    # default (& COMMENT): ""
+    # keep track of the substring corresponding to the block
+    ζ = SubString(s, β.from, β.to)
 
-    β.name == DIV_OPEN && # TODO
+    # check if it's one of the simple blocks
+    β.name == DIV_OPEN && return "<div class=\"$(chop(ζ, head=2, tail=0))\">"
     β.name == DIV_CLOSE && return "</div>"
-    β.name == :CODE && return md2html(SubString(s, ))
+    β.name == :CODE && return md2html(ζ)
+    β.name == :ESCAPE && return ζ
 
+    # check if it's a latex command
+    β.name == :LX_COM_NOARG && return "" # TODO TODO
+    β.name == :LX_COM_WARGS && return "" # TODO TODO
+
+    # check if it's a math block
     if β.name ∈ MD_MATHS_NAMES
-    else
-
+        pmath = convert_md__procmath(β)
+        rlx = resolve_latex(mds, pmath[1], pmath[2], true,
+                            lxcoms, lxdefs, bblocks)
+        return pmath[3] * rlx * pmath[4]
+    end
+    # default case: comment and co --> ignore block
     return ""
 end
 
 
-"""
-    convert_md__procblock(β, mds, lxdefs, bblocks)
-
-Helper function to process an individual block given its context and convert it
-to the appropriate html string.
-"""
-function convert_md__procblock(β::Block, mds::String, coms, lxdefs, bblocks)
-    #=
-    REMAIN BLOCKS: (most common block)
-    These are interstitial blocks (typically text) that may contain
-    user-defined latex that needs to be resolved as well as basic markdown
-    that will be processed by the default html converter.
-    =#
-    β.name == :REMAIN && return resolve_latex(mds, β.from, β.to, false,
-                                              coms, lxdefs, bblocks)
-    #=
-    ESCAPE BLOCKS:
-    These blocks are just plugged "as is", removing the '~~~' that
-    surround them.
-    =#
-    β.name == :ESCAPE && return mds[β.from+3:β.to-3]
-    #=
-    CODE BLOCKS:
-    These blocks are just given to the html engine to be parsed, they are
-    parsed separately so that any symbols that they may contain does not
-    trigger further processing.
-    =#
-    β.name ∈ [:CODE_SINGLE, :CODE] && return md2html(mds[β.from:β.to])
-    #=
-    MATH BLOCKS:
-    These blocks may contain user-defined latex commands that need to be
-    processed. Then, depending on the case, they are plugged in with their
-    appropriate KaTeX markers.
-    =#
-    if β.name ∈ MD_MATHS_NAMES
-        pmath = convert_md__procmath(β)
-        tmpst = resolve_latex(mds, pmath[1], pmath[2], true, coms,
-                              lxdefs, bblocks)
-        # add the relevant KaTeX brackets
-        return pmath[3] * tmpst * pmath[4]
-   end
-   # default case: comment and co
-   return ""
-end
+# """
+#     convert_md__procblock(β, mds, lxdefs, bblocks)
+#
+# Helper function to process an individual block given its context and convert it
+# to the appropriate html string.
+# """
+# function convert_md__procblock(β::Block, mds::String, coms, lxdefs, bblocks)
+#     #=
+#     REMAIN BLOCKS: (most common block)
+#     These are interstitial blocks (typically text) that may contain
+#     user-defined latex that needs to be resolved as well as basic markdown
+#     that will be processed by the default html converter.
+#     =#
+#     β.name == :REMAIN && return resolve_latex(mds, β.from, β.to, false,
+#                                               coms, lxdefs, bblocks)
+#     #=
+#     ESCAPE BLOCKS:
+#     These blocks are just plugged "as is", removing the '~~~' that
+#     surround them.
+#     =#
+#     β.name == :ESCAPE && return mds[β.from+3:β.to-3]
+#     #=
+#     CODE BLOCKS:
+#     These blocks are just given to the html engine to be parsed, they are
+#     parsed separately so that any symbols that they may contain does not
+#     trigger further processing.
+#     =#
+#     β.name ∈ [:CODE_SINGLE, :CODE] && return md2html(mds[β.from:β.to])
+#     #=
+#     MATH BLOCKS:
+#     These blocks may contain user-defined latex commands that need to be
+#     processed. Then, depending on the case, they are plugged in with their
+#     appropriate KaTeX markers.
+#     =#
+#     if β.name ∈ MD_MATHS_NAMES
+#         pmath = convert_md__procmath(β)
+#         tmpst = resolve_latex(mds, pmath[1], pmath[2], true, coms,
+#                               lxdefs, bblocks)
+#         # add the relevant KaTeX brackets
+#         return pmath[3] * tmpst * pmath[4]
+#    end
+#    # default case: comment and co
+#    return ""
+# end
 
 
 """
