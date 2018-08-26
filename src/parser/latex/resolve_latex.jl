@@ -1,7 +1,5 @@
 #=
-SubString(s, β.from, β.to) --> make this into function
-`\\com` --> `def`
-
+TODO: add doc
 =#
 function resolve_lx_noarg(lxname::SubString, lxdefs::Vector{LxDef},
                           inmath::Bool=false)
@@ -22,6 +20,16 @@ function resolve_lx_noarg(lxname::SubString, lxdefs::Vector{LxDef},
     plug, _ = convert_md(partial, lxdefs, isconfig=false,
                             has_mddefs=false)
     return plug
+end
+
+#=
+TODO: ONGOING ONGOING August 26, 2018, work with Sandbox/tester.jl
+
+--> once that one is working in isolation, fix `resolve_latex` then clean up then merge into context, check all ok, then merge into bugfix, see if it resolves the bug testing html then merge into master
+
+=#
+function resolve_lx_wargs(lxcom::SubString, lxdefs::Vector{LxDef},
+                          inmath::Bool=false)
 end
 
 
