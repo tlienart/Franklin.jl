@@ -103,7 +103,7 @@ function find_md_lxcoms(str::String, tokens::Vector{Token},
         (τ.name == :LX_COMMAND) || continue
         # get the range of the command
         # > 1. look for the definition given its name
-        lxname = SubString(str, τ.from, τ.to)
+        lxname = subs(str, τ.from, τ.to)
         # NOTE: we are *not* in a math env here therefore the next line
         # will either error (nothing found) or return a lxdef
         lxdefref = retrieve_lxdefref(lxname, lxdefs, false)

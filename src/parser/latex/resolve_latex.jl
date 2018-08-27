@@ -8,7 +8,7 @@ function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef}, s::AbstractString,
 
     lxdef = getdef(lxc)
     # lxdef = nothing means we're inmath & not found, let KaTeX deal with it
-    (lxdef == nothing) && return lxname
+    isnothing(lxdef) && return lxname
     # lxdef = something -> maybe inmath + found; retrieve & apply
     partial = lxdef
     for (argnum, b) ∈ enumerate(lxc.braces)
@@ -71,7 +71,7 @@ function resolve_latex(str::String, bfrom::Int, bto::Int, inmath::Bool,
         lxname = str[lxtoken.from:lxtoken.to]
         k = findfirst(δ -> (δ.name == lxname), lxdefs)
 
-        if (k == nothing) & ismaths
+        if isnothing(k) & ismaths
             #=
             command is not found but it's a math environment, consider as
             potential KaTeX command, greedy take braces til space
@@ -84,8 +84,8 @@ function resolve_latex(str::String, bfrom::Int, bto::Int, inmath::Bool,
             # 2. look for adjoining braces
             cand_braces = Vector{Block}()
             b_idx = findfirst(b -> (b.from == lxtoken.to + 1), braces_in)
-            (b_idx == nothing) && (offset = lxtoken.to + 1; continue)
-            while b_idx != nothing
+            isnothing(b_idx) && (offset = lxtoken.to + 1; continue)
+            while !isnothing(b_idx)
                 cur_b = braces_in[b_idx]
                 push!(cand_braces, cur_b)
                 b_idx = findfirst(b -> (b.from == cur_b.to + 1), braces_in)
@@ -100,7 +100,7 @@ function resolve_latex(str::String, bfrom::Int, bto::Int, inmath::Bool,
         else
             # this is potentially a user-defined command => the definition
             # needs to exist and be before the command
-            if (k == nothing) || (lxtoken.from < lxdefs[k].from)
+            if isnothing(k) || (lxtoken.from < lxdefs[k].from)
                 error("Command '$lxname' was not defined before it was used. Verify\n '$(str[bfrom:bto])'")
             end
             # => there is a definition, retrieve narg
@@ -119,7 +119,7 @@ function resolve_latex(str::String, bfrom::Int, bto::Int, inmath::Bool,
             # ==> if several arguments, find the first braces
             b1_idx = findfirst(b -> (b.from == lxtoken.to + 1), braces_in)
             # --> it needs to exist + there should be enough left
-            if (b1_idx == nothing) || (b1_idx + lxnarg - 1 > nbraces_in)
+            if isnothing(b1_idx) || (b1_idx + lxnarg - 1 > nbraces_in)
                 error("Command '$lxname' expects $lxnarg arguments and there should be no spaces between command name and first brace: \\com{arg1}... Verify\n '$(str[bfrom:bto])'")
             end
             # --> retrieve the candidate braces
@@ -149,7 +149,7 @@ function resolve_latex(str::String, bfrom::Int, bto::Int, inmath::Bool,
             com_end = cand_braces[end].to
             deactivate_until = findfirst(τ -> τ.from > com_end,
                                          lxtokens_in[i+1:end])
-            if deactivate_until == nothing
+            if isnothing(deactivate_until)
                 active_lxt_in[i+1:end] .= false
             elseif deactivate_until > 1
                 active_lxt_in[i+1:i+deactivate_until] .= false

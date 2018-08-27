@@ -37,7 +37,7 @@ function convert_html__procblock(β::Union{Block, <:HBlock, HCond}, hs::String,
         haselse = (length(β.dofrom) == 1 + length(β.vconds) + 1)
         all(c -> haskey(allvars, c), allconds) || error("At least one of the booleans in the conditional block could not be found. Verify.")
         k = findfirst(c -> allvars[c].first, allconds)
-        if (k == nothing)
+        if isnothing(k)
             haselse || return ""
             partial = hs[β.dofrom[end]:β.doto[end]]
         else

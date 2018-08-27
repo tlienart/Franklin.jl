@@ -49,7 +49,7 @@ function form_interm_md(mds::String, xblocks::Vector{Block},
     # passed through in *context* (i.e. that do not appear in mds) therefore
     # searcg first lxdef actually in mds (nothing if lxdefs is empty)
     first_lxd = findfirst(δ -> (δ.from > 0), lxdefs)
-    next_lxdef = (first_lxd == nothing) ? BIG_INT : lxdefs[first_lxd].from
+    next_lxdef = isnothing(first_lxd) ? BIG_INT : lxdefs[first_lxd].from
 
     # check which block is next
     xb_or_lx = (next_xblock < next_lxdef)
@@ -114,7 +114,7 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
         assignments = Vector{Pair{String, String}}(undef, length(mdd))
         for i ∈ eachindex(mdd)
             m = match(MD_DEF_PAT, mds[mdd[i].from:mdd[i].to])
-            m == nothing && warn("Found delimiters for an @def environment but I couldn't match it, verify $(mds[mdd[i].from:mdd[i].to]). Ignoring.")
+            isnothing(m) && warn("Found delimiters for an @def environment but I couldn't match it, verify $(mds[mdd[i].from:mdd[i].to]). Ignoring.")
             assignments[i] = String(m.captures[1]) => String(m.captures[2])
         end
         # Assign as appropriate

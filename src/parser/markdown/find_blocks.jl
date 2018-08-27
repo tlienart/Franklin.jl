@@ -66,7 +66,7 @@ function find_md_xblocks(tokens::Vector{Token})
         end
         # seek forward to find the first closing token
         k = findfirst(cτ->(cτ.name == close_τ), tokens[i+1:end])
-        (k == nothing) && error("Found the opening token '$(τ.name)' but not the corresponding closing token. Verify.")
+        isnothing(k) && error("Found the opening token '$(τ.name)' but not the corresponding closing token. Verify.")
         # store the block
         k += i
         push!(xblocks, Block(bname, τ.from, tokens[k].to))
