@@ -3,7 +3,7 @@ TODO: add doc
 
 --> once that one is working in isolation, fix `resolve_latex` then clean up then merge into context, check all ok, then merge into bugfix, see if it resolves the bug testing html then merge into master
 =#
-function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef}, s::AbstractString,
+function resolve_lxcom(lxc::LxCom, s::AbstractString, lxdefs::Vector{LxDef},
                        inmath::Bool=false)
 
     lxdef = getdef(lxc)
@@ -16,7 +16,8 @@ function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef}, s::AbstractString,
     end
     partial = ifelse(inmath, mathenv(partial), partial) * EOS
     # reprocess (we don't care about jd_vars=nothing)
-    plug, _ = convert_md(partial, lxdefs, isconfig=false, has_mddefs=false)
+    plug, _ = convert_md(partial, lxdefs, isrecursive=true, isconfig=false,
+                         has_mddefs=false)
 
     return plug
 end

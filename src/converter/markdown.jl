@@ -1,39 +1,35 @@
-# """
-#     stripp(s)
-#
-# Convenience function to remove `<p>` and `</p>` added by the Base markdown to
-# html converter.
-# """
-# function stripp(s::AbstractString)
-#     ts = ifelse(startswith(s, "<p>"), chop(s, 4, tail=0), s)
-#     ts = ifelse(endswith(s, "</p>\n"), chop(s, tail=5), ts)
-#     return ts
-# end
-"""
-    md2html(s, ismaths)
-
-Convenience function to call the base markdown to html converter on "simple"
-strings (i.e. strings that don't need to be further considered and don't
-contain anything else than markdown tokens).
-Note: it may get fed with a `SubString` whence the use of `AbstractString`.
-"""
-function md2html(s::AbstractString)
-    isempty(s) && return s
-    return Markdown.html(Markdown.parse(s))
-end
-
-
 const JD_INSERT = "##JDINSERT##"
 const PAT_JD_INSERT = Regex(JD_INSERT)
 const LEN_JD_INSERT = length(JD_INSERT)
 
+
 """
-    form_interm_md(mds, xblocks, lxdefs)
+    md2html(s, stripp)
+
+Convenience function to call the base markdown to html converter on "simple"
+strings (i.e. strings that don't need to be further considered and don't
+contain anything else than markdown tokens).
+The boolean `stripp` indicates whether to remove the inserted `<p>` and `</p>`
+by the base markdown processor, this is relevant for things that are parsed
+within latex commands etc.
+Note: it may get fed with a `SubString` whence the use of `AbstractString`.
+"""
+function md2html(s::AbstractString, stripp::Bool=false)
+    isempty(s) && return s
+    tmp = Markdown.html(Markdown.parse(s))
+    @show tmp
+    stripp && return chop(tmp, head=3, tail=5) # remove <p>...</p>\n
+    return tmp
+end
+
+
+"""
+    form_inter_md(mds, xblocks, lxdefs)
 
 Form an intermediate MD file where special blocks are replaced by a marker
 (`JD_INSERT`) indicating that a piece will need to be plugged in there later.
 """
-function form_interm_md(mds::String, xblocks::Vector{Block},
+function form_inter_md(mds::AbstractString, xblocks::Vector{<:AbstractBlock},
                         lxdefs::Vector{LxDef})
 
     strlen = lastindex(mds) - 1 # final character is the EOS character
@@ -85,8 +81,8 @@ end
 
 Convert a judoc markdown file into a judoc html.
 """
-function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
-                    isconfig=false, has_mddefs=true)
+function convert_md(mds::AbstractString, pre_lxdefs=Vector{LxDef}();
+                    isrecursive=false, isconfig=false, has_mddefs=true)
     # Tokenize
     tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
     # Deactivate tokens within code blocks
@@ -95,9 +91,13 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
     bblocks, tokens = find_md_bblocks(tokens)
     # Find newcommands (latex definitions)
     lxdefs, tokens = find_md_lxdefs(mds, tokens, bblocks)
+    # Find lxcoms
+    lxcoms, tokens = find_md_lxcoms(mds, tokens, lxdefs, bblocks)
     # Find blocks to extract
     xblocks, tokens = find_md_xblocks(tokens)
-    # Kill trivial tokens that may remain
+    # Merge the lxcoms and xblocks -> list of things to insert
+    blocks2insert = merge_xblocks_lxcoms(xblocks, lxcoms)
+    # Kill trivial tokens that may remain (now that mddef have been extracted)
     tokens = filter(τ -> (τ.name != :LINE_RETURN), tokens)
 
     # if any lxdefs are given in the context, merge them. `pastdef!` specifies
@@ -105,12 +105,9 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
     lprelx = length(pre_lxdefs)
     (lprelx > 0) && (lxdefs = cat(pastdef!.(pre_lxdefs), lxdefs, dims=1))
 
-    # find commands
-    lxcoms = filter(τ -> (τ.name == :LX_COMMAND), tokens)
-
     if has_mddefs
         # Process MD_DEF blocks
-        mdd = filter(b -> (b.name == :MD_DEF), allblocks)
+        mdd = filter(b -> (b.name == :MD_DEF), xblocks)
         assignments = Vector{Pair{String, String}}(undef, length(mdd))
         for i ∈ eachindex(mdd)
             m = match(MD_DEF_PAT, mds[mdd[i].from:mdd[i].to])
@@ -130,42 +127,50 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
     end
 
     # form intermediate markdown + html
-    inter_md = form_interm_md(mds, xblocks, lxdefs)
+    inter_md = form_inter_md(mds, blocks2insert, lxdefs)
+    inter_html = md2html(inter_md, isrecursive)
     # plug resolved blocks in partial html to form the final html
     lxcontext = LxContext(lxcoms, lxdefs, bblocks)
-    hstring = insert_proc_xblocks(md2html(inter_md), mds, xblocks, lxcontext)
+    hstring = convert_inter_html(inter_html, mds, blocks2insert, lxcontext)
     # Return the string + judoc variables if relevant
     return hstring, (has_mddefs ? jd_vars : nothing)
 end
 
 
 """
-    insert_proc_xblocks(pmd, mds, xblocks, coms, lxdefs, bblocks)
+    convert_inter_md(intermd, refmd, xblocks, coms, lxdefs, bblocks)
 
 Take a partial markdown string with the `JD_INSERT` marker and plug in the --
 appropriately processed -- block.
 """
-function insert_proc_xblocks(phs::String, mds::String, xblocks::Vector{Block},
-                             lxcontext::LxContext)
+function convert_inter_html(interhtml::AbstractString, refmd::AbstractString,
+                            blocks2insert::Vector{<:AbstractBlock},
+                            lxcontext::LxContext)
 
-    allmatches = collect(eachmatch(PAT_JD_INSERT, phs))
+    # Find the JD_INSERT indicators
+    allmatches = collect(eachmatch(PAT_JD_INSERT, interhtml))
     pieces = Vector{AbstractString}()
-    strlen = lastindex(phs)
+    strlen = lastindex(interhtml)
 
     head = 1
     for (i, m) ∈ enumerate(allmatches)
-        (head < m.offset) && push!(pieces, subs(phs, head, m.offset-1))
+        (head < m.offset) && push!(pieces, subs(interhtml, head, m.offset-1))
         head = m.offset + LEN_JD_INSERT
         # push! the resolved block
-        push!(pieces, process_xblock(xblocks[i], mds, lxcontext))
+        push!(pieces, convert_block(blocks2insert[i], refmd, lxcontext))
     end
-    (head < strlen) && push!(pieces, subs(phs, head, strlen))
+    (head < strlen) && push!(pieces, subs(interhtml, head, strlen))
     return prod(pieces)
 end
 
 
-# TODO TODO TODO complete doc
-function process_xblock(β::Block, s::String, lxcontext::LxContext)
+#=
+TODO complete doc
+=#
+function convert_block(β::AbstractBlock, s::AbstractString,
+                       lxcontext::LxContext)
+
+    (typeof(β) == LxCom) && return resolve_lxcom(β, s, lxcontext.lxdefs)
 
     ζ = subs(s, β.from, β.to)
     # Return relevant interpolated string based on case
@@ -175,7 +180,7 @@ function process_xblock(β::Block, s::String, lxcontext::LxContext)
     β.name == :ESCAPE && return ζ
     if β.name ∈ MD_MATHS_NAMES
         pmath = convert_md__procmath(β)
-        rlx = resolve_latex(mds, pmath[1], pmath[2], true, lxcontext)
+        rlx = resolve_latex(s, pmath[1], pmath[2], true, lxcontext)
         return pmath[3] * rlx * pmath[4]
     end
     # default case: comment and co --> ignore block

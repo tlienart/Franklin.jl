@@ -25,6 +25,7 @@
 * Instead of keeping the from/to in `AbstratBlock`, maybe it makes more sense to keep the `SubString`? the from to can be recovered
     * `fromto(ss)=(from=ss.offset+1, to=ss.offset+lastindex(ss))`
     * might make some stuff a bit cleaner though should not be priority
+    * might help not to feed bits of string to all functions
 
 ## Context project
 
