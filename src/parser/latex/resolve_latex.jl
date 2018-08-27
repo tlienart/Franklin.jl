@@ -1,35 +1,24 @@
 #=
 TODO: add doc
-=#
-function resolve_lx_noarg(lxname::SubString, lxdefs::Vector{LxDef},
-                          inmath::Bool=false)
-
-    k = findfirst(δ -> (δ.name == lxname), lxdefs)
-    if (k == nothing)
-        # e.g.: \sin --> let KaTex deal with it (and possibly error)
-        inmath && return lxname
-        # otherwise it's a command that should have been defined -> error
-        (lxname.offset < lxdefs[k].from) && error("Command '$lxname' was not defined before it was used.")
-    end
-    # retrieve the definition
-    partial = lxdefs[k].def
-    # apply the def resulting in a partial string that will be reprocessed
-    partial = ifelse(inmath, mathenv(partial), partial) * EOS
-
-    # reprocess
-    plug, _ = convert_md(partial, lxdefs, isconfig=false,
-                            has_mddefs=false)
-    return plug
-end
-
-#=
-TODO: ONGOING ONGOING August 26, 2018, work with Sandbox/tester.jl
 
 --> once that one is working in isolation, fix `resolve_latex` then clean up then merge into context, check all ok, then merge into bugfix, see if it resolves the bug testing html then merge into master
-
 =#
-function resolve_lx_wargs(lxcom::SubString, lxdefs::Vector{LxDef},
-                          inmath::Bool=false)
+function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef}, s::AbstractString,
+                       inmath::Bool=false)
+
+    lxdef = getdef(lxc)
+    # lxdef = nothing means we're inmath & not found, let KaTeX deal with it
+    (lxdef == nothing) && return lxname
+    # lxdef = something -> maybe inmath + found; retrieve & apply
+    partial = lxdef
+    for (argnum, b) ∈ enumerate(lxc.braces)
+        partial = replace(partial, "#$argnum" => subs(s, b.from+1, b.to-1))
+    end
+    partial = ifelse(inmath, mathenv(partial), partial) * EOS
+    # reprocess (we don't care about jd_vars=nothing)
+    plug, _ = convert_md(partial, lxdefs, isconfig=false, has_mddefs=false)
+
+    return plug
 end
 
 
@@ -52,9 +41,11 @@ since the definition of the command may itself contain tokens.
 The function returns the resulting string once all user-defined commands have
 been appropriately replaced and processed.
 """
-function resolve_latex(str::String, bfrom::Int, bto::Int, ismaths::Bool,
-                       lxtokens::Vector{Token}, lxdefs::Vector{LxDef},
-                       bblocks::Vector{Block})
+function resolve_latex(str::String, bfrom::Int, bto::Int, inmath::Bool,
+                       lxcontext::LxContext)
+
+# TODO: name of args has changed, unpack LXCONTEXT appropriately, also inmath
+# instead of ismaths
 
     # filter lxtokens in the given range (bfrom-bto)
     lxtokens_in = filter(τ -> (τ.from >= bfrom) & (τ.to <= bto), lxtokens)

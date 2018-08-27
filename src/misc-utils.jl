@@ -1,12 +1,4 @@
 """
-    change_ext(fname)
-
-Convenience function to replace the extension of a filename with another.
-"""
-change_ext(fname, ext=".html") = splitext(fname)[1] * ext
-
-
-"""
     time_it_took(start)
 
 Convenience function to display a time since `start`.
@@ -19,3 +11,19 @@ function time_it_took(start)
     mess = "[done $mess]"
     println(mess)
 end
+
+
+"""
+    subs(s, from, to)
+
+Convenience function to form a `SubString`.
+"""
+subs(s::AbstractString, from::Int, to::Int) = SubString(s, from, to)
+
+
+"""
+    isnothing(x)
+
+Convenience function to check if a variable is `nothing`.
+"""
+isnothing(x) = (x == nothing)

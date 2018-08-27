@@ -1,27 +1,32 @@
+abstract type AbstractBlock end
+
+
 """
-    Token
+    Token <: AbstractBlock
 
 A token `τ::Token` denotes the part of a main source string that we care about
 covering the range `τ.from:τ.to` and identified by a symbol `τ.name` (e.g.:
 `:MATH_ALIGN_OPEN`). Tokens are typically used in this code to identify
 delimiters of environments.
+See also `Block`, `LxBlock`.
 """
-struct Token
+struct Token <: AbstractBlock
     name::Symbol
     from::Int
     to::Int
 end
 # convenience constructor for single-char token such as `{`
-Token(name::Symbol, loc::Int) = Token(name, loc, loc)
+Token(name, loc) = Token(name, loc, loc)
 
 
 """
-    Block
+    Block === Token
 
-A block has the same content as a token, only the name indicates a segment of
-text typically surrounded by an opening and a closing token. This synonym helps
-the readability of the code to distinguish delimiters (tokens) from segments
-(blocks).
+A `Block` has the same content as a `Token`, only the name indicates a segment
+of text typically surrounded by an opening and a closing token. This synonym
+helps the readability of the code to distinguish delimiters (tokens) from
+segments (blocks).
+See also `Token`, `LxBlock`.
 """
 const Block = Token
 

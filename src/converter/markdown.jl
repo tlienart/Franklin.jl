@@ -58,7 +58,7 @@ function form_interm_md(mds::String, xblocks::Vector{Block},
     head, xb_idx, lx_idx = 1, 1, first_lxd
     while (next_idx < BIG_INT) & (head < strlen)
         # check if there's anything before head and next block and push
-        (head < next_idx) && push!(pieces, SubString(mds, head, next_idx-1))
+        (head < next_idx) && push!(pieces, subs(mds, head, next_idx-1))
         # check whether it's a xblock first or a newcommand first
         if xb_or_lx # it's a xblock --> push
             push!(pieces, JD_INSERT)
@@ -86,7 +86,7 @@ end
 Convert a judoc markdown file into a judoc html.
 """
 function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
-                     isconfig=false, has_mddefs=true)
+                    isconfig=false, has_mddefs=true)
     # Tokenize
     tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
     # Deactivate tokens within code blocks
@@ -132,8 +132,8 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
     # form intermediate markdown + html
     inter_md = form_interm_md(mds, xblocks, lxdefs)
     # plug resolved blocks in partial html to form the final html
-    hstring = insert_proc_xblocks(md2html(inter_md), mds, xblocks,
-                                  lxcoms, lxdefs, bblocks)
+    lxcontext = LxContext(lxcoms, lxdefs, bblocks)
+    hstring = insert_proc_xblocks(md2html(inter_md), mds, xblocks, lxcontext)
     # Return the string + judoc variables if relevant
     return hstring, (has_mddefs ? jd_vars : nothing)
 end
@@ -146,8 +146,7 @@ Take a partial markdown string with the `JD_INSERT` marker and plug in the --
 appropriately processed -- block.
 """
 function insert_proc_xblocks(phs::String, mds::String, xblocks::Vector{Block},
-                             lxcoms::Vector{Token}, lxdefs::Vector{LxDef},
-                             bblocks::Vector{Block})
+                             lxcontext::LxContext)
 
     allmatches = collect(eachmatch(PAT_JD_INSERT, phs))
     pieces = Vector{AbstractString}()
@@ -155,43 +154,36 @@ function insert_proc_xblocks(phs::String, mds::String, xblocks::Vector{Block},
 
     head = 1
     for (i, m) ∈ enumerate(allmatches)
-        (head < m.offset) && push!(pieces, SubString(phs, head, m.offset-1))
+        (head < m.offset) && push!(pieces, subs(phs, head, m.offset-1))
         head = m.offset + LEN_JD_INSERT
         # push! the resolved block
-        push!(pieces, process_xblock(xblocks[i], mds, lxcoms, lxdefs, bblocks))
+        push!(pieces, process_xblock(xblocks[i], mds, lxcontext))
     end
-    (head < strlen) && push!(pieces, SubString(phs, head, strlen))
+    (head < strlen) && push!(pieces, subs(phs, head, strlen))
     return prod(pieces)
 end
 
 
-
 # TODO TODO TODO complete doc
-function process_xblock(β::Block, s::String, lxdefs::Vector{LxDef},
-                        lxcoms::Vector{Token}, bblocks::Vector{Block})
+function process_xblock(β::Block, s::String, lxcontext::LxContext)
 
-    # keep track of the substring corresponding to the block
-    ζ = SubString(s, β.from, β.to)
-
-    # check if it's one of the simple blocks
+    ζ = subs(s, β.from, β.to)
+    # Return relevant interpolated string based on case
     β.name == DIV_OPEN && return "<div class=\"$(chop(ζ, head=2, tail=0))\">"
     β.name == DIV_CLOSE && return "</div>"
     β.name == :CODE && return md2html(ζ)
     β.name == :ESCAPE && return ζ
-
-    # check if it's a latex command
-    β.name == :LX_COM_NOARG && return "" # TODO TODO
-    β.name == :LX_COM_WARGS && return "" # TODO TODO
-
-    # check if it's a math block
     if β.name ∈ MD_MATHS_NAMES
         pmath = convert_md__procmath(β)
-        rlx = resolve_latex(mds, pmath[1], pmath[2], true,
-                            lxcoms, lxdefs, bblocks)
+        rlx = resolve_latex(mds, pmath[1], pmath[2], true, lxcontext)
         return pmath[3] * rlx * pmath[4]
     end
     # default case: comment and co --> ignore block
     return ""
+end
+
+
+function process_xblock(β::LxCom, s::String, lxcontext::LxContext)
 end
 
 
