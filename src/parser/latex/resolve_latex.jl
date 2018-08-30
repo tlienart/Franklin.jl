@@ -1,9 +1,3 @@
-#=
-TODO: add doc
-
---> once that one is working in isolation, fix `resolve_latex` then clean up then merge into context, check all ok, then merge into bugfix, see if it resolves the bug testing html then merge into master
-=#
-
 """
     resolve_lxcom(lxc, s, lxdefs, inmath)
 

@@ -91,19 +91,17 @@ function convert_md(mds::AbstractString, pre_lxdefs=Vector{LxDef}();
     bblocks, tokens = find_md_bblocks(tokens)
     # Find newcommands (latex definitions)
     lxdefs, tokens = find_md_lxdefs(mds, tokens, bblocks)
+    # if any lxdefs are given in the context, merge them. `pastdef!` specifies
+    # that the definitions appear "earlier" by marking the `.from` at 0
+    lprelx = length(pre_lxdefs)
+    (lprelx > 0) && (lxdefs = cat(pastdef!.(pre_lxdefs), lxdefs, dims=1))
+
     # Find blocks to extract
     xblocks, tokens = find_md_xblocks(tokens)
     # Find lxcoms
     lxcoms, tokens = find_md_lxcoms(mds, tokens, lxdefs, bblocks)
     # Merge the lxcoms and xblocks -> list of things to insert
     blocks2insert = merge_xblocks_lxcoms(xblocks, lxcoms)
-    # Kill trivial tokens that may remain (now that mddef have been extracted)
-    tokens = filter(τ -> (τ.name != :LINE_RETURN), tokens)
-
-    # if any lxdefs are given in the context, merge them. `pastdef!` specifies
-    # that the definitions appear "earlier" by marking the `.from` at 0
-    lprelx = length(pre_lxdefs)
-    (lprelx > 0) && (lxdefs = cat(pastdef!.(pre_lxdefs), lxdefs, dims=1))
 
     if has_mddefs
         # Process MD_DEF blocks
@@ -150,18 +148,19 @@ function convert_md_math(mds::AbstractString, lxdefs=Vector{LxDef}())
     # in a math environment > pass a bool to indicate it
     lxcoms, tokens = find_md_lxcoms(mds, tokens, lxdefs, bblocks, true)
     # form the string (see `form_inter_md`, similar but fewer conditions)
-    strlen = lastindex(mds)
+    strlen = lastindex(mds) - 1
     pieces = Vector{AbstractString}()
     lenlxc = length(lxcoms)
     next_lxcom = iszero(lenlxc) ? BIG_INT : lxcoms[1].from
     head, lxcom_idx = 1, 1
     while (next_lxcom < BIG_INT) & (head < strlen)
         (head < next_lxcom) && push!(pieces, subs(mds, head, next_lxcom-1))
-        push!(pieces, resolve_lxcom(lxcoms[next_lxcom], mds, lxdefs, true))
+        push!(pieces, resolve_lxcom(lxcoms[lxcom_idx], mds, lxdefs, true))
+        head = lxcoms[lxcom_idx].to + 1
         lxcom_idx += 1
         next_lxcom = (lxcom_idx > lenlxc) ? BIG_INT : lxcoms[lxcom_idx].from
     end
-    (head <= strlen) && push!(pieces, chop(mds, head=head-1, tail=0))
+    (head <= strlen) && push!(pieces, chop(mds, head=head-1, tail=1))
     return prod(pieces)
 end
 
@@ -244,6 +243,6 @@ function convert_mathblock(β::Block, s::AbstractString, lxdefs::Vector{LxDef})
     !(@isdefined pmath) && error("Undefined math block name.")
 
     # otherwise we're good, convert the inside, decorate with KaTex and return
-    inner = subs(s, pmath[1], pmath[2])
+    inner = subs(s, pmath[1], pmath[2]) * EOS
     return pmath[3] * convert_md_math(inner, lxdefs) * pmath[4]
 end

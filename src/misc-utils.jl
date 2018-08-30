@@ -27,3 +27,11 @@ subs(s::AbstractString, from::Int, to::Int) = SubString(s, from, to)
 Convenience function to check if a variable is `nothing`.
 """
 isnothing(x) = (x == nothing)
+
+
+"""
+    fromto(s, β)
+
+Convenience function to chop a string around a `β.from`, `β.to`.
+"""
+fromto(s, β) = subs(s, β.from, β.to)
