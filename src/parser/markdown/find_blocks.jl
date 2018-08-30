@@ -47,16 +47,11 @@ function find_md_xblocks(tokens::Vector{Token})
     # go over tokens and process the ones announcing a block to extract
     for (i, τ) ∈ enumerate(tokens)
         active_tokens[i] || continue
-        ismaths = false # is it a math block? default = false
+        ismath = false # is it a math block? default = false
         if haskey(MD_EXTRACT, τ.name)
             close_τ, bname = MD_EXTRACT[τ.name]
         elseif haskey(MD_MATHS, τ.name)
-            #= NOTE: there is a corner case where this block is actually
-            encapsulated in the definition of a command (via \newcommand)
-            this is resolved at subsequent step "find_md_lxdefs"
-            =#
             close_τ, bname = MD_MATHS[τ.name]
-            ismaths = true
         elseif τ.name ∈ [:DIV_OPEN, :DIV_CLOSE]
             push!(xblocks, τ)
             continue
@@ -66,29 +61,32 @@ function find_md_xblocks(tokens::Vector{Token})
         end
         # seek forward to find the first closing token
         k = findfirst(cτ->(cτ.name == close_τ), tokens[i+1:end])
-        (k == nothing) && error("Found the opening token '$(τ.name)' but not the corresponding closing token. Verify.")
+        isnothing(k) && error("Found the opening token '$(τ.name)' but not the corresponding closing token. Verify.")
         # store the block
         k += i
         push!(xblocks, Block(bname, τ.from, tokens[k].to))
         # mark tokens within the block as inactive (extracted blocks are not
         # further processed unless they're math blocks where potential
         # user-defined latex commands will be further processed)
-        active_tokens[i:k] .= ifelse(ismaths, map(islatex, tokens[i:k]), false)
+        active_tokens[i:k] .= false
     end
     return xblocks, tokens[active_tokens]
 end
 
-#=
-TODO TODO
-* add DOC !
-=#
-function merge_xblocks_lxcoms(xb::Vector{Block}, lxc::Vector{Block})
+"""
+    merge_xblocks_lxcoms(xb, lxc)
+
+Form a list of `AbstractBlock` corresponding to the list of blocks to insert
+after `md2html` is called. The blocks are extracted separately and this
+function merges them in order of appearance.
+"""
+function merge_xblocks_lxcoms(xb::Vector{Block}, lxc::Vector{LxCom})
 
     isempty(xb) && return lxc
     isempty(lxc) && return xb
 
     lenxb, lenlxc = length(xb), length(lxc)
-    xblocks = Vector{Block}(undef, lenxb + lenlxc)
+    xblocks = Vector{AbstractBlock}(undef, lenxb + lenlxc)
 
     xb_i, lxc_i = 1, 1
     xb_from, lxc_from = xb[xb_i].from, lxc[lxc_i].from
@@ -105,51 +103,4 @@ function merge_xblocks_lxcoms(xb::Vector{Block}, lxc::Vector{Block})
         end
     end
     return xblocks
-end
-
-
-"""
-    get_md_allblocks(xblocks, lxdefs, strlen)
-
-Given a list of blocks, find the interstitial blocks, tag them as `:REMAIN`
-blocks and return a full list of blocks spanning the string.
-"""
-function get_md_allblocks(xblocks::Vector{Block}, lxdefs::Vector{LxDef},
-                          strlen::Int)
-
-    allblocks = Vector{Block}()
-    lenxb = length(xblocks)
-    lenlx = length(lxdefs)
-
-    next_xblock = iszero(lenxb) ? BIG_INT : xblocks[1].from
-    next_lxdef = iszero(lenlx) ? BIG_INT : lxdefs[1].from
-
-    # check which block is next
-    xb_or_lx = (next_xblock < next_lxdef)
-    next_idx = min(next_xblock, next_lxdef)
-
-    head, xb_idx, lx_idx = 1, 1, 1
-    while (next_idx < BIG_INT) & (head < strlen)
-        # check if there's anything before head and next block and push
-        (head < next_idx) && push!(allblocks, remain(head, next_idx-1))
-
-        if xb_or_lx # next block is xblock
-            β = xblocks[xb_idx]
-            push!(allblocks, β)
-            head = β.to + 1
-            xb_idx += 1
-            next_xblock = (xb_idx > lenxb) ? BIG_INT : xblocks[xb_idx].from
-        else # next block is newcommand, no push
-            head = lxdefs[lx_idx].to + 1
-            lx_idx += 1
-            next_lxdef = (lx_idx > lenlx) ? BIG_INT : lxdefs[lx_idx].from
-        end
-
-        # check which block is next
-        xb_or_lx = (next_xblock < next_lxdef)
-        next_idx = min(next_xblock, next_lxdef)
-    end
-    # add final one if exists
-    (head < strlen) && push!(allblocks, remain(head, strlen))
-    return allblocks
 end

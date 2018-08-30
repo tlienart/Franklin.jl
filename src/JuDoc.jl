@@ -13,11 +13,11 @@ include("parser/block_utils.jl")
 include("parser/latex/patterns.jl")
 include("parser/latex/tokens.jl")
 include("parser/latex/resolve_latex.jl")
+include("parser/latex/find_blocks.jl")
 # > markdown
 include("parser/markdown/patterns.jl")
 include("parser/markdown/tokens.jl")
 include("parser/markdown/find_blocks.jl")
-include("parser/markdown/find_lxblocks.jl")
 # > html
 include("parser/html/patterns.jl")
 include("parser/html/tokens.jl")
@@ -30,17 +30,16 @@ include("converter/markdown.jl")
 include("converter/html.jl")
 include("converter/hfuns.jl")
 
-
 # FILE PROCESSING
-
 include("jd_paths.jl")
 include("jd_vars.jl")
 
 # FILE AND DIR MANAGEMENT
-
-include("manager/misc_utils.jl")
 include("manager/dir_utils.jl")
 include("manager/file_utils.jl")
 include("manager/judoc.jl")
+
+# MISC UTILS
+include("misc-utils.jl")
 
 end # module

@@ -54,23 +54,23 @@ function qualify_html_hblocks(blocks::Vector{Block}, s::String)
         ts = s[β.from:β.to]
         # if block {{ if v }}
         m = match(HBLOCK_IF, ts)
-        (m == nothing) ||
+        isnothing(m) ||
             (qb[i] = HIf(m.captures[1], β.from, β.to); continue)
         # else block {{ else }}
         m = match(HBLOCK_ELSE, ts)
-        (m == nothing) ||
+        isnothing(m) ||
             (qb[i] = HElse(β.from, β.to); continue)
         # else if block {{ else if v }}
         m = match(HBLOCK_ELSE_IF, ts)
-        (m == nothing) ||
+        isnothing(m) ||
             (qb[i] = HElseIf(m.captures[1], β.from, β.to); continue)
         # end block {{ end }}
         m = match(HBLOCK_END, ts)
-        (m == nothing) ||
+        isnothing(m) ||
             (qb[i] = HEnd(β.from, β.to); continue)
         # function block {{ fname v1 v2 ... }}
         m = match(HBLOCK_FUN, ts)
-        (m == nothing) ||
+        isnothing(m) ||
             (qb[i] = HFun(m.captures[1], split(m.captures[2]), β.from, β.to);
             continue)
         error("I found a HBlock that did not match anything, verify '$ts'")
@@ -97,7 +97,7 @@ function find_html_cblocks(qblocks::Vector{<:HBlock})
 
         # look forward until the next `{{ end }}` block
         k = findfirst(cβ -> (typeof(cβ) == HEnd), qblocks[i+1:end])
-        (k == nothing) && error("Found an {{ if ... }} block but no matching {{ end }} block. Verify.")
+        isnothing(k) && error("Found an {{ if ... }} block but no matching {{ end }} block. Verify.")
         n_between = k - 1
         k += i
 

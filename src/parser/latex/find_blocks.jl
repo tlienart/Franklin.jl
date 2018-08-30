@@ -22,7 +22,7 @@ function find_md_lxdefs(str::String, tokens::Vector{Token},
         # find first brace blocks after the newcommand (naming)
         k = findfirst(b->(τ.from < b.from), bblocks)
         # there must be two brace blocks after the newcommand (name, def)
-        if (k == nothing) || !(1 <= k < length(bblocks))
+        if isnothing(k) || !(1 <= k < length(bblocks))
             error("Ill formed newcommand (needs two {...})")
         end
 
@@ -34,17 +34,17 @@ function find_md_lxdefs(str::String, tokens::Vector{Token},
         # optional spaces (specification of the number of arguments)
         if !isempty(rge)
             lxnarg = match(LX_NARG_PAT, str[rge])
-            (lxnarg == nothing) && error("Ill formed newcommand (where I
+            isnothing(lxnarg) && error("Ill formed newcommand (where I
             expected the specification of the number of arguments).")
             tmp = lxnarg.captures[2]
-            lxnarg = (tmp == nothing) ? 0 : parse(Int, tmp)
+            lxnarg = isnothing(tmp) ? 0 : parse(Int, tmp)
         end
 
         # η is the range corresponding to the naming braces
         η = brange(bblocks[k])
         # try to find a valid command name in there
         m = match(LX_NAME_PAT, str[η])
-        (m == nothing) && error("Invalid definition of a new command expected a command name of the form `\\command`.")
+        isnothing(m) && error("Invalid definition of a new command expected a command name of the form `\\command`.")
         # keep track of the command name
         lxname = m.captures[1]
         # δ is the range corresponding to the inside of the defining braces
@@ -57,7 +57,7 @@ function find_md_lxdefs(str::String, tokens::Vector{Token},
         active_tokens[[i, i+1]] .= false
         # mark any token in the definition as inactive
         deactivate_until = findfirst(τ->(τ.from > δ.stop+1), tokens[i+2:end])
-        if deactivate_until == nothing
+        if isnothing(deactivate_until)
             active_tokens[i+2:end] = false
         else
             active_tokens[i+2:i+deactivate_until] .= false
@@ -68,14 +68,37 @@ end
 
 
 """
+    retrieve_lxdefref(lxname, lxdefs, inmath)
+
+Retrieve the reference pointing to a `LxDef` corresponding to a given `lxname`.
+If no reference is found but `inmath=true`, we propagate and let KaTeX deal
+with it further down. If something is found, the reference is returned and
+will be accessed further down.
+"""
+function retrieve_lxdefref(lxname::AbstractString, lxdefs::Vector{LxDef},
+                           inmath::Bool=false)
+
+    k = findfirst(δ -> (δ.name == lxname), lxdefs)
+    if isnothing(k)
+        inmath || error("Command '$lxname' was not defined before it was used.")
+        # not found but inmath --> let KaTex deal with it
+        return nothing
+    end
+    (lxname.offset < lxdefs[k].from) && error("Command '$lxname' was used before it was defined.")
+    return Ref(lxdefs, k)
+end
+
+
+"""
     find_md_lxcoms(lxtokens, lxdefs, bblocks)
 
-Find `\\command{arg1}{arg2}...` in `:REMAIN` blocks only.
+Find `\\command{arg1}{arg2}...` outside of `xblocks` and `lxdefs`.
 """
-function find_md_lxcoms(str::String, tokens::Vector{Token},
-                        lxdefs::Vector{LxDef}, bblocks::Vector{Block})
+function find_md_lxcoms(str::AbstractString, tokens::Vector{Token},
+                        lxdefs::Vector{LxDef}, bblocks::Vector{Block},
+                        inmath=false)
 
-    lxcoms = Vector{Block}()
+    lxcoms = Vector{LxCom}()
     active_τ = ones(Bool, length(tokens))
     nbraces = length(bblocks)
 
@@ -84,42 +107,37 @@ function find_md_lxcoms(str::String, tokens::Vector{Token},
         (τ.name == :LX_COMMAND) || continue
         # get the range of the command
         # > 1. look for the definition given its name
-        lxname = str[τ.from:τ.to]
-        k = findfirst(δ -> (δ.name == lxname), lxdefs)
-
-        # couldn't find the definition or definition was not early enough
-        if ((k == nothing) || τ.from < lxdefs[k].from)
-            # command is not found
-            error("Command '$lxname' was not defined before it was used. Verify.")
-        end
-        # there is a definition
+        lxname = subs(str, τ.from, τ.to)
+        lxdefref = retrieve_lxdefref(lxname, lxdefs, inmath)
+        # will only be nothing in a inmath --> no failure, just ignore token
+        isnothing(lxdefref) && continue
         # > 1. retrieve narg
-        lxnarg = lxdefs[k].narg
+        lxnarg = getindex(lxdefref).narg
         # >> there are no arguments
         if lxnarg == 0
-            push!(lxcoms, Block(:LX_COM_NOARG, τ.from, τ.to))
+            push!(lxcoms, LxCom(τ.from, τ.to, lxdefref))
             active_τ[i] = false
         # >> there is at least one argument
         else
             b1_idx = findfirst(b -> (b.from == τ.to + 1), bblocks)
             # --> it needs to exist + there should be enough left
-            if (b1_idx == nothing) || (b1_idx + lxnarg - 1 > nbraces)
+            if isnothing(b1_idx) || (b1_idx + lxnarg - 1 > nbraces)
                 error("Command '$lxname' expects $lxnarg arguments and there should be no spaces between the command name and the first brace: \\com{arg1}... Verify.")
             end
-            # --> retrieve the candidate braces
+            # --> examine candidate braces, there should be no spaces between
+            #  braces to avoid ambiguities
             cand_braces = bblocks[b1_idx:b1_idx+lxnarg-1]
-            # --> there should be no spaces between braces to avoid ambiguities
             for bidx ∈ 1:lxnarg-1
                 (cand_braces[bidx].to+1 == cand_braces[bidx+1].from) || error("Argument braces should not be separated by spaces: \\com{arg1}{arg2}... Verify a '$lxname' command.")
             end
-            # all good, can mark it
+            # all good, can push it
             com_end = cand_braces[end].to
-            push!(lxcoms, Block(:LX_COM_WARGS, τ.from, com_end))
+            push!(lxcoms, LxCom(τ.from, com_end, lxdefref, cand_braces))
             # deactivate tokens in the span of the command (will be
             # reparsed later)
             deactivate_until = findfirst(τ -> (τ.from > com_end),
                                                 tokens[i+1:end])
-            if deactivate_until == nothing
+            if isnothing(deactivate_until)
                 active_τ[i+1:end] .= false
             elseif deactivate_until > 1
                 active_τ[i+1:i+deactivate_until] .= false

@@ -5,7 +5,8 @@ Go through a text left to right, one (valid) char at the time and keep track of
 sequences of chars that match specific tokens.
 The list of tokens found is returned.
 """
-function find_tokens(str::String, tokens_dict::Dict, stokens_dict::Dict)
+function find_tokens(str::AbstractString, tokens_dict::Dict,
+                     stokens_dict::Dict)
     # storage to keep track of the tokens found
     tokens = Token[]
     # head_idx will travel over the valid characters from first to final one
@@ -44,7 +45,7 @@ function find_tokens(str::String, tokens_dict::Dict, stokens_dict::Dict)
                 if steps > 0 # exact match of a given fixed pattern
                     endchar_idx = head_idx + steps
                     endchar_idx > EOS_idx && continue
-                    stack = str[head_idx:endchar_idx]
+                    stack = subs(str, head_idx, endchar_idx)
                     if λ(stack)
                         # offset==True --> looked at 1 extra char (lookahead)
                         endchar_idx -= offset
