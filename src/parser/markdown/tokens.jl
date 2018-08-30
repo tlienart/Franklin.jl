@@ -16,6 +16,16 @@ const MD_1C_TOKENS = Dict{Char, Symbol}(
 
 
 """
+    MD_TOKENS_LX
+
+Subset of `MD_1C_TOKENS` with only the latex tokens (for parsing what's in a math environment).
+"""
+const MD_1C_TOKENS_LX = Dict{Char, Symbol}(
+    '{'  => :LX_BRACE_OPEN,
+    '}'  => :LX_BRACE_CLOSE)
+
+
+"""
     MD_TOKENS
 
 Dictionary of tokens for Markdown. Note that for each, there may be several
@@ -59,6 +69,20 @@ const MD_TOKENS = Dict{Char, Vector{Pair{Tuple{Int, Bool, Function}, Symbol}}}(
 [1] capturing \{ here will force the head to move after it thereby not
 marking it as a potential open brace, same for the close brace.
 [2] check if these are still useful. =#
+
+
+"""
+    MD_TOKENS_LX
+
+Subset of `MD_TOKENS` with only the latex tokens (for parsing what's in a math
+environment).
+"""
+const MD_TOKENS_LX = Dict{Char, Vector{Pair{Tuple{Int, Bool, Function}, Symbol}}}(
+    '\\' => [
+        isexactly("\\{")         => :INACTIVE,
+        isexactly("\\}")         => :INACTIVE,
+        incrlook((_, c) -> α(c)) => :LX_COMMAND ])
+
 
 #=
     EXTRACT BLOCKS

@@ -120,16 +120,19 @@ It returns
 character or not)
 * a function that can be applied on a sequence of character.
 """
-function isexactly(refstring::String, follow=Vector{Char}(), isfollowed=true)
+function isexactly(refstring::AbstractString, follow=Vector{Char}(),
+                   isfollowed=true)
     # number of steps from the start character
-    steps = length(refstring) - 1
+    steps = lastindex(refstring) - 1
     # no offset (don't check next character)
-    isempty(follow) && return (steps, false, s -> s==refstring)
+    isempty(follow) && return (steps, false, s -> (s == refstring))
     # include next char for verification (--> offset of 1)
     steps += 1
     # verification function
-    λ = s -> (s[1:end-1] == refstring) &&
-                (isfollowed ? s[end] ∈ follow : s[end] ∉ follow)
+    λ(s) = begin
+        check = (s[end] ∈ follow)
+        (chop(s) == refstring) && ifelse(isfollowed, check, !check)
+    end
     return (steps, true, λ)
 end
 

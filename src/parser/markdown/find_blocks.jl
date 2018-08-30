@@ -47,16 +47,11 @@ function find_md_xblocks(tokens::Vector{Token})
     # go over tokens and process the ones announcing a block to extract
     for (i, τ) ∈ enumerate(tokens)
         active_tokens[i] || continue
-        ismaths = false # is it a math block? default = false
+        ismath = false # is it a math block? default = false
         if haskey(MD_EXTRACT, τ.name)
             close_τ, bname = MD_EXTRACT[τ.name]
         elseif haskey(MD_MATHS, τ.name)
-            #= NOTE: there is a corner case where this block is actually
-            encapsulated in the definition of a command (via \newcommand)
-            this is resolved at subsequent step "find_md_lxdefs"
-            =#
             close_τ, bname = MD_MATHS[τ.name]
-            ismaths = true
         elseif τ.name ∈ [:DIV_OPEN, :DIV_CLOSE]
             push!(xblocks, τ)
             continue
@@ -73,7 +68,7 @@ function find_md_xblocks(tokens::Vector{Token})
         # mark tokens within the block as inactive (extracted blocks are not
         # further processed unless they're math blocks where potential
         # user-defined latex commands will be further processed)
-        active_tokens[i:k] .= ifelse(ismaths, map(islatex, tokens[i:k]), false)
+        active_tokens[i:k] .= false
     end
     return xblocks, tokens[active_tokens]
 end

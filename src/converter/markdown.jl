@@ -17,7 +17,6 @@ Note: it may get fed with a `SubString` whence the use of `AbstractString`.
 function md2html(s::AbstractString, stripp::Bool=false)
     isempty(s) && return s
     tmp = Markdown.html(Markdown.parse(s))
-    @show tmp
     stripp && return chop(tmp, head=3, tail=5) # remove <p>...</p>\n
     return tmp
 end
@@ -91,10 +90,10 @@ function convert_md(mds::AbstractString, pre_lxdefs=Vector{LxDef}();
     bblocks, tokens = find_md_bblocks(tokens)
     # Find newcommands (latex definitions)
     lxdefs, tokens = find_md_lxdefs(mds, tokens, bblocks)
-    # Find lxcoms
-    lxcoms, tokens = find_md_lxcoms(mds, tokens, lxdefs, bblocks)
     # Find blocks to extract
     xblocks, tokens = find_md_xblocks(tokens)
+    # Find lxcoms
+    lxcoms, tokens = find_md_lxcoms(mds, tokens, lxdefs, bblocks)
     # Merge the lxcoms and xblocks -> list of things to insert
     blocks2insert = merge_xblocks_lxcoms(xblocks, lxcoms)
     # Kill trivial tokens that may remain (now that mddef have been extracted)
@@ -138,6 +137,36 @@ end
 
 
 """
+    convert_md_math(mds, lxdefs)
+
+Same as `convert_md` except tailored for conversion of the inside of a
+math block (no command definitions, restricted tokenisation).
+"""
+function convert_md_math(mds::AbstractString, lxdefs=Vector{LxDef}())
+    # tokenize with restricted set
+    tokens = find_tokens(mds, MD_TOKENS_LX, MD_1C_TOKENS_LX)
+    bblocks, tokens = find_md_bblocks(tokens)
+    # in a math environment > pass a bool to indicate it
+    lxcoms, tokens = find_md_lxcoms(mds, tokens, lxdefs, bblocks, true)
+
+    # form the string (see form_inter_md, similar but with fewer conditions)
+    strlen = lastindex(mds)
+    pieces = Vector{AbstractString}()
+    lenlxc = length(lxcoms)
+    next_lxcom = iszero(lenglxc) ? BIG_INT : lxcoms[1].from
+    head, lxcom_idx = 1, 1
+    while (next_lxcom < BIG_INT) & (head < strlen)
+        (head < next_lxcom) && push!(pieces, subs(mds, head, next_lxcom-1))
+        push!(pieces, resolve_lxcom(lxcoms[next_lxcom], mds, lxdefs, true))
+        lxcom_idx += 1
+        next_lxcom = (lxcom_idx > lenlxc) ? BIG_INT : lxcoms[lxcom_idx].from
+    end
+    (head <= strlen) && push!(pieces, chop(mds, head=head-1, tail=0))
+    return prod(pieces)
+end
+
+
+"""
     convert_inter_md(intermd, refmd, xblocks, coms, lxdefs, bblocks)
 
 Take a partial markdown string with the `JD_INSERT` marker and plug in the --
@@ -152,6 +181,8 @@ function convert_inter_html(interhtml::AbstractString, refmd::AbstractString,
     pieces = Vector{AbstractString}()
     strlen = lastindex(interhtml)
 
+    # construct the pieces of the final html in order, gradually processing
+    # the blocks to insert.
     head = 1
     for (i, m) ∈ enumerate(allmatches)
         (head < m.offset) && push!(pieces, subs(interhtml, head, m.offset-1))
@@ -174,22 +205,37 @@ function convert_block(β::AbstractBlock, s::AbstractString,
 
     ζ = subs(s, β.from, β.to)
     # Return relevant interpolated string based on case
-    β.name == DIV_OPEN && return "<div class=\"$(chop(ζ, head=2, tail=0))\">"
-    β.name == DIV_CLOSE && return "</div>"
+    β.name == :DIV_OPEN && return "<div class=\"$(chop(ζ, head=2, tail=0))\">"
+    β.name == :DIV_CLOSE && return "</div>"
     β.name == :CODE && return md2html(ζ)
     β.name == :ESCAPE && return ζ
-    if β.name ∈ MD_MATHS_NAMES
-        pmath = convert_md__procmath(β)
-        rlx = resolve_latex(s, pmath[1], pmath[2], true, lxcontext)
-        return pmath[3] * rlx * pmath[4]
-    end
+    β.name ∈ MD_MATHS_NAMES && return convert_mathblock(β, s, lxcontext.lxdefs)
     # default case: comment and co --> ignore block
     return ""
 end
 
 
-function process_xblock(β::LxCom, s::String, lxcontext::LxContext)
+function convert_mathblock(β::Block, s::AbstractString, lxdefs::Vector{LxDef})
+
+    β.name == :MATH_A && (pmath = (β.from+1, β.to-1, "\\(",  "\\)"))
+    β.name == :MATH_B && (pmath = (β.from+2, β.to-2, "\$\$", "\$\$"))
+    β.name == :MATH_C && (pmath = (β.from+2, β.to-2, "\\[",  "\\]"))
+
+    β.name == :MATH_ALIGN && (pmath = (β.from+13, β.to-11,
+                                "\$\$\\begin{aligned}", "\\end{aligned}\$\$"))
+    β.name == :MATH_EQA   && (pmath = (β.from+16, β.to-14,
+                                "\$\$\\begin{array}{c}", "\\end{array}\$\$"))
+
+    # this is maths in a recursive parsing --> should not be
+    # bracketed with KaTeX markers but just plugged in.
+    β.name == :MATH_I && (pmath = (β.from+4, β.to-4, "", ""))
+
+    !(@isdefined pmath) && error("Undefined math block name.")
+
+    mathexpr = convert_md_math(subs(s, pmath[1], pmath[2]), lxdefs)
+    return pmath[3] * mathexpr * pmath[4]
 end
+
 
 
 # """

@@ -64,10 +64,46 @@
         * inside: `\sin^2(x)+\com = 1-\cos^2(x)+\com`
     * **>> probably you need to keep resolve latex as it is. just using SubString where appropriate and maybe develop helper functions for the first two cases which would be called in when needed**
 
-
 **NOTED**
 * [x] maybe verify // discrepancy between `coms` (in `convert_md` after filtering for `LX_COMMAND`) and `lxtokens` in `resolve_latex`. Should just be `lxtokens`.
 * convert_md could take a note saying that it can't contain newcommands and so `has_lxdefs=false`
+
+### Sandbox space: math environment
+
+To start, consider something like
+
+```
+$\sin^2(x) + \cos^2(x) \in \R$
+```
+
+* inner = substring "`\sin^2(x) + \cos^2(x) \in \R`"
+* apply `find_md_lxcoms`
+* reconstruct a partial gradually
+
+later
+
+```
+\eqa{\sin^2(x)+\mycom{a}{b} = 1}
+```
+
+this one should be dealt with by a secondary call to convert_md then processing
+so should be the same as tackling
+
+```
+\begin{eqnarray}\sin^2(x)+\mycom{a}{b} = 1\end{eqnarray}
+```
+
+
+**Problem AUG27**: at the moment trying to find lxcoms before knowing where the math
+blocks are, therefore also picking in math environment. therefore the retrieve_lxdefref might actually error instead of checking whether in math environment first. This is annoying. Maybe one way out is to also deactivate tokens that are in math environments and re-get them later when the math block is being processed.
+Maybe one work around is to just retrieve the xblocks before and make sure that the inside of the xblock is neutralized. For this need to investigate
+`markdown/find_md_xblocks` around lines 70-80
+
+--> this means a re-tokenization is needed in math env. Potentially wasteful.
+Since text in math blocks are very small this is probably a small cost.
+Could be improved by keeping a list of active token indices instead of killing
+"inactive" tokens, that way could re-use the tokens. Maybe something for the future, for now might be sufficient like this.
+
 
 # JuDoc
 

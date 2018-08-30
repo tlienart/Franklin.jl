@@ -91,8 +91,9 @@ end
 
 Find `\\command{arg1}{arg2}...` outside of `xblocks` and `lxdefs`.
 """
-function find_md_lxcoms(str::String, tokens::Vector{Token},
-                        lxdefs::Vector{LxDef}, bblocks::Vector{Block})
+function find_md_lxcoms(str::AbstractString, tokens::Vector{Token},
+                        lxdefs::Vector{LxDef}, bblocks::Vector{Block},
+                        inmath=false)
 
     lxcoms = Vector{LxCom}()
     active_τ = ones(Bool, length(tokens))
@@ -104,9 +105,9 @@ function find_md_lxcoms(str::String, tokens::Vector{Token},
         # get the range of the command
         # > 1. look for the definition given its name
         lxname = subs(str, τ.from, τ.to)
-        # NOTE: we are *not* in a math env here therefore the next line
-        # will either error (nothing found) or return a lxdef
-        lxdefref = retrieve_lxdefref(lxname, lxdefs, false)
+        lxdefref = retrieve_lxdefref(lxname, lxdefs, inmath)
+        # will only be nothing in a inmath --> no failure, just ignore token
+        isnothing(lxdefref) && continue
         # > 1. retrieve narg
         lxnarg = getindex(lxdefref).narg
         # >> there are no arguments
