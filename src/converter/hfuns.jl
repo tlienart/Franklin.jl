@@ -12,7 +12,7 @@ function hfun_fill(params::Vector{String}, allvars::Dict)
         # retrieve the value stored
         tmp_repl = allvars[vname].first
 
-        (tmp_repl == nothing) || (replacement = string(tmp_repl))
+        isnothing(tmp_repl) || (replacement = string(tmp_repl))
     else
         warn("I found a '{{fill $vname}}' but I do not know the variable '$vname'. Ignoring.")
     end

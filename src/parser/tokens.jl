@@ -1,27 +1,32 @@
+abstract type AbstractBlock end
+
+
 """
-    Token
+    Token <: AbstractBlock
 
 A token `τ::Token` denotes the part of a main source string that we care about
 covering the range `τ.from:τ.to` and identified by a symbol `τ.name` (e.g.:
 `:MATH_ALIGN_OPEN`). Tokens are typically used in this code to identify
 delimiters of environments.
+See also `Block`, `LxBlock`.
 """
-struct Token
+struct Token <: AbstractBlock
     name::Symbol
     from::Int
     to::Int
 end
 # convenience constructor for single-char token such as `{`
-Token(name::Symbol, loc::Int) = Token(name, loc, loc)
+Token(name, loc) = Token(name, loc, loc)
 
 
 """
-    Block
+    Block === Token
 
-A block has the same content as a token, only the name indicates a segment of
-text typically surrounded by an opening and a closing token. This synonym helps
-the readability of the code to distinguish delimiters (tokens) from segments
-(blocks).
+A `Block` has the same content as a `Token`, only the name indicates a segment
+of text typically surrounded by an opening and a closing token. This synonym
+helps the readability of the code to distinguish delimiters (tokens) from
+segments (blocks).
+See also `Token`, `LxBlock`.
 """
 const Block = Token
 
@@ -115,16 +120,19 @@ It returns
 character or not)
 * a function that can be applied on a sequence of character.
 """
-function isexactly(refstring::String, follow=Vector{Char}(), isfollowed=true)
+function isexactly(refstring::AbstractString, follow=Vector{Char}(),
+                   isfollowed=true)
     # number of steps from the start character
-    steps = length(refstring) - 1
+    steps = lastindex(refstring) - 1
     # no offset (don't check next character)
-    isempty(follow) && return (steps, false, s -> s==refstring)
+    isempty(follow) && return (steps, false, s -> (s == refstring))
     # include next char for verification (--> offset of 1)
     steps += 1
     # verification function
-    λ = s -> (s[1:end-1] == refstring) &&
-                (isfollowed ? s[end] ∈ follow : s[end] ∉ follow)
+    λ(s) = begin
+        check = (s[end] ∈ follow)
+        (chop(s) == refstring) && ifelse(isfollowed, check, !check)
+    end
     return (steps, true, λ)
 end
 
