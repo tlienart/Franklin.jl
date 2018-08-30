@@ -88,3 +88,11 @@ function process_file(case, fpair, clear_out_dir,
         end
     end
 end
+
+
+"""
+    change_ext(fname)
+
+Convenience function to replace the extension of a filename with another.
+"""
+change_ext(fname, ext=".html") = splitext(fname)[1] * ext
