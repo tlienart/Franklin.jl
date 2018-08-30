@@ -73,10 +73,13 @@ function find_md_xblocks(tokens::Vector{Token})
     return xblocks, tokens[active_tokens]
 end
 
-#=
-TODO TODO
-* add DOC !
-=#
+"""
+    merge_xblocks_lxcoms(xb, lxc)
+
+Form a list of `AbstractBlock` corresponding to the list of blocks to insert
+after `md2html` is called. The blocks are extracted separately and this
+function merges them in order of appearance.
+"""
 function merge_xblocks_lxcoms(xb::Vector{Block}, lxc::Vector{LxCom})
 
     isempty(xb) && return lxc
@@ -101,50 +104,3 @@ function merge_xblocks_lxcoms(xb::Vector{Block}, lxc::Vector{LxCom})
     end
     return xblocks
 end
-
-
-# """
-#     get_md_allblocks(xblocks, lxdefs, strlen)
-#
-# Given a list of blocks, find the interstitial blocks, tag them as `:REMAIN`
-# blocks and return a full list of blocks spanning the string.
-# """
-# function get_md_allblocks(xblocks::Vector{AbstractBlock},
-#                           lxdefs::Vector{LxDef}, strlen::Int)
-#
-#     allblocks = Vector{Block}()
-#     lenxb = length(xblocks)
-#     lenlx = length(lxdefs)
-#
-#     next_xblock = iszero(lenxb) ? BIG_INT : xblocks[1].from
-#     next_lxdef = iszero(lenlx) ? BIG_INT : lxdefs[1].from
-#
-#     # check which block is next
-#     xb_or_lx = (next_xblock < next_lxdef)
-#     next_idx = min(next_xblock, next_lxdef)
-#
-#     head, xb_idx, lx_idx = 1, 1, 1
-#     while (next_idx < BIG_INT) & (head < strlen)
-#         # check if there's anything before head and next block and push
-#         (head < next_idx) && push!(allblocks, remain(head, next_idx-1))
-#
-#         if xb_or_lx # next block is xblock
-#             β = xblocks[xb_idx]
-#             push!(allblocks, β)
-#             head = β.to + 1
-#             xb_idx += 1
-#             next_xblock = (xb_idx > lenxb) ? BIG_INT : xblocks[xb_idx].from
-#         else # next block is newcommand, no push
-#             head = lxdefs[lx_idx].to + 1
-#             lx_idx += 1
-#             next_lxdef = (lx_idx > lenlx) ? BIG_INT : lxdefs[lx_idx].from
-#         end
-#
-#         # check which block is next
-#         xb_or_lx = (next_xblock < next_lxdef)
-#         next_idx = min(next_xblock, next_lxdef)
-#     end
-#     # add final one if exists
-#     (head < strlen) && push!(allblocks, remain(head, strlen))
-#     return allblocks
-# end

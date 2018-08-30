@@ -67,11 +67,14 @@ function find_md_lxdefs(str::String, tokens::Vector{Token},
 end
 
 
-#=
-return nothing (inmath & name not found)
-error if not found and not inmath
-lxdef otherwise
-=#
+"""
+    retrieve_lxdefref(lxname, lxdefs, inmath)
+
+Retrieve the reference pointing to a `LxDef` corresponding to a given `lxname`.
+If no reference is found but `inmath=true`, we propagate and let KaTeX deal
+with it further down. If something is found, the reference is returned and
+will be accessed further down.
+"""
 function retrieve_lxdefref(lxname::AbstractString, lxdefs::Vector{LxDef},
                            inmath::Bool=false)
 
