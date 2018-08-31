@@ -1,3 +1,26 @@
+@testset "Find blocks" begin
+    st = raw"""
+        some markdown then `code` and
+        @@dname block @@
+        then maybe an escape
+        ~~~
+        escape block
+        ~~~
+        and done {target} done.
+        """ * JuDoc.EOS
+    tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
+    tokens = JuDoc.deactivate_xblocks(tokens, JuDoc.MD_EXTRACT)
+    bblocks, tokens = JuDoc.find_md_bblocks(tokens)
+    xblocks, tokens = JuDoc.find_md_xblocks(tokens)
+
+    @test bblocks[1].ss == "{target}"
+    @test xblocks[1].ss == "`code`"
+    @test xblocks[2].ss == "@@dname"
+    @test xblocks[3].ss == "@@"
+    @test xblocks[4].ss == "~~~\nescape block\n~~~"
+end
+
+
 @testset "MD Blocks" begin
     st = raw"""
         \newcommand{\E}[1]{\mathbb E\left[#1\right]}blah de blah

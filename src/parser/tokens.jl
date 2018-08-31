@@ -5,19 +5,16 @@ abstract type AbstractBlock end
     Token <: AbstractBlock
 
 A token `τ::Token` denotes the part of a main source string that we care about
-covering the range `τ.from:τ.to` and identified by a symbol `τ.name` (e.g.:
-`:MATH_ALIGN_OPEN`). Tokens are typically used in this code to identify
-delimiters of environments.
+and identified by a symbol `τ.name` (e.g.: `:MATH_ALIGN_OPEN`). Tokens are
+typically used in this code to identify delimiters of environments.
 See also `Block`, `LxBlock`.
 """
 struct Token <: AbstractBlock
     name::Symbol
-    from::Int
-    to::Int
+    ss::SubString
 end
-# convenience constructor for single-char token such as `{`
-Token(name, loc) = Token(name, loc, loc)
-
+from(τ::Token) = τ.ss.offset + 1
+to(τ::Token) = τ.ss.offset + τ.ss.ncodeunits
 
 """
     Block === Token
@@ -31,46 +28,25 @@ See also `Token`, `LxBlock`.
 const Block = Token
 
 
-"""
-    remain(i, j)
-
-Convenience constructor for a `:REMAIN` block (blocks that may need further
-parsing)
-"""
-remain(i::Int, j::Int) = Block(:REMAIN, i, j)
+braces(ss::SubString) = Block(:LXB, ss)
+hblock(ss::SubString) = Block(:H_BLOCK, ss)
 
 
 """
-    braces(from, to)
+    binner(block)
 
-Convenience constructor for a `:LXB` block (latex brackets block i.e. an
-opening brace, the matching closing brace and the span between.)
+For a brace block (`:LXB`), retrieve the span of what's inside the matching
+braces.
 """
-braces(from::Int, to::Int) = Block(:LXB, from, to)
-
-
-"""
-    hblock(from, to)
-
-Convenience constructor for a `:H_BLOCK` block (html block {{...}}).
-"""
-hblock(from::Int, to::Int) = Block(:H_BLOCK, from, to)
+binner(β::Block) = chop(β.ss, head=1, tail=1)
 
 
 """
-    brange(block)
+    hinner(block)
 
-For a brace block, retrieve the span of what's inside the matching braces.
+For a html block, retrieve the span of what's inside the matching braces.
 """
-brange(block::Block) = block.from+1:block.to-1
-
-
-"""
-    hrange(block)
-
-For a hblock, retrieve the span of what's inside the matching braces.
-"""
-hrange(block::Block) = block.from+2:block.to-2
+hinner(β::Block) = chop(β.ss, head=2, tail=2)
 
 
 """
@@ -80,8 +56,8 @@ Given a list of blocks `blocks` and a block index `i` give the span between
 the ith block and the (i+1)th block.
 """
 function span_after(blocks::Vector{Block}, i::Int, eos::Int=0)
-    i == length(blocks) && return (blocks[i].to + 1, eos)
-    return (blocks[i].to + 1, blocks[i+1].from - 1)
+    i == length(blocks) && return (to(blocks[i]) + 1, eos)
+    return (to(blocks[i]) + 1, from(blocks[i+1]) - 1)
 end
 
 

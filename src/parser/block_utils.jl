@@ -27,13 +27,12 @@ function deactivate_xblocks(tokens::Vector{Token},
         active_tokens[i] || continue
         if haskey(xbd, τ.name)
             close_τ, _ = xbd[τ.name]
-        else
-            # ignore the token (does not announce an code block)
+        else # ignore the token (does not announce an code block)
             continue
         end
         # seek forward to find the first closing token
         k = findfirst(cτ -> (cτ.name == close_τ), tokens[i+1:end])
-        isnothing(k) && error("Found the opening token '$(τ.name)' at '$(τ.from:τ.to)' but not the corresponding closing token. Verify.")
+        isnothing(k) && error("Found the opening token '$(τ.name)' but not the corresponding closing token. Verify.")
         # mark tokens within the block as inactive
         active_tokens[i:i+k] .= false
         bracket_tokens[[i, i+k]] .= true
