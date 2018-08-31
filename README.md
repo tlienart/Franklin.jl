@@ -5,8 +5,6 @@
 [![codecov.io](http://codecov.io/github/tlienart/JuDoc.jl/coverage.svg?branch=master)](http://codecov.io/github/tlienart/JuDoc.jl?branch=master)
 
 
-* check that everything "works"
-    * fix bug with list element starting with some maths
 * go through github issues and remove irrelevant ones
 * add doc
     * `process_file` in `manager/file_utils.jl`
@@ -20,9 +18,7 @@
         * one parallel situation could be to insert the content of a code file
         and display it as such. This could be done within the markdown or, in fact could leak through by writing directly in the markdown `'''julia{{ insert path_to_code.jl}}'''` which would permeate through the html conversion then bring in the jl code and display it. (could also think about inserting CSV etc.)
     * css pre-processing (variables)
-* [x] Consider using references to newcommands instead of attaching a copy of the newcommand to every command?
-* [x] Use `isnothing` instead of `x == nothing` (no difference just for readability)
-* Instead of keeping the from/to in `AbstratBlock`, maybe it makes more sense to keep the `SubString`? the from to can be recovered
+* Instead of keeping the from/to in `AbstractBlock`, maybe it makes more sense to keep the `SubString`? the from to can be recovered
     * `fromto(ss)=(from=ss.offset+1, to=ss.offset+lastindex(ss))`
     * might make some stuff a bit cleaner though should not be priority
     * might help not to feed bits of string to all functions
