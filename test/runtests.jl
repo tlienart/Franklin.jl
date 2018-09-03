@@ -15,3 +15,4 @@ include("parser/html.jl") # 🚫 sep 3, 2018
 
 # CONVERTER folder
 include("converter/markdown.jl") # ✅ sep 3, 2018
+include("converter/html.jl")     # ✅ sep 3, 2018

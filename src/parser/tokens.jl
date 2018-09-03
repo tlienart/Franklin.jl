@@ -1,4 +1,7 @@
 abstract type AbstractBlock end
+from(β::AbstractBlock) = from(β.ss)
+to(β::AbstractBlock) = to(β.ss)
+str(β::AbstractBlock) = β.ss.string
 
 
 """
@@ -13,9 +16,7 @@ struct Token <: AbstractBlock
     name::Symbol
     ss::SubString
 end
-from(τ::Token) = from(τ.ss)
-to(τ::Token) = to(τ.ss)
-str(τ::Token) = τ.ss.string
+
 
 """
     Block === Token

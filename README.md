@@ -48,9 +48,16 @@ ssto(s::SubString) = s.offset+s.ncodeunits
         * [x] `retrieve_lxdefref` with test
         * [x] `find_md_lxcoms` with test
 * [ ] parser/html
+    * [ ] `find_blocks`
+    * [ ] `patterns`
+        * [ ] `HCond` should be a substring
+        * [ ] `HIf`, `HElse`, ... should be a substring?
+    * [x] `tokens`
 * [x] converter/markdown
 * [ ] converter/html
 * [ ] converter/hfuns
+
+* mege the merge functions (they now all use the same abstract type)
 
 
 ### Sandbox space: math environment

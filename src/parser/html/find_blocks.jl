@@ -12,7 +12,7 @@ at this point. This second point might fix the first one by making sure that
 """
     find_html_hblocks(tokens)
 
-Find blocks surrounded by `{{...}}`.
+Find blocks surrounded by `{{...}}` and create `Block(:H_BLOCK)`
 """
 function find_html_hblocks(tokens::Vector{Token})
     #
@@ -33,7 +33,7 @@ function find_html_hblocks(tokens::Vector{Token})
              inbalance += bbalance(tokens[j], [:H_BLOCK_OPEN, :H_BLOCK_CLOSE])
          end
          (inbalance > 0) && error("I found at least one open curly brace that is not closed properly. Verify.")
-         push!(hblocks, hblock(τ.from, tokens[j].to))
+         push!(hblocks, hblock(subs(str(τ), from(τ), to(tokens[j]))))
          # remove processed tokens and mark inner tokens as inactive!
          # these will be re-processed in recursion
          active_tokens[i:j] .= false
@@ -43,36 +43,34 @@ end
 
 
 """
-    qualify_html_hblocks(blocks, s)
+    qualify_html_hblocks(blocks)
 
 Given `{{ ... }}` blocks, identify what blocks they are and return a vector
-of qualified blocks of type `<:HBlock`.
+of qualified blocks of type `AbstractBlock`.
 """
-function qualify_html_hblocks(blocks::Vector{Block}, s::String)
-    qb = Vector{HBlock}(undef, length(blocks))
+function qualify_html_hblocks(blocks::Vector{Block})
+    qb = Vector{AbstractBlock}(undef, length(blocks))
     for (i, β) ∈ enumerate(blocks)
-        ts = s[β.from:β.to]
         # if block {{ if v }}
-        m = match(HBLOCK_IF, ts)
+        m = match(HBLOCK_IF, β.ss)
         isnothing(m) ||
-            (qb[i] = HIf(m.captures[1], β.from, β.to); continue)
+            (qb[i] = HIf(β.ss, m.captures[1]); continue)
         # else block {{ else }}
-        m = match(HBLOCK_ELSE, ts)
+        m = match(HBLOCK_ELSE, β.ss)
         isnothing(m) ||
-            (qb[i] = HElse(β.from, β.to); continue)
-        # else if block {{ else if v }}
-        m = match(HBLOCK_ELSE_IF, ts)
+            (qb[i] = HElse(β.ss); continue)
+        # else if block {{ elseif v }}
+        m = match(HBLOCK_ELSEIF, β.ss)
         isnothing(m) ||
-            (qb[i] = HElseIf(m.captures[1], β.from, β.to); continue)
+            (qb[i] = HElseIf(β.ss, m.captures[1]); continue)
         # end block {{ end }}
-        m = match(HBLOCK_END, ts)
+        m = match(HBLOCK_END, β.ss)
         isnothing(m) ||
-            (qb[i] = HEnd(β.from, β.to); continue)
+            (qb[i] = HEnd(β.ss); continue)
         # function block {{ fname v1 v2 ... }}
-        m = match(HBLOCK_FUN, ts)
+        m = match(HBLOCK_FUN, β.ss)
         isnothing(m) ||
-            (qb[i] = HFun(m.captures[1], split(m.captures[2]), β.from, β.to);
-            continue)
+            (qb[i] = HFun(β.ss, m.captures[1], split(m.captures[2])); continue)
         error("I found a HBlock that did not match anything, verify '$ts'")
     end
     return qb
@@ -86,14 +84,15 @@ Given qualified blocks `HIf`, `HElse` etc, construct a vector of the
 conditional blocks which contain the list of conditions etc.
 No nesting is allowed at the moment.
 """
-function find_html_cblocks(qblocks::Vector{<:HBlock})
+function find_html_cblocks(qblocks::Vector{AbstractBlock})
     cblocks = Vector{HCond}()
+    isempty(qblocks) && return cblocks, qblocks
     active_qblocks = ones(Bool, length(qblocks))
     i = 0
     while i < length(qblocks)
         i += 1
         β = qblocks[i]
-        typeof(β) == HIf || continue
+        (typeof(β) == HIf) || continue
 
         # look forward until the next `{{ end }}` block
         k = findfirst(cβ -> (typeof(cβ) == HEnd), qblocks[i+1:end])
@@ -101,27 +100,31 @@ function find_html_cblocks(qblocks::Vector{<:HBlock})
         n_between = k - 1
         k += i
 
-        vcond1 = β.vname
-        vconds = Vector{String}()
-        dofrom, doto = Vector{Int}(), Vector{Int}()
-        from = β.from
-        push!(dofrom, β.to + 1)
+        initial_cond = β.vname
+        secondary_conds = Vector{String}()
+        afrom, ato = Vector{Int}(), Vector{Int}()
+        push!(afrom, to(β) + 1)
 
-        for bi = 1:n_between
-            β = qblocks[i+bi]
+        for bi ∈ 1:n_between
+            β = qblocks[i + bi]
             if typeof(β) == HElseIf
-                push!(doto, β.from - 1)
-                push!(dofrom, β.to + 1)
-                push!(vconds, β.vname)
+                push!(ato,   from(β) - 1)
+                push!(afrom, to(β) + 1)
+                push!(secondary_conds, β.vname)
             elseif typeof(β) == HElse
                 # TODO, should check that there are no other HElseIf etc after
-                push!(doto, β.from - 1)
-                push!(dofrom, β.to + 1)
+                push!(ato,   from(β) - 1)
+                push!(afrom, to(β) + 1)
             end
         end
-        endβ = qblocks[k]
-        push!(doto, endβ.from - 1)
-        push!(cblocks, HCond(vcond1, vconds, dofrom, doto, from, endβ.to))
+        stβ, endβ = qblocks[i], qblocks[k]
+        hcondss = subs(str(stβ), from(stβ), to(endβ))
+        push!(ato, from(endβ) - 1)
+
+        # assemble the actions
+        actions = [subs(str(stβ), afrom[i], ato[i]) for i ∈ eachindex(afrom)]
+        # form the hcond
+        push!(cblocks, HCond(hcondss, initial_cond, secondary_conds, actions))
         active_qblocks[i:k] .= false
         i = k
     end
@@ -130,49 +133,37 @@ end
 
 
 """
-    get_html_allblocks(cblocks, strlen)
+    merge_fblocks_cblocks(hb, cb)
 
-Given a list of blocks, find the interstitial blocks, tag them as `:REMAIN`
-blocks and return a full list of blocks spanning the string.
+Form a list of `AbstractBlock` corresponding to the ordered list of special blocks
+(function blocks and conditional blocks) to process in HTML.
 """
-function get_html_allblocks(qblocks::Vector{<:HBlock}, hblocks::Vector{HCond},
-                            strlen::Int)
+function merge_fblocks_cblocks(hb::Vector{AbstractBlock}, hc::Vector{HCond})
 
-    allblocks = Vector{Union{Block, <:HBlock, HCond}}()
-    lenqb = length(qblocks)
-    lenhb = length(hblocks)
+# NOTE: this function is copied on `merge_xblocks_lxcoms`, it's probably
+# better to have a single function that merges block. May require to define
+# a `promote` operation to make sure that the container vector has the right
+# super type.
 
-    next_qblock = iszero(lenqb) ? BIG_INT : qblocks[1].from
-    next_hblock = iszero(lenhb) ? BIG_INT : hblocks[1].from
+    isempty(hb) && return hc
+    isempty(hc) && return hb
 
-    # check which block is next
-    qb_or_hb = (next_qblock < next_hblock)
-    next_idx = min(next_qblock, next_hblock)
+    lenhb, lenhc = length(hb), length(hc)
+    hblocks = Vector{AbstractBlock}(undef, lenhb + lenhc)
 
-    head, qb_idx, hb_idx = 1, 1, 1
-    while (next_idx < BIG_INT) & (head < strlen)
-        # check if there's anything before head and next block and push
-        (head < next_idx) && push!(allblocks, remain(head, next_idx-1))
+    hb_i, hc_i = 1, 1
+    hb_from, hc_from = from(hb[hb_i]), from(hc[hc_i])
 
-        if qb_or_hb # next block is qblock
-            β = qblocks[qb_idx]
-            push!(allblocks, β)
-            head = β.to + 1
-            qb_idx += 1
-            next_qblock = (qb_idx > lenqb) ? BIG_INT : qblocks[qb_idx].from
-        else # next block is hblock
-            β = hblocks[hb_idx]
-            push!(allblocks, β)
-            head = β.to + 1
-            hb_idx += 1
-            next_hblock = (hb_idx > lenhb) ? BIG_INT : hblocks[hb_idx].from
+    for i ∈ eachindex(hblocks)
+        if hb_from < hc_from
+            hblocks[i] = hb[hb_i]
+            hb_i += 1
+            hb_from = (hb_i > lenhb) ? BIG_INT : from(hb[hb_i])
+        else
+            hblocks[i] = hc[hc_i]
+            hc_i += 1
+            hc_from = (hc_i > lenhc) ? BIG_INT : from(hc[hc_i])
         end
-
-        # check which block is next
-        qb_or_hb = (next_qblock < next_hblock)
-        next_idx = min(next_qblock, next_hblock)
     end
-    # add final one if exists
-    (head < strlen) && push!(allblocks, remain(head, strlen))
-    return allblocks
+    return hblocks
 end
