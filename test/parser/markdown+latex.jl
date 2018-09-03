@@ -21,7 +21,7 @@
 end
 
 
-@testset "MD Blocks" begin
+@testset "Lx defs+coms" begin
     st = raw"""
         \newcommand{\E}[1]{\mathbb E\left[#1\right]}blah de blah
         ~~~
@@ -39,7 +39,7 @@ end
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
     tokens = JuDoc.deactivate_xblocks(tokens, JuDoc.MD_EXTRACT)
     bblocks, tokens = JuDoc.find_md_bblocks(tokens)
-    lxdefs, tokens = JuDoc.find_md_lxdefs(st, tokens, bblocks)
+    lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
 
     @test lxdefs[1].name == "\\E"
     @test lxdefs[1].narg == 1
@@ -56,15 +56,33 @@ end
     @test xblocks[1].name == :ESCAPE
     @test xblocks[2].name == :CODE
 
-    lxcoms, tokens = JuDoc.find_md_lxcoms(st, tokens, lxdefs, bblocks)
+    lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
 
-    @test JuDoc.fromto(st, lxcoms[1]) == "\\eqa{ \\E{f(X)} \\in \\R &\\text{if}& f:\\R\\maptso\\R }"
+    @test lxcoms[1].ss == "\\eqa{ \\E{f(X)} \\in \\R &\\text{if}& f:\\R\\maptso\\R }"
     lxd = getindex(lxcoms[1].lxdef)
     @test lxd.name == "\\eqa"
 end
 
 
-@testset "Find LxComs" begin
+@testset "Lxdefs 2" begin
+    st = raw"""
+        \newcommand{\com}{blah}
+        \newcommand{\comb}[ 2]{hello #1 #2}
+        """ * JuDoc.EOS
+    tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
+    tokens = JuDoc.deactivate_xblocks(tokens, JuDoc.MD_EXTRACT)
+    bblocks, tokens = JuDoc.find_md_bblocks(tokens)
+    lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
+    @test lxdefs[1].name == "\\com"
+    @test lxdefs[1].narg == 0
+    @test lxdefs[1].def == "blah"
+    @test lxdefs[2].name == "\\comb"
+    @test lxdefs[2].narg == 2
+    @test lxdefs[2].def == "hello #1 #2"
+end
+
+
+@testset "Lxcoms 2" begin
     st = raw"""
         \newcommand{\com}{HH}
         \newcommand{\comb}[1]{HH#1HH}
@@ -80,13 +98,13 @@ end
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
     tokens = JuDoc.deactivate_xblocks(tokens, JuDoc.MD_EXTRACT)
     bblocks, tokens = JuDoc.find_md_bblocks(tokens)
-    lxdefs, tokens = JuDoc.find_md_lxdefs(st, tokens, bblocks)
+    lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
-    lxcoms, tokens = JuDoc.find_md_lxcoms(st, tokens, lxdefs, bblocks)
+    lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
 
-    @test JuDoc.fromto(st, lxcoms[1]) == "\\com"
-    @test JuDoc.fromto(st, lxcoms[2]) == "\\comb{blah}"
+    @test lxcoms[1].ss == "\\com"
+    @test lxcoms[2].ss == "\\comb{blah}"
 
     @test xblocks[1].name == :CODE
     @test xblocks[2].name == :DIV_OPEN
@@ -94,27 +112,29 @@ end
 end
 
 
-@testset "Partial MD" begin
+@testset "lxcoms3" begin
     st = raw"""
-        \newcommand{\com}{HH}
-        \newcommand{\comb}[1]{HH#1HH}
-        A list
-        * \com and \comb{blah}
-        * $f$ is a function
-        * a last element
+        text A1 \newcommand{\com}{blah}text A2 \com and
+        ~~~
+        escape B1
+        ~~~
+        \newcommand{\comb}[ 1]{\mathrm{#1}} text C1 $\comb{b}$ text C2
+        \newcommand{\comc}[ 2]{part1:#1 and part2:#2} then \comc{AA}{BB}.
         """ * JuDoc.EOS
 
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
     tokens = JuDoc.deactivate_xblocks(tokens, JuDoc.MD_EXTRACT)
     bblocks, tokens = JuDoc.find_md_bblocks(tokens)
-    lxdefs, tokens = JuDoc.find_md_lxdefs(st, tokens, bblocks)
+    lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
-    lxcoms, tokens = JuDoc.find_md_lxcoms(st, tokens, lxdefs, bblocks)
-    tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
-    blocks2insert = JuDoc.merge_xblocks_lxcoms(xblocks, lxcoms)
 
-    inter_md = JuDoc.form_inter_md(st, blocks2insert, lxdefs)
-    @test inter_md == "\n\nA list\n* ##JDINSERT## and ##JDINSERT##\n* ##JDINSERT## is a function\n* a last element\n"
-    inter_html = JuDoc.md2html(inter_md)
-    @test inter_html == "<p>A list</p>\n<ul>\n<li><p>##JDINSERT## and ##JDINSERT##</p>\n</li>\n<li><p>##JDINSERT## is a function</p>\n</li>\n<li><p>a last element</p>\n</li>\n</ul>\n"
+    @test lxdefs[1].name == "\\com" && lxdefs[1].narg == 0 &&  lxdefs[1].def == "blah"
+    @test lxdefs[2].name == "\\comb" && lxdefs[2].narg == 1 && lxdefs[2].def == "\\mathrm{#1}"
+    @test lxdefs[3].name == "\\comc" && lxdefs[3].narg == 2 && lxdefs[3].def == "part1:#1 and part2:#2"
+    @test xblocks[1].name == :ESCAPE && xblocks[1].ss == "~~~\nescape B1\n~~~"
+
+    lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
+
+    @test lxcoms[1].ss == "\\com" && JuDoc.getdef(lxcoms[1]) == "blah"
+    @test lxcoms[2].ss == "\\comc{AA}{BB}"
 end

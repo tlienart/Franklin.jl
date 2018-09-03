@@ -48,6 +48,7 @@ function find_tokens(str::AbstractString, tokens_dict::Dict,
                     stack = subs(str, head_idx, endchar_idx)
                     if λ(stack)
                         # offset==True --> looked at 1 extra char (lookahead)
+                        head_idx = endchar_idx - offset
                         push!(tokens, Token(case, chop(stack, tail=offset)))
                         # token identified, no need to check other cases.
                         break
@@ -56,7 +57,7 @@ function find_tokens(str::AbstractString, tokens_dict::Dict,
                     stack, shift = head, 1
                     nextchar_idx = head_idx + shift
                     while λ(shift, str[nextchar_idx])
-                        stack *= str[nextchar_idx]
+                        stack = subs(str, head_idx, nextchar_idx)
                         shift += 1
                         nextchar_idx += 1
                     end

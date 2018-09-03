@@ -28,6 +28,7 @@
 * convert_md could take a note saying that it can't contain newcommands and so `has_lxdefs=false`
 * use named argument for `inmath` for readability of the code
 * confusion between `head`, `head_idx` used to mean similar things (see e.g. `find_tokens`)
+* `LxContext` does not need to contain `lxdefs` if the `lxcoms` are already associated with their definitions.
 
 ## SubString project
 
@@ -40,8 +41,16 @@ ssto(s::SubString) = s.offset+s.ncodeunits
 
 * [x] base folder
 * [x] parser/markdown + test
-* [ ] parser/latex
-    * need to do the same gymnastic for `LxDef`, `LxCom`
+* [x] parser/latex
+    * [x] `tokens.jl`
+    * [x] `find_blocks.jl`
+        * [x] `find_md_lxdefs` with test
+        * [x] `retrieve_lxdefref` with test
+        * [x] `find_md_lxcoms` with test
+* [ ] parser/html
+* [x] converter/markdown
+* [ ] converter/html
+* [ ] converter/hfuns
 
 
 ### Sandbox space: math environment

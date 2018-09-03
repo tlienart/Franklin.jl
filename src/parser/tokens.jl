@@ -13,8 +13,9 @@ struct Token <: AbstractBlock
     name::Symbol
     ss::SubString
 end
-from(τ::Token) = τ.ss.offset + 1
-to(τ::Token) = τ.ss.offset + τ.ss.ncodeunits
+from(τ::Token) = from(τ.ss)
+to(τ::Token) = to(τ.ss)
+str(τ::Token) = τ.ss.string
 
 """
     Block === Token
@@ -38,7 +39,7 @@ hblock(ss::SubString) = Block(:H_BLOCK, ss)
 For a brace block (`:LXB`), retrieve the span of what's inside the matching
 braces.
 """
-binner(β::Block) = chop(β.ss, head=1, tail=1)
+braces_content(β::Block) = chop(β.ss, head=1, tail=1)
 
 
 """
@@ -46,7 +47,7 @@ binner(β::Block) = chop(β.ss, head=1, tail=1)
 
 For a html block, retrieve the span of what's inside the matching braces.
 """
-hinner(β::Block) = chop(β.ss, head=2, tail=2)
+hblock_content(β::Block) = chop(β.ss, head=2, tail=2)
 
 
 """

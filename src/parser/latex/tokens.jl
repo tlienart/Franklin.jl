@@ -25,11 +25,13 @@ the command has been defined in the context of what we're currently parsing.
 mutable struct LxDef
     name::String
     narg::Int
-    def::String
+    def::SubString
     # location of the definition > only things that can be mutated via pastdef!
     from::Int
     to::Int
 end
+from(lxd::LxDef) = lxd.from
+to(lxd::LxDef) = lxd.to
 
 
 """
@@ -38,22 +40,23 @@ end
 Convenience function to mark a definition as having been defined in the context
 i.e.: earlier than any other definition appearing in the current page.
 """
-pastdef!(λ::LxDef) = (shift = λ.from; λ.from = 0; λ.to -= shift; λ)
+pastdef!(λ::LxDef) = (λ.to -= λ.from; λ.from = 0; return λ)
 
 
 """
-    LxCom <: AbstractBlock
+    LxCom{T} <: AbstractBlock where T <: Union{Ref{LxDef}, Nothing}
 
 A `LxCom` has a similar content as a `Block`, with the addition of the
 definition and a vector of brace blocks.
 """
 struct LxCom <: AbstractBlock
-    from::Int
-    to::Int
-    lxdef::Union{Ref{LxDef}, Nothing}
+    ss::SubString
+    lxdef::Ref{LxDef}
     braces::Vector{Block}
 end
-LxCom(from, to, def) = LxCom(from, to, def, Vector{Block}())
+LxCom(ss, def) = LxCom(ss, def, Vector{Block}())
+from(lxc::LxCom) = from(lxc.ss)
+to(lxc::LxCom) = to(lxc.ss)
 
 
 """
@@ -62,11 +65,14 @@ LxCom(from, to, def) = LxCom(from, to, def, Vector{Block}())
 For a given `LxCom`, retrieve the definition attached to the corresponding
 `LxDef` via the reference.
 """
-getdef(lxc::LxCom) = isnothing(lxc.lxdef) ? nothing : getindex(lxc.lxdef).def
+getdef(lxc::LxCom) = getindex(lxc.lxdef).def
 
-#=
-TODO add doc once confirmed
-=#
+
+"""
+    LxContext
+
+Convenience structure to keep track of the latex commands and braces.
+"""
 struct LxContext
     lxcoms::Vector{LxCom}
     lxdefs::Vector{LxDef}

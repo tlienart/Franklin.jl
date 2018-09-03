@@ -20,13 +20,10 @@ Convenience function to form a `SubString`.
 """
 subs(s::AbstractString, from::Int, to::Int) = SubString(s, from, to)
 subs(s::AbstractString, from::Int) = subs(s, from, from)
+subs(s::AbstractString, range::UnitRange{Int}) = SubString(s, range)
 
-
-from(s::SubString) = s.offset+1
-from(τ::Token) = from(τ.ss)
-to(s::SubString) = s.offset+s.ncodeunits
-to(τ::Token) = to(τ.ss)
-str(τ::Token) = τ.ss.string
+from(s::SubString) = s.offset + 1
+to(s::SubString) = s.offset + s.ncodeunits
 
 """
     isnothing(x)

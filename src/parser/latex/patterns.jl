@@ -1,7 +1,7 @@
 """
     LX_NAME_PAT
 
-Regex to find the name in a new command. For example:
+Regex to find the name in a new command within a brace block. For example:
     \\newcommand{\\com}[2]{def}
 will give as first capture group `\\com`.
 """
