@@ -5,6 +5,7 @@ Find active open brace characters `{` and their matching closing braces. Return
 the list of such `bblocks` (braces blocks).
 """
 function find_md_bblocks(tokens::Vector{Token})
+    # number of tokens & active tokens
     ntokens = length(tokens)
     active_tokens = ones(Bool, length(tokens))
     # storage for the blocks `{...}`
@@ -21,8 +22,8 @@ function find_md_bblocks(tokens::Vector{Token})
             j += 1
             inbalance += bbalance(tokens[j])
         end
-        (inbalance > 0) && error("I found at least one open curly brace that is not closed properly. Verify.")
-        push!(bblocks, braces(τ.from, tokens[j].to))
+        (inbalance > 0) && error("I found at least one open curly brace '{' that is not closed properly. Verify.")
+        push!(bblocks, braces(subs(str(τ), from(τ), to(tokens[j]))))
         # remove processed tokens
         active_tokens[[i, j]] .= false
     end
@@ -64,7 +65,7 @@ function find_md_xblocks(tokens::Vector{Token})
         isnothing(k) && error("Found the opening token '$(τ.name)' but not the corresponding closing token. Verify.")
         # store the block
         k += i
-        push!(xblocks, Block(bname, τ.from, tokens[k].to))
+        push!(xblocks, Block(bname, subs(str(τ), from(τ), to(tokens[k]))))
         # mark tokens within the block as inactive (extracted blocks are not
         # further processed unless they're math blocks where potential
         # user-defined latex commands will be further processed)
@@ -89,17 +90,17 @@ function merge_xblocks_lxcoms(xb::Vector{Block}, lxc::Vector{LxCom})
     xblocks = Vector{AbstractBlock}(undef, lenxb + lenlxc)
 
     xb_i, lxc_i = 1, 1
-    xb_from, lxc_from = xb[xb_i].from, lxc[lxc_i].from
+    xb_from, lxc_from = from(xb[xb_i]), from(lxc[lxc_i])
 
     for i ∈ eachindex(xblocks)
         if xb_from < lxc_from
             xblocks[i] = xb[xb_i]
             xb_i += 1
-            xb_from = (xb_i > lenxb) ? BIG_INT : xb[xb_i].from
+            xb_from = (xb_i > lenxb) ? BIG_INT : from(xb[xb_i])
         else
             xblocks[i] = lxc[lxc_i]
             lxc_i += 1
-            lxc_from = (lxc_i > lenlxc) ? BIG_INT : lxc[lxc_i].from
+            lxc_from = (lxc_i > lenlxc) ? BIG_INT : from(lxc[lxc_i])
         end
     end
     return xblocks

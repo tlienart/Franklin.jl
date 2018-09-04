@@ -10,56 +10,46 @@ Available functions are:
 """
 const HBLOCK_FUN = r"{{\s*([a-z]\S+)\s+((.|\n)+?)}}"
 
+
 """
     HBLOCK_IF
 
 Regex to match `{{ if vname }}` where `vname` should refer to a boolean in
 the current scope.
 """
-const HBLOCK_IF = r"{{\s*if\s+([a-z]\S+)\s*}}"
-const HBLOCK_ELSE = r"{{\s*else\s*}}"
-const HBLOCK_ELSE_IF = r"{{\s*else\s+if\s+([a-z]\S+)\s*}}"
-const HBLOCK_END = r"{{\s*end\s*}}"
+const HBLOCK_IF     = r"{{\s*if\s+([a-z]\S+)\s*}}"
+const HBLOCK_ELSE   = r"{{\s*else\s*}}"
+const HBLOCK_ELSEIF = r"{{\s*else\s*if\s+([a-z]\S+)\s*}}"
+const HBLOCK_END    = r"{{\s*end\s*}}"
 
 
-struct HCond
-    vcond1::String
-    vconds::Vector{String}
-    dofrom::Vector{Int}
-    doto::Vector{Int}
-    from::Int
-    to::Int
-end
-
-
-abstract type HBlock end
-
-
-struct HIf <: HBlock
+struct HIf <: AbstractBlock
+    ss::SubString      # block {{ if vname }}
     vname::String
-    from::Int
-    to::Int
 end
 
-struct HElse <: HBlock
-    from::Int
-    to::Int
+struct HElse <: AbstractBlock
+    ss::SubString
 end
 
-struct HElseIf <: HBlock
+struct HElseIf <: AbstractBlock
+    ss::SubString
     vname::String
-    from::Int
-    to::Int
 end
 
-struct HEnd <: HBlock
-    from::Int
-    to::Int
+struct HEnd <: AbstractBlock
+    ss::SubString
 end
 
-struct HFun <: HBlock
+struct HCond <: AbstractBlock
+    ss::SubString               # full block
+    init_cond::String           # initial condition (has to exist)
+    sec_conds::Vector{String}   # secondary conditions (can be empty)
+    actions::Vector{SubString}  # what to do when conditions are met
+end
+
+struct HFun <: AbstractBlock
+    ss::SubString
     fname::String
     params::Vector{String}
-    from::Int
-    to::Int
 end

@@ -8,7 +8,7 @@ The list of tokens found is returned.
 function find_tokens(str::AbstractString, tokens_dict::Dict,
                      stokens_dict::Dict)
     # storage to keep track of the tokens found
-    tokens = Token[]
+    tokens = Vector{Token}()
     # head_idx will travel over the valid characters from first to final one
     # excluding it (the EOS character).
     head_idx, EOS_idx = 1, lastindex(str)
@@ -17,7 +17,7 @@ function find_tokens(str::AbstractString, tokens_dict::Dict,
         head = str[head_idx]
         # 1. is it one of the single-char token?
         if haskey(stokens_dict, head)
-            push!(tokens, Token(stokens_dict[head], head_idx))
+            push!(tokens, Token(stokens_dict[head], subs(str, head_idx)))
         # 2. is it one of the multi-char token?
         elseif haskey(tokens_dict, head)
             for ((steps, offset, λ), case) ∈ tokens_dict[head]
@@ -48,23 +48,22 @@ function find_tokens(str::AbstractString, tokens_dict::Dict,
                     stack = subs(str, head_idx, endchar_idx)
                     if λ(stack)
                         # offset==True --> looked at 1 extra char (lookahead)
-                        endchar_idx -= offset
-                        push!(tokens, Token(case, head_idx, endchar_idx))
-                        head_idx = endchar_idx
-                        # token identified, no need to check other possib.
+                        head_idx = endchar_idx - offset
+                        push!(tokens, Token(case, chop(stack, tail=offset)))
+                        # token identified, no need to check other cases.
                         break
                     end
                 else # rule-based match, greedy catch until fail
                     stack, shift = head, 1
                     nextchar_idx = head_idx + shift
                     while λ(shift, str[nextchar_idx])
-                        stack *= str[nextchar_idx]
+                        stack = subs(str, head_idx, nextchar_idx)
                         shift += 1
                         nextchar_idx += 1
                     end
                     endchar_idx = nextchar_idx - 1
                     if endchar_idx > head_idx
-                        push!(tokens, Token(case, head_idx, endchar_idx))
+                        push!(tokens, Token(case, stack))
                         head_idx = endchar_idx
                     end
                 end
