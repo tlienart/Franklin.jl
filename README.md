@@ -27,6 +27,8 @@
 * convert_md could take a note saying that it can't contain newcommands and so `has_lxdefs=false`
 * use named argument for `inmath` for readability of the code
 * confusion between `head`, `head_idx` used to mean similar things (see e.g. `find_tokens`)
+* in `judoc` the setting of parameters (max number of cycles) should be done in a kind of preference file
+* in `hcond` should check that the if/elseif/else are in right order
 
 
 * merge the merge functions (they now all use the same abstract type)
