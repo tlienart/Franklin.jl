@@ -1,7 +1,7 @@
 """
     convert_html(hs, allvars)
 
-Convert a judoc html string into a html string.
+Convert a judoc html string into a html string (i.e. replace {{ ... }} blocks).
 """
 function convert_html(hs::String, allvars::Dict)
     # Tokenize
@@ -32,7 +32,8 @@ end
 """
     convert_hblock(β, allvars)
 
-Helper function to process an individual block when the block is a `HFun`.
+Helper function to process an individual block when the block is a `HFun`
+such as `{{ fill author }}`.
 """
 function convert_hblock(β::HFun, allvars::Dict)
     fname = lowercase(β.fname)
@@ -47,7 +48,8 @@ end
 """
     convert_hblock(β, allvars)
 
-Helper function to process an individual block when the block is a `HCond`.
+Helper function to process an individual block when the block is a `HCond`
+such as `{{ if showauthor }} {{ fill author }} {{ end }}`.
 """
 function convert_hblock(β::HCond, allvars::Dict)
     # check that the bool vars exist
