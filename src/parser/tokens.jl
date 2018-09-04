@@ -116,11 +116,11 @@ end
 
 
 """
-    α(c)
+    α(c, ac)
 
-Syntactic sugar for `isalpha(c)`.
+Check whether `c` is a letter or belongs to `ac`.
 """
-α(c::Char) = isletter(c)
+α(c::Char, ac=Vector{Char}()) = isletter(c) || (c ∈ ac)
 
 
 """

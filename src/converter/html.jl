@@ -58,7 +58,7 @@ function convert_hblock(β::HCond, allvars::Dict)
     all(c -> haskey(allvars, c), allconds) || error("At least one of the booleans in a conditional html block could not be found. Verify.")
     k = findfirst(c -> allvars[c].first, allconds)
     if isnothing(k)
-        haselse || return ""
+        has_else || return ""
         partial = β.actions[end]
     else
         partial = β.actions[k]
