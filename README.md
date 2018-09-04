@@ -34,6 +34,22 @@
 * merge the merge functions (they now all use the same abstract type)
 
 
+### Math href
+
+How about: in `convert_md_math`, pass a boolean that indicates whether we have a "display" math block or not. If we do, then pass it on to `resolve_lxcom` which, if it sees a `\label`, should
+
+* add an anchor to the equation (?) or maybe just before (?) (review how anchors are added)
+* increment some global equation display counter
+* in first pass should do this without worrying about section/subsection, just use one counter per page, would be somewhat easier.
+
+then further the `\eqref` in text should be hard coded and add direct HTML doing something like
+
+```
+<a href=#anchor-tag>($COUNTER_DICT[anchor-tag])</a>
+```
+
+
+
 ### Sandbox space: math environment
 
 To start, consider something like
