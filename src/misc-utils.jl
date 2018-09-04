@@ -19,7 +19,14 @@ end
 Convenience function to form a `SubString`.
 """
 subs(s::AbstractString, from::Int, to::Int) = SubString(s, from, to)
+subs(s::AbstractString, from::Int) = subs(s, from, from)
+subs(s::AbstractString, range::UnitRange{Int}) = SubString(s, range)
 
+from(s::SubString) = s.offset + 1
+to(s::SubString) = s.offset + s.ncodeunits
+
+str(s::String) = s
+str(s::SubString) = s.string
 
 """
     isnothing(x)
@@ -27,11 +34,3 @@ subs(s::AbstractString, from::Int, to::Int) = SubString(s, from, to)
 Convenience function to check if a variable is `nothing`.
 """
 isnothing(x) = (x == nothing)
-
-
-"""
-    fromto(s, β)
-
-Convenience function to chop a string around a `β.from`, `β.to`.
-"""
-fromto(s, β) = subs(s, β.from, β.to)

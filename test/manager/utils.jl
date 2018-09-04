@@ -48,7 +48,7 @@ end
 end
 
 
-@testset "Config+write" begin # ✅ 16 August, 2018
+@testset "Config+write" begin # ✅ 4 Sept, 2018
 	JuDoc.process_config()
 	@test JuDoc.JD_GLOB_VARS["author"].first == "Stefan Zweig"
 	rm(temp_config)
