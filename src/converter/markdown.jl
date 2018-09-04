@@ -80,7 +80,7 @@ end
 
 Convert a judoc markdown file into a judoc html.
 """
-function convert_md(mds::AbstractString, pre_lxdefs=Vector{LxDef}();
+function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
                     isrecursive=false, isconfig=false, has_mddefs=true)
     # Tokenize
     tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
@@ -141,7 +141,7 @@ end
 Same as `convert_md` except tailored for conversion of the inside of a
 math block (no command definitions, restricted tokenisation to latex tokens).
 """
-function convert_md_math(ms::AbstractString, lxdefs=Vector{LxDef}())
+function convert_md_math(ms::String, lxdefs=Vector{LxDef}())
     # tokenize with restricted set
     tokens = find_tokens(ms, MD_TOKENS_LX, MD_1C_TOKENS_LX)
     bblocks, tokens = find_md_bblocks(tokens)

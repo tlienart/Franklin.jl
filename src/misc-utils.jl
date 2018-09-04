@@ -25,6 +25,9 @@ subs(s::AbstractString, range::UnitRange{Int}) = SubString(s, range)
 from(s::SubString) = s.offset + 1
 to(s::SubString) = s.offset + s.ncodeunits
 
+str(s::String) = s
+str(s::SubString) = s.string
+
 """
     isnothing(x)
 

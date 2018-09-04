@@ -1,7 +1,7 @@
 abstract type AbstractBlock end
 from(β::AbstractBlock) = from(β.ss)
 to(β::AbstractBlock) = to(β.ss)
-str(β::AbstractBlock) = β.ss.string
+str(β::AbstractBlock) = str(β.ss)
 
 
 """

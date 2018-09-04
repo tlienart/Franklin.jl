@@ -3,7 +3,7 @@
 
 Convert a judoc html string into a html string.
 """
-function convert_html(hs::AbstractString, allvars::Dict)
+function convert_html(hs::String, allvars::Dict)
     # Tokenize
     tokens = find_tokens(hs, HTML_TOKENS, HTML_1C_TOKENS)
     # Find hblocks ( {{ ... }})
@@ -15,7 +15,6 @@ function convert_html(hs::AbstractString, allvars::Dict)
     # Get the list of blocks to process
     hblocks = merge_fblocks_cblocks(qblocks, cblocks)
     # construct the final html
-    # 🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫
     pieces = Vector{AbstractString}()
     head = 1
     for (i, hb) ∈ enumerate(hblocks)
@@ -62,5 +61,5 @@ function convert_hblock(β::HCond, allvars::Dict)
     else
         partial = β.actions[k]
     end
-    return convert_html(partial, allvars)
+    return convert_html(String(partial), allvars)
 end

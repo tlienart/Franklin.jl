@@ -39,3 +39,14 @@ end
     allvars = Dict()
     @test JuDoc.convert_html(hs, allvars) == "Trying to insert: some random text to insert and see.\n"
 end
+
+
+@testset "cond-insert" begin
+    allvars = Dict{String, Pair{Any, Tuple}}(
+        "author" => "Stefan Zweig" => (String, Nothing),
+        "date_format" => "U dd, yyyy" => (String,),
+        "isnotes" => true => (Bool,))
+    hs = "foot {{if isnotes}} {{fill author}}{{end}}"
+    rhs = JuDoc.convert_html(hs, allvars)
+    @test rhs == "foot  Stefan Zweig"
+end
