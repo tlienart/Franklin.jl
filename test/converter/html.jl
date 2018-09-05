@@ -20,7 +20,8 @@
     hblocks, tokens = JuDoc.find_html_hblocks(tokens)
     qblocks = JuDoc.qualify_html_hblocks(hblocks)
     cblocks, qblocks = JuDoc.find_html_cblocks(qblocks)
-    hblocks = JuDoc.merge_fblocks_cblocks(qblocks, cblocks)
+    cdblocks, qblocks = JuDoc.find_html_cdblocks(qblocks)
+    hblocks = JuDoc.merge_hblocks(qblocks, cblocks, cdblocks)
     convhbs = [JuDoc.convert_hblock(hb, allvars) for hb ∈ hblocks]
     @test convhbs[1] == "INPUT1"
     @test convhbs[2] == "\nother stuff\n"
@@ -47,6 +48,17 @@ end
         "date_format" => "U dd, yyyy" => (String,),
         "isnotes" => true => (Bool,))
     hs = "foot {{if isnotes}} {{fill author}}{{end}}"
+    rhs = JuDoc.convert_html(hs, allvars)
+    @test rhs == "foot  Stefan Zweig"
+end
+
+
+@testset "cond-insert 2" begin
+    allvars = Dict{String, Pair{Any, Tuple}}(
+        "author" => "Stefan Zweig" => (String, Nothing),
+        "date_format" => "U dd, yyyy" => (String,),
+        "isnotes" => true => (Bool,))
+    hs = "foot {{ifdef author}} {{fill author}}{{end}}"
     rhs = JuDoc.convert_html(hs, allvars)
     @test rhs == "foot  Stefan Zweig"
 end
