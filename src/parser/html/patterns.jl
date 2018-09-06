@@ -21,7 +21,10 @@ const HBLOCK_IF     = r"{{\s*if\s+([a-z]\S+)\s*}}"
 const HBLOCK_ELSE   = r"{{\s*else\s*}}"
 const HBLOCK_ELSEIF = r"{{\s*else\s*if\s+([a-z]\S+)\s*}}"
 const HBLOCK_END    = r"{{\s*end\s*}}"
+const HBLOCK_IFDEF  = r"{{\s*ifdef\s+([a-z]\S+)\s*}}"
+const HBLOCK_IFNDEF  = r"{{\s*ifndef\s+([a-z]\S+)\s*}}"
 
+# If vname else ...
 
 struct HIf <: AbstractBlock
     ss::SubString      # block {{ if vname }}
@@ -41,12 +44,37 @@ struct HEnd <: AbstractBlock
     ss::SubString
 end
 
+# conditional block
+
 struct HCond <: AbstractBlock
     ss::SubString               # full block
     init_cond::String           # initial condition (has to exist)
     sec_conds::Vector{String}   # secondary conditions (can be empty)
     actions::Vector{SubString}  # what to do when conditions are met
 end
+
+# If is defined or undefined
+
+struct HIfDef <: AbstractBlock
+    ss::SubString
+    vname::String
+end
+
+struct HIfNDef <: AbstractBlock
+    ss::SubString
+    vname::String
+end
+
+struct HCondDef <: AbstractBlock
+    ss::SubString       # full block
+    checkisdef::Bool    # true if @isdefined, false if !@isdefined
+    vname::String       # initial condition (has to exist)
+    action::SubString   # what to do when condition is met
+end
+HCondDef(β::HIfDef, ss, action) = HCondDef(ss, true, β.vname, action)
+HCondDef(β::HIfNDef, ss, action) = HCondDef(ss, false, β.vname, action)
+
+# Function block
 
 struct HFun <: AbstractBlock
     ss::SubString

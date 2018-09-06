@@ -12,8 +12,10 @@ function convert_html(hs::String, allvars::Dict)
     qblocks = qualify_html_hblocks(hblocks)
     # Find overall conditional blocks (if ... elseif ... else ...  end)
     cblocks, qblocks = find_html_cblocks(qblocks)
+    # Find conditional def blocks (ifdef / ifndef)
+    cdblocks, qblocks = find_html_cdblocks(qblocks)
     # Get the list of blocks to process
-    hblocks = merge_fblocks_cblocks(qblocks, cblocks)
+    hblocks = merge_hblocks(qblocks, cblocks, cdblocks)
     # construct the final html
     pieces = Vector{AbstractString}()
     head = 1
@@ -64,4 +66,19 @@ function convert_hblock(β::HCond, allvars::Dict)
         partial = β.actions[k]
     end
     return convert_html(String(partial), allvars)
+end
+
+
+"""
+    convert_hblock(β, allvars)
+
+Helper function to process an individual block when the block is a `HIfDef`
+such as `{{ ifdef author }} {{ fill author }} {{ end }}`. Which checks
+if a variable exists and if it does, applies something.
+"""
+function convert_hblock(β::HCondDef, allvars::Dict)
+    hasvar = haskey(allvars, β.vname)
+    doaction = ifelse(β.checkisdef, hasvar, !hasvar)
+    doaction && return convert_html(String(β.action), allvars)
+    return ""
 end
