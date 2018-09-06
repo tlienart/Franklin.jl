@@ -41,7 +41,7 @@ function convert_hblock(β::HFun, allvars::Dict)
     fname == "insert" && return hfun_insert(β.params)
     # unknown function
     warn("I found a function block '{{$fname ...}}' but I don't recognise this function name. Ignoring.")
-    return subs(hs, from(β), to(β))
+    return β.ss
 end
 
 

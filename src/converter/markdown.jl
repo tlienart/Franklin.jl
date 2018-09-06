@@ -231,9 +231,10 @@ function convert_mathblock(β::Block, lxdefs::Vector{LxDef})
     # right. So for example, a MATH_B is \$\$...\$\$ so two characters (\$\$)
     # to remove on each side.
     # pm[3] and pm[4] indicate what we have to write for KaTeX instead.
-    βn == :MATH_A     && (pm = ( 1,  1, "\\(",  "\\)"))
-    βn == :MATH_B     && (pm = ( 2,  2, "\$\$", "\$\$"))
-    βn == :MATH_C     && (pm = ( 2,  2, "\\[",  "\\]"))
+    # pm[5] indicates whether it has a number or not
+    βn == :MATH_A     && (pm = ( 1,  1, "\\(",  "\\)", false))
+    βn == :MATH_B     && (pm = ( 2,  2, "\$\$", "\$\$", false))
+    βn == :MATH_C     && (pm = ( 2,  2, "\\[",  "\\]", true))
     βn == :MATH_ALIGN && (pm = (13, 11, "\$\$\\begin{aligned}", "\\end{aligned}\$\$"))
     βn == :MATH_EQA   && (pm = (16, 14, "\$\$\\begin{array}{c}", "\\end{array}\$\$"))
     # this is maths in a recursive parsing --> should not be
