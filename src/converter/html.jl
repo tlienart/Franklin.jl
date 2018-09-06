@@ -42,7 +42,7 @@ function convert_hblock(β::HFun, allvars::Dict)
     fname == "fill"   && return hfun_fill(β.params, allvars)
     fname == "insert" && return hfun_insert(β.params)
     # unknown function
-    warn("I found a function block '{{$fname ...}}' but I don't recognise this function name. Ignoring.")
+    @warn "I found a function block '{{$fname ...}}' but I don't recognise this function name. Ignoring."
     return β.ss
 end
 

@@ -119,9 +119,12 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
         catch x
         	if isa(x, InterruptException)
                 println("\nShutting down.")
+                return 0
             else
                 rethrow(x)
+                return -1
             end
         end
     end
+    return 0
 end

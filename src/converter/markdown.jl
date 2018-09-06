@@ -108,7 +108,7 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
         assignments = Vector{Pair{String, String}}(undef, length(mddefs))
         for (i, mdd) ∈ enumerate(mddefs)
             matched = match(MD_DEF_PAT, mdd.ss)
-            isnothing(matched) && warn("Found delimiters for an @def environment but I couldn't match it appropriately. Verify (will ignore for now).")
+            isnothing(matched) && @warn "Found delimiters for an @def environment but I couldn't match it appropriately. Verify (will ignore for now)."
             vname, vdef = matched.captures[1:2]
             assignments[i] = (String(vname) => String(vdef))
         end
