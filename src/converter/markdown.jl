@@ -108,7 +108,7 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
         assignments = Vector{Pair{String, String}}(undef, length(mddefs))
         for (i, mdd) ∈ enumerate(mddefs)
             matched = match(MD_DEF_PAT, mdd.ss)
-            isnothing(matched) && warn("Found delimiters for an @def environment but I couldn't match it appropriately. Verify (will ignore for now).")
+            isnothing(matched) && @warn "Found delimiters for an @def environment but I couldn't match it appropriately. Verify (will ignore for now)."
             vname, vdef = matched.captures[1:2]
             assignments[i] = (String(vname) => String(vdef))
         end
@@ -231,9 +231,10 @@ function convert_mathblock(β::Block, lxdefs::Vector{LxDef})
     # right. So for example, a MATH_B is \$\$...\$\$ so two characters (\$\$)
     # to remove on each side.
     # pm[3] and pm[4] indicate what we have to write for KaTeX instead.
-    βn == :MATH_A     && (pm = ( 1,  1, "\\(",  "\\)"))
-    βn == :MATH_B     && (pm = ( 2,  2, "\$\$", "\$\$"))
-    βn == :MATH_C     && (pm = ( 2,  2, "\\[",  "\\]"))
+    # pm[5] indicates whether it has a number or not
+    βn == :MATH_A     && (pm = ( 1,  1, "\\(",  "\\)", false))
+    βn == :MATH_B     && (pm = ( 2,  2, "\$\$", "\$\$", false))
+    βn == :MATH_C     && (pm = ( 2,  2, "\\[",  "\\]", true))
     βn == :MATH_ALIGN && (pm = (13, 11, "\$\$\\begin{aligned}", "\\end{aligned}\$\$"))
     βn == :MATH_EQA   && (pm = (16, 14, "\$\$\\begin{array}{c}", "\\end{array}\$\$"))
     # this is maths in a recursive parsing --> should not be
