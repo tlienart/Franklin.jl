@@ -17,6 +17,8 @@ write(temp_rnd, "some random")
 temp_css = joinpath(JuDoc.JD_PATHS[:in_css], "temp.css")
 write(temp_css, "some css")
 
+JuDoc.process_config()
+
 
 @testset "Prep outdir" begin # ✅ aug 15, 2018
 	JuDoc.prepare_output_dir()

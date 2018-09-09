@@ -39,7 +39,9 @@ const JD_LOC_VARS = Dict{String, Pair{Any, Tuple}}(
 
 List of latex definitions accessible to all pages.
 """
-global JD_GLOB_LXDEFS = Vector{LxDef}()
+global JD_GLOB_LXDEFS = [
+    LxDef("\\eqref", 1, SubString("")),
+    ]
 
 
 """

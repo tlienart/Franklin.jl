@@ -48,6 +48,16 @@ then further the `\eqref` in text should be hard coded and add direct HTML doing
 <a href=#anchor-tag>($COUNTER_DICT[anchor-tag])</a>
 ```
 
+```
+<p><a href="#news">Go to the News</a></p>
+<h1>Welcome</h1>
+<p>This paragraph welcomes you.</p>
+<h2>About</h2>
+<p>This paragraph talks about us.</p>
+<h2><a name="news">News</a></h2>
+<p>This is the section your link will go to.</p>
+```
+
 
 
 ### Sandbox space: math environment
