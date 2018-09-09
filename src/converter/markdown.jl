@@ -1,7 +1,7 @@
 const JD_INSERT = "##JDINSERT##"
 const PAT_JD_INSERT = Regex(JD_INSERT)
 const LEN_JD_INSERT = length(JD_INSERT)
-const JD_EQDICT_COUNTER = "__JD_EQDICT_COUNTER__"
+const JD_EQDICT_COUNTER = hash("__JD_EQDICT_COUNTER__")
 
 """
     md2html(ss, stripp)
@@ -85,7 +85,7 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
 
     global JD_GLOB_VARS, JD_GLOB_LXDEFS, JD_EQDICT
     # global container for equation and id
-    !isrecursive && (JD_EQDICT = Dict{String, Int}(JD_EQDICT_COUNTER => 0))
+    !isrecursive && (JD_EQDICT = Dict{UInt, Int}(JD_EQDICT_COUNTER => 0))
     # Tokenize
     tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
     # Deactivate tokens within code blocks
@@ -260,7 +260,7 @@ function convert_mathblock(β::Block, lxdefs::Vector{LxDef})
         JD_EQDICT[JD_EQDICT_COUNTER] += 1
         matched = match(r"\\label{(.*?)}", inner)
         if !isnothing(matched)
-            name = matched.captures[1]
+            name = hash(matched.captures[1])
             anchor = "<a name=\"$name\"></a>"
             JD_EQDICT[name] = JD_EQDICT[JD_EQDICT_COUNTER]
             inner = replace(inner, r"\\label{.*?}" => "")

@@ -10,9 +10,9 @@ function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef}, inmath::Bool=false)
     # sort commands where the input depends on context
     if startswith(lxc.ss, "\\eqref")
         global JD_EQDICT
-        key = braces_content(lxc.braces[1])
+        key = hash(braces_content(lxc.braces[1]))
         return (haskey(JD_EQDICT, key) ?
-                      "<a href=\"$key\">($(JD_EQDICT[key]))</a>" :
+                      "<span class=\"eqref\"><a href=\"#$key\">($(JD_EQDICT[key]))</a></span>" :
                       "(<b>??</b>)")
     end
     # retrieve the definition attached to the command
