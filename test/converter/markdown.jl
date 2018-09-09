@@ -113,3 +113,24 @@ end
 
     @test m == "<p>Then something like \$\$\\begin{array}{c} \\mathbb E\\left[f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R \\end{array}\$\$</p>\n"
 end
+
+
+@testset "Eqref" begin
+    st = raw"""
+        \newcommand{\E}[1]{\mathbb E\left[#1\right]}
+        \newcommand{\eqa}[1]{\begin{eqnarray}#1\end{eqnarray}}
+        \newcommand{\R}{\mathbb R}
+        Then something like
+        \eqa{ \E{f(X)} \in \R &\text{if}& f:\R\maptso\R}
+        and then
+        \eqa{ 1+1 &=& 2 \label{eq:a trivial one}}
+        but further
+        \eqa{ 1 &=& 1 \label{beyond hope}}
+        and finally a \eqref{eq:a trivial one} and maybe \eqref{beyond hope}.
+        """ * JuDoc.EOS
+    m, _ = JuDoc.convert_md(st)
+    @test JuDoc.JD_EQDICT[JuDoc.JD_EQDICT_COUNTER] == 3
+    @test JuDoc.EQDICT["eq:a trivial one"] == 2
+    @test JuDoc.EQDICT["beyond hope"] == 3
+    @test m == raw"""<p>Then something like $$\begin{array}{c} \mathbb E\left[f(X)\right] \in \mathbb R &\text{if}& f:\mathbb R\maptso\mathbb R\end{array}$$ and then <a name="eq:a trivial one"></a>$$\begin{array}{c} 1+1 &=& 2 \end{array}$$ but further <a name="beyond hope"></a>$$\begin{array}{c} 1 &=& 1 \end{array}$$ and finally a <a href="eq:a trivial one">(2)</a> and maybe <a href="beyond hope">(3)</a>.</p>"""
+end

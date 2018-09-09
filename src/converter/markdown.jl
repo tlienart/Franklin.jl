@@ -1,7 +1,7 @@
 const JD_INSERT = "##JDINSERT##"
 const PAT_JD_INSERT = Regex(JD_INSERT)
 const LEN_JD_INSERT = length(JD_INSERT)
-
+const JD_EQDICT_COUNTER = "__JD_EQDICT_COUNTER__"
 
 """
     md2html(ss, stripp)
@@ -82,6 +82,10 @@ Convert a judoc markdown file into a judoc html.
 """
 function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
                     isrecursive=false, isconfig=false, has_mddefs=true)
+
+    global JD_GLOB_VARS, JD_GLOB_LXDEFS, JD_EQDICT
+    # global container for equation and id
+    !isrecursive && (JD_EQDICT = Dict{String, Int}(JD_EQDICT_COUNTER => 0))
     # Tokenize
     tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
     # Deactivate tokens within code blocks
@@ -94,6 +98,7 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
     # that the definitions appear "earlier" by marking the `.from` at 0
     lprelx = length(pre_lxdefs)
     (lprelx > 0) && (lxdefs = cat(pastdef!.(pre_lxdefs), lxdefs, dims=1))
+    lxdefs = cat(JD_GLOB_LXDEFS, lxdefs, dims=1)
 
     # Find blocks to extract
     xblocks, tokens = find_md_xblocks(tokens)
@@ -115,7 +120,7 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
         # Assign as appropriate
         if isconfig
             isempty(assignments) || set_vars!(JD_GLOB_VARS, assignments)
-            isempty(lxdefs) || push!(JD_GLOB_LXDEFS, lxdefs)
+            isempty(lxdefs) || append!(JD_GLOB_LXDEFS, lxdefs)
             # no more processing required
             return nothing
         end
@@ -226,6 +231,7 @@ of a math block, resolving any latex command in it and returning the correct
 syntax that KaTeX can render.
 """
 function convert_mathblock(β::Block, lxdefs::Vector{LxDef})
+    global JD_EQDICT
     βn = β.name
     # pm[1] and pm[2] indicate the number of characters to remove on left and
     # right. So for example, a MATH_B is \$\$...\$\$ so two characters (\$\$)
@@ -245,6 +251,20 @@ function convert_mathblock(β::Block, lxdefs::Vector{LxDef})
     !(@isdefined pm) && error("Undefined math block name.")
 
     # otherwise we're good, convert the inside, decorate with KaTex and return
-    inner = chop(β.ss, head=pm[1], tail=pm[2]) * EOS
-    return pm[3] * convert_md_math(inner, lxdefs) * pm[4]
+    # also if the math block is a "display" one (with a number)
+    inner = chop(β.ss, head=pm[1], tail=pm[2])
+    anchor = ""
+    if βn ∉ [:MATH_A, :MATH_I]
+        # NOTE: in the future if allow equation tags, then will need an `if`
+        # here and only increment if there's no tag. For now just use numbers.
+        JD_EQDICT[JD_EQDICT_COUNTER] += 1
+        matched = match(r"\\label{(.*?)}", inner)
+        if !isnothing(matched)
+            name = matched.captures[1]
+            anchor = "<a name=\"$name\"></a>"
+            JD_EQDICT[name] = JD_EQDICT[JD_EQDICT_COUNTER]
+            inner = replace(inner, r"\\label{.*?}" => "")
+        end
+    end
+    return anchor * pm[3] * convert_md_math(inner * EOS, lxdefs) * pm[4]
 end

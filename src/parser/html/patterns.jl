@@ -17,12 +17,12 @@ const HBLOCK_FUN = r"{{\s*([a-z]\S+)\s+((.|\n)+?)}}"
 Regex to match `{{ if vname }}` where `vname` should refer to a boolean in
 the current scope.
 """
-const HBLOCK_IF     = r"{{\s*if\s+([a-z]\S+)\s*}}"
+const HBLOCK_IF     = r"{{\s*if\s+([a-zA-Z]\S+)\s*}}"
 const HBLOCK_ELSE   = r"{{\s*else\s*}}"
-const HBLOCK_ELSEIF = r"{{\s*else\s*if\s+([a-z]\S+)\s*}}"
+const HBLOCK_ELSEIF = r"{{\s*else\s*if\s+([a-zA-Z]\S+)\s*}}"
 const HBLOCK_END    = r"{{\s*end\s*}}"
-const HBLOCK_IFDEF  = r"{{\s*ifdef\s+([a-z]\S+)\s*}}"
-const HBLOCK_IFNDEF  = r"{{\s*ifndef\s+([a-z]\S+)\s*}}"
+const HBLOCK_IFDEF  = r"{{\s*ifdef\s+([a-zA-Z]\S+)\s*}}"
+const HBLOCK_IFNDEF  = r"{{\s*ifndef\s+([a-zA-Z]\S+)\s*}}"
 
 # If vname else ...
 
