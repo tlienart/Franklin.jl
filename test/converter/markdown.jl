@@ -46,6 +46,7 @@ end
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
     blocks2insert = JuDoc.merge_xblocks_lxcoms(xblocks, lxcoms)
     inter_md = JuDoc.form_inter_md(st, blocks2insert, lxdefs)
+    @test inter_md == "##JDINSERT##\nfinally ⊙⊙𝛴⊙ and\n##JDINSERT##\ndone"
 end
 
 
