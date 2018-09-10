@@ -11,10 +11,9 @@ function hfun_fill(params::Vector{String}, allvars::Dict)
     if haskey(allvars, vname)
         # retrieve the value stored
         tmp_repl = allvars[vname].first
-
         isnothing(tmp_repl) || (replacement = string(tmp_repl))
     else
-        warn("I found a '{{fill $vname}}' but I do not know the variable '$vname'. Ignoring.")
+        @warn "I found a '{{fill $vname}}' but I do not know the variable '$vname'. Ignoring."
     end
     return replacement
 end
@@ -37,7 +36,7 @@ function hfun_insert(params::Vector{String})
     if isfile(fpath)
         replacement = read(fpath, String)
     else
-        warn("I found an {{insert ...}} block and tried to insert '$fpath' but I couldn't find the file. Ignoring.")
+        @warn "I found an {{insert ...}} block and tried to insert '$fpath' but I couldn't find the file. Ignoring."
     end
     return replacement
 end

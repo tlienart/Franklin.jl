@@ -67,6 +67,14 @@ function qualify_html_hblocks(blocks::Vector{Block})
         m = match(HBLOCK_END, β.ss)
         isnothing(m) ||
             (qb[i] = HEnd(β.ss); continue)
+        # ifdef block
+        m = match(HBLOCK_IFDEF, β.ss)
+        isnothing(m) ||
+            (qb[i] = HIfDef(β.ss, m.captures[1]); continue)
+        # ifndef block
+        m = match(HBLOCK_IFNDEF, β.ss)
+        isnothing(m) ||
+            (qb[i] = HIfNDef(β.ss, m.captures[1]); continue)
         # function block {{ fname v1 v2 ... }}
         m = match(HBLOCK_FUN, β.ss)
         isnothing(m) ||
@@ -133,37 +141,82 @@ end
 
 
 """
-    merge_fblocks_cblocks(hb, cb)
+    find_html_cdblocks(qblocks)
+
+Given qualified blocks `HIfDef` or `HIfNDef` build a conditional def block.
+"""
+function find_html_cdblocks(qblocks::Vector{AbstractBlock})
+    cdblocks = Vector{HCondDef}()
+    isempty(qblocks) && return cdblocks, qblocks
+    active_qblocks = ones(Bool, length(qblocks))
+    i = 0
+    while i < length(qblocks)
+        i += 1
+        β = qblocks[i]
+        (typeof(β) ∈ [HIfDef, HIfNDef]) || continue
+        # look forward until next `{{end}} block
+        k = findfirst(cβ -> (typeof(cβ) == HEnd), qblocks[i+1:end])
+        isnothing(k) && error("Found an {{ if(n)def ...}} block but no matching {{end}} block. Verify.")
+        k += i
+        endβ = qblocks[k]
+        hcondss = subs(str(β), from(β), to(endβ))
+        action = subs(str(β), to(β)+1, from(endβ)-1)
+        push!(cdblocks, HCondDef(β, hcondss, action))
+        active_qblocks[i:k] .= false
+        i = k
+    end
+    return cdblocks, qblocks[active_qblocks]
+end
+
+
+"""
+    merge_hblocks(hb, cb, cdb)
 
 Form a list of `AbstractBlock` corresponding to the ordered list of special blocks
 (function blocks and conditional blocks) to process in HTML.
 """
-function merge_fblocks_cblocks(hb::Vector{AbstractBlock}, hc::Vector{HCond})
+function merge_hblocks(hb::Vector{AbstractBlock}, hc::Vector{HCond},
+                       hcd::Vector{HCondDef})
 
 # NOTE: this function is copied on `merge_xblocks_lxcoms`, it's probably
 # better to have a single function that merges block. May require to define
 # a `promote` operation to make sure that the container vector has the right
 # super type.
 
-    isempty(hb) && return hc
-    isempty(hc) && return hb
+    lenhb, lenhc, lenhcd = length(hb), length(hc), length(hcd)
+    hblocks = Vector{AbstractBlock}(undef, lenhb + lenhc + lenhcd)
+    hb_i, hc_i, hcd_i = 1, 1, 1
 
-    lenhb, lenhc = length(hb), length(hc)
-    hblocks = Vector{AbstractBlock}(undef, lenhb + lenhc)
-
-    hb_i, hc_i = 1, 1
-    hb_from, hc_from = from(hb[hb_i]), from(hc[hc_i])
+    hb_from  = hfrom(hb, hb_i, lenhb)
+    hc_from  = hfrom(hc, hc_i, lenhc)
+    hcd_from = hfrom(hcd, hcd_i, lenhcd)
 
     for i ∈ eachindex(hblocks)
-        if hb_from < hc_from
+        minfrom = min(hb_from, hc_from, hcd_from)
+        if hb_from == minfrom
             hblocks[i] = hb[hb_i]
             hb_i += 1
-            hb_from = (hb_i > lenhb) ? BIG_INT : from(hb[hb_i])
-        else
+            hb_from = hfrom(hb, hb_i, lenhb)
+        elseif hc_from == minfrom
             hblocks[i] = hc[hc_i]
             hc_i += 1
-            hc_from = (hc_i > lenhc) ? BIG_INT : from(hc[hc_i])
+            hc_from = hfrom(hc, hc_i, lenhc)
+        else
+            hblocks[i] = hcd[hcd_i]
+            hcd_i += 1
+            hcd_from = hfrom(hcd, hcd_i, lenhcd)
         end
     end
     return hblocks
 end
+
+
+"""
+    hfrom(h, h_i, lenh)
+
+Convenience function to check if `h_i` is smaller than the length of `h`, a
+vector of `AbstractBlock`, if it is, then return the starting point of that
+block, otherwise return `BIG_INT`.
+"""
+hfrom(h::Vector{<:AbstractBlock}, h_i::Int, lenh::Int) =
+    (h_i > lenh) ? BIG_INT : from(h[h_i])

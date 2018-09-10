@@ -30,6 +30,7 @@ mutable struct LxDef
     from::Int
     to::Int
 end
+LxDef(name, narg, def) = LxDef(name, narg, def, 0, 0)
 from(lxd::LxDef) = lxd.from
 to(lxd::LxDef) = lxd.to
 
@@ -44,15 +45,15 @@ pastdef!(λ::LxDef) = (λ.to -= λ.from; λ.from = 0; return λ)
 
 
 """
-    LxCom{T} <: AbstractBlock where T <: Union{Ref{LxDef}, Nothing}
+    LxCom <: AbstractBlock
 
 A `LxCom` has a similar content as a `Block`, with the addition of the
 definition and a vector of brace blocks.
 """
 struct LxCom <: AbstractBlock
-    ss::SubString
-    lxdef::Ref{LxDef}
-    braces::Vector{Block}
+    ss::SubString           # \\command
+    lxdef::Ref{LxDef}       # definition of the command
+    braces::Vector{Block}   # relevant {...} associated with the command
 end
 LxCom(ss, def) = LxCom(ss, def, Vector{Block}())
 from(lxc::LxCom) = from(lxc.ss)

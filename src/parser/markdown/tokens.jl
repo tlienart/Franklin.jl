@@ -51,7 +51,8 @@ const MD_TOKENS = Dict{Char, Vector{Pair{Tuple{Int, Bool, Function}, Symbol}}}(
     '@' => [
         isexactly("@def", [' ']) => :MD_DEF_OPEN,    # @def var = ...
         isexactly("@@", SPACER)  => :DIV_CLOSE,      # @@⎵*
-        incrlook((i, c)->ifelse(i==1, c=='@', α(c))) => :DIV_OPEN ], # @@dname
+        incrlook((i, c) ->
+            ifelse(i==1, c=='@', α(c, ['-']))) => :DIV_OPEN ], # @@dname
     '$' => [
         isexactly("\$", ['$'], false) => :MATH_A,    # $⎵*
         isexactly("\$\$") => :MATH_B,                # $$⎵*

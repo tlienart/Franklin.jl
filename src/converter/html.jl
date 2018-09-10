@@ -12,8 +12,10 @@ function convert_html(hs::String, allvars::Dict)
     qblocks = qualify_html_hblocks(hblocks)
     # Find overall conditional blocks (if ... elseif ... else ...  end)
     cblocks, qblocks = find_html_cblocks(qblocks)
+    # Find conditional def blocks (ifdef / ifndef)
+    cdblocks, qblocks = find_html_cdblocks(qblocks)
     # Get the list of blocks to process
-    hblocks = merge_fblocks_cblocks(qblocks, cblocks)
+    hblocks = merge_hblocks(qblocks, cblocks, cdblocks)
     # construct the final html
     pieces = Vector{AbstractString}()
     head = 1
@@ -40,8 +42,8 @@ function convert_hblock(β::HFun, allvars::Dict)
     fname == "fill"   && return hfun_fill(β.params, allvars)
     fname == "insert" && return hfun_insert(β.params)
     # unknown function
-    warn("I found a function block '{{$fname ...}}' but I don't recognise this function name. Ignoring.")
-    return subs(hs, from(β), to(β))
+    @warn "I found a function block '{{$fname ...}}' but I don't recognise this function name. Ignoring."
+    return β.ss
 end
 
 
@@ -58,10 +60,25 @@ function convert_hblock(β::HCond, allvars::Dict)
     all(c -> haskey(allvars, c), allconds) || error("At least one of the booleans in a conditional html block could not be found. Verify.")
     k = findfirst(c -> allvars[c].first, allconds)
     if isnothing(k)
-        haselse || return ""
+        has_else || return ""
         partial = β.actions[end]
     else
         partial = β.actions[k]
     end
     return convert_html(String(partial), allvars)
+end
+
+
+"""
+    convert_hblock(β, allvars)
+
+Helper function to process an individual block when the block is a `HIfDef`
+such as `{{ ifdef author }} {{ fill author }} {{ end }}`. Which checks
+if a variable exists and if it does, applies something.
+"""
+function convert_hblock(β::HCondDef, allvars::Dict)
+    hasvar = haskey(allvars, β.vname)
+    doaction = ifelse(β.checkisdef, hasvar, !hasvar)
+    doaction && return convert_html(String(β.action), allvars)
+    return ""
 end
