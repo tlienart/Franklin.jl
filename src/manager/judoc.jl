@@ -41,10 +41,7 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
     ###
     # . finding and reading the infrastructure files (used in write_page)
     ###
-
-    head    = read(JD_PATHS[:in_html] * "head.html", String)
-    pg_foot = read(JD_PATHS[:in_html] * "page_foot.html", String)
-    foot    = read(JD_PATHS[:in_html] * "foot.html", String)
+    head, pg_foot, foot = "", "", ""
 
     ###
     # . main part
@@ -53,23 +50,33 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
     # -- if `!single_pass` then the directory is monitored for file
     # changes until the user interrupts the session.
     ###
-    verb && print("Compiling the full folder once... ")
-    start = time()
-
     # looking for an index file to process
     indexmd   = JD_PATHS[:in] => "index.md"
     indexhtml = JD_PATHS[:in] => "index.html"
-    if isfile(joinpath(indexmd...))
-        process_file("md", indexmd, clear_out_dir, head, pg_foot, foot)
-    elseif isfile(joinpath(indexhtml...))
-        process_file("html", indexhtml, clear_out_dir)
-    else
-        @warn "I didn't find an index.[md|html], there should be one. Ignoring."
+
+    jd_full() = begin
+        head    = read(JD_PATHS[:in_html] * "head.html", String)
+        pg_foot = read(JD_PATHS[:in_html] * "page_foot.html", String)
+        foot    = read(JD_PATHS[:in_html] * "foot.html", String)
+
+        if isfile(joinpath(indexmd...))
+            process_file("md", indexmd, clear_out_dir,
+                         head, pg_foot, foot)
+        elseif isfile(joinpath(indexhtml...))
+            process_file("html", indexhtml, clear_out_dir)
+        else
+            @warn "I didn't find an index.[md|html], there should be one. Ignoring."
+        end
+        # looking at the rest of the files
+        for (name, dict) ∈ watched, (fpair, t) ∈ dict
+            process_file(name, fpair, clear_out_dir,
+                         head, pg_foot, foot, t)
+        end
     end
-    # looking at the rest of the files
-    for (name, dict) ∈ watched, (fpair, t) ∈ dict
-        process_file(name, fpair, clear_out_dir, head, pg_foot, foot, t)
-    end
+
+    verb && print("Compiling the full folder once... ")
+    start = time()
+    jd_full()
     verb && time_it_took(start)
 
     # variables useful when using continuous_checking
@@ -107,9 +114,17 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
                     # modified and should be re-processed + copied
                     verb && print("file $fpath was modified... ")
                     dict[fpair] = cur_t
-                    start = time()
-                    process_file(name, fpair, false, head, pg_foot, foot, cur_t)
-                    verb && time_it_took(start)
+                    if haskey(infra_files, fpair)
+                        verb && print("\n... infra file modified --> full pass... ")
+                        start = time()
+                        jd_full()
+                        verb && time_it_took(start)
+                    else
+                        start = time()
+                        process_file(name, fpair, false,
+                                     head, pg_foot, foot, cur_t)
+                        verb && time_it_took(start)
+                    end
                 end
                 # increase the loop counter
     			cntr += 1
