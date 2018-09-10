@@ -213,7 +213,7 @@ function convert_block(β::Block, lxc::LxContext)
     βn == :DIV_OPEN  && return "<div class=\"$(chop(β.ss, head=2, tail=0))\">"
     βn == :DIV_CLOSE && return "</div>"
     βn == :CODE      && return md2html(β.ss)
-    βn == :ESCAPE    && return β.ss
+    βn == :ESCAPE    && return chop(β.ss, head=3, tail=3)
     # Math block --> needs to call further processing to resolve possible latex
     βn ∈ MD_MATHS_NAMES && return convert_mathblock(β, lxc.lxdefs)
     # default case: comment and co --> ignore block

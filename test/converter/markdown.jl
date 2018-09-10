@@ -72,7 +72,7 @@ end
     @test inter_html == "<p>text A1 text A2 ##JDINSERT## and ##JDINSERT##  text C1 ##JDINSERT## text C2  then ##JDINSERT##.</p>\n"
     lxcontext = JuDoc.LxContext(lxcoms, lxdefs, bblocks)
     hstring = JuDoc.convert_inter_html(inter_html, blocks2insert, lxcontext)
-    @test hstring == "<p>text A1 text A2 blah and ~~~\nescape B1\n~~~  text C1 \\(\\mathrm{b}\\) text C2  then part1:AA and part2:BB.</p>\n"
+    @test hstring == "<p>text A1 text A2 blah and \nescape B1\n  text C1 \\(\\mathrm{b}\\) text C2  then part1:AA and part2:BB.</p>\n"
 end
 
 
