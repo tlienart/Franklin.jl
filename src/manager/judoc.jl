@@ -87,7 +87,7 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
     NCYCL = 20
 
     if !single_pass
-        println("Watching input folder... press CTRL+C to stop.")
+        println("Watching input folder... press CTRL+C to stop...\n")
         # this will go on until interrupted by the user (see catch)
         cntr = 1
         try while true
