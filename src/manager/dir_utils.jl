@@ -37,11 +37,11 @@ change. The variable `verb` propagates verbosity.
 """
 function scan_input_dir!(md_files, html_files, other_files,
                          infra_files, verb=false)
-    # Top level files: only allowed: `index.md` or `index.html` and config.md
+    # Top level files: only allowed: `index.md` or `index.html`
     for file ∈ readdir(JD_PATHS[:in])
-        file ∉ ["index.md", "index.html", "config.md"] && continue
+        file ∉ ["index.md", "index.html"] && continue
         fname, fext = splitext(file)
-        fpair = normpath(JD_PATHS[:in] * "/")=>file
+        fpair = (normpath(JD_PATHS[:in] * "/") => file)
         if fext == ".md"
             add_if_new_file!(md_files, fpair, verb)
         else
@@ -56,7 +56,7 @@ function scan_input_dir!(md_files, html_files, other_files,
             # skip if it's the config file
             file ∈ IGNORE_FILES && continue
             fname, fext = splitext(file)
-            fpair = nroot=>file
+            fpair = (nroot => file)
             if fext == ".md"
                 add_if_new_file!(md_files, fpair, verb)
             elseif fext == ".html"
@@ -67,6 +67,12 @@ function scan_input_dir!(md_files, html_files, other_files,
         end
     end
     # Infastructure files
+    # config.md
+    if isfile(JD_PATHS[:in] * "/config.md")
+        fpair = (normpath(JD_PATHS[:in] * "/") => "config.md")
+        add_if_new_file!(infra_files, fpair, verb)
+    end
+    # html and css parts
     for d ∈ [:in_css, :in_html], (root, _, files) ∈ walkdir(JD_PATHS[d])
         nroot = normpath(root * "/")
         for file ∈ files
