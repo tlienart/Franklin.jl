@@ -12,7 +12,8 @@ It is a global that gets modified having an impact on all pages.
 """
 global JD_GLOB_VARS = Dict{String, Pair{Any, Tuple}}(
 	"author" => Pair("THE AUTHOR", (String, Nothing)),
-    "date_format" => Pair("U dd, yyyy", (String,))
+    "date_format" => Pair("U dd, yyyy", (String,)),
+    "title"    => Pair(nothing, (Nothing, String)),
     )
 
 
@@ -27,7 +28,6 @@ const JD_LOC_VARS = Dict{String, Pair{Any, Tuple}}(
     "hasmath"  => Pair(true,    (Bool,)),
     "hascode"  => Pair(false,   (Bool,)),
     "isnotes"  => Pair(true,    (Bool,)),
-    "title"    => Pair(nothing, (Nothing, String)),
     "date"     => Pair(Date(1), (String, Date, Nothing)),
     "jd_ctime" => Pair(Date(1), (Date,)),
     "jd_mtime" => Pair(Date(1), (Date,)),

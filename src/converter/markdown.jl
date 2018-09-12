@@ -53,15 +53,16 @@ function form_inter_md(mds::AbstractString, xblocks::Vector{<:AbstractBlock},
     head, xb_idx, lx_idx = 1, 1, first_lxd
     while (next_idx < BIG_INT) & (head < strlen)
         # check if there's anything before head and next block and push
-        (head < next_idx) && push!(pieces, subs(mds, head, next_idx-1))
+        (head < next_idx) &&
+            push!(pieces, subs(mds, head, prevind(mds, next_idx)))
         # check whether it's a xblock first or a newcommand first
         if xb_or_lx # it's a xblock --> push
             push!(pieces, JD_INSERT)
-            head = to(xblocks[xb_idx]) + 1
+            head = nextind(mds, to(xblocks[xb_idx]))
             xb_idx += 1
             next_xblock = (xb_idx > lenxb) ? BIG_INT : from(xblocks[xb_idx])
         else # it's a newcommand --> no push
-            head = to(lxdefs[lx_idx]) + 1
+            head = nextind(mds, to(lxdefs[lx_idx]))
             lx_idx += 1
             next_lxdef = (lx_idx > lenlx) ? BIG_INT : from(lxdefs[lx_idx])
         end
@@ -70,7 +71,7 @@ function form_inter_md(mds::AbstractString, xblocks::Vector{<:AbstractBlock},
         next_idx = min(next_xblock, next_lxdef)
     end
     # add final one if exists, chop EOS and adjust head
-    (head <= strlen) && push!(pieces, chop(mds, head=head-1, tail=1))
+    (head <= strlen) && push!(pieces, subs(mds, head, strlen))
     return prod(pieces)
 end
 
@@ -98,7 +99,6 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
     # that the definitions appear "earlier" by marking the `.from` at 0
     lprelx = length(pre_lxdefs)
     (lprelx > 0) && (lxdefs = cat(pastdef!.(pre_lxdefs), lxdefs, dims=1))
-    lxdefs = cat(JD_GLOB_LXDEFS, lxdefs, dims=1)
 
     # Find blocks to extract
     xblocks, tokens = find_md_xblocks(tokens)
@@ -161,11 +161,11 @@ function convert_md_math(ms::String, lxdefs=Vector{LxDef}())
     while (next_lxcom < BIG_INT) & (head < strlen)
         (head < next_lxcom) && push!(pieces, subs(ms, head, next_lxcom-1))
         push!(pieces, resolve_lxcom(lxcoms[lxcom_idx], lxdefs, true))
-        head = to(lxcoms[lxcom_idx]) + 1
+        head = nextind(ms, to(lxcoms[lxcom_idx]))
         lxcom_idx += 1
         next_lxcom = (lxcom_idx > lenlxc) ? BIG_INT : from(lxcoms[lxcom_idx])
     end
-    (head <= strlen) && push!(pieces, chop(ms, head=head-1, tail=1))
+    (head <= strlen) && push!(pieces, chop(ms, head=prevind(ms, head), tail=1))
     return prod(pieces)
 end
 
@@ -213,7 +213,7 @@ function convert_block(β::Block, lxc::LxContext)
     βn == :DIV_OPEN  && return "<div class=\"$(chop(β.ss, head=2, tail=0))\">"
     βn == :DIV_CLOSE && return "</div>"
     βn == :CODE      && return md2html(β.ss)
-    βn == :ESCAPE    && return β.ss
+    βn == :ESCAPE    && return chop(β.ss, head=3, tail=3)
     # Math block --> needs to call further processing to resolve possible latex
     βn ∈ MD_MATHS_NAMES && return convert_mathblock(β, lxc.lxdefs)
     # default case: comment and co --> ignore block
