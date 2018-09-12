@@ -22,7 +22,7 @@ function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef}, inmath::Bool=false)
     # lxdef = something -> maybe inmath + found; retrieve & apply
     partial = lxdef
     for (argnum, β) ∈ enumerate(lxc.braces)
-        partial = replace(partial, "#$argnum" => braces_content(β))
+        partial = replace(partial, "#$argnum" => " "*braces_content(β))
     end
     partial = ifelse(inmath, mathenv(partial), partial) * EOS
     # reprocess (we don't care about jd_vars=nothing)

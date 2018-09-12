@@ -58,7 +58,7 @@ function find_md_lxdefs(tokens::Vector{Token}, bblocks::Vector{Block})
         # mark any token in the definition as inactive
         deactivate_until = findfirst(τ -> (from(τ) > todef), tokens[i+2:end])
         if isnothing(deactivate_until)
-            active_tokens[i+2:end] = false
+            active_tokens[i+2:end] .= false
         else
             active_tokens[i+2:i+deactivate_until] .= false
         end

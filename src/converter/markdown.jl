@@ -99,7 +99,6 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
     # that the definitions appear "earlier" by marking the `.from` at 0
     lprelx = length(pre_lxdefs)
     (lprelx > 0) && (lxdefs = cat(pastdef!.(pre_lxdefs), lxdefs, dims=1))
-    lxdefs = cat(JD_GLOB_LXDEFS, lxdefs, dims=1)
 
     # Find blocks to extract
     xblocks, tokens = find_md_xblocks(tokens)
