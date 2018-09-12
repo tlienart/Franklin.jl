@@ -20,7 +20,6 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
     ###
     set_paths!()
     prepare_output_dir(clear_out_dir)
-    process_config()
 
     ###
     # . recovering the list of files in the input dir we care about
@@ -55,6 +54,8 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
     indexhtml = JD_PATHS[:in] => "index.html"
 
     jd_full() = begin
+        process_config()
+        
         head    = read(JD_PATHS[:in_html] * "head.html", String)
         pg_foot = read(JD_PATHS[:in_html] * "page_foot.html", String)
         foot    = read(JD_PATHS[:in_html] * "foot.html", String)
