@@ -68,7 +68,7 @@ end
     inter_html = JuDoc.md2html(inter_md)
     lxcontext = JuDoc.LxContext(lxcoms, lxdefs, bblocks)
     hstring = JuDoc.convert_inter_html(inter_html, blocks2insert, lxcontext)
-    @test hstring == "<p>ab \$\$\\begin{array}{c}\\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\$\$</p>\n"
+    @test hstring == "<p>ab \$\$\\begin{array}{c} \\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\$\$</p>\n"
 end
 
 
@@ -98,7 +98,7 @@ end
     @test inter_html == "<p>text A1 text A2 ##JDINSERT## and ##JDINSERT##  text C1 ##JDINSERT## text C2  then ##JDINSERT##.</p>\n"
     lxcontext = JuDoc.LxContext(lxcoms, lxdefs, bblocks)
     hstring = JuDoc.convert_inter_html(inter_html, blocks2insert, lxcontext)
-    @test hstring == "<p>text A1 text A2 blah and \nescape B1\n  text C1 \\(\\mathrm{b}\\) text C2  then part1:AA and part2:BB.</p>\n"
+    @test hstring == "<p>text A1 text A2 blah and \nescape B1\n  text C1 \\(\\mathrm{ b}\\) text C2  then part1: AA and part2: BB.</p>\n"
 end
 
 
@@ -123,7 +123,7 @@ end
     hstring = JuDoc.convert_inter_html(inter_html, blocks2insert, lxcontext)
 
     @test inter_md == "\n\nThen ##JDINSERT##.\n"
-    @test hstring == "<p>Then hello auth1, goodbye auth1, auth2&#33;.</p>\n"
+    @test hstring == "<p>Then hello   auth1, goodbye  auth1,  auth2&#33;.</p>\n"
 end
 
 
@@ -137,7 +137,7 @@ end
         """ * JuDoc.EOS
     m, _ = JuDoc.convert_md(st)
 
-    @test m == "<p>Then something like \$\$\\begin{array}{c} \\mathbb E\\left[f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R \\end{array}\$\$</p>\n"
+    @test m == "<p>Then something like \$\$\\begin{array}{c}  \\mathbb E\\left[ f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R \\end{array}\$\$</p>\n"
 end
 
 
@@ -154,9 +154,9 @@ end
         \eqa{ 1 &=& 1 \label{beyond hope}}
         and finally a \eqref{eq:a trivial one} and maybe \eqref{beyond hope}.
         """ * JuDoc.EOS
-    m, _ = JuDoc.convert_md(st)
+    m, _ = JuDoc.convert_md(st, JuDoc.JD_GLOB_LXDEFS)
     @test JuDoc.JD_EQDICT[JuDoc.JD_EQDICT_COUNTER] == 3
     @test JuDoc.JD_EQDICT[hash("eq:a trivial one")] == 2
     @test JuDoc.JD_EQDICT[hash("beyond hope")] == 3
-    m == "<p>Then something like \$\$\\begin{array}{c} \\mathbb E\\left[f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R\\end{array}\$\$ and then <a name=\"$(hash("eq:a trivial one"))\"></a>\$\$\\begin{array}{c} 1+1 &=& 2 \\end{array}\$\$ but further <a name=\"$(hash("beyond hope"))\"></a>\$\$\\begin{array}{c} 1 &=& 1 \\end{array}\$\$ and finally a <span class=\"eqref\"><a href=\"#$(hash("eq:a trivial one"))\">(2)</a></span> and maybe <span class=\"eqref\"><a href=\"#$(hash("beyond hope"))\">(3)</a></span>.</p>\n"
+    m == "<p>Then something like \$\$\\begin{array}{c}  \\mathbb E\\left[ f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R\\end{array}\$\$ and then <a name=\"$(hash("eq: a trivial one"))\"></a>\$\$\\begin{array}{c}  1+1 &=& 2 \\end{array}\$\$ but further <a name=\"$(hash("beyond hope"))\"></a>\$\$\\begin{array}{c}  1 &=& 1 \\end{array}\$\$ and finally a <span class=\"eqref\"><a href=\"#$(hash("eq: a trivial one"))\">(2)</a></span> and maybe <span class=\"eqref\"><a href=\"#$(hash("beyond hope"))\">(3)</a></span>.</p>\n"
 end

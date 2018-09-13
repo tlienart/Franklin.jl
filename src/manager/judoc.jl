@@ -55,7 +55,7 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
 
     jd_full() = begin
         process_config()
-        
+
         head    = read(JD_PATHS[:in_html] * "head.html", String)
         pg_foot = read(JD_PATHS[:in_html] * "page_foot.html", String)
         foot    = read(JD_PATHS[:in_html] * "foot.html", String)
