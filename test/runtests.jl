@@ -1,7 +1,6 @@
 using JuDoc, Test
 
-include("jd_paths.jl") # ✅ aug 16, 2018 // RUN ONLY ONCE
-include("jd_vars.jl")  # ✅ aug 16, 2018
+include("jd_paths_vars.jl") # ✅ aug 16, 2018
 
 # MANAGER folder
 include("manager/utils.jl") # ✅ sep 9, 2018

@@ -63,7 +63,7 @@ end
 	JuDoc.write_page(JuDoc.JD_PATHS[:in], "index.md", head, pg_foot, foot)
 	out_file = JuDoc.out_path(JuDoc.JD_PATHS[:f]) * "index.html"
 	@test isfile(out_file)
-	@test read(out_file, String) == "head<div class=content>\n<p>blah blah</p>\n\npage_foot</div>foot  Stefan Zweig"
+	@test read(out_file, String) == "head<div class=content>\n<p>blah blah</p>\n\npage_foot</div>\nfoot  Stefan Zweig"
 end
 
 
@@ -107,6 +107,7 @@ rm(temp_index2)
 			<div class="copyright">
 					&copy; All rights reserved.
 			</div>
-	</div></div>    </body>
+	</div></div>
+	    </body>
 	</html>"""
 end
