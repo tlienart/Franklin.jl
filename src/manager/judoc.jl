@@ -14,9 +14,7 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
     ###
     # . setting up:
     # -- reading and storing the path variables
-    # -- setting up the output directory (potentially erasing it if
-    # `clear_out_dir`)
-    # -- read the configuration file
+    # -- setting up the output directory (clear if `clear_out_dir`)
     ###
     set_paths!()
     prepare_output_dir(clear_out_dir)
@@ -24,8 +22,7 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
     ###
     # . recovering the list of files in the input dir we care about
     # -- these are stored in dictionaries, the key is the full path,
-    # the value is the time of last change (useful for continuous
-    # monitoring)
+    # the value is the time of last change (useful for continuous monitoring)
     ###
     md_files    = Dict{Pair{String, String}, Float64}()
     html_files  = Dict{Pair{String, String}, Float64}()
@@ -37,23 +34,16 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
 
     scan_input_dir!(watched_files...)
 
-    ###
-    # . finding and reading the infrastructure files (used in write_page)
-    ###
     head, pg_foot, foot = "", "", ""
-
-    ###
-    # . main part
-    # -- if `single_pass` then the files are processed only once before
-    # terminating
-    # -- if `!single_pass` then the directory is monitored for file
-    # changes until the user interrupts the session.
-    ###
     # looking for an index file to process
     indexmd   = JD_PATHS[:in] => "index.md"
     indexhtml = JD_PATHS[:in] => "index.html"
 
+    # function corresponding to a "full pass" where every file is considered
     jd_full() = begin
+        reset_GLOB_VARS()
+        reset_GLOB_LXDEFS()
+
         process_config()
 
         head    = read(JD_PATHS[:in_html] * "head.html", String)
@@ -75,18 +65,23 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
         end
     end
 
+    ###
+    # . main part
+    # -- if `single_pass` then the files are processed only once before
+    # terminating
+    # -- if `!single_pass` then the directory is monitored for file
+    # changes until the user interrupts the session.
+    ###
     verb && print("Compiling the full folder once... ")
-    start = time()
-    jd_full()
-    verb && time_it_took(start)
-
+    # ---------------------------
+    start = time()              #
+    jd_full()                   #
+    verb && time_it_took(start) #
+    # ---------------------------
     # variables useful when using continuous_checking
-    # TODO this could be set externally (e.g. in config file)
-    START = time()
-    MAXT  = 5000 # max number of seconds before shutting down.
+    # could be set externally though not very important
     SLEEP = 0.1
-    NCYCL = 20
-
+    NCYCL = 20   # every NCYCL * SLEEP, directory is checked
     if !single_pass
         println("Watching input folder... press CTRL+C to stop...\n")
         # this will go on until interrupted by the user (see catch)
@@ -94,13 +89,13 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
         try while true
     		# every NCYCL cycles, scan directory, update dictionaries
     		if mod(cntr, NCYCL) == 0
-    			# 1 check if some files have been deleted
+    			# 1) check if some files have been deleted
     			# note we don't do anything. we just remove from the dict.
     			# to get clean folder --> rerun the compile() from blank
                 for d ∈ watched_files, (fpair, _) ∈ d
                     !isfile(joinpath(fpair...)) && delete!(d, fpair)
                 end
-                # 2 scan the input folder, if new files have been
+                # 2) scan the input folder, if new files have been
                 # added then this will update the dictionaries
                 scan_input_dir!(watched_files..., verb)
     			cntr = 1
@@ -117,30 +112,35 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
                     dict[fpair] = cur_t
                     if haskey(infra_files, fpair)
                         verb && print("\n... infra file modified --> full pass... ")
-                        start = time()
-                        jd_full()
-                        verb && time_it_took(start)
+                        # ---------------------------
+                        start = time()              #
+                        jd_full()                   #
+                        verb && time_it_took(start) #
+                        # ---------------------------
                     else
-                        start = time()
-                        process_file(name, fpair, false,
-                                     head, pg_foot, foot, cur_t)
-                        verb && time_it_took(start)
+                        # ----------------------------------------
+                        start = time()                           #
+                        process_file(name, fpair, false,         #
+                                     head, pg_foot, foot, cur_t) #
+                        verb && time_it_took(start)              #
+                        # ----------------------------------------
                     end
                 end
                 # increase the loop counter
     			cntr += 1
     			sleep(SLEEP)
     		end # if mod(cntr, NCYCL)
-            end # try while
+            end # try while (same level as above, that's fine)
         catch x
         	if isa(x, InterruptException)
-                println("\nShutting down.")
+                println("\nShutting down JuDoc. ✅")
                 return 0
             else
                 rethrow(x)
                 return -1
             end
         end
-    end
+    end # end if !single_pass
+
     return 0
 end

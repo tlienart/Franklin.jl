@@ -10,12 +10,16 @@ the format KEY => PAIR where
 and the second is a tuple of accepted possible (super)types for that value. (e.g.: "THE AUTHOR" => (String, Nothing))
 It is a global that gets modified having an impact on all pages.
 """
-global JD_GLOB_VARS = Dict{String, Pair{Any, Tuple}}(
-	"author" => Pair("THE AUTHOR", (String, Nothing)),
-    "date_format" => Pair("U dd, yyyy", (String,)),
-    "title"    => Pair(nothing, (Nothing, String)),
-    )
+global JD_GLOB_VARS
 
+reset_GLOB_VARS() = begin
+    global JD_GLOB_VARS
+        JD_GLOB_VARS = Dict{String, Pair{Any, Tuple}}(
+        "author" => Pair("THE AUTHOR", (String, Nothing)),
+        "date_format" => Pair("U dd, yyyy", (String,))
+        )
+end
+reset_GLOB_VARS()
 
 """
     JD_LOC_VARS
@@ -39,10 +43,15 @@ const JD_LOC_VARS = Dict{String, Pair{Any, Tuple}}(
 
 List of latex definitions accessible to all pages.
 """
-global JD_GLOB_LXDEFS = [
-    LxDef("\\eqref", 1, SubString("")),
-    ]
+global JD_GLOB_LXDEFS
 
+reset_GLOB_LXDEFS() = begin
+    global JD_GLOB_LXDEFS
+    JD_GLOB_LXDEFS = [
+        LxDef("\\eqref", 1, SubString("")),
+        ]
+end
+reset_GLOB_LXDEFS()
 
 """
     jd_date(d)
