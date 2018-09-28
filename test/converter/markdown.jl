@@ -42,7 +42,7 @@ end
     inter_html = JuDoc.md2html(inter_md)
     lxcontext = JuDoc.LxContext(lxcoms, lxdefs, bblocks)
     hstring = JuDoc.convert_inter_html(inter_html, blocks2insert, lxcontext)
-    @test hstring == "<p>ab \$\$\\begin{array}{c}\\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\$\$</p>\n"
+    @test hstring == "<p>ab \$\$\\begin{array}{c} \\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\$\$</p>\n"
 end
 
 
