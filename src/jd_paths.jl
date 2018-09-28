@@ -13,7 +13,7 @@ JD_PATHS = Dict{Symbol, String}()
 
 Collection of file names that will be ignored at compile time.
 """
-const IGNORE_FILES = ["config.md", ".DS_Store"]
+const IGNORE_FILES = [".DS_Store"]
 
 
 """
