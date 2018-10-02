@@ -15,7 +15,7 @@ function convert_html(hs::String, allvars::Dict)
     # Find conditional def blocks (ifdef / ifndef)
     cdblocks, qblocks = find_html_cdblocks(qblocks)
     # Get the list of blocks to process
-    hblocks = merge_hblocks(qblocks, cblocks, cdblocks)
+    hblocks = merge_blocks(qblocks, cblocks, cdblocks)
     # construct the final html
     pieces = Vector{AbstractString}()
     head = 1

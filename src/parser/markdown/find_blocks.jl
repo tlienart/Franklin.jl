@@ -73,35 +73,3 @@ function find_md_xblocks(tokens::Vector{Token})
     end
     return xblocks, tokens[active_tokens]
 end
-
-"""
-    merge_xblocks_lxcoms(xb, lxc)
-
-Form a list of `AbstractBlock` corresponding to the list of blocks to insert
-after `md2html` is called. The blocks are extracted separately and this
-function merges them in order of appearance.
-"""
-function merge_xblocks_lxcoms(xb::Vector{Block}, lxc::Vector{LxCom})
-
-    isempty(xb) && return lxc
-    isempty(lxc) && return xb
-
-    lenxb, lenlxc = length(xb), length(lxc)
-    xblocks = Vector{AbstractBlock}(undef, lenxb + lenlxc)
-
-    xb_i, lxc_i = 1, 1
-    xb_from, lxc_from = from(xb[xb_i]), from(lxc[lxc_i])
-
-    for i ∈ eachindex(xblocks)
-        if xb_from < lxc_from
-            xblocks[i] = xb[xb_i]
-            xb_i += 1
-            xb_from = (xb_i > lenxb) ? BIG_INT : from(xb[xb_i])
-        else
-            xblocks[i] = lxc[lxc_i]
-            lxc_i += 1
-            lxc_from = (lxc_i > lenlxc) ? BIG_INT : from(lxc[lxc_i])
-        end
-    end
-    return xblocks
-end
