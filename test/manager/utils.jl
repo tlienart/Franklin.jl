@@ -58,7 +58,7 @@ end
 	# testing write
 	head = "head"
 	pg_foot = "\npage_foot"
-	foot = "foot {{if isnotes}} {{fill author}}{{end}}"
+	foot = "foot {{if hasmath}} {{fill author}}{{end}}"
 
 	JuDoc.write_page(JuDoc.JD_PATHS[:in], "index.md", head, pg_foot, foot)
 	out_file = JuDoc.out_path(JuDoc.JD_PATHS[:f]) * "index.html"
