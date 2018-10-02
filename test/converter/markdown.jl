@@ -15,7 +15,8 @@
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
-    blocks2insert = JuDoc.merge_xblocks_lxcoms(xblocks, lxcoms)
+#XXX    blocks2insert = JuDoc.merge_xblocks_lxcoms(xblocks, lxcoms)
+    blocks2insert = JuDoc.merge_blocks(xblocks, lxcoms)
 
     inter_md = JuDoc.form_inter_md(st, blocks2insert, lxdefs)
     @test inter_md == "\n\nA list\n* ##JDINSERT## and ##JDINSERT##\n* ##JDINSERT## is a function\n* a last element\n"
@@ -44,7 +45,9 @@ end
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
-    blocks2insert = JuDoc.merge_xblocks_lxcoms(xblocks, lxcoms)
+#XXX    blocks2insert = JuDoc.merge_xblocks_lxcoms(xblocks, lxcoms)
+    blocks2insert = JuDoc.merge_blocks(xblocks, lxcoms)
+
     inter_md = JuDoc.form_inter_md(st, blocks2insert, lxdefs)
     @test inter_md == "##JDINSERT##\nfinally ⊙⊙𝛴⊙ and\n##JDINSERT##\ndone"
 end
@@ -60,7 +63,8 @@ end
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
-    blocks2insert = JuDoc.merge_xblocks_lxcoms(xblocks, lxcoms)
+#XXX    blocks2insert = JuDoc.merge_xblocks_lxcoms(xblocks, lxcoms)
+    blocks2insert = JuDoc.merge_blocks(xblocks, lxcoms)
 
     inter_md = JuDoc.form_inter_md(st, blocks2insert, lxdefs)
     @test inter_md == "ab\n##JDINSERT##"
@@ -89,7 +93,8 @@ end
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
-    blocks2insert = JuDoc.merge_xblocks_lxcoms(xblocks, lxcoms)
+#XXX    blocks2insert = JuDoc.merge_xblocks_lxcoms(xblocks, lxcoms)
+    blocks2insert = JuDoc.merge_blocks(xblocks, lxcoms)
 
     inter_md = JuDoc.form_inter_md(st, blocks2insert, lxdefs)
     @test inter_md == "text A1 text A2 ##JDINSERT## and\n##JDINSERT##\n text C1 ##JDINSERT## text C2\n then ##JDINSERT##.\n"
@@ -115,7 +120,8 @@ end
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
-    blocks2insert = JuDoc.merge_xblocks_lxcoms(xblocks, lxcoms)
+#XXX    blocks2insert = JuDoc.merge_xblocks_lxcoms(xblocks, lxcoms)
+    blocks2insert = JuDoc.merge_blocks(xblocks, lxcoms)
 
     inter_md = JuDoc.form_inter_md(st, blocks2insert, lxdefs)
     inter_html = JuDoc.md2html(inter_md)

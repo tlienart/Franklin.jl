@@ -105,7 +105,8 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
     # Find lxcoms
     lxcoms, tokens = find_md_lxcoms(tokens, lxdefs, bblocks)
     # Merge the lxcoms and xblocks -> list of things to insert
-    blocks2insert = merge_xblocks_lxcoms(xblocks, lxcoms)
+#XXX    blocks2insert = merge_xblocks_lxcoms(xblocks, lxcoms)
+    blocks2insert = merge_blocks(xblocks, lxcoms)
 
     if has_mddefs
         # Process MD_DEF blocks

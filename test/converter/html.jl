@@ -21,7 +21,7 @@
     qblocks = JuDoc.qualify_html_hblocks(hblocks)
     cblocks, qblocks = JuDoc.find_html_cblocks(qblocks)
     cdblocks, qblocks = JuDoc.find_html_cdblocks(qblocks)
-    hblocks = JuDoc.merge_hblocks(qblocks, cblocks, cdblocks)
+    hblocks = JuDoc.merge_blocks(qblocks, cblocks, cdblocks)
     convhbs = [JuDoc.convert_hblock(hb, allvars) for hb ∈ hblocks]
     @test convhbs[1] == "INPUT1"
     @test convhbs[2] == "\nother stuff\n"
