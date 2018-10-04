@@ -1,103 +1,49 @@
 # ONGOING
 
-[![Build Status](https://travis-ci.org/tlienart/JuDoc.jl.svg?branch=master)](https://travis-ci.org/tlienart/JuDoc.jl)
-
-[![codecov.io](http://codecov.io/github/tlienart/JuDoc.jl/coverage.svg?branch=master)](http://codecov.io/github/tlienart/JuDoc.jl?branch=master)
-
-
-* go through github issues and remove irrelevant ones
-* add doc
-    * `process_file` in `manager/file_utils.jl`
-* add tests
-    * definition of global latex commands via config
-* add future issues
-    * nesting of conditions in HTML setting
-    * much more testing
-    * (eventually) benchmarking, though should be quite quick
-    * insert content that does also need to be processed? (e.g. html). it's unclear there's a usecase for this so maybe wait until there is one...
-        * one parallel situation could be to insert the content of a code file
-        and display it as such. This could be done within the markdown or, in fact could leak through by writing directly in the markdown `'''julia{{ insert path_to_code.jl}}'''` which would permeate through the html conversion then bring in the jl code and display it. (could also think about inserting CSV etc.)
-    * css pre-processing (variables)
-* Instead of keeping the from/to in `AbstractBlock`, maybe it makes more sense to keep the `SubString`? the from to can be recovered
-    * `fromto(ss)=(from=ss.offset+1, to=ss.offset+lastindex(ss))`
-    * might make some stuff a bit cleaner though should not be priority
-    * might help not to feed bits of string to all functions
-
-**NOTED**
-* convert_md could take a note saying that it can't contain newcommands and so `has_lxdefs=false`
-* use named argument for `inmath` for readability of the code
-* confusion between `head`, `head_idx` used to mean similar things (see e.g. `find_tokens`)
-* in `judoc` the setting of parameters (max number of cycles) should be done in a kind of preference file
-* in `hcond` should check that the if/elseif/else are in right order
-
-
-* merge the merge functions (they now all use the same abstract type)
-
-
-### Math href
-
-How about: in `convert_md_math`, pass a boolean that indicates whether we have a "display" math block or not. If we do, then pass it on to `resolve_lxcom` which, if it sees a `\label`, should
-
-* add an anchor to the equation (?) or maybe just before (?) (review how anchors are added)
-* increment some global equation display counter
-* in first pass should do this without worrying about section/subsection, just use one counter per page, would be somewhat easier.
-
-then further the `\eqref` in text should be hard coded and add direct HTML doing something like
-
-```
-<a href=#anchor-tag>($COUNTER_DICT[anchor-tag])</a>
-```
-
-```
-<p><a href="#news">Go to the News</a></p>
-<h1>Welcome</h1>
-<p>This paragraph welcomes you.</p>
-<h2>About</h2>
-<p>This paragraph talks about us.</p>
-<h2><a name="news">News</a></h2>
-<p>This is the section your link will go to.</p>
-```
-
-
-
-### Sandbox space: math environment
-
-To start, consider something like
-
-```
-$\sin^2(x) + \cos^2(x) \in \R$
-```
-
-* inner = substring "`\sin^2(x) + \cos^2(x) \in \R`"
-* apply `find_md_lxcoms`
-* reconstruct a partial gradually
-
-later
-
-```
-\eqa{\sin^2(x)+\mycom{a}{b} = 1}
-```
-
-this one should be dealt with by a secondary call to convert_md then processing
-so should be the same as tackling
-
-```
-\begin{eqnarray}\sin^2(x)+\mycom{a}{b} = 1\end{eqnarray}
-```
-
-
-**Problem AUG27**: at the moment trying to find lxcoms before knowing where the math
-blocks are, therefore also picking in math environment. therefore the retrieve_lxdefref might actually error instead of checking whether in math environment first. This is annoying. Maybe one way out is to also deactivate tokens that are in math environments and re-get them later when the math block is being processed.
-Maybe one work around is to just retrieve the xblocks before and make sure that the inside of the xblock is neutralized. For this need to investigate
-`markdown/find_md_xblocks` around lines 70-80
-
---> this means a re-tokenization is needed in math env. Potentially wasteful.
-Since text in math blocks are very small this is probably a small cost.
-Could be improved by keeping a list of active token indices instead of killing
-"inactive" tokens, that way could re-use the tokens. Maybe something for the future, for now might be sufficient like this.
+[![Build Status](https://travis-ci.org/tlienart/JuDoc.jl.svg?branch=master)](https://travis-ci.org/tlienart/JuDoc.jl) | [![codecov.io](http://codecov.io/github/tlienart/JuDoc.jl/coverage.svg?branch=master)](http://codecov.io/github/tlienart/JuDoc.jl?branch=master)
 
 
 # JuDoc
+
+## What's this about?
+
+JuDoc is a simple static site generator oriented towards technical blogging and written in Julia.
+
+This:
+```md
+@def title = "Example"
+
+\newcommand{\R}{\mathbb R}
+\newcommand{\E}{\mathbb E}
+\newcommand{\scal}[1]{\langle #1 \rangle}
+
+You can define commands in a same way as LaTeX.
+And use them in the same way: $\E[\scal{f, g}] \in \R$.
+Maths display is done with [KaTeX](https://katex.org).
+
+The syntax is basically an extended form of [gfm](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) allowing for some LaTeX as well as div blocks:
+
+@@box
+Something inside a div with div name "box"
+@@
+
+You can add figures, tables, links and code just as you would in gfm.
+
+Extending Markdown allows to define macros for things that may appear many times in the current page (or in all your pages), for example let's say you want to define an environment for systematically inserting images from a specific folder within a specific div.
+
+\newcommand{\smimg}[1]{@@smimg ![](/assets/smimg/!#1) @@}
+
+\smimg{myimg.png}
+
+It also allows things like referencing (which is not natively supported by KaTeX for instance):
+
+$$ \exp(i\pi) + 1 = 0 \label{a nice equation} $$
+
+can then be referenced as such: \eqref{a nice equation} which is convenient for maths notes.
+```
+
+Renders to
+
 
 ## Getting started
 

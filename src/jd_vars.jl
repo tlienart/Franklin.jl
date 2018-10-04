@@ -29,6 +29,8 @@ Entries have the same format as for `JD_GLOB_VARS`.
 It is a constant that gets copied for every page that is being looked at.
 """
 const JD_LOC_VARS = Dict{String, Pair{Any, Tuple}}(
+    "isdemo"   => Pair(false,   (Bool,)),
+    "title"    => Pair(nothing, (String, Nothing)),
     "hasmath"  => Pair(true,    (Bool,)),
     "hascode"  => Pair(false,   (Bool,)),
     "date"     => Pair(Date(1), (String, Date, Nothing)),
