@@ -39,6 +39,7 @@ function scan_input_dir!(md_files, html_files, other_files,
                          infra_files, verb=false)
     # top level files (src/*)
     for file ∈ readdir(JD_PATHS[:in])
+        isfile(file) || continue
         fname, fext = splitext(file)
         fpair = normpath(JD_PATHS[:in] * "/")=>file
         if file == "config.md"
@@ -54,6 +55,7 @@ function scan_input_dir!(md_files, html_files, other_files,
         # ensure there's a "/" at the end of the root
         nroot = normpath(root * "/")
         for file ∈ files
+            isfile(file) || continue
             # skip if it has to be ignored
             file ∈ IGNORE_FILES && continue
             fname, fext = splitext(file)
@@ -71,6 +73,7 @@ function scan_input_dir!(md_files, html_files, other_files,
     for d ∈ [:in_css, :in_html], (root, _, files) ∈ walkdir(JD_PATHS[d])
         nroot = normpath(root * "/")
         for file ∈ files
+            isfile(file) || continue
             fname, fext = splitext(file)
             # skipping files that are not of the type INFRA_EXT
             fext ∉ INFRA_EXT && continue
