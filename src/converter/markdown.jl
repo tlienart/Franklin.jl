@@ -105,7 +105,6 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
     # Find lxcoms
     lxcoms, tokens = find_md_lxcoms(tokens, lxdefs, bblocks)
     # Merge the lxcoms and xblocks -> list of things to insert
-#XXX    blocks2insert = merge_xblocks_lxcoms(xblocks, lxcoms)
     blocks2insert = merge_blocks(xblocks, lxcoms)
 
     if has_mddefs
@@ -147,12 +146,12 @@ end
 Same as `convert_md` except tailored for conversion of the inside of a
 math block (no command definitions, restricted tokenisation to latex tokens).
 """
-function convert_md_math(ms::String, lxdefs=Vector{LxDef}())
+function convert_md_math(ms::String, lxdefs=Vector{LxDef}(), offset=0)
     # tokenize with restricted set
     tokens = find_tokens(ms, MD_TOKENS_LX, MD_1C_TOKENS_LX)
     bblocks, tokens = find_md_bblocks(tokens)
     # in a math environment > pass a bool to indicate it
-    lxcoms, tokens = find_md_lxcoms(tokens, lxdefs, bblocks, true)
+    lxcoms, tokens = find_md_lxcoms(tokens, lxdefs, bblocks, true, offset)
     # form the string (see `form_inter_md`, similar but fewer conditions)
     strlen = lastindex(ms) - 1
     pieces = Vector{AbstractString}()
@@ -267,5 +266,6 @@ function convert_mathblock(β::Block, lxdefs::Vector{LxDef})
             inner = replace(inner, r"\\label{.*?}" => "")
         end
     end
-    return anchor * pm[3] * convert_md_math(inner * EOS, lxdefs) * pm[4]
+    inner *= EOS
+    return anchor * pm[3] * convert_md_math(inner, lxdefs, from(β)) * pm[4]
 end

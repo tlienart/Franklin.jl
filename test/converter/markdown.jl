@@ -15,7 +15,6 @@
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
-#XXX    blocks2insert = JuDoc.merge_xblocks_lxcoms(xblocks, lxcoms)
     blocks2insert = JuDoc.merge_blocks(xblocks, lxcoms)
 
     inter_md = JuDoc.form_inter_md(st, blocks2insert, lxdefs)
@@ -45,7 +44,6 @@ end
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
-#XXX    blocks2insert = JuDoc.merge_xblocks_lxcoms(xblocks, lxcoms)
     blocks2insert = JuDoc.merge_blocks(xblocks, lxcoms)
 
     inter_md = JuDoc.form_inter_md(st, blocks2insert, lxdefs)
@@ -63,7 +61,6 @@ end
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
-#XXX    blocks2insert = JuDoc.merge_xblocks_lxcoms(xblocks, lxcoms)
     blocks2insert = JuDoc.merge_blocks(xblocks, lxcoms)
 
     inter_md = JuDoc.form_inter_md(st, blocks2insert, lxdefs)
@@ -93,7 +90,6 @@ end
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
-#XXX    blocks2insert = JuDoc.merge_xblocks_lxcoms(xblocks, lxcoms)
     blocks2insert = JuDoc.merge_blocks(xblocks, lxcoms)
 
     inter_md = JuDoc.form_inter_md(st, blocks2insert, lxdefs)
@@ -120,7 +116,6 @@ end
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
-#XXX    blocks2insert = JuDoc.merge_xblocks_lxcoms(xblocks, lxcoms)
     blocks2insert = JuDoc.merge_blocks(xblocks, lxcoms)
 
     inter_md = JuDoc.form_inter_md(st, blocks2insert, lxdefs)

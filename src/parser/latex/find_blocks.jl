@@ -76,7 +76,7 @@ with it further down. If something is found, the reference is returned and
 will be accessed further down.
 """
 function retrieve_lxdefref(lxname::SubString, lxdefs::Vector{LxDef},
-                           inmath::Bool=false)
+                           inmath=false, offset=0)
 
     k = findfirst(δ -> (δ.name == lxname), lxdefs)
     if isnothing(k)
@@ -84,18 +84,18 @@ function retrieve_lxdefref(lxname::SubString, lxdefs::Vector{LxDef},
         # not found but inmath --> let KaTex deal with it
         return nothing
     end
-    (from(lxname) < from(lxdefs[k])) && error("Command '$lxname' was used before it was defined.")
+    (offset + from(lxname) < from(lxdefs[k])) && error("Command '$lxname' was used before it was defined.")
     return Ref(lxdefs, k)
 end
 
 
 """
-    find_md_lxcoms(lxtokens, lxdefs, bblocks, inmath)
+    find_md_lxcoms(lxtokens, lxdefs, bblocks, inmath, offset)
 
 Find `\\command{arg1}{arg2}...` outside of `xblocks` and `lxdefs`.
 """
 function find_md_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
-                        bblocks::Vector{Block}, inmath=false)
+                        bblocks::Vector{Block}, inmath=false, offset=0)
 
     lxcoms = Vector{LxCom}()
     active_τ = ones(Bool, length(tokens))
@@ -107,7 +107,7 @@ function find_md_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
         # get the range of the command
         # > 1. look for the definition given its name
         lxname = τ.ss
-        lxdefref = retrieve_lxdefref(lxname, lxdefs, inmath)
+        lxdefref = retrieve_lxdefref(lxname, lxdefs, inmath, offset)
         # will only be nothing in a inmath --> no failure, just ignore token
         isnothing(lxdefref) && continue
         # > 1. retrieve narg
