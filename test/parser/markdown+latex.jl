@@ -9,7 +9,7 @@
         and done {target} done.
         """ * JuDoc.EOS
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    tokens = JuDoc.deactivate_xblocks(tokens, JuDoc.MD_EXTRACT)
+    tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
     bblocks, tokens = JuDoc.find_md_bblocks(tokens)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
 
@@ -37,7 +37,7 @@ end
         ```
         """ * JuDoc.EOS
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    tokens = JuDoc.deactivate_xblocks(tokens, JuDoc.MD_EXTRACT)
+    tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
     bblocks, tokens = JuDoc.find_md_bblocks(tokens)
     lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
 
@@ -70,7 +70,7 @@ end
         \newcommand{\comb}[ 2]{hello #1 #2}
         """ * JuDoc.EOS
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    tokens = JuDoc.deactivate_xblocks(tokens, JuDoc.MD_EXTRACT)
+    tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
     bblocks, tokens = JuDoc.find_md_bblocks(tokens)
     lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     @test lxdefs[1].name == "\\com"
@@ -96,7 +96,7 @@ end
 
     # Tokenization and Markdown conversion
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    tokens = JuDoc.deactivate_xblocks(tokens, JuDoc.MD_EXTRACT)
+    tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
     bblocks, tokens = JuDoc.find_md_bblocks(tokens)
     lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
@@ -123,7 +123,7 @@ end
         """ * JuDoc.EOS
 
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    tokens = JuDoc.deactivate_xblocks(tokens, JuDoc.MD_EXTRACT)
+    tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
     bblocks, tokens = JuDoc.find_md_bblocks(tokens)
     lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
