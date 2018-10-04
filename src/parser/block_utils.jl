@@ -11,22 +11,23 @@ end
 
 
 """
-    deactivate_xblocks(tokens, xbd)
+    deactivate_blocks(tokens, bd)
 
-Find blocks in the text that will be extracted and mark all tokens within these blocks as inactive in order to avoid them being processed further.
-This allows, for example, to ignore any braces that appear in xblocks.
+Find blocks in the text to escape before further processing. Mark all tokens
+within their span as inactive.
 """
-function deactivate_xblocks(tokens::Vector{Token},
-                            xbd::Dict{Symbol,Pair{Symbol,Symbol}})
+function deactivate_blocks(tokens::Vector{Token},
+                           bd::Dict{Symbol,Pair{Symbol,Symbol}})
 
     # mark all tokens as active to begin with
     active_tokens = ones(Bool, length(tokens))
-    bracket_tokens = zeros(Bool, length(tokens))
+    # keep track of the boundary tokens
+    boundary_tokens = zeros(Bool, length(tokens))
     # go over tokens and process the ones announcing a code block
     for (i, τ) ∈ enumerate(tokens)
         active_tokens[i] || continue
-        if haskey(xbd, τ.name)
-            close_τ, _ = xbd[τ.name]
+        if haskey(bd, τ.name)
+            close_τ, _ = bd[τ.name]
         else # ignore the token (does not announce an code block)
             continue
         end
@@ -35,9 +36,9 @@ function deactivate_xblocks(tokens::Vector{Token},
         isnothing(k) && error("Found the opening token '$(τ.name)' but not the corresponding closing token. Verify.")
         # mark tokens within the block as inactive
         active_tokens[i:i+k] .= false
-        bracket_tokens[[i, i+k]] .= true
+        boundary_tokens[[i, i+k]] .= true
     end
-    return tokens[active_tokens .| bracket_tokens]
+    return tokens[active_tokens .| boundary_tokens]
 end
 
 

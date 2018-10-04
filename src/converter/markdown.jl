@@ -90,7 +90,7 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
     # Tokenize
     tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
     # Deactivate tokens within code blocks
-    tokens = deactivate_xblocks(tokens, MD_EXTRACT)
+    tokens = deactivate_blocks(tokens, MD_EXTRACT)
     # Find brace blocks
     bblocks, tokens = find_md_bblocks(tokens)
     # Find newcommands (latex definitions)

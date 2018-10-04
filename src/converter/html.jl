@@ -6,7 +6,8 @@ Convert a judoc html string into a html string (i.e. replace {{ ... }} blocks).
 function convert_html(hs::String, allvars::Dict)
     # Tokenize
     tokens = find_tokens(hs, HTML_TOKENS, HTML_1C_TOKENS)
-    # Find hblocks ( {{ ... }})
+    tokens = deactivate_blocks(tokens, HTML_ESCAPE)
+    # Find hblocks ({{ ... }})
     hblocks, tokens = find_html_hblocks(tokens)
     # Find qblocks (qualify the hblocks)
     qblocks = qualify_html_hblocks(hblocks)

@@ -62,3 +62,13 @@ end
     rhs = JuDoc.convert_html(hs, allvars)
     @test rhs == "foot  Stefan Zweig"
 end
+
+@testset "escape-coms" begin
+    allvars = Dict{String, Pair{Any, Tuple}}(
+        "author" => "Stefan Zweig" => (String, Nothing),
+        "date_format" => "U dd, yyyy" => (String,),
+        "isnotes" => true => (Bool,))
+    hs = "foot <!-- {{ fill blahblah }} {{ if v1 }} --> {{ifdef author}} {{fill author}}{{end}}"
+    rhs = JuDoc.convert_html(hs, allvars)
+    @test rhs == "foot <!-- {{ fill blahblah }} {{ if v1 }} -->  Stefan Zweig"
+end

@@ -9,7 +9,7 @@
         """ * JuDoc.EOS
 
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    tokens = JuDoc.deactivate_xblocks(tokens, JuDoc.MD_EXTRACT)
+    tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
     bblocks, tokens = JuDoc.find_md_bblocks(tokens)
     lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
@@ -39,7 +39,7 @@ end
         done
         """
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    tokens = JuDoc.deactivate_xblocks(tokens, JuDoc.MD_EXTRACT)
+    tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
     bblocks, tokens = JuDoc.find_md_bblocks(tokens)
     lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
@@ -57,7 +57,7 @@ end
     st = raw"""a\newcommand{\eqa}[1]{\begin{eqnarray}#1\end{eqnarray}}b
         \eqa{\sin^2(x)+\cos^2(x) &=& 1}""" * JuDoc.EOS
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    tokens = JuDoc.deactivate_xblocks(tokens, JuDoc.MD_EXTRACT)
+    tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
     bblocks, tokens = JuDoc.find_md_bblocks(tokens)
     lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
@@ -87,7 +87,7 @@ end
         """ * JuDoc.EOS
 
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    tokens = JuDoc.deactivate_xblocks(tokens, JuDoc.MD_EXTRACT)
+    tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
     bblocks, tokens = JuDoc.find_md_bblocks(tokens)
     lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
@@ -114,7 +114,7 @@ end
         Then \comb{auth1}{auth2}.
         """ * JuDoc.EOS
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    tokens = JuDoc.deactivate_xblocks(tokens, JuDoc.MD_EXTRACT)
+    tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
     bblocks, tokens = JuDoc.find_md_bblocks(tokens)
     lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
