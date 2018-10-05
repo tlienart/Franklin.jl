@@ -1,5 +1,5 @@
-td = mktempdir() * "/"
-const FOLDER_PATH = td
+const td = mktempdir() * "/"
+JuDoc.FOLDER_PATH[] = td
 
 @testset "Paths" begin
     P = JuDoc.set_paths!()
