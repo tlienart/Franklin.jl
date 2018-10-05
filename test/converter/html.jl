@@ -30,7 +30,8 @@ end
 
 
 @testset "h-insert" begin
-    temp_rnd = joinpath(JuDoc.JD_PATHS[:in_html], "temp.rnd")
+    # Julia 0.7 complains if there's no global here.
+    global temp_rnd = joinpath(JuDoc.JD_PATHS[:in_html], "temp.rnd")
     write(temp_rnd, "some random text to insert")
     hs = raw"""
         Trying to insert: {{ insert temp.rnd }} and see.

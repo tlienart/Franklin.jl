@@ -155,7 +155,7 @@ end
         \eqa{ 1 &=& 1 \label{beyond hope}}
         and finally a \eqref{eq:a trivial one} and maybe \eqref{beyond hope}.
         """ * JuDoc.EOS
-    m, _ = JuDoc.convert_md(st, values(JuDoc.JD_GLOB_LXDEFS))
+    m, _ = JuDoc.convert_md(st, collect(values(JuDoc.JD_GLOB_LXDEFS)))
     @test JuDoc.JD_EQDICT[JuDoc.JD_EQDICT_COUNTER] == 3
     @test JuDoc.JD_EQDICT[hash("eq:a trivial one")] == 2
     @test JuDoc.JD_EQDICT[hash("beyond hope")] == 3
