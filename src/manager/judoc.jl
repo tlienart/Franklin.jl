@@ -41,8 +41,8 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
 
     # function corresponding to a "full pass" where every file is considered
     jd_full() = begin
-        reset_GLOB_VARS()
-        reset_GLOB_LXDEFS()
+        def_GLOB_VARS()
+        def_GLOB_LXDEFS()
 
         process_config()
 

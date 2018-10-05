@@ -20,6 +20,9 @@ JuDoc.FOLDER_PATH[] = td
     mkdir(JuDoc.JD_PATHS[:in_html])
 end
 
+JuDoc.def_LOC_VARS()
+JuDoc.def_GLOB_VARS()
+JuDoc.def_GLOB_LXDEFS()
 
 @testset "Set vars" begin
     d = Dict{String, Pair{Any, Tuple}}(

@@ -1,4 +1,20 @@
 """
+	IGNORE_FILES
+
+Collection of file names that will be ignored at compile time.
+"""
+const IGNORE_FILES = [".DS_Store"]
+
+
+"""
+	INFRA_EXT
+
+Collection of file extensions considered for infrastructure files.
+"""
+const INFRA_EXT = [".html", ".css"]
+
+
+"""
 	FOLDER_PATH
 
 Container to keep track of where JuDoc is being run.
@@ -14,22 +30,6 @@ simpler case only requires the main input folder to be defined i.e.
 `JD_PATHS[:in]` and infers the others via the `set_paths!()` function.
 """
 const JD_PATHS = Dict{Symbol, String}()
-
-
-"""
-	IGNORE_FILES
-
-Collection of file names that will be ignored at compile time.
-"""
-const IGNORE_FILES = [".DS_Store"]
-
-
-"""
-	INFRA_EXT
-
-Collection of file extensions considered for infrastructure files.
-"""
-const INFRA_EXT = [".html", ".css"]
 
 
 """

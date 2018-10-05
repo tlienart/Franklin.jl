@@ -1,6 +1,8 @@
 const JD_INSERT = "##JDINSERT##"
 const PAT_JD_INSERT = Regex(JD_INSERT)
 const LEN_JD_INSERT = length(JD_INSERT)
+
+const JD_EQDICT = Dict{UInt, Int}()
 const JD_EQDICT_COUNTER = hash("__JD_EQDICT_COUNTER__")
 
 """
@@ -84,9 +86,8 @@ Convert a judoc markdown file into a judoc html.
 function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
                     isrecursive=false, isconfig=false, has_mddefs=true)
 
-    global JD_GLOB_VARS, JD_GLOB_LXDEFS, JD_EQDICT
-    # global container for equation and id
-    !isrecursive && (JD_EQDICT = Dict{UInt, Int}(JD_EQDICT_COUNTER => 0))
+    # container for equation and id
+    !isrecursive && (JD_EQDICT[JD_EQDICT_COUNTER] = 0)
     # Tokenize
     tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
     # Deactivate tokens within code blocks
@@ -120,7 +121,9 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
         # Assign as appropriate
         if isconfig
             isempty(assignments) || set_vars!(JD_GLOB_VARS, assignments)
-            isempty(lxdefs) || append!(JD_GLOB_LXDEFS, lxdefs)
+            for lxd ∈ lxdefs
+                JD_GLOB_LXDEFS[lxd.name] = lxd
+            end
             # no more processing required
             return nothing
         end
@@ -128,7 +131,6 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
         jd_vars = merge(JD_GLOB_VARS, copy(JD_LOC_VARS))
         set_vars!(jd_vars, assignments)
     end
-
     # form intermediate markdown + html
     inter_md = form_inter_md(mds, blocks2insert, lxdefs)
     inter_html = md2html(inter_md, isrecursive)
@@ -231,7 +233,6 @@ of a math block, resolving any latex command in it and returning the correct
 syntax that KaTeX can render.
 """
 function convert_mathblock(β::Block, lxdefs::Vector{LxDef})
-    global JD_EQDICT
     βn = β.name
     # pm[1] and pm[2] indicate the number of characters to remove on left and
     # right. So for example, a MATH_B is \$\$...\$\$ so two characters (\$\$)
