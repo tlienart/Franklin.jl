@@ -41,8 +41,8 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
 
     # function corresponding to a "full pass" where every file is considered
     jd_full() = begin
-        reset_GLOB_VARS()
-        reset_GLOB_LXDEFS()
+        def_GLOB_VARS()
+        def_GLOB_LXDEFS()
 
         process_config()
 
@@ -143,4 +143,23 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
     end # end if !single_pass
 
     return 0
+end
+
+
+"""
+    run(; clear, verb,  port)
+
+Runs JuDoc in a given directory. The named argument `clear` indicates whether
+to clear the output dir or not, `verb` whether to display information about
+changes etc seen by the engine, `port` where to serve with browser-sync.
+"""
+function serve(;clear=true, verb=false, port=8000)
+    FOLDER_PATH[] = pwd()
+    # next line is such that when called from outside using
+    # `julia -e "using JuDoc; JuDoc.run()"` it interrupts nicely upon CTRL+C
+    ccall(:jl_exit_on_sigint, Nothing, (Cint,), 0)
+    # start browser-sync, serving in 8000
+    run(`bash -c "browser-sync start -s -f $FOLDER_PATH --no-notify --logLevel silent --port $port &"`)
+    println("Serving at localhost:$port")
+    JuDoc.judoc(single_pass=false, verb=verb, clear_out_dir=clear);
 end

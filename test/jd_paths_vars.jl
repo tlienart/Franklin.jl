@@ -1,5 +1,5 @@
-td = mktempdir() * "/"
-const FOLDER_PATH = td
+const td = mktempdir() * "/"
+JuDoc.FOLDER_PATH[] = td
 
 @testset "Paths" begin
     P = JuDoc.set_paths!()
@@ -20,6 +20,9 @@ const FOLDER_PATH = td
     mkdir(JuDoc.JD_PATHS[:in_html])
 end
 
+JuDoc.def_LOC_VARS()
+JuDoc.def_GLOB_VARS()
+JuDoc.def_GLOB_LXDEFS()
 
 @testset "Set vars" begin
     d = Dict{String, Pair{Any, Tuple}}(

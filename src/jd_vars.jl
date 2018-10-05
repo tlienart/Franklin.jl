@@ -8,35 +8,36 @@ the format KEY => PAIR where
 * KEY is a string (e.g.: "author")
 * PAIR is an pair where the first element is the default value for the variable
 and the second is a tuple of accepted possible (super)types for that value. (e.g.: "THE AUTHOR" => (String, Nothing))
-It is a global that gets modified having an impact on all pages.
+It is a constant for perf reasons but it can be modified (since it's a Dict).
 """
-global JD_GLOB_VARS
+const JD_GLOB_VARS = Dict{String, Pair{Any, Tuple}}()
 
-reset_GLOB_VARS() = begin
-    global JD_GLOB_VARS
-        JD_GLOB_VARS = Dict{String, Pair{Any, Tuple}}(
-        "author" => Pair("THE AUTHOR", (String, Nothing)),
-        "date_format" => Pair("U dd, yyyy", (String,))
-        )
+def_GLOB_VARS() = begin
+    empty!(JD_GLOB_VARS)
+    JD_GLOB_VARS["author"]      = Pair("THE AUTHOR", (String, Nothing))
+    JD_GLOB_VARS["date_format"] = Pair("U dd, yyyy", (String,))
 end
-reset_GLOB_VARS()
+
 
 """
     JD_LOC_VARS
 
 Dictionary of variables copied and then set for each page (through definitions).
 Entries have the same format as for `JD_GLOB_VARS`.
-It is a constant that gets copied for every page that is being looked at.
+It is a constant for perf reasons but it can be modified (since it's a Dict).
 """
-const JD_LOC_VARS = Dict{String, Pair{Any, Tuple}}(
-    "isdemo"   => Pair(false,   (Bool,)),
-    "title"    => Pair(nothing, (String, Nothing)),
-    "hasmath"  => Pair(true,    (Bool,)),
-    "hascode"  => Pair(false,   (Bool,)),
-    "date"     => Pair(Date(1), (String, Date, Nothing)),
-    "jd_ctime" => Pair(Date(1), (Date,)),
-    "jd_mtime" => Pair(Date(1), (Date,)),
-    )
+const JD_LOC_VARS = Dict{String, Pair{Any, Tuple}}()
+
+def_LOC_VARS() = begin
+    empty!(JD_LOC_VARS)
+    JD_LOC_VARS["isdemo"]   = Pair(false,   (Bool,))
+    JD_LOC_VARS["title"]    = Pair(nothing, (String, Nothing))
+    JD_LOC_VARS["hasmath"]  = Pair(true,    (Bool,))
+    JD_LOC_VARS["hascode"]  = Pair(false,   (Bool,))
+    JD_LOC_VARS["date"]     = Pair(Date(1), (String, Date, Nothing))
+    JD_LOC_VARS["jd_ctime"] = Pair(Date(1), (Date,))
+    JD_LOC_VARS["jd_mtime"] = Pair(Date(1), (Date,))
+end
 
 
 """
@@ -44,15 +45,13 @@ const JD_LOC_VARS = Dict{String, Pair{Any, Tuple}}(
 
 List of latex definitions accessible to all pages.
 """
-global JD_GLOB_LXDEFS
+const JD_GLOB_LXDEFS = Dict{String, LxDef}()
 
-reset_GLOB_LXDEFS() = begin
-    global JD_GLOB_LXDEFS
-    JD_GLOB_LXDEFS = [
-        LxDef("\\eqref", 1, SubString("")),
-        ]
+def_GLOB_LXDEFS() = begin
+    empty!(JD_GLOB_LXDEFS)
+    JD_GLOB_LXDEFS["\\eqref"] = LxDef("\\eqref", 1, SubString(""))
 end
-reset_GLOB_LXDEFS()
+
 
 """
     jd_date(d)
