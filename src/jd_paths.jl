@@ -13,7 +13,7 @@ Dictionary for the paths of the input folders and the output folders. The
 simpler case only requires the main input folder to be defined i.e.
 `JD_PATHS[:in]` and infers the others via the `set_paths!()` function.
 """
-JD_PATHS = Dict{Symbol, String}()
+const JD_PATHS = Dict{Symbol, String}()
 
 
 """
@@ -39,8 +39,6 @@ Queries the `Main` module to see if the different path variables are defined.
 `Main.PATH_INPUT` must be defined (and valid), the others have a default value.
 """
 function set_paths!()
-	global JD_PATHS
-
 	@assert isassigned(FOLDER_PATH) "FOLDER_PATH undefined"
 	@assert isdir(FOLDER_PATH[]) "FOLDER_PATH is not a valid path"
 
