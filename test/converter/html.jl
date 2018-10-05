@@ -30,8 +30,6 @@ end
 
 
 @testset "h-insert" begin
-    # NOTE: the test/jd_paths.jl must have been run before
-    global temp_rnd
     temp_rnd = joinpath(JuDoc.JD_PATHS[:in_html], "temp.rnd")
     write(temp_rnd, "some random text to insert")
     hs = raw"""

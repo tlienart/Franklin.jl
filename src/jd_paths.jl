@@ -1,22 +1,4 @@
 """
-	FOLDER_PATH
-
-Container to keep track of where JuDoc is being run.
-"""
-const FOLDER_PATH = Ref{String}()
-
-
-"""
-	JD_PATHS
-
-Dictionary for the paths of the input folders and the output folders. The
-simpler case only requires the main input folder to be defined i.e.
-`JD_PATHS[:in]` and infers the others via the `set_paths!()` function.
-"""
-JD_PATHS = Dict{Symbol, String}()
-
-
-"""
 	IGNORE_FILES
 
 Collection of file names that will be ignored at compile time.
@@ -33,14 +15,30 @@ const INFRA_EXT = [".html", ".css"]
 
 
 """
+	FOLDER_PATH
+
+Container to keep track of where JuDoc is being run.
+"""
+const FOLDER_PATH = Ref{String}()
+
+
+"""
+	JD_PATHS
+
+Dictionary for the paths of the input folders and the output folders. The
+simpler case only requires the main input folder to be defined i.e.
+`JD_PATHS[:in]` and infers the others via the `set_paths!()` function.
+"""
+const JD_PATHS = Dict{Symbol, String}()
+
+
+"""
 	set_paths!()
 
 Queries the `Main` module to see if the different path variables are defined.
 `Main.PATH_INPUT` must be defined (and valid), the others have a default value.
 """
 function set_paths!()
-	global JD_PATHS
-
 	@assert isassigned(FOLDER_PATH) "FOLDER_PATH undefined"
 	@assert isdir(FOLDER_PATH[]) "FOLDER_PATH is not a valid path"
 

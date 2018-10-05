@@ -42,7 +42,8 @@ function write_page(root, file, head, pg_foot, foot)
     ###
     jd_vars = merge(JD_GLOB_VARS, copy(JD_LOC_VARS))
     fpath = joinpath(root, file)
-    (content, jd_vars) = convert_md(read(fpath, String) * EOS, JD_GLOB_LXDEFS)
+    vJD_GLOB_LXDEFS = values(JD_GLOB_LXDEFS)
+    (content, jd_vars) = convert_md(read(fpath, String) * EOS, vJD_GLOB_LXDEFS)
 
     # adding document variables to the dictionary
     s = stat(fpath)
