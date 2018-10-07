@@ -6,7 +6,7 @@ brace of a brace block. Adds 1 if the token corresponds to an opening brace,
 removes 1 if it's a closing brace, adds nothing otherwise.
 """
 function bbalance(τ::Token, open_close=[:LX_BRACE_OPEN, :LX_BRACE_CLOSE])
-    return dot(τ.name .== open_close, [1, -1])
+    return sum((τ.name .== open_close) .* [1, -1])
 end
 
 
