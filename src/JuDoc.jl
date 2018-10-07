@@ -1,11 +1,11 @@
 module JuDoc
 
 using Markdown
-using LinearAlgebra: dot
+using Dates # see jd_vars
 
 # a number we don't expect to take over with the number of tokens etc...
-# basically acts as `Inf` with Int type.
-const BIG_INT = 100_000_000_000
+# basically acts as `Inf` with Int type (Int32 or Int64 is fine)
+const BIG_INT = 100_000_000
 
 # PARSING
 include("parser/tokens.jl")

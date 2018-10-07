@@ -42,6 +42,7 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
     # function corresponding to a "full pass" where every file is considered
     jd_full() = begin
         def_GLOB_VARS()
+        def_LOC_VARS()
         def_GLOB_LXDEFS()
 
         process_config()
@@ -136,12 +137,14 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
                 println("\nShutting down JuDoc. ✅")
                 return 0
             else
-                rethrow(x)
+                println("An error caused JuDoc to stop, this is usually caused by bad syntax used somewhere such as braces not properly closed. Check. The error message is printed below.\n\n")
+                println(x.msg)
+                # rem we don't fail by rethrowing otherwise the corresponding
+                # node process (browser-sync) doesn't get killed properly.
                 return -1
             end
         end
     end # end if !single_pass
-
     return 0
 end
 
@@ -160,6 +163,51 @@ function serve(;clear=true, verb=false, port=8000)
     ccall(:jl_exit_on_sigint, Nothing, (Cint,), 0)
     # start browser-sync, serving in 8000
     run(`bash -c "browser-sync start -s -f $FOLDER_PATH --no-notify --logLevel silent --port $port &"`)
-    println("Serving at localhost:$port")
+    println("Serving at localhost:$port...")
+    println("Starting the engine (give it 1-2s)...")
     JuDoc.judoc(single_pass=false, verb=verb, clear_out_dir=clear);
+end
+
+const PY_MIN = raw"""
+    import os
+    from css_html_js_minify import process_single_html_file as min_html
+    from css_html_js_minify import process_single_css_file as min_css
+    # modify those if you're not using the standard output paths.
+    CSS, PUB = "css/", "pub/"
+    min_html("index.html", overwrite=True)
+    for root, dirs, files in os.walk(PUB):
+        for fname in files:
+            if fname.endswith(".html"):
+                min_html(os.path.join(root, fname), overwrite=True)
+
+    for root, dirs, files in os.walk(CSS):
+        for fname in files:
+            if fname.endswith(".css"):
+                min_css(os.path.join(root, fname), overwrite=True)
+    """
+const PY_MIN_NAME = ".__py_tmp_minscript.py"
+
+
+function publish(; minify=true, push=true)
+    if minify
+        try
+            print("Minifying .html and .css files...")
+            write(PY_MIN_NAME, PY_MIN)
+            run(`bash -c "python $PY_MIN_NAME > /dev/null"`)
+            rm(PY_MIN_NAME)
+            println(" [done] ✅")
+        catch e
+            println("\nCould not minify. Verify that you have css-html-js-minify installed (via pip) and that you use python 3.6+. Ignoring for now...\n")
+            @show e
+        end
+    end
+    if push
+        print("Pushing updates on Github...")
+        try
+            run(`bash -c "git add -A && git commit -m \"jd-update\" --quiet && git push --quiet"`, wait=true)
+            println(" [done] ✅")
+        catch e
+            println("Could not push updates to Github, verify your connection and try manually.\n")
+        end
+    end
 end
