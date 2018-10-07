@@ -168,6 +168,16 @@ function serve(;clear=true, verb=false, port=8000)
     JuDoc.judoc(single_pass=false, verb=verb, clear_out_dir=clear);
 end
 
+
+"""
+    PY_MIN
+
+This is a simple script using `css_html_js_minify` (available via pip) to
+compress html and css files (the js that we use is already compressed).
+The reason for calling the script over the command line is that the command
+line seems to be buggy when provided with file paths. This script runs in a
+negligible amount of time.
+"""
 const PY_MIN = raw"""
     import os
     from css_html_js_minify import process_single_html_file as min_html
