@@ -54,7 +54,7 @@ maths notes.
 ```
 <!-- =========== end EXAMPLE =========== -->
 
-Renders to [this page](https://tlienart.github.io/misc/judoc-example1.html).
+Renders to [this page](https://tlienart.github.io/pub/misc/judoc-example1.html).
 
 Like it? read on.
 
@@ -160,6 +160,9 @@ site
 
 ## Shortcuts
 
-It quickly becomes convenient to define the following two shortcuts and save them in your bash profile (`~/.bash_profile`):
+It quickly becomes convenient to define the following two shortcuts and save them in your bash profile:
 
-1. a shortcut for running the engine and serving on port 8000 via browser-sync: `alias jd="using JuDoc; JuDoc.serve()"`
+1. a shortcut for running the engine and live serving on port 8000 via browser-sync: `alias jd="using JuDoc; JuDoc.serve()"`
+2. a shortcut for minifying the generated pages and push everything to GitHub: `alias jdp="using JuDoc; JuDoc.publish()"`
+
+The `serve` and `publish` commands have a few simple arguments, have a look in [judoc.jl](https://github.com/tlienart/JuDoc.jl/blob/master/src/manager/judoc.jl) for more informations.
