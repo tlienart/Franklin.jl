@@ -53,6 +53,7 @@ function write_page(root, file, head, pg_foot, foot)
     # 3. process blocks in the html infra elements based on `jd_vars` (e.g.:
     # add the date in the footer)
     ###
+    content = convert_html(string(content), jd_vars)
     head, pg_foot, foot = (e->convert_html(e, jd_vars)).([head, pg_foot, foot])
     ###
     # 4. construct the page proper
