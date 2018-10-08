@@ -28,7 +28,8 @@ Math is displayed with [KaTeX](https://katex.org) which is much faster than Math
 
 $$ \hat f(\xi) = \int_\R \exp(-2i\pi \xi t) \,\mathrm{d}t. \label{fourier} $$
 
-The syntax is basically an extended form of GitHub Flavored Markdown ([GFM](https://guides.github.com/features/mastering-markdown/))
+The syntax is basically an extended form of GitHub Flavored Markdown
+([GFM](https://guides.github.com/features/mastering-markdown/))
 allowing for some **LaTeX** as well as **div blocks**:
 
 @@colbox-yellow
@@ -55,7 +56,8 @@ KaTeX for instance):
 
 $$ \exp(i\pi) + 1 = 0 \label{a nice equation} $$
 
-can then be referenced as such: \eqref{a nice equation} unrelated to \eqref{fourier} which is convenient for
+can then be referenced as such: \eqref{a nice equation} unrelated to
+\eqref{fourier} which is convenient for
 maths notes.
 ```
 <!-- =========== end EXAMPLE =========== -->
