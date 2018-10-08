@@ -36,15 +36,7 @@ Something inside a div with div name "colbox-yellow"
 @@
 
 You can add figures, tables, links and code just as you would in GFM.
-For syntax highlighting, [highlight.js](https://highlightjs.org) is used by default:
-
-```julia
-struct Point{T <: Real}
-    x::T
-    y::T
-end
-length(p::Point) = sqrt(p.x^2 + p.y^2)
-```
+For syntax highlighting, [highlight.js](https://highlightjs.org) is used by default.
 
 ## Why?
 
