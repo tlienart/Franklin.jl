@@ -32,7 +32,7 @@ be displayed "as is".
 function hfun_insert(params::Vector{String})
     length(params) == 1 || error("I found an {{insert ...}} block with more than one parameter. Verify.")
     replacement = ""
-    fpath = JD_PATHS[:in_html] * params[1]
+    fpath = joinpath(JD_PATHS[:in_html], params[1])
     if isfile(fpath)
         replacement = read(fpath, String)
     else

@@ -53,6 +53,7 @@ function write_page(root, file, head, pg_foot, foot)
     # 3. process blocks in the html infra elements based on `jd_vars` (e.g.:
     # add the date in the footer)
     ###
+    content = convert_html(string(content), jd_vars)
     head, pg_foot, foot = (e->convert_html(e, jd_vars)).([head, pg_foot, foot])
     ###
     # 4. construct the page proper
@@ -61,7 +62,7 @@ function write_page(root, file, head, pg_foot, foot)
     ###
     # 5. write the html file where appropriate
     ###
-    write(out_path(root) * change_ext(file), pg)
+    write(joinpath(out_path(root), change_ext(file)), pg)
 end
 
 
@@ -72,9 +73,9 @@ function process_file(case, fpair, clear_out_dir,
     elseif case == "html"
         raw_html = read(joinpath(fpair...), String)
         proc_html = convert_html(raw_html, JD_GLOB_VARS)
-        write(out_path(fpair.first) * fpair.second, proc_html)
+        write(joinpath(out_path(fpair.first), fpair.second), proc_html)
     elseif case == "other"
-        opath = out_path(fpair.first) * fpair.second
+        opath = joinpath(out_path(fpair.first), fpair.second)
         # only copy it again if necessary (particularly relevant)
         # when the asset files take quite a bit of space.
         if clear_out_dir || !isfile(opath) || last(opath) < t
@@ -84,7 +85,7 @@ function process_file(case, fpair, clear_out_dir,
         # copy over css files
         # NOTE some processing may be further added here later on.
         if splitext(fpair.second)[2] == ".css"
-            cp(joinpath(fpair...), JD_PATHS[:out_css] * fpair.second,
+            cp(joinpath(fpair...), joinpath(JD_PATHS[:out_css], fpair.second),
                 force=true)
         end
     end
