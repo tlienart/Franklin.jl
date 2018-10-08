@@ -6,9 +6,12 @@
 
 ## What's this about?
 
-JuDoc is a simple static site generator oriented towards technical blogging and written in Julia.
+JuDoc is a simple static site generator (SSG) oriented towards technical blogging and written in Julia.
+I use it to generate [my website](https://tlienart.github.io).
 
-This:
+It's basically the same as most SSG using Markdown as base syntax but allowing extra stuff, in particular maths rendering via KaTeX and macro definition via LaTeX-like commands.
+The note below renders to [this page](https://tlienart.github.io/pub/misc/judoc-example1.html).
+for instance. If you like it, read on.
 
 <!-- =========== EXAMPLE =========== -->
 ```md
@@ -57,14 +60,9 @@ KaTeX for instance):
 $$ \exp(i\pi) + 1 = 0 \label{a nice equation} $$
 
 can then be referenced as such: \eqref{a nice equation} unrelated to
-\eqref{fourier} which is convenient for
-maths notes.
+\eqref{fourier} which is convenient for maths notes.
 ```
 <!-- =========== end EXAMPLE =========== -->
-
-Renders to [this page](https://tlienart.github.io/pub/misc/judoc-example1.html).
-
-Like it? read on.
 
 ## Installation
 
