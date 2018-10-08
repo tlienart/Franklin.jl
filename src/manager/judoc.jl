@@ -47,9 +47,9 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
 
         process_config()
 
-        head    = read(JD_PATHS[:in_html] * "head.html", String)
-        pg_foot = read(JD_PATHS[:in_html] * "page_foot.html", String)
-        foot    = read(JD_PATHS[:in_html] * "foot.html", String)
+        head    = read(joinpath(JD_PATHS[:in_html], "head.html"), String)
+        pg_foot = read(joinpath(JD_PATHS[:in_html], "page_foot.html"), String)
+        foot    = read(joinpath(JD_PATHS[:in_html], "foot.html"), String)
 
         if isfile(joinpath(indexmd...))
             process_file("md", indexmd, clear_out_dir,
