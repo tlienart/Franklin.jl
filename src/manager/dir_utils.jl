@@ -22,7 +22,7 @@ Take a `root` path to an input file and convert to output path. If the output
 path does not exist, create it.
 """
 function out_path(root::String)
-    f_out_path = JD_PATHS[:f] * root[length(JD_PATHS[:in])+1:end]
+    f_out_path = joinpath(JD_PATHS[:f], root[length(JD_PATHS[:in])+1:end])
     f_out_path = replace(f_out_path, "/pages/" => "/pub/")
     !ispath(f_out_path) && mkpath(f_out_path)
     return f_out_path
@@ -39,9 +39,9 @@ function scan_input_dir!(md_files, html_files, other_files,
                          infra_files, verb=false)
     # top level files (src/*)
     for file ∈ readdir(JD_PATHS[:in])
-        isfile(JD_PATHS[:in] * file) || continue
+        isfile(joinpath(JD_PATHS[:in], file)) || continue
         fname, fext = splitext(file)
-        fpair = normpath(JD_PATHS[:in] * "/")=>file
+        fpair = (JD_PATHS[:in] => file)
         if file == "config.md"
             add_if_new_file!(infra_files, fpair, verb)
         elseif fext == ".md"
@@ -52,14 +52,12 @@ function scan_input_dir!(md_files, html_files, other_files,
     end
     # pages files (src/pages/*)
     for (root, _, files) ∈ walkdir(JD_PATHS[:in_pages])
-        # ensure there's a "/" at the end of the root
-        nroot = normpath(root * "/")
         for file ∈ files
-            isfile(nroot * file) || continue
+            isfile(joinpath(root, file)) || continue
             # skip if it has to be ignored
             file ∈ IGNORE_FILES && continue
             fname, fext = splitext(file)
-            fpair = (nroot => file)
+            fpair = (root => file)
             if fext == ".md"
                 add_if_new_file!(md_files, fpair, verb)
             elseif fext == ".html"
@@ -71,13 +69,12 @@ function scan_input_dir!(md_files, html_files, other_files,
     end
     # infastructure files (src/_css/* and src/_html_parts/*)
     for d ∈ [:in_css, :in_html], (root, _, files) ∈ walkdir(JD_PATHS[d])
-        nroot = normpath(root * "/")
         for file ∈ files
-            isfile(nroot * file) || continue
+            isfile(joinpath(root, file)) || continue
             fname, fext = splitext(file)
             # skipping files that are not of the type INFRA_EXT
             fext ∉ INFRA_EXT && continue
-            add_if_new_file!(infra_files, nroot=>file, verb)
+            add_if_new_file!(infra_files, root=>file, verb)
         end
     end
 end
