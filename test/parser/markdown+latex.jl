@@ -54,7 +54,7 @@ end
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
 
     @test xblocks[1].name == :ESCAPE
-    @test xblocks[2].name == :CODE
+    @test xblocks[2].name == :CODE_BLOCK
 
     lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
 
@@ -106,7 +106,7 @@ end
     @test lxcoms[1].ss == "\\com"
     @test lxcoms[2].ss == "\\comb{blah}"
 
-    @test xblocks[1].name == :CODE
+    @test xblocks[1].name == :CODE_BLOCK
     @test xblocks[2].name == :DIV_OPEN
     @test xblocks[3].name == :DIV_CLOSE
 end

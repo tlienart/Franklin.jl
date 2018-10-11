@@ -212,10 +212,11 @@ plugged in the final html.
 function convert_block(β::Block, lxc::LxContext)
     # Return relevant interpolated string based on case
     βn = β.name
-    βn == :DIV_OPEN  && return "<div class=\"$(chop(β.ss, head=2, tail=0))\">"
-    βn == :DIV_CLOSE && return "</div>\n"
-    βn == :CODE      && return md2html(β.ss)
-    βn == :ESCAPE    && return chop(β.ss, head=3, tail=3)
+    βn == :DIV_OPEN    && return "<div class=\"$(chop(β.ss, head=2, tail=0))\">"
+    βn == :DIV_CLOSE   && return "</div>\n"
+    βn == :CODE_INLINE && return md2html(β.ss, true)
+    βn == :CODE_BLOCK  && return md2html(β.ss)
+    βn == :ESCAPE      && return chop(β.ss, head=3, tail=3)
     # Math block --> needs to call further processing to resolve possible latex
     βn ∈ MD_MATHS_NAMES && return convert_mathblock(β, lxc.lxdefs)
     # default case: comment and co --> ignore block
