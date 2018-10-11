@@ -102,9 +102,9 @@ const MD_EXTRACT = Dict(
     :COMMENT_OPEN => :COMMENT_CLOSE => :COMMENT,
     :ESCAPE       => :ESCAPE        => :ESCAPE,
     :MD_DEF_OPEN  => :LINE_RETURN   => :MD_DEF,         # See note [^3]
-    :CODE_SINGLE  => :CODE_SINGLE   => :CODE,
-    :CODE_L       => :CODE          => :CODE,
-    :CODE         => :CODE          => :CODE,
+    :CODE_SINGLE  => :CODE_SINGLE   => :CODE_INLINE,
+    :CODE_L       => :CODE          => :CODE_BLOCK,
+    :CODE         => :CODE          => :CODE_BLOCK,
     ) # end dict
 #= NOTE
 [3] an `MD_DEF` goes from an `@def` to the next `\n` so no multiple line def
