@@ -53,7 +53,7 @@ definition and a vector of brace blocks.
 struct LxCom <: AbstractBlock
     ss::SubString           # \\command
     lxdef::Ref{LxDef}       # definition of the command
-    braces::Vector{Block}   # relevant {...} associated with the command
+    braces::Vector{OCBlock} # relevant {...} associated with the command
 end
 LxCom(ss, def) = LxCom(ss, def, Vector{Block}())
 from(lxc::LxCom) = from(lxc.ss)
@@ -77,5 +77,5 @@ Convenience structure to keep track of the latex commands and braces.
 struct LxContext
     lxcoms::Vector{LxCom}
     lxdefs::Vector{LxDef}
-    bblocks::Vector{Block}
+    bblocks::Vector{OCBlock}
 end

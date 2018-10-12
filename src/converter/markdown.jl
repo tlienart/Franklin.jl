@@ -92,8 +92,12 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
     tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
     # Deactivate tokens within code blocks
     tokens = deactivate_blocks(tokens, MD_EXTRACT)
-    # Find brace blocks
-    bblocks, tokens = find_md_bblocks(tokens)
+    # Find div blocks, deactivate tokens within them
+    dblocks, tokens = find_md_ocblocks(tokens, :DIV,
+                            :DIV_OPEN => :DIV_CLOSE)
+    # Find brace blocks, do not deactivate tokens within them
+    bblocks, tokens = find_md_ocblocks(tokens, :LXB,
+                            :LXB_OPEN => :LXB_CLOSE, deactivate=false)
     # Find newcommands (latex definitions)
     lxdefs, tokens = find_md_lxdefs(tokens, bblocks)
     # if any lxdefs are given in the context, merge them. `pastdef!` specifies
@@ -106,7 +110,7 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
     # Find lxcoms
     lxcoms, tokens = find_md_lxcoms(tokens, lxdefs, bblocks)
     # Merge the lxcoms and xblocks -> list of things to insert
-    blocks2insert = merge_blocks(xblocks, lxcoms)
+    blocks2insert = merge_blocks(dblocks, xblocks, lxcoms)
 
     if has_mddefs
         # Process MD_DEF blocks
@@ -131,12 +135,15 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
         jd_vars = merge(JD_GLOB_VARS, copy(JD_LOC_VARS))
         set_vars!(jd_vars, assignments)
     end
+
     # form intermediate markdown + html
     inter_md = form_inter_md(mds, blocks2insert, lxdefs)
     inter_html = md2html(inter_md, isrecursive)
+
     # plug resolved blocks in partial html to form the final html
     lxcontext = LxContext(lxcoms, lxdefs, bblocks)
     hstring = convert_inter_html(inter_html, blocks2insert, lxcontext)
+
     # Return the string + judoc variables if relevant
     return hstring, (has_mddefs ? jd_vars : nothing)
 end
@@ -151,7 +158,8 @@ math block (no command definitions, restricted tokenisation to latex tokens).
 function convert_md_math(ms::String, lxdefs=Vector{LxDef}(), offset=0)
     # tokenize with restricted set
     tokens = find_tokens(ms, MD_TOKENS_LX, MD_1C_TOKENS_LX)
-    bblocks, tokens = find_md_bblocks(tokens)
+    bblocks, tokens = find_md_ocblocks(tokens, :LXB,
+                            :LXB_OPEN => :LXB_CLOSE, deactivate=false)
     # in a math environment > pass a bool to indicate it
     lxcoms, tokens = find_md_lxcoms(tokens, lxdefs, bblocks, true, offset)
     # form the string (see `form_inter_md`, similar but fewer conditions)
@@ -175,8 +183,8 @@ end
 """
     convert_inter_md(intermd, refmd, xblocks, coms, lxdefs, bblocks)
 
-Take a partial markdown string with the `JD_INSERT` marker and plug in the --
-appropriately processed -- block.
+Take a partial markdown string with the `JD_INSERT` marker and plug in the
+appropriately processed block.
 """
 function convert_inter_html(interhtml::AbstractString,
                             blocks2insert::Vector{<:AbstractBlock},
@@ -209,21 +217,26 @@ Helper function for `convert_inter_html` that processes an extracted block
 given a latex context `lxc` and return the processed html that needs to be
 plugged in the final html.
 """
-function convert_block(β::Block, lxc::LxContext)
+function convert_block(β::B, lxc::LxContext) where B <: AbstractBlock
     # Return relevant interpolated string based on case
     βn = β.name
-    βn == :DIV_OPEN    && return "<div class=\"$(chop(β.ss, head=2, tail=0))\">"
-    βn == :DIV_CLOSE   && return "</div>\n"
     βn == :CODE_INLINE && return md2html(β.ss, true)
     βn == :CODE_BLOCK  && return md2html(β.ss)
     βn == :ESCAPE      && return chop(β.ss, head=3, tail=3)
     # Math block --> needs to call further processing to resolve possible latex
     βn ∈ MD_MATHS_NAMES && return convert_mathblock(β, lxc.lxdefs)
+    # Div block --> need to process the block as a sub-element
+    if βn == :DIV
+        ct, _ = convert_md(content(β) * EOS, lxc.lxdefs;
+                        isrecursive=true, has_mddefs=false)
+        d1 = "<div class=\"$(chop(β.ocpair.first.ss, head=2, tail=0))\">"
+        d2 = "</div>\n"
+        return d1 * ct * d2
+    end
     # default case: comment and co --> ignore block
     return ""
 end
 convert_block(β::LxCom, lxc::LxContext) = resolve_lxcom(β, lxc.lxdefs)
-
 
 
 """

@@ -30,7 +30,7 @@ function find_html_hblocks(tokens::Vector{Token})
          j = i
          while !iszero(inbalance) & (j <= ntokens)
              j += 1
-             inbalance += bbalance(tokens[j], [:H_BLOCK_OPEN, :H_BLOCK_CLOSE])
+             inbalance += ocbalance(tokens[j], :H_BLOCK_OPEN => :H_BLOCK_CLOSE)
          end
          (inbalance > 0) && error("I found at least one open curly brace that is not closed properly. Verify.")
          push!(hblocks, hblock(subs(str(τ), from(τ), to(tokens[j]))))

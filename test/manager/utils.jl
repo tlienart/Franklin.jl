@@ -19,7 +19,6 @@ write(temp_css, "some css")
 
 JuDoc.process_config()
 
-
 @testset "Prep outdir" begin # ✅ aug 15, 2018
 	JuDoc.prepare_output_dir()
 	@test isdir(JuDoc.JD_PATHS[:out])

@@ -10,8 +10,8 @@ Dictionary of single-char tokens for Markdown. Note that these characters are
 exclusive, they cannot appear again in a larger token.
 """
 const MD_1C_TOKENS = Dict{Char, Symbol}(
-    '{'  => :LX_BRACE_OPEN,
-    '}'  => :LX_BRACE_CLOSE,
+    '{'  => :LXB_OPEN,
+    '}'  => :LXB_CLOSE,
     '\n' => :LINE_RETURN)
 
 
@@ -21,8 +21,8 @@ const MD_1C_TOKENS = Dict{Char, Symbol}(
 Subset of `MD_1C_TOKENS` with only the latex tokens (for parsing what's in a math environment).
 """
 const MD_1C_TOKENS_LX = Dict{Char, Symbol}(
-    '{'  => :LX_BRACE_OPEN,
-    '}'  => :LX_BRACE_CLOSE)
+    '{'  => :LXB_OPEN,
+    '}'  => :LXB_CLOSE)
 
 
 """

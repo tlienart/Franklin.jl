@@ -1,12 +1,14 @@
 """
-bbalance(token)
+ocbalance(token)
 
 Helper function to update the inbalance counter when looking for the closing
-brace of a brace block. Adds 1 if the token corresponds to an opening brace,
-removes 1 if it's a closing brace, adds nothing otherwise.
+token of a block with nesting. Adds 1 if the token corresponds to an opening
+token, removes 1 if it's a closing token. 0 otherwise.
 """
-function bbalance(τ::Token, open_close=[:LX_BRACE_OPEN, :LX_BRACE_CLOSE])
-    return sum((τ.name .== open_close) .* [1, -1])
+function ocbalance(τ::Token, ocpair=(:LX_BRACE_OPEN => :LX_BRACE_CLOSE))
+    (τ.name == ocpair.first) && return 1
+    (τ.name == ocpair.second) && return -1
+    return 0
 end
 
 

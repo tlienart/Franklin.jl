@@ -1,7 +1,8 @@
 abstract type AbstractBlock end
+
 from(β::AbstractBlock) = from(β.ss)
-to(β::AbstractBlock) = to(β.ss)
-str(β::AbstractBlock) = str(β.ss)
+to(β::AbstractBlock)   = to(β.ss)
+str(β::AbstractBlock)  = str(β.ss)
 
 
 """
@@ -30,17 +31,7 @@ See also `Token`, `LxBlock`.
 const Block = Token
 
 
-braces(ss::SubString) = Block(:LXB, ss)
 hblock(ss::SubString) = Block(:H_BLOCK, ss)
-
-
-"""
-    binner(block)
-
-For a brace block (`:LXB`), retrieve the span of what's inside the matching
-braces.
-"""
-braces_content(β::Block) = chop(β.ss, head=1, tail=1)
 
 
 """
@@ -52,14 +43,30 @@ hblock_content(β::Block) = chop(β.ss, head=2, tail=2)
 
 
 """
-    span_after(blocks, i)
+    OCBlock
 
-Given a list of blocks `blocks` and a block index `i` give the span between
-the ith block and the (i+1)th block.
+Open-Close block, blocks that are defined by an opening token and a closing
+token, they may be nested. For instance braces block are formed of an
+opening `{` and a closing `}` and they could be nested.
 """
-function span_after(blocks::Vector{Block}, i::Int, eos::Int=0)
-    i == length(blocks) && return (to(blocks[i]) + 1, eos)
-    return (to(blocks[i]) + 1, from(blocks[i+1]) - 1)
+struct OCBlock <: AbstractBlock
+    name::Symbol
+    ocpair::Pair{Token, Token}
+    ss::SubString
+end
+OCBlock(name, ocpair) = OCBlock(name, ocpair,
+    subs(str(ocpair.first), from(ocpair.first), to(ocpair.second)))
+
+
+"""
+    content(ocb)
+
+Return the content of an open-close block (`OCBlock`), for instance the content
+of a `{...}` block would be `...`.
+"""
+function content(ocb::OCBlock)
+    head, tail = lastindex.(e.ss for e ∈ ocb.ocpair)
+    return chop(ocb.ss, head=head, tail=tail)
 end
 
 
