@@ -65,7 +65,8 @@ Return the content of an open-close block (`OCBlock`), for instance the content
 of a `{...}` block would be `...`.
 """
 function content(ocb::OCBlock)
-    head, tail = lastindex.(e.ss for e ∈ ocb.ocpair)
+    # collect is necessary for Julia 0.7, not for 1.0
+    head, tail = lastindex.(collect(e.ss for e ∈ ocb.ocpair))
     return chop(ocb.ss, head=head, tail=tail)
 end
 

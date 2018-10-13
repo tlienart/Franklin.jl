@@ -13,7 +13,7 @@ include("manager/utils.jl") # ✅  oct 12, 2018
 println("🍺")
 
 # PARSER folder
-println("nPARSER/MD+LX")
+println("PARSER/MD+LX")
 include("parser/markdown+latex.jl") # ✅  oct 12, 2018
 println("🍺")
 println("PARSER/HTML")
@@ -22,8 +22,8 @@ println("🍺")
 
 # CONVERTER folder
 println("CONVERTER/MD")
-include("converter/markdown.jl") # 🚫 oct 12, 2018
+include("converter/markdown.jl") # ✅ oct 12, 2018
 println("🍺")
 println("CONVERTER/HTML")
-include("converter/html.jl")     # 🚫  oct 12, 2018
+include("converter/html.jl")     # ✅ oct 12, 2018
 println("🍺")
