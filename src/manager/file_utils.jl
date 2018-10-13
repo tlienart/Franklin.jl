@@ -66,8 +66,30 @@ function write_page(root, file, head, pg_foot, foot)
 end
 
 
-function process_file(case, fpair, clear_out_dir,
-                      head="", pg_foot="", foot="", t=0.)
+function process_file(case, fpair, args...)
+    try
+        process_file_err(case, fpair, args...)
+    catch err
+        rp = fpair.first
+        rp = rp[end-min(20, length(rp))+1 : end]
+        println("\n... error processing '$(fpair.second)' in ...$rp.\n Verify, then start judoc again...\n")
+        println(err.msg)
+        throw(ErrorException("jd-err"))
+    end
+end
+
+
+"""
+    proces_file_err(case, fpair, clear_out_dir, head, pg_foot, foot, t)
+
+Considers a source file which, depending on `case` could be a html file or
+a file in judoc markdown etc, located in a place described by `fpair`,
+processes it by converting it and adding appropriate header and footer and
+writes it to the appropriate place.
+It can throw an error which will be caught in `process_file(args...)`.
+"""
+function process_file_err(case, fpair, clear_out_dir,
+                          head="", pg_foot="", foot="", t=0.)
     if case == "md"
         write_page(fpair..., head, pg_foot, foot)
     elseif case == "html"

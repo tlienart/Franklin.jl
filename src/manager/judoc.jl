@@ -9,7 +9,7 @@ all markdown files to html and reproduce the same structure to an output dir.
 if file names have been changed etc to get rid of stale files.
 * `verb` whether to display things
 """
-function judoc(;single_pass=true, clear_out_dir=false, verb=true)
+function judoc(;single_pass=true, clear_out_dir=false, verb=true, port=8000)
 
     ###
     # . setting up:
@@ -61,9 +61,22 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
         end
         # looking at the rest of the files
         for (name, dict) ∈ watched, (fpair, t) ∈ dict
-            process_file(name, fpair, clear_out_dir,
-                         head, pg_foot, foot, t)
+            try
+                process_file(name, fpair, clear_out_dir,
+                             head, pg_foot, foot, t)
+            catch err
+                if isa(err, ErrorException)
+                    cleanup_process()
+                    return -1 # caught in `file_utils/process_file`
+                else
+                    println("An unexpected error caused JuDoc to stop. Check. The error message is printed below.\n\n")
+                    println(err.msg)
+                    cleanup_process()
+                    return -2
+                end
+            end
         end
+        return 0
     end
 
     ###
@@ -76,7 +89,8 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
     verb && print("Compiling the full folder once... ")
     # ---------------------------
     start = time()              #
-    jd_full()                   #
+    sig = jd_full()             #
+    sig < 0 && return sig       #
     verb && time_it_took(start) #
     # ---------------------------
     # variables useful when using continuous_checking
@@ -84,7 +98,8 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
     SLEEP = 0.1
     NCYCL = 20   # every NCYCL * SLEEP, directory is checked
     if !single_pass
-        println("Watching input folder... press CTRL+C to stop...\n")
+        println("Watching input folder... press CTRL+C to stop...")
+        println("... serving at http://localhost:$port ...")
         # this will go on until interrupted by the user (see catch)
         cntr = 1
         try while true
@@ -132,16 +147,22 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true)
     			sleep(SLEEP)
     		end # if mod(cntr, NCYCL)
             end # try while (same level as above, that's fine)
-        catch x
-        	if isa(x, InterruptException)
+        catch err
+        	if isa(err, InterruptException)
+                # this is the normal interruption (user pressing CTRL+C)
                 println("\nShutting down JuDoc. ✅")
+                rm(PID_FILE, force=true)
                 return 0
+            elseif isa(err, ErrorException)
+                # this an anormal but controlled interruption (error)
+                cleanup_process()
+                return -1 # caught in `file_utils/process_file`
             else
-                println("An error caused JuDoc to stop, this is usually caused by bad syntax used somewhere such as braces not properly closed. Check. The error message is printed below.\n\n")
-                println(x.msg)
-                # rem we don't fail by rethrowing otherwise the corresponding
-                # node process (browser-sync) doesn't get killed properly.
-                return -1
+                # this should not happen
+                println("An unexpected error caused JuDoc to stop. Check. The error message is printed below.\n\n")
+                println(err.msg)
+                cleanup_process()
+                return -2
             end
         end
     end # end if !single_pass
@@ -158,15 +179,23 @@ changes etc seen by the engine, `port` where to serve with browser-sync.
 """
 function serve(;clear=true, verb=false, port=8000)
     FOLDER_PATH[] = pwd()
-    # next line is such that when called from outside using
-    # `julia -e "using JuDoc; JuDoc.run()"` it interrupts nicely upon CTRL+C
-    ccall(:jl_exit_on_sigint, Nothing, (Cint,), 0)
     # start browser-sync, serving in 8000
-    run(`bash -c "browser-sync start -s -f $FOLDER_PATH --no-notify --logLevel silent --port $port &"`)
-    println("Serving at localhost:$port...")
+    run(`bash -c "browser-sync start -s -f $FOLDER_PATH --no-notify --logLevel silent --port $port --no-open & echo \$! > $PID_FILE"`)
     println("Starting the engine (give it 1-2s)...")
-    JuDoc.judoc(single_pass=false, verb=verb, clear_out_dir=clear);
+    JuDoc.judoc(single_pass=false, verb=verb, clear_out_dir=clear, port=port);
 end
+
+
+"""
+    cleanup_process()
+
+Kills the process started by `browser-sync`, this is needed in case JuDoc was
+stopped by an error rather than an interruption (CTRL+C) sent by the user.
+In that case, the node process corresponding to browser-sync is not terminated
+properly, this makes sure it gets cleaned up.
+"""
+cleanup_process() = isfile(PID_FILE) &&
+    (run(`bash -c "kill \$(cat $PID_FILE)"`); rm(PID_FILE))
 
 
 """

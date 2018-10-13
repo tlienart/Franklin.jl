@@ -90,11 +90,8 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
     !isrecursive && (JD_EQDICT[JD_EQDICT_COUNTER] = 0)
     # Tokenize
     tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
-    # Deactivate tokens within code blocks
+    # Deactivate tokens within code blocks and other escape blocks
     tokens = deactivate_blocks(tokens, MD_EXTRACT)
-    # Find div blocks, deactivate tokens within them
-    dblocks, tokens = find_md_ocblocks(tokens, :DIV,
-                            :DIV_OPEN => :DIV_CLOSE)
     # Find brace blocks, do not deactivate tokens within them
     bblocks, tokens = find_md_ocblocks(tokens, :LXB,
                             :LXB_OPEN => :LXB_CLOSE, deactivate=false)
@@ -104,8 +101,10 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
     # that the definitions appear "earlier" by marking the `.from` at 0
     lprelx = length(pre_lxdefs)
     (lprelx > 0) && (lxdefs = cat(pastdef!.(pre_lxdefs), lxdefs, dims=1))
-
-    # Find blocks to extract
+    # Find div blocks, deactivate tokens within them
+    dblocks, tokens = find_md_ocblocks(tokens, :DIV,
+                            :DIV_OPEN => :DIV_CLOSE)
+    # Find other blocks to extract/escape (e.g.: code blocks)
     xblocks, tokens = find_md_xblocks(tokens)
     # Find lxcoms
     lxcoms, tokens = find_md_lxcoms(tokens, lxdefs, bblocks)
