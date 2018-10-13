@@ -57,6 +57,8 @@ end
 OCBlock(name, ocpair) = OCBlock(name, ocpair,
     subs(str(ocpair.first), from(ocpair.first), to(ocpair.second)))
 
+otok(ocb::OCBlock) = ocb.ocpair.first
+ctok(ocb::OCBlock) = ocb.ocpair.second
 
 """
     content(ocb)
@@ -65,9 +67,7 @@ Return the content of an open-close block (`OCBlock`), for instance the content
 of a `{...}` block would be `...`.
 """
 function content(ocb::OCBlock)
-    # collect is necessary for Julia 0.7, not for 1.0
-    head, tail = lastindex.(collect(e.ss for e ∈ ocb.ocpair))
-    return chop(ocb.ss, head=head, tail=tail)
+    return subs(str(ocb.ss), to(otok(ocb))+1, from(ctok(ocb))-1)
 end
 
 

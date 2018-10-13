@@ -203,7 +203,7 @@ function convert_inter_html(interhtml::AbstractString,
         push!(pieces, convert_block(blocks2insert[i], lxcontext))
     end
     # store whatever is after the last JD_INSERT if anything
-    (head < strlen) && push!(pieces, subs(interhtml, head, strlen))
+    (head <= strlen) && push!(pieces, subs(interhtml, head, strlen))
     # return the full string
     return prod(pieces)
 end
