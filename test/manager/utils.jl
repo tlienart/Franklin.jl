@@ -19,7 +19,6 @@ write(temp_css, "some css")
 
 JuDoc.process_config()
 
-
 @testset "Prep outdir" begin # ✅ aug 15, 2018
 	JuDoc.prepare_output_dir()
 	@test isdir(JuDoc.JD_PATHS[:out])
@@ -36,6 +35,7 @@ end
 
 
 @testset "Scan dir" begin # ✅ aug 16, 2018
+	println("🐝 Testing file tracking...:")
 	# it also tests add_if_new_file and last
 	md_files = Dict{Pair{String, String}, Float64}()
 	html_files = empty(md_files)
@@ -110,4 +110,11 @@ rm(temp_index2)
 	</div></div>
 	    </body>
 	</html>"""
+end
+
+
+@testset "Safe procfile" begin
+	write(temp_index, "blah blah { blih etc")
+	println("🐝 Testing error message...:")
+	@test_throws ErrorException JuDoc.process_file("md", JuDoc.JD_PATHS[:in] => "index.md", false)
 end

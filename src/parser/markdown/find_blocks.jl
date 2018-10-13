@@ -1,33 +1,41 @@
 """
-    find_md_bblocks(tokens)
+    find_md_ocblocks(tokens, otoken, ctoken, deactivate)
 
-Find active open brace characters `{` and their matching closing braces. Return
-the list of such `bblocks` (braces blocks).
+Find active blocks between an opening token (`otoken`) and a closing token
+`ctoken`. These can be nested (e.g. braces). Return the list of such blocks. If
+`deactivate` is `true`, all the tokens within the block will be marked as
+inactive (for further, separate processing).
 """
-function find_md_bblocks(tokens::Vector{Token})
+function find_md_ocblocks(tokens::Vector{Token}, name::S, ocpair::Pair{S, S};
+                          deactivate=true) where S <: Symbol
     # number of tokens & active tokens
     ntokens = length(tokens)
     active_tokens = ones(Bool, length(tokens))
-    # storage for the blocks `{...}`
-    bblocks = Vector{Block}()
-    # look for tokens indicating an opening brace
+    # storage for the blocks
+    ocblocks = Vector{OCBlock}()
+    # go over active tokens check if there's an opening token, if so look for
+    # the closing one.
     for (i, τ) ∈ enumerate(tokens)
-        # only consider active open braces
-        (active_tokens[i] & (τ.name == :LX_BRACE_OPEN)) || continue
-        # inbalance keeps track of whether we've closed all braces (0) or not
-        inbalance = 1
-        # index for the closing brace: seek forward in list of active tokens
+        # only consider active
+        (active_tokens[i] & (τ.name == ocpair.first)) || continue
+        # inbalance ≥ 0, 0 if all opening tokens are closed
+        inbalance = 1 # we've seen an opening token
+        # index for the closing token
         j = i
         while !iszero(inbalance) & (j <= ntokens)
             j += 1
-            inbalance += bbalance(tokens[j])
+            inbalance += ocbalance(tokens[j], ocpair)
         end
-        (inbalance > 0) && error("I found at least one open curly brace '{' that is not closed properly. Verify.")
-        push!(bblocks, braces(subs(str(τ), from(τ), to(tokens[j]))))
-        # remove processed tokens
-        active_tokens[[i, j]] .= false
+        (inbalance > 0) && error("I found at least one opening token '$(ocpair.first)' that is not closed properly. Verify.")
+        push!(ocblocks, OCBlock(name, τ => tokens[j]))
+        # remove processed tokens and inner tokens if deactivate
+        if deactivate
+            active_tokens[i:j] .= false
+        else
+            active_tokens[[i, j]] .= false
+        end
     end
-    return bblocks, tokens[active_tokens]
+    return ocblocks, tokens[active_tokens]
 end
 
 
@@ -38,7 +46,7 @@ Find blocks of text that will be extracted (see `MD_EXTRACT`, `MD_MATHS`).
 Blocks are searched for in order, tokens that are contained in a extracted
 block are deactivated (unless it's a maths block in which case latex tokens are
 preserved). The function returns the list of blocks as well as a shrunken list
-of active tokens.
+of active tokens. These blocks cannot be nested.
 """
 function find_md_xblocks(tokens::Vector{Token})
     # storage for blocks to extract (we don't know how many will be retrieved)
@@ -53,9 +61,6 @@ function find_md_xblocks(tokens::Vector{Token})
             close_τ, bname = MD_EXTRACT[τ.name]
         elseif haskey(MD_MATHS, τ.name)
             close_τ, bname = MD_MATHS[τ.name]
-        elseif τ.name ∈ [:DIV_OPEN, :DIV_CLOSE]
-            push!(xblocks, τ)
-            continue
         else
             # ignore the token (does not announce an extract block)
             continue

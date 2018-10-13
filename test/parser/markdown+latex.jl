@@ -10,14 +10,16 @@
         """ * JuDoc.EOS
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
     tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
-    bblocks, tokens = JuDoc.find_md_bblocks(tokens)
+    dblocks, tokens = JuDoc.find_md_ocblocks(tokens, :DIV,
+                                :DIV_OPEN => :DIV_CLOSE)
+    bblocks, tokens = JuDoc.find_md_ocblocks(tokens, :LXB,
+                                :LXB_OPEN => :LXB_CLOSE, deactivate=false)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
 
+    @test dblocks[1].ss == "@@dname block @@"
     @test bblocks[1].ss == "{target}"
     @test xblocks[1].ss == "`code`"
-    @test xblocks[2].ss == "@@dname"
-    @test xblocks[3].ss == "@@"
-    @test xblocks[4].ss == "~~~\nescape block\n~~~"
+    @test xblocks[2].ss == "~~~\nescape block\n~~~"
 end
 
 
@@ -38,7 +40,8 @@ end
         """ * JuDoc.EOS
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
     tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
-    bblocks, tokens = JuDoc.find_md_bblocks(tokens)
+    bblocks, tokens = JuDoc.find_md_ocblocks(tokens, :LXB,
+                                :LXB_OPEN => :LXB_CLOSE, deactivate=false)
     lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
 
     @test lxdefs[1].name == "\\E"
@@ -71,7 +74,8 @@ end
         """ * JuDoc.EOS
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
     tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
-    bblocks, tokens = JuDoc.find_md_bblocks(tokens)
+    bblocks, tokens = JuDoc.find_md_ocblocks(tokens, :LXB,
+                                :LXB_OPEN => :LXB_CLOSE, deactivate=false)
     lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     @test lxdefs[1].name == "\\com"
     @test lxdefs[1].narg == 0
@@ -97,7 +101,10 @@ end
     # Tokenization and Markdown conversion
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
     tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
-    bblocks, tokens = JuDoc.find_md_bblocks(tokens)
+    dblocks, tokens = JuDoc.find_md_ocblocks(tokens, :DIV,
+                                :DIV_OPEN => :DIV_CLOSE)
+    bblocks, tokens = JuDoc.find_md_ocblocks(tokens, :LXB,
+                                :LXB_OPEN => :LXB_CLOSE, deactivate=false)
     lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
@@ -107,8 +114,7 @@ end
     @test lxcoms[2].ss == "\\comb{blah}"
 
     @test xblocks[1].name == :CODE_BLOCK
-    @test xblocks[2].name == :DIV_OPEN
-    @test xblocks[3].name == :DIV_CLOSE
+    @test JuDoc.content(dblocks[1]) == " inner part "
 end
 
 
@@ -124,7 +130,10 @@ end
 
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
     tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
-    bblocks, tokens = JuDoc.find_md_bblocks(tokens)
+    dblocks, tokens = JuDoc.find_md_ocblocks(tokens, :DIV,
+                                :DIV_OPEN => :DIV_CLOSE)
+    bblocks, tokens = JuDoc.find_md_ocblocks(tokens, :LXB,
+                                :LXB_OPEN => :LXB_CLOSE, deactivate=false)
     lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
 

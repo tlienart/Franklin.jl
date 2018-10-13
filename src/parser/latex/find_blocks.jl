@@ -7,7 +7,7 @@ The format is:
     \\newcommand{NAMING}[NARG]{DEFINING}
 where [NARG] is optional (see `LX_NARG_PAT`).
 """
-function find_md_lxdefs(tokens::Vector{Token}, bblocks::Vector{Block})
+function find_md_lxdefs(tokens::Vector{Token}, bblocks::Vector{OCBlock})
 
     lxdefs = Vector{LxDef}()
     active_tokens = ones(Bool, length(tokens))
@@ -43,11 +43,11 @@ function find_md_lxdefs(tokens::Vector{Token}, bblocks::Vector{Block})
         naming_braces = bblocks[k]
         defining_braces = bblocks[k+1]
         # try to find a valid command name in the first set of braces
-        matched = match(LX_NAME_PAT, braces_content(naming_braces))
+        matched = match(LX_NAME_PAT, content(naming_braces))
         isnothing(matched) && error("Invalid definition of a new command expected a command name of the form `\\command`.")
         # keep track of the command name, definition and where it stops
         lxname = matched.captures[1]
-        def = braces_content(defining_braces)
+        def = content(defining_braces)
         todef = to(defining_braces)
         # store the new latex command
         push!(lxdefs, LxDef(lxname, lxnarg, def, fromτ, todef))
@@ -95,7 +95,7 @@ end
 Find `\\command{arg1}{arg2}...` outside of `xblocks` and `lxdefs`.
 """
 function find_md_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
-                        bblocks::Vector{Block}, inmath=false, offset=0)
+                        bblocks::Vector{OCBlock}, inmath=false, offset=0)
 
     lxcoms = Vector{LxCom}()
     active_τ = ones(Bool, length(tokens))

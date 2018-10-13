@@ -10,12 +10,15 @@
 
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
     tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
-    bblocks, tokens = JuDoc.find_md_bblocks(tokens)
+    dblocks, tokens = JuDoc.find_md_ocblocks(tokens, :DIV,
+                                :DIV_OPEN => :DIV_CLOSE)
+    bblocks, tokens = JuDoc.find_md_ocblocks(tokens, :LXB,
+                                :LXB_OPEN => :LXB_CLOSE, deactivate=false)
     lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
-    blocks2insert = JuDoc.merge_blocks(xblocks, lxcoms)
+    blocks2insert = JuDoc.merge_blocks(dblocks, xblocks, lxcoms)
 
     inter_md = JuDoc.form_inter_md(st, blocks2insert, lxdefs)
     @test inter_md == "\n\nA list\n* ##JDINSERT## and ##JDINSERT##\n* ##JDINSERT## is a function\n* a last element\n"
@@ -39,12 +42,15 @@ end
         """
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
     tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
-    bblocks, tokens = JuDoc.find_md_bblocks(tokens)
+    dblocks, tokens = JuDoc.find_md_ocblocks(tokens, :DIV,
+                                :DIV_OPEN => :DIV_CLOSE)
+    bblocks, tokens = JuDoc.find_md_ocblocks(tokens, :LXB,
+                                :LXB_OPEN => :LXB_CLOSE, deactivate=false)
     lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
-    blocks2insert = JuDoc.merge_blocks(xblocks, lxcoms)
+    blocks2insert = JuDoc.merge_blocks(dblocks, xblocks, lxcoms)
 
     inter_md = JuDoc.form_inter_md(st, blocks2insert, lxdefs)
     @test inter_md == "##JDINSERT##\nfinally ⊙⊙𝛴⊙ and\n##JDINSERT##\ndone"
@@ -56,12 +62,15 @@ end
         \eqa{\sin^2(x)+\cos^2(x) &=& 1}""" * JuDoc.EOS
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
     tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
-    bblocks, tokens = JuDoc.find_md_bblocks(tokens)
+    dblocks, tokens = JuDoc.find_md_ocblocks(tokens, :DIV,
+                                :DIV_OPEN => :DIV_CLOSE)
+    bblocks, tokens = JuDoc.find_md_ocblocks(tokens, :LXB,
+                                :LXB_OPEN => :LXB_CLOSE, deactivate=false)
     lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
-    blocks2insert = JuDoc.merge_blocks(xblocks, lxcoms)
+    blocks2insert = JuDoc.merge_blocks(dblocks, xblocks, lxcoms)
 
     inter_md = JuDoc.form_inter_md(st, blocks2insert, lxdefs)
     @test inter_md == "ab\n##JDINSERT##"
@@ -85,7 +94,8 @@ end
 
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
     tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
-    bblocks, tokens = JuDoc.find_md_bblocks(tokens)
+    bblocks, tokens = JuDoc.find_md_ocblocks(tokens, :LXB,
+                            :LXB_OPEN => :LXB_CLOSE, deactivate=false)
     lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
@@ -111,7 +121,8 @@ end
         """ * JuDoc.EOS
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
     tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
-    bblocks, tokens = JuDoc.find_md_bblocks(tokens)
+    bblocks, tokens = JuDoc.find_md_ocblocks(tokens, :LXB,
+                            :LXB_OPEN => :LXB_CLOSE, deactivate=false)
     lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)

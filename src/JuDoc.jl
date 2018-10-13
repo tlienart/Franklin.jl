@@ -6,6 +6,7 @@ using Dates # see jd_vars
 # a number we don't expect to take over with the number of tokens etc...
 # basically acts as `Inf` with Int type (Int32 or Int64 is fine)
 const BIG_INT = 100_000_000
+const PID_FILE = ".__jdpid_tmp__"
 
 # PARSING
 include("parser/tokens.jl")
