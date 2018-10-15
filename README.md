@@ -16,7 +16,7 @@ To give an idea of the syntax, the source below renders to [this page](https://t
 for instance. If you like it, read on.
 
 <!-- =========== EXAMPLE =========== -->
-```md
+```markdown
 @def isdemo = true      <!-- these are page variables that are used to -->
 @def hascode = true     <!-- determine how the html should be rendered,  -->
 @def title = "Example"  <!-- e.g. what css sheets to include -->
