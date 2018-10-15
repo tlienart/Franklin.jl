@@ -27,7 +27,7 @@ The key objectives of JuDoc were to have something that:
 1. can be used by people who have little experience with webdev,
 1. is in Julia, is fast™ for local editing, and can be easily extended,
 1. generates all the HTML/CSS locally with the exception of maths and code rendering (via KaTeX and highlightjs respectively),
-1. generates pages that are *lightweight* and *load fast™*,
+1. generates pages that are *lightweight* and *load fast™* (no to the [bloated web](https://pxlnv.com/blog/bullshit-web/), [no no](http://idlewords.com/talks/website_obesity.htm)),
 1. generates pages that are easy to understand for non-web-experts.
 
 In particular, themes should refrain from using too much additional JavaScript or intricate CSS if possible.
