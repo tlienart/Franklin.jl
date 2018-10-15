@@ -4,7 +4,18 @@
 | :----: | :----: |
 | [![Build Status](https://travis-ci.org/tlienart/JuDoc.jl.svg?branch=master)](https://travis-ci.org/tlienart/JuDoc.jl) | [![codecov.io](http://codecov.io/github/tlienart/JuDoc.jl/coverage.svg?branch=master)](http://codecov.io/github/tlienart/JuDoc.jl?branch=master) |
 
-## What's this about?
+1. [What's this about](#about)
+    1. [Short example](#short-ex1)
+1. [Why?](#why)
+1. [Installation](#installation)
+    1. [The engine](#the-engine)
+    1. [Rendering](#rendering)
+    1. [Minifying](#minifying)
+1. [Getting started](#getting-started)
+    1. [Folder structure](#folder-structure)
+1. [Shortcuts](#shortcuts)
+
+## What's this about? <a name="about"></a>
 
 JuDoc is a simple static site generator (SSG) oriented towards technical blogging (code, maths, ...) and written in Julia.
 I use it to generate [my website](https://tlienart.github.io).
@@ -12,8 +23,10 @@ I use it to generate [my website](https://tlienart.github.io).
 It's basically the same as most SSG using Markdown as base syntax with extensions allowing LaTeX-like commands.
 Not just for maths (which is rendered using KaTeX) but also to define macros using `\newcommand{...}[...]{...}` as in LaTeX.
 
-To give an idea of the syntax, the source below renders to [this page](https://tlienart.github.io/pub/misc/judoc-example1.html).
-for instance. If you like it, read on.
+### Short example <a name="short-ex1"></a>
+
+To give an idea of the syntax, the source below renders to [this page](https://tlienart.github.io/pub/misc/judoc-example1.html) (open it in a new window to compare).
+If you like what you see, read on.
 
 <!-- =========== EXAMPLE =========== -->
 ```markdown
@@ -21,9 +34,9 @@ for instance. If you like it, read on.
 @def hascode = true     <!-- determine how the html should be rendered,  -->
 @def title = "Example"  <!-- e.g. what css sheets to include -->
 
-\newcommand{\R}{\mathbb R}      <!-- just like in LaTeX; you can use this -->
-\newcommand{\E}{\mathbb E}      <!-- for maths environment but not only -->
-\newcommand{\scal}[1]{\langle #1 \rangle} <!-- see further below -->
+\newcommand{\R}{\mathbb R}                <!-- just like in LaTeX; you can -->
+\newcommand{\E}{\mathbb E}                <!-- use this for maths but also -->
+\newcommand{\scal}[1]{\langle #1 \rangle} <!-- for things that are repeated -->
 
 # JuDoc Example
 
@@ -44,7 +57,7 @@ Something inside a div with div name "colbox-yellow"
 You can add figures, tables, links and code just as you would in GFM.
 For syntax highlighting, [highlight.js](https://highlightjs.org) is used by default.
 
-## Why?
+## Why? <a name="why"></a>
 
 Extending Markdown allows to define LaTeX-style commands for things that may
 appear many times in the current page (or in all your pages), for example let's
