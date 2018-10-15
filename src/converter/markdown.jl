@@ -2,9 +2,6 @@ const JD_INSERT = "##JDINSERT##"
 const PAT_JD_INSERT = Regex(JD_INSERT)
 const LEN_JD_INSERT = length(JD_INSERT)
 
-const JD_EQDICT = Dict{UInt, Int}()
-const JD_EQDICT_COUNTER = hash("__JD_EQDICT_COUNTER__")
-
 """
     md2html(ss, stripp)
 
@@ -87,7 +84,11 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
                     isrecursive=false, isconfig=false, has_mddefs=true)
 
     # container for equation and id
-    !isrecursive && (JD_EQDICT[JD_EQDICT_COUNTER] = 0)
+    if !isrecursive
+        def_LOC_VARS()
+        def_JD_LOC_EQDICT()
+        def_JD_LOC_BIBREFDICT()
+    end
     # Tokenize
     tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
     # Deactivate tokens within code blocks and other escape blocks
@@ -271,12 +272,12 @@ function convert_mathblock(β::Block, lxdefs::Vector{LxDef})
     if βn ∉ [:MATH_A, :MATH_I]
         # NOTE: in the future if allow equation tags, then will need an `if`
         # here and only increment if there's no tag. For now just use numbers.
-        JD_EQDICT[JD_EQDICT_COUNTER] += 1
+        JD_LOC_EQDICT[JD_LOC_EQDICT_COUNTER] += 1
         matched = match(r"\\label{(.*?)}", inner)
         if !isnothing(matched)
             name = hash(matched.captures[1])
             anchor = "<a name=\"$name\"></a>"
-            JD_EQDICT[name] = JD_EQDICT[JD_EQDICT_COUNTER]
+            JD_LOC_EQDICT[name] = JD_LOC_EQDICT[JD_LOC_EQDICT_COUNTER]
             inner = replace(inner, r"\\label{.*?}" => "")
         end
     end

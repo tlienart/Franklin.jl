@@ -47,9 +47,18 @@ const JD_GLOB_LXDEFS = Dict{String, LxDef}()
 
 def_GLOB_LXDEFS() = begin
     empty!(JD_GLOB_LXDEFS)
-    JD_GLOB_LXDEFS["\\eqref"] = LxDef("\\eqref", 1, SubString(""))
+    # for \eqref and \cite, see parser/latex/resolve_latex
+    JD_GLOB_LXDEFS["\\eqref"]    = LxDef("\\eqref",    1, SubString(""))
+    JD_GLOB_LXDEFS["\\cite"]     = LxDef("\\cite",     1, SubString(""))
+    JD_GLOB_LXDEFS["\\citet"]    = LxDef("\\citet",    1, SubString(""))
+    JD_GLOB_LXDEFS["\\citep"]    = LxDef("\\citep",    1, SubString(""))
+    JD_GLOB_LXDEFS["\\biblabel"] = LxDef("\\biblabel", 2, SubString(""))
 end
 
+
+#= =========================
+Convenience functions
+============================ =#
 
 """
     jd_date(d)
