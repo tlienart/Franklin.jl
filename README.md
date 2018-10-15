@@ -6,22 +6,24 @@
 
 ## What's this about?
 
-JuDoc is a simple static site generator (SSG) oriented towards technical blogging and written in Julia.
+JuDoc is a simple static site generator (SSG) oriented towards technical blogging (code, maths, ...) and written in Julia.
 I use it to generate [my website](https://tlienart.github.io).
 
-It's basically the same as most SSG using Markdown as base syntax but allowing extra stuff, in particular maths rendering via KaTeX and macro definition via LaTeX-like commands.
-The note below renders to [this page](https://tlienart.github.io/pub/misc/judoc-example1.html).
+It's basically the same as most SSG using Markdown as base syntax with extensions allowing LaTeX-like commands.
+Not just for maths (which is rendered using KaTeX) but also to define macros using `\newcommand{...}[...]{...}` as in LaTeX.
+
+To give an idea of the syntax, the source below renders to [this page](https://tlienart.github.io/pub/misc/judoc-example1.html).
 for instance. If you like it, read on.
 
 <!-- =========== EXAMPLE =========== -->
 ```md
-@def isdemo = true
-@def hascode = true
-@def title = "Example"
+@def isdemo = true      <!-- these are page variables that are used to -->
+@def hascode = true     <!-- determine how the html should be rendered,  -->
+@def title = "Example"  <!-- e.g. what css sheets to include -->
 
-\newcommand{\R}{\mathbb R}
-\newcommand{\E}{\mathbb E}
-\newcommand{\scal}[1]{\langle #1 \rangle}
+\newcommand{\R}{\mathbb R}      <!-- just like in LaTeX; you can use this -->
+\newcommand{\E}{\mathbb E}      <!-- for maths environment but not only -->
+\newcommand{\scal}[1]{\langle #1 \rangle} <!-- see further below -->
 
 # JuDoc Example
 
