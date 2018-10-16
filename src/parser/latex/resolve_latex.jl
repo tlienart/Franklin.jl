@@ -36,20 +36,15 @@ const JD_LOC_BIBREFDICT = Dict{UInt, String}()
 def_JD_LOC_BIBREFDICT() = empty!(JD_LOC_BIBREFDICT)
 
 
-# convenience constants
-const JDLE = JD_LOC_EQDICT
-const JDLB = JD_LOC_BIBREFDICT
-
-
 """
     form_biblabel(lxc)
 
 Given a `biblabel` command, update `JD_LOC_BIBREFDICT` to keep track of the
 reference so that it can be linked with a hyperreference.
 """
-function form_biblabel(lxc::LxCom)
-    JD_LOC_BIBREFDICT[hash(content(lxc.braces[1]))] = content(lxc.braces[2])
-    return "<a name=\"$(hash(content(lxc.braces[1])))\"></a>"
+function form_biblabel(λ::LxCom)
+    JD_LOC_BIBREFDICT[hash(strip(content(λ.braces[1])))] = content(λ.braces[2])
+    return "<a name=\"$(hash(content(λ.braces[1])))\"></a>"
 end
 
 
@@ -60,15 +55,20 @@ Given a latex command such as `\\eqref{abc}`, hash the reference (here `abc`),
 check if the given dictionary `d` has an entry corresponding to that hash
 and return the appropriate HTML for it.
 """
-function form_href(lxc::LxCom, d::Dict{UInt, <:Union{Int, String}};
-                    parens="("=>")", refclass="href")
+function form_href(lxc::LxCom, dname::String; parens="("=>")", class="href")
 
-    k = hash(content(lxc.braces[1]))
-    haskey(d, k) || return "(<b>??</b>)"
-    # construct the link with appropriate parens
-    link = "<a href=\"#$k\">$(parens.first)$(d[k])$(parens.second)</a>"
+    ct = content(lxc.braces[1]) # "r1, r2, r3"
+    refs = strip.(split(ct, ","))    # ["r1", "r2", "r3"]
+    hkeys = hash.(refs)
+    nkeys = length(hkeys)
+    # construct the partial link with appropriate parens, it will be
+    # resolved at the second pass (HTML pass) whence the introduction of {{..}}
+    # inner will be "{{href $dn $hr1}}, {{href $dn $hr2}}, {{href $dn $hr3}}"
+    # where $hr1 is the hash of r1 etc.
+    in = prod("{{href $dname $k}}$(ifelse(i < nkeys, ", ", ""))"
+                    for (i, k) ∈ enumerate(hkeys))
     # encapsulate in a span for potential css-styling
-    return "<span class=\"$refclass\">$link</span>"
+    return "<span class=\"$class\">$(parens.first)$in$(parens.second)</span>"
 end
 
 
@@ -79,10 +79,10 @@ Dictionary for special latex commands for which a specific replacement that
 refers to context is constructed.
 """
 const JD_COMS = Dict{String, Function}(
-    "\\eqref" => (λ -> form_href(λ, JDLE; refclass="eqref)")),
-    "\\cite"  => (λ -> form_href(λ, JDLB; parens=""=>"", refclass="bibref")),
-    "\\citet" => (λ -> form_href(λ, JDLB; parens=""=>"", refclass="bibref")),
-    "\\citep" => (λ -> form_href(λ, JDLB; refclass="bibref")),
+    "\\eqref" => (λ -> form_href(λ, "EQR";  class="eqref)")),
+    "\\cite"  => (λ -> form_href(λ, "BIBR"; parens=""=>"", class="bibref")),
+    "\\citet" => (λ -> form_href(λ, "BIBR"; parens=""=>"", class="bibref")),
+    "\\citep" => (λ -> form_href(λ, "BIBR"; class="bibref")),
     "\\biblabel" => form_biblabel,
 )
 

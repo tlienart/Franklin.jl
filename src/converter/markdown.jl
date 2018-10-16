@@ -240,6 +240,26 @@ convert_block(β::LxCom, lxc::LxContext) = resolve_lxcom(β, lxc.lxdefs)
 
 
 """
+    JD_MBLOCKS_PM
+
+Dictionary to keep track of how math blocks are fenced in standard LaTeX and
+how these fences need to be adapted for compatibility with KaTeX.
+Each tuple contains the number of characters to chop off the front and the back
+of the maths expression (fences) as well as the KaTeX-compatible replacement.
+For instance, `\$ ... \$` will become `\\( ... \\)` chopping off 1 character at
+the front and the back (`\$` sign).
+"""
+const JD_MBLOCKS_PM = Dict{Symbol, Tuple{Int, Int, String, String}}(
+    :MATH_A     => ( 1,  1, "\\(",  "\\)"),
+    :MATH_B     => ( 2,  2, "\$\$", "\$\$"),
+    :MATH_C     => ( 2,  2, "\\[",  "\\]"),
+    :MATH_ALIGN => (13, 11, "\$\$\\begin{aligned}", "\\end{aligned}\$\$"),
+    :MATH_EQA   => (16, 14, "\$\$\\begin{array}{c}", "\\end{array}\$\$"),
+    :MATH_I     => ( 4,  4, "", "")
+)
+
+
+"""
     convert_mathblock(β, s, lxdefs)
 
 Helper function for the math block case of `convert_block` taking the inside
@@ -247,35 +267,22 @@ of a math block, resolving any latex command in it and returning the correct
 syntax that KaTeX can render.
 """
 function convert_mathblock(β::Block, lxdefs::Vector{LxDef})
-    βn = β.name
-    # pm[1] and pm[2] indicate the number of characters to remove on left and
-    # right. So for example, a MATH_B is \$\$...\$\$ so two characters (\$\$)
-    # to remove on each side.
-    # pm[3] and pm[4] indicate what we have to write for KaTeX instead.
-    # pm[5] indicates whether it has a number or not
-    βn == :MATH_A     && (pm = ( 1,  1, "\\(",  "\\)"))
-    βn == :MATH_B     && (pm = ( 2,  2, "\$\$", "\$\$"))
-    βn == :MATH_C     && (pm = ( 2,  2, "\\[",  "\\]"))
-    βn == :MATH_ALIGN && (pm = (13, 11, "\$\$\\begin{aligned}", "\\end{aligned}\$\$"))
-    βn == :MATH_EQA   && (pm = (16, 14, "\$\$\\begin{array}{c}", "\\end{array}\$\$"))
-    # this is maths in a recursive parsing --> should not be
-    # bracketed with KaTeX markers but just plugged in.
-    βn == :MATH_I && (pm = (4, 4, "", ""))
 
-    # if none of the previous shortcut worked it's an unknown block
-    !(@isdefined pm) && error("Undefined math block name.")
+    pm = get(JD_MBLOCKS_PM, β.name) do
+        error("Unrecognised math block name.")
+    end
 
-    # otherwise we're good, convert the inside, decorate with KaTex and return
-    # also if the math block is a "display" one (with a number)
+    # convert the inside, decorate with KaTex and return, also act if
+    #if the math block is a "display" one (with a number)
     inner = chop(β.ss, head=pm[1], tail=pm[2])
     anchor = ""
-    if βn ∉ [:MATH_A, :MATH_I]
+    if β.name ∉ [:MATH_A, :MATH_I]
         # NOTE: in the future if allow equation tags, then will need an `if`
         # here and only increment if there's no tag. For now just use numbers.
         JD_LOC_EQDICT[JD_LOC_EQDICT_COUNTER] += 1
         matched = match(r"\\label{(.*?)}", inner)
         if !isnothing(matched)
-            name = hash(matched.captures[1])
+            name = hash(strip(matched.captures[1]))
             anchor = "<a name=\"$name\"></a>"
             JD_LOC_EQDICT[name] = JD_LOC_EQDICT[JD_LOC_EQDICT_COUNTER]
             inner = replace(inner, r"\\label{.*?}" => "")

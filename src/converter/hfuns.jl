@@ -40,3 +40,20 @@ function hfun_insert(params::Vector{String})
     end
     return replacement
 end
+
+
+function hfun_href(params::Vector{String})
+    length(params) == 2 || error("I found an {{href ...}} block and expected 2 parameters but got $(length(params)). Verify.")
+    replacement = "<b>??</b>"
+    dname, hkey = params[1], parse(UInt, params[2])
+    if params[1] == "EQR"
+        haskey(JD_LOC_EQDICT, hkey) || return replacement
+        replacement = "<a href=\"#$hkey\">$(JD_LOC_EQDICT[hkey])</a>"
+    elseif params[1] == "BIBR"
+        haskey(JD_LOC_BIBREFDICT, hkey) || return replacement
+        replacement = "<a href=\"#$hkey\">$(JD_LOC_BIBREFDICT[hkey])</a>"
+    else
+        @warn "Unknown dictionary name $dname in {{href ...}}. Ignoring"
+    end
+    return replacement
+end

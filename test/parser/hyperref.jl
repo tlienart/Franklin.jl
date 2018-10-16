@@ -11,7 +11,6 @@
        * \biblabel{bardenet17}{Bardenet et al., 2017} **Bardenet**, **Doucet** and **Holmes**: *On Markov Chain Monte Carlo Methods for Tall Data*, 2017.
     """ * JuDoc.EOS;
 
-    JuDoc.def_LOC_VARS()
     JuDoc.def_GLOB_VARS()
     JuDoc.def_GLOB_LXDEFS()
 
@@ -28,4 +27,6 @@
     @test JuDoc.JD_LOC_EQDICT[h1] == 1 # first equation
     @test JuDoc.JD_LOC_BIBREFDICT[h2] == "Amari and Douglas., 1998"
     @test JuDoc.JD_LOC_BIBREFDICT[h3] == "Bardenet et al., 2017"
+
+    h = JuDoc.convert_html(m)
 end
