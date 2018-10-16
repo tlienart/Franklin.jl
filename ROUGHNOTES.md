@@ -2,6 +2,10 @@
 
 This should eventually be compiled into proper documentation.
 
+## Exact replacement vs safe replacement
+
+* `!#1` vs `#1`
+
 ## Serving with browser-sync
 
 * using `browser-sync` in `JuDoc.serve` to launch a local server and refresh the page upon modification of the source file

@@ -1,7 +1,6 @@
 const td = mktempdir() * "/"
 JuDoc.FOLDER_PATH[] = td
 
-JuDoc.def_LOC_VARS()
 JuDoc.def_GLOB_VARS()
 JuDoc.def_GLOB_LXDEFS()
 

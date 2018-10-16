@@ -3,7 +3,7 @@
 
 Convert a judoc html string into a html string (i.e. replace {{ ... }} blocks).
 """
-function convert_html(hs::String, allvars::Dict)
+function convert_html(hs::String, allvars=Dict{String, Pair{Any, Tuple}}())
     # Tokenize
     tokens = find_tokens(hs, HTML_TOKENS, HTML_1C_TOKENS)
     tokens = deactivate_blocks(tokens, HTML_ESCAPE)
@@ -33,6 +33,18 @@ end
 
 
 """
+    JD_HBLOCKS
+
+Dictionary for special html functions.
+"""
+const JD_HBLOCKS = Dict{String, Function}(
+    "fill"   => ((π, ν) -> hfun_fill(π, ν)),
+    "insert" => ((π, _) -> hfun_insert(π)),
+    "href"   => ((π, _) -> hfun_href(π)),
+)
+
+
+"""
     convert_hblock(β, allvars)
 
 Helper function to process an individual block when the block is a `HFun`
@@ -40,8 +52,8 @@ such as `{{ fill author }}`.
 """
 function convert_hblock(β::HFun, allvars::Dict)
     fname = lowercase(β.fname)
-    fname == "fill"   && return hfun_fill(β.params, allvars)
-    fname == "insert" && return hfun_insert(β.params)
+    haskey(JD_HBLOCKS, fname) && return JD_HBLOCKS[fname](β.params, allvars)
+
     # unknown function
     @warn "I found a function block '{{$fname ...}}' but I don't recognise this function name. Ignoring."
     return β.ss
