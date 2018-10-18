@@ -159,3 +159,17 @@ end
     @test lxcoms[1].ss == "\\com" && JuDoc.getdef(lxcoms[1]) == "blah"
     @test lxcoms[2].ss == "\\comc{AA}{BB}"
 end
+
+
+@testset "Check deactivate" begin # see #70
+    st = raw"""
+           \newcommand{\scal}[1]{\left\langle#1\right\rangle}
+           \newcommand{\E}{\mathbb E}
+           exhibit A
+           $\scal{\mu, \nu} = \E[X]$
+           exhibit B
+           $\E[X] = \scal{\mu, \nu}$
+           end.""" * JuDoc.EOS
+    (m, _) = JuDoc.convert_md(st);
+    @test m == "<p>exhibit A \\(\\left\\langle \\mu, \\nu\\right\\rangle = \\mathbb E[X]\\) exhibit B \\(\\mathbb E[X] = \\left\\langle \\mu, \\nu\\right\\rangle\\) end.</p>\n"
+end
