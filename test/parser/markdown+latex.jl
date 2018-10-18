@@ -161,7 +161,7 @@ end
 end
 
 
-@testset "Check deactivate" begin # see #70
+@testset "Brace rge" begin # see #70
     st = raw"""
            \newcommand{\scal}[1]{\left\langle#1\right\rangle}
            \newcommand{\E}{\mathbb E}
