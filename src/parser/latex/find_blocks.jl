@@ -141,7 +141,7 @@ function find_md_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
             if isnothing(deactivate_until)
                 active_τ[i+1:end] .= false
             elseif deactivate_until > 1
-                active_τ[i+1:i+deactivate_until] .= false
+                active_τ[i+1:i+deactivate_until-1] .= false
             end
         end
     end
