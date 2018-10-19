@@ -211,27 +211,32 @@ function convert_inter_html(ihtml::AbstractString,
         # want to get rid of, potentially both happen simultaneously.
         # 1. <p>##JDINSERT##...
         # 2. ...##JDINSERT##</p>
-        # these cases can *only* happen out of the markdown to html conversion
-        # so there is no ambiguity possible, we *always* want to remove these.
-        δ1, δ2 = 0, 1 # keep track of the offset at the front / back
+        # exceptions,
+        # - list items introduce <li><p> and </p>\n</li> which shouldn't remove
+        # - end of doc introduces </p>(\n?) which should not be removed
+        δ1, δ2 = 0, 0 # keep track of the offset at the front / back
         # => case 1
+        cand10 = prevind(ihtml, m.offset, 7)
         cand1a = prevind(ihtml, m.offset, 3)
         cand1b = prevind(ihtml, m.offset)
-        if cand1a > 0 && ihtml[cand1a:cand1b] == "<p>"
+        hasli = cand10 > 0 && ihtml[cand10:cand1b] == "<li><p>"
+        if !(hasli) && cand1a > 0 && ihtml[cand1a:cand1b] == "<p>"
             δ1 = 3
         end
         # => case 2
         iend = m.offset + LEN_JD_INSERT
         cand2a = nextind(ihtml, iend)
         cand2b = nextind(ihtml, iend, 4) # length(</p>) is 4
-        if cand2b ≤ strlen && ihtml[cand2a:cand2b] == "</p>"
-            δ2 = 5
+        cand20 = nextind(ihtml, iend, 10)
+        hasli = cand20 ≤ strlen && ihtml[cand2a:cand20] == "</p>\n</li>";
+        if !(hasli) && cand2b ≤ strlen - 4 && ihtml[cand2a:cand2b] == "</p>"
+            δ2 = 4
         end
         # push whatever is at the front
         prev = prevind(ihtml, m.offset-δ1)
         (head ≤ prev) && push!(pieces, subs(ihtml, head:prev))
         # move head appropriately
-        head = iend + δ2
+        head = iend + δ2 + 1
         # store the resolved block
         push!(pieces, convert_block(blocks2insert[i], lxcontext))
     end
