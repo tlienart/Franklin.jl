@@ -1,6 +1,14 @@
-const JD_INSERT = "##JDINSERT##"
-const PAT_JD_INSERT = Regex(JD_INSERT)
-const LEN_JD_INSERT = length(JD_INSERT)
+"""
+    JD_INSERT
+
+String that is plugged as a placeholder of blocks that need further processing.
+The spaces allow to handle overzealous inclusion of `<p>...</p>` from the base
+Markdown to HTML conversion.
+"""
+const JD_INSERT = " ##JDINSERT## "
+const JD_INSERT_ = strip(JD_INSERT)
+const PAT_JD_INSERT = Regex(JD_INSERT_)
+const LEN_JD_INSERT = length(JD_INSERT_)
 
 """
     md2html(ss, stripp)
@@ -30,7 +38,7 @@ function form_inter_md(mds::AbstractString, xblocks::Vector{<:AbstractBlock},
                        lxdefs::Vector{LxDef})
 
     # final character is the EOS character
-    strlen = lastindex(mds) - 1
+    strlen = prevind(mds, lastindex(mds))
     pieces = Vector{AbstractString}()
 
     lenxb = length(xblocks)
@@ -69,7 +77,7 @@ function form_inter_md(mds::AbstractString, xblocks::Vector{<:AbstractBlock},
         xb_or_lx = (next_xblock < next_lxdef)
         next_idx = min(next_xblock, next_lxdef)
     end
-    # add final one if exists, chop EOS and adjust head
+    # add final one if exists
     (head <= strlen) && push!(pieces, subs(mds, head, strlen))
     return prod(pieces)
 end
@@ -186,25 +194,53 @@ end
 Take a partial markdown string with the `JD_INSERT` marker and plug in the
 appropriately processed block.
 """
-function convert_inter_html(interhtml::AbstractString,
+function convert_inter_html(ihtml::AbstractString,
                             blocks2insert::Vector{<:AbstractBlock},
                             lxcontext::LxContext)
 
     # Find the JD_INSERT indicators
-    allmatches = collect(eachmatch(PAT_JD_INSERT, interhtml))
+    allmatches = collect(eachmatch(PAT_JD_INSERT, ihtml))
     pieces = Vector{AbstractString}()
-    strlen = lastindex(interhtml)
+    strlen = lastindex(ihtml)
     # construct the pieces of the final html in order, gradually processing
     # the blocks to insert.
     head = 1
     for (i, m) ∈ enumerate(allmatches)
-        (head < m.offset) && push!(pieces, subs(interhtml, head, m.offset-1))
-        head = m.offset + LEN_JD_INSERT
+        # two cases can happen based on whitespaces around an insertion that we
+        # want to get rid of, potentially both happen simultaneously.
+        # 1. <p>##JDINSERT##...
+        # 2. ...##JDINSERT##</p>
+        # exceptions,
+        # - list items introduce <li><p> and </p>\n</li> which shouldn't remove
+        # - end of doc introduces </p>(\n?) which should not be removed
+        δ1, δ2 = 0, 0 # keep track of the offset at the front / back
+        # => case 1
+        cand10 = prevind(ihtml, m.offset, 7)
+        cand1a = prevind(ihtml, m.offset, 3)
+        cand1b = prevind(ihtml, m.offset)
+        hasli = cand10 > 0 && ihtml[cand10:cand1b] == "<li><p>"
+        if !(hasli) && cand1a > 0 && ihtml[cand1a:cand1b] == "<p>"
+            δ1 = 3
+        end
+        # => case 2
+        iend = m.offset + LEN_JD_INSERT
+        cand2a = nextind(ihtml, iend)
+        cand2b = nextind(ihtml, iend, 4) # length(</p>) is 4
+        cand20 = nextind(ihtml, iend, 10)
+        hasli = cand20 ≤ strlen && ihtml[cand2a:cand20] == "</p>\n</li>";
+        if !(hasli) && cand2b ≤ strlen - 4 && ihtml[cand2a:cand2b] == "</p>"
+            δ2 = 4
+        end
+        # push whatever is at the front
+        prev = prevind(ihtml, m.offset-δ1)
+        (head ≤ prev) && push!(pieces, subs(ihtml, head:prev))
+        # move head appropriately
+        head = iend + δ2 + 1
         # store the resolved block
         push!(pieces, convert_block(blocks2insert[i], lxcontext))
     end
     # store whatever is after the last JD_INSERT if anything
-    (head <= strlen) && push!(pieces, subs(interhtml, head, strlen))
+    (head ≤ strlen) && push!(pieces, subs(ihtml, head:strlen))
     # return the full string
     return prod(pieces)
 end

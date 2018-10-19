@@ -11,7 +11,7 @@ println("🍺")
 
 # PARSER folder
 println("PARSER/MD+LX")
-include("parser/markdown+latex.jl") # ✅  oct 12, 2018
+include("parser/markdown+latex.jl") # ✅  oct 19, 2018
 include("parser/hyperref.jl")       # ✅  oct 15, 2018
 println("🍺")
 println("PARSER/HTML")

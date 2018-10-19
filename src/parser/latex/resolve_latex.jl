@@ -120,7 +120,7 @@ function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef}, inmath::Bool=false)
     partial = ifelse(inmath, mathenv(partial), partial) * EOS
 
     # reprocess (we don't care about jd_vars=nothing)
-    plug, _ = convert_md(partial, lxdefs, isrecursive=true, isconfig=false,
-                         has_mddefs=false)
+    plug, _ = convert_md(partial, lxdefs, isrecursive=true,
+                         isconfig=false, has_mddefs=false)
     return plug
 end

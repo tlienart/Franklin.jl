@@ -43,7 +43,7 @@ function find_tokens(str::AbstractString, tokens_dict::Dict,
                 See https://docs.julialang.org/en/stable/manual/strings/
                 =#
                 if steps > 0 # exact match of a given fixed pattern
-                    endchar_idx = head_idx + steps
+                    endchar_idx = nextind(str, head_idx, steps)
                     endchar_idx > EOS_idx && continue
                     stack = subs(str, head_idx, endchar_idx)
                     if λ(stack)

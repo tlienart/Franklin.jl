@@ -21,9 +21,9 @@
     blocks2insert = JuDoc.merge_blocks(dblocks, xblocks, lxcoms)
 
     inter_md = JuDoc.form_inter_md(st, blocks2insert, lxdefs)
-    @test inter_md == "\n\nA list\n* ##JDINSERT## and ##JDINSERT##\n* ##JDINSERT## is a function\n* a last element\n"
+    @test inter_md == "\n\nA list\n*  ##JDINSERT##  and  ##JDINSERT## \n*  ##JDINSERT##  is a function\n* a last element\n"
     inter_html = JuDoc.md2html(inter_md)
-    @test inter_html == "<p>A list</p>\n<ul>\n<li><p>##JDINSERT## and ##JDINSERT##</p>\n</li>\n<li><p>##JDINSERT## is a function</p>\n</li>\n<li><p>a last element</p>\n</li>\n</ul>\n"
+    @test inter_html == "<p>A list</p>\n<ul>\n<li><p>##JDINSERT##  and  ##JDINSERT## </p>\n</li>\n<li><p>##JDINSERT##  is a function</p>\n</li>\n<li><p>a last element</p>\n</li>\n</ul>\n"
 end
 
 
@@ -53,7 +53,7 @@ end
     blocks2insert = JuDoc.merge_blocks(dblocks, xblocks, lxcoms)
 
     inter_md = JuDoc.form_inter_md(st, blocks2insert, lxdefs)
-    @test inter_md == "##JDINSERT##\nfinally ⊙⊙𝛴⊙ and\n##JDINSERT##\ndone"
+    @test inter_md == " ##JDINSERT## \nfinally ⊙⊙𝛴⊙ and\n ##JDINSERT## \ndone"
 end
 
 
@@ -73,12 +73,12 @@ end
     blocks2insert = JuDoc.merge_blocks(dblocks, xblocks, lxcoms)
 
     inter_md = JuDoc.form_inter_md(st, blocks2insert, lxdefs)
-    @test inter_md == "ab\n##JDINSERT##"
+    @test inter_md == "ab\n ##JDINSERT## "
 
     inter_html = JuDoc.md2html(inter_md)
     lxcontext = JuDoc.LxContext(lxcoms, lxdefs, bblocks)
     hstring = JuDoc.convert_inter_html(inter_html, blocks2insert, lxcontext)
-    @test hstring == "<p>ab \$\$\\begin{array}{c} \\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\$\$</p>\n"
+    @test hstring == "<p>ab  \$\$\\begin{array}{c} \\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\$\$</p>\n"
 end
 
 
@@ -103,13 +103,13 @@ end
     blocks2insert = JuDoc.merge_blocks(xblocks, lxcoms)
 
     inter_md = JuDoc.form_inter_md(st, blocks2insert, lxdefs)
-    @test inter_md == "text A1 text A2 ##JDINSERT## and\n##JDINSERT##\n text C1 ##JDINSERT## text C2\n then ##JDINSERT##.\n"
+    @test inter_md == "text A1 text A2  ##JDINSERT##  and\n ##JDINSERT## \n text C1  ##JDINSERT##  text C2\n then  ##JDINSERT## .\n"
 
     inter_html = JuDoc.md2html(inter_md)
-    @test inter_html == "<p>text A1 text A2 ##JDINSERT## and ##JDINSERT##  text C1 ##JDINSERT## text C2  then ##JDINSERT##.</p>\n"
+    @test inter_html == "<p>text A1 text A2  ##JDINSERT##  and  ##JDINSERT##   text C1  ##JDINSERT##  text C2  then  ##JDINSERT## .</p>\n"
     lxcontext = JuDoc.LxContext(lxcoms, lxdefs, bblocks)
     hstring = JuDoc.convert_inter_html(inter_html, blocks2insert, lxcontext)
-    @test hstring == "<p>text A1 text A2 blah and \nescape B1\n  text C1 \\(\\mathrm{ b}\\) text C2  then part1: AA and part2: BB.</p>\n"
+    @test hstring == "<p>text A1 text A2  blah and  \nescape B1\n  text C1  \\(\\mathrm{ b}\\) text C2  then  part1: AA and part2: BB.</p>\n"
 end
 
 
@@ -134,8 +134,8 @@ end
     lxcontext = JuDoc.LxContext(lxcoms, lxdefs, bblocks)
     hstring = JuDoc.convert_inter_html(inter_html, blocks2insert, lxcontext)
 
-    @test inter_md == "\n\nThen ##JDINSERT##.\n"
-    @test hstring == "<p>Then hello   auth1, goodbye  auth1,  auth2&#33;.</p>\n"
+    @test inter_md == "\n\nThen  ##JDINSERT## .\n"
+    @test hstring == "<p>Then  hello   auth1, goodbye  auth1,  auth2&#33;.</p>\n"
 end
 
 
@@ -149,7 +149,7 @@ end
         """ * JuDoc.EOS
     m, _ = JuDoc.convert_md(st)
 
-    @test m == "<p>Then something like \$\$\\begin{array}{c}  \\mathbb E\\left[ f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R \\end{array}\$\$</p>\n"
+    @test m == "<p>Then something like  \$\$\\begin{array}{c}  \\mathbb E\\left[ f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R \\end{array}\$\$</p>\n"
 end
 
 
@@ -170,5 +170,50 @@ end
     @test JuDoc.JD_LOC_EQDICT[JuDoc.JD_LOC_EQDICT_COUNTER] == 3
     @test JuDoc.JD_LOC_EQDICT[hash("eq:a trivial one")] == 2
     @test JuDoc.JD_LOC_EQDICT[hash("beyond hope")] == 3
-    m == "<p>Then something like \$\$\\begin{array}{c}  \\mathbb E\\left[ f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R\\end{array}\$\$ and then <a name=\"$(hash("eq: a trivial one"))\"></a>\$\$\\begin{array}{c}  1+1 &=& 2 \\end{array}\$\$ but further <a name=\"$(hash("beyond hope"))\"></a>\$\$\\begin{array}{c}  1 &=& 1 \\end{array}\$\$ and finally a <span class=\"eqref\"><a href=\"#$(hash("eq: a trivial one"))\">(2)</a></span> and maybe <span class=\"eqref\"><a href=\"#$(hash("beyond hope"))\">(3)</a></span>.</p>\n"
+
+    h1 = hash("eq:a trivial one")
+    h2 = hash("beyond hope")
+
+    m == "<p>Then something like  \$\$\\begin{array}{c}  \\mathbb E\\left[ f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R\\end{array}\$\$ and then  <a name=\"$h1\"></a>\$\$\\begin{array}{c}  1+1 &=&2 \\end{array}\$\$ but further  <a name=\"$h2\"></a>\$\$\\begin{array}{c}  1 &=& 1 \\end{array}\$\$ and finally a  <span class=\"eqref)\">({{href EQR $h1}})</span> and maybe  <span class=\"eqref)\">({{href EQR $h2}})</span>.</p>\n"
+end
+
+
+@testset "Insert" begin # see also #65
+    st = raw"""
+        \newcommand{\com}[1]{⭒!#1⭒}
+        abc\com{A}\com{B}def.
+        """ * JuDoc.EOS
+    (m, _) = JuDoc.convert_md(st)
+    @test m == "<p>abc ⭒A⭒ ⭒B⭒def.</p>\n"
+
+    st = raw"""
+        \newcommand{\com}[1]{⭒!#1⭒}
+        abc
+
+        \com{A}\com{B}
+
+        def.
+        """ * JuDoc.EOS
+    (m, _) = JuDoc.convert_md(st)
+    @test m == "<p>abc</p>\n⭒A⭒ ⭒B⭒\n<p>def.</p>\n"
+
+    st = raw"""
+        \newcommand{\com}[1]{⭒!#1⭒}
+        abc
+
+        \com{A}
+
+        def.
+        """ * JuDoc.EOS
+    (m, _) = JuDoc.convert_md(st)
+    @test m == "<p>abc</p>\n⭒A⭒\n<p>def.</p>\n"
+
+    st = raw"""
+        \newcommand{\com}[1]{†!#1†}
+        blah \com{a}
+        * \com{aaa} tt
+        * ss \com{bbb}
+        """ * JuDoc.EOS
+    (m, _) = JuDoc.convert_md(st)
+    @test m == "<p>blah  †a†\n<ul>\n<li><p>†aaa† tt</p>\n</li>\n<li><p>ss  †bbb†</p>\n</li>\n</ul>\n"
 end

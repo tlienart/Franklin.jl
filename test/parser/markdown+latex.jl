@@ -170,6 +170,6 @@ end
            exhibit B
            $\E[X] = \scal{\mu, \nu}$
            end.""" * JuDoc.EOS
-    (m, _) = JuDoc.convert_md(st);
-    @test m == "<p>exhibit A \\(\\left\\langle \\mu, \\nu\\right\\rangle = \\mathbb E[X]\\) exhibit B \\(\\mathbb E[X] = \\left\\langle \\mu, \\nu\\right\\rangle\\) end.</p>\n"
+    (m, _) = JuDoc.convert_md(st)
+    @test m == "<p>exhibit A  \\(\\left\\langle \\mu, \\nu\\right\\rangle = \\mathbb E[X]\\) exhibit B  \\(\\mathbb E[X] = \\left\\langle \\mu, \\nu\\right\\rangle\\) end.</p>\n"
 end
