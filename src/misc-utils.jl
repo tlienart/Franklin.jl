@@ -5,7 +5,9 @@
     str(s)
 
 Returns the string corresponding to `s`, `s` itself if it is a string, or the
-parent string if `s` is a substring. This does not allocate.
+parent string if `s` is a substring.
+
+DEVNOTE: this does not allocate.
 """
 str(s::String) = s
 str(s::SubString) = s.string
@@ -16,8 +18,10 @@ str(s::SubString) = s.string
     subs(s, from)
     subs(s, range)
 
-Convenience functions to take a substring of a string. This only allocates for
-the creation of a substring object (i.e. extremely little).
+Convenience functions to take a substring of a string.
+
+DEVNOTE: this only allocates for the creation of a substring object (i.e.
+extremely little).
 """
 subs(s::AbstractString, from::Int, to::Int) = SubString(s, from, to)
 subs(s::AbstractString, from::Int) = subs(s, from, from)
