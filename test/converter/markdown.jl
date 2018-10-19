@@ -172,3 +172,35 @@ end
     @test JuDoc.JD_LOC_EQDICT[hash("beyond hope")] == 3
     m == "<p>Then something like \$\$\\begin{array}{c}  \\mathbb E\\left[ f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R\\end{array}\$\$ and then <a name=\"$(hash("eq: a trivial one"))\"></a>\$\$\\begin{array}{c}  1+1 &=& 2 \\end{array}\$\$ but further <a name=\"$(hash("beyond hope"))\"></a>\$\$\\begin{array}{c}  1 &=& 1 \\end{array}\$\$ and finally a <span class=\"eqref\"><a href=\"#$(hash("eq: a trivial one"))\">(2)</a></span> and maybe <span class=\"eqref\"><a href=\"#$(hash("beyond hope"))\">(3)</a></span>.</p>\n"
 end
+
+
+@testset "Insert" begin # see also #65
+    st = raw"""
+        \newcommand{\com}[1]{⭒!#1⭒}
+        abc\com{A}\com{B}def.
+        """ * JuDoc.EOS
+    (m, _) = JuDoc.convert_md(st)
+    @test m == "<p>abc ⭒A⭒ ⭒B⭒def.</p>\n"
+
+    st = raw"""
+        \newcommand{\com}[1]{⭒!#1⭒}
+        abc
+
+        \com{A}\com{B}
+
+        def.
+        """ * JuDoc.EOS
+    (m, _) = JuDoc.convert_md(st)
+    @test m == "<p>abc</p>\n⭒A⭒ ⭒B⭒\n<p>def.</p>\n"
+
+    st = raw"""
+        \newcommand{\com}[1]{⭒!#1⭒}
+        abc
+
+        \com{A}
+
+        def.
+        """ * JuDoc.EOS
+    (m, _) = JuDoc.convert_md(st)
+    @test m == "<p>abc</p>\n⭒A⭒\n<p>def.</p>\n"
+end

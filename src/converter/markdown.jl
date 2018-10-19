@@ -1,6 +1,14 @@
-const JD_INSERT = "##JDINSERT##"
-const PAT_JD_INSERT = Regex(JD_INSERT)
-const LEN_JD_INSERT = length(JD_INSERT)
+"""
+    JD_INSERT
+
+String that is plugged as a placeholder of blocks that need further processing.
+The spaces allow to handle overzealous inclusion of `<p>...</p>` from the base
+Markdown to HTML conversion.
+"""
+const JD_INSERT = " ##JDINSERT## "
+const JD_INSERT_ = strip(JD_INSERT)
+const PAT_JD_INSERT = Regex(JD_INSERT_)
+const LEN_JD_INSERT = length(JD_INSERT_)
 
 """
     md2html(ss, stripp)
@@ -30,7 +38,7 @@ function form_inter_md(mds::AbstractString, xblocks::Vector{<:AbstractBlock},
                        lxdefs::Vector{LxDef})
 
     # final character is the EOS character
-    strlen = lastindex(mds) - 1
+    strlen = prevind(mds, lastindex(mds))
     pieces = Vector{AbstractString}()
 
     lenxb = length(xblocks)
@@ -69,7 +77,7 @@ function form_inter_md(mds::AbstractString, xblocks::Vector{<:AbstractBlock},
         xb_or_lx = (next_xblock < next_lxdef)
         next_idx = min(next_xblock, next_lxdef)
     end
-    # add final one if exists, chop EOS and adjust head
+    # add final one if exists
     (head <= strlen) && push!(pieces, subs(mds, head, strlen))
     return prod(pieces)
 end
@@ -199,22 +207,36 @@ function convert_inter_html(ihtml::AbstractString,
     # the blocks to insert.
     head = 1
     for (i, m) ∈ enumerate(allmatches)
-        # check whether there may be a <p> directly preceding the insertion,
-        # i.e. the case where <p>##JDINSERT##</p>.
-        # length("<p>") = 3, length("</p>") = 4
-        δ = 0
-        idx_after = m.offset + LEN_JD_INSERT
-        if m.offset > 3 && idx_after < strlen - 3 &&
-            ihtml[(m.offset-3):(idx_after+3)] == "<p>"*JD_INSERT*"</p>"
-            δ = 3
+        # two cases can happen based on whitespaces around an insertion that we
+        # want to get rid of, potentially both happen simultaneously.
+        # 1. <p>##JDINSERT##...
+        # 2. ...##JDINSERT##</p>
+        # these cases can *only* happen out of the markdown to html conversion
+        # so there is no ambiguity possible, we *always* want to remove these.
+        δ1, δ2 = 0, 1 # keep track of the offset at the front / back
+        # => case 1
+        cand1a = prevind(ihtml, m.offset, 3)
+        cand1b = prevind(ihtml, m.offset)
+        if cand1a > 0 && ihtml[cand1a:cand1b] == "<p>"
+            δ1 = 3
         end
-        (head < m.offset-δ) && push!(pieces, subs(ihtml, head:m.offset-δ-1))
-        head = m.offset + LEN_JD_INSERT + δ + 1
+        # => case 2
+        iend = m.offset + LEN_JD_INSERT
+        cand2a = nextind(ihtml, iend)
+        cand2b = nextind(ihtml, iend, 4) # length(</p>) is 4
+        if cand2b ≤ strlen && ihtml[cand2a:cand2b] == "</p>"
+            δ2 = 5
+        end
+        # push whatever is at the front
+        prev = prevind(ihtml, m.offset-δ1)
+        (head ≤ prev) && push!(pieces, subs(ihtml, head:prev))
+        # move head appropriately
+        head = iend + δ2
         # store the resolved block
         push!(pieces, convert_block(blocks2insert[i], lxcontext))
     end
     # store whatever is after the last JD_INSERT if anything
-    (head <= strlen) && push!(pieces, subs(ihtml, head, strlen))
+    (head ≤ strlen) && push!(pieces, subs(ihtml, head:strlen))
     # return the full string
     return prod(pieces)
 end

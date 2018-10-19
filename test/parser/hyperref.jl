@@ -31,7 +31,7 @@
     h = JuDoc.convert_html(m)
 
     @test occursin("<a name=\"$h1\"></a>\$\$ x = x \$\$", h)
-    @test occursin("<li><p><a name=\"$h2\"></a> <strong>Amari</strong> and <strong>Douglas</strong>: <em>Why Natural Gradient</em>, 1998.</p>\n</li>", h)
+    @test occursin("<li><a name=\"$h2\"></a> <strong>Amari</strong> and <strong>Douglas</strong>: <em>Why Natural Gradient</em>, 1998.</p>\n</li>", h)
     @test occursin("<li><p><a name=\"$h3\"></a> <strong>Bardenet</strong>, <strong>Doucet</strong> and <strong>Holmes</strong>: <em>On Markov Chain Monte Carlo Methods for Tall Data</em>, 2017.</p>\n</li>", h)
 
     @test occursin("<span class=\"eqref)\">(<a href=\"#$h1\">1</a>)</span>", h)

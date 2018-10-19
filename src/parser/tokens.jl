@@ -67,7 +67,8 @@ Return the content of an open-close block (`OCBlock`), for instance the content
 of a `{...}` block would be `...`.
 """
 function content(ocb::OCBlock)
-    return subs(str(ocb.ss), to(otok(ocb))+1, from(ctok(ocb))-1)
+    s = str(ocb.ss)
+    return subs(s, nextind(s, to(otok(ocb))), prevind(s, from(ctok(ocb))))
 end
 
 
