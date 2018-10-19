@@ -187,25 +187,34 @@ end
 Take a partial markdown string with the `JD_INSERT` marker and plug in the
 appropriately processed block.
 """
-function convert_inter_html(interhtml::AbstractString,
+function convert_inter_html(ihtml::AbstractString,
                             blocks2insert::Vector{<:AbstractBlock},
                             lxcontext::LxContext)
 
     # Find the JD_INSERT indicators
-    allmatches = collect(eachmatch(PAT_JD_INSERT, interhtml))
+    allmatches = collect(eachmatch(PAT_JD_INSERT, ihtml))
     pieces = Vector{AbstractString}()
-    strlen = lastindex(interhtml)
+    strlen = lastindex(ihtml)
     # construct the pieces of the final html in order, gradually processing
     # the blocks to insert.
     head = 1
     for (i, m) ∈ enumerate(allmatches)
-        (head < m.offset) && push!(pieces, subs(interhtml, head, m.offset-1))
-        head = m.offset + LEN_JD_INSERT
+        # check whether there may be a <p> directly preceding the insertion,
+        # i.e. the case where <p>##JDINSERT##</p>.
+        # length("<p>") = 3, length("</p>") = 4
+        δ = 0
+        idx_after = m.offset + LEN_JD_INSERT
+        if m.offset > 3 && idx_after < strlen - 3 &&
+            ihtml[(m.offset-3):(idx_after+3)] == "<p>"*JD_INSERT*"</p>"
+            δ = 3
+        end
+        (head < m.offset-δ) && push!(pieces, subs(ihtml, head:m.offset-δ-1))
+        head = m.offset + LEN_JD_INSERT + δ + 1
         # store the resolved block
         push!(pieces, convert_block(blocks2insert[i], lxcontext))
     end
     # store whatever is after the last JD_INSERT if anything
-    (head <= strlen) && push!(pieces, subs(interhtml, head, strlen))
+    (head <= strlen) && push!(pieces, subs(ihtml, head, strlen))
     # return the full string
     return prod(pieces)
 end

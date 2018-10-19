@@ -70,7 +70,7 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true, port=8000)
                     return -1 # caught in `file_utils/process_file`
                 else
                     println("An unexpected error caused JuDoc to stop. Check. The error message is printed below.\n\n")
-                    println(err.msg)
+                    @show err
                     cleanup_process()
                     return -2
                 end
@@ -158,9 +158,8 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true, port=8000)
                 cleanup_process()
                 return -1 # caught in `file_utils/process_file`
             else
-                # this should not happen
-                println("An unexpected error caused JuDoc to stop. Check. The error message is printed below.\n\n")
-                println(err.msg)
+                println("An unexpected error caused JuDoc to stop. Check. The error is shown below.\n\n")
+                @show err
                 cleanup_process()
                 return -2
             end
