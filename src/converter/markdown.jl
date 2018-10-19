@@ -89,8 +89,7 @@ end
 Convert a judoc markdown file into a judoc html.
 """
 function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
-                    isrecursive=false, isconfig=false, has_mddefs=true,
-                    isinlatex=false)
+                    isrecursive=false, isconfig=false, has_mddefs=true)
 
     # container for equation and id
     if !isrecursive
@@ -147,7 +146,7 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
 
     # form intermediate markdown + html
     inter_md = form_inter_md(mds, blocks2insert, lxdefs)
-    inter_html = md2html(inter_md, isinlatex)
+    inter_html = md2html(inter_md, isrecursive)
 
     # plug resolved blocks in partial html to form the final html
     lxcontext = LxContext(lxcoms, lxdefs, bblocks)
