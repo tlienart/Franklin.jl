@@ -1,5 +1,5 @@
 """
-    find_md_ocblocks(tokens, otoken, ctoken, deactivate)
+    find_md_ocblocks(tokens, otoken, ctoken; deactivate, nestable)
 
 Find active blocks between an opening token (`otoken`) and a closing token
 `ctoken`. These can be nested (e.g. braces). Return the list of such blocks. If
@@ -7,7 +7,7 @@ Find active blocks between an opening token (`otoken`) and a closing token
 inactive (for further, separate processing).
 """
 function find_md_ocblocks(tokens::Vector{Token}, name::S, ocpair::Pair{S, S};
-                          deactivate=true) where S <: Symbol
+                          deactivate=true, nestable=true) where S <: Symbol
     # number of tokens & active tokens
     ntokens = length(tokens)
     active_tokens = ones(Bool, length(tokens))
@@ -18,15 +18,23 @@ function find_md_ocblocks(tokens::Vector{Token}, name::S, ocpair::Pair{S, S};
     for (i, τ) ∈ enumerate(tokens)
         # only consider active
         (active_tokens[i] & (τ.name == ocpair.first)) || continue
-        # inbalance ≥ 0, 0 if all opening tokens are closed
-        inbalance = 1 # we've seen an opening token
-        # index for the closing token
-        j = i
-        while !iszero(inbalance) & (j <= ntokens)
-            j += 1
-            inbalance += ocbalance(tokens[j], ocpair)
+        # if nestable, need to keep track of the balance
+        if nestable
+            # inbalance ≥ 0, 0 if all opening tokens are closed
+            inbalance = 1 # we've seen an opening token
+            # index for the closing token
+            j = i
+            while !iszero(inbalance) & (j <= ntokens)
+                j += 1
+                inbalance += ocbalance(tokens[j], ocpair)
+            end
+            (inbalance > 0) && error("I found at least one opening token '$(ocpair.first)' that is not closed properly. Verify.")
+        else
+            # seek forward to find the first closing token
+            j = findfirst(cτ -> (cτ.name == ocpair.second), tokens[i+1:end])
+            # error if no closing token is found
+            isnothing(j) && error("Found the opening token '$(τ.name)' but not the corresponding closing token. Verify.")
         end
-        (inbalance > 0) && error("I found at least one opening token '$(ocpair.first)' that is not closed properly. Verify.")
         push!(ocblocks, OCBlock(name, τ => tokens[j]))
         # remove processed tokens and inner tokens if deactivate
         if deactivate
@@ -56,7 +64,6 @@ function find_md_xblocks(tokens::Vector{Token})
     # go over tokens and process the ones announcing a block to extract
     for (i, τ) ∈ enumerate(tokens)
         active_tokens[i] || continue
-        ismath = false # is it a math block? default = false
         if haskey(MD_EXTRACT, τ.name)
             close_τ, bname = MD_EXTRACT[τ.name]
         elseif haskey(MD_MATHS, τ.name)
