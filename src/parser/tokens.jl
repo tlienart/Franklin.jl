@@ -158,29 +158,18 @@ function isexactly(refstring::AbstractString, follow=Vector{Char}(),
     # include next char for verification (--> offset of 1)
     steps = nextind(refstring, steps)
     # verification function
-    λ(s) = begin
-        check = (s[end] ∈ follow)
-        (chop(s) == refstring) && ifelse(isfollowed, check, !check)
-    end
-
+    λ(s) = (chop(s) == refstring) && !xor(isfollowed, s[end] ∈ follow)
+    
     return (steps, true, λ)
 end
 
 
 """
-    α(c)
-
-Check whether `c` is a letter.
-"""
-α(c::Char) = isletter(c)
-
-
-"""
     α(c, ac)
 
-Check whether `c` is in a vector of characters `ac`.
+Check whether `c` is a letter or is in a vector of character `ac`.
 """
-α(c::Char, ac::Vector{Char}) = (c ∈ ac)
+α(c::Char, ac=Vector{Char}()) = isletter(c) || (c ∈ ac)
 
 
 """
