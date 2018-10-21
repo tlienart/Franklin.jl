@@ -26,6 +26,20 @@
 end
 
 
+@testset "Brace rge" begin # see #70
+    st = raw"""
+           \newcommand{\scal}[1]{\left\langle#1\right\rangle}
+           \newcommand{\E}{\mathbb E}
+           exhibit A
+           $\scal{\mu, \nu} = \E[X]$
+           exhibit B
+           $\E[X] = \scal{\mu, \nu}$
+           end.""" * JuDoc.EOS
+    (m, _) = JuDoc.convert_md(st)
+    @test m == "<p>exhibit A  \\(\\left\\langle \\mu, \\nu\\right\\rangle = \\mathbb E[X]\\) exhibit B  \\(\\mathbb E[X] = \\left\\langle \\mu, \\nu\\right\\rangle\\) end.</p>\n"
+end
+
+
 # index arithmetic over a string is a bit trickier when using all symbols
 # we can use `prevind` and `nextind` to make sure it works properly
 @testset "Inter Md 2" begin

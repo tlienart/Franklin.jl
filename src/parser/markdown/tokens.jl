@@ -139,12 +139,35 @@ const MD_OCBLOCKS = Dict(
 =#
 
 
-#=
-    MATH BLOCKS
-=#
+"""
+    MC_OCBLOCKS_MATHS
 
-# Math blocks, those can potentially interact with latex.
-# (if any \... is present in them, jd will try to resolve it)
+Same concept as `MD_OCBLOCKS` but for math blocks, they can't be nested.
+Separating them from the other dictionary makes their processing easier.
+"""
+const MD_OCBLOCKS_MATHS = Dict(
+    :MATH_A     => (:MATH_A          => :MATH_A          ),
+    :MATH_B     => (:MATH_B          => :MATH_B          ),
+    :MATH_C     => (:MATH_C_OPEN     => :MATH_C_CLOSE    ),
+    :MATH_I     => (:MATH_I_OPEN     => :MATH_I_CLOSE    ),
+    :MATH_ALIGN => (:MATH_ALIGN_OPEN => :MATH_ALIGN_CLOSE),
+    :MATH_EQA   => (:MATH_EQA_OPEN   => :MATH_EQA_CLOSE  ),
+)
+
+
+"""
+    MD_MATH_NAMES
+
+List of names of maths environments.
+"""
+const MD_MATHS_NAMES = keys(MD_OCBLOCKS_MATHS)
+
+
+for name ∈ MD_MATHS_NAMES
+    MD_OCBLOCKS[name] = (MD_OCBLOCKS_MATHS[name], false)
+end
+
+
 """
     MD_MATHS
 
@@ -160,14 +183,6 @@ const MD_MATHS = Dict(
     :MATH_ALIGN_OPEN => :MATH_ALIGN_CLOSE => :MATH_ALIGN,
     :MATH_EQA_OPEN   => :MATH_EQA_CLOSE   => :MATH_EQA,
     ) # end dict
-
-
-"""
-    MD_MATH_NAMES
-
-List of names of maths environments.
-"""
-const MD_MATHS_NAMES = [η for (_, (⎵, η)) ∈ MD_MATHS]
 
 
 """

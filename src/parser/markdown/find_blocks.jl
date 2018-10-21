@@ -60,6 +60,22 @@ find_md_braces_ocb(tokens) = find_md_ocblocks(tokens,
 
 
 """
+    find_md_all_ocblocks(tokens)
+
+Convenience function to find all ocblocks associated with `MD_OCBLOCKS`.
+Returns a vector of vector of ocblocks.
+"""
+function find_md_all_ocblocks(tokens::Vector{Token})
+    ocbs_all = Vector{OCBlock}()
+    for (name, (ocpair, nest)) ∈ MD_OCBLOCKS
+       ocbs, tokens = find_md_ocblocks(tokens, name, ocpair; nestable=nest)
+       append!(ocbs_all, ocbs)
+    end
+    return ocbs_all, tokens
+end
+
+
+"""
     find_md_xblocks(tokens)
 
 Find blocks of text that will be extracted (see `MD_EXTRACT`, `MD_MATHS`).
