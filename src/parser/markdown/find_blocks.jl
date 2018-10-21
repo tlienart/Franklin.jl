@@ -7,7 +7,7 @@ Find active blocks between an opening token (`otoken`) and a closing token
 inactive (for further, separate processing).
 """
 function find_md_ocblocks(tokens::Vector{Token}, name::S, ocpair::Pair{S, S};
-                          deactivate=true, nestable=true) where S <: Symbol
+                          deactivate=true, nestable=false) where S <: Symbol
     # number of tokens & active tokens
     ntokens = length(tokens)
     active_tokens = ones(Bool, length(tokens))
@@ -34,6 +34,7 @@ function find_md_ocblocks(tokens::Vector{Token}, name::S, ocpair::Pair{S, S};
             j = findfirst(cτ -> (cτ.name == ocpair.second), tokens[i+1:end])
             # error if no closing token is found
             isnothing(j) && error("Found the opening token '$(τ.name)' but not the corresponding closing token. Verify.")
+            j += i
         end
         push!(ocblocks, OCBlock(name, τ => tokens[j]))
         # remove processed tokens and inner tokens if deactivate
@@ -45,6 +46,17 @@ function find_md_ocblocks(tokens::Vector{Token}, name::S, ocpair::Pair{S, S};
     end
     return ocblocks, tokens[active_tokens]
 end
+
+
+"""
+    find_md_braces_ocb(tokens)
+
+Convenience function for the braces case (`{ ... }`). The reason for
+making this a special function is because it's called earlier in
+`convert_md` as it is needed in `find_md_lxdefs`.
+"""
+find_md_braces_ocb(tokens) = find_md_ocblocks(tokens,
+    :LXB, :LXB_OPEN => :LXB_CLOSE, deactivate=false, nestable=true)
 
 
 """

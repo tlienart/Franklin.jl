@@ -111,6 +111,34 @@ const MD_EXTRACT = Dict(
 are allowed =#
 
 
+"""
+    MD_OCBLOCKS
+
+Dictionary of open-close blocks whose content should be deactivated (any token
+within their span should be marked as inactive) until further processing.
+The keys are identifier for the type of block, the value is a pair with the
+opening and closing tokens followed by a boolean indicating whether the block
+is nestable or not.
+The only `OCBlock` not in this dictionary is the brace block since it should
+not deactivate its content which is needed to find latex definitions (see
+parser/markdown/find_blocks/find_md_lxdefs).
+"""
+const MD_OCBLOCKS = Dict(
+    # name            opening token    closing token     nestable
+    :DIV          => ((:DIV_OPEN     => :DIV_CLOSE    ), true),
+    :COMMENT      => ((:COMMENT_OPEN => :COMMENT_CLOSE), false),
+    :ESCAPE       => ((:ESCAPE       => :ESCAPE       ), false),
+    :MD_DEF       => ((:MD_DEF_OPEN  => :LINE_RETURN  ), false), # see [^3]
+    :CODE_INLINE  => ((:CODE_SINGLE  => :CODE_SINGLE  ), false),
+    :CODE_BLOCK_L => ((:CODE_L       => :CODE         ), false),
+    :CODE_BLOCK   => ((:CODE         => :CODE         ), false)
+)
+#= NOTE:
+    [3] an `MD_DEF` goes from an `@def` to the next `\n` so no multiple-line
+    def are allowed.
+=#
+
+
 #=
     MATH BLOCKS
 =#

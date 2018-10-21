@@ -22,10 +22,9 @@ end
         """ * JuDoc.EOS
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
     tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
+    bblocks, tokens = JuDoc.find_md_braces_ocb(tokens)
     dblocks, tokens = JuDoc.find_md_ocblocks(tokens, :DIV,
                                 :DIV_OPEN => :DIV_CLOSE)
-    bblocks, tokens = JuDoc.find_md_ocblocks(tokens, :LXB,
-                                :LXB_OPEN => :LXB_CLOSE, deactivate=false)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
 
     @test dblocks[1].ss == "@@dname block @@"
@@ -52,8 +51,7 @@ end
         """ * JuDoc.EOS
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
     tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
-    bblocks, tokens = JuDoc.find_md_ocblocks(tokens, :LXB,
-                                :LXB_OPEN => :LXB_CLOSE, deactivate=false)
+    bblocks, tokens = JuDoc.find_md_braces_ocb(tokens)
     lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
 
     @test lxdefs[1].name == "\\E"
@@ -86,8 +84,7 @@ end
         """ * JuDoc.EOS
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
     tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
-    bblocks, tokens = JuDoc.find_md_ocblocks(tokens, :LXB,
-                                :LXB_OPEN => :LXB_CLOSE, deactivate=false)
+    bblocks, tokens = JuDoc.find_md_braces_ocb(tokens)
     lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     @test lxdefs[1].name == "\\com"
     @test lxdefs[1].narg == 0
@@ -113,11 +110,10 @@ end
     # Tokenization and Markdown conversion
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
     tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
+    bblocks, tokens = JuDoc.find_md_braces_ocb(tokens)
+    lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     dblocks, tokens = JuDoc.find_md_ocblocks(tokens, :DIV,
                                 :DIV_OPEN => :DIV_CLOSE)
-    bblocks, tokens = JuDoc.find_md_ocblocks(tokens, :LXB,
-                                :LXB_OPEN => :LXB_CLOSE, deactivate=false)
-    lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
@@ -142,11 +138,10 @@ end
 
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
     tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
+    bblocks, tokens = JuDoc.find_md_braces_ocb(tokens)
+    lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     dblocks, tokens = JuDoc.find_md_ocblocks(tokens, :DIV,
                                 :DIV_OPEN => :DIV_CLOSE)
-    bblocks, tokens = JuDoc.find_md_ocblocks(tokens, :LXB,
-                                :LXB_OPEN => :LXB_CLOSE, deactivate=false)
-    lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
 
     @test lxdefs[1].name == "\\com" && lxdefs[1].narg == 0 &&  lxdefs[1].def == "blah"

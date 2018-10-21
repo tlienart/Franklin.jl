@@ -102,23 +102,22 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
     # Deactivate tokens within code blocks and other escape blocks
     tokens = deactivate_blocks(tokens, MD_EXTRACT)
     # Find brace blocks, do not deactivate tokens within them
-    bblocks, tokens = find_md_ocblocks(tokens, :LXB,
-                            :LXB_OPEN => :LXB_CLOSE, deactivate=false)
+    braces_ocb, tokens = find_md_braces_ocb(tokens)
     # Find newcommands (latex definitions)
-    lxdefs, tokens = find_md_lxdefs(tokens, bblocks)
+    lxdefs, tokens = find_md_lxdefs(tokens, braces_ocb)
     # if any lxdefs are given in the context, merge them. `pastdef!` specifies
     # that the definitions appear "earlier" by marking the `.from` at 0
     lprelx = length(pre_lxdefs)
     (lprelx > 0) && (lxdefs = cat(pastdef!.(pre_lxdefs), lxdefs, dims=1))
     # Find div blocks, deactivate tokens within them
-    dblocks, tokens = find_md_ocblocks(tokens, :DIV,
-                            :DIV_OPEN => :DIV_CLOSE)
+    divs_ocb, tokens = find_md_ocblocks(tokens,
+                            :DIV, :DIV_OPEN=>:DIV_CLOSE)
     # Find other blocks to extract/escape (e.g.: code blocks)
     xblocks, tokens = find_md_xblocks(tokens)
     # Find lxcoms
-    lxcoms, tokens = find_md_lxcoms(tokens, lxdefs, bblocks)
+    lxcoms, tokens = find_md_lxcoms(tokens, lxdefs, braces_ocb)
     # Merge the lxcoms and xblocks -> list of things to insert
-    blocks2insert = merge_blocks(dblocks, xblocks, lxcoms)
+    blocks2insert = merge_blocks(divs_ocb, xblocks, lxcoms)
 
     if has_mddefs
         # Process MD_DEF blocks
@@ -149,7 +148,7 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
     inter_html = md2html(inter_md, isrecursive)
 
     # plug resolved blocks in partial html to form the final html
-    lxcontext = LxContext(lxcoms, lxdefs, bblocks)
+    lxcontext = LxContext(lxcoms, lxdefs, braces_ocb)
     hstring = convert_inter_html(inter_html, blocks2insert, lxcontext)
 
     # Return the string + judoc variables if relevant

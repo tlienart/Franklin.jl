@@ -12,8 +12,7 @@
     tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
     dblocks, tokens = JuDoc.find_md_ocblocks(tokens, :DIV,
                                 :DIV_OPEN => :DIV_CLOSE)
-    bblocks, tokens = JuDoc.find_md_ocblocks(tokens, :LXB,
-                                :LXB_OPEN => :LXB_CLOSE, deactivate=false)
+    bblocks, tokens = JuDoc.find_md_braces_ocb(tokens)
     lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
@@ -44,8 +43,7 @@ end
     tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
     dblocks, tokens = JuDoc.find_md_ocblocks(tokens, :DIV,
                                 :DIV_OPEN => :DIV_CLOSE)
-    bblocks, tokens = JuDoc.find_md_ocblocks(tokens, :LXB,
-                                :LXB_OPEN => :LXB_CLOSE, deactivate=false)
+    bblocks, tokens = JuDoc.find_md_braces_ocb(tokens)
     lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
@@ -64,8 +62,7 @@ end
     tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
     dblocks, tokens = JuDoc.find_md_ocblocks(tokens, :DIV,
                                 :DIV_OPEN => :DIV_CLOSE)
-    bblocks, tokens = JuDoc.find_md_ocblocks(tokens, :LXB,
-                                :LXB_OPEN => :LXB_CLOSE, deactivate=false)
+    bblocks, tokens = JuDoc.find_md_braces_ocb(tokens)
     lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
@@ -94,8 +91,7 @@ end
 
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
     tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
-    bblocks, tokens = JuDoc.find_md_ocblocks(tokens, :LXB,
-                            :LXB_OPEN => :LXB_CLOSE, deactivate=false)
+    bblocks, tokens = JuDoc.find_md_braces_ocb(tokens)
     lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
@@ -121,8 +117,7 @@ end
         """ * JuDoc.EOS
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
     tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
-    bblocks, tokens = JuDoc.find_md_ocblocks(tokens, :LXB,
-                            :LXB_OPEN => :LXB_CLOSE, deactivate=false)
+    bblocks, tokens = JuDoc.find_md_braces_ocb(tokens)
     lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
     xblocks, tokens = JuDoc.find_md_xblocks(tokens)
     lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
