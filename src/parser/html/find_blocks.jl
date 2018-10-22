@@ -8,7 +8,6 @@ at this point. This second point might fix the first one by making sure that
     HElse -> HEnd
 =#
 
-
 """
     find_html_hblocks(tokens)
 

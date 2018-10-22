@@ -142,7 +142,7 @@ function find_md_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
         else
             # spot where an opening brace is expected
             nxtidx = to(τ) + 1
-            b1_idx = findfirst(β -> (from(β) == nextbrace), braces)
+            b1_idx = findfirst(β -> (from(β) == nxtidx), braces)
             # --> it needs to exist + there should be enough braces left
             if isnothing(b1_idx) || (b1_idx + lxnarg - 1 > nbraces)
                 error("Command '$lxname' expects $lxnarg arguments and there should be no spaces between the command name and the first brace: \\com{arg1}... Verify.")
@@ -158,7 +158,7 @@ function find_md_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
             # all good, can push it
             from_c = from(τ)
             to_c   = to(cand_braces[end])
-            str_c  = subs(str(τ), fromcom, tocom)
+            str_c  = subs(str(τ), from_c, to_c)
             push!(lxcoms, LxCom(str_c, lxdefref, cand_braces))
 
             # deactivate tokens in the span of the command (will be
