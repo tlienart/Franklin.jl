@@ -45,32 +45,25 @@ end
 
 
 """
+    from_ifsmaller(v, idx, len)
+
+Convenience function to check if `idx` is smaller than the length of `v`, a
+vector of `<:AbstractBlock` or of `LxDef`, if it is, then return the starting
+point of that block, otherwise return `BIG_INT`.
+"""
+from_ifsmaller(v::Vector, idx::Int, len::Int) =
+    (idx > len) ? BIG_INT : from(v[idx])
+
+
+"""
     merge_blocks(lvb)
 
 Merge vectors of blocks by order of appearance of the blocks.
 """
 function merge_blocks(lvb::Vector{<:AbstractBlock}...)
-    vbs_len = [length(vb) for vb ∈ lvb]
-    blocks = Vector{AbstractBlock}(undef, sum(vbs_len)) # to contain all blocks
-    vbs_index = ones(Int, length(lvb))
-    vbs_from = from_ifsmaller.(lvb, vbs_index, vbs_len)
 
-    for i ∈ eachindex(blocks)
-        k = argmin(vbs_from)
-        blocks[i] = lvb[k][vbs_index[k]]
-        vbs_index[k] += 1
-        vbs_from[k] = from_ifsmaller(lvb[k], vbs_index[k], vbs_len[k])
-    end
+    blocks = vcat(lvb...)
+    sort!(blocks, by=(β->from(β)))
+
     return blocks
 end
-
-
-"""
-    from_ifsmaller(vb, vb_idx, vb_len)
-
-Convenience function to check if `vb_idx` is smaller than the length of `vb`, a
-vector of `<:AbstractBlock`, if it is, then return the starting point of that
-block, otherwise return `BIG_INT`.
-"""
-from_ifsmaller(vb::Vector{<:AbstractBlock}, vb_idx::Int, vb_len::Int) =
-    (vb_idx > vb_len) ? BIG_INT : from(vb[vb_idx])

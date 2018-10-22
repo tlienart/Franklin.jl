@@ -74,23 +74,20 @@ function form_inter_md(mds::AbstractString,
         # check whether it's a block first or a newcommand first
         if b_or_lxd # it's a block, check if should be pushed
             β = blocks[b_idx]
-            @show β
-            @show β.ss
-            @show β.name
-            @show β.name ∈ MD_IGNORE
-            if β.name ∈ MD_IGNORE # skip, increase counters, move head
+            # check whether the block should be skipped
+            if isa(β, OCBlock) && β.name ∈ MD_IGNORE
                 head = nextind(mds, to(β))
             else # push
                 push!(pieces, JD_INSERT)
                 head = nextind(mds, to(blocks[b_idx]))
             end
             b_idx += 1
-            next_b = (b_idx > len_b) ? BIG_INT : from(blocks[b_idx])
+            next_b = from_ifsmaller(blocks, b_idx, len_b)
 
         else # newcommand or ignore --> skip, increase counters, move head
             head     = nextind(mds, to(lxdefs[lxd_idx]))
             lxd_idx += 1
-            next_lxd = (lxd_idx > len_lxd) ? BIG_INT : from(lxdefs[lxd_idx])
+            next_lxd = from_ifsmaller(lxdefs, lxd_idx, len_lxd)
         end
         # check which block is next
         b_or_lxd = (next_b < next_lxd)
@@ -218,7 +215,7 @@ function convert_md_math(ms::String,
         # move the head
         head     = nextind(ms, to(lxcoms[lxc_idx]))
         lxc_idx += 1
-        next_lxc = (lxc_idx > len_lxc) ? BIG_INT : from(lxcoms[lxc_idx])
+        next_lxc = from_ifsmaller(lxcoms, lxc_idx, len_lxc)
     end
     # add anything after the last command
     (head <= strlen) && push!(pieces, chop(ms, head=prevind(ms, head), tail=1))
