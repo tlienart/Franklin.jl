@@ -55,7 +55,7 @@ struct LxCom <: AbstractBlock
     lxdef::Ref{LxDef}       # definition of the command
     braces::Vector{OCBlock} # relevant {...} associated with the command
 end
-LxCom(ss, def) = LxCom(ss, def, Vector{Block}())
+LxCom(ss, def) = LxCom(ss, def, Vector{OCBlock}())
 from(lxc::LxCom) = from(lxc.ss)
 to(lxc::LxCom) = to(lxc.ss)
 
