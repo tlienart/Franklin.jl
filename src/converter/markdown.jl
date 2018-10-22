@@ -45,8 +45,10 @@ function form_inter_md(mds::AbstractString,
                        lxdefs::Vector{LxDef})
 
     # final character is the EOS character
-    strlen = prevind(mds, lastindex(mds))
-    pieces = Vector{AbstractString}()
+    strlen  = prevind(mds, lastindex(mds))
+    pieces  = Vector{AbstractString}()
+    # keep track of the matching blocks for each insert
+    mblocks = Vector{AbstractBlock}()
 
     len_b   = length(blocks)
     len_lxd = length(lxdefs)
@@ -79,6 +81,7 @@ function form_inter_md(mds::AbstractString,
                 head = nextind(mds, to(β))
             else # push
                 push!(pieces, JD_INSERT)
+                push!(mblocks, β)
                 head = nextind(mds, to(blocks[b_idx]))
             end
             b_idx += 1
@@ -97,7 +100,7 @@ function form_inter_md(mds::AbstractString,
     (head <= strlen) && push!(pieces, subs(mds, head, strlen))
 
     # combine everything and return
-    return prod(pieces)
+    return prod(pieces), mblocks
 end
 
 
@@ -166,12 +169,12 @@ function convert_md(mds::String,
     blocks2insert = merge_blocks(lxcoms, blocks)
 
     # form intermediate markdown + html
-    inter_md   = form_inter_md(mds, blocks2insert, lxdefs)
+    inter_md, mblocks = form_inter_md(mds, blocks2insert, lxdefs)
     inter_html = md2html(inter_md, isrecursive)
 
     # plug resolved blocks in partial html to form the final html
     lxcontext = LxContext(lxcoms, lxdefs, braces)
-    hstring   = convert_inter_html(inter_html, blocks2insert, lxcontext)
+    hstring   = convert_inter_html(inter_html, mblocks, lxcontext)
 
     # Return the string + judoc variables if relevant
     return hstring, (has_mddefs ? jd_vars : nothing)
