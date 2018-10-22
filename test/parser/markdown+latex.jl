@@ -26,18 +26,13 @@ end
     blocks, tokens = JuDoc.find_md_ocblocks(tokens)
     braces = filter(β -> β.name == :LXB, blocks)
 
-    # div block
-    β = blocks[1]
-    @test β.name == :DIV
-    @test β.ss == "@@dname block @@"
-
     # escape block
-    β = blocks[2]
+    β = blocks[1]
     @test β.name == :ESCAPE
     @test β.ss == "~~~\nescape block\n~~~"
 
     # inline code block
-    β = blocks[3]
+    β = blocks[2]
     @test β.name == :CODE_INLINE
     @test β.ss == "`code`"
 
@@ -45,6 +40,11 @@ end
     β = braces[1]
     @test β.name == :LXB
     @test β.ss == "{target}"
+
+    # div block
+    β = blocks[4]
+    @test β.name == :DIV
+    @test β.ss == "@@dname block @@"
 end
 
 
@@ -128,13 +128,13 @@ end
     @test lxcoms[1].ss == "\\com"
     @test lxcoms[2].ss == "\\comb{blah}"
 
-    @test blocks[1].name == :DIV
-    @test blocks[1].ss == "@@adiv inner part @@"
-    @test JuDoc.content(blocks[1]) == " inner part "
+    @test blocks[1].name == :CODE_BLOCK_L
+    @test blocks[1].ss == "```julia\nf(x) = x^2\n```"
+    @test JuDoc.content(blocks[1]) == "\nf(x) = x^2\n"
 
-    @test blocks[2].name == :CODE_BLOCK_L
-    @test blocks[2].ss == "```julia\nf(x) = x^2\n```"
-    @test JuDoc.content(blocks[2]) == "\nf(x) = x^2\n"
+    @test blocks[2].name == :DIV
+    @test blocks[2].ss == "@@adiv inner part @@"
+    @test JuDoc.content(blocks[2]) == " inner part "
 end
 
 
