@@ -2,6 +2,7 @@
     a = raw"""some markdown then `code` and @@dname block @@""" * JuDoc.EOS
 
     tokens = JuDoc.find_tokens(a, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
+
     @test tokens[1].name == :CODE_SINGLE
     @test tokens[2].name == :CODE_SINGLE
     @test tokens[3].name == :DIV_OPEN
@@ -20,17 +21,30 @@ end
         ~~~
         and done {target} done.
         """ * JuDoc.EOS
-    tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
-    bblocks, tokens = JuDoc.find_md_braces_ocb(tokens)
-    dblocks, tokens = JuDoc.find_md_ocblocks(tokens, :DIV,
-                                :DIV_OPEN => :DIV_CLOSE)
-    xblocks, tokens = JuDoc.find_md_xblocks(tokens)
 
-    @test dblocks[1].ss == "@@dname block @@"
-    @test bblocks[1].ss == "{target}"
-    @test xblocks[1].ss == "`code`"
-    @test xblocks[2].ss == "~~~\nescape block\n~~~"
+    tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
+    blocks, tokens = JuDoc.find_md_ocblocks(tokens)
+    braces = filter(β -> β.name == :LXB, blocks)
+
+    # div block
+    β = blocks[1]
+    @test β.name == :DIV
+    @test β.ss == "@@dname block @@"
+
+    # escape block
+    β = blocks[2]
+    @test β.name == :ESCAPE
+    @test β.ss == "~~~\nescape block\n~~~"
+
+    # inline code block
+    β = blocks[3]
+    @test β.name == :CODE_INLINE
+    @test β.ss == "`code`"
+
+    # brace block
+    β = braces[1]
+    @test β.name == :LXB
+    @test β.ss == "{target}"
 end
 
 
@@ -49,27 +63,25 @@ end
         \newcommand{\brol}{\mathbb B}
         ```
         """ * JuDoc.EOS
+
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
-    bblocks, tokens = JuDoc.find_md_braces_ocb(tokens)
-    lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
+    blocks, tokens = JuDoc.find_md_ocblocks(tokens)
+    lxdefs, tokens, braces, blocks = JuDoc.find_lxdefs(tokens, blocks)
 
     @test lxdefs[1].name == "\\E"
     @test lxdefs[1].narg == 1
-    @test lxdefs[1].def == "\\mathbb E\\left[#1\\right]"
+    @test lxdefs[1].def  == "\\mathbb E\\left[#1\\right]"
     @test lxdefs[2].name == "\\eqa"
     @test lxdefs[2].narg == 1
-    @test lxdefs[2].def == "\\begin{eqnarray}#1\\end{eqnarray}"
+    @test lxdefs[2].def  == "\\begin{eqnarray}#1\\end{eqnarray}"
     @test lxdefs[3].name == "\\R"
     @test lxdefs[3].narg == 0
-    @test lxdefs[3].def == "\\mathbb R"
+    @test lxdefs[3].def  == "\\mathbb R"
 
-    xblocks, tokens = JuDoc.find_md_xblocks(tokens)
+    @test blocks[1].name == :ESCAPE
+    @test blocks[2].name == :CODE_BLOCK_L
 
-    @test xblocks[1].name == :ESCAPE
-    @test xblocks[2].name == :CODE_BLOCK
-
-    lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
+    lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, braces)
 
     @test lxcoms[1].ss == "\\eqa{ \\E{f(X)} \\in \\R &\\text{if}& f:\\R\\maptso\\R }"
     lxd = getindex(lxcoms[1].lxdef)
@@ -82,10 +94,11 @@ end
         \newcommand{\com}{blah}
         \newcommand{\comb}[ 2]{hello #1 #2}
         """ * JuDoc.EOS
+
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
-    bblocks, tokens = JuDoc.find_md_braces_ocb(tokens)
-    lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
+    blocks, tokens = JuDoc.find_md_ocblocks(tokens)
+    lxdefs, tokens, braces, blocks = JuDoc.find_lxdefs(tokens, blocks)
+
     @test lxdefs[1].name == "\\com"
     @test lxdefs[1].narg == 0
     @test lxdefs[1].def == "blah"
@@ -107,22 +120,22 @@ end
         @@adiv inner part @@ final.
         """ * JuDoc.EOS
 
-    # Tokenization and Markdown conversion
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
-    bblocks, tokens = JuDoc.find_md_braces_ocb(tokens)
-    lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
-    dblocks, tokens = JuDoc.find_md_ocblocks(tokens, :DIV,
-                                :DIV_OPEN => :DIV_CLOSE)
-    xblocks, tokens = JuDoc.find_md_xblocks(tokens)
-    lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
+    blocks, tokens = JuDoc.find_md_ocblocks(tokens)
+    lxdefs, tokens, braces, blocks = JuDoc.find_lxdefs(tokens, blocks)
+    lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, braces)
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
 
     @test lxcoms[1].ss == "\\com"
     @test lxcoms[2].ss == "\\comb{blah}"
 
-    @test xblocks[1].name == :CODE_BLOCK
-    @test JuDoc.content(dblocks[1]) == " inner part "
+    @test blocks[1].name == :DIV
+    @test blocks[1].ss == "@@adiv inner part @@"
+    @test JuDoc.content(blocks[1]) == " inner part "
+
+    @test blocks[2].name == :CODE_BLOCK_L
+    @test blocks[2].ss == "```julia\nf(x) = x^2\n```"
+    @test JuDoc.content(blocks[2]) == "\nf(x) = x^2\n"
 end
 
 
@@ -137,20 +150,14 @@ end
         """ * JuDoc.EOS
 
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
-    bblocks, tokens = JuDoc.find_md_braces_ocb(tokens)
-    lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
-    dblocks, tokens = JuDoc.find_md_ocblocks(tokens, :DIV,
-                                :DIV_OPEN => :DIV_CLOSE)
-    xblocks, tokens = JuDoc.find_md_xblocks(tokens)
+    blocks, tokens = JuDoc.find_md_ocblocks(tokens)
+    lxdefs, tokens, braces, blocks = JuDoc.find_lxdefs(tokens, blocks)
+    lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, braces)
+    tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
 
     @test lxdefs[1].name == "\\com" && lxdefs[1].narg == 0 &&  lxdefs[1].def == "blah"
     @test lxdefs[2].name == "\\comb" && lxdefs[2].narg == 1 && lxdefs[2].def == "\\mathrm{#1}"
     @test lxdefs[3].name == "\\comc" && lxdefs[3].narg == 2 && lxdefs[3].def == "part1:#1 and part2:#2"
-    @test xblocks[1].name == :ESCAPE && xblocks[1].ss == "~~~\nescape B1\n~~~"
-
-    lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
-
-    @test lxcoms[1].ss == "\\com" && JuDoc.getdef(lxcoms[1]) == "blah"
-    @test lxcoms[2].ss == "\\comc{AA}{BB}"
+    @test blocks[1].name == :ESCAPE
+    @test blocks[1].ss == "~~~\nescape B1\n~~~"
 end

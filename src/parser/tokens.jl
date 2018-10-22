@@ -34,34 +34,6 @@ end
 
 
 """
-    Block === Token
-
-A `Block` has the same content as a `Token`, only the name indicates a segment
-of text typically surrounded by an opening and a closing token. This synonym
-helps the readability of the code to distinguish delimiters (tokens) from
-segments (blocks) even though they're effectively defined the same way.
-See also `Token`, `LxBlock`.
-"""
-const Block = Token
-
-
-"""
-    hblock(ss)
-
-Convenience function to mark a substring `ss` as a block with name `:H_BLOCK`.
-"""
-hblock(ss::SubString) = Block(:H_BLOCK, ss)
-
-
-"""
-    hinner(block)
-
-For a html block, retrieve the span of what's inside the matching braces.
-"""
-hblock_content(β::Block) = chop(β.ss, head=2, tail=2)
-
-
-"""
     OCBlock
 
 Open-Close block, blocks that are defined by an opening `Token` and a closing
@@ -159,7 +131,7 @@ function isexactly(refstring::AbstractString, follow=Vector{Char}(),
     steps = nextind(refstring, steps)
     # verification function
     λ(s) = (chop(s) == refstring) && !xor(isfollowed, s[end] ∈ follow)
-    
+
     return (steps, true, λ)
 end
 

@@ -85,36 +85,10 @@ const MD_TOKENS_LX = Dict{Char, Vector{Pair{Tuple{Int, Bool, Function}, Symbol}}
         incrlook((_, c) -> α(c)) => :LX_COMMAND ])
 
 
-#=
-    EXTRACT BLOCKS
-=#
-
-# Blocks that will be extracted and that will NOT interact with latex
-# (if any \... is present in them, it will stay like that and not be resolved)
 """
-    MD_EXTRACT
+    MD_OCB
 
-Dictionary to store opening tokens, their corresponding closing tokens and how
-a block surrounded by such tokens should be referred to as (md context).
-"""
-const MD_EXTRACT = Dict(
-    # opening token  # closing token   # name of the block
-    :COMMENT_OPEN => :COMMENT_CLOSE => :COMMENT,
-    :ESCAPE       => :ESCAPE        => :ESCAPE,
-    :MD_DEF_OPEN  => :LINE_RETURN   => :MD_DEF,         # See note [^3]
-    :CODE_SINGLE  => :CODE_SINGLE   => :CODE_INLINE,
-    :CODE_L       => :CODE          => :CODE_BLOCK,
-    :CODE         => :CODE          => :CODE_BLOCK,
-    ) # end dict
-#= NOTE
-[3] an `MD_DEF` goes from an `@def` to the next `\n` so no multiple line def
-are allowed =#
-
-
-"""
-    MD_OCBLOCKS
-
-Dictionary of open-close blocks whose content should be deactivated (any token
+Dictionary of Open-Close Blocks whose content should be deactivated (any token
 within their span should be marked as inactive) until further processing.
 The keys are identifier for the type of block, the value is a pair with the
 opening and closing tokens followed by a boolean indicating whether the block
@@ -123,7 +97,7 @@ The only `OCBlock` not in this dictionary is the brace block since it should
 not deactivate its content which is needed to find latex definitions (see
 parser/markdown/find_blocks/find_md_lxdefs).
 """
-const MD_OCBLOCKS = Dict(
+const MD_OCB = [
     # name            opening token    closing token     nestable
     :DIV          => ((:DIV_OPEN     => :DIV_CLOSE    ), true),
     :COMMENT      => ((:COMMENT_OPEN => :COMMENT_CLOSE), false),
@@ -132,7 +106,7 @@ const MD_OCBLOCKS = Dict(
     :CODE_INLINE  => ((:CODE_SINGLE  => :CODE_SINGLE  ), false),
     :CODE_BLOCK_L => ((:CODE_L       => :CODE         ), false),
     :CODE_BLOCK   => ((:CODE         => :CODE         ), false)
-)
+]
 #= NOTE:
     [3] an `MD_DEF` goes from an `@def` to the next `\n` so no multiple-line
     def are allowed.
@@ -140,19 +114,38 @@ const MD_OCBLOCKS = Dict(
 
 
 """
-    MC_OCBLOCKS_MATHS
+    MD_OCB_MATHS
 
-Same concept as `MD_OCBLOCKS` but for math blocks, they can't be nested.
+Same concept as `MD_OCB` but for math blocks, they can't be nested.
 Separating them from the other dictionary makes their processing easier.
 """
-const MD_OCBLOCKS_MATHS = Dict(
-    :MATH_A     => (:MATH_A          => :MATH_A          ),
-    :MATH_B     => (:MATH_B          => :MATH_B          ),
-    :MATH_C     => (:MATH_C_OPEN     => :MATH_C_CLOSE    ),
-    :MATH_I     => (:MATH_I_OPEN     => :MATH_I_CLOSE    ),
-    :MATH_ALIGN => (:MATH_ALIGN_OPEN => :MATH_ALIGN_CLOSE),
-    :MATH_EQA   => (:MATH_EQA_OPEN   => :MATH_EQA_CLOSE  ),
-)
+const MD_OCB_MATHS = [
+    :MATH_A     => ((:MATH_A          => :MATH_A          ), false),
+    :MATH_B     => ((:MATH_B          => :MATH_B          ), false),
+    :MATH_C     => ((:MATH_C_OPEN     => :MATH_C_CLOSE    ), false),
+    :MATH_I     => ((:MATH_I_OPEN     => :MATH_I_CLOSE    ), false),
+    :MATH_ALIGN => ((:MATH_ALIGN_OPEN => :MATH_ALIGN_CLOSE), false),
+    :MATH_EQA   => ((:MATH_EQA_OPEN   => :MATH_EQA_CLOSE  ), false),
+]
+
+
+"""
+    MD_OCB_BRACES
+
+Same concept as `MD_OCB` but specifically for braces blocks. They can
+be nested.
+"""
+const MD_OCB_BRACES = [:LXB => ((:LXB_OPEN => :LXB_CLOSE), true)]
+
+
+"""
+    MD_OCB_ALL
+
+Combination of all `MD_OCB` in order.
+
+Dev note: the order in which these are stacked matters.
+"""
+const MD_OCB_ALL = vcat(MD_OCB, MD_OCB_MATHS, MD_OCB_BRACES)
 
 
 """
@@ -160,37 +153,4 @@ const MD_OCBLOCKS_MATHS = Dict(
 
 List of names of maths environments.
 """
-const MD_MATHS_NAMES = keys(MD_OCBLOCKS_MATHS)
-
-
-for name ∈ MD_MATHS_NAMES
-    MD_OCBLOCKS[name] = (MD_OCBLOCKS_MATHS[name], false)
-end
-
-
-"""
-    MD_MATHS
-
-Dictionary to store opening tokens, their corresponding closing tokens and how
-a block surrounded by such tokens should be referred to as. Additionally all
-these blocks should be considered as maths environments.
-"""
-const MD_MATHS = Dict(
-    :MATH_A          => :MATH_A           => :MATH_A,
-    :MATH_B          => :MATH_B           => :MATH_B,
-    :MATH_C_OPEN     => :MATH_C_CLOSE     => :MATH_C,
-    :MATH_I_OPEN     => :MATH_I_CLOSE     => :MATH_I,
-    :MATH_ALIGN_OPEN => :MATH_ALIGN_CLOSE => :MATH_ALIGN,
-    :MATH_EQA_OPEN   => :MATH_EQA_CLOSE   => :MATH_EQA,
-    ) # end dict
-
-
-"""
-    mathenv(s)
-
-Convenience function to denote a string as being in a math context in a
-recursive parsing situation. These blocks will be processed as math blocks
-but without adding KaTeX elements to it given that they are part of a larger
-context that already has KaTeX elements.
-"""
-mathenv(s) = "_\$>_" * s * "_\$<_"
+const MD_MATHS_NAMES = [e.first for e ∈ MD_OCB_MATHS]

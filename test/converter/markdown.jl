@@ -9,34 +9,24 @@
         """ * JuDoc.EOS
 
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
-    dblocks, tokens = JuDoc.find_md_ocblocks(tokens, :DIV,
-                                :DIV_OPEN => :DIV_CLOSE)
-    bblocks, tokens = JuDoc.find_md_braces_ocb(tokens)
-    lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
-    xblocks, tokens = JuDoc.find_md_xblocks(tokens)
-    lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
+    blocks, tokens = JuDoc.find_md_ocblocks(tokens)
+    lxdefs, tokens, braces, blocks = JuDoc.find_lxdefs(tokens, blocks)
+
+    @test length(braces) == 1
+    @test JuDoc.content(braces[1]) == "blah"
+
+    @test length(blocks) == 1
+    @test blocks[1].name == :MATH_A
+    @test JuDoc.content(blocks[1]) == "f"
+
+    lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, braces)
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
-    blocks2insert = JuDoc.merge_blocks(dblocks, xblocks, lxcoms)
+    blocks2insert = JuDoc.merge_blocks(lxcoms, blocks)
 
     inter_md = JuDoc.form_inter_md(st, blocks2insert, lxdefs)
     @test inter_md == "\n\nA list\n*  ##JDINSERT##  and  ##JDINSERT## \n*  ##JDINSERT##  is a function\n* a last element\n"
     inter_html = JuDoc.md2html(inter_md)
     @test inter_html == "<p>A list</p>\n<ul>\n<li><p>##JDINSERT##  and  ##JDINSERT## </p>\n</li>\n<li><p>##JDINSERT##  is a function</p>\n</li>\n<li><p>a last element</p>\n</li>\n</ul>\n"
-end
-
-
-@testset "Brace rge" begin # see #70
-    st = raw"""
-           \newcommand{\scal}[1]{\left\langle#1\right\rangle}
-           \newcommand{\E}{\mathbb E}
-           exhibit A
-           $\scal{\mu, \nu} = \E[X]$
-           exhibit B
-           $\E[X] = \scal{\mu, \nu}$
-           end.""" * JuDoc.EOS
-    (m, _) = JuDoc.convert_md(st)
-    @test m == "<p>exhibit A  \\(\\left\\langle \\mu, \\nu\\right\\rangle = \\mathbb E[X]\\) exhibit B  \\(\\mathbb E[X] = \\left\\langle \\mu, \\nu\\right\\rangle\\) end.</p>\n"
 end
 
 
@@ -53,16 +43,13 @@ end
         ~~~
         done
         """
+
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
-    dblocks, tokens = JuDoc.find_md_ocblocks(tokens, :DIV,
-                                :DIV_OPEN => :DIV_CLOSE)
-    bblocks, tokens = JuDoc.find_md_braces_ocb(tokens)
-    lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
-    xblocks, tokens = JuDoc.find_md_xblocks(tokens)
-    lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
+    blocks, tokens = JuDoc.find_md_ocblocks(tokens)
+    lxdefs, tokens, braces, blocks = JuDoc.find_lxdefs(tokens, blocks)
+    lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, braces)
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
-    blocks2insert = JuDoc.merge_blocks(dblocks, xblocks, lxcoms)
+    blocks2insert = JuDoc.merge_blocks(lxcoms, blocks)
 
     inter_md = JuDoc.form_inter_md(st, blocks2insert, lxdefs)
     @test inter_md == " ##JDINSERT## \nfinally ⊙⊙𝛴⊙ and\n ##JDINSERT## \ndone"
@@ -70,26 +57,31 @@ end
 
 
 @testset "Latex eqa" begin
-    st = raw"""a\newcommand{\eqa}[1]{\begin{eqnarray}#1\end{eqnarray}}b
-        \eqa{\sin^2(x)+\cos^2(x) &=& 1}""" * JuDoc.EOS
+    st = raw"""
+        a\newcommand{\eqa}[1]{\begin{eqnarray}#1\end{eqnarray}}b@@d .@@
+        \eqa{\sin^2(x)+\cos^2(x) &=& 1}
+        """ * JuDoc.EOS
+
+    JuDoc.def_JD_LOC_EQDICT()
+
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
-    dblocks, tokens = JuDoc.find_md_ocblocks(tokens, :DIV,
-                                :DIV_OPEN => :DIV_CLOSE)
-    bblocks, tokens = JuDoc.find_md_braces_ocb(tokens)
-    lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
-    xblocks, tokens = JuDoc.find_md_xblocks(tokens)
-    lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
+    blocks, tokens = JuDoc.find_md_ocblocks(tokens)
+    lxdefs, tokens, braces, blocks = JuDoc.find_lxdefs(tokens, blocks)
+    lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, braces)
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
-    blocks2insert = JuDoc.merge_blocks(dblocks, xblocks, lxcoms)
+    blocks2insert = JuDoc.merge_blocks(lxcoms, blocks)
 
     inter_md = JuDoc.form_inter_md(st, blocks2insert, lxdefs)
-    @test inter_md == "ab\n ##JDINSERT## "
+    @test inter_md == "ab ##JDINSERT## \n ##JDINSERT## \n"
 
     inter_html = JuDoc.md2html(inter_md)
-    lxcontext = JuDoc.LxContext(lxcoms, lxdefs, bblocks)
+    lxcontext = JuDoc.LxContext(lxcoms, lxdefs, braces)
+
+    @test JuDoc.convert_block(blocks2insert[1], lxcontext) == "<div class=\"d\">.</div>\n"
+    @test JuDoc.convert_block(blocks2insert[2], lxcontext) == "\$\$\\begin{array}{c} \\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\$\$"
+
     hstring = JuDoc.convert_inter_html(inter_html, blocks2insert, lxcontext)
-    @test hstring == "<p>ab  \$\$\\begin{array}{c} \\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\$\$</p>\n"
+    @test hstring == "<p>ab <div class=\"d\">.</div>\n  \$\$\\begin{array}{c} \\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\$\$</p>\n"
 end
 
 
@@ -104,20 +96,18 @@ end
         """ * JuDoc.EOS
 
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
-    bblocks, tokens = JuDoc.find_md_braces_ocb(tokens)
-    lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
-    xblocks, tokens = JuDoc.find_md_xblocks(tokens)
-    lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
+    blocks, tokens = JuDoc.find_md_ocblocks(tokens)
+    lxdefs, tokens, braces, blocks = JuDoc.find_lxdefs(tokens, blocks)
+    lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, braces)
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
-    blocks2insert = JuDoc.merge_blocks(xblocks, lxcoms)
+    blocks2insert = JuDoc.merge_blocks(lxcoms, blocks)
 
     inter_md = JuDoc.form_inter_md(st, blocks2insert, lxdefs)
     @test inter_md == "text A1 text A2  ##JDINSERT##  and\n ##JDINSERT## \n text C1  ##JDINSERT##  text C2\n then  ##JDINSERT## .\n"
 
     inter_html = JuDoc.md2html(inter_md)
     @test inter_html == "<p>text A1 text A2  ##JDINSERT##  and  ##JDINSERT##   text C1  ##JDINSERT##  text C2  then  ##JDINSERT## .</p>\n"
-    lxcontext = JuDoc.LxContext(lxcoms, lxdefs, bblocks)
+    lxcontext = JuDoc.LxContext(lxcoms, lxdefs, braces)
     hstring = JuDoc.convert_inter_html(inter_html, blocks2insert, lxcontext)
     @test hstring == "<p>text A1 text A2  blah and  \nescape B1\n  text C1  \\(\\mathrm{ b}\\) text C2  then  part1: AA and part2: BB.</p>\n"
 end
@@ -129,18 +119,17 @@ end
         \newcommand{ \comb} [2 ]{\coma{#1}, goodbye #1, #2!}
         Then \comb{auth1}{auth2}.
         """ * JuDoc.EOS
+
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    tokens = JuDoc.deactivate_blocks(tokens, JuDoc.MD_EXTRACT)
-    bblocks, tokens = JuDoc.find_md_braces_ocb(tokens)
-    lxdefs, tokens = JuDoc.find_md_lxdefs(tokens, bblocks)
-    xblocks, tokens = JuDoc.find_md_xblocks(tokens)
-    lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, bblocks)
+    blocks, tokens = JuDoc.find_md_ocblocks(tokens)
+    lxdefs, tokens, braces, blocks = JuDoc.find_lxdefs(tokens, blocks)
+    lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, braces)
     tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
-    blocks2insert = JuDoc.merge_blocks(xblocks, lxcoms)
+    blocks2insert = JuDoc.merge_blocks(lxcoms, blocks)
 
     inter_md = JuDoc.form_inter_md(st, blocks2insert, lxdefs)
     inter_html = JuDoc.md2html(inter_md)
-    lxcontext = JuDoc.LxContext(lxcoms, lxdefs, bblocks)
+    lxcontext = JuDoc.LxContext(lxcoms, lxdefs, braces)
     hstring = JuDoc.convert_inter_html(inter_html, blocks2insert, lxcontext)
 
     @test inter_md == "\n\nThen  ##JDINSERT## .\n"
@@ -184,6 +173,20 @@ end
     h2 = hash("beyond hope")
 
     m == "<p>Then something like  \$\$\\begin{array}{c}  \\mathbb E\\left[ f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R\\end{array}\$\$ and then  <a name=\"$h1\"></a>\$\$\\begin{array}{c}  1+1 &=&2 \\end{array}\$\$ but further  <a name=\"$h2\"></a>\$\$\\begin{array}{c}  1 &=& 1 \\end{array}\$\$ and finally a  <span class=\"eqref)\">({{href EQR $h1}})</span> and maybe  <span class=\"eqref)\">({{href EQR $h2}})</span>.</p>\n"
+end
+
+
+@testset "Brace rge" begin # see #70
+    st = raw"""
+           \newcommand{\scal}[1]{\left\langle#1\right\rangle}
+           \newcommand{\E}{\mathbb E}
+           exhibit A
+           $\scal{\mu, \nu} = \E[X]$
+           exhibit B
+           $\E[X] = \scal{\mu, \nu}$
+           end.""" * JuDoc.EOS
+    (m, _) = JuDoc.convert_md(st)
+    @test m == "<p>exhibit A  \\(\\left\\langle \\mu, \\nu\\right\\rangle = \\mathbb E[X]\\) exhibit B  \\(\\mathbb E[X] = \\left\\langle \\mu, \\nu\\right\\rangle\\) end.</p>\n"
 end
 
 

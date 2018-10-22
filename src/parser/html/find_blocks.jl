@@ -19,7 +19,7 @@ function find_html_hblocks(tokens::Vector{Token})
     ntokens = length(tokens)
     active_tokens = ones(Bool, length(tokens))
     # storage for the blocks `{...}`
-    hblocks = Vector{Block}()
+    hblocks = Vector{OCBlock}()
     # look for tokens indicating an opening brace
     for (i, τ) ∈ enumerate(tokens)
          # only consider active open braces
@@ -33,7 +33,7 @@ function find_html_hblocks(tokens::Vector{Token})
              inbalance += ocbalance(tokens[j], :H_BLOCK_OPEN => :H_BLOCK_CLOSE)
          end
          (inbalance > 0) && error("I found at least one open curly brace that is not closed properly. Verify.")
-         push!(hblocks, hblock(subs(str(τ), from(τ), to(tokens[j]))))
+         push!(hblocks, OCBlock(:H_BLOCK, τ => tokens[j]))
          # remove processed tokens and mark inner tokens as inactive!
          # these will be re-processed in recursion
          active_tokens[i:j] .= false
@@ -48,7 +48,7 @@ end
 Given `{{ ... }}` blocks, identify what blocks they are and return a vector
 of qualified blocks of type `AbstractBlock`.
 """
-function qualify_html_hblocks(blocks::Vector{Block})
+function qualify_html_hblocks(blocks::Vector{OCBlock})
     qb = Vector{AbstractBlock}(undef, length(blocks))
     for (i, β) ∈ enumerate(blocks)
         # if block {{ if v }}

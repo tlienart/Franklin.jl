@@ -6,6 +6,7 @@
         {{ else }}
         show other stuff
         {{ end }}"""
+
     tokens = JuDoc.find_tokens(st, JuDoc.HTML_TOKENS, JuDoc.HTML_1C_TOKENS)
     hblocks, tokens = JuDoc.find_html_hblocks(tokens)
     @test hblocks[1].ss == "{{ fill v1 }}"
@@ -25,9 +26,11 @@ end
         show other stuff
         {{ end }}
         """
+
     tokens = JuDoc.find_tokens(st, JuDoc.HTML_TOKENS, JuDoc.HTML_1C_TOKENS)
     hblocks, tokens = JuDoc.find_html_hblocks(tokens)
     qblocks = JuDoc.qualify_html_hblocks(hblocks)
+
     @test qblocks[1].fname == "fill"
     @test qblocks[1].params == ["v1"]
     @test qblocks[2].vname == "b1"
@@ -50,6 +53,7 @@ end
         {{ end }}
         final text
         """
+
     tokens = JuDoc.find_tokens(st, JuDoc.HTML_TOKENS, JuDoc.HTML_1C_TOKENS)
     hblocks, tokens = JuDoc.find_html_hblocks(tokens)
     qblocks = JuDoc.qualify_html_hblocks(hblocks)
@@ -75,12 +79,14 @@ end
         {{ end }}
         final text
         """
+
     tokens = JuDoc.find_tokens(st, JuDoc.HTML_TOKENS, JuDoc.HTML_1C_TOKENS)
     hblocks, tokens = JuDoc.find_html_hblocks(tokens)
     qblocks = JuDoc.qualify_html_hblocks(hblocks)
     cblocks, qblocks = JuDoc.find_html_cblocks(qblocks)
     cdblocks, qblocks = JuDoc.find_html_cdblocks(qblocks)
     hblocks = JuDoc.merge_blocks(qblocks, cblocks, cdblocks)
+
     @test hblocks[1].ss == "{{ fill v1 }}"
     @test hblocks[2].ss == "{{ if b1 }}\nshow stuff here {{ fill v2 }}\n{{ elseif b2 }}\nother stuff\n{{ else }}\nshow other stuff\n{{ end }}"
 end

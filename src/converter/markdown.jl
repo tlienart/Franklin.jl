@@ -106,26 +106,24 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
     tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
 
     # Find all open-close blocks
-    ocblocks, tokens = find_md_all_ocblocks(tokens)
-    # Find brace blocks
-    braces_ocb, tokens = find_md_braces_ocb(tokens)
+    blocks, tokens = find_md_ocblocks(tokens)
 
-    # Find newcommands (latex definitions)
-    lxdefs, tokens = find_md_lxdefs(tokens, braces_ocb)
+    # Find newcommands (latex definitions), update active blocks/braces
+    lxdefs, tokens, braces, blocks = find_lxdefs(tokens, blocks)
     # if any lxdefs are given in the context, merge them. `pastdef!` specifies
     # that the definitions appear "earlier" by marking the `.from` at 0
     lprelx = length(pre_lxdefs)
     (lprelx > 0) && (lxdefs = cat(pastdef!.(pre_lxdefs), lxdefs, dims=1))
 
     # Find lxcoms
-    lxcoms, tokens = find_md_lxcoms(tokens, lxdefs, braces_ocb)
+    lxcoms, tokens = find_md_lxcoms(tokens, lxdefs, braces)
 
     # Merge all the blocks that will need further processing before insertion
-    blocks2insert = merge_blocks(braces_ocb, lxcoms, ocblocks)
+    blocks2insert = merge_blocks(lxcoms, blocks)
 
     if has_mddefs
         # Process MD_DEF blocks
-        mddefs = filter(β -> (β.name == :MD_DEF), ocblocks)
+        mddefs = filter(β -> (β.name == :MD_DEF), blocks)
         assignments = Vector{Pair{String, String}}(undef, length(mddefs))
         for (i, mdd) ∈ enumerate(mddefs)
             matched = match(MD_DEF_PAT, mdd.ss)
@@ -152,7 +150,7 @@ function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
     inter_html = md2html(inter_md, isrecursive)
 
     # plug resolved blocks in partial html to form the final html
-    lxcontext = LxContext(lxcoms, lxdefs, braces_ocb)
+    lxcontext = LxContext(lxcoms, lxdefs, braces)
     hstring   = convert_inter_html(inter_html, blocks2insert, lxcontext)
 
     # Return the string + judoc variables if relevant
@@ -173,9 +171,10 @@ function convert_md_math(ms::String, lxdefs=Vector{LxDef}(), offset=0)
     MATH = true
     # tokenize with restricted set
     tokens = find_tokens(ms, MD_TOKENS_LX, MD_1C_TOKENS_LX)
-    braces_ocb, tokens = find_md_braces_ocb(tokens)
+    blocks, tokens = find_md_ocblocks(tokens)
+    braces = filter(β -> β.name == :LXB, blocks) # should be all of them
     # in a math environment -> pass a bool to indicate it as well as offset
-    lxcoms, tokens = find_md_lxcoms(tokens, lxdefs,  braces_ocb, MATH, offset)
+    lxcoms, tokens = find_md_lxcoms(tokens, lxdefs,  braces, MATH, offset)
     # form the string (see `form_inter_md`, similar but fewer conditions)
     strlen   = prevind(ms, lastindex(ms))
     pieces   = Vector{AbstractString}()
@@ -185,13 +184,13 @@ function convert_md_math(ms::String, lxdefs=Vector{LxDef}(), offset=0)
     while (next_lxc < BIG_INT) & (head < strlen)
         # add anything that may occur before the first command
         (head < next_lxc) &&
-            push!(pieces, subs(ms, head, prevind(ms, next_lxcom)))
+            push!(pieces, subs(ms, head, prevind(ms, next_lxc)))
         # add the first command after resolving, bool to indicate that inmath
         push!(pieces, resolve_lxcom(lxcoms[lxc_idx], lxdefs, MATH))
         # move the head
         head     = nextind(ms, to(lxcoms[lxc_idx]))
         lxc_idx += 1
-        next_lxc = (lxc_idx > len_lxc) ? BIG_INT : from(lxcoms[lxcom_idx])
+        next_lxc = (lxc_idx > len_lxc) ? BIG_INT : from(lxcoms[lxc_idx])
     end
     # add anything after the last command
     (head <= strlen) && push!(pieces, chop(ms, head=prevind(ms, head), tail=1))
@@ -314,7 +313,7 @@ Helper function for the math block case of `convert_block` taking the inside
 of a math block, resolving any latex command in it and returning the correct
 syntax that KaTeX can render.
 """
-function convert_mathblock(β::Block, lxdefs::Vector{LxDef})
+function convert_mathblock(β::OCBlock, lxdefs::Vector{LxDef})
 
     pm = get(JD_MBLOCKS_PM, β.name) do
         error("Unrecognised math block name.")

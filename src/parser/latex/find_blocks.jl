@@ -1,5 +1,5 @@
 """
-    find_md_lxdefs(tokens, blocks, bblocks)
+    find_md_lxdefs(tokens, braces, blocks)
 
 Find `\\newcommand` elements and try to parse what follows to form a proper
 Latex command. Return a list of such elements.
@@ -7,63 +7,78 @@ The format is:
     \\newcommand{NAMING}[NARG]{DEFINING}
 where [NARG] is optional (see `LX_NARG_PAT`).
 """
-function find_md_lxdefs(tokens::Vector{Token}, bblocks::Vector{OCBlock})
+function find_lxdefs(tokens::Vector{Token}, blocks::Vector{OCBlock})
 
     lxdefs = Vector{LxDef}()
+
+    braces = filter(β -> β.name == :LXB, blocks)
+    nbraces = length(braces)
+
     active_tokens = ones(Bool, length(tokens))
+    active_blocks = ones(Bool, length(blocks))
+
     # go over tokens, stop over the ones that indicate a newcommand
     for (i, τ) ∈ enumerate(tokens)
         # skip inactive tokens
         active_tokens[i] || continue
         # look for tokens that indicate a newcommand
         (τ.name == :LX_NEWCOMMAND) || continue
-
         # find first brace blocks after the newcommand (naming)
         fromτ = from(τ)
-        k = findfirst(β -> (fromτ < from(β)), bblocks)
+        k = findfirst(β -> (fromτ < from(β)), braces)
         # there must be two brace blocks after the newcommand (name, def)
-        if isnothing(k) || !(1 <= k < length(bblocks))
+        if isnothing(k) || !(1 <= k < nbraces)
             error("Ill formed newcommand (needs two {...})")
         end
-
         # try to find a number of arg between these two first {...} to see # if it may contain something which we'll try to interpret as [.d.]
-        rge = (to(bblocks[k])+1):(from(bblocks[k+1])-1)
+        rge = (to(braces[k])+1):(from(braces[k+1])-1)
         lxnarg = 0
         # it found something between the naming brace and the def brace
         # check if it looks like [.d.] where d is a number and . are
         # optional spaces (specification of the number of arguments)
         if !isempty(rge)
-            lxnarg = match(LX_NARG_PAT, subs(str(bblocks[k]), rge))
+            lxnarg = match(LX_NARG_PAT, subs(str(braces[k]), rge))
             isnothing(lxnarg) && error("Ill formed newcommand (where I
             expected the specification of the number of arguments).")
             matched = lxnarg.captures[2]
             lxnarg = isnothing(matched) ? 0 : parse(Int, matched)
         end
-
-        naming_braces = bblocks[k]
-        defining_braces = bblocks[k+1]
+        # assign naming / def
+        naming_braces = braces[k]
+        defining_braces = braces[k+1]
         # try to find a valid command name in the first set of braces
         matched = match(LX_NAME_PAT, content(naming_braces))
         isnothing(matched) && error("Invalid definition of a new command expected a command name of the form `\\command`.")
         # keep track of the command name, definition and where it stops
         lxname = matched.captures[1]
-        def = content(defining_braces)
+        lxdef = content(defining_braces)
         todef = to(defining_braces)
         # store the new latex command
-        push!(lxdefs, LxDef(lxname, lxnarg, def, fromτ, todef))
+        push!(lxdefs, LxDef(lxname, lxnarg, lxdef, fromτ, todef))
 
         # mark newcommand token as processed as well as the next token
-        # which is necessarily the command name (braces are inactive)
-        active_tokens[[i, i+1]] .= false
-        # mark any token in the definition as inactive
-        deactivate_until = findfirst(τ -> (from(τ) > todef), tokens[i+2:end])
-        if isnothing(deactivate_until)
-            active_tokens[i+2:end] .= false
-        else
-            active_tokens[i+2:i+deactivate_until] .= false
+        # which is necessarily the command name (brace token is inactive here)
+        active_tokens[i] = false
+        # # mark any token in the definition as inactive
+        # deactivate_until = findfirst(τᵢ -> (from(τᵢ) > todef), tokens[i+1:end])
+        #
+        # if isnothing(deactivate_until)
+        #     active_tokens[i+1:end] .= false
+        # else
+        #     active_tokens[i+1:i+deactivate_until] .= false
+        # end
+        # mark any block (inc. braces!) starting in the scope as inactive
+        for (i, isactive) ∈ enumerate(active_blocks)
+            isactive || continue
+            (fromτ ≤ from(blocks[i]) ≤ todef) && (active_blocks[i] = false)
         end
     end # tokens
-    return lxdefs, tokens[active_tokens]
+    tokens = tokens[active_tokens]
+    blocks = blocks[active_blocks]
+    braces_mask = map(β -> β.name == :LXB, blocks)
+    braces = blocks[braces_mask]
+    blocks = blocks[@. ~braces_mask]
+    return lxdefs, tokens, braces, blocks
 end
 
 
