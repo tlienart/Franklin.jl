@@ -117,8 +117,9 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true, port=8000)
     			cntr = 1
     		else
                 for (name, dict) ∈ watched, (fpair, t) ∈ dict
+
                     fpath = joinpath(fpair...)
-                    cur_t = last(fpath)
+                    cur_t = lastm(fpath)
                     cur_t <= t && continue
                     # if the time of last modification is
                     # greater (more recent) than the one stored in

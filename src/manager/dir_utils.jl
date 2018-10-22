@@ -7,11 +7,15 @@ Prepare the output directory `JD_PATHS[:out]`.
 start from a blank slate
 """
 function prepare_output_dir(clear_out=true)
+
     # if required to start from a blank slate -> remove the output dir
     (clear_out & isdir(JD_PATHS[:out])) && rm(JD_PATHS[:out], recursive=true)
+
     # create the output dir and the css dir if necessary
     !isdir(JD_PATHS[:out]) && mkdir(JD_PATHS[:out])
     !isdir(JD_PATHS[:out_css]) && mkdir(JD_PATHS[:out_css])
+
+    return nothing
 end
 
 
@@ -22,9 +26,12 @@ Take a `root` path to an input file and convert to output path. If the output
 path does not exist, create it.
 """
 function out_path(root::String)
+
     f_out_path = joinpath(JD_PATHS[:f], root[length(JD_PATHS[:in])+1:end])
     f_out_path = replace(f_out_path, "/pages/" => "/pub/")
+
     !ispath(f_out_path) && mkpath(f_out_path)
+
     return f_out_path
 end
 
@@ -35,8 +42,9 @@ end
 Update the dictionaries referring to input files and their time of last
 change. The variable `verb` propagates verbosity.
 """
-function scan_input_dir!(md_files, html_files, other_files,
-                         infra_files, verb=false)
+function scan_input_dir!(md_files, html_files, other_files, infra_files,
+                         verb = false)
+
     # top level files (src/*)
     for file ∈ readdir(JD_PATHS[:in])
         isfile(joinpath(JD_PATHS[:in], file)) || continue
@@ -50,6 +58,7 @@ function scan_input_dir!(md_files, html_files, other_files,
             add_if_new_file!(html_files, fpair, verb)
         end
     end
+
     # pages files (src/pages/*)
     for (root, _, files) ∈ walkdir(JD_PATHS[:in_pages])
         for file ∈ files
@@ -67,6 +76,7 @@ function scan_input_dir!(md_files, html_files, other_files,
             end
         end
     end
+
     # infastructure files (src/_css/* and src/_html_parts/*)
     for d ∈ [:in_css, :in_html], (root, _, files) ∈ walkdir(JD_PATHS[d])
         for file ∈ files
@@ -77,6 +87,8 @@ function scan_input_dir!(md_files, html_files, other_files,
             add_if_new_file!(infra_files, root=>file, verb)
         end
     end
+
+    return nothing
 end
 
 
@@ -87,8 +99,11 @@ Helper function, if `fpair` is not referenced in the dictionary (new file)
 add the entry to the dictionary with the time of last modification as val.
 """
 function add_if_new_file!(dict, fpair, verb)
+
     if !haskey(dict, fpair)
         verb && println("tracking new file '$(fpair.second)'.")
-        dict[fpair] = last(joinpath(fpair...))
+        dict[fpair] = lastm(joinpath(fpair...))
     end
+
+    return nothing
 end

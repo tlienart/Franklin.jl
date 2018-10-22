@@ -5,7 +5,9 @@ H-Function of the form `{{ fill vname }}` to plug in the content of a
 jd-var `vname` (assuming it can be represented as a string).
 """
 function hfun_fill(params::Vector{String}, allvars::Dict)
+
     length(params) == 1 || error("I found a {{fill ...}} with more than one parameter. Verify.")
+
     replacement = ""
     vname = params[1]
     if haskey(allvars, vname)
@@ -15,6 +17,7 @@ function hfun_fill(params::Vector{String}, allvars::Dict)
     else
         @warn "I found a '{{fill $vname}}' but I do not know the variable '$vname'. Ignoring."
     end
+
     return replacement
 end
 
@@ -30,7 +33,9 @@ processing which means that any `{{...}}` block in the inserted content will
 be displayed "as is".
 """
 function hfun_insert(params::Vector{String})
+
     length(params) == 1 || error("I found an {{insert ...}} block with more than one parameter. Verify.")
+
     replacement = ""
     fpath = joinpath(JD_PATHS[:in_html], params[1])
     if isfile(fpath)
@@ -38,22 +43,26 @@ function hfun_insert(params::Vector{String})
     else
         @warn "I found an {{insert ...}} block and tried to insert '$fpath' but I couldn't find the file. Ignoring."
     end
+
     return replacement
 end
 
 
 function hfun_href(params::Vector{String})
+
     length(params) == 2 || error("I found an {{href ...}} block and expected 2 parameters but got $(length(params)). Verify.")
+
     replacement = "<b>??</b>"
     dname, hkey = params[1], parse(UInt, params[2])
     if params[1] == "EQR"
         haskey(JD_LOC_EQDICT, hkey) || return replacement
-        replacement = "<a href=\"#$hkey\">$(JD_LOC_EQDICT[hkey])</a>"
+        replacement = html_ahref(hkey, JD_LOC_EQDICT[hkey])
     elseif params[1] == "BIBR"
         haskey(JD_LOC_BIBREFDICT, hkey) || return replacement
-        replacement = "<a href=\"#$hkey\">$(JD_LOC_BIBREFDICT[hkey])</a>"
+        replacement = html_ahref(hkey, JD_LOC_BIBREFDICT[hkey])
     else
         @warn "Unknown dictionary name $dname in {{href ...}}. Ignoring"
     end
+
     return replacement
 end

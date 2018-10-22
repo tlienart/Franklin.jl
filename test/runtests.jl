@@ -6,21 +6,21 @@ using JuDoc, Test
 include("jd_paths_vars.jl") # ✅  aug 16, 2018
 
 # MANAGER folder
-include("manager/utils.jl") # ✅  oct 12, 2018
+include("manager/utils.jl") # ✅  oct 22, 2018
 println("🍺")
 
 # PARSER folder
 println("PARSER/MD+LX")
 include("parser/markdown+latex.jl") # ✅  oct 19, 2018
-include("parser/hyperref.jl")       # ✅  oct 15, 2018
 println("🍺")
 println("PARSER/HTML")
-include("parser/html.jl") # ✅ oct 12, 2018
+include("parser/html.jl") # ✅  oct 12, 2018
 println("🍺")
 
 # CONVERTER folder
 println("CONVERTER/MD")
-include("converter/markdown.jl") # ✅ oct 12, 2018
+include("converter/markdown.jl") # ✅  oct 22, 2018
+include("converter/hyperref.jl") # ✅  oct 22, 2018
 println("🍺")
 println("CONVERTER/HTML")
 include("converter/html.jl")     # ✅ oct 12, 2018

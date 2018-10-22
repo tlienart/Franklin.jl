@@ -1,9 +1,9 @@
 """
-    last(f)
+    lastm(f)
 
 Convenience function to get the time of last modification of a file.
 """
-last(f::String) = stat(f).mtime
+lastm(f::String) = stat(f).mtime
 
 
 """
@@ -15,6 +15,7 @@ via `JD_GLOB_LXDEFS`. If the configuration file is not found a warning is
 shown.
 """
 function process_config()
+
     # read the config.md file if it is present
     config_path = joinpath(JD_PATHS[:in], "config.md")
     if isfile(config_path)
@@ -22,6 +23,8 @@ function process_config()
     else
         @warn "I didn't find a config file. Ignoring."
     end
+
+    return nothing
 end
 
 
@@ -33,6 +36,7 @@ the appropriate HTML page (inserting `head`, `pg_foot` and `foot`) and
 finally write it at the appropriate place.
 """
 function write_page(root, file, head, pg_foot, foot)
+
     ###
     # 0. create a dictionary with all the variables available to the page
     # 1. read the markdown into string, convert it and extract definitions
@@ -63,10 +67,13 @@ function write_page(root, file, head, pg_foot, foot)
     # 5. write the html file where appropriate
     ###
     write(joinpath(out_path(root), change_ext(file)), pg)
+
+    return nothing
 end
 
 
 function process_file(case, fpair, args...)
+
     try
         process_file_err(case, fpair, args...)
     catch err
@@ -76,6 +83,8 @@ function process_file(case, fpair, args...)
         @show err
         throw(ErrorException("jd-err"))
     end
+
+    return nothing
 end
 
 
@@ -90,6 +99,7 @@ It can throw an error which will be caught in `process_file(args...)`.
 """
 function process_file_err(case, fpair, clear_out_dir,
                           head="", pg_foot="", foot="", t=0.)
+
     if case == "md"
         write_page(fpair..., head, pg_foot, foot)
     elseif case == "html"
@@ -100,7 +110,7 @@ function process_file_err(case, fpair, clear_out_dir,
         opath = joinpath(out_path(fpair.first), fpair.second)
         # only copy it again if necessary (particularly relevant)
         # when the asset files take quite a bit of space.
-        if clear_out_dir || !isfile(opath) || last(opath) < t
+        if clear_out_dir || !isfile(opath) || lastm(opath) < t
             cp(joinpath(fpair...), opath, force=true)
         end
     else # case == "infra"
@@ -111,6 +121,8 @@ function process_file_err(case, fpair, clear_out_dir,
                 force=true)
         end
     end
+
+    return nothing
 end
 
 

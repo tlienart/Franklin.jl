@@ -2,14 +2,21 @@
 	JD_GLOB_VARS
 
 Dictionary of variables assumed to be set for the entire website. Entries have
-the format KEY => PAIR where
-* KEY is a string (e.g.: "author")
-* PAIR is an pair where the first element is the default value for the variable
-and the second is a tuple of accepted possible (super)types for that value. (e.g.: "THE AUTHOR" => (String, Nothing))
-It is a constant for perf reasons but it can be modified (since it's a Dict).
+the format KEY => PAIR where KEY is a string (e.g.: "author") and PAIR is a pair where the first element is the default value for the variable
+and the second is a tuple of accepted possible (super)types for that value.
+(e.g.: "THE AUTHOR" => (String, Nothing))
+
+DEVNOTE: marked as constant for perf reasons but can be modified since Dict.
 """
 const JD_GLOB_VARS = Dict{String, Pair{Any, Tuple}}()
 
+
+"""
+    def_GLOB_VARS
+
+Convenience function to allocate default values of the global site variables.
+This is called once, when JuDoc is started.
+"""
 def_GLOB_VARS() = begin
     empty!(JD_GLOB_VARS)
     JD_GLOB_VARS["author"]      = Pair("THE AUTHOR", (String, Nothing))
@@ -22,10 +29,18 @@ end
 
 Dictionary of variables copied and then set for each page (through definitions).
 Entries have the same format as for `JD_GLOB_VARS`.
-It is a constant for perf reasons but it can be modified (since it's a Dict).
+
+DEVNOTE: marked as constant for perf reasons but can be modified since Dict.
 """
 const JD_LOC_VARS = Dict{String, Pair{Any, Tuple}}()
 
+
+"""
+    def_LOC_VARS
+
+Convenience function to allocate default values of page variables. This is
+called every time a page is processed.
+"""
 def_LOC_VARS() = begin
     empty!(JD_LOC_VARS)
     JD_LOC_VARS["isdemo"]   = Pair(false,   (Bool,))
@@ -41,13 +56,21 @@ end
 """
     JD_GLOB_LXDEFS
 
-List of latex definitions accessible to all pages.
+List of latex definitions accessible to all pages. This is filled when the
+config file is read (via manager/file_utils/process_config)
 """
 const JD_GLOB_LXDEFS = Dict{String, LxDef}()
 
+
+"""
+    def_GLOB_LXDEFS
+
+Convenience function to allocate default values of global latex commands
+accessible throughout the site.
+"""
 def_GLOB_LXDEFS() = begin
     empty!(JD_GLOB_LXDEFS)
-    # for \eqref and \cite, see parser/latex/resolve_latex
+    # for \eqref and \cite*, see parser/latex/resolve_latex
     JD_GLOB_LXDEFS["\\eqref"]    = LxDef("\\eqref",    1, SubString(""))
     JD_GLOB_LXDEFS["\\cite"]     = LxDef("\\cite",     1, SubString(""))
     JD_GLOB_LXDEFS["\\citet"]    = LxDef("\\citet",    1, SubString(""))
@@ -56,9 +79,9 @@ def_GLOB_LXDEFS() = begin
 end
 
 
-#= =========================
-Convenience functions
-============================ =#
+#= ==========================================
+Convenience functions related to the jd_vars
+============================================= =#
 
 """
     jd_date(d)
@@ -88,6 +111,9 @@ modification time.
 set_var!(dict, key, val) = (dict[key] = Pair(val, dict[key].second))
 
 
+#= =================================================
+set_vars, the key function to assign site variables
+==================================================== =#
 
 """
     set_vars!(jd_vars, assignments)
@@ -95,7 +121,7 @@ set_var!(dict, key, val) = (dict[key] = Pair(val, dict[key].second))
 Given a set of definitions `assignments`, update the variables dictionary
 `jd_vars`. Keys in `assignments` that do not match keys in `jd_vars` are
 ignored (a warning message is displayed).
-The entries in `assignments` are of the form `KEY=>STR` where `KEY` is a
+The entries in `assignments` are of the form `KEY => STR` where `KEY` is a
 string key (e.g.: "hasmath") and `STR` is an assignment to evaluate (e.g.:
 "=false").
 
