@@ -20,7 +20,7 @@ println("🍺")
 # CONVERTER folder
 println("CONVERTER/MD")
 include("converter/markdown.jl") # ✅  oct 22, 2018
-include("converter/hyperref.jl") # 🚫  oct 22, 2018
+include("converter/hyperref.jl") # ✅  oct 22, 2018
 println("🍺")
 println("CONVERTER/HTML")
 include("converter/html.jl")     # ✅ oct 12, 2018

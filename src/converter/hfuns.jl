@@ -48,14 +48,6 @@ function hfun_insert(params::Vector{String})
 end
 
 
-"""
-    html_href(key, name)
-
-Convenience function to introduce a hyper reference.
-"""
-html_href(key, name) = "<a href=\"#$key\">$name</a>"
-
-
 function hfun_href(params::Vector{String})
 
     length(params) == 2 || error("I found an {{href ...}} block and expected 2 parameters but got $(length(params)). Verify.")
@@ -64,10 +56,10 @@ function hfun_href(params::Vector{String})
     dname, hkey = params[1], parse(UInt, params[2])
     if params[1] == "EQR"
         haskey(JD_LOC_EQDICT, hkey) || return replacement
-        replacement = html_href(hkey, JD_LOC_EQDICT[hkey])
+        replacement = html_ahref(hkey, JD_LOC_EQDICT[hkey])
     elseif params[1] == "BIBR"
         haskey(JD_LOC_BIBREFDICT, hkey) || return replacement
-        replacement = html_href(hkey, JD_LOC_BIBREFDICT[hkey])
+        replacement = html_ahref(hkey, JD_LOC_BIBREFDICT[hkey])
     else
         @warn "Unknown dictionary name $dname in {{href ...}}. Ignoring"
     end

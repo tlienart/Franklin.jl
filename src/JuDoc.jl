@@ -27,6 +27,8 @@ include("parser/html/tokens.jl")
 include("parser/html/find_blocks.jl")
 
 # CONVERSION
+# > utils
+include("converter/html_utils.jl")
 # > markdown
 include("converter/markdown.jl")
 # > html
@@ -43,6 +45,6 @@ include("manager/file_utils.jl")
 include("manager/judoc.jl")
 
 # MISC UTILS
-include("misc-utils.jl")
+include("misc_utils.jl")
 
 end # module

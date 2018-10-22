@@ -20,10 +20,16 @@ The boolean `stripp` indicates whether to remove the inserted `<p>` and `</p>`
 by the base markdown processor, this is relevant for things that are parsed
 within latex commands etc.
 """
-function md2html(ss::AbstractString, stripp::Bool=false)
+function md2html(ss::AbstractString,
+                 stripp = false)
+
     isempty(ss) && return ss
+    # Use the base Markdown -> Html converter
     partial = Markdown.html(Markdown.parse(ss))
-    stripp && return chop(partial, head=3, tail=5) # remove <p>...</p>\n
+
+    # In some cases, base converter adds <p>...</p>\n which we might not want
+    stripp && return chop(partial, head=3, tail=5)
+
     return partial
 end
 
@@ -34,7 +40,8 @@ end
 Form an intermediate MD file where special blocks are replaced by a marker
 (`JD_INSERT`) indicating that a piece will need to be plugged in there later.
 """
-function form_inter_md(mds::AbstractString, blocks::Vector{<:AbstractBlock},
+function form_inter_md(mds::AbstractString,
+                       blocks::Vector{<:AbstractBlock},
                        lxdefs::Vector{LxDef})
 
     # final character is the EOS character
@@ -55,31 +62,33 @@ function form_inter_md(mds::AbstractString, blocks::Vector{<:AbstractBlock},
 
     # check what's next: a block or a lxdef
     b_or_lxd = (next_b < next_lxd)
-    next_idx = min(next_b, next_lxd)
+    nxtidx = min(next_b, next_lxd)
 
+    # keep track of a few counters
     head, b_idx, lxd_idx = 1, 1, first_lxd
 
-    while (next_idx < BIG_INT) & (head < strlen)
-        # check if there's anything before head and next block and push
-        (head < next_idx) &&
-            push!(pieces, subs(mds, head, prevind(mds, next_idx)))
+    while (nxtidx < BIG_INT) & (head < strlen)
+        # check if there's anything before head and next block and push it
+        (head < nxtidx) && push!(pieces, subs(mds, head, prevind(mds, nxtidx)))
         # check whether it's a block first or a newcommand first
-        if b_or_lxd # it's a block --> push
+        if b_or_lxd # it's a block --> push, increase counters, move head
             push!(pieces, JD_INSERT)
             head   = nextind(mds, to(blocks[b_idx]))
             b_idx += 1
             next_b = (b_idx > len_b) ? BIG_INT : from(blocks[b_idx])
-        else # it's a newcommand --> no push
+        else # it's a newcommand --> skip, increase counters, move head
             head     = nextind(mds, to(lxdefs[lxd_idx]))
             lxd_idx += 1
             next_lxd = (lxd_idx > len_lxd) ? BIG_INT : from(lxdefs[lxd_idx])
         end
         # check which block is next
         b_or_lxd = (next_b < next_lxd)
-        next_idx = min(next_b, next_lxd)
+        nxtidx = min(next_b, next_lxd)
     end
-    # add final one if exists
+    # add whatever is after the last block
     (head <= strlen) && push!(pieces, subs(mds, head, strlen))
+
+    # combine everything and return
     return prod(pieces)
 end
 
@@ -93,8 +102,11 @@ Convert a judoc markdown file read as `mds` into a judoc html.
 - `isconfig` indicates whether the file to convert is the configuration file
 - `has_mddefs` whether to look for definitions of page variables or not
 """
-function convert_md(mds::String, pre_lxdefs=Vector{LxDef}();
-                    isrecursive=false, isconfig=false, has_mddefs=true)
+function convert_md(mds::String,
+                    pre_lxdefs  = Vector{LxDef}();
+                    isrecursive = false,
+                    isconfig    = false,
+                    has_mddefs  = true)
 
     if !isrecursive
         def_LOC_VARS()           # page-specific variables
@@ -166,15 +178,20 @@ math block (no command definitions, restricted tokenisation to latex tokens).
 The offset keeps track of where the math block was, which is useful to check
 whether any of the latex command used in the block have not yet been defined.
 """
-function convert_md_math(ms::String, lxdefs=Vector{LxDef}(), offset=0)
+function convert_md_math(ms::String,
+                         lxdefs = Vector{LxDef}(),
+                         offset = 0)
 
     MATH = true
-    # tokenize with restricted set
+
+    # tokenize with restricted set, find braces
     tokens = find_tokens(ms, MD_TOKENS_LX, MD_1C_TOKENS_LX)
     blocks, tokens = find_md_ocblocks(tokens)
     braces = filter(β -> β.name == :LXB, blocks) # should be all of them
+
     # in a math environment -> pass a bool to indicate it as well as offset
     lxcoms, tokens = find_md_lxcoms(tokens, lxdefs,  braces, MATH, offset)
+
     # form the string (see `form_inter_md`, similar but fewer conditions)
     strlen   = prevind(ms, lastindex(ms))
     pieces   = Vector{AbstractString}()
@@ -194,6 +211,7 @@ function convert_md_math(ms::String, lxdefs=Vector{LxDef}(), offset=0)
     end
     # add anything after the last command
     (head <= strlen) && push!(pieces, chop(ms, head=prevind(ms, head), tail=1))
+
     # combine everything
     return prod(pieces)
 end
@@ -213,6 +231,7 @@ function convert_inter_html(ihtml::AbstractString,
     allmatches = collect(eachmatch(PAT_JD_INSERT, ihtml))
     pieces = Vector{AbstractString}()
     strlen = lastindex(ihtml)
+
     # construct the pieces of the final html in order, gradually processing
     # the blocks to insert.
     head = 1
@@ -252,6 +271,7 @@ function convert_inter_html(ihtml::AbstractString,
     end
     # store whatever is after the last JD_INSERT if anything
     (head ≤ strlen) && push!(pieces, subs(ihtml, head:strlen))
+
     # return the full string
     return prod(pieces)
 end
@@ -265,21 +285,24 @@ given a latex context `lxc` and returns the processed html that needs to be
 plugged in the final html.
 """
 function convert_block(β::B, lxcontext::LxContext) where B <: AbstractBlock
+
     # Return relevant interpolated string based on case
     βn = β.name
     βn == :CODE_INLINE && return md2html(β.ss, true)
     βn == :CODE_BLOCK  && return md2html(β.ss)
     βn == :ESCAPE      && return chop(β.ss, head=3, tail=3)
+
     # Math block --> needs to call further processing to resolve possible latex
     βn ∈ MD_MATHS_NAMES && return convert_mathblock(β, lxcontext.lxdefs)
+
     # Div block --> need to process the block as a sub-element
     if βn == :DIV
         ct, _ = convert_md(content(β) * EOS, lxcontext.lxdefs;
-                        isrecursive=true, has_mddefs=false)
-        d1 = "<div class=\"$(chop(β.ocpair.first.ss, head=2, tail=0))\">"
-        d2 = "</div>\n"
-        return d1 * ct * d2
+                           isrecursive=true, has_mddefs=false)
+        name = chop(otok(β).ss, head=2, tail=0)
+        return html_div(name, ct)
     end
+
     # default case: comment and co --> ignore block
     return ""
 end
@@ -315,13 +338,14 @@ syntax that KaTeX can render.
 """
 function convert_mathblock(β::OCBlock, lxdefs::Vector{LxDef})
 
+    # try to find the block out of `JD_MBLOCKS_PM`, if not found, error
     pm = get(JD_MBLOCKS_PM, β.name) do
         error("Unrecognised math block name.")
     end
 
     # convert the inside, decorate with KaTex and return, also act if
-    #if the math block is a "display" one (with a number)
-    inner = chop(β.ss, head=pm[1], tail=pm[2])
+    # if the math block is a "display" one (with a number)
+    inner  = chop(β.ss, head=pm[1], tail=pm[2])
     anchor = ""
     if β.name ∉ [:MATH_A, :MATH_I]
         # NOTE: in the future if allow equation tags, then will need an `if`
@@ -333,12 +357,14 @@ function convert_mathblock(β::OCBlock, lxdefs::Vector{LxDef})
         # check if there's a label, if there is, add that to the dictionary
         matched = match(r"\\label{(.*?)}", inner)
         if !isnothing(matched)
-            name = hash(strip(matched.captures[1]))
+            name   = hash(strip(matched.captures[1]))
             anchor = "<a name=\"$name\"></a>"
+            inner  = replace(inner, r"\\label{.*?}" => "")
+            # store the label name and associated number
             JD_LOC_EQDICT[name] = JD_LOC_EQDICT[JD_LOC_EQDICT_COUNTER]
-            inner = replace(inner, r"\\label{.*?}" => "")
         end
     end
     inner *= EOS
+
     return anchor * pm[3] * convert_md_math(inner, lxdefs, from(β)) * pm[4]
 end
