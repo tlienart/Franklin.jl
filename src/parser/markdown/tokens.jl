@@ -154,3 +154,11 @@ const MD_OCB_ALL = vcat(MD_OCB, MD_OCB_MATHS, MD_OCB_BRACES)
 List of names of maths environments.
 """
 const MD_MATHS_NAMES = [e.first for e ∈ MD_OCB_MATHS]
+
+
+"""
+    MD_IGNORE
+
+List of names of blocks that will need to be dropped at compile time.
+"""
+const MD_IGNORE = [:COMMENT, :MD_DEF]
