@@ -70,13 +70,24 @@ function form_inter_md(mds::AbstractString,
     while (nxtidx < BIG_INT) & (head < strlen)
         # check if there's anything before head and next block and push it
         (head < nxtidx) && push!(pieces, subs(mds, head, prevind(mds, nxtidx)))
+
         # check whether it's a block first or a newcommand first
-        if b_or_lxd # it's a block --> push, increase counters, move head
-            push!(pieces, JD_INSERT)
-            head   = nextind(mds, to(blocks[b_idx]))
+        if b_or_lxd # it's a block, check if should be pushed
+            β = blocks[b_idx]
+            @show β
+            @show β.ss
+            @show β.name
+            @show β.name ∈ MD_IGNORE
+            if β.name ∈ MD_IGNORE # skip, increase counters, move head
+                head = nextind(mds, to(β))
+            else # push
+                push!(pieces, JD_INSERT)
+                head = nextind(mds, to(blocks[b_idx]))
+            end
             b_idx += 1
             next_b = (b_idx > len_b) ? BIG_INT : from(blocks[b_idx])
-        else # it's a newcommand --> skip, increase counters, move head
+
+        else # newcommand or ignore --> skip, increase counters, move head
             head     = nextind(mds, to(lxdefs[lxd_idx]))
             lxd_idx += 1
             next_lxd = (lxd_idx > len_lxd) ? BIG_INT : from(lxdefs[lxd_idx])
@@ -128,10 +139,7 @@ function convert_md(mds::String,
     (lprelx > 0) && (lxdefs = cat(pastdef!.(pre_lxdefs), lxdefs, dims=1))
 
     # Find lxcoms
-    lxcoms, tokens = find_md_lxcoms(tokens, lxdefs, braces)
-
-    # Merge all the blocks that will need further processing before insertion
-    blocks2insert = merge_blocks(lxcoms, blocks)
+    lxcoms, _ = find_md_lxcoms(tokens, lxdefs, braces)
 
     if has_mddefs
         # Process MD_DEF blocks
@@ -156,6 +164,9 @@ function convert_md(mds::String,
         jd_vars = merge(JD_GLOB_VARS, copy(JD_LOC_VARS))
         set_vars!(jd_vars, assignments)
     end
+
+    # Merge all the blocks that will need further processing before insertion
+    blocks2insert = merge_blocks(lxcoms, blocks)
 
     # form intermediate markdown + html
     inter_md   = form_inter_md(mds, blocks2insert, lxdefs)
@@ -190,7 +201,7 @@ function convert_md_math(ms::String,
     braces = filter(β -> β.name == :LXB, blocks) # should be all of them
 
     # in a math environment -> pass a bool to indicate it as well as offset
-    lxcoms, tokens = find_md_lxcoms(tokens, lxdefs,  braces, MATH, offset)
+    lxcoms, _ = find_md_lxcoms(tokens, lxdefs,  braces, MATH, offset)
 
     # form the string (see `form_inter_md`, similar but fewer conditions)
     strlen   = prevind(ms, lastindex(ms))
@@ -303,7 +314,7 @@ function convert_block(β::B, lxcontext::LxContext) where B <: AbstractBlock
         return html_div(name, ct)
     end
 
-    # default case: comment and co --> ignore block
+    # default case --> ignore block (should not happen)
     return ""
 end
 convert_block(β::LxCom, λ::LxContext) = resolve_lxcom(β, λ.lxdefs)
