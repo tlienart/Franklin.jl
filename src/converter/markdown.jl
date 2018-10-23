@@ -7,8 +7,8 @@ Markdown to HTML conversion.
 """
 const JD_INSERT = " ##JDINSERT## "
 const JD_INSERT_ = strip(JD_INSERT)
-const PAT_JD_INSERT = Regex(JD_INSERT_)
-const LEN_JD_INSERT = length(JD_INSERT_)
+const JD_INSERT_PAT = Regex(JD_INSERT_)
+const JD_INSERT_LEN = length(JD_INSERT_)
 
 """
     md2html(ss, stripp)
@@ -239,7 +239,7 @@ function convert_inter_html(ihtml::AbstractString,
                             lxcontext::LxContext)
 
     # Find the JD_INSERT indicators
-    allmatches = collect(eachmatch(PAT_JD_INSERT, ihtml))
+    allmatches = collect(eachmatch(JD_INSERT_PAT, ihtml))
     pieces = Vector{AbstractString}()
     strlen = lastindex(ihtml)
 
@@ -264,7 +264,7 @@ function convert_inter_html(ihtml::AbstractString,
         !(hasli) && (c1a > 0) && ihtml[c1a:c1b] == "<p>" && (δ1 = 3)
 
         # => case 2
-        iend   = m.offset + LEN_JD_INSERT
+        iend   = m.offset + JD_INSERT_LEN
         c2a = nextind(ihtml, iend)
         c2b = nextind(ihtml, iend, 4)  # </p*
         c20 = nextind(ihtml, iend, 10) # </p>\n</li*
