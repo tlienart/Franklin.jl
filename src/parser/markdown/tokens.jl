@@ -96,16 +96,19 @@ is nestable or not.
 The only `OCBlock` not in this dictionary is the brace block since it should
 not deactivate its content which is needed to find latex definitions (see
 parser/markdown/find_blocks/find_md_lxdefs).
+
+Dev note: order matters.
 """
 const MD_OCB = [
     # name            opening token    closing token     nestable
-    :DIV          => ((:DIV_OPEN     => :DIV_CLOSE    ), true),
     :COMMENT      => ((:COMMENT_OPEN => :COMMENT_CLOSE), false),
     :ESCAPE       => ((:ESCAPE       => :ESCAPE       ), false),
-    :MD_DEF       => ((:MD_DEF_OPEN  => :LINE_RETURN  ), false), # see [^3]
     :CODE_INLINE  => ((:CODE_SINGLE  => :CODE_SINGLE  ), false),
     :CODE_BLOCK_L => ((:CODE_L       => :CODE         ), false),
-    :CODE_BLOCK   => ((:CODE         => :CODE         ), false)
+    :CODE_BLOCK   => ((:CODE         => :CODE         ), false),
+    :MD_DEF       => ((:MD_DEF_OPEN  => :LINE_RETURN  ), false), # see [^3]
+    :LXB          => ((:LXB_OPEN     => :LXB_CLOSE    ), true ),
+    :DIV          => ((:DIV_OPEN     => :DIV_CLOSE    ), true ),
 ]
 #= NOTE:
     [3] an `MD_DEF` goes from an `@def` to the next `\n` so no multiple-line
@@ -128,16 +131,6 @@ const MD_OCB_MATHS = [
     :MATH_EQA   => ((:MATH_EQA_OPEN   => :MATH_EQA_CLOSE  ), false),
 ]
 
-
-"""
-    MD_OCB_BRACES
-
-Same concept as `MD_OCB` but specifically for braces blocks. They can
-be nested.
-"""
-const MD_OCB_BRACES = [:LXB => ((:LXB_OPEN => :LXB_CLOSE), true)]
-
-
 """
     MD_OCB_ALL
 
@@ -145,7 +138,7 @@ Combination of all `MD_OCB` in order.
 
 Dev note: the order in which these are stacked matters.
 """
-const MD_OCB_ALL = vcat(MD_OCB, MD_OCB_MATHS, MD_OCB_BRACES)
+const MD_OCB_ALL = vcat(MD_OCB, MD_OCB_MATHS)
 
 
 """
@@ -154,3 +147,11 @@ const MD_OCB_ALL = vcat(MD_OCB, MD_OCB_MATHS, MD_OCB_BRACES)
 List of names of maths environments.
 """
 const MD_MATHS_NAMES = [e.first for e ∈ MD_OCB_MATHS]
+
+
+"""
+    MD_IGNORE
+
+List of names of blocks that will need to be dropped at compile time.
+"""
+const MD_IGNORE = [:COMMENT, :MD_DEF]

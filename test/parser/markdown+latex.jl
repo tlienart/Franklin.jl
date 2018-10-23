@@ -26,18 +26,13 @@ end
     blocks, tokens = JuDoc.find_md_ocblocks(tokens)
     braces = filter(β -> β.name == :LXB, blocks)
 
-    # div block
-    β = blocks[1]
-    @test β.name == :DIV
-    @test β.ss == "@@dname block @@"
-
     # escape block
-    β = blocks[2]
+    β = blocks[1]
     @test β.name == :ESCAPE
     @test β.ss == "~~~\nescape block\n~~~"
 
     # inline code block
-    β = blocks[3]
+    β = blocks[2]
     @test β.name == :CODE_INLINE
     @test β.ss == "`code`"
 
@@ -45,6 +40,11 @@ end
     β = braces[1]
     @test β.name == :LXB
     @test β.ss == "{target}"
+
+    # div block
+    β = blocks[4]
+    @test β.name == :DIV
+    @test β.ss == "@@dname block @@"
 end
 
 
@@ -123,19 +123,18 @@ end
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
     blocks, tokens = JuDoc.find_md_ocblocks(tokens)
     lxdefs, tokens, braces, blocks = JuDoc.find_lxdefs(tokens, blocks)
-    lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, braces)
-    tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
+    lxcoms, _ = JuDoc.find_md_lxcoms(tokens, lxdefs, braces)
 
     @test lxcoms[1].ss == "\\com"
     @test lxcoms[2].ss == "\\comb{blah}"
 
-    @test blocks[1].name == :DIV
-    @test blocks[1].ss == "@@adiv inner part @@"
-    @test JuDoc.content(blocks[1]) == " inner part "
+    @test blocks[1].name == :CODE_BLOCK_L
+    @test blocks[1].ss == "```julia\nf(x) = x^2\n```"
+    @test JuDoc.content(blocks[1]) == "\nf(x) = x^2\n"
 
-    @test blocks[2].name == :CODE_BLOCK_L
-    @test blocks[2].ss == "```julia\nf(x) = x^2\n```"
-    @test JuDoc.content(blocks[2]) == "\nf(x) = x^2\n"
+    @test blocks[2].name == :DIV
+    @test blocks[2].ss == "@@adiv inner part @@"
+    @test JuDoc.content(blocks[2]) == " inner part "
 end
 
 
@@ -152,12 +151,47 @@ end
     tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
     blocks, tokens = JuDoc.find_md_ocblocks(tokens)
     lxdefs, tokens, braces, blocks = JuDoc.find_lxdefs(tokens, blocks)
-    lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, braces)
-    tokens = filter(τ -> τ.name != :LINE_RETURN, tokens)
+    lxcoms, _ = JuDoc.find_md_lxcoms(tokens, lxdefs, braces)
 
     @test lxdefs[1].name == "\\com" && lxdefs[1].narg == 0 &&  lxdefs[1].def == "blah"
     @test lxdefs[2].name == "\\comb" && lxdefs[2].narg == 1 && lxdefs[2].def == "\\mathrm{#1}"
     @test lxdefs[3].name == "\\comc" && lxdefs[3].narg == 2 && lxdefs[3].def == "part1:#1 and part2:#2"
     @test blocks[1].name == :ESCAPE
     @test blocks[1].ss == "~~~\nescape B1\n~~~"
+end
+
+
+@testset "Merge-blocks" begin
+    st = raw"""
+        @def title = "Convex Optimisation I"
+        \newcommand{\com}[1]{⭒!#1⭒}
+        \com{A}
+        <!-- comment -->
+        then some
+        ## blah <!-- ✅ 19/9/999 -->
+        end \com{B}.
+        """ * JuDoc.EOS
+
+    tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
+    blocks, tokens = JuDoc.find_md_ocblocks(tokens)
+    lxdefs, tokens, braces, blocks = JuDoc.find_lxdefs(tokens, blocks)
+    lxcoms, _ = JuDoc.find_md_lxcoms(tokens, lxdefs, braces)
+
+    @test blocks[1].name == :COMMENT
+    @test JuDoc.content(blocks[1]) == " comment "
+    @test blocks[2].name == :COMMENT
+    @test JuDoc.content(blocks[2]) == " ✅ 19/9/999 "
+    @test blocks[3].name == :MD_DEF
+    @test JuDoc.content(blocks[3]) == " title = \"Convex Optimisation I\""
+
+    @test lxcoms[1].ss == "\\com{A}"
+    @test lxcoms[2].ss == "\\com{B}"
+
+    b2i = JuDoc.merge_blocks(lxcoms, blocks)
+
+    @test b2i[1].ss == "@def title = \"Convex Optimisation I\"\n"
+    @test b2i[2].ss == "\\com{A}"
+    @test b2i[3].ss == "<!-- comment -->"
+    @test b2i[4].ss == "<!-- ✅ 19/9/999 -->"
+    @test b2i[5].ss == "\\com{B}"
 end

@@ -24,7 +24,7 @@ function find_md_ocblocks(tokens::Vector{Token}, name::S, ocpair::Pair{S, S};
             inbalance = 1 # we've seen an opening token
             # index for the closing token
             j = i
-            while !iszero(inbalance) & (j <= ntokens)
+            while !iszero(inbalance) & (j < ntokens)
                 j += 1
                 inbalance += ocbalance(tokens[j], ocpair)
             end
