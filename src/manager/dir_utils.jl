@@ -64,7 +64,7 @@ function scan_input_dir!(md_files, html_files, other_files, infra_files,
         for file ∈ files
             isfile(joinpath(root, file)) || continue
             # skip if it has to be ignored
-            file ∈ IGNORE_FILES && continue
+            file ∈ JD_IGNORE_FILES && continue
             fname, fext = splitext(file)
             fpair = (root => file)
             if fext == ".md"
@@ -82,8 +82,8 @@ function scan_input_dir!(md_files, html_files, other_files, infra_files,
         for file ∈ files
             isfile(joinpath(root, file)) || continue
             fname, fext = splitext(file)
-            # skipping files that are not of the type INFRA_EXT
-            fext ∉ INFRA_EXT && continue
+            # skipping files that are not of the type JD_INFRA_EXT
+            fext ∉ JD_INFRA_EXT && continue
             add_if_new_file!(infra_files, root=>file, verb)
         end
     end

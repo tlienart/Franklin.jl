@@ -152,7 +152,7 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true, port=8000)
         	if isa(err, InterruptException)
                 # this is the normal interruption (user pressing CTRL+C)
                 println("\nShutting down JuDoc. ✅")
-                rm(PID_FILE, force=true)
+                rm(JD_PID_FILE, force=true)
                 return 0
             elseif isa(err, ErrorException)
                 # this an anormal but controlled interruption (error)
@@ -178,9 +178,9 @@ to clear the output dir or not, `verb` whether to display information about
 changes etc seen by the engine, `port` where to serve with browser-sync.
 """
 function serve(;clear=true, verb=false, port=8000)
-    FOLDER_PATH[] = pwd()
+    JD_FOLDER_PATH[] = pwd()
     # start browser-sync, serving in 8000
-    run(`bash -c "browser-sync start -s -f $FOLDER_PATH --no-notify --logLevel silent --port $port --no-open & echo \$! > $PID_FILE"`)
+    run(`bash -c "browser-sync start -s -f $JD_FOLDER_PATH --no-notify --logLevel silent --port $port --no-open & echo \$! > $JD_PID_FILE"`)
     println("Starting the engine (give it 1-2s)...")
     JuDoc.judoc(single_pass=false, verb=verb, clear_out_dir=clear, port=port);
 end
@@ -194,12 +194,12 @@ stopped by an error rather than an interruption (CTRL+C) sent by the user.
 In that case, the node process corresponding to browser-sync is not terminated
 properly, this makes sure it gets cleaned up.
 """
-cleanup_process() = isfile(PID_FILE) &&
-    (run(`bash -c "kill \$(cat $PID_FILE)"`); rm(PID_FILE))
+cleanup_process() = isfile(JD_PID_FILE) &&
+    (run(`bash -c "kill \$(cat $JD_PID_FILE)"`); rm(JD_PID_FILE))
 
 
 """
-    PY_MIN
+    JD_PY_MIN
 
 This is a simple script using `css_html_js_minify` (available via pip) to
 compress html and css files (the js that we use is already compressed).
@@ -207,7 +207,7 @@ The reason for calling the script over the command line is that the command
 line seems to be buggy when provided with file paths. This script runs in a
 negligible amount of time.
 """
-const PY_MIN = raw"""
+const JD_PY_MIN = raw"""
     import os
     from css_html_js_minify import process_single_html_file as min_html
     from css_html_js_minify import process_single_css_file as min_css
@@ -224,16 +224,16 @@ const PY_MIN = raw"""
             if fname.endswith(".css"):
                 min_css(os.path.join(root, fname), overwrite=True)
     """
-const PY_MIN_NAME = ".__py_tmp_minscript.py"
+const JD_PY_MIN_NAME = ".__py_tmp_minscript.py"
 
 
 function publish(; minify=true, push=true)
     if minify
         try
             print("Minifying .html and .css files...")
-            write(PY_MIN_NAME, PY_MIN)
-            run(`bash -c "python $PY_MIN_NAME > /dev/null"`)
-            rm(PY_MIN_NAME)
+            write(JD_PY_MIN_NAME, JD_PY_MIN)
+            run(`bash -c "python $JD_PY_MIN_NAME > /dev/null"`)
+            rm(JD_PY_MIN_NAME)
             println(" [done] ✅")
         catch e
             println("\nCould not minify. Verify that you have css-html-js-minify installed (via pip) and that you use python 3.6+. Ignoring for now...\n")

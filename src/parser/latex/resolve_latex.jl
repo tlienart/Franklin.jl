@@ -73,16 +73,16 @@ end
 
 
 """
-    JD_COMS
+    JD_REF_COMS
 
-Dictionary for special latex commands for which a specific replacement that
-refers to context is constructed.
+Dictionary for latex commands related to hyperreference for which a specific
+replacement that depends on context is constructed.
 """
-const JD_COMS = Dict{String, Function}(
-    "\\eqref" => (λ -> form_href(λ, "EQR";  class="eqref)")),
-    "\\cite"  => (λ -> form_href(λ, "BIBR"; parens=""=>"", class="bibref")),
-    "\\citet" => (λ -> form_href(λ, "BIBR"; parens=""=>"", class="bibref")),
-    "\\citep" => (λ -> form_href(λ, "BIBR"; class="bibref")),
+const JD_REF_COMS = Dict{String, Function}(
+    "\\eqref"    => (λ -> form_href(λ, "EQR";  class="eqref)")),
+    "\\cite"     => (λ -> form_href(λ, "BIBR"; parens=""=>"", class="bibref")),
+    "\\citet"    => (λ -> form_href(λ, "BIBR"; parens=""=>"", class="bibref")),
+    "\\citep"    => (λ -> form_href(λ, "BIBR"; class="bibref")),
     "\\biblabel" => form_biblabel,
 )
 
@@ -99,7 +99,7 @@ function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef}, inmath::Bool=false)
     i = findfirst("{", lxc.ss)
     name = isnothing(i) ? lxc.ss : subs(lxc.ss, 1:(first(i)-1))
     # sort special commands where the input depends on context
-    haskey(JD_COMS, name) && return JD_COMS[name](lxc)
+    haskey(JD_REF_COMS, name) && return JD_REF_COMS[name](lxc)
 
     # retrieve the definition attached to the command
     lxdef = getdef(lxc)
