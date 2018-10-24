@@ -37,11 +37,13 @@ end
 
 
 """
-    JD_HBLOCKS
+    JD_HTML_FUNS
 
-Dictionary for special html functions.
+Dictionary for special html functions. They can take two variables, the first
+one `π` refers to the arguments passed to the function, the second one `ν`
+refers to the page variables (i.e. the context) available to the function.
 """
-const JD_HBLOCKS = Dict{String, Function}(
+const JD_HTML_FUNS = Dict{String, Function}(
     "fill"   => ((π, ν) -> hfun_fill(π, ν)),
     "insert" => ((π, _) -> hfun_insert(π)),
     "href"   => ((π, _) -> hfun_href(π)),
@@ -56,12 +58,11 @@ such as `{{ fill author }}`.
 """
 function convert_hblock(β::HFun, allvars::Dict)
 
-    fname = lowercase(β.fname)
-    haskey(JD_HBLOCKS, fname) && return JD_HBLOCKS[fname](β.params, allvars)
+    fn = lowercase(β.fname)
+    haskey(JD_HTML_FUNS, fn) && return JD_HTML_FUNS[fn](β.params, allvars)
 
-    # unknown function
-    @warn "I found a function block '{{$fname ...}}' but I don't recognise this function name. Ignoring."
-
+    # if here, then the function name is unknown, warn and ignore
+    @warn "I found a function block '{{$fn ...}}' but I don't recognise this function name. Ignoring."
     return β.ss
 end
 
@@ -76,12 +77,17 @@ function convert_hblock(β::HCond, allvars::Dict)
 
     # check that the bool vars exist
     allconds = [β.init_cond, β.sec_conds...]
-    has_else = (length(β.actions) == 1 + length(β.sec_conds) + 1)
     all(c -> haskey(allvars, c), allconds) || error("At least one of the booleans in a conditional html block could not be found. Verify.")
+
+    # check if there's an "else" clause
+    has_else = (length(β.actions) == 1 + length(β.sec_conds) + 1)
+    # check the first clause that is verified
     k = findfirst(c -> allvars[c].first, allconds)
+    # if none is verified, use the else clause if there is one or do nothing
     if isnothing(k)
         has_else || return ""
         partial = β.actions[end]
+    # otherwise run the 1st one which is verified
     else
         partial = β.actions[k]
     end
@@ -100,8 +106,11 @@ if a variable exists and if it does, applies something.
 function convert_hblock(β::HCondDef, allvars::Dict)
 
     hasvar = haskey(allvars, β.vname)
+
+    # check if the corresponding bool is true and if so, act accordingly
     doaction = ifelse(β.checkisdef, hasvar, !hasvar)
     doaction && return convert_html(String(β.action), allvars)
 
+    # default = do nothing
     return ""
 end

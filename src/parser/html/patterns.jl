@@ -1,5 +1,5 @@
 """
-    HBLOCK_FUN
+    HBLOCK_FUN_PAT
 
 Regex to match `{{ fname param₁ param₂ }}` where `fname` is a html processing
 function and `paramᵢ` should refer to appropriate variables in the current
@@ -8,7 +8,7 @@ Available functions are:
     * `{{ fill vname }}`: to plug a variable (e.g.: a date, author name)
     * `{{ insert fpath }}`: to plug in a file referred to by the `fpath` (e.g.: a html header)
 """
-const HBLOCK_FUN = r"{{\s*([a-z]\S+)\s+((.|\n)+?)}}"
+const HBLOCK_FUN_PAT = r"{{\s*([a-z]\S+)\s+((.|\n)+?)}}"
 
 
 """
@@ -17,12 +17,12 @@ const HBLOCK_FUN = r"{{\s*([a-z]\S+)\s+((.|\n)+?)}}"
 Regex to match `{{ if vname }}` where `vname` should refer to a boolean in
 the current scope.
 """
-const HBLOCK_IF     = r"{{\s*if\s+([a-zA-Z]\S+)\s*}}"
-const HBLOCK_ELSE   = r"{{\s*else\s*}}"
-const HBLOCK_ELSEIF = r"{{\s*else\s*if\s+([a-zA-Z]\S+)\s*}}"
-const HBLOCK_END    = r"{{\s*end\s*}}"
-const HBLOCK_IFDEF  = r"{{\s*ifdef\s+([a-zA-Z]\S+)\s*}}"
-const HBLOCK_IFNDEF  = r"{{\s*ifndef\s+([a-zA-Z]\S+)\s*}}"
+const HBLOCK_IF_PAT     = r"{{\s*if\s+([a-zA-Z]\S+)\s*}}"
+const HBLOCK_ELSE_PAT   = r"{{\s*else\s*}}"
+const HBLOCK_ELSEIF_PAT = r"{{\s*else\s*if\s+([a-zA-Z]\S+)\s*}}"
+const HBLOCK_END_PAT    = r"{{\s*end\s*}}"
+const HBLOCK_IFDEF_PAT  = r"{{\s*ifdef\s+([a-zA-Z]\S+)\s*}}"
+const HBLOCK_IFNDEF_PAT = r"{{\s*ifndef\s+([a-zA-Z]\S+)\s*}}"
 
 # If vname else ...
 
