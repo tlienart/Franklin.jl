@@ -193,15 +193,13 @@ function convert_md_math(ms::String,
                          lxdefs = Vector{LxDef}(),
                          offset = 0)
 
-    MATH = true
-
     # tokenize with restricted set, find braces
     tokens = find_tokens(ms, MD_TOKENS_LX, MD_1C_TOKENS_LX)
-    blocks, tokens = find_md_ocblocks(tokens)
+    blocks, tokens = find_md_ocblocks(tokens, inmath=true)
     braces = filter(β -> β.name == :LXB, blocks) # should be all of them
 
     # in a math environment -> pass a bool to indicate it as well as offset
-    lxcoms, _ = find_md_lxcoms(tokens, lxdefs,  braces, MATH, offset)
+    lxcoms, _ = find_md_lxcoms(tokens, lxdefs,  braces, offset; inmath=true)
 
     # form the string (see `form_inter_md`, similar but fewer conditions)
     strlen   = prevind(ms, lastindex(ms))
@@ -214,7 +212,7 @@ function convert_md_math(ms::String,
         (head < next_lxc) &&
             push!(pieces, subs(ms, head, prevind(ms, next_lxc)))
         # add the first command after resolving, bool to indicate that inmath
-        push!(pieces, resolve_lxcom(lxcoms[lxc_idx], lxdefs, MATH))
+        push!(pieces, resolve_lxcom(lxcoms[lxc_idx], lxdefs, inmath=true))
         # move the head
         head     = nextind(ms, to(lxcoms[lxc_idx]))
         lxc_idx += 1

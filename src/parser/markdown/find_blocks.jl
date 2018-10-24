@@ -7,12 +7,14 @@ Find active blocks between an opening token (`otoken`) and a closing token
 inactive (for further, separate processing).
 """
 function find_md_ocblocks(tokens::Vector{Token}, name::S, ocpair::Pair{S, S};
-                         nestable=false) where S <: Symbol
+                         nestable=false, inmath=false) where S <: Symbol
+
     # number of tokens & active tokens
     ntokens = length(tokens)
     active_tokens = ones(Bool, length(tokens))
     # storage for the blocks
     ocblocks = Vector{OCBlock}()
+
     # go over active tokens check if there's an opening token, if so look for
     # the closing one.
     for (i, τ) ∈ enumerate(tokens)
@@ -37,9 +39,16 @@ function find_md_ocblocks(tokens::Vector{Token}, name::S, ocpair::Pair{S, S};
             j += i
         end
         push!(ocblocks, OCBlock(name, τ => tokens[j]))
-        # remove processed tokens and tokens within blocks
-        active_tokens[i:j] .= false
+
+        # remove processed tokens and tokens within blocks except if
+        # it's a brace block in a math environment.
+        if name == :LXB && inmath
+            active_tokens[[i, j]] .= false
+        else
+            active_tokens[i:j] .= false
+        end
     end
+
     return ocblocks, tokens[active_tokens]
 end
 
@@ -50,10 +59,11 @@ end
 Convenience function to find all ocblocks associated with `MD_OCBLOCKS`.
 Returns a vector of vector of ocblocks.
 """
-function find_md_ocblocks(tokens::Vector{Token})
+function find_md_ocblocks(tokens::Vector{Token}; inmath=false)
     ocbs_all = Vector{OCBlock}()
     for (name, (ocpair, nest)) ∈ MD_OCB_ALL
-        ocbs, tokens = find_md_ocblocks(tokens, name, ocpair; nestable=nest)
+        ocbs, tokens = find_md_ocblocks(tokens, name, ocpair;
+                                        nestable=nest, inmath=inmath)
         append!(ocbs_all, ocbs)
     end
     return ocbs_all, tokens
