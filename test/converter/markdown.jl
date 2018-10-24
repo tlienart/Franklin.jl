@@ -229,3 +229,15 @@ end
     (m, _) = JuDoc.convert_md(st)
     @test m == "<p>blah  †a†\n<ul>\n<li><p>†aaa† tt</p>\n</li>\n<li><p>ss  †bbb†</p>\n</li>\n</ul>\n"
 end
+
+
+@testset "Braces" begin # see also 73
+    st = raw"""
+        \newcommand{\R}{\mathbb R}
+        $$
+        	\min_{x\in \R^n} \quad f(x)+i_C(x).
+        $$
+        """ * JuDoc.EOS
+    (m, _) = JuDoc.convert_md(st)
+    @test m == "\$\$\n\t\\min_{x\\in \\mathbb R^n} \\quad f(x)+i_C(x).\n\$\$</p>\n"
+end
