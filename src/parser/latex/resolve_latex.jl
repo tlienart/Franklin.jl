@@ -88,13 +88,13 @@ const JD_REF_COMS = Dict{String, Function}(
 
 
 """
-    resolve_lxcom(lxc, lxdefs, inmath)
+    resolve_lxcom(lxc, lxdefs; inmath)
 
 Take a `LxCom` object `lxc` and try to resolve it. Provided a definition
 exists etc, the definition is plugged in then sent forward to be re-parsed
 (in case further latex is present).
 """
-function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef}, inmath::Bool=false)
+function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef}; inmath=false)
 
     i = findfirst("{", lxc.ss)
     name = isnothing(i) ? lxc.ss : subs(lxc.ss, 1:(first(i)-1))

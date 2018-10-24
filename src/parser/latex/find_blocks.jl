@@ -114,7 +114,7 @@ end
 Find `\\command{arg1}{arg2}...` outside of `xblocks` and `lxdefs`.
 """
 function find_md_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
-                        braces::Vector{OCBlock}, inmath=false, offset=0)
+                        braces::Vector{OCBlock}, offset=0; inmath=false)
 
     lxcoms   = Vector{LxCom}()
     active_τ = ones(Bool, length(tokens))
