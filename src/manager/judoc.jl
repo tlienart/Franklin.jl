@@ -199,7 +199,7 @@ cleanup_process() = isfile(PID_FILE) &&
 
 
 """
-    PY_MIN
+    JD_PY_MIN
 
 This is a simple script using `css_html_js_minify` (available via pip) to
 compress html and css files (the js that we use is already compressed).
@@ -207,7 +207,7 @@ The reason for calling the script over the command line is that the command
 line seems to be buggy when provided with file paths. This script runs in a
 negligible amount of time.
 """
-const PY_MIN = raw"""
+const JD_PY_MIN = raw"""
     import os
     from css_html_js_minify import process_single_html_file as min_html
     from css_html_js_minify import process_single_css_file as min_css
@@ -224,16 +224,16 @@ const PY_MIN = raw"""
             if fname.endswith(".css"):
                 min_css(os.path.join(root, fname), overwrite=True)
     """
-const PY_MIN_NAME = ".__py_tmp_minscript.py"
+const JD_PY_MIN_NAME = ".__py_tmp_minscript.py"
 
 
 function publish(; minify=true, push=true)
     if minify
         try
             print("Minifying .html and .css files...")
-            write(PY_MIN_NAME, PY_MIN)
-            run(`bash -c "python $PY_MIN_NAME > /dev/null"`)
-            rm(PY_MIN_NAME)
+            write(JD_PY_MIN_NAME, JD_PY_MIN)
+            run(`bash -c "python $JD_PY_MIN_NAME > /dev/null"`)
+            rm(JD_PY_MIN_NAME)
             println(" [done] ✅")
         catch e
             println("\nCould not minify. Verify that you have css-html-js-minify installed (via pip) and that you use python 3.6+. Ignoring for now...\n")
