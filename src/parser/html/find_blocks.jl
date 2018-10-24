@@ -51,31 +51,31 @@ function qualify_html_hblocks(blocks::Vector{OCBlock})
     qb = Vector{AbstractBlock}(undef, length(blocks))
     for (i, β) ∈ enumerate(blocks)
         # if block {{ if v }}
-        m = match(HBLOCK_IF, β.ss)
+        m = match(HBLOCK_IF_PAT, β.ss)
         isnothing(m) ||
             (qb[i] = HIf(β.ss, m.captures[1]); continue)
         # else block {{ else }}
-        m = match(HBLOCK_ELSE, β.ss)
+        m = match(HBLOCK_ELSE_PAT, β.ss)
         isnothing(m) ||
             (qb[i] = HElse(β.ss); continue)
         # else if block {{ elseif v }}
-        m = match(HBLOCK_ELSEIF, β.ss)
+        m = match(HBLOCK_ELSEIF_PAT, β.ss)
         isnothing(m) ||
             (qb[i] = HElseIf(β.ss, m.captures[1]); continue)
         # end block {{ end }}
-        m = match(HBLOCK_END, β.ss)
+        m = match(HBLOCK_END_PAT, β.ss)
         isnothing(m) ||
             (qb[i] = HEnd(β.ss); continue)
         # ifdef block
-        m = match(HBLOCK_IFDEF, β.ss)
+        m = match(HBLOCK_IFDEF_PAT, β.ss)
         isnothing(m) ||
             (qb[i] = HIfDef(β.ss, m.captures[1]); continue)
         # ifndef block
-        m = match(HBLOCK_IFNDEF, β.ss)
+        m = match(HBLOCK_IFNDEF_PAT, β.ss)
         isnothing(m) ||
             (qb[i] = HIfNDef(β.ss, m.captures[1]); continue)
         # function block {{ fname v1 v2 ... }}
-        m = match(HBLOCK_FUN, β.ss)
+        m = match(HBLOCK_FUN_PAT, β.ss)
         isnothing(m) ||
             (qb[i] = HFun(β.ss, m.captures[1], split(m.captures[2])); continue)
         error("I found a HBlock that did not match anything, verify '$ts'")

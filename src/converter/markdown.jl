@@ -77,7 +77,7 @@ function form_inter_md(mds::AbstractString,
         if b_or_lxd # it's a block, check if should be pushed
             β = blocks[b_idx]
             # check whether the block should be skipped
-            if isa(β, OCBlock) && β.name ∈ MD_IGNORE
+            if isa(β, OCBlock) && β.name ∈ MD_OCB_IGNORE
                 head = nextind(mds, to(β))
             else # push
                 push!(pieces, JD_INSERT)
@@ -304,7 +304,7 @@ function convert_block(β::B, lxcontext::LxContext) where B <: AbstractBlock
     βn == :ESCAPE      && return chop(β.ss, head=3, tail=3)
 
     # Math block --> needs to call further processing to resolve possible latex
-    βn ∈ MD_MATHS_NAMES && return convert_mathblock(β, lxcontext.lxdefs)
+    βn ∈ MD_MATH_NAMES && return convert_mathblock(β, lxcontext.lxdefs)
 
     # Div block --> need to process the block as a sub-element
     if βn == :DIV

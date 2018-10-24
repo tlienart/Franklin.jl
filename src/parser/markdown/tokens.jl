@@ -117,12 +117,12 @@ const MD_OCB = [
 
 
 """
-    MD_OCB_MATHS
+    MD_OCB_MATH
 
 Same concept as `MD_OCB` but for math blocks, they can't be nested.
 Separating them from the other dictionary makes their processing easier.
 """
-const MD_OCB_MATHS = [
+const MD_OCB_MATH = [
     :MATH_A     => ((:MATH_A          => :MATH_A          ), false),
     :MATH_B     => ((:MATH_B          => :MATH_B          ), false),
     :MATH_C     => ((:MATH_C_OPEN     => :MATH_C_CLOSE    ), false),
@@ -138,7 +138,15 @@ Combination of all `MD_OCB` in order.
 
 Dev note: the order in which these are stacked matters.
 """
-const MD_OCB_ALL = vcat(MD_OCB, MD_OCB_MATHS)
+const MD_OCB_ALL = vcat(MD_OCB, MD_OCB_MATH)
+
+
+"""
+    MD_OCB_IGNORE
+
+List of names of blocks that will need to be dropped at compile time.
+"""
+const MD_OCB_IGNORE = [:COMMENT, :MD_DEF]
 
 
 """
@@ -146,12 +154,4 @@ const MD_OCB_ALL = vcat(MD_OCB, MD_OCB_MATHS)
 
 List of names of maths environments.
 """
-const MD_MATHS_NAMES = [e.first for e ∈ MD_OCB_MATHS]
-
-
-"""
-    MD_IGNORE
-
-List of names of blocks that will need to be dropped at compile time.
-"""
-const MD_IGNORE = [:COMMENT, :MD_DEF]
+const MD_MATH_NAMES = [e.first for e ∈ MD_OCB_MATH]
