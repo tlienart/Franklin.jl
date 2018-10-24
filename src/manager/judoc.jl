@@ -152,7 +152,7 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true, port=8000)
         	if isa(err, InterruptException)
                 # this is the normal interruption (user pressing CTRL+C)
                 println("\nShutting down JuDoc. ✅")
-                rm(PID_FILE, force=true)
+                rm(JD_PID_FILE, force=true)
                 return 0
             elseif isa(err, ErrorException)
                 # this an anormal but controlled interruption (error)
@@ -178,9 +178,9 @@ to clear the output dir or not, `verb` whether to display information about
 changes etc seen by the engine, `port` where to serve with browser-sync.
 """
 function serve(;clear=true, verb=false, port=8000)
-    FOLDER_PATH[] = pwd()
+    JD_FOLDER_PATH[] = pwd()
     # start browser-sync, serving in 8000
-    run(`bash -c "browser-sync start -s -f $FOLDER_PATH --no-notify --logLevel silent --port $port --no-open & echo \$! > $PID_FILE"`)
+    run(`bash -c "browser-sync start -s -f $JD_FOLDER_PATH --no-notify --logLevel silent --port $port --no-open & echo \$! > $JD_PID_FILE"`)
     println("Starting the engine (give it 1-2s)...")
     JuDoc.judoc(single_pass=false, verb=verb, clear_out_dir=clear, port=port);
 end
@@ -194,8 +194,8 @@ stopped by an error rather than an interruption (CTRL+C) sent by the user.
 In that case, the node process corresponding to browser-sync is not terminated
 properly, this makes sure it gets cleaned up.
 """
-cleanup_process() = isfile(PID_FILE) &&
-    (run(`bash -c "kill \$(cat $PID_FILE)"`); rm(PID_FILE))
+cleanup_process() = isfile(JD_PID_FILE) &&
+    (run(`bash -c "kill \$(cat $JD_PID_FILE)"`); rm(JD_PID_FILE))
 
 
 """
