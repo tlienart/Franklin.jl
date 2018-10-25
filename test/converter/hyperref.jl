@@ -34,7 +34,7 @@
     @test occursin("<li><p><a name=\"$h2\"></a> <strong>Amari</strong> and <strong>Douglas</strong>: <em>Why Natural Gradient</em>, 1998.</p>\n</li>", h)
     @test occursin("<li><p><a name=\"$h3\"></a> <strong>Bardenet</strong>, <strong>Doucet</strong> and <strong>Holmes</strong>: <em>On Markov Chain Monte Carlo Methods for Tall Data</em>, 2017.</p>\n</li>", h)
 
-    @test occursin("<span class=\"eqref)\">(<a href=\"#$h1\">1</a>)</span>", h)
+    @test occursin("<span class=\"eqref\">(<a href=\"#$h1\">1</a>)</span>", h)
     @test occursin("<span class=\"bibref\"><a href=\"#$h2\">Amari and Douglas., 1998</a></span>", h)
     @test occursin("<span class=\"bibref\">(<a href=\"#$h3\">Bardenet et al., 2017</a>)</span>", h)
 end
@@ -62,5 +62,5 @@ end
     h1 = J.refstring("eq:a trivial one")
     h2 = J.refstring("beyond hope")
 
-    m == "<p>Then something like  \$\$\\begin{array}{c}  \\mathbb E\\left[ f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R\\end{array}\$\$ and then  <a name=\"$h1\"></a>\$\$\\begin{array}{c}  1+1 &=&2 \\end{array}\$\$ but further  <a name=\"$h2\"></a>\$\$\\begin{array}{c}  1 &=& 1 \\end{array}\$\$ and finally a  <span class=\"eqref)\">({{href EQR $h1}})</span> and maybe  <span class=\"eqref)\">({{href EQR $h2}})</span>.</p>\n"
+    m == "<p>Then something like  \$\$\\begin{array}{c}  \\mathbb E\\left[ f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R\\end{array}\$\$ and then  <a name=\"$h1\"></a>\$\$\\begin{array}{c}  1+1 &=&2 \\end{array}\$\$ but further  <a name=\"$h2\"></a>\$\$\\begin{array}{c}  1 &=& 1 \\end{array}\$\$ and finally a  <span class=\"eqref\">({{href EQR $h1}})</span> and maybe  <span class=\"eqref\">({{href EQR $h2}})</span>.</p>\n"
 end
