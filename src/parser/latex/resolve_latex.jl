@@ -80,7 +80,7 @@ Dictionary for latex commands related to hyperreference for which a specific
 replacement that depends on context is constructed.
 """
 const JD_REF_COMS = Dict{String, Function}(
-    "\\eqref"    => (λ -> form_href(λ, "EQR";  class="eqref)")),
+    "\\eqref"    => (λ -> form_href(λ, "EQR";  class="eqref")),
     "\\cite"     => (λ -> form_href(λ, "BIBR"; parens=""=>"", class="bibref")),
     "\\citet"    => (λ -> form_href(λ, "BIBR"; parens=""=>"", class="bibref")),
     "\\citep"    => (λ -> form_href(λ, "BIBR"; class="bibref")),
