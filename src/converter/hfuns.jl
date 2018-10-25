@@ -53,7 +53,7 @@ function hfun_href(params::Vector{String})
     length(params) == 2 || error("I found an {{href ...}} block and expected 2 parameters but got $(length(params)). Verify.")
 
     replacement = "<b>??</b>"
-    dname, hkey = params[1], parse(UInt, params[2])
+    dname, hkey = params[1], params[2]
     if params[1] == "EQR"
         haskey(JD_LOC_EQDICT, hkey) || return replacement
         replacement = html_ahref(hkey, JD_LOC_EQDICT[hkey])

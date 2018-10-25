@@ -80,3 +80,13 @@ but without adding KaTeX elements to it given that they are part of a larger
 context that already has KaTeX elements.
 """
 mathenv(s) = "_\$>_" * s * "_\$<_"
+
+
+"""
+    refstring(s)
+
+Creates a random string pegged to `s` that we can use to make references.
+We could just use the hash but it's quite long, here the length of the output
+is controlled  by `JD_LEN_RANDSTRING` which is usually set to 4.
+"""
+refstring(s) = randstring(MersenneTwister(hash(s)), JD_LEN_RANDSTRING)
