@@ -2,11 +2,13 @@ module JuDoc
 
 using Markdown
 using Dates # see jd_vars
+using Random
 
 # a number we don't expect to take over with the number of tokens etc...
 # basically acts as `Inf` with Int type (Int32 or Int64 is fine)
 const BIG_INT = 100_000_000
 const JD_PID_FILE = ".__jdpid_tmp__"
+const JD_LEN_RANDSTRING = 4 # make this longer if you think you'll collide...
 
 # PARSING
 include("parser/tokens.jl")

@@ -151,31 +151,6 @@ end
 end
 
 
-@testset "Eqref" begin
-    st = raw"""
-        \newcommand{\E}[1]{\mathbb E\left[#1\right]}
-        \newcommand{\eqa}[1]{\begin{eqnarray}#1\end{eqnarray}}
-        \newcommand{\R}{\mathbb R}
-        Then something like
-        \eqa{ \E{f(X)} \in \R &\text{if}& f:\R\maptso\R}
-        and then
-        \eqa{ 1+1 &=& 2 \label{eq:a trivial one}}
-        but further
-        \eqa{ 1 &=& 1 \label{beyond hope}}
-        and finally a \eqref{eq:a trivial one} and maybe \eqref{beyond hope}.
-        """ * JuDoc.EOS
-    m, _ = JuDoc.convert_md(st, collect(values(JuDoc.JD_GLOB_LXDEFS)))
-    @test JuDoc.JD_LOC_EQDICT[JuDoc.JD_LOC_EQDICT_COUNTER] == 3
-    @test JuDoc.JD_LOC_EQDICT[hash("eq:a trivial one")] == 2
-    @test JuDoc.JD_LOC_EQDICT[hash("beyond hope")] == 3
-
-    h1 = hash("eq:a trivial one")
-    h2 = hash("beyond hope")
-
-    m == "<p>Then something like  \$\$\\begin{array}{c}  \\mathbb E\\left[ f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R\\end{array}\$\$ and then  <a name=\"$h1\"></a>\$\$\\begin{array}{c}  1+1 &=&2 \\end{array}\$\$ but further  <a name=\"$h2\"></a>\$\$\\begin{array}{c}  1 &=& 1 \\end{array}\$\$ and finally a  <span class=\"eqref)\">({{href EQR $h1}})</span> and maybe  <span class=\"eqref)\">({{href EQR $h2}})</span>.</p>\n"
-end
-
-
 @testset "Brace rge" begin # see #70
     st = raw"""
            \newcommand{\scal}[1]{\left\langle#1\right\rangle}
