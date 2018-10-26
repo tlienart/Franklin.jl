@@ -297,9 +297,10 @@ function convert_block(β::B, lxcontext::LxContext) where B <: AbstractBlock
 
     # Return relevant interpolated string based on case
     βn = β.name
-    βn == :CODE_INLINE && return md2html(β.ss, true)
-    βn == :CODE_BLOCK  && return md2html(β.ss)
-    βn == :ESCAPE      && return chop(β.ss, head=3, tail=3)
+    βn == :CODE_INLINE  && return md2html(β.ss, true)
+    βn == :CODE_BLOCK_L && return md2html(β.ss)
+    βn == :CODE_BLOCK   && return md2html(β.ss)
+    βn == :ESCAPE       && return chop(β.ss, head=3, tail=3)
 
     # Math block --> needs to call further processing to resolve possible latex
     βn ∈ MD_MATH_NAMES && return convert_mathblock(β, lxcontext.lxdefs)
