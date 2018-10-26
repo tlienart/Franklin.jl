@@ -231,3 +231,14 @@ end
     (m, _) = J.convert_md(st)
     @test m == "<p>Some code  <pre><code class=\"language-julia\">struct P\n    x::Real\nend</code></pre>\n done</p>\n"
 end
+
+
+@testset "Deactiv-div" begin # see #74
+    st = raw"""
+        Etc and `~~~` but hey.
+        @@dd but `x` and `y`? @@
+        done
+        """ * JuDoc.EOS
+    (m, _) = J.convert_md(st)
+    @test m == "<p>Etc and  <code>~~~</code> but hey.  <div class=\"dd\">but  <code>x</code> and  <code>y</code>? </div>\n done</p>\n"
+end

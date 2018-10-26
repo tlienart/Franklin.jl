@@ -25,12 +25,12 @@ function deactivate_blocks(tokens::Vector{Token},
     active_tokens = ones(Bool, length(tokens))
     # keep track of the boundary tokens
     boundary_tokens = zeros(Bool, length(tokens))
-    # go over tokens and process the ones announcing a code block
+    # go over tokens and process the ones announcing a block to deactivate
     for (i, τ) ∈ enumerate(tokens)
         active_tokens[i] || continue
         if haskey(bd, τ.name)
             close_τ, _ = bd[τ.name]
-        else # ignore the token (does not announce an code block)
+        else # ignore the token (does not announce a block to deactivate)
             continue
         end
         # seek forward to find the first closing token
@@ -41,6 +41,27 @@ function deactivate_blocks(tokens::Vector{Token},
         boundary_tokens[[i, i+k]] .= true
     end
     return tokens[active_tokens .| boundary_tokens]
+end
+
+
+"""
+    deactivate_divs
+
+Since divs are recursively processed, once they've been found, everything
+inside them needs to be deactivated and left for further re-processing to
+avoid double inclusion.
+"""
+function deactivate_divs(blocks::Vector{OCBlock})
+    active_blocks = ones(Bool, length(blocks))
+    for (i, β) ∈ enumerate(blocks)
+        fromβ, toβ = from(β), to(β)
+        active_blocks[i] || continue
+        if β.name == :DIV
+            innerblocks = findall(b -> fromβ < from(b) < toβ, blocks)
+            active_blocks[innerblocks] .= false
+        end
+    end
+    return blocks[active_blocks]
 end
 
 
@@ -61,9 +82,7 @@ from_ifsmaller(v::Vector, idx::Int, len::Int) =
 Merge vectors of blocks by order of appearance of the blocks.
 """
 function merge_blocks(lvb::Vector{<:AbstractBlock}...)
-
     blocks = vcat(lvb...)
     sort!(blocks, by=(β->from(β)))
-
     return blocks
 end
