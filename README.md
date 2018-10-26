@@ -125,6 +125,8 @@ Again, it's not a required dependency, it is however encoded in `JuDoc.publish()
 
 ## Getting started
 
+The easiest is probably that you just head to [the JuDocExample repo](https://github.com/JuDocExample) and experiment from there then come back here.
+
 ### Folder structure
 
 The starting point should be a folder with the following structure (the folders/files marked with a star *must* be
