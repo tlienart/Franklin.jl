@@ -1,7 +1,7 @@
 @testset "Find Tokens" begin
-    a = raw"""some markdown then `code` and @@dname block @@""" * JuDoc.EOS
+    a = raw"""some markdown then `code` and @@dname block @@""" * J.EOS
 
-    tokens = JuDoc.find_tokens(a, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
+    tokens = J.find_tokens(a, J.MD_TOKENS, J.MD_1C_TOKENS)
 
     @test tokens[1].name == :CODE_SINGLE
     @test tokens[2].name == :CODE_SINGLE
@@ -20,19 +20,19 @@ end
         escape block
         ~~~
         and done {target} done.
-        """ * JuDoc.EOS
+        """ * J.EOS
 
-    tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    blocks, tokens = JuDoc.find_md_ocblocks(tokens)
+    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
+    blocks, tokens = J.find_md_ocblocks(tokens)
     braces = filter(β -> β.name == :LXB, blocks)
 
     # escape block
-    β = blocks[1]
+    β = blocks[2]
     @test β.name == :ESCAPE
     @test β.ss == "~~~\nescape block\n~~~"
 
     # inline code block
-    β = blocks[2]
+    β = blocks[1]
     @test β.name == :CODE_INLINE
     @test β.ss == "`code`"
 
@@ -62,11 +62,11 @@ end
         ```latex
         \newcommand{\brol}{\mathbb B}
         ```
-        """ * JuDoc.EOS
+        """ * J.EOS
 
-    tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    blocks, tokens = JuDoc.find_md_ocblocks(tokens)
-    lxdefs, tokens, braces, blocks = JuDoc.find_lxdefs(tokens, blocks)
+    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
+    blocks, tokens = J.find_md_ocblocks(tokens)
+    lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
 
     @test lxdefs[1].name == "\\E"
     @test lxdefs[1].narg == 1
@@ -78,10 +78,10 @@ end
     @test lxdefs[3].narg == 0
     @test lxdefs[3].def  == "\\mathbb R"
 
-    @test blocks[1].name == :ESCAPE
-    @test blocks[2].name == :CODE_BLOCK_L
+    @test blocks[2].name == :ESCAPE
+    @test blocks[1].name == :CODE_BLOCK_L
 
-    lxcoms, tokens = JuDoc.find_md_lxcoms(tokens, lxdefs, braces)
+    lxcoms, tokens = J.find_md_lxcoms(tokens, lxdefs, braces)
 
     @test lxcoms[1].ss == "\\eqa{ \\E{f(X)} \\in \\R &\\text{if}& f:\\R\\maptso\\R }"
     lxd = getindex(lxcoms[1].lxdef)
@@ -93,11 +93,11 @@ end
     st = raw"""
         \newcommand{\com}{blah}
         \newcommand{\comb}[ 2]{hello #1 #2}
-        """ * JuDoc.EOS
+        """ * J.EOS
 
-    tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    blocks, tokens = JuDoc.find_md_ocblocks(tokens)
-    lxdefs, tokens, braces, blocks = JuDoc.find_lxdefs(tokens, blocks)
+    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
+    blocks, tokens = J.find_md_ocblocks(tokens)
+    lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
 
     @test lxdefs[1].name == "\\com"
     @test lxdefs[1].narg == 0
@@ -118,23 +118,23 @@ end
         ```
         etc \comb{blah} then maybe
         @@adiv inner part @@ final.
-        """ * JuDoc.EOS
+        """ * J.EOS
 
-    tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    blocks, tokens = JuDoc.find_md_ocblocks(tokens)
-    lxdefs, tokens, braces, blocks = JuDoc.find_lxdefs(tokens, blocks)
-    lxcoms, _ = JuDoc.find_md_lxcoms(tokens, lxdefs, braces)
+    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
+    blocks, tokens = J.find_md_ocblocks(tokens)
+    lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
+    lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
 
     @test lxcoms[1].ss == "\\com"
     @test lxcoms[2].ss == "\\comb{blah}"
 
     @test blocks[1].name == :CODE_BLOCK_L
     @test blocks[1].ss == "```julia\nf(x) = x^2\n```"
-    @test JuDoc.content(blocks[1]) == "\nf(x) = x^2\n"
+    @test J.content(blocks[1]) == "\nf(x) = x^2\n"
 
     @test blocks[2].name == :DIV
     @test blocks[2].ss == "@@adiv inner part @@"
-    @test JuDoc.content(blocks[2]) == " inner part "
+    @test J.content(blocks[2]) == " inner part "
 end
 
 
@@ -146,12 +146,12 @@ end
         ~~~
         \newcommand{\comb}[ 1]{\mathrm{#1}} text C1 $\comb{b}$ text C2
         \newcommand{\comc}[ 2]{part1:#1 and part2:#2} then \comc{AA}{BB}.
-        """ * JuDoc.EOS
+        """ * J.EOS
 
-    tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    blocks, tokens = JuDoc.find_md_ocblocks(tokens)
-    lxdefs, tokens, braces, blocks = JuDoc.find_lxdefs(tokens, blocks)
-    lxcoms, _ = JuDoc.find_md_lxcoms(tokens, lxdefs, braces)
+    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
+    blocks, tokens = J.find_md_ocblocks(tokens)
+    lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
+    lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
 
     @test lxdefs[1].name == "\\com" && lxdefs[1].narg == 0 &&  lxdefs[1].def == "blah"
     @test lxdefs[2].name == "\\comb" && lxdefs[2].narg == 1 && lxdefs[2].def == "\\mathrm{#1}"
@@ -170,24 +170,24 @@ end
         then some
         ## blah <!-- ✅ 19/9/999 -->
         end \com{B}.
-        """ * JuDoc.EOS
+        """ * J.EOS
 
-    tokens = JuDoc.find_tokens(st, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS)
-    blocks, tokens = JuDoc.find_md_ocblocks(tokens)
-    lxdefs, tokens, braces, blocks = JuDoc.find_lxdefs(tokens, blocks)
-    lxcoms, _ = JuDoc.find_md_lxcoms(tokens, lxdefs, braces)
+    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
+    blocks, tokens = J.find_md_ocblocks(tokens)
+    lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
+    lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
 
     @test blocks[1].name == :COMMENT
-    @test JuDoc.content(blocks[1]) == " comment "
+    @test J.content(blocks[1]) == " comment "
     @test blocks[2].name == :COMMENT
-    @test JuDoc.content(blocks[2]) == " ✅ 19/9/999 "
+    @test J.content(blocks[2]) == " ✅ 19/9/999 "
     @test blocks[3].name == :MD_DEF
-    @test JuDoc.content(blocks[3]) == " title = \"Convex Optimisation I\""
+    @test J.content(blocks[3]) == " title = \"Convex Optimisation I\""
 
     @test lxcoms[1].ss == "\\com{A}"
     @test lxcoms[2].ss == "\\com{B}"
 
-    b2i = JuDoc.merge_blocks(lxcoms, blocks)
+    b2i = J.merge_blocks(lxcoms, blocks)
 
     @test b2i[1].ss == "@def title = \"Convex Optimisation I\"\n"
     @test b2i[2].ss == "\\com{A}"

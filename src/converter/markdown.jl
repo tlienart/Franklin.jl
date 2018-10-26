@@ -166,7 +166,7 @@ function convert_md(mds::String,
     end
 
     # Merge all the blocks that will need further processing before insertion
-    blocks2insert = merge_blocks(lxcoms, blocks)
+    blocks2insert = merge_blocks(lxcoms, deactivate_divs(blocks))
 
     # form intermediate markdown + html
     inter_md, mblocks = form_inter_md(mds, blocks2insert, lxdefs)
