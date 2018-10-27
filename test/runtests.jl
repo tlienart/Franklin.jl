@@ -1,4 +1,5 @@
-using JuDoc, Test
+using JuDoc, Random, Test
+const J = JuDoc
 
 # NOTE this first file MUST be included before running the rest of the tests
 # otherwise you may get an error like "key 0x099191234..." was not found or

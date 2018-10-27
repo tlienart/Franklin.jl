@@ -166,7 +166,7 @@ function convert_md(mds::String,
     end
 
     # Merge all the blocks that will need further processing before insertion
-    blocks2insert = merge_blocks(lxcoms, blocks)
+    blocks2insert = merge_blocks(lxcoms, deactivate_divs(blocks))
 
     # form intermediate markdown + html
     inter_md, mblocks = form_inter_md(mds, blocks2insert, lxdefs)
@@ -297,9 +297,10 @@ function convert_block(β::B, lxcontext::LxContext) where B <: AbstractBlock
 
     # Return relevant interpolated string based on case
     βn = β.name
-    βn == :CODE_INLINE && return md2html(β.ss, true)
-    βn == :CODE_BLOCK  && return md2html(β.ss)
-    βn == :ESCAPE      && return chop(β.ss, head=3, tail=3)
+    βn == :CODE_INLINE  && return md2html(β.ss, true)
+    βn == :CODE_BLOCK_L && return md2html(β.ss)
+    βn == :CODE_BLOCK   && return md2html(β.ss)
+    βn == :ESCAPE       && return chop(β.ss, head=3, tail=3)
 
     # Math block --> needs to call further processing to resolve possible latex
     βn ∈ MD_MATH_NAMES && return convert_mathblock(β, lxcontext.lxdefs)
@@ -366,7 +367,7 @@ function convert_mathblock(β::OCBlock, lxdefs::Vector{LxDef})
         # check if there's a label, if there is, add that to the dictionary
         matched = match(r"\\label{(.*?)}", inner)
         if !isnothing(matched)
-            name   = hash(strip(matched.captures[1]))
+            name   = refstring(strip(matched.captures[1]))
             anchor = "<a name=\"$name\"></a>"
             inner  = replace(inner, r"\\label{.*?}" => "")
             # store the label name and associated number

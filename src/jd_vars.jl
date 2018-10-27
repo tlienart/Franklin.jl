@@ -21,6 +21,7 @@ def_GLOB_VARS() = begin
     empty!(JD_GLOB_VARS)
     JD_GLOB_VARS["author"]      = Pair("THE AUTHOR", (String, Nothing))
     JD_GLOB_VARS["date_format"] = Pair("U dd, yyyy", (String,))
+    JD_GLOB_VARS["baseurl"]     = Pair(nothing,      (String, Nothing))
 end
 
 
