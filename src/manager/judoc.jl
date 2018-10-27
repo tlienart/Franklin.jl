@@ -98,8 +98,8 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true, port=8000)
     SLEEP = 0.1
     NCYCL = 20   # every NCYCL * SLEEP, directory is checked
     if !single_pass
-        println("Watching input folder... press CTRL+C to stop...")
-        println("... serving at http://localhost:$port ...")
+        println("Now live-serving at http://localhost:$port/... ✅")
+        println("Watching input folder, press CTRL+C to stop...")
         # this will go on until interrupted by the user (see catch)
         cntr = 1
         try while true
