@@ -23,6 +23,11 @@ I use it to generate [my website](https://tlienart.github.io).
 It's basically the same as most SSG using Markdown as base syntax with extensions allowing LaTeX-like commands.
 Not just for maths (which is rendered using KaTeX) but also to define macros using `\newcommand{...}[...]{...}` as in LaTeX.
 
+So there's really two main components:
+
+1. a system to manage files converting them from markdown-like format to HTML, allowing convenient templates and live preview via browser-sync,
+2. a parser to allow the definition of latex-like commands in Markdown as well as div blocks and a few other goodies.
+
 ### Short example <a name="short-ex1"></a>
 
 To give an idea of the syntax, the source below renders to [this page](https://tlienart.github.io/pub/misc/judoc-example1.html) (open it in a new window to compare).
@@ -34,15 +39,16 @@ If you like what you see, read on.
 @def hascode = true     <!-- determine how the html should be rendered,  -->
 @def title = "Example"  <!-- e.g. what css sheets to include -->
 
-\newcommand{\R}{\mathbb R}                <!-- just like in LaTeX; you can -->
-\newcommand{\E}{\mathbb E}                <!-- use this for maths but also -->
-\newcommand{\scal}[1]{\langle #1 \rangle} <!-- for things that are repeated -->
+\newcommand{\R}{\mathbb R}                <!-- just like in LaTeX -->
+\newcommand{\E}{\mathbb E}
+\newcommand{\scal}[1]{\left\langle #1 \right\rangle}
 
 # JuDoc Example
 
 You can define commands in a same way as in LaTeX, and use them in the same
 way: $\E[\scal{f, g}] \in \R$.
-Math is displayed with [KaTeX](https://katex.org) which is much faster than MathJax.
+Math is displayed with [KaTeX](https://katex.org) which is faster than MathJax and generally renders better.
+Note below the use of `\label` for hyper-referencing, this is not natively supported by KaTeX but is handled by JuDoc.
 
 $$ \hat f(\xi) = \int_\R \exp(-2i\pi \xi t) \,\mathrm{d}t. \label{fourier} $$
 
@@ -57,27 +63,29 @@ Something inside a div with div name "colbox-yellow"
 You can add figures, tables, links and code just as you would in GFM.
 For syntax highlighting, [highlight.js](https://highlightjs.org) is used by default.
 
-## Why? <a name="why"></a>
+## Why?
 
 Extending Markdown allows to define LaTeX-style commands for things that may
-appear many times in the current page (or in all your pages), for example let's
-say you want to define an environment for systematically inserting images from
-a specific folder within a specific div.
+appear many times in the current page (or in all your pages), for example let's say you want to define an environment for systematically inserting images from a specific folder within a specific div.
 You could do this with:
 
 \newcommand{\smimg}[1]{@@img-small ![](/assets/misc/smimg/!#1) @@}
 
 \smimg{marine-iguanas-wikicommons.jpg}
 
-It also allows things like referencing (which is not natively supported by
-KaTeX for instance):
+It also allows things like hyper-referencing as alluded to before:
 
 $$ \exp(i\pi) + 1 = 0 \label{a nice equation} $$
 
 can then be referenced as such: \eqref{a nice equation} unrelated to
 \eqref{fourier} which is convenient for maths notes.
 ```
+
+(see [what it renders](https://tlienart.github.io/pub/misc/judoc-example1.html) to if you haven't already).
+
 <!-- =========== end EXAMPLE =========== -->
+
+## Why
 
 ## Installation
 
