@@ -7,7 +7,7 @@ const J = JuDoc
 include("jd_paths_vars.jl") # ✅  aug 16, 2018
 
 # MANAGER folder
-include("manager/utils.jl") # ✅  oct 22, 2018
+include("manager/utils.jl") # ✅  oct 30, 2018
 println("🍺")
 
 # PARSER folder
