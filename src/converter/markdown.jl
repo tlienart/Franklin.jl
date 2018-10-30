@@ -148,7 +148,7 @@ function convert_md(mds::String,
         assignments = Vector{Pair{String, String}}(undef, length(mddefs))
         for (i, mdd) ∈ enumerate(mddefs)
             matched = match(MD_DEF_PAT, mdd.ss)
-            isnothing(matched) && @warn "Found delimiters for an @def environment but I couldn't match it appropriately. Verify (will ignore for now)."
+            isnothing(matched) && (@warn "Found delimiters for an @def environment but I couldn't match it appropriately. Verify (will ignore for now)."; continue)
             vname, vdef = matched.captures[1:2]
             assignments[i] = (String(vname) => String(vdef))
         end
@@ -259,20 +259,21 @@ function convert_inter_html(ihtml::AbstractString,
         c1a = prevind(ihtml, m.offset, 3) # *p>
         c1b = prevind(ihtml, m.offset)    # <p*
 
-        hasli = (c10 > 0) && ihtml[c10:c1b] == "<li><p>"
-        !(hasli) && (c1a > 0) && ihtml[c1a:c1b] == "<p>" && (δ1 = 3)
+        hasli1 = (c10 > 0) && ihtml[c10:c1b] == "<li><p>"
+        !(hasli1) && (c1a > 0) && ihtml[c1a:c1b] == "<p>" && (δ1 = 3)
 
         # => case 2
-        iend   = m.offset + JD_INSERT_LEN
-        c2a = nextind(ihtml, iend)
-        c2b = nextind(ihtml, iend, 4)  # </p*
-        c20 = nextind(ihtml, iend, 10) # </p>\n</li*
+        iend = m.offset + JD_INSERT_LEN
+        c2a  = nextind(ihtml, iend)
+        c2b  = nextind(ihtml, iend, 4)  # </p*
+        c20  = nextind(ihtml, iend, 10) # </p>\n</li*
 
-        hasli = (c20 ≤ strlen) && ihtml[c2a:c20] == "</p>\n</li>"
-        !(hasli) && (c2b ≤ strlen - 4) && ihtml[c2a:c2b] == "</p>" && (δ2 = 4)
+        hasli2 = (c20 ≤ strlen) && ihtml[c2a:c20] == "</p>\n</li>"
+        !(hasli2) && (c2b ≤ strlen - 4) && ihtml[c2a:c2b] == "</p>" && (δ2 = 4)
 
-        # push whatever is at the front
-        prev = prevind(ihtml, m.offset - δ1)
+        # push whatever is at the front, skip the extra space if still present
+        δ1 = ifelse(iszero(δ1) && !hasli1, 1, δ1)
+        prev = (m.offset - δ1 > 0) ? prevind(ihtml, m.offset - δ1) : 0
         (head ≤ prev) && push!(pieces, subs(ihtml, head:prev))
         # move head appropriately
         head = iend + δ2 + 1

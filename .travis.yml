@@ -18,4 +18,4 @@ script:
   # - julia -e 'Pkg.test("JuDoc")'
 after_success:
   # push coverage results to Codecov
-  - julia -e 'using Pkg; cd(Pkg.dir("JuDoc")); Pkg.add("Coverage@0.6.0"); using Coverage; Codecov.submit(Codecov.process_folder())'
+  - 'using Pkg; pkg"add Coverage@0.6.0"; using Coverage; Codecov.submit(Codecov.process_folder())'

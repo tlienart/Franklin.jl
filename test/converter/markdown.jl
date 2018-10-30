@@ -81,7 +81,7 @@ end
     @test J.convert_block(blocks2insert[2], lxcontext) == "\$\$\\begin{array}{c} \\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\$\$"
 
     hstring = J.convert_inter_html(inter_html, blocks2insert, lxcontext)
-    @test hstring == "<p>ab <div class=\"d\">.</div>\n  \$\$\\begin{array}{c} \\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\$\$</p>\n"
+    @test hstring == "<p>ab<div class=\"d\">.</div>\n \$\$\\begin{array}{c} \\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\$\$</p>\n"
 end
 
 
@@ -109,7 +109,7 @@ end
     @test inter_html == "<p>text A1 text A2  ##JDINSERT##  and  ##JDINSERT##   text C1  ##JDINSERT##  text C2  then  ##JDINSERT## .</p>\n"
     lxcontext = J.LxContext(lxcoms, lxdefs, braces)
     hstring = J.convert_inter_html(inter_html, blocks2insert, lxcontext)
-    @test hstring == "<p>text A1 text A2  blah and  \nescape B1\n  text C1  \\(\\mathrm{ b}\\) text C2  then  part1: AA and part2: BB.</p>\n"
+    @test hstring == "<p>text A1 text A2 blah and \nescape B1\n  text C1 \\(\\mathrm{ b}\\) text C2  then part1: AA and part2: BB.</p>\n"
 end
 
 
@@ -133,7 +133,7 @@ end
     hstring = J.convert_inter_html(inter_html, mblocks, lxcontext)
 
     @test inter_md == "\n\nThen  ##JDINSERT## .\n"
-    @test hstring == "<p>Then  hello   auth1, goodbye  auth1,  auth2&#33;.</p>\n"
+    @test hstring == "<p>Then hello   auth1, goodbye  auth1,  auth2&#33;.</p>\n"
 end
 
 
@@ -147,7 +147,7 @@ end
         """ * J.EOS
     m, _ = J.convert_md(st)
 
-    @test m == "<p>Then something like  \$\$\\begin{array}{c}  \\mathbb E\\left[ f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R \\end{array}\$\$</p>\n"
+    @test m == "<p>Then something like \$\$\\begin{array}{c}  \\mathbb E\\left[ f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R \\end{array}\$\$</p>\n"
 end
 
 
@@ -161,7 +161,7 @@ end
            $\E[X] = \scal{\mu, \nu}$
            end.""" * J.EOS
     (m, _) = J.convert_md(st)
-    @test m == "<p>exhibit A  \\(\\left\\langle \\mu, \\nu\\right\\rangle = \\mathbb E[X]\\) exhibit B  \\(\\mathbb E[X] = \\left\\langle \\mu, \\nu\\right\\rangle\\) end.</p>\n"
+    @test m == "<p>exhibit A \\(\\left\\langle \\mu, \\nu\\right\\rangle = \\mathbb E[X]\\) exhibit B \\(\\mathbb E[X] = \\left\\langle \\mu, \\nu\\right\\rangle\\) end.</p>\n"
 end
 
 
@@ -171,7 +171,7 @@ end
         abc\com{A}\com{B}def.
         """ * J.EOS
     (m, _) = J.convert_md(st)
-    @test m == "<p>abc ⭒A⭒ ⭒B⭒def.</p>\n"
+    @test m == "<p>abc⭒A⭒⭒B⭒def.</p>\n"
 
     st = raw"""
         \newcommand{\com}[1]{⭒!#1⭒}
@@ -182,7 +182,7 @@ end
         def.
         """ * J.EOS
     (m, _) = J.convert_md(st)
-    @test m == "<p>abc</p>\n⭒A⭒ ⭒B⭒\n<p>def.</p>\n"
+    @test m == "<p>abc</p>\n⭒A⭒⭒B⭒\n<p>def.</p>\n"
 
     st = raw"""
         \newcommand{\com}[1]{⭒!#1⭒}
@@ -202,7 +202,7 @@ end
         * ss \com{bbb}
         """ * J.EOS
     (m, _) = J.convert_md(st)
-    @test m == "<p>blah  †a†\n<ul>\n<li><p>†aaa† tt</p>\n</li>\n<li><p>ss  †bbb†</p>\n</li>\n</ul>\n"
+    @test m == "<p>blah †a†\n<ul>\n<li><p>†aaa† tt</p>\n</li>\n<li><p>ss †bbb†</p>\n</li>\n</ul>\n"
 end
 
 
@@ -229,7 +229,7 @@ end
     done
     """ * JuDoc.EOS
     (m, _) = J.convert_md(st)
-    @test m == "<p>Some code  <pre><code class=\"language-julia\">struct P\n    x::Real\nend</code></pre>\n done</p>\n"
+    @test m == "<p>Some code <pre><code class=\"language-julia\">struct P\n    x::Real\nend</code></pre>\n done</p>\n"
 end
 
 
@@ -240,5 +240,5 @@ end
         done
         """ * JuDoc.EOS
     (m, _) = J.convert_md(st)
-    @test m == "<p>Etc and  <code>~~~</code> but hey.  <div class=\"dd\">but  <code>x</code> and  <code>y</code>? </div>\n done</p>\n"
+    @test m == "<p>Etc and <code>~~~</code> but hey. <div class=\"dd\">but <code>x</code> and <code>y</code>? </div>\n done</p>\n"
 end
