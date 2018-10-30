@@ -48,20 +48,20 @@ function find_tokens(str::AbstractString, tokens_dict::Dict,
                     stack = subs(str, head_idx, endchar_idx)
                     if λ(stack)
                         # offset==True --> looked at 1 extra char (lookahead)
-                        head_idx = endchar_idx - offset
+                        head_idx = prevind(str, endchar_idx, offset)
                         push!(tokens, Token(case, chop(stack, tail=offset)))
                         # token identified, no need to check other cases.
                         break
                     end
                 else # rule-based match, greedy catch until fail
                     stack, shift = head, 1
-                    nextchar_idx = head_idx + shift
+                    nextchar_idx = nextind(str, head_idx)
                     while λ(shift, str[nextchar_idx])
                         stack = subs(str, head_idx, nextchar_idx)
                         shift += 1
-                        nextchar_idx += 1
+                        nextchar_idx = nextind(str, nextchar_idx)
                     end
-                    endchar_idx = nextchar_idx - 1
+                    endchar_idx = prevind(str, nextchar_idx)
                     if endchar_idx > head_idx
                         push!(tokens, Token(case, stack))
                         head_idx = endchar_idx

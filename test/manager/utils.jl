@@ -54,7 +54,7 @@ end
 	JuDoc.process_config()
 	@test JuDoc.JD_GLOB_VARS["author"].first == "Stefan Zweig"
 	rm(temp_config)
-	@test (@test_logs (:warn, "I didn't find a config file. Ignoring.")  JuDoc.process_config()) == nothing
+	@test_logs (:warn, "I didn't find a config file. Ignoring.")  JuDoc.process_config()
 	# testing write
 	head = "head"
 	pg_foot = "\npage_foot"
