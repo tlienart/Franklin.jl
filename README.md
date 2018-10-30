@@ -6,6 +6,7 @@
 
 1. [What's this about](#about)
     1. [Short example](#short-ex1)
+1. [Why](#why)
 1. [Installation](#installation)
     1. [The engine](#the-engine)
     1. [Rendering](#rendering)
