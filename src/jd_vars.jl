@@ -44,7 +44,6 @@ called every time a page is processed.
 """
 def_LOC_VARS() = begin
     empty!(JD_LOC_VARS)
-    JD_LOC_VARS["isdemo"]   = Pair(false,   (Bool,))
     JD_LOC_VARS["title"]    = Pair(nothing, (String, Nothing))
     JD_LOC_VARS["hasmath"]  = Pair(true,    (Bool,))
     JD_LOC_VARS["hascode"]  = Pair(false,   (Bool,))

@@ -30,17 +30,19 @@ end
     JuDoc.set_vars!(d, ["a"=>"5", "b"=>"nothing"])
     @test d["a"].first == 5
     @test d["b"].first == nothing
-    @test (@test_logs (:warn, "Doc var 'a' (type(s): (Real,)) can't be set to value 'blah' (type: String). Assignment ignored.") JuDoc.set_vars!(d, ["a"=>"\"blah\""])) == nothing
-    @test (@test_logs (:error, "I got an error (of type 'DomainError') trying to evaluate '__tmp__ = sqrt(-1)', fix the assignment.") JuDoc.set_vars!(d, ["a"=> "sqrt(-1)"])) == nothing
-    @test (@test_logs (:warn, "Doc var name 'blah' is unknown. Assignment ignored.") JuDoc.set_vars!(d, ["blah"=>"1"])) == nothing
+    @test_logs (:warn, "Doc var 'a' (type(s): (Real,)) can't be set to value 'blah' (type: String). Assignment ignored.") JuDoc.set_vars!(d, ["a"=>"\"blah\""])
+    @test_logs (:error, "I got an error (of type 'DomainError') trying to evaluate '__tmp__ = sqrt(-1)', fix the assignment.") JuDoc.set_vars!(d, ["a"=> "sqrt(-1)"])
+    @test_logs (:warn, "Doc var name 'blah' is unknown. Assignment ignored.") JuDoc.set_vars!(d, ["blah"=>"1"])
 end
 
 
 @testset "Def+coms" begin # see #78
     st = raw"""
         @def title = "blah" <!-- comment -->
+        @def hasmath = false
         etc
-        """
+        """ * J.EOS
     (m, jdv) = J.convert_md(st)
     @test jdv["title"].first == "blah"
+    @test jdv["hasmath"].first == false
 end
