@@ -22,6 +22,11 @@ I use it to generate [my website](https://tlienart.github.io).
 It's basically the same as most SSG using Markdown as base syntax with extensions allowing LaTeX-like commands.
 Not just for maths (which is rendered using KaTeX) but also to define macros using `\newcommand{...}[...]{...}` as in LaTeX.
 
+So there's really two main components:
+
+1. a system to manage files converting them from markdown-like format to HTML, allowing for convenient templates and live preview via `browser-sync`
+1. a parser to allow the definition of latex-like commands in Markdown as well as div blocks and a few other goodies such as latex-like hyper-references.
+
 ### Short example <a id="short-ex1"></a>
 
 To give an idea of the syntax, the source below renders to [this page](https://tlienart.github.io/pub/misc/judoc-example1.html) (open it in a new window to compare).
