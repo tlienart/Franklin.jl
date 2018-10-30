@@ -368,7 +368,7 @@ function convert_mathblock(β::OCBlock, lxdefs::Vector{LxDef})
         matched = match(r"\\label{(.*?)}", inner)
         if !isnothing(matched)
             name   = refstring(strip(matched.captures[1]))
-            anchor = "<a name=\"$name\"></a>"
+            anchor = "<a id=\"$name\"></a>"
             inner  = replace(inner, r"\\label{.*?}" => "")
             # store the label name and associated number
             JD_LOC_EQDICT[name] = JD_LOC_EQDICT[JD_LOC_EQDICT_COUNTER]

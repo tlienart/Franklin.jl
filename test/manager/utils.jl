@@ -63,7 +63,7 @@ end
 	JuDoc.write_page(JuDoc.JD_PATHS[:in], "index.md", head, pg_foot, foot)
 	out_file = JuDoc.out_path(JuDoc.JD_PATHS[:f]) * "index.html"
 	@test isfile(out_file)
-	@test read(out_file, String) == "head<div class=content>\n<p>blah blah</p>\n\npage_foot</div>\nfoot  Stefan Zweig"
+	@test read(out_file, String) == "head\n<div class=\"jd-content\">\n<p>blah blah</p>\n\n\npage_foot\n</div>\nfoot  Stefan Zweig"
 end
 
 
@@ -95,21 +95,7 @@ rm(temp_index2)
 
 	@test issubset(["css", "libs", "index.html"], readdir(JuDoc.JD_PATHS[:f]))
 	@test issubset(["temp.html", "temp.rnd"], readdir(JuDoc.JD_PATHS[:out]))
-	@test read(JuDoc.JD_PATHS[:f] * "index.html", String) == raw"""<!doctype html>
-	<html lang="en-UK">
-		<head>
-			<meta charset="UTF-8">
-			<link rel="stylesheet" href="/css/main.css">
-		</head>
-	<body><div class=content>
-	<p>blah blah</p>
-	<div class="page-foot">
-			<div class="copyright">
-					&copy; All rights reserved.
-			</div>
-	</div></div>
-	    </body>
-	</html>"""
+	@test read(JuDoc.JD_PATHS[:f] * "index.html", String) == "<!doctype html>\n<html lang=\"en-UK\">\n\t<head>\n\t\t<meta charset=\"UTF-8\">\n\t\t<link rel=\"stylesheet\" href=\"/css/main.css\">\n\t</head>\n<body>\n<div class=\"jd-content\">\n<p>blah blah</p>\n\n<div class=\"page-foot\">\n\t\t<div class=\"copyright\">\n\t\t\t\t&copy; All rights reserved.\n\t\t</div>\n</div>\n</div>\n    </body>\n</html>"
 end
 
 

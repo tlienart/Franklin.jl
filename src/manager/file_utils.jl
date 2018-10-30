@@ -29,6 +29,15 @@ end
 
 
 """
+    build_page(head, content, pg_foot, foot)
+
+Convenience function to assemble the html out of its parts.
+"""
+build_page(head, content, pg_foot, foot) =
+    "$head\n<div class=\"jd-content\">\n$content\n$pg_foot\n</div>\n$foot"
+
+
+"""
     write_page(root, file, head, pg_foot, foot)
 
 Take a path to an input markdown file (via `root` and `file`), then construct
@@ -62,7 +71,7 @@ function write_page(root, file, head, pg_foot, foot)
     ###
     # 4. construct the page proper
     ###
-    pg = head * "<div class=content>\n" * content * pg_foot * "</div>\n" * foot
+    pg = build_page(head, content, pg_foot, foot)
     ###
     # 5. write the html file where appropriate
     ###
