@@ -46,8 +46,10 @@ If you like what you see, read on.
 
 You can define commands in a same way as in LaTeX, and use them in the same
 way: $\E[\scal{f, g}] \in \R$.
-Math is displayed with [KaTeX](https://katex.org) which is faster than MathJax and generally renders better.
-Note below the use of `\label` for hyper-referencing, this is not natively supported by KaTeX but is handled by JuDoc.
+Math is displayed with [KaTeX](https://katex.org) which is faster than MathJax
+and generally renders better.
+Note below the use of `\label` for hyper-referencing, this is not natively
+supported by KaTeX but is handled by JuDoc.
 
 $$ \hat f(\xi) = \int_\R \exp(-2i\pi \xi t) \,\mathrm{d}t. \label{fourier} $$
 
@@ -60,12 +62,15 @@ Something inside a div with div name "colbox-yellow"
 @@
 
 You can add figures, tables, links and code just as you would in GFM.
-For syntax highlighting, [highlight.js](https://highlightjs.org) is used by default.
+For syntax highlighting, [highlight.js](https://highlightjs.org) is used by
+default.
 
 ## Why?
 
 Extending Markdown allows to define LaTeX-style commands for things that may
-appear many times in the current page (or in all your pages), for example let's say you want to define an environment for systematically inserting images from a specific folder within a specific div.
+appear many times in the current page (or in all your pages), for example let's
+say you want to define an environment for systematically inserting images from
+a specific folder within a specific div.
 You could do this with:
 
 \newcommand{\smimg}[1]{@@img-small ![](/assets/misc/smimg/!#1) @@}
@@ -132,7 +137,7 @@ Again, it's not a required dependency, it is however encoded in `JuDoc.publish()
 
 ## Getting started
 
-The easiest is probably that you just head to [the JuDocExample repo](https://github.com/JuDocExample) and experiment from there then come back here.
+The easiest is probably that you just head to [the JuDocExample repo](https://github.com/tlienart/JuDocExample) and experiment from there then come back here.
 
 ### Folder structure
 
