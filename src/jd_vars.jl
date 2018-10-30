@@ -50,6 +50,7 @@ def_LOC_VARS() = begin
     JD_LOC_VARS["date"]     = Pair(Date(1), (String, Date, Nothing))
     JD_LOC_VARS["jd_ctime"] = Pair(Date(1), (Date,))
     JD_LOC_VARS["jd_mtime"] = Pair(Date(1), (Date,))
+    JD_LOC_VARS["isdemo"]   = Pair(false,   (Bool,))
 end
 
 
