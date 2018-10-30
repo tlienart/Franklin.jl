@@ -141,6 +141,7 @@ function convert_md(mds::String,
     # Find lxcoms
     lxcoms, _ = find_md_lxcoms(tokens, lxdefs, braces)
 
+    jd_vars = nothing
     if has_mddefs
         # Process MD_DEF blocks
         mddefs = filter(β -> (β.name == :MD_DEF), blocks)
@@ -177,7 +178,7 @@ function convert_md(mds::String,
     hstring   = convert_inter_html(inter_html, mblocks, lxcontext)
 
     # Return the string + judoc variables if relevant
-    return hstring, (has_mddefs ? jd_vars : nothing)
+    return hstring, jd_vars
 end
 
 
