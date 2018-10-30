@@ -91,6 +91,28 @@ can then be referenced as such: \eqref{a nice equation} unrelated to
 
 ## Why
 
+In the past I had another website which used [Jemdoc](http://jemdoc.jaboc.net/) which I thought was quite cool particularly because it was very simple.
+However it was not very fast, did not allow live preview, and did not work with KaTeX (at least natively).
+Of course the name of the present package is in homage to Jemdoc.
+
+Then I started using [Hugo](https://gohugo.io/) and while I really enjoyed the live preview, themes etc, I didn't really like the fact that I didn't fully understand what was going on under the hood nor how to minimise the amount of cruft that would be added to a website.
+I struggled to get KaTeX to work with it too.
+
+I tried a few other frameworks like [Hakyll](https://jaspervdj.be/hakyll/), [Pelican](https://blog.getpelican.com/), and others but I didn't really click.
+
+So my list of desiderata was to write something
+
+* simple like JemDoc,
+* that could do live-preview with near-instantaneous rendering of modifications,
+* that generated efficient webpages with as little cruft as possible,
+* that allowed latex-like commands,
+* in Julia.
+
+The point about latex commands should maybe be clarified: I've used LaTeX a lot over the last 10 years and one thing I really like is the ability to define simpler commands for things that recur in your document.
+This is particularly useful within math environments but it could also be useful to repeatedly introduce elements with the same style etc.
+
+So I guess these are the reasons which motivated me to start working on JuDoc!
+
 ## Installation
 
 In short:
