@@ -26,7 +26,6 @@ end
 
 
 @testset "isexactly" begin
-
     steps, b, λ = J.isexactly("<!--")
     @test steps == length("<!--") - 1 # minus start char
     @test b == false
@@ -40,8 +39,9 @@ end
     @test λ("\$a") == false
     @test λ("a\$") == false
 
-    steps, b, λ = J.isexactly("\$", ['\$'], false)
-    @test steps == 1
+    rs = "\$"
+    steps, b, λ = J.isexactly(rs, ['\$'], false)
+    @test steps == nextind(rs, prevind(rs, lastindex(rs)))
     @test b == true
     @test λ("\$\$") == false
     @test λ("\$a") == true
