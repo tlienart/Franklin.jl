@@ -147,6 +147,12 @@ function set_vars!(jd_vars::Dict{String, Pair{Any, Tuple}},
     if !isempty(assignments)
         for (key, assign) ∈ assignments
             if haskey(jd_vars, key)
+                # at this point there may still be a comment in the assignment
+                # string e.g. if it came from @def title = "blah" <!-- ... -->
+                # so let's strip <!-- and everything after.
+                # NOTE This is agressive so if it happened that the user wanted # this in a string it would fail (but come on...)
+                idx = findfirst("<!--", assign)
+                !isnothing(idx) && (assign = assign[1:prevind(assign, idx[1])])
                 tmp = Meta.parse("__tmp__ = " * assign)
                 # try to evaluate the parsed assignment
                 try
