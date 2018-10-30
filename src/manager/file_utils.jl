@@ -90,6 +90,7 @@ function process_file(case, fpair, args...)
         rp = rp[end-min(20, length(rp))+1 : end]
         println("\n... error processing '$(fpair.second)' in ...$rp.\n Verify, then start judoc again...\n")
         @show err
+        cleanup_process()
         throw(ErrorException("jd-err"))
     end
 

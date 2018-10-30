@@ -51,29 +51,31 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true, port=8000)
         pg_foot = read(joinpath(JD_PATHS[:in_html], "page_foot.html"), String)
         foot    = read(joinpath(JD_PATHS[:in_html], "foot.html"), String)
 
-        if isfile(joinpath(indexmd...))
-            process_file("md", indexmd, clear_out_dir,
-                         head, pg_foot, foot)
-        elseif isfile(joinpath(indexhtml...))
-            process_file("html", indexhtml, clear_out_dir)
-        else
-            @warn "I didn't find an index.[md|html], there should be one. Ignoring."
-        end
-        # looking at the rest of the files
-        for (name, dict) ∈ watched, (fpair, t) ∈ dict
-            try
+        try
+            if isfile(joinpath(indexmd...))
+                process_file("md", indexmd, clear_out_dir,
+                             head, pg_foot, foot)
+            elseif isfile(joinpath(indexhtml...))
+                process_file("html", indexhtml, clear_out_dir)
+            else
+                @warn "I didn't find an index.[md|html], there should be one. Ignoring."
+            end
+            # looking at the rest of the files
+            for (name, dict) ∈ watched, (fpair, t) ∈ dict
                 process_file(name, fpair, clear_out_dir,
                              head, pg_foot, foot, t)
-            catch err
-                if isa(err, ErrorException)
-                    cleanup_process()
-                    return -1 # caught in `file_utils/process_file`
-                else
-                    println("An unexpected error caused JuDoc to stop. Check. The error message is printed below.\n\n")
-                    @show err
-                    cleanup_process()
-                    return -2
-                end
+            end
+        catch err
+            if isa(err, ErrorException)
+                # JuDoc error (e.g. variable does not exist or brackets not
+                # closed etc, mainly parsing errors)
+                cleanup_process()
+                return -1 # caught in `file_utils/process_file`
+            else
+                println("An unexpected error caused JuDoc to stop. Check. The error message is printed below.\n\n")
+                @show err
+                cleanup_process()
+                return -2
             end
         end
         return 0
