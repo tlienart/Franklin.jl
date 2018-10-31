@@ -9,7 +9,7 @@ parent string if `s` is a substring.
 
 DEVNOTE: this does not allocate.
 """
-str(s::String) = s
+str(s::String)    = s
 str(s::SubString) = s.string
 
 
@@ -23,8 +23,8 @@ Convenience functions to take a substring of a string.
 DEVNOTE: this only allocates for the creation of a substring object (i.e.
 extremely little).
 """
-subs(s::AbstractString, from::Int, to::Int) = SubString(s, from, to)
-subs(s::AbstractString, from::Int) = subs(s, from, from)
+subs(s::AbstractString, from::Int, to::Int)    = SubString(s, from, to)
+subs(s::AbstractString, from::Int)             = subs(s, from, from)
 subs(s::AbstractString, range::UnitRange{Int}) = SubString(s, range)
 
 
@@ -56,7 +56,7 @@ Convenience function to display a time since `start`.
 function time_it_took(start)
     comp_time = time() - start
     mess = comp_time > 60 ? "$(round(comp_time/60;   digits=1))m" :
-           comp_time > 1 ?  "$(round(comp_time;      digits=1))s" :
+           comp_time >  1 ? "$(round(comp_time;      digits=1))s" :
                             "$(round(comp_time*1000; digits=1))ms"
     mess = "✅ [done $mess]"
     println(mess)
