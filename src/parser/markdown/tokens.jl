@@ -101,13 +101,13 @@ Dev note: order matters.
 """
 const MD_OCB = [
     # name            opening token    closing token     nestable
-    # -- ESCAPED BLOCKS (blocks that will not be further processed)
+    # ------------------------------------------------------------
     :COMMENT      => ((:COMMENT_OPEN => :COMMENT_CLOSE), false),
     :CODE_BLOCK_L => ((:CODE_L       => :CODE         ), false),
     :CODE_BLOCK   => ((:CODE         => :CODE         ), false),
     :CODE_INLINE  => ((:CODE_SINGLE  => :CODE_SINGLE  ), false),
     :ESCAPE       => ((:ESCAPE       => :ESCAPE       ), false),
-    # -- PROCESSABLE BLOCKS (blocks that will be further processed)
+    # ------------------------------------------------------------
     :MD_DEF       => ((:MD_DEF_OPEN  => :LINE_RETURN  ), false), # see [^3]
     :LXB          => ((:LXB_OPEN     => :LXB_CLOSE    ), true ),
     :DIV          => ((:DIV_OPEN     => :DIV_CLOSE    ), true ),

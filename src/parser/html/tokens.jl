@@ -17,8 +17,8 @@ case that works will be taken.
 const HTML_TOKENS = Dict{Char, Vector{Pair{Tuple{Int, Bool, Function}, Symbol}}}(
     '<' => [ isexactly("<!--") => :COMMENT_OPEN  ],  # <!-- ...
     '-' => [ isexactly("-->")  => :COMMENT_CLOSE ],  #      ... -->
-    '{' => [ isexactly("{{") => :H_BLOCK_OPEN    ],  # {{
-    '}' => [ isexactly("}}") => :H_BLOCK_CLOSE   ],  # }}
+    '{' => [ isexactly("{{")   => :H_BLOCK_OPEN  ],  # {{
+    '}' => [ isexactly("}}")   => :H_BLOCK_CLOSE ],  # }}
     ) # end dict
 
 
@@ -43,3 +43,11 @@ const HTML_ESCAPE = Dict(
     # opening token  # closing token   # name of the block
     :COMMENT_OPEN => :COMMENT_CLOSE => :COMMENT,
 )
+
+
+const HTML_OCB = [
+    # name        opening token    closing token     nestable
+    # ------------------------------------------------------------
+    :COMMENT => ((:COMMENT_OPEN => :COMMENT_CLOSE), false),
+    :H_BLOCK => ((:H_BLOCK_OPEN => :H_BLOCK_CLOSE), false)
+]

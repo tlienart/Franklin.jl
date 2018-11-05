@@ -125,7 +125,7 @@ function convert_md(mds::String,
         def_JD_LOC_BIBREFDICT()  # page-specific reference dict (hrefs)
     end
 
-    # Tokenize & deactivate the tokens
+    # Tokenize
     tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
 
     # Find all open-close blocks

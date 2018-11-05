@@ -25,9 +25,9 @@ function convert_html(hs::String, allvars=Dict{String, Pair{Any, Tuple}}())
     head = 1
     for (i, hb) ∈ enumerate(hblocks)
         fromhb = from(hb)
-        (head < fromhb) && push!(pieces, subs(hs, head, fromhb-1))
+        (head < fromhb) && push!(pieces, subs(hs, head, prevind(hs, fromhb)))
         push!(pieces, convert_hblock(hb, allvars))
-        head = to(hb) + 1
+        head = nextind(hs, to(hb))
     end
     strlen = lastindex(hs)
     (head < strlen) && push!(pieces, subs(hs, head, strlen))
