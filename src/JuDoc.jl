@@ -21,9 +21,7 @@ include("parser/latex/find_blocks.jl")
 include("parser/latex/resolve_lxcoms.jl")
 include("parser/latex/resolve_hrefs.jl")
 # > markdown
-include("parser/markdown/patterns.jl")
-include("parser/markdown/tokens.jl")
-include("parser/markdown/find_blocks.jl")
+include("parser/markdown.jl")
 # > html
 include("parser/html/patterns.jl")
 include("parser/html/tokens.jl")

@@ -86,6 +86,16 @@ const MD_TOKENS_LX = Dict{Char, Vector{Pair{Tuple{Int, Bool, Function}, Symbol}}
 
 
 """
+    MD_DEF_PAT
+
+Regex to match an assignment of the form
+    @def var = value
+The first group captures the name (`var`), the second the assignment (`value`).
+"""
+const MD_DEF_PAT = r"@def\s+(\S+)\s*?=\s*?(\S.*)"
+
+
+"""
     MD_OCB
 
 Dictionary of Open-Close Blocks whose content should be deactivated (any token
@@ -159,3 +169,20 @@ const MD_OCB_IGNORE = [:COMMENT, :MD_DEF]
 List of names of maths environments.
 """
 const MD_MATH_NAMES = [e.first for e ∈ MD_OCB_MATH]
+
+
+"""
+    find_md_ocblocks(tokens)
+
+Convenience function to find all ocblocks associated with `MD_OCBLOCKS`.
+Returns a vector of vector of ocblocks.
+"""
+function find_md_ocblocks(tokens::Vector{Token}; inmath=false)
+    ocbs_all = Vector{OCBlock}()
+    for (name, (ocpair, nest)) ∈ MD_OCB_ALL
+        ocbs, tokens = find_ocblocks(tokens, name, ocpair;
+                                     nestable=nest, inmath=inmath)
+        append!(ocbs_all, ocbs)
+    end
+    return ocbs_all, tokens
+end
