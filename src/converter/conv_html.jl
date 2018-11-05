@@ -7,16 +7,18 @@ function convert_html(hs::String, allvars=Dict{String, Pair{Any, Tuple}}())
 
     # Tokenize
     tokens = find_tokens(hs, HTML_TOKENS, HTML_1C_TOKENS)
-    tokens = deactivate_blocks(tokens, HTML_ESCAPE)
 
     # Find hblocks ({{ ... }})
-    hblocks, tokens = find_html_hblocks(tokens)
+    hblocks, tokens = find_all_ocblocks(tokens, HTML_OCB)
+    filter!(hb -> hb.name != :COMMENT, hblocks)
+
     # Find qblocks (qualify the hblocks)
     qblocks = qualify_html_hblocks(hblocks)
     # Find overall conditional blocks (if ... elseif ... else ...  end)
     cblocks, qblocks = find_html_cblocks(qblocks)
     # Find conditional def blocks (ifdef / ifndef)
     cdblocks, qblocks = find_html_cdblocks(qblocks)
+
     # Get the list of blocks to process
     hblocks = merge_blocks(qblocks, cblocks, cdblocks)
 
@@ -25,9 +27,9 @@ function convert_html(hs::String, allvars=Dict{String, Pair{Any, Tuple}}())
     head = 1
     for (i, hb) ∈ enumerate(hblocks)
         fromhb = from(hb)
-        (head < fromhb) && push!(pieces, subs(hs, head, fromhb-1))
+        (head < fromhb) && push!(pieces, subs(hs, head, prevind(hs, fromhb)))
         push!(pieces, convert_hblock(hb, allvars))
-        head = to(hb) + 1
+        head = nextind(hs, to(hb))
     end
     strlen = lastindex(hs)
     (head < strlen) && push!(pieces, subs(hs, head, strlen))

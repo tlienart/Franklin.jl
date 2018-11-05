@@ -8,7 +8,7 @@
         {{ end }}"""
 
     tokens = JuDoc.find_tokens(st, JuDoc.HTML_TOKENS, JuDoc.HTML_1C_TOKENS)
-    hblocks, tokens = JuDoc.find_html_hblocks(tokens)
+    hblocks, tokens = JuDoc.find_all_ocblocks(tokens, J.HTML_OCB)
     @test hblocks[1].ss == "{{ fill v1 }}"
     @test hblocks[2].ss == "{{ if b1 }}"
     @test hblocks[3].ss == "{{ fill v2 }}"
@@ -28,7 +28,7 @@ end
         """
 
     tokens = JuDoc.find_tokens(st, JuDoc.HTML_TOKENS, JuDoc.HTML_1C_TOKENS)
-    hblocks, tokens = JuDoc.find_html_hblocks(tokens)
+    hblocks, tokens = JuDoc.find_all_ocblocks(tokens, J.HTML_OCB)
     qblocks = JuDoc.qualify_html_hblocks(hblocks)
 
     @test qblocks[1].fname == "fill"
@@ -55,7 +55,7 @@ end
         """
 
     tokens = JuDoc.find_tokens(st, JuDoc.HTML_TOKENS, JuDoc.HTML_1C_TOKENS)
-    hblocks, tokens = JuDoc.find_html_hblocks(tokens)
+    hblocks, tokens = JuDoc.find_all_ocblocks(tokens, J.HTML_OCB)
     qblocks = JuDoc.qualify_html_hblocks(hblocks)
     cblocks, qblocks = JuDoc.find_html_cblocks(qblocks)
 
@@ -81,7 +81,7 @@ end
         """
 
     tokens = JuDoc.find_tokens(st, JuDoc.HTML_TOKENS, JuDoc.HTML_1C_TOKENS)
-    hblocks, tokens = JuDoc.find_html_hblocks(tokens)
+    hblocks, tokens = JuDoc.find_all_ocblocks(tokens, J.HTML_OCB)
     qblocks = JuDoc.qualify_html_hblocks(hblocks)
     cblocks, qblocks = JuDoc.find_html_cblocks(qblocks)
     cdblocks, qblocks = JuDoc.find_html_cdblocks(qblocks)
