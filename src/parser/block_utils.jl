@@ -54,6 +54,26 @@ end
 
 
 """
+    find_all_ocblocks(tokens, dict)
+
+Convenience function to find all ocblocks e.g. such as `MD_OCBLOCKS`.
+Returns a vector of vectors of ocblocks.
+"""
+function find_all_ocblocks(tokens::Vector{Token},
+                          ocblist::Vector{Pair{S,Tuple{Pair{S, S},Bool}}};
+                          inmath=false) where S <: Symbol
+
+    ocbs_all = Vector{OCBlock}()
+    for (name, (ocpair, nest)) ∈ MD_OCB_ALL
+        ocbs, tokens = find_ocblocks(tokens, name, ocpair;
+                                     nestable=nest, inmath=inmath)
+        append!(ocbs_all, ocbs)
+    end
+    return ocbs_all, tokens
+end
+
+
+"""
 ocbalance(token)
 
 Helper function to update the inbalance counter when looking for the closing

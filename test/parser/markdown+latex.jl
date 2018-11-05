@@ -23,7 +23,7 @@ end
         """ * J.EOS
 
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
-    blocks, tokens = J.find_md_ocblocks(tokens)
+    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
     braces = filter(β -> β.name == :LXB, blocks)
 
     # escape block
@@ -65,7 +65,7 @@ end
         """ * J.EOS
 
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
-    blocks, tokens = J.find_md_ocblocks(tokens)
+    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
     lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
 
     @test lxdefs[1].name == "\\E"
@@ -96,7 +96,7 @@ end
         """ * J.EOS
 
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
-    blocks, tokens = J.find_md_ocblocks(tokens)
+    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
     lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
 
     @test lxdefs[1].name == "\\com"
@@ -121,7 +121,7 @@ end
         """ * J.EOS
 
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
-    blocks, tokens = J.find_md_ocblocks(tokens)
+    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
     lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
     lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
 
@@ -149,7 +149,7 @@ end
         """ * J.EOS
 
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
-    blocks, tokens = J.find_md_ocblocks(tokens)
+    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
     lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
     lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
 
@@ -173,7 +173,7 @@ end
         """ * J.EOS
 
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
-    blocks, tokens = J.find_md_ocblocks(tokens)
+    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
     lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
     lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
 

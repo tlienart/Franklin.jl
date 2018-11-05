@@ -9,7 +9,7 @@
         """ * J.EOS
 
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
-    blocks, tokens = J.find_md_ocblocks(tokens)
+    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
     lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
 
     @test length(braces) == 1
@@ -45,7 +45,7 @@ end
         """
 
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
-    blocks, tokens = J.find_md_ocblocks(tokens)
+    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
     lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
     lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
 
@@ -65,7 +65,7 @@ end
     J.def_JD_LOC_EQDICT()
 
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
-    blocks, tokens = J.find_md_ocblocks(tokens)
+    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
     lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
     lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
 
@@ -96,7 +96,7 @@ end
         """ * J.EOS
 
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
-    blocks, tokens = J.find_md_ocblocks(tokens)
+    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
     lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
     lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
 
@@ -121,7 +121,7 @@ end
         """ * J.EOS
 
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
-    blocks, tokens = J.find_md_ocblocks(tokens)
+    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
     lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
     lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
 

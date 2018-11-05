@@ -129,7 +129,7 @@ function convert_md(mds::String,
     tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
 
     # Find all open-close blocks
-    blocks, tokens = find_md_ocblocks(tokens)
+    blocks, tokens = find_all_ocblocks(tokens, MD_OCB_ALL)
 
     # Find newcommands (latex definitions), update active blocks/braces
     lxdefs, tokens, braces, blocks = find_lxdefs(tokens, blocks)
@@ -196,7 +196,7 @@ function convert_md_math(ms::String,
 
     # tokenize with restricted set, find braces
     tokens = find_tokens(ms, MD_TOKENS_LX, MD_1C_TOKENS_LX)
-    blocks, tokens = find_md_ocblocks(tokens, inmath=true)
+    blocks, tokens = find_all_ocblocks(tokens, MD_OCB_ALL, inmath=true)
     braces = filter(β -> β.name == :LXB, blocks) # should be all of them
 
     # in a math environment -> pass a bool to indicate it as well as offset
