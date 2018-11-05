@@ -49,5 +49,5 @@ const HTML_OCB = [
     # name        opening token    closing token     nestable
     # ------------------------------------------------------------
     :COMMENT => ((:COMMENT_OPEN => :COMMENT_CLOSE), false),
-    :H_BLOCK => ((:H_BLOCK_OPEN => :H_BLOCK_CLOSE), false)
+    :H_BLOCK => ((:H_BLOCK_OPEN => :H_BLOCK_CLOSE), true)
 ]

@@ -64,7 +64,7 @@ function find_all_ocblocks(tokens::Vector{Token},
                           inmath=false) where S <: Symbol
 
     ocbs_all = Vector{OCBlock}()
-    for (name, (ocpair, nest)) ∈ MD_OCB_ALL
+    for (name, (ocpair, nest)) ∈ ocblist
         ocbs, tokens = find_ocblocks(tokens, name, ocpair;
                                      nestable=nest, inmath=inmath)
         append!(ocbs_all, ocbs)
@@ -84,39 +84,6 @@ function ocbalance(τ::Token, ocpair=(:LX_BRACE_OPEN => :LX_BRACE_CLOSE))
     (τ.name == ocpair.first) && return 1
     (τ.name == ocpair.second) && return -1
     return 0
-end
-
-
-# XXX obsolete, would disappear
-"""
-    deactivate_blocks(tokens, bd)
-
-Find blocks in the text to escape before further processing. Mark all tokens
-within their span as inactive.
-"""
-function deactivate_blocks(tokens::Vector{Token},
-                           bd::Dict{Symbol,Pair{Symbol,Symbol}})
-
-    # mark all tokens as active to begin with
-    active_tokens = ones(Bool, length(tokens))
-    # keep track of the boundary tokens
-    boundary_tokens = zeros(Bool, length(tokens))
-    # go over tokens and process the ones announcing a block to deactivate
-    for (i, τ) ∈ enumerate(tokens)
-        active_tokens[i] || continue
-        if haskey(bd, τ.name)
-            close_τ, _ = bd[τ.name]
-        else # ignore the token (does not announce a block to deactivate)
-            continue
-        end
-        # seek forward to find the first closing token
-        k = findfirst(cτ -> (cτ.name == close_τ), tokens[i+1:end])
-        isnothing(k) && error("Found the opening token '$(τ.name)' but not the corresponding closing token. Verify.")
-        # mark tokens within the block as inactive
-        active_tokens[i:i+k] .= false
-        boundary_tokens[[i, i+k]] .= true
-    end
-    return tokens[active_tokens .| boundary_tokens]
 end
 
 

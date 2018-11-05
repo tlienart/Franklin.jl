@@ -17,7 +17,7 @@
         """
 
     tokens = JuDoc.find_tokens(hs, JuDoc.HTML_TOKENS, JuDoc.HTML_1C_TOKENS)
-    hblocks, tokens = JuDoc.find_html_hblocks(tokens)
+    hblocks, tokens = JuDoc.find_all_ocblocks(tokens, J.HTML_OCB)
     qblocks = JuDoc.qualify_html_hblocks(hblocks)
     cblocks, qblocks = JuDoc.find_html_cblocks(qblocks)
     cdblocks, qblocks = JuDoc.find_html_cdblocks(qblocks)

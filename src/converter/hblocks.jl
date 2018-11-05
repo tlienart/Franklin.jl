@@ -9,37 +9,90 @@ at this point. This second point might fix the first one by making sure that
 =#
 
 """
-    find_html_hblocks(tokens)
+    HBLOCK_FUN_PAT
 
-Find blocks surrounded by `{{...}}` and create `Block(:H_BLOCK)`
+Regex to match `{{ fname param₁ param₂ }}` where `fname` is a html processing
+function and `paramᵢ` should refer to appropriate variables in the current
+scope.
+Available functions are:
+    * `{{ fill vname }}`: to plug a variable (e.g.: a date, author name)
+    * `{{ insert fpath }}`: to plug in a file referred to by the `fpath` (e.g.: a html header)
 """
-function find_html_hblocks(tokens::Vector{Token})
-    #
-    ntokens = length(tokens)
-    active_tokens = ones(Bool, length(tokens))
-    # storage for the blocks `{...}`
-    hblocks = Vector{OCBlock}()
-    # look for tokens indicating an opening brace
-    for (i, τ) ∈ enumerate(tokens)
-         # only consider active open braces
-         (active_tokens[i] & (τ.name == :H_BLOCK_OPEN)) || continue
-         # inbalance keeps track of whether we've closed all braces (0) or not
-         inbalance = 1
-         # index for the closing brace: seek forward in list of active tokens
-         j = i
-         while !iszero(inbalance) & (j <= ntokens)
-             j += 1
-             inbalance += ocbalance(tokens[j], :H_BLOCK_OPEN => :H_BLOCK_CLOSE)
-         end
-         (inbalance > 0) && error("I found at least one open curly brace that is not closed properly. Verify.")
-         push!(hblocks, OCBlock(:H_BLOCK, τ => tokens[j]))
-         # remove processed tokens and mark inner tokens as inactive!
-         # these will be re-processed in recursion
-         active_tokens[i:j] .= false
-    end
-    return hblocks, tokens[active_tokens]
+const HBLOCK_FUN_PAT = r"{{\s*([a-z]\S+)\s+((.|\n)+?)}}"
+
+
+"""
+    HBLOCK_IF
+
+Regex to match `{{ if vname }}` where `vname` should refer to a boolean in
+the current scope.
+"""
+const HBLOCK_IF_PAT     = r"{{\s*if\s+([a-zA-Z]\S+)\s*}}"
+const HBLOCK_ELSE_PAT   = r"{{\s*else\s*}}"
+const HBLOCK_ELSEIF_PAT = r"{{\s*else\s*if\s+([a-zA-Z]\S+)\s*}}"
+const HBLOCK_END_PAT    = r"{{\s*end\s*}}"
+const HBLOCK_IFDEF_PAT  = r"{{\s*ifdef\s+([a-zA-Z]\S+)\s*}}"
+const HBLOCK_IFNDEF_PAT = r"{{\s*ifndef\s+([a-zA-Z]\S+)\s*}}"
+
+# If vname else ...
+
+struct HIf <: AbstractBlock
+    ss::SubString      # block {{ if vname }}
+    vname::String
 end
 
+struct HElse <: AbstractBlock
+    ss::SubString
+end
+
+struct HElseIf <: AbstractBlock
+    ss::SubString
+    vname::String
+end
+
+struct HEnd <: AbstractBlock
+    ss::SubString
+end
+
+# conditional block
+
+struct HCond <: AbstractBlock
+    ss::SubString               # full block
+    init_cond::String           # initial condition (has to exist)
+    sec_conds::Vector{String}   # secondary conditions (can be empty)
+    actions::Vector{SubString}  # what to do when conditions are met
+end
+
+# If is defined or undefined
+
+struct HIfDef <: AbstractBlock
+    ss::SubString
+    vname::String
+end
+
+struct HIfNDef <: AbstractBlock
+    ss::SubString
+    vname::String
+end
+
+struct HCondDef <: AbstractBlock
+    ss::SubString       # full block
+    checkisdef::Bool    # true if @isdefined, false if !@isdefined
+    vname::String       # initial condition (has to exist)
+    action::SubString   # what to do when condition is met
+end
+HCondDef(β::HIfDef, ss, action) = HCondDef(ss, true, β.vname, action)
+HCondDef(β::HIfNDef, ss, action) = HCondDef(ss, false, β.vname, action)
+
+# Function block
+
+struct HFun <: AbstractBlock
+    ss::SubString
+    fname::String
+    params::Vector{String}
+end
+
+###############################################################################
 
 """
     qualify_html_hblocks(blocks)
@@ -48,6 +101,7 @@ Given `{{ ... }}` blocks, identify what blocks they are and return a vector
 of qualified blocks of type `AbstractBlock`.
 """
 function qualify_html_hblocks(blocks::Vector{OCBlock})
+
     qb = Vector{AbstractBlock}(undef, length(blocks))
     for (i, β) ∈ enumerate(blocks)
         # if block {{ if v }}
@@ -92,6 +146,7 @@ conditional blocks which contain the list of conditions etc.
 No nesting is allowed at the moment.
 """
 function find_html_cblocks(qblocks::Vector{AbstractBlock})
+
     cblocks = Vector{HCond}()
     isempty(qblocks) && return cblocks, qblocks
     active_qblocks = ones(Bool, length(qblocks))
@@ -145,6 +200,7 @@ end
 Given qualified blocks `HIfDef` or `HIfNDef` build a conditional def block.
 """
 function find_html_cdblocks(qblocks::Vector{AbstractBlock})
+
     cdblocks = Vector{HCondDef}()
     isempty(qblocks) && return cdblocks, qblocks
     active_qblocks = ones(Bool, length(qblocks))
