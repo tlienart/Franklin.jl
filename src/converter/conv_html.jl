@@ -34,7 +34,10 @@ function convert_html(hs::String, allvars=Dict{String, Pair{Any, Tuple}}())
     strlen = lastindex(hs)
     (head < strlen) && push!(pieces, subs(hs, head, strlen))
 
-    return prod(pieces)
+    fhs = prod(pieces)
+    δ = ifelse(endswith(fhs, "</p>\n") && !startswith(fhs, "<p>"), 5, 0)
+
+    return chop(fhs, tail=δ)
 end
 
 
