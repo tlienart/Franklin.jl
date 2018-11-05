@@ -5,8 +5,8 @@ String that is plugged as a placeholder of blocks that need further processing.
 The spaces allow to handle overzealous inclusion of `<p>...</p>` from the base
 Markdown to HTML conversion.
 """
-const JD_INSERT = " ##JDINSERT## "
-const JD_INSERT_ = strip(JD_INSERT)
+const JD_INSERT     = " ##JDINSERT## "
+const JD_INSERT_    = strip(JD_INSERT)
 const JD_INSERT_PAT = Regex(JD_INSERT_)
 const JD_INSERT_LEN = length(JD_INSERT_)
 
