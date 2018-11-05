@@ -1,8 +1,3 @@
-#=
-NOTE: TOKENS must be single-char characters, for safety, that means they are
-composed of chars before code-point 80. So not things like ∀ or ∃ etc.
-=#
-
 """
     MD_1C_TOKENS
 
@@ -86,6 +81,16 @@ const MD_TOKENS_LX = Dict{Char, Vector{Pair{Tuple{Int, Bool, Function}, Symbol}}
 
 
 """
+    MD_DEF_PAT
+
+Regex to match an assignment of the form
+    @def var = value
+The first group captures the name (`var`), the second the assignment (`value`).
+"""
+const MD_DEF_PAT = r"@def\s+(\S+)\s*?=\s*?(\S.*)"
+
+
+"""
     MD_OCB
 
 Dictionary of Open-Close Blocks whose content should be deactivated (any token
@@ -101,12 +106,14 @@ Dev note: order matters.
 """
 const MD_OCB = [
     # name            opening token    closing token     nestable
+    # ------------------------------------------------------------
     :COMMENT      => ((:COMMENT_OPEN => :COMMENT_CLOSE), false),
-    :CODE_INLINE  => ((:CODE_SINGLE  => :CODE_SINGLE  ), false),
     :CODE_BLOCK_L => ((:CODE_L       => :CODE         ), false),
     :CODE_BLOCK   => ((:CODE         => :CODE         ), false),
-    :MD_DEF       => ((:MD_DEF_OPEN  => :LINE_RETURN  ), false), # see [^3]
+    :CODE_INLINE  => ((:CODE_SINGLE  => :CODE_SINGLE  ), false),
     :ESCAPE       => ((:ESCAPE       => :ESCAPE       ), false),
+    # ------------------------------------------------------------
+    :MD_DEF       => ((:MD_DEF_OPEN  => :LINE_RETURN  ), false), # see [^3]
     :LXB          => ((:LXB_OPEN     => :LXB_CLOSE    ), true ),
     :DIV          => ((:DIV_OPEN     => :DIV_CLOSE    ), true ),
 ]
@@ -121,6 +128,8 @@ const MD_OCB = [
 
 Same concept as `MD_OCB` but for math blocks, they can't be nested.
 Separating them from the other dictionary makes their processing easier.
+
+Dev note: order does not matter.
 """
 const MD_OCB_MATH = [
     :MATH_A     => ((:MATH_A          => :MATH_A          ), false),

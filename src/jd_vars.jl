@@ -109,7 +109,7 @@ only be used internally as it does not check the validity of `val`.
 See `write_page` where it is used to store a file's creation and last
 modification time.
 """
-set_var!(dict, key, val) = (dict[key] = Pair(val, dict[key].second))
+set_var!(dict::Dict, key, val) = (dict[key] = Pair(val, dict[key].second))
 
 
 #= =================================================
@@ -163,7 +163,7 @@ function set_vars!(jd_vars::Dict{String, Pair{Any, Tuple}},
                 end
                 # if the retrieved value has the right type, assign it to
                 # the corresponding key
-                type_tmp = typeof(tmp)
+                type_tmp  = typeof(tmp)
                 acc_types = jd_vars[key].second
                 if is_ok_type(type_tmp, acc_types)
                     jd_vars[key] = Pair(tmp, acc_types)

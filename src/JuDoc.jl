@@ -15,28 +15,24 @@ include("parser/tokens.jl")
 include("parser/find_tokens.jl")
 include("parser/block_utils.jl")
 # > latex
-include("parser/latex/patterns.jl")
-include("parser/latex/tokens.jl")
-include("parser/latex/find_blocks.jl")
+include("parser/latex/tokens_lx.jl")
+include("parser/latex/find_lxblocks.jl")
 include("parser/latex/resolve_lxcoms.jl")
-include("parser/latex/resolve_hrefs.jl")
+include("parser/latex/resolve_lxrefs.jl")
 # > markdown
-include("parser/markdown/patterns.jl")
-include("parser/markdown/tokens.jl")
-include("parser/markdown/find_blocks.jl")
+include("parser/tokens_md.jl")
 # > html
-include("parser/html/patterns.jl")
-include("parser/html/tokens.jl")
-include("parser/html/find_blocks.jl")
+include("parser/tokens_html.jl")
 
 # CONVERSION
 # > utils
-include("converter/html_utils.jl")
-# > markdown
-include("converter/markdown.jl")
-# > html
-include("converter/html.jl")
+include("converter/hblocks.jl")
 include("converter/hfuns.jl")
+# > markdown
+include("converter/conv_md.jl")
+# > html
+include("converter/conv_html.jl")
+
 
 # FILE PROCESSING
 include("jd_paths.jl")

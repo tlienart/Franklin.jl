@@ -6,7 +6,7 @@ const J = JuDoc
 # saying that the key :in doesn't exist or something along those lines
 include("jd_paths_vars.jl") # ✅  aug 16, 2018
 
-include("misc.jl")
+include("misc.jl") # ✅  nov 1, 2018
 
 # MANAGER folder
 include("manager/utils.jl") # ✅  oct 30, 2018

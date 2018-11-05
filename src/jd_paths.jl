@@ -46,9 +46,10 @@ function set_paths!()
 	@assert isassigned(JD_FOLDER_PATH) "JD_FOLDER_PATH undefined"
 	@assert isdir(JD_FOLDER_PATH[]) "JD_FOLDER_PATH is not a valid path"
 
-	#= NOTE I recommend against changing the names of those paths to simplify
-	development. Pparticularly for the output dirs. If you do, check for
-	example that the function JuDoc.publish points to the right dirs/files. =#
+	# NOTE it is not recommended to change the names of those paths.
+	# Particularly for the output dir. If you do, check for example that
+	# functions such as JuDoc.publish points to the right dirs/files.
+
 	JD_PATHS[:f] 		= normpath(JD_FOLDER_PATH[] * "/")
 	JD_PATHS[:in] 		= JD_PATHS[:f]  * "src/"
 	JD_PATHS[:in_pages] = JD_PATHS[:in] * "pages/"
