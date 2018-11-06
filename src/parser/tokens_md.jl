@@ -7,7 +7,8 @@ exclusive, they cannot appear again in a larger token.
 const MD_1C_TOKENS = Dict{Char, Symbol}(
     '{'  => :LXB_OPEN,
     '}'  => :LXB_CLOSE,
-    '\n' => :LINE_RETURN)
+    '\n' => :LINE_RETURN
+    )
 
 
 """
@@ -17,7 +18,8 @@ Subset of `MD_1C_TOKENS` with only the latex tokens (for parsing what's in a mat
 """
 const MD_1C_TOKENS_LX = Dict{Char, Symbol}(
     '{'  => :LXB_OPEN,
-    '}'  => :LXB_CLOSE)
+    '}'  => :LXB_CLOSE
+    )
 
 
 """
@@ -27,7 +29,7 @@ Dictionary of tokens for Markdown. Note that for each, there may be several
 possibilities to consider in which case the order is important: the first
 case that works will be taken.
 """
-const MD_TOKENS = Dict{Char, Vector{Pair{Tuple{Int, Bool, Function}, Symbol}}}(
+const MD_TOKENS = Dict{Char, Vector{TokenFinder}}(
     '<' => [ isexactly("<!--") => :COMMENT_OPEN ],   # <!-- ...
     '-' => [ isexactly("-->")  => :COMMENT_CLOSE ],  #      ... -->
     '~' => [ isexactly("~~~")  => :ESCAPE ],         # ~~~  ... ~~~
@@ -73,11 +75,12 @@ marking it as a potential open brace, same for the close brace.
 Subset of `MD_TOKENS` with only the latex tokens (for parsing what's in a math
 environment).
 """
-const MD_TOKENS_LX = Dict{Char, Vector{Pair{Tuple{Int, Bool, Function}, Symbol}}}(
+const MD_TOKENS_LX = Dict{Char, Vector{TokenFinder}}(
     '\\' => [
         isexactly("\\{")         => :INACTIVE,
         isexactly("\\}")         => :INACTIVE,
-        incrlook((_, c) -> α(c)) => :LX_COMMAND ])
+        incrlook((_, c) -> α(c)) => :LX_COMMAND ]
+    )
 
 
 """
@@ -116,7 +119,7 @@ const MD_OCB = [
     :MD_DEF       => ((:MD_DEF_OPEN  => :LINE_RETURN  ), false), # see [^3]
     :LXB          => ((:LXB_OPEN     => :LXB_CLOSE    ), true ),
     :DIV          => ((:DIV_OPEN     => :DIV_CLOSE    ), true ),
-]
+    ]
 #= NOTE:
     [3] an `MD_DEF` goes from an `@def` to the next `\n` so no multiple-line
     def are allowed.
@@ -138,7 +141,7 @@ const MD_OCB_MATH = [
     :MATH_I     => ((:MATH_I_OPEN     => :MATH_I_CLOSE    ), false),
     :MATH_ALIGN => ((:MATH_ALIGN_OPEN => :MATH_ALIGN_CLOSE), false),
     :MATH_EQA   => ((:MATH_EQA_OPEN   => :MATH_EQA_CLOSE  ), false),
-]
+    ]
 
 """
     MD_OCB_ALL

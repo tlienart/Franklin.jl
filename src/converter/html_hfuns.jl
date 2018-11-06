@@ -1,4 +1,35 @@
 """
+    JD_HTML_FUNS
+
+Dictionary for special html functions. They can take two variables, the first
+one `π` refers to the arguments passed to the function, the second one `ν`
+refers to the page variables (i.e. the context) available to the function.
+"""
+const JD_HTML_FUNS = Dict{String, Function}(
+    "fill"   => ((π, ν) -> hfun_fill(π, ν)),
+    "insert" => ((π, _) -> hfun_insert(π)),
+    "href"   => ((π, _) -> hfun_href(π)),
+)
+
+
+"""
+    convert_hblock(β, allvars)
+
+Helper function to process an individual block when the block is a `HFun`
+such as `{{ fill author }}`.
+"""
+function convert_hblock(β::HFun, allvars::Dict)
+
+    fn = lowercase(β.fname)
+    haskey(JD_HTML_FUNS, fn) && return JD_HTML_FUNS[fn](β.params, allvars)
+
+    # if here, then the function name is unknown, warn and ignore
+    @warn "I found a function block '{{$fn ...}}' but I don't recognise this function name. Ignoring."
+    return β.ss
+end
+
+
+"""
     hfun_fill(params, allvars)
 
 H-Function of the form `{{ fill vname }}` to plug in the content of a
