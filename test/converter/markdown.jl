@@ -242,3 +242,15 @@ end
     (m, _) = J.convert_md(st)
     @test m == "<p>Etc and <code>~~~</code> but hey. <div class=\"dd\">but <code>x</code> and <code>y</code>? </div>\n done</p>\n"
 end
+
+
+@testset "renewcom" begin # see #36
+    st = raw"""
+        \newcommand{\com}[1]{⭒!#1⭒}
+        \com{A}
+        \newcommand{\com}[1]{◲!#1◲}
+        \com{A}
+        """ * J.EOS
+    (m, _) = J.convert_md(st)
+    @test m == "⭒A⭒\n◲A◲</p>\n"
+end
