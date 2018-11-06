@@ -37,11 +37,9 @@ if a variable exists and if it does, applies something.
 function convert_hblock(β::HCondDef, allvars::Dict)
 
     hasvar = haskey(allvars, β.vname)
-
     # check if the corresponding bool is true and if so, act accordingly
     doaction = ifelse(β.checkisdef, hasvar, !hasvar)
     doaction && return convert_html(String(β.action), allvars)
-
     # default = do nothing
     return ""
 end

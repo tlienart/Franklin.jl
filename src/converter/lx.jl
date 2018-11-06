@@ -36,7 +36,6 @@ function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef}; inmath=false)
     return plug
 end
 
-
 #= ===============
 Hyper references
 ================== =#

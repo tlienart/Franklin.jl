@@ -25,7 +25,7 @@ function convert_block(β::B, lxcontext::LxContext) where B <: AbstractBlock
         return html_div(name, ct)
     end
 
-    # default case --> ignore block (should not happen)
+    # default case, ignore block (should not happen)
     return ""
 end
 convert_block(β::LxCom, λ::LxContext) = resolve_lxcom(β, λ.lxdefs)
@@ -48,7 +48,7 @@ const JD_MBLOCKS_PM = Dict{Symbol, Tuple{Int, Int, String, String}}(
     :MATH_ALIGN => (13, 11, "\$\$\\begin{aligned}", "\\end{aligned}\$\$"),
     :MATH_EQA   => (16, 14, "\$\$\\begin{array}{c}", "\\end{array}\$\$"),
     :MATH_I     => ( 4,  4, "", "")
-)
+    )
 
 
 """

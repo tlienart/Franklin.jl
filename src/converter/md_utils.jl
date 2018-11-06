@@ -28,8 +28,7 @@ end
 Convenience function to check if `idx` is smaller than the length of `v`, if it is, then return the starting point of `v[idx]` (via `from`), otherwise return
 `BIG_INT`.
 """
-from_ifsmaller(v::Vector, idx::Int, len::Int) =
-    (idx > len) ? BIG_INT : from(v[idx])
+from_ifsmaller(v::Vector, idx, len) = (idx > len) ? BIG_INT : from(v[idx])
 
 
 """
@@ -46,7 +45,7 @@ function deactivate_divs(blocks::Vector{OCBlock})
         fromβ, toβ = from(β), to(β)
         active_blocks[i] || continue
         if β.name == :DIV
-            innerblocks = findall(b -> fromβ < from(b) < toβ, blocks)
+            innerblocks = findall(b -> (fromβ < from(b) < toβ), blocks)
             active_blocks[innerblocks] .= false
         end
     end

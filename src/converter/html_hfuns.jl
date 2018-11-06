@@ -9,7 +9,7 @@ const JD_HTML_FUNS = Dict{String, Function}(
     "fill"   => ((π, ν) -> hfun_fill(π, ν)),
     "insert" => ((π, _) -> hfun_insert(π)),
     "href"   => ((π, _) -> hfun_href(π)),
-)
+    )
 
 
 """
