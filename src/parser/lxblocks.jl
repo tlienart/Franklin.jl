@@ -96,15 +96,17 @@ will be accessed further down.
 function retrieve_lxdefref(lxname::SubString, lxdefs::Vector{LxDef},
                            inmath=false, offset=0)
 
-    k = findfirst(δ -> (δ.name == lxname), lxdefs)
-    if isnothing(k)
+    ks = findall(δ -> (δ.name == lxname), lxdefs)
+    fromlx = from(lxname) + offset
+    filter!(k -> (fromlx > from(lxdefs[k])), ks)
+
+    if isempty(ks)
         inmath || error("Command '$lxname' was not defined before it was used.")
         # not found but inmath --> let KaTex deal with it
         return nothing
     end
-    (offset + from(lxname) < from(lxdefs[k])) && error("Command '$lxname' was used before it was defined.")
 
-    return Ref(lxdefs, k)
+    return Ref(lxdefs, ks[end])
 end
 
 
