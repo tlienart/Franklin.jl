@@ -58,12 +58,23 @@ to(lxd::LxDef) = lxd.to
 
 
 """
-    pastdef!(λ)
+    pastdef(λ, a)
 
 Convenience function to mark a definition as having been defined in the context
 i.e.: earlier than any other definition appearing in the current page.
 """
-pastdef!(λ::LxDef) = (λ.to -= λ.from; λ.from = 0; return λ)
+pastdef(λ::LxDef, a::Int) = LxDef(λ.name, λ.narg, λ.def, a, a + (λ.to-λ.from))
+
+function pastdef(vλ::Vector{LxDef})
+    # put the past defs far back but preserve order
+    vλc = deepcopy(vλ)
+    a = -BIG_INT
+    for (i, λ) ∈ enumerate(vλc)
+        vλc[i] = pastdef(λ, a)
+        a = to(vλc[i]) + 1
+    end
+    return vλc
+end
 
 
 """

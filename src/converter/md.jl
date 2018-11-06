@@ -107,13 +107,15 @@ function convert_md(mds::String,
 
     # Find all open-close blocks
     blocks, tokens = find_all_ocblocks(tokens, MD_OCB_ALL)
+    # now that blocks have been found, line-returns can be dropped
+    filter!(τ -> τ.name != :LINE_RETURN, tokens)
 
     # Find newcommands (latex definitions), update active blocks/braces
     lxdefs, tokens, braces, blocks = find_lxdefs(tokens, blocks)
-    # if any lxdefs are given in the context, merge them. `pastdef!` specifies
-    # that the definitions appear "earlier" by marking the `.from` at 0
+    # if any lxdefs are given in the context, merge them. `pastdef` specifies
+    # that the definitions appear "earlier"
     lprelx = length(pre_lxdefs)
-    (lprelx > 0) && (lxdefs = cat(pastdef!.(pre_lxdefs), lxdefs, dims=1))
+    (lprelx > 0) && (lxdefs = cat(pastdef(pre_lxdefs), lxdefs, dims=1))
 
     # Find lxcoms
     lxcoms, _ = find_md_lxcoms(tokens, lxdefs, braces)
