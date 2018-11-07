@@ -39,5 +39,6 @@ function convert_html(hs::String, allvars=Dict{String, Pair{Any, Tuple}}())
     # this may happen if the first element parsed is an ocblock (not text)
     δ = ifelse(endswith(fhs, "</p>\n") && !startswith(fhs, "<p>"), 5, 0)
 
+    isempty(fhs) && return ""
     return chop(fhs, tail=δ)
 end

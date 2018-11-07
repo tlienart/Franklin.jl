@@ -138,7 +138,7 @@ function convert_md(mds::String,
                 JD_GLOB_LXDEFS[lxd.name] = lxd
             end
             # no more processing required
-            return nothing
+            return
         end
         # create variable dictionary for the page
         jd_vars = merge(JD_GLOB_VARS, copy(JD_LOC_VARS))

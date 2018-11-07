@@ -68,7 +68,7 @@ end
 
 Convenience function to check if a variable is `nothing`.
 """
-isnothing(x) = (x == nothing)
+isnothing(x) = (x === nothing)
 
 
 """
