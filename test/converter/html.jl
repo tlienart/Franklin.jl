@@ -71,3 +71,27 @@ end
     rhs = JuDoc.convert_html(hs, allvars)
     @test rhs == "foot <!-- {{ fill blahblah }} {{ if v1 }} -->  Stefan Zweig"
 end
+
+
+@testset "Cblock+empty" begin # refers to #96
+    allvars = Dict(
+        "b1" => false => (Bool,),
+        "b2" => true => (Bool,))
+
+    jdc = x->JuDoc.convert_html(x, allvars)
+
+    # flag b1 is false
+    @test "{{if b1}} blah {{ else }} blih {{ end }}" |> jdc == " blih " # else
+    @test "{{if b1}} {{ else }} blih {{ end }}" |> jdc == " blih "      # else
+
+    # flag b2 is true
+    @test "{{if b2}} blah {{ else }} blih {{ end }}" |> jdc == " blah " # if
+    @test "{{if b2}} blah {{ else }} {{ end }}" |> jdc == " blah "      # if
+    @test "{{if b2}} blah {{ end }}" |> jdc == " blah "                 # if
+
+    @test "{{if b1}} blah {{ else }} {{ end }}" |> jdc == "" # else, empty
+    @test "{{if b1}} {{ else }} {{ end }}" |> jdc == ""      # else, empty
+    @test "{{if b1}} blah {{ end }}" |> jdc == ""            # else, empty
+    @test "{{if b2}} {{ else }} {{ end }}" |> jdc == ""      # if, empty
+    @test "{{if b2}} {{ else }} blih {{ end }}" |> jdc == "" # if, empty
+end

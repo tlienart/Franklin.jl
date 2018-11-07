@@ -30,7 +30,7 @@ So there's really two main components:
 
 ### Short example <a id="short-ex1"></a>
 
-To give an idea of the syntax, the source below renders to [this page](https://tlienart.github.io/pub/misc/judoc-example1.html) (open it in a new window to compare).
+To give an idea of the syntax, the source below renders to [this page](https://tlienart.github.io/pub/misc/jd-ex1.html) (open it in a new window to compare).
 If you like what you see, read on.
 
 <!-- =========== EXAMPLE =========== -->
@@ -86,7 +86,7 @@ can then be referenced as such: \eqref{a nice equation} unrelated to
 \eqref{fourier} which is convenient for maths notes.
 ```
 
-(see [what it renders](https://tlienart.github.io/pub/misc/judoc-example1.html) to if you haven't already).
+(see [what it renders](https://tlienart.github.io/pub/misc/jd-ex1.html) to if you haven't already).
 
 <!-- =========== end EXAMPLE =========== -->
 

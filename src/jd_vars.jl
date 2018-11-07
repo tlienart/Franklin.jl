@@ -50,7 +50,6 @@ def_LOC_VARS() = begin
     JD_LOC_VARS["date"]     = Pair(Date(1), (String, Date, Nothing))
     JD_LOC_VARS["jd_ctime"] = Pair(Date(1), (Date,))
     JD_LOC_VARS["jd_mtime"] = Pair(Date(1), (Date,))
-    JD_LOC_VARS["isdemo"]   = Pair(false,   (Bool,))
 end
 
 
@@ -146,21 +145,22 @@ function set_vars!(jd_vars::Dict{String, Pair{Any, Tuple}},
 
     if !isempty(assignments)
         for (key, assign) ∈ assignments
+            # at this point there may still be a comment in the assignment
+            # string e.g. if it came from @def title = "blah" <!-- ... -->
+            # so let's strip <!-- and everything after.
+            # NOTE This is agressive so if it happened that the user wanted # this in a string it would fail (but come on...)
+            idx = findfirst("<!--", assign)
+            !isnothing(idx) && (assign = assign[1:prevind(assign, idx[1])])
+            tmp = Meta.parse("__tmp__ = " * assign)
+            # try to evaluate the parsed assignment
+            try
+                tmp = eval(tmp)
+            catch err
+                @error "I got an error (of type '$(typeof(err))') trying to evaluate '$tmp', fix the assignment."
+                break
+            end
+
             if haskey(jd_vars, key)
-                # at this point there may still be a comment in the assignment
-                # string e.g. if it came from @def title = "blah" <!-- ... -->
-                # so let's strip <!-- and everything after.
-                # NOTE This is agressive so if it happened that the user wanted # this in a string it would fail (but come on...)
-                idx = findfirst("<!--", assign)
-                !isnothing(idx) && (assign = assign[1:prevind(assign, idx[1])])
-                tmp = Meta.parse("__tmp__ = " * assign)
-                # try to evaluate the parsed assignment
-                try
-                    tmp = eval(tmp)
-                catch err
-                    @error "I got an error (of type '$(typeof(err))') trying to evaluate '$tmp', fix the assignment."
-                    break
-                end
                 # if the retrieved value has the right type, assign it to
                 # the corresponding key
                 type_tmp  = typeof(tmp)
@@ -171,8 +171,10 @@ function set_vars!(jd_vars::Dict{String, Pair{Any, Tuple}},
                     @warn "Doc var '$key' (type(s): $acc_types) can't be set to value '$tmp' (type: $type_tmp). Assignment ignored."
                 end
             else
-                @warn "Doc var name '$key' is unknown. Assignment ignored."
+                # there is no key, so directly assign, the type is not checked
+                jd_vars[key] = Pair(tmp, (typeof(tmp), ))
             end
         end
     end
+    return jd_vars
 end
