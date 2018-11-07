@@ -15,7 +15,7 @@ function prepare_output_dir(clear_out=true)
     !isdir(JD_PATHS[:out]) && mkdir(JD_PATHS[:out])
     !isdir(JD_PATHS[:out_css]) && mkdir(JD_PATHS[:out_css])
 
-    return nothing
+    return
 end
 
 
@@ -88,7 +88,7 @@ function scan_input_dir!(md_files, html_files, other_files, infra_files,
         end
     end
 
-    return nothing
+    return
 end
 
 
@@ -105,5 +105,5 @@ function add_if_new_file!(dict, fpair, verb)
         dict[fpair] = lastm(joinpath(fpair...))
     end
 
-    return nothing
+    return
 end

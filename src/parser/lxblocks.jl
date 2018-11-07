@@ -103,7 +103,7 @@ function retrieve_lxdefref(lxname::SubString, lxdefs::Vector{LxDef},
     if isempty(ks)
         inmath || error("Command '$lxname' was not defined before it was used.")
         # not found but inmath --> let KaTex deal with it
-        return nothing
+        return
     end
 
     return Ref(lxdefs, ks[end])

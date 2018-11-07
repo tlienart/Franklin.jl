@@ -24,7 +24,7 @@ function process_config()
         @warn "I didn't find a config file. Ignoring."
     end
 
-    return nothing
+    return
 end
 
 
@@ -77,7 +77,7 @@ function write_page(root, file, head, pg_foot, foot)
     ###
     write(joinpath(out_path(root), change_ext(file)), pg)
 
-    return nothing
+    return
 end
 
 
@@ -94,7 +94,7 @@ function process_file(case, fpair, args...)
         throw(ErrorException("jd-err"))
     end
 
-    return nothing
+    return
 end
 
 
@@ -132,7 +132,7 @@ function process_file_err(case, fpair, clear_out_dir,
         end
     end
 
-    return nothing
+    return
 end
 
 
