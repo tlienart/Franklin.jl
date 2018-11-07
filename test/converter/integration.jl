@@ -7,6 +7,12 @@ chtml = t -> J.convert_html(t...)
 conv = st -> st |> cmd |> chtml
 
 @testset "∫ newcom" begin
+    st = raw"""
+        \newcommand{ \coma }[ 1]{hello #1}
+        \newcommand{ \comb} [2 ]{\coma{#1}, goodbye #1, #2!}
+        Then \comb{auth1}{auth2}.
+        """ * J.EOS
+    @test st |> conv == "<p>Then hello   auth1, goodbye  auth1,  auth2&#33;.</p>\n"
 end
 
 @testset "∫ math" begin
