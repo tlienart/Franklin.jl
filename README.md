@@ -5,14 +5,15 @@
 | [![Build Status](https://travis-ci.org/tlienart/JuDoc.jl.svg?branch=master)](https://travis-ci.org/tlienart/JuDoc.jl) | [![codecov.io](http://codecov.io/github/tlienart/JuDoc.jl/coverage.svg?branch=master)](http://codecov.io/github/tlienart/JuDoc.jl?branch=master) |
 
 1. [What's this about](#about)
+    1. [Features](#features)
     1. [Short example](#short-ex1)
 1. [Why](#why)
 1. [Installation](#installation)
     1. [The engine](#the-engine)
     1. [Rendering](#rendering)
     1. [Minifying](#minifying)
-1. [Getting started](#getting-started)
-    1. [Folder structure](#folder-structure)
+    1. [Getting started](#getting-started)
+        1. [Folder structure](#folder-structure)
 1. [Shortcuts](#shortcuts)
 
 ## What's this about? <a id="about"></a>
@@ -20,26 +21,39 @@
 JuDoc is a simple static site generator (SSG) oriented towards technical blogging (code, maths, ...) and written in Julia.
 I use it to generate [my website](https://tlienart.github.io).
 
-It's basically the same as most SSG using Markdown as base syntax with extensions allowing LaTeX-like commands.
-Not just for maths (which is rendered using KaTeX) but also to define macros using `\newcommand{...}[...]{...}` as in LaTeX.
+### Features
 
-So there's really two main components:
+**Supported**
+* allows LaTeX-like definition of commands
+* allows easy inclusion of div-blocks and raw-html
+* maths rendered via KaTeX, code via highlight.js
+* seamless offline editing
+* within-page hyperrefs for maths and citations
+* simple html templating
+* fast rendering (~5ms per page on warm session)
+* live preview (partly via [`browsersync`](https://browsersync.io/))
+* minified output (via [`css-html-js-minify`](https://github.com/juancarlospaco/css-html-js-minify))
 
-1. a system to manage files converting them from markdown-like format to HTML, allowing for convenient templates and live preview via `browser-sync`
-1. a parser to allow the definition of latex-like commands in Markdown as well as div blocks and a few other goodies such as latex-like hyper-references.
+**Coming**
+* customisable bibliography styles
+* themes
 
 ### Short example <a id="short-ex1"></a>
 
 To give an idea of the syntax, the source below renders to [this page](https://tlienart.github.io/pub/misc/jd-ex1.html) (open it in a new window to compare).
-If you like what you see, read on.
 
 <!-- =========== EXAMPLE =========== -->
 ```markdown
-@def isdemo = true      <!-- these are page variables that are used to -->
-@def hascode = true     <!-- determine how the html should be rendered,  -->
-@def title = "Example"  <!-- e.g. what css sheets to include -->
+<!-- These are page variables that are used to control the templating and
+the rendering of the final html. For instance the title will lead to an
+appropriate <title> element. -->
+@def isdemo = true
+@def hascode = true
+@def title = "Example"
 
-\newcommand{\R}{\mathbb R}                <!-- just like in LaTeX -->
+<!-- Commands can be defined just like in LaTeX, this can be very useful
+in math-environments but also for other recurring elements -->
+\newcommand{\R}{\mathbb R}
 \newcommand{\E}{\mathbb E}
 \newcommand{\scal}[1]{\left\langle #1 \right\rangle}
 
@@ -86,20 +100,16 @@ can then be referenced as such: \eqref{a nice equation} unrelated to
 \eqref{fourier} which is convenient for maths notes.
 ```
 
-(see [what it renders](https://tlienart.github.io/pub/misc/jd-ex1.html) to if you haven't already).
-
 <!-- =========== end EXAMPLE =========== -->
 
 ## Why
 
-In the past I had another website which used [Jemdoc](http://jemdoc.jaboc.net/) which I thought was quite cool particularly because it was very simple.
+There are a lot of SSGs out there with some pretty big and established ones like [Hugo](https://gohugo.io/), [Pelican](https://blog.getpelican.com/) or [Jekyll](https://github.com/jekyll/jekyll).
+
+In the past, I tried [Jemdoc](http://jemdoc.jaboc.net/) which I thought was nice particularly because of it simplicity.
 However it was not very fast, did not allow live preview, and did not work with KaTeX (at least natively).
-Of course the name of the present package is in homage to Jemdoc.
 
-Then I started using [Hugo](https://gohugo.io/) and while I really enjoyed the live preview, themes etc, I didn't really like the fact that I didn't fully understand what was going on under the hood nor how to minimise the amount of cruft that would be added to a website.
-I struggled to get KaTeX to work with it too.
-
-I tried a few other frameworks like [Hakyll](https://jaspervdj.be/hakyll/), [Pelican](https://blog.getpelican.com/), and others but I didn't really click.
+I tried some of the other SSGs: HuGo and Jekyll but also others like  [Hakyll](https://jaspervdj.be/hakyll/) and [Gutenberg](https://github.com/Keats/gutenberg) but while these projects are awesome, I never felt very comfortable using them for technical notes, something that would hopefully feel quite close to LaTeX.
 
 So my list of desiderata was to write something
 
@@ -109,11 +119,6 @@ So my list of desiderata was to write something
 * that allowed latex-like commands,
 * in Julia.
 
-The point about latex commands should maybe be clarified: I've used LaTeX a lot over the last 10 years and one thing I really like is the ability to define simpler commands for things that recur in your document.
-This is particularly useful within math environments but it could also be useful to repeatedly introduce elements with the same style etc.
-
-So I guess these are the reasons which motivated me to start working on JuDoc!
-
 ## Installation
 
 In short:
@@ -122,7 +127,7 @@ In short:
 * `npm install -g browser-sync`
 * `pip install css-html-js-minify`
 
-details below.
+more details below.
 
 ### The engine
 
@@ -156,23 +161,21 @@ pip install css-html-js-minify
 
 Again, it's not a required dependency, it is however encoded in `JuDoc.publish()` so if you use that, JuDoc will assume that you have it.
 
-**Remark** there are more sophisticated minifiers out there however the script above is simple and has the added advantage that it doesn't clash with KaTeX which [`html-minifier`](https://github.com/kangax/html-minifier) does in my experience.
+**Remark** there are more sophisticated minifiers out there however the script above is simple and has the added advantage that it doesn't clash with KaTeX which, for instance, [`html-minifier`](https://github.com/kangax/html-minifier) does as far as I can tell.
 
-## Getting started
+### Getting started
 
 The easiest is probably that you just head to [the JuDocExample repo](https://github.com/tlienart/JuDocExample) and experiment from there then come back here.
+The added advantage is that you would have a KaTeX release which I know works with JuDoc as more recent releases may not.
 
-### Folder structure
-
-The starting point should be a folder with the following structure (the folders/files marked with a star *must* be
-there)
+The starting point should be a folder with the following structure (the folders/files marked with a star *must* be there)
 
 ```
 site
 +-- assets
 +-- libs (*)
 |   +-- katex
-|   +-- prism
+|   +-- highlight
 +-- src (*)
 |   +-- _css (*)
 |   +-- _html_parts (*)
@@ -215,12 +218,23 @@ site
 * `pub/*`: contains all the (possibly minified) html pages that have been generated from your `.md` notes
 * `index.html`: is the generated landing page from `index.md`
 
+### Running
 
-## Shortcuts
+The first time you will apply `JuDoc.serve()` it will take 1 or 2 seconds to start (this is standard in Julia, the package and the functions need to be compiled), once it's running, modifications will be applied instantaneously.
 
-It quickly becomes convenient to define the following two shortcuts and save them in your bash profile:
+Also, if you stop the engine using `CTRL+C` and re-start it with `JuDoc.serve()` the initial delay will not be present anymore.
 
-1. a shortcut for running the engine and live serving on port 8000 via browser-sync: `alias jd="using JuDoc; JuDoc.serve()"`
-2. a shortcut for minifying the generated pages and push everything to GitHub: `alias jdp="using JuDoc; JuDoc.publish()"`
+For this reason, it is recommended to run `JuDoc.serve()` from within a Julia session as opposed, for instance, to running it from your bash:
 
-The `serve` and `publish` commands have a few simple arguments, have a look in [judoc.jl](https://github.com/tlienart/JuDoc.jl/blob/master/src/manager/judoc.jl) for more informations.
+```
+julia -e "using JuDoc; serve()"
+```
+
+This would work as well of course but if, for some reason, you wish to stop the engine then start it again, you will each time need to wait for that initial short delay.
+
+## Contributing
+
+Initially I wrote this project because I thought it was interesting for me.
+I'm now thinking it may be interesting to others too and as a result, contributions to make this project better would be very welcome.
+
+Some notes on how to contribute are gathered [there](https://github.com/tlienart/JuDoc.jl/blob/master/CONTRIBUTING.md).
