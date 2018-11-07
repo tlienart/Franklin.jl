@@ -28,3 +28,6 @@ println("🍺")
 println("CONVERTER/HTML")
 include("converter/html.jl")     # ✅ oct 12, 2018
 println("🍺")
+println("INTEGRATION")
+include("converter/integration.jl")
+println("🍻🍻🍻")
