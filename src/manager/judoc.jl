@@ -185,6 +185,7 @@ function serve(;clear=true, verb=false, port=8000)
     run(`bash -c "browser-sync start -s -f $JD_FOLDER_PATH --no-notify --logLevel silent --port $port --no-open & echo \$! > $JD_PID_FILE"`)
     println("Starting the engine (give it 1-2s)...")
     JuDoc.judoc(single_pass=false, verb=verb, clear_out_dir=clear, port=port);
+    return
 end
 
 
