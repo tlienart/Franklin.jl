@@ -1,4 +1,111 @@
 """
+    convert_md(mds, pre_lxdefs; isrecursive, isconfig, has_mddefs)
+
+Convert a judoc markdown file read as `mds` into a judoc html.
+- `pre_lxdefs` is a vector of `LxDef` that are already available.
+- `isrecursive` indicates whether the call is the parent call or a child call
+- `isconfig` indicates whether the file to convert is the configuration file
+- `has_mddefs` whether to look for definitions of page variables or not
+"""
+function convert_md(mds::String,
+                    pre_lxdefs  = Vector{LxDef}();
+                    isrecursive = false,
+                    isconfig    = false,
+                    has_mddefs  = true)
+
+    if !isrecursive
+        def_LOC_VARS()           # page-specific variables
+        def_JD_LOC_EQDICT()      # page-specific equation dict (hrefs)
+        def_JD_LOC_BIBREFDICT()  # page-specific reference dict (hrefs)
+    end
+
+    # Tokenize
+    tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
+
+    # Find all open-close blocks
+    blocks, tokens = find_all_ocblocks(tokens, MD_OCB_ALL)
+    # now that blocks have been found, line-returns can be dropped
+    filter!(τ -> τ.name != :LINE_RETURN, tokens)
+
+    # Find newcommands (latex definitions), update active blocks/braces
+    lxdefs, tokens, braces, blocks = find_lxdefs(tokens, blocks)
+    # if any lxdefs are given in the context, merge them. `pastdef` specifies
+    # that the definitions appear "earlier"
+    lprelx = length(pre_lxdefs)
+    (lprelx > 0) && (lxdefs = cat(pastdef(pre_lxdefs), lxdefs, dims=1))
+
+    # Find lxcoms
+    lxcoms, _ = find_md_lxcoms(tokens, lxdefs, braces)
+
+    # Process mddefs
+    jd_vars = nothing
+    has_mddefs && (jd_vars = process_md_defs(blocks, isconfig, lxdefs))
+    isconfig && return
+
+    # Merge all the blocks that will need further processing before insertion
+    blocks2insert = merge_blocks(lxcoms, deactivate_divs(blocks))
+
+    # form intermediate markdown + html
+    inter_md, mblocks = form_inter_md(mds, blocks2insert, lxdefs)
+    inter_html = md2html(inter_md, isrecursive)
+
+    # plug resolved blocks in partial html to form the final html
+    lxcontext = LxContext(lxcoms, lxdefs, braces)
+    hstring   = convert_inter_html(inter_html, mblocks, lxcontext)
+
+    # Return the string + judoc variables if relevant
+    return hstring, jd_vars
+end
+
+
+"""
+    convert_md_math(ms, lxdefs, offset)
+
+Same as `convert_md` except tailored for conversion of the inside of a
+math block (no command definitions, restricted tokenisation to latex tokens).
+The offset keeps track of where the math block was, which is useful to check
+whether any of the latex command used in the block have not yet been defined.
+"""
+function convert_md_math(ms::String,
+                         lxdefs = Vector{LxDef}(),
+                         offset = 0)
+
+    # tokenize with restricted set, find braces
+    tokens = find_tokens(ms, MD_TOKENS_LX, MD_1C_TOKENS_LX)
+    blocks, tokens = find_all_ocblocks(tokens, MD_OCB_ALL, inmath=true)
+    braces = filter(β -> β.name == :LXB, blocks) # should be all of them
+
+    # in a math environment -> pass a bool to indicate it as well as offset
+    lxcoms, _ = find_md_lxcoms(tokens, lxdefs,  braces, offset; inmath=true)
+
+    # form the string (see `form_inter_md`, similar but fewer conditions)
+    strlen   = prevind(ms, lastindex(ms))
+    pieces   = Vector{AbstractString}()
+    len_lxc  = length(lxcoms)
+    next_lxc = iszero(len_lxc) ? BIG_INT : from(lxcoms[1])
+
+    head, lxc_idx = 1, 1
+
+    while (next_lxc < BIG_INT) & (head < strlen)
+        # add anything that may occur before the first command
+        (head < next_lxc) &&
+            push!(pieces, subs(ms, head, prevind(ms, next_lxc)))
+        # add the first command after resolving, bool to indicate that inmath
+        push!(pieces, resolve_lxcom(lxcoms[lxc_idx], lxdefs, inmath=true))
+        # move the head
+        head     = nextind(ms, to(lxcoms[lxc_idx]))
+        lxc_idx += 1
+        next_lxc = from_ifsmaller(lxcoms, lxc_idx, len_lxc)
+    end
+    # add anything after the last command
+    (head <= strlen) && push!(pieces, chop(ms, head=prevind(ms, head), tail=1))
+
+    # combine everything
+    return prod(pieces)
+end
+
+
+"""
     JD_INSERT
 
 String that is plugged as a placeholder of blocks that need further processing.
@@ -82,133 +189,6 @@ end
 
 
 """
-    convert_md(mds, pre_lxdefs; isrecursive, isconfig, has_mddefs)
-
-Convert a judoc markdown file read as `mds` into a judoc html.
-- `pre_lxdefs` is a vector of `LxDef` that are already available.
-- `isrecursive` indicates whether the call is the parent call or a child call
-- `isconfig` indicates whether the file to convert is the configuration file
-- `has_mddefs` whether to look for definitions of page variables or not
-"""
-function convert_md(mds::String,
-                    pre_lxdefs  = Vector{LxDef}();
-                    isrecursive = false,
-                    isconfig    = false,
-                    has_mddefs  = true)
-
-    if !isrecursive
-        def_LOC_VARS()           # page-specific variables
-        def_JD_LOC_EQDICT()      # page-specific equation dict (hrefs)
-        def_JD_LOC_BIBREFDICT()  # page-specific reference dict (hrefs)
-    end
-
-    # Tokenize
-    tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
-
-    # Find all open-close blocks
-    blocks, tokens = find_all_ocblocks(tokens, MD_OCB_ALL)
-    # now that blocks have been found, line-returns can be dropped
-    filter!(τ -> τ.name != :LINE_RETURN, tokens)
-
-    # Find newcommands (latex definitions), update active blocks/braces
-    lxdefs, tokens, braces, blocks = find_lxdefs(tokens, blocks)
-    # if any lxdefs are given in the context, merge them. `pastdef` specifies
-    # that the definitions appear "earlier"
-    lprelx = length(pre_lxdefs)
-    (lprelx > 0) && (lxdefs = cat(pastdef(pre_lxdefs), lxdefs, dims=1))
-
-    # Find lxcoms
-    lxcoms, _ = find_md_lxcoms(tokens, lxdefs, braces)
-
-    jd_vars = nothing
-    if has_mddefs
-        # Process MD_DEF blocks
-        mddefs = filter(β -> (β.name == :MD_DEF), blocks)
-        assignments = Vector{Pair{String, String}}(undef, length(mddefs))
-        for (i, mdd) ∈ enumerate(mddefs)
-            matched = match(MD_DEF_PAT, mdd.ss)
-            isnothing(matched) && (@warn "Found delimiters for an @def environment but I couldn't match it appropriately. Verify (will ignore for now)."; continue)
-            vname, vdef = matched.captures[1:2]
-            assignments[i] = (String(vname) => String(vdef))
-        end
-        # Assign as appropriate
-        if isconfig
-            isempty(assignments) || set_vars!(JD_GLOB_VARS, assignments)
-            for lxd ∈ lxdefs
-                JD_GLOB_LXDEFS[lxd.name] = lxd
-            end
-            # no more processing required
-            return
-        end
-        # create variable dictionary for the page
-        jd_vars = merge(JD_GLOB_VARS, copy(JD_LOC_VARS))
-        set_vars!(jd_vars, assignments)
-    end
-
-    # Merge all the blocks that will need further processing before insertion
-    blocks2insert = merge_blocks(lxcoms, deactivate_divs(blocks))
-
-    # form intermediate markdown + html
-    inter_md, mblocks = form_inter_md(mds, blocks2insert, lxdefs)
-    inter_html = md2html(inter_md, isrecursive)
-
-    # plug resolved blocks in partial html to form the final html
-    lxcontext = LxContext(lxcoms, lxdefs, braces)
-    hstring   = convert_inter_html(inter_html, mblocks, lxcontext)
-
-    # Return the string + judoc variables if relevant
-    return hstring, jd_vars
-end
-
-
-"""
-    convert_md_math(ms, lxdefs, offset)
-
-Same as `convert_md` except tailored for conversion of the inside of a
-math block (no command definitions, restricted tokenisation to latex tokens).
-The offset keeps track of where the math block was, which is useful to check
-whether any of the latex command used in the block have not yet been defined.
-"""
-function convert_md_math(ms::String,
-                         lxdefs = Vector{LxDef}(),
-                         offset = 0)
-
-    # tokenize with restricted set, find braces
-    tokens = find_tokens(ms, MD_TOKENS_LX, MD_1C_TOKENS_LX)
-    blocks, tokens = find_all_ocblocks(tokens, MD_OCB_ALL, inmath=true)
-    braces = filter(β -> β.name == :LXB, blocks) # should be all of them
-
-    # in a math environment -> pass a bool to indicate it as well as offset
-    lxcoms, _ = find_md_lxcoms(tokens, lxdefs,  braces, offset; inmath=true)
-
-    # form the string (see `form_inter_md`, similar but fewer conditions)
-    strlen   = prevind(ms, lastindex(ms))
-    pieces   = Vector{AbstractString}()
-    len_lxc  = length(lxcoms)
-    next_lxc = iszero(len_lxc) ? BIG_INT : from(lxcoms[1])
-
-    head, lxc_idx = 1, 1
-
-    while (next_lxc < BIG_INT) & (head < strlen)
-        # add anything that may occur before the first command
-        (head < next_lxc) &&
-            push!(pieces, subs(ms, head, prevind(ms, next_lxc)))
-        # add the first command after resolving, bool to indicate that inmath
-        push!(pieces, resolve_lxcom(lxcoms[lxc_idx], lxdefs, inmath=true))
-        # move the head
-        head     = nextind(ms, to(lxcoms[lxc_idx]))
-        lxc_idx += 1
-        next_lxc = from_ifsmaller(lxcoms, lxc_idx, len_lxc)
-    end
-    # add anything after the last command
-    (head <= strlen) && push!(pieces, chop(ms, head=prevind(ms, head), tail=1))
-
-    # combine everything
-    return prod(pieces)
-end
-
-
-"""
     convert_inter_html(ihtml, blocks, lxcontext)
 
 Take a partial markdown string with the `JD_INSERT` marker and plug in the
@@ -266,4 +246,35 @@ function convert_inter_html(ihtml::AbstractString,
 
     # return the full string
     return prod(pieces)
+end
+
+
+"""
+    process_md_defs(blocks, isconfig)
+
+Convenience function to process markdown definitions `@def ...` as appropriate.
+"""
+function process_md_defs(blocks::Vector{OCBlock}, isconfig::Bool,
+                         lxdefs::Vector{LxDef})
+
+    mddefs = filter(β -> (β.name == :MD_DEF), blocks)
+    assignments = Vector{Pair{String, String}}(undef, length(mddefs))
+    for (i, mdd) ∈ enumerate(mddefs)
+        matched = match(MD_DEF_PAT, mdd.ss)
+        isnothing(matched) && (@warn "Found delimiters for an @def environment but it didn't have the right @def var = .... Verify (will ignore for now)."; continue)
+        vname, vdef = matched.captures[1:2]
+        assignments[i] = (String(vname) => String(vdef))
+    end
+    if isconfig
+        isempty(assignments) || set_vars!(JD_GLOB_VARS, assignments)
+        for lxd ∈ lxdefs
+            JD_GLOB_LXDEFS[lxd.name] = lxd
+        end
+        return
+    end
+    # create variable dictionary for the page
+    # NOTE: assignments here may be empty, that's fine.
+    jd_vars = merge(JD_GLOB_VARS, copy(JD_LOC_VARS))
+    set_vars!(jd_vars, assignments)
+    return jd_vars
 end
