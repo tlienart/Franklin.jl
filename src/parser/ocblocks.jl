@@ -9,23 +9,20 @@ inactive (for further, separate processing).
 function find_ocblocks(tokens::Vector{Token}, name::S, ocpair::Pair{S, S};
                          nestable=false, inmath=false) where S <: Symbol
 
-    # number of tokens & active tokens
-    ntokens = length(tokens)
+    ntokens       = length(tokens)
     active_tokens = ones(Bool, length(tokens))
-    # storage for the blocks
-    ocblocks = Vector{OCBlock}()
+    ocblocks      = Vector{OCBlock}()
 
-    # go over active tokens check if there's an opening token, if so look for
-    # the closing one.
+    # go over active tokens check if there's an opening token
+    # if so look for the closing one and push
     for (i, τ) ∈ enumerate(tokens)
-        # only consider active
+        # only consider active and opening tokens
         (active_tokens[i] & (τ.name == ocpair.first)) || continue
         # if nestable, need to keep track of the balance
         if nestable
             # inbalance ≥ 0, 0 if all opening tokens are closed
             inbalance = 1 # we've seen an opening token
-            # index for the closing token
-            j = i
+            j = i # index for the closing token
             while !iszero(inbalance) & (j < ntokens)
                 j += 1
                 inbalance += ocbalance(tokens[j], ocpair)
@@ -42,34 +39,11 @@ function find_ocblocks(tokens::Vector{Token}, name::S, ocpair::Pair{S, S};
 
         # remove processed tokens and tokens within blocks except if
         # it's a brace block in a math environment.
-        if name == :LXB && inmath
-            active_tokens[[i, j]] .= false
-        else
-            active_tokens[i:j] .= false
-        end
+        span = ifelse((name == :LXB) & inmath, [i, j], i:j)
+        active_tokens[span] .= false
     end
 
     return ocblocks, tokens[active_tokens]
-end
-
-
-"""
-    find_all_ocblocks(tokens, dict)
-
-Convenience function to find all ocblocks e.g. such as `MD_OCBLOCKS`.
-Returns a vector of vectors of ocblocks.
-"""
-function find_all_ocblocks(tokens::Vector{Token},
-                          ocblist::Vector{Pair{S,Tuple{Pair{S, S},Bool}}};
-                          inmath=false) where S <: Symbol
-
-    ocbs_all = Vector{OCBlock}()
-    for (name, (ocpair, nest)) ∈ ocblist
-        ocbs, tokens = find_ocblocks(tokens, name, ocpair;
-                                     nestable=nest, inmath=inmath)
-        append!(ocbs_all, ocbs)
-    end
-    return ocbs_all, tokens
 end
 
 
@@ -88,14 +62,23 @@ end
 
 
 """
-    from_ifsmaller(v, idx, len)
+    find_all_ocblocks(tokens, dict)
 
-Convenience function to check if `idx` is smaller than the length of `v`, a
-vector of `<:AbstractBlock` or of `LxDef`, if it is, then return the starting
-point of that block, otherwise return `BIG_INT`.
+Convenience function to find all ocblocks e.g. such as `MD_OCBLOCKS`.
+Returns a vector of vectors of ocblocks.
 """
-from_ifsmaller(v::Vector, idx::Int, len::Int) =
-    (idx > len) ? BIG_INT : from(v[idx])
+function find_all_ocblocks(tokens::Vector{Token},
+                          ocblist::Vector{Pair{S, Tuple{Pair{S, S}, Bool}}};
+                          inmath=false) where S <: Symbol
+
+    ocbs_all = Vector{OCBlock}()
+    for (name, (ocpair, nest)) ∈ ocblist
+        ocbs, tokens = find_ocblocks(tokens, name, ocpair;
+                                     nestable=nest, inmath=inmath)
+        append!(ocbs_all, ocbs)
+    end
+    return ocbs_all, tokens
+end
 
 
 """
@@ -107,25 +90,4 @@ function merge_blocks(lvb::Vector{<:AbstractBlock}...)
     blocks = vcat(lvb...)
     sort!(blocks, by=(β->from(β)))
     return blocks
-end
-
-
-"""
-    deactivate_divs
-
-Since divs are recursively processed, once they've been found, everything
-inside them needs to be deactivated and left for further re-processing to
-avoid double inclusion.
-"""
-function deactivate_divs(blocks::Vector{OCBlock})
-    active_blocks = ones(Bool, length(blocks))
-    for (i, β) ∈ enumerate(blocks)
-        fromβ, toβ = from(β), to(β)
-        active_blocks[i] || continue
-        if β.name == :DIV
-            innerblocks = findall(b -> fromβ < from(b) < toβ, blocks)
-            active_blocks[innerblocks] .= false
-        end
-    end
-    return blocks[active_blocks]
 end

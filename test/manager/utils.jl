@@ -1,7 +1,3 @@
-#=
-	making a playground to test dirs and co
-=#
-
 temp_config = joinpath(JuDoc.JD_PATHS[:in], "config.md")
 write(temp_config, "@def author = \"Stefan Zweig\"\n")
 temp_index = joinpath(JuDoc.JD_PATHS[:in], "index.md")
