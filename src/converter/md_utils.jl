@@ -16,7 +16,11 @@ function md2html(ss::AbstractString,
     partial = Markdown.html(Markdown.parse(ss))
 
     # In some cases, base converter adds <p>...</p>\n which we might not want
-    stripp && return chop(partial, head=3, tail=5)
+    stripp && begin
+        startswith(partial, "<p>")  && (partial = chop(partial, head=3))
+        endswith(partial, "</p>") && (partial = chop(partial, tail=4))
+        endswith(partial, "</p>\n") && (partial = chop(partial, tail=5))
+    end
 
     return partial
 end

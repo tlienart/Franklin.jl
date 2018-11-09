@@ -131,3 +131,22 @@ end
     @test stv(false, true)  |> conv == "<p>start \n targ2 \n done</p>\n"
     @test stv(false, false) |> conv == "<p>start \n targ3 \n done</p>\n"
 end
+
+@testset "∫ recurs" begin # see #97
+    st = raw"""
+        | A | B |
+        | :---: | :---: |
+        | C | D |
+        """ * J.EOS
+
+    @test st |> conv == "<table><tr><th>A</th><th>B</th></tr><tr><td>C</td><td>D</td></tr></table>\n"
+    @test J.convert_md(st, isrecursive=true) |> chtml == st |> conv
+
+    st = raw"""
+        @@emptydiv
+        @@emptycore
+        @@
+        @@
+        """ * J.EOS
+    st |> conv == "<div class=\"emptydiv\"><div class=\"emptycore\"></div>\n</div>\n"
+end
