@@ -14,7 +14,8 @@
     1. [Minifying](#minifying)
     1. [Getting started](#getting-started)
         1. [Folder structure](#folder-structure)
-1. [Shortcuts](#shortcuts)
+    1. [Running](#running)
+1. [Contributing](#contributing)
 
 ## What's this about? <a id="about"></a>
 
