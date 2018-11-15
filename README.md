@@ -127,6 +127,16 @@ In short:
 * `npm install -g browser-sync`
 * `pip install css-html-js-minify`
 
+Then in your site directory
+
+```julia-repl
+julia> using JuDoc
+julia> serve()
+Starting the engine (give it 1-2s)...
+Now live-serving at http://localhost:8000/... ✅
+Watching input folder, press CTRL+C to stop...
+```
+
 more details below.
 
 ### The engine
