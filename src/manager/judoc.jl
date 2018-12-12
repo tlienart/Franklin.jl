@@ -253,3 +253,21 @@ function publish(; minify=true, push=true)
         end
     end
 end
+
+
+function cleanpull()
+    JD_FOLDER_PATH[] = pwd()
+    set_paths!()
+    if isdir(JD_PATHS[:out])
+        print("Removing local output dir...")
+        rm(JD_PATHS[:out], force=true, recursive=true)
+        println(" [done] ✅")
+    end
+    try
+        print("Retrieving updates from GitHub...")
+        run(`bash -c "git pull --quiet"`, wait=true)
+        println(" [done] ✅")
+    catch e
+        println("Could not pull updates from Github, verify your connection and try manually.\n")
+    end
+end
