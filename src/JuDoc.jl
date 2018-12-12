@@ -7,6 +7,7 @@ using Random
 const BIG_INT = typemax(Int)
 const JD_PID_FILE = ".__jdpid_tmp__"
 const JD_LEN_RANDSTRING = 4 # make this longer if you think you'll collide...
+const JD_SERVE_FIRSTCALL = Ref(true)
 
 export serve, publish, cleanpull
 

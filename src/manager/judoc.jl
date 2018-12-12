@@ -183,7 +183,9 @@ function serve(;clear=true, verb=false, port=8000)
     JD_FOLDER_PATH[] = pwd()
     # start browser-sync, serving in 8000
     run(`bash -c "browser-sync start -s -f $JD_FOLDER_PATH --no-notify --logLevel silent --port $port --no-open & echo \$! > $JD_PID_FILE"`)
-    println("Starting the engine (give it 1-2s)...")
+    print("Starting the engine")
+    println(ifelse(JD_SERVE_FIRSTCALL.x, " (give it 1-2s)...", "..."))
+    JD_SERVE_FIRSTCALL.x && (JD_SERVE_FIRSTCALL.x = false)
     JuDoc.judoc(single_pass=false, verb=verb, clear_out_dir=clear, port=port);
     return
 end
