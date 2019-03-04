@@ -13,4 +13,4 @@ notifications:
   email: false
 after_success:
   # push coverage results to Codecov
-  - julia -e 'using Pkg; pkg"add Coverage@0.6.0"; using Coverage; Codecov.submit(Codecov.process_folder())'
+  - julia -e 'using Pkg; pkg"add Coverage"; using Coverage; Codecov.submit(Codecov.process_folder())'
