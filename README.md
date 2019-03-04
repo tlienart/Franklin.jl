@@ -25,11 +25,11 @@ I use it to generate [my website](https://tlienart.github.io).
 ### Features
 
 **Supported**
-* allows LaTeX-like definition of commands
-* allows easy inclusion of div-blocks and raw-html
-* maths rendered via KaTeX, code via highlight.js
+* allows LaTeX-like definition of commands (via `\newcommand{..}[.]{..}`)
+* allows easy inclusion of user-defined div-blocks and raw-html
+* maths rendered via [KaTeX](https://katex.org/), code via [highlight.js](highlightjs.org)
 * seamless offline editing
-* within-page hyperrefs for maths and citations
+* within-page hyper-references for equations and citations
 * simple html templating
 * fast rendering (~5ms per page on warm session)
 * live preview (partly via [`browsersync`](https://browsersync.io/))
@@ -37,11 +37,11 @@ I use it to generate [my website](https://tlienart.github.io).
 
 **Coming**
 * customisable bibliography styles
-* themes
+* CSS themes (*if you want to help, let me know!*)
 
 ### Short example <a id="short-ex1"></a>
 
-To give an idea of the syntax, the source below renders to [this page](https://tlienart.github.io/pub/misc/jd-ex1.html) (open it in a new window to compare).
+To give an idea of the syntax, the source below renders to [this page](https://tlienart.github.io/pub/misc/judoc-example1.html) (open it in a new tab/window to compare).
 
 <!-- =========== EXAMPLE =========== -->
 ```markdown
