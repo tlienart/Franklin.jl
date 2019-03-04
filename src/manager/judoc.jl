@@ -182,7 +182,7 @@ changes etc seen by the engine, `port` where to serve with browser-sync.
 function serve(;clear=true, verb=false, port=8000)
     JD_FOLDER_PATH[] = pwd()
     # start browser-sync, serving in 8000
-    run(`bash -c "browser-sync start -s -f $(JD_FOLDER_PATH.x3) --no-notify --logLevel silent --port $port --no-open & echo \$! > $JD_PID_FILE"`)
+    run(`bash -c "browser-sync start -s -f $(JD_FOLDER_PATH.x) --no-notify --logLevel silent --port $port --no-open & echo \$! > $JD_PID_FILE"`)
     print("Starting the engine")
     println(ifelse(JD_SERVE_FIRSTCALL.x, " (give it 1-2s)...", "..."))
     JD_SERVE_FIRSTCALL.x && (JD_SERVE_FIRSTCALL.x = false)
