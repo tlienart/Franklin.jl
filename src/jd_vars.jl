@@ -66,16 +66,18 @@ const JD_GLOB_LXDEFS = Dict{String, LxDef}()
     def_GLOB_LXDEFS
 
 Convenience function to allocate default values of global latex commands accessible throughout
-the site.
+the site. See [`resolve_lxcom`](@ref).
 """
 def_GLOB_LXDEFS() = begin
     empty!(JD_GLOB_LXDEFS)
-    # for \eqref and \cite*, see parser/latex/resolve_latex
+    # hyperreferences
     JD_GLOB_LXDEFS["\\eqref"]    = LxDef("\\eqref",    1, SubString(""))
     JD_GLOB_LXDEFS["\\cite"]     = LxDef("\\cite",     1, SubString(""))
     JD_GLOB_LXDEFS["\\citet"]    = LxDef("\\citet",    1, SubString(""))
     JD_GLOB_LXDEFS["\\citep"]    = LxDef("\\citep",    1, SubString(""))
     JD_GLOB_LXDEFS["\\biblabel"] = LxDef("\\biblabel", 2, SubString(""))
+    # inclusion
+    JD_GLOB_LXDEFS["\\input"]    = LxDef("\\input",    2, SubString(""))
 end
 
 

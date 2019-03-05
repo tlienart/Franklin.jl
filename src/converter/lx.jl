@@ -7,9 +7,13 @@ is plugged in then sent forward to be re-parsed (in case further latex is presen
 function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef}; inmath=false)
 
     i = findfirst("{", lxc.ss)
+    # extract the name of the command e.g. \\cite
     name = isnothing(i) ? lxc.ss : subs(lxc.ss, 1:(first(i)-1))
+
     # sort special commands where the input depends on context
     haskey(JD_REF_COMS, name) && return JD_REF_COMS[name](lxc)
+
+    (name == "\\input") && return resolve_input(lxc)
 
     # retrieve the definition attached to the command
     lxdef = getdef(lxc)
@@ -93,8 +97,8 @@ dictionary `d` has an entry corresponding to that hash and return the appropriat
 """
 function form_href(lxc::LxCom, dname::String; parens="("=>")", class="href")
 
-    ct = content(lxc.braces[1]) # "r1, r2, r3"
-    refs = strip.(split(ct, ","))    # ["r1", "r2", "r3"]
+    ct = content(lxc.braces[1])   # "r1, r2, r3"
+    refs = strip.(split(ct, ",")) # ["r1", "r2", "r3"]
     names = refstring.(refs)
     nkeys = length(names)
     # construct the partial link with appropriate parens, it will be
@@ -120,4 +124,37 @@ const JD_REF_COMS = Dict{String, Function}(
     "\\citet"    => (λ -> form_href(λ, "BIBR"; parens=""=>"", class="bibref")),
     "\\citep"    => (λ -> form_href(λ, "BIBR"; class="bibref")),
     "\\biblabel" => form_biblabel,
-)
+    )
+
+
+"""
+    resolve_input(lxc)
+
+Resolve a command of the form `\\input{julia}{script.jl}` by replacing it with a qualified guarded
+code block (allowing syntax highlighting). If the first brackets are empty, it will be a simple
+unqualified code-block.
+"""
+function resolve_input(lxc::LxCom)
+    qual  = strip(content(lxc.braces[1])) # julia
+    fname = strip(content(lxc.braces[2])) # script1.jl
+    # NOTE: based on extension, could have different actions
+    # --> .jl, .py, etc should write a qualified guarded code block
+    # --> .txt and by default, should write an unqualified code block
+    # --> .table or other special extensions could directly format into tables?
+    isfile(fname) || throw(ArgumentError("I found an \\input command but couldn't find $fname."))
+
+    io = IOBuffer()
+    open(fname, "r") do f
+        for line ∈ readlines(f)
+             # - if there is a \s#\s+HIDE , skip that line
+             match(r"\s#(\s)*?[hH][iI][dD][eE]", line) === nothing || continue
+             write(io, line)
+             write(io, "\n")
+        end
+    end
+    qual_lc = lowercase(qual)
+    class = ifelse(isempty(qual_lc), "", "class=$qual_lc")
+
+    # NOTE: here our own syntax highlighting could be done for recognised languages
+    return "<pre><code $class>$(strip(String(take!(io))))</code></pre>"
+end
