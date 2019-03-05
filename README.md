@@ -22,6 +22,8 @@
 JuDoc is a simple static site generator (SSG) oriented towards technical blogging (code, maths, ...) and written in Julia.
 I use it to generate [my website](https://tlienart.github.io).
 
+TL;DR, give a shot at [the JuDocExample repo](https://github.com/tlienart/JuDocExample) and see if you like it.
+
 ### Features
 
 **Supported**
