@@ -1,8 +1,8 @@
 """
     convert_hblock(β, allvars)
 
-Helper function to process an individual block when the block is a `HCond`
-such as `{{ if showauthor }} {{ fill author }} {{ end }}`.
+Helper function to process an individual block when the block is a `HCond` such as `{{ if
+showauthor }} {{ fill author }} {{ end }}`.
 """
 function convert_hblock(β::HCond, allvars::Dict)
 
@@ -30,9 +30,9 @@ end
 """
     convert_hblock(β, allvars)
 
-Helper function to process an individual block when the block is a `HIfDef`
-such as `{{ ifdef author }} {{ fill author }} {{ end }}`. Which checks
-if a variable exists and if it does, applies something.
+Helper function to process an individual block when the block is a `HIfDef` such as `{{ ifdef
+author }} {{ fill author }} {{ end }}`. Which checks if a variable exists and if it does, applies
+something.
 """
 function convert_hblock(β::HCondDef, allvars::Dict)
 

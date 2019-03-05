@@ -10,9 +10,8 @@ const HTML_1C_TOKENS = Dict{Char, Symbol}()
 """
     HTML_TOKENS
 
-Dictionary of tokens for HTML. Note that for each, there may be several
-possibilities to consider in which case the order is important: the first
-case that works will be taken.
+Dictionary of tokens for HTML. Note that for each, there may be several possibilities to consider
+in which case the order is important: the first case that works will be taken.
 """
 const HTML_TOKENS = Dict{Char, Vector{TokenFinder}}(
     '<' => [ isexactly("<!--") => :COMMENT_OPEN  ],  # <!-- ...
@@ -46,8 +45,7 @@ at this point. This second point might fix the first one by making sure that
 """
     HBLOCK_IF
 
-Regex to match `{{ if vname }}` where `vname` should refer to a boolean in
-the current scope.
+Regex to match `{{ if vname }}` where `vname` should refer to a boolean in the current scope.
 """
 const HBLOCK_IF_PAT     = r"{{\s*if\s+([a-zA-Z]\S+)\s*}}"
 const HBLOCK_ELSE_PAT   = r"{{\s*else\s*}}"
@@ -117,9 +115,9 @@ FUNCTION BLOCKS
 """
     HBLOCK_FUN_PAT
 
-Regex to match `{{ fname param₁ param₂ }}` where `fname` is a html processing
-function and `paramᵢ` should refer to appropriate variables in the current
-scope.
+Regex to match `{{ fname param₁ param₂ }}` where `fname` is a html processing function and `paramᵢ`
+should refer to appropriate variables in the current scope.
+
 Available functions are:
     * `{{ fill vname }}`: to plug a variable (e.g.: a date, author name)
     * `{{ insert fpath }}`: to plug in a file referred to by the `fpath` (e.g.: a html header)

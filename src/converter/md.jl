@@ -61,10 +61,10 @@ end
 """
     convert_md_math(ms, lxdefs, offset)
 
-Same as `convert_md` except tailored for conversion of the inside of a
-math block (no command definitions, restricted tokenisation to latex tokens).
-The offset keeps track of where the math block was, which is useful to check
-whether any of the latex command used in the block have not yet been defined.
+Same as `convert_md` except tailored for conversion of the inside of a math block (no command
+definitions, restricted tokenisation to latex tokens). The offset keeps track of where the math
+block was, which is useful to check whether any of the latex command used in the block have not
+yet been defined.
 """
 function convert_md_math(ms::String,
                          lxdefs = Vector{LxDef}(),
@@ -108,9 +108,8 @@ end
 """
     JD_INSERT
 
-String that is plugged as a placeholder of blocks that need further processing.
-The spaces allow to handle overzealous inclusion of `<p>...</p>` from the base
-Markdown to HTML conversion.
+String that is plugged as a placeholder of blocks that need further processing. The spaces allow to
+handle overzealous inclusion of `<p>...</p>` from the base Markdown to HTML conversion.
 """
 const JD_INSERT     = " ##JDINSERT## "
 const JD_INSERT_    = strip(JD_INSERT)
@@ -121,8 +120,8 @@ const JD_INSERT_LEN = length(JD_INSERT_)
 """
     form_inter_md(mds, blocks, lxdefs)
 
-Form an intermediate MD file where special blocks are replaced by a marker
-(`JD_INSERT`) indicating that a piece will need to be plugged in there later.
+Form an intermediate MD file where special blocks are replaced by a marker (`JD_INSERT`) indicating
+that a piece will need to be plugged in there later.
 """
 function form_inter_md(mds::AbstractString,
                        blocks::Vector{<:AbstractBlock},
@@ -191,8 +190,8 @@ end
 """
     convert_inter_html(ihtml, blocks, lxcontext)
 
-Take a partial markdown string with the `JD_INSERT` marker and plug in the
-appropriately processed block.
+Take a partial markdown string with the `JD_INSERT` marker and plug in the appropriately processed
+block.
 """
 function convert_inter_html(ihtml::AbstractString,
                             blocks::Vector{<:AbstractBlock},

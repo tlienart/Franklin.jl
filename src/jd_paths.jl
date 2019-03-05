@@ -27,9 +27,9 @@ const JD_INFRA_EXT = [".html", ".css"]
 """
 	JD_PATHS
 
-Dictionary for the paths of the input folders and the output folders. The
-simpler case only requires the main input folder to be defined i.e.
-`JD_PATHS[:in]` and infers the others via the `set_paths!()` function.
+Dictionary for the paths of the input folders and the output folders. The simpler case only
+requires the main input folder to be defined i.e. `JD_PATHS[:in]` and infers the others via the
+`set_paths!()` function.
 
 DEVNOTE: marked as const for perf reasons but can be assigned later as Dict.
 """
@@ -39,8 +39,8 @@ const JD_PATHS = Dict{Symbol, String}()
 """
 	set_paths!()
 
-This assigns all the paths where files will be read and written with root the
-`JD_FOLDER_PATH` which is assigned at runtime.
+This assigns all the paths where files will be read and written with root the `JD_FOLDER_PATH`
+which is assigned at runtime.
 """
 function set_paths!()
 	@assert isassigned(JD_FOLDER_PATH) "JD_FOLDER_PATH undefined"
