@@ -1,10 +1,9 @@
 """
     find_ocblocks(tokens, otoken, ctoken; deactivate, nestable)
 
-Find active blocks between an opening token (`otoken`) and a closing token
-`ctoken`. These can be nested (e.g. braces). Return the list of such blocks. If
-`deactivate` is `true`, all the tokens within the block will be marked as
-inactive (for further, separate processing).
+Find active blocks between an opening token (`otoken`) and a closing token `ctoken`. These can be
+nested (e.g. braces). Return the list of such blocks. If `deactivate` is `true`, all the tokens
+within the block will be marked as inactive (for further, separate processing).
 """
 function find_ocblocks(tokens::Vector{Token}, name::S, ocpair::Pair{S, S};
                          nestable=false, inmath=false) where S <: Symbol
@@ -27,12 +26,14 @@ function find_ocblocks(tokens::Vector{Token}, name::S, ocpair::Pair{S, S};
                 j += 1
                 inbalance += ocbalance(tokens[j], ocpair)
             end
-            (inbalance > 0) && error("I found at least one opening token '$(ocpair.first)' that is not closed properly. Verify.")
+            (inbalance > 0) && error("I found at least one opening token '$(ocpair.first)' that " *
+                                     " is not closed properly.")
         else
             # seek forward to find the first closing token
             j = findfirst(cτ -> (cτ.name == ocpair.second), tokens[i+1:end])
             # error if no closing token is found
-            isnothing(j) && error("Found the opening token '$(τ.name)' but not the corresponding closing token. Verify.")
+            isnothing(j) && error("Found the opening token '$(τ.name)' but not the " *
+                                  "corresponding closing token.")
             j += i
         end
         push!(ocblocks, OCBlock(name, τ => tokens[j]))
@@ -48,14 +49,14 @@ end
 
 
 """
-ocbalance(token)
+    ocbalance(token)
 
-Helper function to update the inbalance counter when looking for the closing
-token of a block with nesting. Adds 1 if the token corresponds to an opening
-token, removes 1 if it's a closing token. 0 otherwise.
+Helper function to update the inbalance counter when looking for the closing token of a block with
+nesting. Adds 1 if the token corresponds to an opening token, removes 1 if it's a closing token and
+0 otherwise.
 """
 function ocbalance(τ::Token, ocpair=(:LX_BRACE_OPEN => :LX_BRACE_CLOSE))
-    (τ.name == ocpair.first) && return 1
+    (τ.name == ocpair.first)  && return 1
     (τ.name == ocpair.second) && return -1
     return 0
 end
@@ -64,8 +65,8 @@ end
 """
     find_all_ocblocks(tokens, dict)
 
-Convenience function to find all ocblocks e.g. such as `MD_OCBLOCKS`.
-Returns a vector of vectors of ocblocks.
+Convenience function to find all ocblocks e.g. such as `MD_OCBLOCKS`. Returns a vector of vectors
+of ocblocks.
 """
 function find_all_ocblocks(tokens::Vector{Token},
                           ocblist::Vector{Pair{S, Tuple{Pair{S, S}, Bool}}};

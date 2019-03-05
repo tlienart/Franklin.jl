@@ -1,8 +1,8 @@
 """
     MD_1C_TOKENS
 
-Dictionary of single-char tokens for Markdown. Note that these characters are
-exclusive, they cannot appear again in a larger token.
+Dictionary of single-char tokens for Markdown. Note that these characters are exclusive, they
+cannot appear again in a larger token.
 """
 const MD_1C_TOKENS = Dict{Char, Symbol}(
     '{'  => :LXB_OPEN,
@@ -25,9 +25,8 @@ const MD_1C_TOKENS_LX = Dict{Char, Symbol}(
 """
     MD_TOKENS
 
-Dictionary of tokens for Markdown. Note that for each, there may be several
-possibilities to consider in which case the order is important: the first
-case that works will be taken.
+Dictionary of tokens for Markdown. Note that for each, there may be several possibilities to
+consider in which case the order is important: the first case that works will be taken.
 """
 const MD_TOKENS = Dict{Char, Vector{TokenFinder}}(
     '<' => [ isexactly("<!--") => :COMMENT_OPEN ],   # <!-- ...
@@ -72,8 +71,7 @@ marking it as a potential open brace, same for the close brace.
 """
     MD_TOKENS_LX
 
-Subset of `MD_TOKENS` with only the latex tokens (for parsing what's in a math
-environment).
+Subset of `MD_TOKENS` with only the latex tokens (for parsing what's in a math environment).
 """
 const MD_TOKENS_LX = Dict{Char, Vector{TokenFinder}}(
     '\\' => [
@@ -96,14 +94,12 @@ const MD_DEF_PAT = r"@def\s+(\S+)\s*?=\s*?(\S.*)"
 """
     MD_OCB
 
-Dictionary of Open-Close Blocks whose content should be deactivated (any token
-within their span should be marked as inactive) until further processing.
-The keys are identifier for the type of block, the value is a pair with the
-opening and closing tokens followed by a boolean indicating whether the block
-is nestable or not.
-The only `OCBlock` not in this dictionary is the brace block since it should
-not deactivate its content which is needed to find latex definitions (see
-parser/markdown/find_blocks/find_md_lxdefs).
+Dictionary of Open-Close Blocks whose content should be deactivated (any token within their span
+should be marked as inactive) until further processing.
+The keys are identifier for the type of block, the value is a pair with the opening and closing
+tokens followed by a boolean indicating whether the block is nestable or not.
+The only `OCBlock` not in this dictionary is the brace block since it should not deactivate its
+content which is needed to find latex definitions (see parser/markdown/find_blocks/find_md_lxdefs).
 
 Dev note: order matters.
 """
@@ -129,8 +125,8 @@ const MD_OCB = [
 """
     MD_OCB_MATH
 
-Same concept as `MD_OCB` but for math blocks, they can't be nested.
-Separating them from the other dictionary makes their processing easier.
+Same concept as `MD_OCB` but for math blocks, they can't be nested. Separating them from the other
+dictionary makes their processing easier.
 
 Dev note: order does not matter.
 """

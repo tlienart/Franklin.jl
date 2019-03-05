@@ -1,8 +1,8 @@
 """
     judoc(;single_pass, clear_out_dir, verb)
 
-Take a directory that contains markdown files (possibly in subfolders), convert
-all markdown files to html and reproduce the same structure to an output dir.
+Take a directory that contains markdown files (possibly in subfolders), convert all markdown files
+to html and reproduce the same structure to an output dir.
 
 * `single_pass` compiles the whole thing once (no dir watching).
 * `clear_out_dir` destroys what was previously in `out_dir` this can be useful
@@ -175,9 +175,9 @@ end
 """
     run(; clear, verb,  port)
 
-Runs JuDoc in a given directory. The named argument `clear` indicates whether
-to clear the output dir or not, `verb` whether to display information about
-changes etc seen by the engine, `port` where to serve with browser-sync.
+Runs JuDoc in a given directory. The named argument `clear` indicates whether to clear the output
+dir or not, `verb` whether to display information about changes etc seen by the engine, `port`
+where to serve with browser-sync.
 """
 function serve(;clear=true, verb=false, port=8000)
     JD_FOLDER_PATH[] = pwd()
@@ -194,10 +194,9 @@ end
 """
     cleanup_process()
 
-Kills the process started by `browser-sync`, this is needed in case JuDoc was
-stopped by an error rather than an interruption (CTRL+C) sent by the user.
-In that case, the node process corresponding to browser-sync is not terminated
-properly, this makes sure it gets cleaned up.
+Kills the process started by `browser-sync`, this is needed in case JuDoc was stopped by an error
+rather than an interruption (CTRL+C) sent by the user. In that case, the node process corresponding
+to browser-sync is not terminated properly, this makes sure it gets cleaned up.
 """
 cleanup_process() = isfile(JD_PID_FILE) &&
     (run(`bash -c "kill \$(cat $JD_PID_FILE)"`); rm(JD_PID_FILE))
@@ -206,11 +205,10 @@ cleanup_process() = isfile(JD_PID_FILE) &&
 """
     JD_PY_MIN
 
-This is a simple script using `css_html_js_minify` (available via pip) to
-compress html and css files (the js that we use is already compressed).
-The reason for calling the script over the command line is that the command
-line seems to be buggy when provided with file paths. This script runs in a
-negligible amount of time.
+This is a simple script using `css_html_js_minify` (available via pip) to compress html and css
+files (the js that we use is already compressed). The reason for calling the script over the
+command line is that the command line seems to be buggy when provided with file paths. This script
+runs in a negligible amount of time.
 """
 const JD_PY_MIN = raw"""
     import os

@@ -9,10 +9,9 @@ lastm(f::String) = stat(f).mtime
 """
     process_config()
 
-Checks for a `config.md` file in `JD_PATHS[:in]` and uses it to set the global
-variables referenced in `JD_GLOB_VARS` it also sets the global latex commands
-via `JD_GLOB_LXDEFS`. If the configuration file is not found a warning is
-shown.
+Checks for a `config.md` file in `JD_PATHS[:in]` and uses it to set the global variables referenced
+in `JD_GLOB_VARS` it also sets the global latex commands via `JD_GLOB_LXDEFS`. If the configuration
+file is not found a warning is shown.
 """
 function process_config()
 
@@ -40,9 +39,8 @@ build_page(head, content, pg_foot, foot) =
 """
     write_page(root, file, head, pg_foot, foot)
 
-Take a path to an input markdown file (via `root` and `file`), then construct
-the appropriate HTML page (inserting `head`, `pg_foot` and `foot`) and
-finally write it at the appropriate place.
+Take a path to an input markdown file (via `root` and `file`), then construct the appropriate HTML
+page (inserting `head`, `pg_foot` and `foot`) and finally write it at the appropriate place.
 """
 function write_page(root, file, head, pg_foot, foot)
 
@@ -101,11 +99,10 @@ end
 """
     proces_file_err(case, fpair, clear_out_dir, head, pg_foot, foot, t)
 
-Considers a source file which, depending on `case` could be a html file or
-a file in judoc markdown etc, located in a place described by `fpair`,
-processes it by converting it and adding appropriate header and footer and
-writes it to the appropriate place.
-It can throw an error which will be caught in `process_file(args...)`.
+Considers a source file which, depending on `case` could be a html file or a file in judoc markdown
+etc, located in a place described by `fpair`, processes it by converting it and adding appropriate
+header and footer and writes it to the appropriate place. It can throw an error which will be
+caught in `process_file(args...)`.
 """
 function process_file_err(case, fpair, clear_out_dir,
                           head="", pg_foot="", foot="", t=0.)

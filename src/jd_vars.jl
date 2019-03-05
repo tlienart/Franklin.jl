@@ -1,10 +1,10 @@
 """
 	JD_GLOB_VARS
 
-Dictionary of variables assumed to be set for the entire website. Entries have
-the format KEY => PAIR where KEY is a string (e.g.: "author") and PAIR is a pair where the first element is the default value for the variable
-and the second is a tuple of accepted possible (super)types for that value.
-(e.g.: "THE AUTHOR" => (String, Nothing))
+Dictionary of variables assumed to be set for the entire website. Entries have the format
+KEY => PAIR where KEY is a string (e.g.: "author") and PAIR is a pair where the first element is
+the default value for the variable and the second is a tuple of accepted possible (super)types
+for that value. (e.g.: "THE AUTHOR" => (String, Nothing))
 
 DEVNOTE: marked as constant for perf reasons but can be modified since Dict.
 """
@@ -14,8 +14,8 @@ const JD_GLOB_VARS = Dict{String, Pair{Any, Tuple}}()
 """
     def_GLOB_VARS
 
-Convenience function to allocate default values of the global site variables.
-This is called once, when JuDoc is started.
+Convenience function to allocate default values of the global site variables. This is called once,
+when JuDoc is started.
 """
 def_GLOB_VARS() = begin
     empty!(JD_GLOB_VARS)
@@ -28,8 +28,8 @@ end
 """
     JD_LOC_VARS
 
-Dictionary of variables copied and then set for each page (through definitions).
-Entries have the same format as for `JD_GLOB_VARS`.
+Dictionary of variables copied and then set for each page (through definitions). Entries have the
+same format as for `JD_GLOB_VARS`.
 
 DEVNOTE: marked as constant for perf reasons but can be modified since Dict.
 """
@@ -39,8 +39,8 @@ const JD_LOC_VARS = Dict{String, Pair{Any, Tuple}}()
 """
     def_LOC_VARS
 
-Convenience function to allocate default values of page variables. This is
-called every time a page is processed.
+Convenience function to allocate default values of page variables. This is called every time a page
+is processed.
 """
 def_LOC_VARS() = begin
     empty!(JD_LOC_VARS)
@@ -56,8 +56,8 @@ end
 """
     JD_GLOB_LXDEFS
 
-List of latex definitions accessible to all pages. This is filled when the
-config file is read (via manager/file_utils/process_config)
+List of latex definitions accessible to all pages. This is filled when the config file is read
+(via manager/file_utils/process_config).
 """
 const JD_GLOB_LXDEFS = Dict{String, LxDef}()
 
@@ -65,17 +65,19 @@ const JD_GLOB_LXDEFS = Dict{String, LxDef}()
 """
     def_GLOB_LXDEFS
 
-Convenience function to allocate default values of global latex commands
-accessible throughout the site.
+Convenience function to allocate default values of global latex commands accessible throughout
+the site. See [`resolve_lxcom`](@ref).
 """
 def_GLOB_LXDEFS() = begin
     empty!(JD_GLOB_LXDEFS)
-    # for \eqref and \cite*, see parser/latex/resolve_latex
+    # hyperreferences
     JD_GLOB_LXDEFS["\\eqref"]    = LxDef("\\eqref",    1, SubString(""))
     JD_GLOB_LXDEFS["\\cite"]     = LxDef("\\cite",     1, SubString(""))
     JD_GLOB_LXDEFS["\\citet"]    = LxDef("\\citet",    1, SubString(""))
     JD_GLOB_LXDEFS["\\citep"]    = LxDef("\\citep",    1, SubString(""))
     JD_GLOB_LXDEFS["\\biblabel"] = LxDef("\\biblabel", 2, SubString(""))
+    # inclusion
+    JD_GLOB_LXDEFS["\\input"]    = LxDef("\\input",    2, SubString(""))
 end
 
 

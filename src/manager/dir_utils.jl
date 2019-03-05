@@ -3,8 +3,8 @@
 
 Prepare the output directory `JD_PATHS[:out]`.
 
-* `clear_out_dir` removes the content of the output directory if it exists to
-start from a blank slate
+* `clear_out_dir` removes the content of the output directory if it exists to start from a blank
+slate
 """
 function prepare_output_dir(clear_out=true)
 
@@ -22,8 +22,8 @@ end
 """
     out_path(root)
 
-Take a `root` path to an input file and convert to output path. If the output
-path does not exist, create it.
+Take a `root` path to an input file and convert to output path. If the output path does not exist,
+create it.
 """
 function out_path(root::String)
 
@@ -39,8 +39,8 @@ end
 """
     scan_input_dir!(md_files, html_files, other_files, infra_files, verb)
 
-Update the dictionaries referring to input files and their time of last
-change. The variable `verb` propagates verbosity.
+Update the dictionaries referring to input files and their time of last change. The variable `verb`
+propagates verbosity.
 """
 function scan_input_dir!(md_files, html_files, other_files, infra_files,
                          verb = false)
@@ -95,8 +95,8 @@ end
 """
     add_if_new_file!(dict, fpair)
 
-Helper function, if `fpair` is not referenced in the dictionary (new file)
-add the entry to the dictionary with the time of last modification as val.
+Helper function, if `fpair` is not referenced in the dictionary (new file) add the entry to the
+dictionary with the time of last modification as val.
 """
 function add_if_new_file!(dict, fpair, verb)
 

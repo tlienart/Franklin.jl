@@ -1,12 +1,10 @@
 """
     md2html(ss, stripp)
 
-Convenience function to call the base markdown to html converter on "simple"
-strings (i.e. strings that don't need to be further considered and don't
-contain anything else than markdown tokens).
-The boolean `stripp` indicates whether to remove the inserted `<p>` and `</p>`
-by the base markdown processor, this is relevant for things that are parsed
-within latex commands etc.
+Convenience function to call the base markdown to html converter on "simple" strings (i.e. strings
+that don't need to be further considered and don't contain anything else than markdown tokens).
+The boolean `stripp` indicates whether to remove the inserted `<p>` and `</p>` by the base markdown
+processor, this is relevant for things that are parsed within latex commands etc.
 """
 function md2html(ss::AbstractString,
                  stripp = false)
@@ -29,8 +27,7 @@ end
 """
     from_ifsmaller(v, idx, len)
 
-Convenience function to check if `idx` is smaller than the length of `v`, if it is, then return the starting point of `v[idx]` (via `from`), otherwise return
-`BIG_INT`.
+Convenience function to check if `idx` is smaller than the length of `v`, if it is, then return the starting point of `v[idx]` (via `from`), otherwise return `BIG_INT`.
 """
 from_ifsmaller(v::Vector, idx, len) = (idx > len) ? BIG_INT : from(v[idx])
 
@@ -38,9 +35,8 @@ from_ifsmaller(v::Vector, idx, len) = (idx > len) ? BIG_INT : from(v[idx])
 """
     deactivate_divs
 
-Since divs are recursively processed, once they've been found, everything
-inside them needs to be deactivated and left for further re-processing to
-avoid double inclusion.
+Since divs are recursively processed, once they've been found, everything inside them needs to be
+deactivated and left for further re-processing to avoid double inclusion.
 """
 function deactivate_divs(blocks::Vector{OCBlock})
 

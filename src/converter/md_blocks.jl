@@ -1,9 +1,8 @@
 """
     convert_block(β, lxc)
 
-Helper function for `convert_inter_html` that processes an extracted block
-given a latex context `lxc` and returns the processed html that needs to be
-plugged in the final html.
+Helper function for `convert_inter_html` that processes an extracted block given a latex context
+`lxc` and returns the processed html that needs to be plugged in the final html.
 """
 function convert_block(β::B, lxcontext::LxContext) where B <: AbstractBlock
 
@@ -34,12 +33,12 @@ convert_block(β::LxCom, λ::LxContext) = resolve_lxcom(β, λ.lxdefs)
 """
     JD_MBLOCKS_PM
 
-Dictionary to keep track of how math blocks are fenced in standard LaTeX and
-how these fences need to be adapted for compatibility with KaTeX.
-Each tuple contains the number of characters to chop off the front and the back
-of the maths expression (fences) as well as the KaTeX-compatible replacement.
-For instance, `\$ ... \$` will become `\\( ... \\)` chopping off 1 character at
-the front and the back (`\$` sign).
+Dictionary to keep track of how math blocks are fenced in standard LaTeX and how these fences need
+to be adapted for compatibility with KaTeX. Each tuple contains the number of characters to chop
+off the front and the back of the maths expression (fences) as well as the KaTeX-compatible
+replacement.
+For instance, `\$ ... \$` will become `\\( ... \\)` chopping off 1 character at the front and the
+back (`\$` sign).
 """
 const JD_MBLOCKS_PM = Dict{Symbol, Tuple{Int, Int, String, String}}(
     :MATH_A     => ( 1,  1, "\\(",  "\\)"),
@@ -54,9 +53,8 @@ const JD_MBLOCKS_PM = Dict{Symbol, Tuple{Int, Int, String, String}}(
 """
     convert_mathblock(β, s, lxdefs)
 
-Helper function for the math block case of `convert_block` taking the inside
-of a math block, resolving any latex command in it and returning the correct
-syntax that KaTeX can render.
+Helper function for the math block case of `convert_block` taking the inside of a math block,
+resolving any latex command in it and returning the correct syntax that KaTeX can render.
 """
 function convert_mathblock(β::OCBlock, lxdefs::Vector{LxDef})
 

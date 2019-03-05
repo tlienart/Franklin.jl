@@ -1,9 +1,9 @@
 """
     JD_HTML_FUNS
 
-Dictionary for special html functions. They can take two variables, the first
-one `π` refers to the arguments passed to the function, the second one `ν`
-refers to the page variables (i.e. the context) available to the function.
+Dictionary for special html functions. They can take two variables, the first one `π` refers to the
+arguments passed to the function, the second one `ν` refers to the page variables (i.e. the
+context) available to the function.
 """
 const JD_HTML_FUNS = Dict{String, Function}(
     "fill"   => ((π, ν) -> hfun_fill(π, ν)),
@@ -15,8 +15,7 @@ const JD_HTML_FUNS = Dict{String, Function}(
 """
     convert_hblock(β, allvars)
 
-Helper function to process an individual block when the block is a `HFun`
-such as `{{ fill author }}`.
+Helper function to process an individual block when it's a `HFun` such as `{{ fill author }}`.
 """
 function convert_hblock(β::HFun, allvars::Dict)
 
@@ -32,8 +31,8 @@ end
 """
     hfun_fill(params, allvars)
 
-H-Function of the form `{{ fill vname }}` to plug in the content of a
-jd-var `vname` (assuming it can be represented as a string).
+H-Function of the form `{{ fill vname }}` to plug in the content of a jd-var `vname` (assuming it
+can be represented as a string).
 """
 function hfun_fill(params::Vector{String}, allvars::Dict)
 
@@ -56,12 +55,10 @@ end
 """
     hfun_insert(params)
 
-H-Function of the form `{{ insert fpath }}` to plug in the content of a file at
-`fpath`. Note that the base path is assumed to be `JD_PATHS[:in_html]` so paths
-have to be expressed relative to that.
-Note that (at the moment) the content is inserted "as is" without further
-processing which means that any `{{...}}` block in the inserted content will
-be displayed "as is".
+H-Function of the form `{{ insert fpath }}` to plug in the content of a file at `fpath`. Note that
+the base path is assumed to be `JD_PATHS[:in_html]` so paths have to be expressed relative to that.
+Note that (at the moment) the content is inserted "as is" without further processing which means
+that any `{{...}}` block in the inserted content will be displayed "as is".
 """
 function hfun_insert(params::Vector{String})
 
