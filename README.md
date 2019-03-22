@@ -110,23 +110,27 @@ can then be referenced as such: \eqref{a nice equation} unrelated to
 There are a lot of SSGs out there with some pretty big and established ones like [Hugo](https://gohugo.io/), [Pelican](https://blog.getpelican.com/) or [Jekyll](https://github.com/jekyll/jekyll).
 
 In the past, I tried [Jemdoc](http://jemdoc.jaboc.net/) which I thought was nice particularly because of it simplicity.
-However it was not very fast, did not allow live preview, and did not work with KaTeX (at least natively).
+However it is not very fast, does not allow live preview, and does not work with KaTeX (at least natively).
 
-I tried some of the other SSGs: HuGo and Jekyll but also others like  [Hakyll](https://jaspervdj.be/hakyll/) and [Gutenberg](https://github.com/Keats/gutenberg) but while these projects are awesome, I never felt very comfortable using them for technical notes, something that would hopefully feel quite close to LaTeX.
+I also tried some of the other SSGs: Hugo, Jekyll, [Hakyll](https://jaspervdj.be/hakyll/) and [Gutenberg](https://github.com/Keats/gutenberg) but while these projects are awesome, I never felt really comfortable using them for technical notes and was looking for something that would hopefully feel quite close to LaTeX.
 
-So my list of desiderata was to write something
+The list of goals was then to build something
 
 * simple like JemDoc,
-* that could do live-preview with near-instantaneous rendering of modifications,
-* that generated efficient webpages with as little cruft as possible,
-* that allowed latex-like commands,
+* that can do live-preview with near-instantaneous rendering of modifications,
+* that generates efficient webpages with as little cruft as possible,
+* that allows latex-like commands,
 * in Julia.
+
+JuDoc is an attempt at meeting these criterion, help to make this better is always welcome!
 
 ## Installation
 
+You may prefer to directly clone and modify [the JuDocExample repo](https://github.com/tlienart/JuDocExample) instead of going through the detailed instructions below.
+
 In short:
 
-* `add https://github.com/tlienart/JuDoc.jl` in Julia ≥ 0.7
+* `add https://github.com/tlienart/JuDoc.jl` in Julia ≥ 1.0
 * `npm install -g browser-sync`
 * `pip install css-html-js-minify`
 
@@ -144,7 +148,7 @@ more details below.
 
 ### The engine
 
-To install JuDoc, you need [Julia](https://julialang.org/) (0.7 or above) and JuDoc (which is currently unregistered):
+To install JuDoc, you need [Julia](https://julialang.org/) (1.0 or above) and JuDoc (which is currently unregistered):
 
 ```
 ] # enter package mode
@@ -189,6 +193,12 @@ site
 +-- libs (*)
 |   +-- katex
 |   +-- highlight
++-- scripts (*)
+|   +-- output
+|   |   +-- script1.txt
+|   |   +-- ...
+|   +-- script1.jl
+|   +-- ...
 +-- src (*)
 |   +-- _css (*)
 |   +-- _html_parts (*)
@@ -204,6 +214,7 @@ The folders can be described as follows:
 
 * `assets`: essentially contains files like images.
 * `libs`: contains files necessary to run libraries such as [KaTeX](https://katex.org) and [highlight.js](https://highlightjs.org/).
+* `scripts`: contains code scripts that you may want to show.
 * `src`: this is the folder where you work
     * `src/_css`: is where you should modify your CSS files
     * `src/_html_parts`: is where basic html building blocks are defined (head, foot etc) which are used in assembling the final pages
