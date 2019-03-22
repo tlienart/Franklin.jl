@@ -23,7 +23,16 @@ function process_config()
         @warn "I didn't find a config file. Ignoring."
     end
 
-    return
+    if JD_GLOB_VARS["codetheme"][1] !== nothing
+        path = joinpath(JD_PATHS[:out_css], "highlight.css")
+        # NOTE: will overwrite (every time config.md is modified)
+        isdir(JD_PATHS[:out_css]) || mkpath(JD_PATHS[:out_css])
+        open(path, "w+") do stream
+            stylesheet(stream, MIME("text/css"), JD_GLOB_VARS["codetheme"][1])
+        end
+    end
+
+    return nothing
 end
 
 
@@ -66,6 +75,7 @@ function write_page(root, file, head, pg_foot, foot)
     ###
     content = convert_html(str(content), jd_vars)
     head, pg_foot, foot = (e->convert_html(e, jd_vars)).([head, pg_foot, foot])
+
     ###
     # 4. construct the page proper
     ###
@@ -74,8 +84,8 @@ function write_page(root, file, head, pg_foot, foot)
     # 5. write the html file where appropriate
     ###
     write(joinpath(out_path(root), change_ext(file)), pg)
-
-    return
+    
+    return nothing
 end
 
 

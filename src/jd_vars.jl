@@ -19,9 +19,10 @@ when JuDoc is started.
 """
 def_GLOB_VARS() = begin
     empty!(JD_GLOB_VARS)
-    JD_GLOB_VARS["author"]      = Pair("THE AUTHOR", (String, Nothing))
-    JD_GLOB_VARS["date_format"] = Pair("U dd, yyyy", (String,))
-    JD_GLOB_VARS["baseurl"]     = Pair(nothing,      (String, Nothing))
+    JD_GLOB_VARS["author"]      = Pair("THE AUTHOR",   (String, Nothing))
+    JD_GLOB_VARS["date_format"] = Pair("U dd, yyyy",   (String,))
+    JD_GLOB_VARS["baseurl"]     = Pair(nothing,        (String, Nothing))
+    JD_GLOB_VARS["codetheme"]   = Pair(Themes.DefaultTheme, (Highlights.AbstractTheme, Nothing))
 end
 
 
@@ -105,10 +106,9 @@ is_ok_type(t, tt) = any(<:(t, tᵢ) for tᵢ ∈ tt)
 """
     set_var(dict, key, val)
 
-Take a var dictionary `dict` and update the corresponding pair. This should
-only be used internally as it does not check the validity of `val`.
-See `write_page` where it is used to store a file's creation and last
-modification time.
+Take a var dictionary `dict` and update the corresponding pair. This should only be used internally
+as it does not check the validity of `val`. See [`write_page`](@ref) where it is used to store a
+file's creation and last modification time.
 """
 set_var!(dict::Dict, key, val) = (dict[key] = Pair(val, dict[key].second))
 
@@ -120,12 +120,10 @@ set_vars, the key function to assign site variables
 """
     set_vars!(jd_vars, assignments)
 
-Given a set of definitions `assignments`, update the variables dictionary
-`jd_vars`. Keys in `assignments` that do not match keys in `jd_vars` are
-ignored (a warning message is displayed).
-The entries in `assignments` are of the form `KEY => STR` where `KEY` is a
-string key (e.g.: "hasmath") and `STR` is an assignment to evaluate (e.g.:
-"=false").
+Given a set of definitions `assignments`, update the variables dictionary `jd_vars`. Keys in
+`assignments` that do not match keys in `jd_vars` are ignored (a warning message is displayed).
+The entries in `assignments` are of the form `KEY => STR` where `KEY` is a string key (e.g.:
+"hasmath") and `STR` is an assignment to evaluate (e.g.: "=false").
 
 Example:
 

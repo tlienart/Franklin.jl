@@ -15,7 +15,7 @@ function prepare_output_dir(clear_out=true)
     !isdir(JD_PATHS[:out]) && mkdir(JD_PATHS[:out])
     !isdir(JD_PATHS[:out_css]) && mkdir(JD_PATHS[:out_css])
 
-    return
+    return nothing
 end
 
 
@@ -27,9 +27,13 @@ create it.
 """
 function out_path(root::String)
 
-    f_out_path = joinpath(JD_PATHS[:f], root[length(JD_PATHS[:in])+1:end])
-    f_out_path = replace(f_out_path, "/pages/" => "/pub/")
+    len_in = lastindex(joinpath(JD_PATHS[:in], ""))
+    length(root) <= len_in && return JD_PATHS[:f]
 
+    dpath = root[nextind(root, len_in):end]
+
+    f_out_path = joinpath(JD_PATHS[:f], dpath)
+    f_out_path = replace(f_out_path, r"([^a-zA-Z\d\s_:])pages" => s"\1pub")
     !ispath(f_out_path) && mkpath(f_out_path)
 
     return f_out_path
