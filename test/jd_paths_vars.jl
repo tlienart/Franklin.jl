@@ -1,4 +1,4 @@
-const td = mktempdir() * "/"
+const td = mktempdir()
 J.JD_FOLDER_PATH[] = td
 
 J.def_GLOB_VARS()
@@ -8,12 +8,12 @@ J.def_GLOB_LXDEFS()
     P = J.set_paths!()
 
     @test J.JD_PATHS[:f] == td
-    @test J.JD_PATHS[:in] == td * "src/"
-    @test J.JD_PATHS[:in_css] == td * "src/_css/"
-    @test J.JD_PATHS[:in_html] == td * "src/_html_parts/"
-    @test J.JD_PATHS[:libs] == td * "libs/"
-    @test J.JD_PATHS[:out] == td * "pub/"
-    @test J.JD_PATHS[:out_css] == td * "css/"
+    @test J.JD_PATHS[:in] == joinpath(td, "src")
+    @test J.JD_PATHS[:in_css] == joinpath(td, "src", "_css")
+    @test J.JD_PATHS[:in_html] == joinpath(td, "src", "_html_parts")
+    @test J.JD_PATHS[:libs] == joinpath(td, "libs")
+    @test J.JD_PATHS[:out] == joinpath(td, "pub")
+    @test J.JD_PATHS[:out_css] == joinpath(td, "css")
     @test P == J.JD_PATHS
 
     mkdir(J.JD_PATHS[:in])

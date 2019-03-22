@@ -41,6 +41,7 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true, port=8000)
 
     # function corresponding to a "full pass" where every file is considered
     jd_full() = begin
+
         def_GLOB_VARS()
         def_LOC_VARS()
         def_GLOB_LXDEFS()
@@ -95,6 +96,7 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true, port=8000)
     sig < 0 && return sig       #
     verb && time_it_took(start) #
     # ---------------------------
+
     # variables useful when using continuous_checking
     # could be set externally though not very important
     SLEEP = 0.1

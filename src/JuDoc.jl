@@ -3,6 +3,7 @@ module JuDoc
 using Markdown
 using Dates # see jd_vars
 using Random
+using Highlights
 
 const BIG_INT = typemax(Int)
 const JD_PID_FILE = ".__jdpid_tmp__"
@@ -10,6 +11,14 @@ const JD_LEN_RANDSTRING = 4 # make this longer if you think you'll collide...
 const JD_SERVE_FIRSTCALL = Ref(true)
 
 export serve, publish, cleanpull
+
+const HIGHLIGHT = Dict{String,Pair{String,Any}}(
+    "fortran"    => "!" => Lexers.FortranLexer,
+    "julia-repl" => "#" => Lexers.JuliaConsoleLexer,
+    "julia"      => "#" => Lexers.JuliaLexer,
+    "matlab"     => "%" => Lexers.MatlabLexer,
+    "r"          => "#" => Lexers.RLexer,
+    "toml"       => "#" => Lexers.TOMLLexer)
 
 # PARSING
 include("parser/tokens.jl")
