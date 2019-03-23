@@ -107,19 +107,19 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true, port=8000)
         # this will go on until interrupted by the user (see catch)
         cntr = 1
         try while true
-    		# every NCYCL cycles, scan directory, update dictionaries
-    		if mod(cntr, NCYCL) == 0
-    			# 1) check if some files have been deleted
-    			# note we don't do anything. we just remove from the dict.
-    			# to get clean folder --> rerun the compile() from blank
+            # every NCYCL cycles, scan directory, update dictionaries
+            if mod(cntr, NCYCL) == 0
+                # 1) check if some files have been deleted
+                # note we don't do anything. we just remove from the dict.
+                # to get clean folder --> rerun the compile() from blank
                 for d ∈ watched_files, (fpair, _) ∈ d
                     !isfile(joinpath(fpair...)) && delete!(d, fpair)
                 end
                 # 2) scan the input folder, if new files have been
                 # added then this will update the dictionaries
                 scan_input_dir!(watched_files..., verb)
-    			cntr = 1
-    		else
+                cntr = 1
+            else
                 for (name, dict) ∈ watched, (fpair, t) ∈ dict
 
                     fpath = joinpath(fpair...)
@@ -148,12 +148,12 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true, port=8000)
                     end
                 end
                 # increase the loop counter
-    			cntr += 1
-    			sleep(SLEEP)
-    		end # if mod(cntr, NCYCL)
+                cntr += 1
+                sleep(SLEEP)
+            end # if mod(cntr, NCYCL)
             end # try while (same level as above, that's fine)
         catch err
-        	if isa(err, InterruptException)
+            if isa(err, InterruptException)
                 # this is the normal interruption (user pressing CTRL+C)
                 println("\nShutting down JuDoc. ✅")
                 rm(JD_PID_FILE, force=true)

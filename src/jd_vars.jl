@@ -1,5 +1,5 @@
 """
-	JD_GLOB_VARS
+    JD_GLOB_VARS
 
 Dictionary of variables assumed to be set for the entire website. Entries have the format
 KEY => PAIR where KEY is a string (e.g.: "author") and PAIR is a pair where the first element is
