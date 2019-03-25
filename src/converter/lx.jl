@@ -126,12 +126,25 @@ const JD_REF_COMS = Dict{String, Function}(
     "\\biblabel" => form_biblabel,
     )
 
+
+"""
+    check_input_fname(fname)
+
+Internal function to check that a given filename exists in `JD_PATH[:scripts]`. See also
+[`resolve_input`](@ref).
+"""
 function check_input_fname(fname::AbstractString)
     fp = joinpath(JD_PATHS[:scripts], fname)
     isfile(fp) || throw(ArgumentError("Couldn't find file $fp when trying to resolve an \\input."))
     return fp
 end
 
+"""
+    resolve_input_hlcode(fname, lang)
+
+Internal function to read the content of a script file and highlight it using `Highlights.jl`.
+See also [`resolve_input`](@ref).
+"""
 function resolve_input_hlcode(fname::AbstractString, lang::AbstractString; use_hl=true)
     fp = check_input_fname(fname)
     # Read the file while ignoring lines that are flagged with something like `# HIDE`
@@ -154,11 +167,23 @@ function resolve_input_hlcode(fname::AbstractString, lang::AbstractString; use_h
     return "<pre><code $lang>$(String(take!(io_in)))</code></pre>"
 end
 
+"""
+    resolve_input_othercode(fname, lang)
+
+Internal function to read the content of a script file and highlight it using `highlight.js`. See
+also [`resolve_input`](@ref).
+"""
 function resolve_input_othercode(fname::AbstractString, lang::AbstractString)
     fp = check_input_fname(fname)
     return "<pre><code $lang>$(read(fp, String))</code></pre>"
 end
 
+"""
+    resolve_input_plainoutput(fname, lang)
+
+Internal function to read the raw output of the execution of a file and display it in a pre block.
+See also [`resolve_input`](@ref).
+"""
 function resolve_input_plainoutput(fname::AbstractString)
     fp = check_input_fname(fname)
     # find a file in output that has the same root name
@@ -180,6 +205,12 @@ function resolve_input_plainoutput(fname::AbstractString)
     return "<pre id=\"judoc-out-plain\"><code>$(read(fp, String))</code></pre>"
 end
 
+"""
+    resolve_input_plotoutput(fname, id)
+
+Internal function to read a plot outputted by script `fname`, possibly named with `id`. See also
+[`resolve_input`](@ref).
+"""
 function resolve_input_plotoutput(fname::AbstractString, id::String="")
     fp = check_input_fname(fname)
     # find an img in output that has the same root name
@@ -199,7 +230,7 @@ function resolve_input_plotoutput(fname::AbstractString, id::String="")
         fp == "" || break
     end
     fp != "" || throw(ErrorException("I found an input command but not a relevant output plot."))
-    return "<img src=\"/scripts/output/$(joinpath(d, fp))\" id=\"judoc-out-plot\"/>"
+    return "<img src=\"assets/scripts/output/$(joinpath(d, fp))\" id=\"judoc-out-plot\"/>"
 end
 
 """

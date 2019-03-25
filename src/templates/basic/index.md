@@ -168,7 +168,7 @@ This dictionary of variables is accessed locally by pages through `@def varname 
 
 There's a few other such functions of the form `{{fname p₁ p₂}}` as well as support for conditional blocks. If you wander through the `src/_html_parts/` folder and its content, you should be able to see those in action.
 
-<!-- ## Including scripts
+## Including scripts
 
 In order to include the content of a script you can use the `\input` command specifying which language it should be tagged as:
 
@@ -189,4 +189,4 @@ Finally, a similar syntax is available if you want to show plots that are produc
 
 and then
 
-\input{plot}{script2.jl} -->
+\input{plot}{script2.jl}
