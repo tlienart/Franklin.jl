@@ -102,8 +102,8 @@ function judoc(;single_pass=true, clear_out_dir=false, verb=true, port=8000)
     SLEEP = 0.1
     NCYCL = 20   # every NCYCL * SLEEP, directory is checked
     if !single_pass
-        println("Now live-serving at http://localhost:$port/... ✅")
-        println("Watching input folder, press CTRL+C to stop...")
+        println("✓ Now live-serving at http://localhost:$port")
+        println("✓ Watching input folder, press CTRL+C to stop the server.")
         # this will go on until interrupted by the user (see catch)
         cntr = 1
         try while true
@@ -185,7 +185,7 @@ function serve(;clear=true, verb=false, port=8000)
     JD_FOLDER_PATH[] = pwd()
     # start browser-sync, serving in 8000
     run(`bash -c "browser-sync start -s -f $(JD_FOLDER_PATH.x) --no-notify --logLevel silent --port $port --no-open & echo \$! > $JD_PID_FILE"`)
-    print("Starting the engine")
+    print("→ Starting the engine")
     println(ifelse(JD_SERVE_FIRSTCALL.x, " (give it 1-2s)...", "..."))
     JD_SERVE_FIRSTCALL.x && (JD_SERVE_FIRSTCALL.x = false)
     JuDoc.judoc(single_pass=false, verb=verb, clear_out_dir=clear, port=port);
