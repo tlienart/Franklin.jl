@@ -193,7 +193,7 @@ site
 +-- libs (*)
 |   +-- katex
 |   +-- highlight
-+-- scripts (*)
++-- scripts
 |   +-- output
 |   |   +-- script1.txt
 |   |   +-- ...

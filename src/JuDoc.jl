@@ -10,7 +10,7 @@ const JD_PID_FILE = ".__jdpid_tmp__"
 const JD_LEN_RANDSTRING = 4 # make this longer if you think you'll collide...
 const JD_SERVE_FIRSTCALL = Ref(true)
 
-export serve, publish, cleanpull
+export serve, publish, cleanpull, newsite
 
 const HIGHLIGHT = Dict{String,Pair{String,Any}}(
     "fortran"    => "!" => Lexers.FortranLexer,
@@ -19,6 +19,8 @@ const HIGHLIGHT = Dict{String,Pair{String,Any}}(
     "matlab"     => "%" => Lexers.MatlabLexer,
     "r"          => "#" => Lexers.RLexer,
     "toml"       => "#" => Lexers.TOMLLexer)
+
+const JUDOC_PATH = splitdir(pathof(JuDoc))[1] # .../JuDoc/src
 
 # PARSING
 include("parser/tokens.jl")
@@ -52,6 +54,7 @@ include("jd_vars.jl")
 include("manager/dir_utils.jl")
 include("manager/file_utils.jl")
 include("manager/judoc.jl")
+include("manager/newsite.jl")
 
 # MISC UTILS
 include("misc_utils.jl")
