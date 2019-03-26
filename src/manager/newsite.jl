@@ -12,15 +12,11 @@ function initlibs(topdir::String, template::String)
     # NOTE: it's better if the user copies/pastes their own stuff, this is a default one
     # so that they get a template, languages = {julia, julia REPL, python, R, markdown, bash}
     cp(joinpath(TEMPL_PATH, "common", "libs", "highlight"), joinpath(libs, "highlight"))
-    # TODO --> bring what's in libs in an acceptable fashion.  Same if there's any extra assets
-    # tlibs = joinpath(TEMPL_PATH, template, "libs")
-    # if isdir(tlibs)
-    #     for (root, dirs, _) ∈ walkdir(libs)
-    #         for file ∈ files
-    #             cp(joinpath(root, file), joinpath(libs, ""))
-    #         end
-    #     end
-    # end
+
+    tlibs = joinpath(TEMPL_PATH, template, "libs")
+    if isdir(tlibs)
+        mergefolders(tlibs, libs)
+    end
     return nothing
 end
 
@@ -49,6 +45,11 @@ function initassets(topdir::String, template::String)
     assets = mkdir(joinpath(topdir, "assets"))
     cp(joinpath(TEMPL_PATH, "common", "assets", "infra"),   joinpath(assets, "infra"))
     cp(joinpath(TEMPL_PATH, "common", "assets", "scripts"), joinpath(assets, "scripts"))
+
+    tassets = joinpath(TEMPL_PATH, template, "assets")
+    if isdir(tassets)
+        mergefolders(tassets, assets)
+    end
 end
 
 """
