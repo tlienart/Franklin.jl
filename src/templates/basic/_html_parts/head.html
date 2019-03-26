@@ -3,22 +3,16 @@
 	<head>
 		<meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="stylesheet" href="/css/main.css">
-		<link rel="stylesheet" href="/css/highlight.css">
-        <link rel="icon" href="/assets/infra/favicon.png">
-		{{ifdef title}} <title>{{fill title}}</title>	{{end}}
 		{{if hasmath}} {{insert head_katex.html }} 		{{end}}
         {{if hascode}} {{insert head_highlight.html }} 	{{end}}
+		<link rel="stylesheet" href="/css/main.css">
+        <link rel="icon" href="/assets/infra/favicon.png">
+		{{ifdef title}} <title>{{fill title}}</title>	{{end}}
 	</head>
     <body>
         <header>
             <div class="blog-name"><a href="">Basic Template</a></div>
             <nav>
-				<!--
-				NOTE: the baseurl stuff is needed only because this is a github project and therefore the baseurl is not just tlienart.github.io but in fact tlienart.github.io/JuDocExample
-				for your own website you can safely ignore this.
-				See also definition of the baseurl in config.md
-				-->
                 <ul>
                     <li><a href="/">Home</a></li>
                     <li><a href="/pub/menu1.html">Menu 1</a></li>
