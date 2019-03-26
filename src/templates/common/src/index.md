@@ -5,7 +5,7 @@
 the config file by setting hasmath = false for instance and just setting it to true
 where appropriate -->
 
-# Examples of how to use JuDoc
+# How to use JuDoc
 
 This section is meant as a refresher if you're new to JuDoc.
 Have a look at both how the website renders and the corresponding markdown (`index.md`).
