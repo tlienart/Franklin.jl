@@ -7,11 +7,19 @@ of the website folder. See [`newsite`](@ref).
 function initlibs(topdir::String, template::String)
     libs = mkdir(joinpath(topdir, "libs"))
     # katex
-    cp(joinpath(JUDOC_PATH, "templates", "common", "katex"), joinpath(libs, "katex"))
+    cp(joinpath(TEMPL_PATH, "common", "libs", "katex"),     joinpath(libs, "katex"))
     # highlight
     # NOTE: it's better if the user copies/pastes their own stuff, this is a default one
     # so that they get a template, languages = {julia, julia REPL, python, R, markdown, bash}
-    cp(joinpath(JUDOC_PATH, "templates", "common", "highlight"), joinpath(libs, "highlight"))
+    cp(joinpath(TEMPL_PATH, "common", "libs", "highlight"), joinpath(libs, "highlight"))
+    # tlibs = joinpath(TEMPL_PATH, template, "libs")
+    # if isdir(tlibs)
+    #     for (root, dirs, _) ∈ walkdir(libs)
+    #         for file ∈ files
+    #             cp(joinpath(root, file), joinpath(libs, ""))
+    #         end
+    #     end
+    # end
     return nothing
 end
 
@@ -23,11 +31,11 @@ See [`newsite`](@ref).
 """
 function initsrc(topdir::String, template::String)
     src = mkdir(joinpath(topdir, "src"))
-    cp(joinpath(JUDOC_PATH, "templates", template, "_css"), joinpath(src, "_css"))
-    cp(joinpath(JUDOC_PATH, "templates", template, "_html_parts"), joinpath(src, "_html_parts"))
-    cp(joinpath(JUDOC_PATH, "templates", template, "pages"), joinpath(src, "pages"))
-    cp(joinpath(JUDOC_PATH, "templates", template, "config.md"), joinpath(src, "config.md"))
-    cp(joinpath(JUDOC_PATH, "templates", template, "index.md"), joinpath(src, "index.md"))
+    cp(joinpath(TEMPL_PATH, template, "_css"),             joinpath(src, "_css"))
+    cp(joinpath(TEMPL_PATH, template, "_html_parts"),      joinpath(src, "_html_parts"))
+    cp(joinpath(TEMPL_PATH, "common", "src", "pages"),     joinpath(src, "pages"))
+    cp(joinpath(TEMPL_PATH, "common", "src", "config.md"), joinpath(src, "config.md"))
+    cp(joinpath(TEMPL_PATH, "common", "src", "index.md"),  joinpath(src, "index.md"))
 end
 
 """
@@ -37,7 +45,9 @@ Internal function to copy over the `assets/` folder from a given template to the
 See [`newsite`](@ref).
 """
 function initassets(topdir::String, template::String)
-    cp(joinpath(JUDOC_PATH, "templates", template, "assets"), joinpath(topdir, "assets"))
+    assets = mkdir(joinpath(topdir, "assets"))
+    cp(joinpath(TEMPL_PATH, "common", "assets", "infra"),   joinpath(assets, "infra"))
+    cp(joinpath(TEMPL_PATH, "common", "assets", "scripts"), joinpath(assets, "scripts"))
 end
 
 """
@@ -57,9 +67,12 @@ serve()
 function newsite(topdir::String="TestWebsite";
                  template::String="basic")
 
+    template = lowercase(template)
+    template ∈ ["basic", "pure-sm"] || throw(ArgumentError("Template $template doesn't exist."))
+
     topdir = mkdir(topdir)
-    initlibs(topdir, template)
-    initsrc(topdir, template)
+    initlibs(topdir,   template)
+    initsrc(topdir,    template)
     initassets(topdir, template)
     cd(topdir)
     println("✓ Website folder generated at $(topdir) (now the current directory).")

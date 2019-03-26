@@ -21,6 +21,7 @@ const HIGHLIGHT = Dict{String,Pair{String,Any}}(
     "toml"       => "#" => Lexers.TOMLLexer)
 
 const JUDOC_PATH = splitdir(pathof(JuDoc))[1] # .../JuDoc/src
+const TEMPL_PATH = joinpath(JUDOC_PATH, "templates")
 
 # PARSING
 include("parser/tokens.jl")
