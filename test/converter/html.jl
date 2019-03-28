@@ -95,3 +95,49 @@ end
     @test "{{if b2}} {{ else }} {{ end }}" |> jdc == ""      # if, empty
     @test "{{if b2}} {{ else }} blih {{ end }}" |> jdc == "" # if, empty
 end
+
+
+@testset "Cond ispage" begin
+    allvars = Dict{String, Pair{Any, Tuple}}()
+
+    hs = raw"""
+        Some text then {{ ispage /index.html }} blah {{ end }} but
+        {{isnotpage /src/blah.html /src/ya/xx}} blih {{end}} done.
+        """
+
+    tokens = JuDoc.find_tokens(hs, JuDoc.HTML_TOKENS, JuDoc.HTML_1C_TOKENS)
+    hblocks, tokens = JuDoc.find_all_ocblocks(tokens, J.HTML_OCB)
+    qblocks = JuDoc.qualify_html_hblocks(hblocks)
+
+    @test qblocks[1] isa J.HIsPage
+    @test qblocks[1].pages[1] == "/index.html"
+    @test qblocks[2] isa J.HEnd
+    @test qblocks[3] isa J.HIsNotPage
+    @test qblocks[3].pages[1] == "/src/blah.html"
+    @test qblocks[3].pages[2] == "/src/ya/xx"
+
+    cblocks, qblocks = JuDoc.find_html_cblocks(qblocks)
+    @test isempty(cblocks)
+    cdblocks, qblocks = JuDoc.find_html_cdblocks(qblocks)
+    @test isempty(cblocks)
+    cpblocks, qblocks = JuDoc.find_html_cpblocks(qblocks)
+
+    @test isempty(qblocks)
+    @test cpblocks[1].checkispage == true
+    @test cpblocks[1].pages[1] == "/index.html"
+    @test cpblocks[1].action == " blah "
+    @test cpblocks[2].checkispage == false
+    @test cpblocks[2].pages[1] == "/src/blah.html"
+
+    hblocks = JuDoc.merge_blocks(qblocks, cblocks, cdblocks, cpblocks)
+
+    @test hblocks[1] isa J.HCondPage
+    @test hblocks[1].pages == cpblocks[1].pages
+
+    convhbs = [JuDoc.convert_hblock(hb, allvars, "/index.md") for hb ∈ hblocks]
+
+    @test convhbs[1] == " blah " # condition is met
+    @test convhbs[2] == " blih " # condition is met
+
+    @test JuDoc.convert_html(hs, allvars, joinpath(J.JD_PATHS[:in], "index.md")) == "Some text then  blah  but\n blih  done.\n"
+end

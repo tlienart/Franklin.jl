@@ -4,8 +4,8 @@
 Convert a judoc html string into a html string (i.e. replace {{ ... }} blocks).
 """
 function convert_html(hs::AbstractString,
-                      allvars=Dict{String, Pair{Any, Tuple}}())
-
+                      allvars::Dict{String, Pair{Any, Tuple}},
+                      fpath::AbstractString)
     # Tokenize
     tokens = find_tokens(hs, HTML_TOKENS, HTML_1C_TOKENS)
 
@@ -19,9 +19,11 @@ function convert_html(hs::AbstractString,
     cblocks, qblocks = find_html_cblocks(qblocks)
     # Find conditional def blocks (ifdef / ifndef)
     cdblocks, qblocks = find_html_cdblocks(qblocks)
+    # Find conditional page blocks (ispage / isnotpage)
+    cpblocks, qblocks = find_html_cpblocks(qblocks)
 
     # Get the list of blocks to process
-    hblocks = merge_blocks(qblocks, cblocks, cdblocks)
+    hblocks = merge_blocks(qblocks, cblocks, cdblocks, cpblocks)
 
     # construct the final html
     pieces = Vector{AbstractString}()
@@ -29,7 +31,7 @@ function convert_html(hs::AbstractString,
     for (i, hb) ∈ enumerate(hblocks)
         fromhb = from(hb)
         (head < fromhb) && push!(pieces, subs(hs, head, prevind(hs, fromhb)))
-        push!(pieces, convert_hblock(hb, allvars))
+        push!(pieces, convert_hblock(hb, allvars, fpath))
         head = nextind(hs, to(hb))
     end
     strlen = lastindex(hs)
