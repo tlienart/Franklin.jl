@@ -44,14 +44,10 @@ end
 
 function convert_hblock(β::HCondPage, allvars::Dict, fpath::AbstractString="")
     # get the relative paths so assuming fpath == joinpath(JD_PATHS[:in], rel_path)
-    rel_path = replace(fpath, JD_PATHS[:in] => "")
-    # it will always be "/something" so always "/" then "something" (inc. on windows)
-    split_rel_path = splitpath(rel_path)
-    if split_rel_path[2] == "pages"
-        split_rel_path[2] = "pub"
-    end
+    rpath = replace(fpath, JD_PATHS[:in] => "")
+    rpath = replace(rpath, Regex("^$(PATH_SEP)pages$(PATH_SEP)")=>"$(PATH_SEP)pub$(PATH_SEP)")
     # rejoin and remove the extension
-    rel_path = splitext(joinpath(split_rel_path...))[1]
+    rel_path = splitext(rpath)[1]
     # compare with β.pnames
     inpage = any(page -> splitext(page)[1] == rel_path, β.pages)
     # check if the corresponding bool is true and if so, act accordingly
