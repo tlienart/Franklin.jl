@@ -36,7 +36,7 @@ end
     hs = raw"""
         Trying to insert: {{ insert temp.rnd }} and see.
         """
-    allvars = Dict()
+    allvars = Dict{String, Pair{Any, Tuple}}()
     @test JuDoc.convert_html(hs, allvars) == "Trying to insert: some random text to insert and see.\n"
 end
 
@@ -74,7 +74,7 @@ end
 
 
 @testset "Cblock+empty" begin # refers to #96
-    allvars = Dict(
+    allvars = Dict{String, Pair{Any, Tuple}}(
         "b1" => false => (Bool,),
         "b2" => true => (Bool,))
 
