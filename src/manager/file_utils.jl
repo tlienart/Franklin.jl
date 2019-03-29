@@ -1,12 +1,4 @@
 """
-    lastm(f)
-
-Convenience function to get the time of last modification of a file.
-"""
-lastm(f::String) = stat(f).mtime
-
-
-"""
     process_config()
 
 Checks for a `config.md` file in `JD_PATHS[:in]` and uses it to set the global variables referenced
@@ -84,7 +76,7 @@ function write_page(root, file, head, pg_foot, foot)
     # 5. write the html file where appropriate
     ###
     write(joinpath(out_path(root), change_ext(file)), pg)
-    
+
     return nothing
 end
 
@@ -127,7 +119,7 @@ function process_file_err(case, fpair, clear_out_dir,
         opath = joinpath(out_path(fpair.first), fpair.second)
         # only copy it again if necessary (particularly relevant)
         # when the asset files take quite a bit of space.
-        if clear_out_dir || !isfile(opath) || lastm(opath) < t
+        if clear_out_dir || !isfile(opath) || mtime(opath) < t
             cp(joinpath(fpair...), opath, force=true)
         end
     else # case == "infra"
