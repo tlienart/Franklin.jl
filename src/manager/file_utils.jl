@@ -65,8 +65,8 @@ function write_page(root, file, head, pg_foot, foot)
     # 3. process blocks in the html infra elements based on `jd_vars` (e.g.:
     # add the date in the footer)
     ###
-    content = convert_html(str(content), jd_vars)
-    head, pg_foot, foot = (e->convert_html(e, jd_vars)).([head, pg_foot, foot])
+    content = convert_html(str(content), jd_vars, fpath)
+    head, pg_foot, foot = (e->convert_html(e, jd_vars, fpath)).([head, pg_foot, foot])
 
     ###
     # 4. construct the page proper
@@ -112,8 +112,9 @@ function process_file_err(case, fpair, clear_out_dir,
     if case == "md"
         write_page(fpair..., head, pg_foot, foot)
     elseif case == "html"
-        raw_html = read(joinpath(fpair...), String)
-        proc_html = convert_html(raw_html, JD_GLOB_VARS)
+        fpath = joinpath(fpair...)
+        raw_html = read(fpath, String)
+        proc_html = convert_html(raw_html, JD_GLOB_VARS, fpath)
         write(joinpath(out_path(fpair.first), fpair.second), proc_html)
     elseif case == "other"
         opath = joinpath(out_path(fpair.first), fpair.second)
@@ -130,8 +131,7 @@ function process_file_err(case, fpair, clear_out_dir,
                 force=true)
         end
     end
-
-    return
+    return nothing
 end
 
 

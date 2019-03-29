@@ -115,22 +115,22 @@ HCondDef(β::HIfNDef, ss, action) = HCondDef(ss, false, β.vname, action)
 
 struct HIsPage <: AbstractBlock
     ss::SubString
-    pnames::Vector{<:AbstractString} # one or several pages
+    pages::Vector{<:AbstractString} # one or several pages
 end
 
 struct HIsNotPage <: AbstractBlock
     ss::SubString
-    pnames::Vector{<:AbstractString}
+    pages::Vector{<:AbstractString}
 end
 
 struct HCondPage <: AbstractBlock
     ss::SubString                    # full block
     checkispage::Bool                # true for ispage false for isnotpage
-    pnames::Vector{<:AbstractString} # page names
+    pages::Vector{<:AbstractString}  # page names
     action::SubString                # what to do when condition is met
 end
-HCondPage(β::HIsPage, ss, action) = HCondPage(ss, true, β.pnames, action)
-HCondPage(β::HIsNotPage, ss, action) = HCondPage(ss, false, β.pnames, action)
+HCondPage(β::HIsPage, ss, action) = HCondPage(ss, true, β.pages, action)
+HCondPage(β::HIsNotPage, ss, action) = HCondPage(ss, false, β.pages, action)
 
 #= ============
 FUNCTION BLOCKS
