@@ -29,7 +29,6 @@ JuDoc.process_config()
 	@test !isfile(temp_out)
 end
 
-
 @testset "Scan dir" begin # ✅ aug 16, 2018
 	println("🐝 Testing file tracking...:")
 	# it also tests add_if_new_file and last
@@ -40,11 +39,10 @@ end
 	watched_files = [md_files, html_files, other_files, infra_files]
 	JuDoc.scan_input_dir!(md_files, html_files, other_files, infra_files, true)
 	@test haskey(md_files, JuDoc.JD_PATHS[:in_pages]=>"blah.md")
-	@test md_files[JuDoc.JD_PATHS[:in_pages]=>"blah.md"] == JuDoc.lastm(temp_blah) == stat(temp_blah).mtime
-	@test html_files[JuDoc.JD_PATHS[:in_pages]=>"temp.html"] == JuDoc.lastm(temp_html)
-	@test other_files[JuDoc.JD_PATHS[:in_pages]=>"temp.rnd"] == JuDoc.lastm(temp_rnd)
+	@test md_files[JuDoc.JD_PATHS[:in_pages]=>"blah.md"] == mtime(temp_blah) == stat(temp_blah).mtime
+	@test html_files[JuDoc.JD_PATHS[:in_pages]=>"temp.html"] == mtime(temp_html)
+	@test other_files[JuDoc.JD_PATHS[:in_pages]=>"temp.rnd"] == mtime(temp_rnd)
 end
-
 
 @testset "Config+write" begin # ✅ 4 Sept, 2018
 	JuDoc.process_config()

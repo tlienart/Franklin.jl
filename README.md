@@ -12,7 +12,7 @@ I use it to generate [my website](https://tlienart.github.io).
 
 (_for more detailed instructions, read the Install section further on_)
 
-* `add https://github.com/tlienart/JuDoc.jl` in Julia ≥ 1.0
+* `add https://github.com/tlienart/JuDoc.jl` in Julia ≥ 1.0.
 * `npm install -g browser-sync` (to live-preview)
 
 ```julia-repl

@@ -7,6 +7,8 @@ of qualified blocks of type `AbstractBlock`.
 function qualify_html_hblocks(blocks::Vector{OCBlock})
 
     qb = Vector{AbstractBlock}(undef, length(blocks))
+
+    # TODO improve this (if there are many blocks this would be slow)
     for (i, β) ∈ enumerate(blocks)
         # if block {{ if v }}
         m = match(HBLOCK_IF_PAT, β.ss)
@@ -20,12 +22,21 @@ function qualify_html_hblocks(blocks::Vector{OCBlock})
         # end block {{ end }}
         m = match(HBLOCK_END_PAT, β.ss)
         isnothing(m) || (qb[i] = HEnd(β.ss); continue)
+        # ---
         # ifdef block
         m = match(HBLOCK_IFDEF_PAT, β.ss)
         isnothing(m) || (qb[i] = HIfDef(β.ss, m.captures[1]); continue)
         # ifndef block
         m = match(HBLOCK_IFNDEF_PAT, β.ss)
         isnothing(m) || (qb[i] = HIfNDef(β.ss, m.captures[1]); continue)
+        # ---
+        # ispage block
+        m = match(HBLOCK_ISPAGE_PAT, β.ss)
+        isnothing(m) || (qb[i] = HIsPage(β.ss, split(m.captures[1])); continue)
+        # isnotpage block
+        m = match(HBLOCK_ISNOTPAGE_PAT, β.ss)
+        isnothing(m) || (qb[i] = HIsNotPage(β.ss, split(m.captures[1])); continue)
+        # ---
         # function block {{ fname v1 v2 ... }}
         m = match(HBLOCK_FUN_PAT, β.ss)
         isnothing(m) || (qb[i] = HFun(β.ss, m.captures[1], split(m.captures[2])); continue)
@@ -55,7 +66,7 @@ function find_html_cblocks(qblocks::Vector{AbstractBlock})
 
         # look forward until the next `{{ end }}` block
         k = findfirst(cβ -> (typeof(cβ) == HEnd), qblocks[i+1:end])
-        isnothing(k) && error("Found an {{ if ... }} block but no matching {{ end }} block. ")
+        isnothing(k) && error("Found an {{if ...}} block but no matching {{end}} block. ")
 
         n_between = k - 1
         k += i
@@ -95,7 +106,7 @@ end
 """
     find_html_cdblocks(qblocks)
 
-Given qualified blocks `HIfDef` or `HIfNDef` build a conditional def block.
+Given qualified blocks `HIfDef` or `HIfNDef` build conditional page blocks.
 """
 function find_html_cdblocks(qblocks::Vector{AbstractBlock})
 
@@ -106,10 +117,10 @@ function find_html_cdblocks(qblocks::Vector{AbstractBlock})
     while i < length(qblocks)
         i += 1
         β = qblocks[i]
-        (typeof(β) ∈ [HIfDef, HIfNDef]) || continue
+        (typeof(β) ∈ (HIfDef, HIfNDef)) || continue
         # look forward until next `{{end}} block
         k = findfirst(cβ -> (typeof(cβ) == HEnd), qblocks[i+1:end])
-        isnothing(k) && error("Found an {{ if(n)def ...}} block but no matching {{end}} block.")
+        isnothing(k) && error("Found an {{if(n)def ...}} block but no matching {{end}} block.")
         k += i
         endβ = qblocks[k]
         hcondss = subs(str(β), from(β), to(endβ))
@@ -119,4 +130,34 @@ function find_html_cdblocks(qblocks::Vector{AbstractBlock})
         i = k
     end
     return cdblocks, qblocks[active_qblocks]
+end
+
+
+"""
+    find_html_cpblocks(qblocks)
+
+Given qualified blocks `HIsPage` or `HIsNotPage` build conditional page blocks.
+"""
+function find_html_cpblocks(qblocks::Vector{AbstractBlock})
+
+    cpblocks = Vector{HCondPage}()
+    isempty(qblocks) && return cpblocks, qblocks
+    active_qblocks = ones(Bool, length(qblocks))
+    i = 0
+    while i < length(qblocks)
+        i += 1
+        β = qblocks[i]
+        (typeof(β) ∈ (HIsPage, HIsNotPage)) || continue
+        # look forward until next `{{end}} block
+        k = findfirst(cβ -> (typeof(cβ) == HEnd), qblocks[i+1:end])
+        isnothing(k) && error("Found an {{is(not)page ...}} block but no matching {{end}} block.")
+        k += i
+        endβ = qblocks[k]
+        hcondss = subs(str(β), from(β), to(endβ))
+        action = subs(str(β), to(β)+1, from(endβ)-1)
+        push!(cpblocks, HCondPage(β, hcondss, action))
+        active_qblocks[i:k] .= false
+        i = k
+    end
+    return cpblocks, qblocks[active_qblocks]
 end

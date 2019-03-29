@@ -47,14 +47,14 @@ at this point. This second point might fix the first one by making sure that
 
 Regex to match `{{ if vname }}` where `vname` should refer to a boolean in the current scope.
 """
-const HBLOCK_IF_PAT     = r"{{\s*if\s+([a-zA-Z]\S+)\s*}}"
-const HBLOCK_ELSE_PAT   = r"{{\s*else\s*}}"
-const HBLOCK_ELSEIF_PAT = r"{{\s*else\s*if\s+([a-zA-Z]\S+)\s*}}"
-const HBLOCK_END_PAT    = r"{{\s*end\s*}}"
-const HBLOCK_IFDEF_PAT  = r"{{\s*ifdef\s+([a-zA-Z]\S+)\s*}}"
-const HBLOCK_IFNDEF_PAT = r"{{\s*ifndef\s+([a-zA-Z]\S+)\s*}}"
-
-# If ... elseif ... else ...
+const HBLOCK_IF_PAT        = r"{{\s*if\s+([a-zA-Z]\S+)\s*}}"        # {{if v1}}
+const HBLOCK_ELSE_PAT      = r"{{\s*else\s*}}"                      # {{else}}
+const HBLOCK_ELSEIF_PAT    = r"{{\s*else\s*if\s+([a-zA-Z]\S+)\s*}}" # {{elseif v1}}
+const HBLOCK_END_PAT       = r"{{\s*end\s*}}"                       # {{end}}
+const HBLOCK_IFDEF_PAT     = r"{{\s*ifdef\s+([a-zA-Z]\S+)\s*}}"     # {{ifdef v1}}
+const HBLOCK_IFNDEF_PAT    = r"{{\s*ifndef\s+([a-zA-Z]\S+)\s*}}"    # {{ifndef v1}}
+const HBLOCK_ISPAGE_PAT    = r"{{\s*ispage\s+((.|\n)+?)}}"          # {{ispage p1 p2}}
+const HBLOCK_ISNOTPAGE_PAT = r"{{\s*isnotpage\s+((.|\n)+?)}}"       # {{isnotpage p1 p2}}
 
 struct HIf <: AbstractBlock
     ss::SubString
@@ -107,6 +107,30 @@ struct HCondDef <: AbstractBlock
 end
 HCondDef(β::HIfDef, ss, action) = HCondDef(ss, true, β.vname, action)
 HCondDef(β::HIfNDef, ss, action) = HCondDef(ss, false, β.vname, action)
+
+# ------------------------------------------------------------
+# Specific conditional block based on whether the current page
+# is or isn't in a group of given pages
+# ------------------------------------------------------------
+
+struct HIsPage <: AbstractBlock
+    ss::SubString
+    pages::Vector{<:AbstractString} # one or several pages
+end
+
+struct HIsNotPage <: AbstractBlock
+    ss::SubString
+    pages::Vector{<:AbstractString}
+end
+
+struct HCondPage <: AbstractBlock
+    ss::SubString                    # full block
+    checkispage::Bool                # true for ispage false for isnotpage
+    pages::Vector{<:AbstractString}  # page names
+    action::SubString                # what to do when condition is met
+end
+HCondPage(β::HIsPage, ss, action) = HCondPage(ss, true, β.pages, action)
+HCondPage(β::HIsNotPage, ss, action) = HCondPage(ss, false, β.pages, action)
 
 #= ============
 FUNCTION BLOCKS

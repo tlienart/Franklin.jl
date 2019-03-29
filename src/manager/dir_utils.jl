@@ -106,7 +106,7 @@ function add_if_new_file!(dict, fpair, verb)
 
     if !haskey(dict, fpair)
         verb && println("tracking new file '$(fpair.second)'.")
-        dict[fpair] = lastm(joinpath(fpair...))
+        dict[fpair] = mtime(joinpath(fpair...))
     end
 
     return

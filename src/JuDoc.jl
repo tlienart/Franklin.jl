@@ -23,6 +23,15 @@ const HIGHLIGHT = Dict{String,Pair{String,Any}}(
 const JUDOC_PATH = splitdir(pathof(JuDoc))[1] # .../JuDoc/src
 const TEMPL_PATH = joinpath(JUDOC_PATH, "templates")
 
+# copied from Base/path.jl
+if Sys.isunix()
+    const PATH_SEP = "/"
+elseif Sys.iswindows()
+    const PATH_SEP = "\\"
+else
+    error("Unhandled OS")
+end
+
 # PARSING
 include("parser/tokens.jl")
 include("parser/ocblocks.jl")

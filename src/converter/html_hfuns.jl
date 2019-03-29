@@ -13,11 +13,13 @@ const JD_HTML_FUNS = Dict{String, Function}(
 
 
 """
-    convert_hblock(β, allvars)
+    convert_hblock(β, allvars, fpath)
 
 Helper function to process an individual block when it's a `HFun` such as `{{ fill author }}`.
+Dev Note: `fpath` is (currently) unused but is passed to all `convert_hblock` functions.
+See [`convert_html`](@ref).
 """
-function convert_hblock(β::HFun, allvars::Dict)
+function convert_hblock(β::HFun, allvars::Dict, ::AbstractString="")
 
     fn = lowercase(β.fname)
     haskey(JD_HTML_FUNS, fn) && return JD_HTML_FUNS[fn](β.params, allvars)

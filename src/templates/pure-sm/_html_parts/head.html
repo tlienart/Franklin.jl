@@ -25,14 +25,10 @@
             <a class="pure-menu-heading" href="#">BLOGNAME</a>
 
             <ul class="pure-menu-list">
-                <li class="pure-menu-item"><a href="/" class="pure-menu-link">Home</a></li>
-                <li class="pure-menu-item"><a href="/pub/menu1.html" class="pure-menu-link">Menu 1</a></li>
-
-                <li class="pure-menu-item">
-                    <a href="/pub/menu2.html" class="pure-menu-link">Menu 2</a>
-                </li>
-
-                <li class="pure-menu-item"><a href="/pub/menu3.html" class="pure-menu-link">Menu 3</a></li>
+                <li class="pure-menu-item {{ispage /index.html}}pure-menu-selected{{end}}"><a href="/" class="pure-menu-link">Home</a></li>
+                <li class="pure-menu-item {{ispage /pub/menu1.html}}pure-menu-selected{{end}}"><a href="/pub/menu1.html" class="pure-menu-link">Menu 1</a></li>
+                <li class="pure-menu-item {{ispage /pub/menu2.html}}pure-menu-selected{{end}}"><a href="/pub/menu2.html" class="pure-menu-link">Menu 2</a></li>
+                <li class="pure-menu-item {{ispage /pub/menu3.html}}pure-menu-selected{{end}}"><a href="/pub/menu3.html" class="pure-menu-link">Menu 3</a></li>
             </ul>
         </div>
     </div>
