@@ -26,7 +26,6 @@ julia> serve()
 → Starting the engine (give it 1-2s)...
 ✓ Now live-serving at http://localhost:8000
 ✓ Watching input folder, press CTRL+C to stop the server.
-
 ```
 
 You can now modify the files in `MyNewSite/src` and see the changes being live-rendered in your browser.
@@ -35,7 +34,7 @@ You can now modify the files in `MyNewSite/src` and see the changes being live-r
 
 **Supported**
 * allows LaTeX-like definition of commands (via `\newcommand{..}[.]{..}`)
-* allows easy inclusion of user-defined div-blocks and raw-html
+* allows easy inclusion of user-defined div-blocks via `@@divname ... @@` and raw-html via `~~~ ... ~~~`
 * maths rendered via [KaTeX](https://katex.org/), code via [highlight.js](highlightjs.org)
 * seamless offline editing
 * within-page hyper-references for equations and citations
@@ -45,8 +44,10 @@ You can now modify the files in `MyNewSite/src` and see the changes being live-r
 * minified output (via [`css-html-js-minify`](https://github.com/juancarlospaco/css-html-js-minify))
 
 **Coming**
+* more CSS  themes (two are available, the aim is to get ±6 good ones as per [#112](https://github.com/tlienart/JuDoc.jl/issues/112), _suggestion/contribution for other ones are welcome_)
+* pre-rendering of code highlighting and katex for faster online page loading
 * customisable bibliography styles
-* CSS themes (*if you want to help, let me know!*)
+* docs
 
 ## Why
 
