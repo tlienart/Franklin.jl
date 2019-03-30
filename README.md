@@ -45,6 +45,7 @@ You can now modify the files in `MyNewSite/src` and see the changes being live-r
 
 **Coming**
 * more CSS  themes (two are available, the aim is to get ±6 good ones as per [#112](https://github.com/tlienart/JuDoc.jl/issues/112), _suggestion/contribution for other ones are welcome_)
+* live rendering via [LiveServer.jl](https://github.com/asprionj/LiveServer.jl) instead of browser-sync, LiveServer is WIP with [Jonas](https://github.com/asprionj).
 * pre-rendering of code highlighting and katex for faster online page loading
 * customisable bibliography styles
 * docs
