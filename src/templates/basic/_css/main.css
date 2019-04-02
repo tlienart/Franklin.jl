@@ -95,6 +95,11 @@ html {
     margin-top: 2em;
     margin-bottom: 1em; }
 
+.jd-content table {
+    margin-left: auto;
+    margin-right: auto;
+}
+
 /* ==================================================================
     GENERAL FORMATTING
 ================================================================== */
