@@ -70,7 +70,7 @@ function newsite(topdir::String="TestWebsite";
                  template::String="basic")
 
     template = lowercase(template)
-    template ∈ ["basic", "pure-sm"] || throw(ArgumentError("Template $template doesn't exist."))
+    template ∈ ("basic", "pure-sm", "vela") || throw(ArgumentError("Template $template doesn't exist."))
 
     topdir = mkdir(topdir)
     initlibs(topdir,   template)

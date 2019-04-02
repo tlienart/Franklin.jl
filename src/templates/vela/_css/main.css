@@ -1,0 +1,382 @@
+/* ==================================================================
+    DEFAULT FONT AND LAYOUT
+================================================================== */
+
+html {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size  : 17px; }
+
+body {
+    color: black;
+}
+
+/* minor adjustments to Pure/side-bar css */
+
+.header h2 {
+    margin: 0 auto;
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+/* ==================================================================
+    BASIC GRID FOR PROFILE PIC
+================================================================== */
+
+.row {
+  display: block; }
+
+.left {
+  float: left;
+  margin-right: 15px; }
+
+.right {
+    float: right; }
+
+.jd-content .container img {
+    width: auto;
+    padding-left: 0;
+    border-radius: 10px; }
+
+/* ==================================================================
+    FOOT / COPYRIGHT
+================================================================== */
+
+.jd-content .page-foot a {
+    text-decoration: none;
+    color: #a6a2a0;
+    text-decoration: underline; }
+
+.page-foot {
+    font-size: 80%;
+    font-family: Arial, serif;
+    color: #a6a2a0;
+    text-align: center;
+    margin-top: 6em;
+    border-top: 1px solid lightgrey;
+    padding-top: 2em;
+    margin-bottom: 4em; }
+
+/* ==================================================================
+    TEXT GEOMETRY
+================================================================== */
+
+.jd-content {
+    position: relative;
+    padding-left: 12.5%;
+    padding-right: 12.5%;
+    line-height: 1.35em; }
+
+/* on wide screens, fix content width to a max value */
+@media (min-width: 940px) {
+    .jd-content {
+        width: 705px;
+        margin-left: auto;
+        margin-right: auto; }
+    }
+
+/* on narrow device, reduce margins */
+@media (max-width: 480px) {
+    header {
+        padding-left: 6%;
+        padding-right: 6%; }
+    .jd-content {
+        padding-left: 6%;
+        padding-right: 6%; }
+    }
+
+/* ==================================================================
+    TITLES
+================================================================== */
+
+.jd-content h1 { font-size: 24px; }
+.jd-content h2 { font-size: 22px; }
+.jd-content h3 { font-size: 20px; }
+
+.jd-content h1, h2, h3, h4, h5 {
+    text-align: left; }
+
+.jd-content h1 {
+    padding-bottom: 0.5em;
+    border-bottom: 3px double lightgrey;
+    margin-top: 1.5em;
+    margin-bottom: 1em; }
+
+.jd-content h2 {
+    padding-bottom: 0.3em;
+    border-bottom: 1px solid lightgrey;
+    margin-top: 2em;
+    margin-bottom: 1em; }
+
+/* ==================================================================
+    GENERAL FORMATTING
+================================================================== */
+
+/* spacing between bullet points */
+.jd-content li p {
+        margin: 10px 0; }
+
+.jd-content a {
+    color: #004de6;
+    text-decoration: none; }
+
+.jd-content a:hover {
+    text-decoration: underline; }
+
+/* ==================================================================
+    HYPERREFS
+================================================================== */
+
+.eqref a  { color: green; }
+.bibref a { color: green; }
+
+/* ==================================================================
+    IMAGES in CONTENT
+================================================================== */
+
+.jd-content img {
+    width: 70%;
+    text-align: center;
+    padding-left: 10%; }
+
+.jd-content .img-small img {
+    width: 50%;
+    text-align: center;
+    padding-left: 20%; }
+
+/* ==================================================================
+    KATEX
+================================================================== */
+
+body { counter-reset: eqnum; }
+
+.katex { font-size: 1em !important; }
+
+.katex-display .katex {
+    display: inline-block; } /* overwrite katex settings */
+
+.katex-display::after {
+    counter-increment: eqnum;
+    content: "(" counter(eqnum) ")";
+    position: relative;
+    float: right;
+    padding-right: 5px; }
+
+/* ==================================================================
+    CODE & HIGHLIGHT.JS
+================================================================== */
+
+code {
+    background-color: rgba(27,31,35,0.05); /*#f6f8fa;*/
+    padding: 0.1em 0.2em;
+    border-radius: 2px;
+    font-size: 90%; }
+
+/*
+NOTE if update `highlight.pack.js`, look for `julia>`, replace by (so that pkg and shell are recognised)
+
+return{c:[{cN:"metaj",b:/^julia>/,r:10,starts:{e:/^(?![ ]{6})/,sL:"julia"},aliases:["jldoctest"]},{cN:"metas",b:/^shell>/,r:10,starts:{e:/^(?![ ]{6})/,sL:"bash"},aliases:["jldoctest"]},{cN:"metap",b:/^\(.*\)\spkg>/,r:10,starts:{e:/^(?![ ]{6})/,sL:"julia"},aliases:["jldoctest"]}]}})
+*/
+
+.hljs {
+    font-size: 90%;
+    line-height: 1.35em;
+    border-radius: 10px; }
+
+.hljs-metaj, .hljs-metas, .hljs-metap { font-weight: bold; }
+
+.hljs-metaj { color: rgb(25, 179, 51); }
+
+.hljs-metas { color: red; }
+
+.hljs-metap { color: rgb(51, 131, 231); }
+
+/* ==================================================================
+    BOXES
+================================================================== */
+
+.colbox-blue {
+    background-color: #EEF3F5;
+    padding-top: 5px;
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-bottom: 5px;
+    margin-left: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-radius: 0 10px 10px 0;
+    border-left: 5px solid #4C9CF1; }
+
+.colbox-yellow {
+    background-color: #ffffe6;
+    padding-top: 5px;
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-bottom: 5px;
+    margin-left: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-radius: 0 10px 10px 0;
+    border-left: 5px solid orange; }
+
+.colbox-red {
+    background-color: red;
+    padding-top: 5px;
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-bottom: 5px;
+    margin: 5px;
+    border-radius: 0 10px 10px 0;
+    border-left: 5px solid orange; }
+
+/* ==================================================================
+    Specific elements
+================================================================== */
+
+.center {
+    display: table;
+    margin: 0 auto;
+    width: 50%;
+}
+
+.github table, th, td {
+    border: 1px solid grey;
+    border-collapse: collapse;
+    padding-left: 6px;
+    padding-right: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+span#underline { text-decoration: underline; }
+
+.github img {
+    width: 110%;
+    padding: 0;
+}
+
+/* ==================================================================
+    Header and Nav
+================================================================== */
+
+nav {
+    width: 64%;
+    display: inline-block; }
+
+nav ul {
+    padding-left: 0;
+    margin-top: 0;
+    margin-bottom: 0; }
+
+nav li {
+    display: inline-block; }
+
+nav li a {
+    color: #004de6;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: bold;
+    display: inline-block;
+    float: center;
+    padding-top: 10px;
+    padding-right:2px;
+    padding-left:2px;
+    padding-bottom:5px;
+    margin-left:7px;
+    margin-right:7px;
+    border-bottom: 2px solid #4C9CF1;
+    transition: color 0.3s ease; }
+
+header {
+    text-align: right;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    display: flex;
+    align-items: center; }
+
+header .blog-name {
+    width: 35%;
+    display: inline-block;
+    text-align: left;
+    font-size: 18px;
+    font-family: "Lucida Console", Monaco, monospace;
+    padding-top: 10px;}
+
+header .blog-name a {
+    color: #a6a2a0;
+    text-decoration: none; }
+
+header li a:hover {
+    color: black;
+    border-bottom: 2px solid black; }
+
+
+#menu-icon {
+    display: none; }
+
+@media (min-width: 481px) {
+    header {
+        padding-left: 12.5%;
+        padding-right: 12.5%; }
+    }
+
+/* wide display: enforce maximum width of header to match content */
+@media (min-width: 940px) {
+    header {
+        width: 705px;
+        margin-left: auto;
+        margin-right: auto; }
+    }
+
+/*
+medium display: nav goes under name
+*/
+@media (max-width: 700px) {
+    header { display: block; }
+    header .blog-name {
+        display: block;
+        width: 100%;
+        padding-bottom: 10px; }
+    nav {
+        width: 100%; }
+    }
+
+/*
+narrow display: collapse the header (don't show the menu items)
+instead, display a burger menu.
+*/
+@media (max-width: 500px) {
+    header {
+        height: 35px;
+        display: flex;
+        align-items: center; }
+    header .blog-name {
+        display: inline-block;
+        width: 70%; }
+    nav {
+        display: inline-block;
+        width: 27%; }
+    nav ul, nav:active ul {
+        display: none;
+        position: absolute;
+        /* padding: 20px; */
+        background: #fff;
+        border: 1px solid #444;
+        right: 50px;
+        top: 60px;
+        width: 30%;
+        border-radius: 4px 0 4px 4px;
+        z-index: 1;}
+    nav li {
+        text-align: left;
+        display: block;
+        padding: 0;
+        margin: 0; }
+    header li a { border-bottom: none; }
+    header li a:hover { border-bottom: none; }
+    nav:hover ul{
+        display: block; }
+    #menu-icon {
+        display: inline-block;
+        margin-right: 10px;
+        margin-top: 5px; }
+    }

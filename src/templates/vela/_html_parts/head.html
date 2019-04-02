@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {{if hasmath}} {{insert head_katex.html }}   {{end}}
+  {{if hascode}} {{insert head_highlight.html }}   {{end}}
+
+  <link href="/css/vela.css" rel="stylesheet">
+  <script src="/libs/vela/jquery.min.js"></script>
+
+  <link href="/css/main.css" rel="stylesheet">
+  <link rel="icon" href="/assets/infra/favicon.png">
+
+  {{ifdef title}} <title>{{fill title}}</title>  {{end}}
+</head>
+<body>
+  <div class="main-nav" id="menu">
+    <div class="flex-container">
+      <span class="sidebar-brand">
+        <h3 style='font-size: 25px'>advanced<br>calculus</h3>
+        <span style='font-size: 50px;padding-top:7px;'>2</span>
+      </span>
+    </div> <!-- class="flex-container" -->
+
+    <nav class="sidebar-nav">
+      <ul class="metismenu"  id="metismenu" >
+        <li><a href="/vela" class="active">Course Organization</a></li>
+        <li><a href="/vela/toc" class="">Table of contents</a></li>
+        <li><a href="/vela/1" class=" has-arrow">First Topic</a>
+          <ul>
+            <li><a href="/vela/1/1.1" class=" has-arrow">First Subtopic</a>
+              <ul>
+                <li><a href="/vela/1/1.1/1.1.1" class=" has-arrow">First SubSubtopic</a>
+                  <ul>
+                    <li><a href="/vela/1/1.1/1.1.1/1.1.1.1" class=" has-arrow">First SubSubSubtopic</a>
+                      <ul>
+                        <li><a href="/vela/1/1.1/1.1.1/1.1.1.1/1.1.1.1.1" class=" has-arrow">First Sub^4-topic</a>
+                          <ul>
+                            <li><a href="/vela/1/1.1/1.1.1/1.1.1.1/1.1.1.1.1/1.1.1.1.1.1" class=" has-arrow">First Sub^5-topic</a>
+                              <ul>
+                                <li><a href="/vela/1/1.1/1.1.1/1.1.1.1/1.1.1.1.1/1.1.1.1.1.1/1.1.1.1.1.1.1" class="">Finally here</a></li>
+                              </ul>
+                            </li>
+                          </ul>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+                <li><a href="/vela/1/1.1/1.1.2" class="">Second SubSubtopic</a></li>
+              </ul>
+            </li>
+            <li><a href="/vela/1/1.2" class="">Some learning Videos</a></li>
+            <li><a href="/vela/1/1.3" class="">Another important section</a></li>
+          </ul>
+        </li>
+        <li><a href="/vela/2" class=" has-arrow">Second Topic</a>
+          <ul>
+            <li><a href="/vela/2/2.1" class="">Some learning Videos</a></li>
+            <li><a href="/vela/2/2.2" class=" has-arrow">First Subtopic</a>
+              <ul>
+                <li><a href="/vela/2/2.2/2.2.1" class=" has-arrow">First SubSubtopic</a>
+                  <ul>
+                    <li><a href="/vela/2/2.2/2.2.1/2.2.1.2" class="">First SubSubSubtopic</a></li>
+                  </ul>
+                </li>
+                <li><a href="/vela/2/2.2/2.2.2" class="">Second SubSubtopic</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div> <!-- main nav menu -->
+
+  <main id="panel">
+    <div class="toggle-button hamburger hamburger--spin">
+      <div class="hamburger-box">
+        <div class="hamburger-inner"></div>
+      </div>
+    </div>
+
+
+<!-- Content appended here -->
