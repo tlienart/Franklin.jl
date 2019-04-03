@@ -51,8 +51,8 @@ const HBLOCK_IF_PAT        = r"{{\s*if\s+([a-zA-Z]\S+)\s*}}"        # {{if v1}}
 const HBLOCK_ELSE_PAT      = r"{{\s*else\s*}}"                      # {{else}}
 const HBLOCK_ELSEIF_PAT    = r"{{\s*else\s*if\s+([a-zA-Z]\S+)\s*}}" # {{elseif v1}}
 const HBLOCK_END_PAT       = r"{{\s*end\s*}}"                       # {{end}}
-const HBLOCK_IFDEF_PAT     = r"{{\s*ifdef\s+([a-zA-Z]\S+)\s*}}"     # {{ifdef v1}}
-const HBLOCK_IFNDEF_PAT    = r"{{\s*ifndef\s+([a-zA-Z]\S+)\s*}}"    # {{ifndef v1}}
+const HBLOCK_ISDEF_PAT     = r"{{\s*isdef\s+([a-zA-Z]\S+)\s*}}"     # {{isdef v1}}
+const HBLOCK_ISNOTDEF_PAT  = r"{{\s*isnotdef\s+([a-zA-Z]\S+)\s*}}"  # {{isnotdef v1}}
 const HBLOCK_ISPAGE_PAT    = r"{{\s*ispage\s+((.|\n)+?)}}"          # {{ispage p1 p2}}
 const HBLOCK_ISNOTPAGE_PAT = r"{{\s*isnotpage\s+((.|\n)+?)}}"       # {{isnotpage p1 p2}}
 
@@ -89,12 +89,12 @@ end
 # Specific conditional block based on whether a var is defined
 # ------------------------------------------------------------
 
-struct HIfDef <: AbstractBlock
+struct HIsDef <: AbstractBlock
     ss::SubString
     vname::String
 end
 
-struct HIfNDef <: AbstractBlock
+struct HIsNotDef <: AbstractBlock
     ss::SubString
     vname::String
 end
@@ -105,8 +105,8 @@ struct HCondDef <: AbstractBlock
     vname::String       # initial condition (has to exist)
     action::SubString   # what to do when condition is met
 end
-HCondDef(β::HIfDef, ss, action) = HCondDef(ss, true, β.vname, action)
-HCondDef(β::HIfNDef, ss, action) = HCondDef(ss, false, β.vname, action)
+HCondDef(β::HIsDef, ss, action) = HCondDef(ss, true, β.vname, action)
+HCondDef(β::HIsNotDef, ss, action) = HCondDef(ss, false, β.vname, action)
 
 # ------------------------------------------------------------
 # Specific conditional block based on whether the current page
