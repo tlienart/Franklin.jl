@@ -15,7 +15,7 @@ I use it to generate [my website](https://tlienart.github.io).
 * `add https://github.com/tlienart/JuDoc.jl` in Julia ≥ 1.0.
 * `npm install -g browser-sync` (to live-preview)
 
-```julia-repl
+```julia
 julia> using JuDoc
 
 julia> newsite("MyNewSite")
@@ -91,7 +91,7 @@ JuDoc is an attempt at meeting these criterion, help to make this better is alwa
 
 To install JuDoc, you need [Julia](https://julialang.org/) (1.0 or above) and JuDoc (which is currently unregistered):
 
-```
+```julia
 ] # enter package mode
 (v 1.0) > add https://github.com/tlienart/JuDoc.jl
 ```
