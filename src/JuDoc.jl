@@ -1,5 +1,7 @@
 module JuDoc
 
+using JuDocTemplates
+
 using Markdown
 using Dates # see jd_vars
 using Random
@@ -64,7 +66,6 @@ include("jd_vars.jl")
 include("manager/dir_utils.jl")
 include("manager/file_utils.jl")
 include("manager/judoc.jl")
-include("manager/newsite.jl")
 
 # MISC UTILS
 include("misc_utils.jl")

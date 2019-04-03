@@ -57,7 +57,7 @@ end
         "author" => "Stefan Zweig" => (String, Nothing),
         "date_format" => "U dd, yyyy" => (String,),
         "isnotes" => true => (Bool,))
-    hs = "foot {{ifdef author}} {{fill author}}{{end}}"
+    hs = "foot {{isdef author}} {{fill author}}{{end}}"
     rhs = JuDoc.convert_html(hs, allvars)
     @test rhs == "foot  Stefan Zweig"
 end
@@ -67,7 +67,7 @@ end
         "author" => "Stefan Zweig" => (String, Nothing),
         "date_format" => "U dd, yyyy" => (String,),
         "isnotes" => true => (Bool,))
-    hs = "foot <!-- {{ fill blahblah }} {{ if v1 }} --> {{ifdef author}} {{fill author}}{{end}}"
+    hs = "foot <!-- {{ fill blahblah }} {{ if v1 }} --> {{isdef author}} {{fill author}}{{end}}"
     rhs = JuDoc.convert_html(hs, allvars)
     @test rhs == "foot <!-- {{ fill blahblah }} {{ if v1 }} -->  Stefan Zweig"
 end

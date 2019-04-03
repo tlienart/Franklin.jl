@@ -23,12 +23,12 @@ function qualify_html_hblocks(blocks::Vector{OCBlock})
         m = match(HBLOCK_END_PAT, β.ss)
         isnothing(m) || (qb[i] = HEnd(β.ss); continue)
         # ---
-        # ifdef block
-        m = match(HBLOCK_IFDEF_PAT, β.ss)
-        isnothing(m) || (qb[i] = HIfDef(β.ss, m.captures[1]); continue)
+        # isdef block
+        m = match(HBLOCK_ISDEF_PAT, β.ss)
+        isnothing(m) || (qb[i] = HIsDef(β.ss, m.captures[1]); continue)
         # ifndef block
-        m = match(HBLOCK_IFNDEF_PAT, β.ss)
-        isnothing(m) || (qb[i] = HIfNDef(β.ss, m.captures[1]); continue)
+        m = match(HBLOCK_ISNOTDEF_PAT, β.ss)
+        isnothing(m) || (qb[i] = HIfNotDef(β.ss, m.captures[1]); continue)
         # ---
         # ispage block
         m = match(HBLOCK_ISPAGE_PAT, β.ss)
@@ -106,7 +106,7 @@ end
 """
     find_html_cdblocks(qblocks)
 
-Given qualified blocks `HIfDef` or `HIfNDef` build conditional page blocks.
+Given qualified blocks `HIsDef` or `HIsNotDef` build conditional page blocks.
 """
 function find_html_cdblocks(qblocks::Vector{AbstractBlock})
 
@@ -117,7 +117,7 @@ function find_html_cdblocks(qblocks::Vector{AbstractBlock})
     while i < length(qblocks)
         i += 1
         β = qblocks[i]
-        (typeof(β) ∈ (HIfDef, HIfNDef)) || continue
+        (typeof(β) ∈ (HIsDef, HIsNotDef)) || continue
         # look forward until next `{{end}} block
         k = findfirst(cβ -> (typeof(cβ) == HEnd), qblocks[i+1:end])
         isnothing(k) && error("Found an {{if(n)def ...}} block but no matching {{end}} block.")
