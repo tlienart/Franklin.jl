@@ -50,6 +50,22 @@ You can now modify the files in `MyNewSite/src` and see the changes being live-r
 * customisable bibliography styles
 * docs
 
+#### Templates
+
+```julia
+using JuDoc
+newsite("site-name", template="template-name")
+serve()
+```
+
+where the supported templates are currently:
+
+| Name          | Adapted from  | Comment  |
+| ------------- | -------------| -----    |
+| `"basic"`     | N/A ([example](https://tlienart.github.io/)) | minimal cruft, no extra JS |
+| `"pure-sm"`   | Pure "Side-Menu" ([example](https://purecss.io/layouts/side-menu/)) | small JS for the responsive menu  |
+| `"vela"`      | Grav "Vela" ([example](https://demo.matthiasdanzinger.eu/vela/)) | JQuery + JS for the side menu |
+
 ## Why
 
 There are a lot of SSGs out there; some pretty big and established ones like [Hugo](https://gohugo.io/), [Pelican](https://blog.getpelican.com/) or [Jekyll](https://github.com/jekyll/jekyll).
