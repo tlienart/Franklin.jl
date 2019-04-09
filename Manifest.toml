@@ -3,6 +3,18 @@
 [[Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
+[[BinaryProvider]]
+deps = ["Libdl", "Pkg", "SHA", "Test"]
+git-tree-sha1 = "055eb2690182ebc31087859c3dd8598371d3ef9e"
+uuid = "b99e7846-7c00-51b0-8f62-c81ae34c0232"
+version = "0.5.3"
+
+[[Crayons]]
+deps = ["Test"]
+git-tree-sha1 = "f621b8ef51fd2004c7cf157ea47f027fdeac5523"
+uuid = "a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f"
+version = "4.0.0"
+
 [[Dates]]
 deps = ["Printf"]
 uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
@@ -17,18 +29,45 @@ git-tree-sha1 = "4d30e889c9f106a51ffa4791a88ffd4765bf20c3"
 uuid = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 version = "0.7.0"
 
+[[Documenter]]
+deps = ["Base64", "DocStringExtensions", "InteractiveUtils", "JSON", "LibGit2", "Logging", "Markdown", "Pkg", "REPL", "Random", "Test", "Unicode"]
+git-tree-sha1 = "11ba1460e7429eddc2a71f912cd5b9a66fbd8cf5"
+uuid = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+version = "0.22.2"
+
+[[FileWatching]]
+uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
+
+[[HTTP]]
+deps = ["Base64", "Dates", "Distributed", "IniFile", "MbedTLS", "Random", "Sockets", "Test"]
+git-tree-sha1 = "25db0e3f27bd5715814ca7e4ad22025fdcf5cc6e"
+uuid = "cd3eb016-35fb-5094-929b-558a96fad6f3"
+version = "0.8.0"
+
 [[Highlights]]
 deps = ["DocStringExtensions", "InteractiveUtils", "REPL", "Test"]
 git-tree-sha1 = "286ff83d696dd92748e603a3219618d9e407e872"
 uuid = "eafb193a-b7ab-5a9e-9068-77385905fa72"
 version = "0.3.1"
 
+[[IniFile]]
+deps = ["Test"]
+git-tree-sha1 = "098e4d2c533924c921f9f9847274f2ad89e018b8"
+uuid = "83e8ac13-25f8-5344-8a64-a9f2b223428f"
+version = "0.5.0"
+
 [[InteractiveUtils]]
 deps = ["Markdown"]
 uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 
+[[JSON]]
+deps = ["Dates", "Distributed", "Mmap", "Sockets", "Test", "Unicode"]
+git-tree-sha1 = "1f7a25b53ec67f5e9422f1f551ee216503f4a0fa"
+uuid = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
+version = "0.20.0"
+
 [[JuDocTemplates]]
-git-tree-sha1 = "fb481d654d169ac516dfd749f9e19d9db923027d"
+git-tree-sha1 = "8e48a60263a7ba6488c4c1c7539dd3e186272ff7"
 repo-rev = "master"
 repo-url = "https://github.com/tlienart/JuDocTemplates.jl"
 uuid = "6793090a-55ae-11e9-0511-73b91164f4ea"
@@ -37,12 +76,32 @@ version = "0.1.0"
 [[LibGit2]]
 uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
 
+[[Libdl]]
+uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
+
+[[LiveServer]]
+deps = ["Crayons", "Documenter", "FileWatching", "HTTP", "Sockets", "Test"]
+git-tree-sha1 = "0e2f18aa860949d9908326de848f944ff4f729e0"
+repo-rev = "master"
+repo-url = "https://github.com/asprionj/LiveServer.jl"
+uuid = "16fef848-5104-11e9-1b77-fb7a48bbb589"
+version = "0.1.0"
+
 [[Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 
 [[Markdown]]
 deps = ["Base64"]
 uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
+
+[[MbedTLS]]
+deps = ["BinaryProvider", "Dates", "Distributed", "Libdl", "Random", "Sockets", "Test"]
+git-tree-sha1 = "2d94286a9c2f52c63a16146bb86fd6cdfbf677c6"
+uuid = "739be429-bea8-5141-9913-cc70e7f3736d"
+version = "0.6.8"
+
+[[Mmap]]
+uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
 [[Pkg]]
 deps = ["Dates", "LibGit2", "Markdown", "Printf", "REPL", "Random", "SHA", "UUIDs"]
