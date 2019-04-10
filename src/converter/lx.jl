@@ -222,8 +222,9 @@ function resolve_input_plotoutput(fname::AbstractString, id::String="")
     fp = ""
     for (root, _, files) ∈ walkdir(outdir)
         for (f, e) ∈ splitext.(files)
-            if fn == f && lowercase(e) ∈ [".gif", ".jpg", ".jpeg", ".png", ".svg"]
-                fp = f * e
+            lc_e = lowercase(e)
+            if fn == f && lc_e ∈ [".gif", ".jpg", ".jpeg", ".png", ".svg"]
+                fp = f * lc_e
                 break
             end
         end

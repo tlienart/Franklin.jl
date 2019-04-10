@@ -9,7 +9,7 @@ include("jd_paths_vars.jl") # ✅  aug 16, 2018
 include("misc.jl") # ✅  nov 1, 2018
 
 # MANAGER folder
-include("manager/utils.jl") # ✅  oct 30, 2018
+include("manager/utils.jl") # ✅  april 10, 2019
 println("🍺")
 
 # PARSER folder
@@ -29,5 +29,5 @@ println("CONVERTER/HTML")
 include("converter/html.jl")     # ✅ oct 12, 2018
 println("🍺")
 println("INTEGRATION")
-include("converter/integration.jl")
+include("converter/integration.jl") # ✅  april 10, 2019
 println("🍻🍻🍻")

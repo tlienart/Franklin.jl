@@ -6,7 +6,6 @@ in `JD_GLOB_VARS` it also sets the global latex commands via `JD_GLOB_LXDEFS`. I
 file is not found a warning is shown.
 """
 function process_config()
-
     # read the config.md file if it is present
     config_path = joinpath(JD_PATHS[:in], "config.md")
     if isfile(config_path)
@@ -61,6 +60,7 @@ function write_page(root, file, head, pg_foot, foot)
     s = stat(fpath)
     set_var!(jd_vars, "jd_ctime", jd_date(unix2datetime(s.ctime)))
     set_var!(jd_vars, "jd_mtime", jd_date(unix2datetime(s.mtime)))
+
     ###
     # 3. process blocks in the html infra elements based on `jd_vars` (e.g.:
     # add the date in the footer)
@@ -72,6 +72,7 @@ function write_page(root, file, head, pg_foot, foot)
     # 4. construct the page proper
     ###
     pg = build_page(head, content, pg_foot, foot)
+
     ###
     # 5. write the html file where appropriate
     ###
@@ -82,7 +83,6 @@ end
 
 
 function process_file(case, fpair, args...)
-
     try
         process_file_err(case, fpair, args...)
     catch err
@@ -90,11 +90,9 @@ function process_file(case, fpair, args...)
         rp = rp[end-min(20, length(rp))+1 : end]
         println("\n... error processing '$(fpair.second)' in ...$rp.\n Verify, then start judoc again...\n")
         @show err
-        cleanup_process()
         throw(ErrorException("jd-err"))
     end
-
-    return
+    return nothing
 end
 
 
@@ -108,22 +106,21 @@ caught in `process_file(args...)`.
 """
 function process_file_err(case, fpair, clear_out_dir,
                           head="", pg_foot="", foot="", t=0.)
-
-    if case == "md"
+    if case == :md
         write_page(fpair..., head, pg_foot, foot)
-    elseif case == "html"
+    elseif case == :html
         fpath = joinpath(fpair...)
         raw_html = read(fpath, String)
         proc_html = convert_html(raw_html, JD_GLOB_VARS, fpath)
         write(joinpath(out_path(fpair.first), fpair.second), proc_html)
-    elseif case == "other"
+    elseif case == :other
         opath = joinpath(out_path(fpair.first), fpair.second)
         # only copy it again if necessary (particularly relevant)
         # when the asset files take quite a bit of space.
         if clear_out_dir || !isfile(opath) || mtime(opath) < t
             cp(joinpath(fpair...), opath, force=true)
         end
-    else # case == "infra"
+    else # case == :infra
         # copy over css files
         # NOTE some processing may be further added here later on.
         if splitext(fpair.second)[2] == ".css"
