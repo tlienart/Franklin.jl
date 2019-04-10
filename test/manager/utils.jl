@@ -105,8 +105,7 @@ rm(temp_index2)
 end
 
 
-@testset "Safe procfile" begin
-	write(temp_index, "blah blah { blih etc")
+@testset "Safe procfile" begin write(temp_index, "blah blah { blih etc")
 	println("🐝 Testing error message...:")
 	@test_throws ErrorException JuDoc.process_file(:md, JuDoc.JD_PATHS[:in] => "index.md", false)
 end
