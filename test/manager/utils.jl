@@ -86,7 +86,18 @@ rm(temp_index2)
 		    </body>
 		</html>""")
 
-	JuDoc.judoc()
+	clear = true
+
+	watched_files = J.jd_setup(clear)
+
+	# initiate page segments
+    head    = read(joinpath(J.JD_PATHS[:in_html], "head.html"), String)
+    pg_foot = read(joinpath(J.JD_PATHS[:in_html], "page_foot.html"), String)
+    foot    = read(joinpath(J.JD_PATHS[:in_html], "foot.html"), String)
+
+    pgelems = (head=head, pg_foot=pg_foot, foot=foot)
+
+	J.jd_fullpass(watched_files, pgelems, clear)
 
 	@test issubset(["css", "libs", "index.html"], readdir(JuDoc.JD_PATHS[:f]))
 	@test issubset(["temp.html", "temp.rnd"], readdir(JuDoc.JD_PATHS[:out]))
@@ -97,5 +108,5 @@ end
 @testset "Safe procfile" begin
 	write(temp_index, "blah blah { blih etc")
 	println("🐝 Testing error message...:")
-	@test_throws ErrorException JuDoc.process_file("md", JuDoc.JD_PATHS[:in] => "index.md", false)
+	@test_throws ErrorException JuDoc.process_file(:md, JuDoc.JD_PATHS[:in] => "index.md", false)
 end

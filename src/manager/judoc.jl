@@ -10,6 +10,13 @@
 # * `verb` whether to display things
 # """
 
+"""
+    jd_setup(clear::Bool)
+
+Sets up the collection of `watched_files` by doing an initial scan of the input directory.
+It also sets the paths variables and prepares the output directory.
+The `clear` argument indicates whether to remove any existing output directory or not.
+"""
 function jd_setup(clear::Bool=true)
     ###
     # . setting up:
@@ -34,7 +41,12 @@ function jd_setup(clear::Bool=true)
     return watched_files
 end
 
+"""
+    jd_fullpass(watched_files::NamedTuple, pgelems::NamedTuple, clear::Bool)
 
+A single full pass of judoc looking at all watched files and processing them as appropriate.
+The `pgelems` tuple contains the html segments to use aroud the generated html (head, foot, ...).
+"""
 function jd_fullpass(watched_files::NamedTuple, pgelems::NamedTuple, clear::Bool)
     # reset page variables and latex definitions
     def_GLOB_VARS()
@@ -78,12 +90,18 @@ function jd_fullpass(watched_files::NamedTuple, pgelems::NamedTuple, clear::Bool
     return 0
 end
 
+"""
+    jd_loop(cycle_counter, filewatcher, clear, watched_files, pgelems, verb)
 
+This is the function that is continuously run, checks if files have been modified and if so,
+processes them. Every 30 cycles, it checks whether any file was added or deleted and consequently
+updates the `watched_files`.
+"""
 function jd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, clear::Bool,
                  watched_files::NamedTuple, pgelems::NamedTuple, verb::Bool)
     # every 50 cycles (5 seconds), scan directory to check for new or deleted files and
     # update dicts accordingly
-    if mod(cycle_counter, 50) == 0
+    if mod(cycle_counter, 30) == 0
         # 1) check if some files have been deleted; note that we don't do anything,
         # we just remove the file reference from the corresponding dictionary.
         # NOTE watched.is[2] is watched_files, see jd_setup
