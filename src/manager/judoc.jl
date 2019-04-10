@@ -173,7 +173,7 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
     if !single
         coreloopfun = (cntr, fw) -> jd_loop(cntr, fw, clear, watched_files, pgelems, verb)
         # start the liveserver in the current directory
-        LiveServer.verbose(verb)
+        LiveServer.setverbose(verb)
         LiveServer.serve(port=port, coreloopfun=coreloopfun)
     end
     return nothing
