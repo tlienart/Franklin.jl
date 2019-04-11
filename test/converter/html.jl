@@ -37,6 +37,15 @@
     cdblocks, qblocks = J.find_html_cdblocks(qblocks)
     hblocks = J.merge_blocks(qblocks, cblocks, cdblocks)
     @test J.convert_hblock(hblocks[1], allvars) == ""
+
+    hs = raw"""
+        unknown function {{ unknown fun }} and see.
+        """
+    tokens = J.find_tokens(hs, J.HTML_TOKENS, J.HTML_1C_TOKENS)
+    hblocks, tokens = J.find_all_ocblocks(tokens, J.HTML_OCB)
+    qblocks = J.qualify_html_hblocks(hblocks)
+    @test qblocks[1] isa J.HFun
+    @test (@test_logs (:warn, "I found a function block '{{unknown ...}}' but I don't recognise this function name. Ignoring.") J.convert_hblock(qblocks[1], allvars)) == "{{ unknown fun }}"
 end
 
 
