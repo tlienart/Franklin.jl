@@ -28,7 +28,7 @@ function qualify_html_hblocks(blocks::Vector{OCBlock})
         isnothing(m) || (qb[i] = HIsDef(β.ss, m.captures[1]); continue)
         # ifndef block
         m = match(HBLOCK_ISNOTDEF_PAT, β.ss)
-        isnothing(m) || (qb[i] = HIfNotDef(β.ss, m.captures[1]); continue)
+        isnothing(m) || (qb[i] = HIsNotDef(β.ss, m.captures[1]); continue)
         # ---
         # ispage block
         m = match(HBLOCK_ISPAGE_PAT, β.ss)
