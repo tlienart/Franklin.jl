@@ -13,7 +13,6 @@ I use it to generate [my website](https://tlienart.github.io).
 (_for more detailed instructions, read the Install section further on_)
 
 * `add https://github.com/tlienart/JuDoc.jl` in Julia ≥ 1.0.
-* `npm install -g browser-sync` (to live-preview)
 
 ```julia
 julia> using JuDoc
@@ -23,9 +22,10 @@ julia> newsite("MyNewSite")
 → Use `serve()` to render the website and see it in your browser.
 
 julia> serve()
-→ Starting the engine (give it 1-2s)...
-✓ Now live-serving at http://localhost:8000
-✓ Watching input folder, press CTRL+C to stop the server.
+→ Initial full pass... [done 2.2s]
+→ Starting the server
+✓ LiveServer listening on http://localhost:8000/ ...
+  (use CTRL+C to shut down)
 ```
 
 You can now modify the files in `MyNewSite/src` and see the changes being live-rendered in your browser.
@@ -45,7 +45,6 @@ You can now modify the files in `MyNewSite/src` and see the changes being live-r
 
 **Coming**
 * more CSS  themes (two are available, the aim is to get ±6 good ones as per [#112](https://github.com/tlienart/JuDoc.jl/issues/112), _suggestion/contribution for other ones are welcome_)
-* live rendering via [LiveServer.jl](https://github.com/asprionj/LiveServer.jl) instead of browser-sync, LiveServer is WIP with [Jonas](https://github.com/asprionj).
 * pre-rendering of code highlighting and katex for faster online page loading
 * customisable bibliography styles
 * docs
@@ -95,18 +94,6 @@ To install JuDoc, you need [Julia](https://julialang.org/) (1.0 or above) and Ju
 ] # enter package mode
 (v 1.0) > add https://github.com/tlienart/JuDoc.jl
 ```
-
-### Rendering
-
-To render your site locally, `serve()` uses [`browser-sync`](https://browsersync.io/) which allows you to directly see the modifications you make in your browser.
-It is not necessary to install it i.e.: you could just run JuDoc and use another server or push the pages on GitHub and see how they get rendered there but it's easier to see how your website renders locally with any modifications you make being applied live.
-To install [`browser-sync`](https://browsersync.io/) just run
-
-```
-npm install -g browser-sync
-```
-
-(which requires you to have [`npm`](https://www.npmjs.com/get-npm) but it's unlikely you don't.)
 
 ### Minifying
 
