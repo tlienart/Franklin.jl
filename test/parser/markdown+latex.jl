@@ -105,6 +105,22 @@ end
     @test lxdefs[2].name == "\\comb"
     @test lxdefs[2].narg == 2
     @test lxdefs[2].def == "hello #1 #2"
+
+    #
+    # Errors
+    #
+
+    # testing malformed newcommands
+    st = raw"""abc \newcommand abc""" * J.EOS
+    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
+    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
+    # Ill formed newcommand (needs two {...})
+    @test_throws ErrorException J.find_lxdefs(tokens, blocks)
+    st = raw"""abc \newcommand{abc} def""" * J.EOS
+    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
+    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
+    # Ill formed newcommand (needs two {...})
+    @test_throws ErrorException J.find_lxdefs(tokens, blocks)
 end
 
 
@@ -135,6 +151,20 @@ end
     @test blocks[2].name == :DIV
     @test blocks[2].ss == "@@adiv inner part @@"
     @test J.content(blocks[2]) == " inner part "
+
+    #
+    # Errors
+    #
+
+    st = raw"""
+        \newcommand{\comb}[1]{HH#1HH}
+        etc \comb then.
+        """ * J.EOS
+    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
+    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
+    lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
+    # Command comb expects 1 argument and there should be no spaces ...
+    @test_throws ErrorException J.find_md_lxcoms(tokens, lxdefs, braces)
 end
 
 
