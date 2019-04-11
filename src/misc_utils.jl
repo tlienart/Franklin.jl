@@ -57,6 +57,7 @@ function time_it_took(start)
                             "$(round(comp_time*1000; digits=1))ms"
     mess = "[done $mess]"
     println(mess)
+    return nothing
 end
 
 
