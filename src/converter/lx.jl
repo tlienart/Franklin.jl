@@ -164,7 +164,7 @@ function resolve_input_hlcode(fname::AbstractString, lang::AbstractString; use_h
         highlight(io_out, MIME("text/html"), String(take!(io_in)), lexer)
         return String(take!(io_out))
     end
-    return "<pre><code $lang>$(String(take!(io_in)))</code></pre>"
+    return "<pre><code class=\"language-$lang\">$(String(take!(io_in)))</code></pre>"
 end
 
 """
@@ -175,7 +175,7 @@ also [`resolve_input`](@ref).
 """
 function resolve_input_othercode(fname::AbstractString, lang::AbstractString)
     fp = check_input_fname(fname)
-    return "<pre><code $lang>$(read(fp, String))</code></pre>"
+    return "<pre><code class=\"language-$lang\">$(read(fp, String))</code></pre>"
 end
 
 """
@@ -185,7 +185,8 @@ Internal function to read the raw output of the execution of a file and display 
 See also [`resolve_input`](@ref).
 """
 function resolve_input_plainoutput(fname::AbstractString)
-    fp = check_input_fname(fname)
+    # will throw an error if fname doesn't exist as a script
+    check_input_fname(fname)
     # find a file in output that has the same root name
     d, fn = splitdir(fname)
     fn, _ = splitext(fn)

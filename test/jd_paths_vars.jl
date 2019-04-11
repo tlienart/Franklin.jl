@@ -7,13 +7,15 @@ J.def_GLOB_LXDEFS()
 @testset "Paths" begin
     P = J.set_paths!()
 
-    @test J.JD_PATHS[:f] == td
-    @test J.JD_PATHS[:in] == joinpath(td, "src")
-    @test J.JD_PATHS[:in_css] == joinpath(td, "src", "_css")
+    @test J.JD_PATHS[:f]       == td
+    @test J.JD_PATHS[:in]      == joinpath(td, "src")
+    @test J.JD_PATHS[:in_css]  == joinpath(td, "src", "_css")
     @test J.JD_PATHS[:in_html] == joinpath(td, "src", "_html_parts")
-    @test J.JD_PATHS[:libs] == joinpath(td, "libs")
-    @test J.JD_PATHS[:out] == joinpath(td, "pub")
+    @test J.JD_PATHS[:libs]    == joinpath(td, "libs")
+    @test J.JD_PATHS[:out]     == joinpath(td, "pub")
     @test J.JD_PATHS[:out_css] == joinpath(td, "css")
+    @test J.JD_PATHS[:scripts] == joinpath(td, "assets", "scripts")
+
     @test P == J.JD_PATHS
 
     mkdir(J.JD_PATHS[:in])
@@ -21,6 +23,8 @@ J.def_GLOB_LXDEFS()
     mkdir(J.JD_PATHS[:libs])
     mkdir(J.JD_PATHS[:in_css])
     mkdir(J.JD_PATHS[:in_html])
+    mkpath(J.JD_PATHS[:scripts])
+    mkpath(joinpath(J.JD_PATHS[:scripts], "output"))
 end
 
 @testset "Set vars" begin
