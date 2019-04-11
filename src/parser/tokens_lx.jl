@@ -28,14 +28,6 @@ const LX_TOKENS = [:LX_BRACE_OPEN, :LX_BRACE_CLOSE, :LX_COMMAND]
 
 
 """
-    islatex(τ)
-
-Convenience function to check if a token is a latex token (see `LX_TOKENS`).
-"""
-islatex(τ::Token) = τ.name ∈ LX_TOKENS
-
-
-"""
     LxDef
 
 Structure to keep track of the definition of a latex command declared via a

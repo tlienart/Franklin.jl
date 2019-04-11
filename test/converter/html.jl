@@ -60,6 +60,9 @@ end
     hs = "foot {{isdef author}} {{fill author}}{{end}}"
     rhs = JuDoc.convert_html(hs, allvars)
     @test rhs == "foot  Stefan Zweig"
+    hs2 = "foot {{isnotdef blogname}}hello{{end}}"
+    rhs = JuDoc.convert_html(hs2, allvars)
+    @test rhs == "foot hello"
 end
 
 @testset "escape-coms" begin

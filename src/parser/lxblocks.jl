@@ -42,8 +42,8 @@ function find_lxdefs(tokens::Vector{Token}, blocks::Vector{OCBlock})
         # optional spaces (specification of the number of arguments)
         if !isempty(rge)
             lxnarg = match(LX_NARG_PAT, subs(str(braces[k]), rge))
-            isnothing(lxnarg) && error("Ill formed newcommand (where I
-            expected the specification of the number of arguments).")
+            isnothing(lxnarg) && error("Ill formed newcommand (where I expected the "*
+                                       "specification of the number of arguments).")
             matched = lxnarg.captures[2]
             lxnarg = isnothing(matched) ? 0 : parse(Int, matched)
         end
@@ -148,8 +148,8 @@ function find_md_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
             b1_idx = findfirst(β -> (from(β) == nxtidx), braces)
             # --> it needs to exist + there should be enough braces left
             if isnothing(b1_idx) || (b1_idx + lxnarg - 1 > nbraces)
-                error("Command '$lxname' expects $lxnarg arguments and there should be no " *
-                      "spaces between the command name and the first brace: \\com{arg1}...")
+                error("Command '$lxname' expects $lxnarg argument(s) and there should be no " *
+                      "space(s) between the command name and the first brace: \\com{arg1}...")
             end
 
             # --> examine candidate braces, there should be no spaces between
@@ -157,7 +157,7 @@ function find_md_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
             cand_braces = braces[b1_idx:b1_idx+lxnarg-1]
             for bidx ∈ 1:lxnarg-1
                 if (to(cand_braces[bidx]) + 1 != from(cand_braces[bidx+1]))
-                    error("Argument braces should not be separated by spaces: \\com{arg1}{arg2}...
+                    error("Argument braces should not be separated by space(s): \\com{arg1}{arg2}...
                            Verify a '$lxname' command.")
                 end
             end
