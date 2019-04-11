@@ -62,6 +62,7 @@ where the supported templates are currently:
 | Name          | Adapted from  | Comment  |
 | ------------- | -------------| -----    |
 | `"basic"`     | N/A ([example](https://tlienart.github.io/)) | minimal cruft, no extra JS |
+| `"hypertext"` | Grav "Hypertext" ([example](http://hypertext.artofthesmart.com/)) | minimal cruft, no extra JS |
 | `"pure-sm"`   | Pure "Side-Menu" ([example](https://purecss.io/layouts/side-menu/)) | small JS for the responsive menu  |
 | `"vela"`      | Grav "Vela" ([example](https://demo.matthiasdanzinger.eu/vela/)) | JQuery + JS for the side menu |
 
