@@ -26,7 +26,7 @@ function convert_hblock(β::HFun, allvars::Dict, ::AbstractString="")
 
     # if here, then the function name is unknown, warn and ignore
     @warn "I found a function block '{{$fn ...}}' but I don't recognise this function name. Ignoring."
-    return β.ss
+    return ""
 end
 
 

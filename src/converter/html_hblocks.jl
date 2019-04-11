@@ -29,7 +29,7 @@ end
 """
     convert_hblock(β, allvars, fpath)
 
-Helper function to process an individual block when the block is a `HIfDef` such as `{{ ifdef
+Helper function to process an individual block when the block is a `HIsDef` such as `{{ ifdef
 author }} {{ fill author }} {{ end }}`. Which checks if a variable exists and if it does, applies
 something.
 """

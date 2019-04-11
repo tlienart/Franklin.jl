@@ -82,7 +82,7 @@ The list of goals was then to build something
 * that allows latex-like commands,
 * in Julia.
 
-JuDoc is an attempt at meeting these criterion, help to make this better is always welcome!
+JuDoc is an attempt at meeting these criterion, help to make it better is always welcome!
 
 ## Installation
 
