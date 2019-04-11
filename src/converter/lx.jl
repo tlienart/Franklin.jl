@@ -194,7 +194,7 @@ function resolve_input_plainoutput(fname::AbstractString)
     isdir(outdir) || throw(ErrorException("I found an input command but not $outdir."))
     fp = ""
     for (root, _, files) ∈ walkdir(outdir)
-        for (f,e) ∈ splitext.(files)
+        for (f, e) ∈ splitext.(files)
             if fn == f
                 fp = joinpath(root, f * e)
                 break
