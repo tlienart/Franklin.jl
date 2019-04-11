@@ -67,7 +67,7 @@ uuid = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
 version = "0.20.0"
 
 [[JuDocTemplates]]
-git-tree-sha1 = "4f4f878a4904c82cc0c8efff27416fc870792c84"
+git-tree-sha1 = "9f126dd355898ef43cf2c3e5c5f8ecabc0bc0afc"
 repo-rev = "master"
 repo-url = "https://github.com/tlienart/JuDocTemplates.jl"
 uuid = "6793090a-55ae-11e9-0511-73b91164f4ea"
