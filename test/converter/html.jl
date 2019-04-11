@@ -38,6 +38,12 @@
     hblocks = J.merge_blocks(qblocks, cblocks, cdblocks)
     @test J.convert_hblock(hblocks[1], allvars) == ""
 
+    hs = raw"""abc {{ fill nope }} ... """
+    tokens = J.find_tokens(hs, J.HTML_TOKENS, J.HTML_1C_TOKENS)
+    hblocks, tokens = J.find_all_ocblocks(tokens, J.HTML_OCB)
+    qblocks = J.qualify_html_hblocks(hblocks)
+    @test (@test_logs (:warn, "I found a '{{fill nope}}' but I do not know the variable 'nope'. Ignoring.") J.convert_hblock(qblocks[1], allvars)) == ""
+
     hs = raw"""
         unknown function {{ unknown fun }} and see.
         """
@@ -45,7 +51,7 @@
     hblocks, tokens = J.find_all_ocblocks(tokens, J.HTML_OCB)
     qblocks = J.qualify_html_hblocks(hblocks)
     @test qblocks[1] isa J.HFun
-    @test (@test_logs (:warn, "I found a function block '{{unknown ...}}' but I don't recognise this function name. Ignoring.") J.convert_hblock(qblocks[1], allvars)) == "{{ unknown fun }}"
+    @test (@test_logs (:warn, "I found a function block '{{unknown ...}}' but I don't recognise this function name. Ignoring.") J.convert_hblock(qblocks[1], allvars)) == ""
 end
 
 
@@ -58,6 +64,12 @@ end
         """
     allvars = Dict{String, Pair{Any, Tuple}}()
     @test J.convert_html(hs, allvars) == "Trying to insert: some random text to insert and see.\n"
+
+    hs = raw"""Trying to insert: {{ insert nope.rnd }} and see."""
+    tokens = J.find_tokens(hs, J.HTML_TOKENS, J.HTML_1C_TOKENS)
+    hblocks, tokens = J.find_all_ocblocks(tokens, J.HTML_OCB)
+    qblocks = J.qualify_html_hblocks(hblocks)
+    @test (@test_logs (:warn, "I found an {{insert ...}} block and tried to insert '$(joinpath(J.JD_PATHS[:in_html], "nope.rnd"))' but I couldn't find the file. Ignoring.") J.convert_hblock(qblocks[1], allvars)) == ""
 end
 
 
