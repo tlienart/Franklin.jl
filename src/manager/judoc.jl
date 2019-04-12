@@ -42,12 +42,16 @@ function jd_setup(clear::Bool=true)
 end
 
 """
-    jd_fullpass(watched_files::NamedTuple, pgelems::NamedTuple, clear::Bool)
+    jd_fullpass(watched_files::NamedTuple, clear::Bool)
 
 A single full pass of judoc looking at all watched files and processing them as appropriate.
-The `pgelems` tuple contains the html segments to use aroud the generated html (head, foot, ...).
 """
-function jd_fullpass(watched_files::NamedTuple, pgelems::NamedTuple, clear::Bool)
+function jd_fullpass(watched_files::NamedTuple, clear::Bool)
+     # initiate page segments
+     head    = read(joinpath(JD_PATHS[:in_html], "head.html"), String)
+     pg_foot = read(joinpath(JD_PATHS[:in_html], "page_foot.html"), String)
+     foot    = read(joinpath(JD_PATHS[:in_html], "foot.html"), String)
+
     # reset page variables and latex definitions
     def_GLOB_VARS()
     def_LOC_VARS()
@@ -63,7 +67,7 @@ function jd_fullpass(watched_files::NamedTuple, pgelems::NamedTuple, clear::Bool
     # the process_file may error
     try
         if isfile(joinpath(indexmd...))
-            process_file(:md, indexmd, clear, pgelems...)
+            process_file(:md, indexmd, clear, head, pg_foot, foot)
         elseif isfile(joinpath(indexhtml...))
             # there is a file `index.html`, process it
             process_file(:html, indexhtml, clear)
@@ -72,7 +76,7 @@ function jd_fullpass(watched_files::NamedTuple, pgelems::NamedTuple, clear::Bool
         end
         # look at the rest of the files
         for (case, dict) ∈ pairs(watched_files), (fpair, t) ∈ dict
-            process_file(case, fpair, clear, pgelems..., t)
+            process_file(case, fpair, clear, head, pg_foot, foot, t)
         end
     catch err
         if isa(err, ErrorException)
@@ -91,14 +95,14 @@ function jd_fullpass(watched_files::NamedTuple, pgelems::NamedTuple, clear::Bool
 end
 
 """
-    jd_loop(cycle_counter, filewatcher, clear, watched_files, pgelems, verb)
+    jd_loop(cycle_counter, filewatcher, clear, watched_files, verb)
 
 This is the function that is continuously run, checks if files have been modified and if so,
 processes them. Every 30 cycles, it checks whether any file was added or deleted and consequently
 updates the `watched_files`.
 """
 function jd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, clear::Bool,
-                 watched_files::NamedTuple, pgelems::NamedTuple, verb::Bool)
+                 watched_files::NamedTuple, verb::Bool)
     # every 50 cycles (5 seconds), scan directory to check for new or deleted files and
     # update dicts accordingly
     if mod(cycle_counter, 30) == 0
@@ -126,11 +130,16 @@ function jd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, clear::Bool,
             if haskey(watched_files[:infra], fpair)
                 verb && print("\n... infra file modified --> full pass... ")
                 start = time()
-                jd_fullpass(watched_files, pgelems, false)
+                jd_fullpass(watched_files, false)
                 verb && time_it_took(start)
             else
                 start = time()
-                process_file(case, fpair, false, pgelems..., cur_t) #
+                # TODO, ideally these would only be read if they've changed. Not super important
+                # but just not necessary. (Fixing may be a bit of a pain though)
+                head    = read(joinpath(JD_PATHS[:in_html], "head.html"), String)
+                pg_foot = read(joinpath(JD_PATHS[:in_html], "page_foot.html"), String)
+                foot    = read(joinpath(JD_PATHS[:in_html], "foot.html"), String)
+                process_file(case, fpair, false, head, pg_foot, foot, cur_t) #
                 verb && time_it_took(start)
             end
         end
@@ -152,18 +161,11 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
     # -------------
     watched_files = jd_setup(clear)
 
-    # initiate page segments
-    head    = read(joinpath(JD_PATHS[:in_html], "head.html"), String)
-    pg_foot = read(joinpath(JD_PATHS[:in_html], "page_foot.html"), String)
-    foot    = read(joinpath(JD_PATHS[:in_html], "foot.html"), String)
-
-    pgelems = (head=head, pg_foot=pg_foot, foot=foot)
-
     # do a first pass
     # ---------------
     print("→ Initial full pass... ")
     start = time()
-    sig = jd_fullpass(watched_files, pgelems, clear)
+    sig = jd_fullpass(watched_files, clear)
     sig < 0 && return sig
     time_it_took(start)
 
@@ -171,7 +173,7 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
     # -------------------------
     println("→ Starting the server")
     if !single
-        coreloopfun = (cntr, fw) -> jd_loop(cntr, fw, clear, watched_files, pgelems, verb)
+        coreloopfun = (cntr, fw) -> jd_loop(cntr, fw, clear, watched_files, verb)
         # start the liveserver in the current directory
         LiveServer.setverbose(verb)
         LiveServer.serve(port=port, coreloopfun=coreloopfun)

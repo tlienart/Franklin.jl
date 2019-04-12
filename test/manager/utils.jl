@@ -90,14 +90,7 @@ rm(temp_index2)
 
 	watched_files = J.jd_setup(clear)
 
-	# initiate page segments
-    head    = read(joinpath(J.JD_PATHS[:in_html], "head.html"), String)
-    pg_foot = read(joinpath(J.JD_PATHS[:in_html], "page_foot.html"), String)
-    foot    = read(joinpath(J.JD_PATHS[:in_html], "foot.html"), String)
-
-    pgelems = (head=head, pg_foot=pg_foot, foot=foot)
-
-	J.jd_fullpass(watched_files, pgelems, clear)
+	J.jd_fullpass(watched_files, clear)
 
 	@test issubset(["css", "libs", "index.html"], readdir(JuDoc.JD_PATHS[:f]))
 	@test issubset(["temp.html", "temp.rnd"], readdir(JuDoc.JD_PATHS[:out]))
