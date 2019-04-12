@@ -65,6 +65,9 @@ where the supported templates are currently:
 | `"hypertext"` | Grav "Hypertext" ([example](http://hypertext.artofthesmart.com/)) | minimal cruft, no extra JS |
 | `"pure-sm"`   | Pure "Side-Menu" ([example](https://purecss.io/layouts/side-menu/)) | small JS for the responsive menu  |
 | `"vela"`      | Grav "Vela" ([example](https://demo.matthiasdanzinger.eu/vela/)) | JQuery + JS for the side menu |
+| `"tufte"`      | Tufte CSS ([example](https://edwardtufte.github.io/tufte-css/)) | font + stylesheet, no extra JS |
+
+If you would like to contribute a template, please refer to the [JuDocTemplates.jl](https://github.com/tlienart/JuDocTemplates.jl) repository.
 
 ## Why
 
