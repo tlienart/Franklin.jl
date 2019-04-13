@@ -75,6 +75,10 @@ isnothing(x) = (x === nothing)
 Convenience function to denote a string as being in a math context in a recursive parsing
 situation. These blocks will be processed as math blocks but without adding KaTeX elements to it
 given that they are part of a larger context that already has KaTeX elements.
+NOTE: this happens when resolving latex commands in a math environment. So for instance if you have
+`\$\$ x \\in \\R \$\$` and `\\R` is defined as a command that does `\\mathbb{R}` well that would be
+an embedded math environment. These environments are marked as such so that we don't add additional
+KaTeX markers around them.
 """
 mathenv(s) = "_\$>_" * s * "_\$<_"
 

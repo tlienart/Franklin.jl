@@ -8,8 +8,8 @@ processor, this is relevant for things that are parsed within latex commands etc
 """
 function md2html(ss::AbstractString,
                  stripp = false)
-
     isempty(ss) && return ss
+
     # Use the base Markdown -> Html converter
     partial = Markdown.html(Markdown.parse(ss))
 
@@ -39,7 +39,6 @@ Since divs are recursively processed, once they've been found, everything inside
 deactivated and left for further re-processing to avoid double inclusion.
 """
 function deactivate_divs(blocks::Vector{OCBlock})
-
     active_blocks = ones(Bool, length(blocks))
     for (i, β) ∈ enumerate(blocks)
         fromβ, toβ = from(β), to(β)

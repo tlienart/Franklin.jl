@@ -5,7 +5,6 @@ Helper function for `convert_inter_html` that processes an extracted block given
 `lxc` and returns the processed html that needs to be plugged in the final html.
 """
 function convert_block(β::B, lxcontext::LxContext) where B <: AbstractBlock
-
     # Return relevant interpolated string based on case
     βn = β.name
     βn == :CODE_INLINE  && return md2html(β.ss, true)
