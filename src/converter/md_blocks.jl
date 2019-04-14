@@ -39,13 +39,13 @@ replacement.
 For instance, `\$ ... \$` will become `\\( ... \\)` chopping off 1 character at the front and the
 back (`\$` sign).
 """
-const JD_MBLOCKS_PM = Dict{Symbol, Tuple{Int, Int, String, String}}(
-    :MATH_A     => ( 1,  1, "\\(",  "\\)"),
-    :MATH_B     => ( 2,  2, "\$\$", "\$\$"),
-    :MATH_C     => ( 2,  2, "\\[",  "\\]"),
-    :MATH_ALIGN => (13, 11, "\$\$\\begin{aligned}", "\\end{aligned}\$\$"),
-    :MATH_EQA   => (16, 14, "\$\$\\begin{array}{c}", "\\end{array}\$\$"),
-    :MATH_I     => ( 4,  4, "", "")
+const JD_MBLOCKS_PM = Dict{Symbol, Tuple{Int,Int,String,String,String,String}}(
+    :MATH_A     => ( 1,  1, "\\(",  "", "", "\\)"),
+    :MATH_B     => ( 2,  2, "\$\$", "", "", "\$\$"),
+    :MATH_C     => ( 2,  2, "\\[",  "", "", "\\]"),
+    :MATH_ALIGN => (13, 11, "\$\$", "\\begin{aligned}",  "\\end{aligned}", "\$\$"),
+    :MATH_EQA   => (16, 14, "\$\$", "\\begin{array}{c}", "\\end{array}",   "\$\$"),
+    :MATH_I     => ( 4,  4, "", "", "", "")
     )
 
 
@@ -85,5 +85,5 @@ function convert_mathblock(β::OCBlock, lxdefs::Vector{LxDef})
     end
     inner *= EOS
 
-    return anchor * pm[3] * convert_md_math(inner, lxdefs, from(β)) * pm[4]
+    return anchor * (pm[3] * pm[4]) * convert_md_math(inner, lxdefs, from(β)) * (pm[5] * pm[6])
 end

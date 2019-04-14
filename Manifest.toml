@@ -31,9 +31,9 @@ version = "0.7.0"
 
 [[Documenter]]
 deps = ["Base64", "DocStringExtensions", "InteractiveUtils", "JSON", "LibGit2", "Logging", "Markdown", "Pkg", "REPL", "Random", "Test", "Unicode"]
-git-tree-sha1 = "11ba1460e7429eddc2a71f912cd5b9a66fbd8cf5"
+git-tree-sha1 = "13a6d15102410d8e70146533b759fc48d844a1d0"
 uuid = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
-version = "0.22.2"
+version = "0.22.3"
 
 [[FileWatching]]
 uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
@@ -67,9 +67,7 @@ uuid = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
 version = "0.20.0"
 
 [[JuDocTemplates]]
-git-tree-sha1 = "9f126dd355898ef43cf2c3e5c5f8ecabc0bc0afc"
-repo-rev = "master"
-repo-url = "https://github.com/tlienart/JuDocTemplates.jl"
+path = "/Users/tlienart/.julia/dev/JuDocTemplates"
 uuid = "6793090a-55ae-11e9-0511-73b91164f4ea"
 version = "0.1.0"
 
@@ -81,9 +79,7 @@ uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
 
 [[LiveServer]]
 deps = ["Crayons", "Documenter", "FileWatching", "HTTP", "Sockets", "Test"]
-git-tree-sha1 = "921cbb1abfda5912543d3928ed970da2aa670a58"
-repo-rev = "master"
-repo-url = "https://github.com/asprionj/LiveServer.jl"
+path = "/Users/tlienart/.julia/dev/LiveServer.jl"
 uuid = "16fef848-5104-11e9-1b77-fb7a48bbb589"
 version = "0.1.0"
 
