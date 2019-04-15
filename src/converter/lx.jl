@@ -5,7 +5,6 @@ Take a `LxCom` object `lxc` and try to resolve it. Provided a definition exists 
 is plugged in then sent forward to be re-parsed (in case further latex is present).
 """
 function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef}; inmath=false)
-
     i = findfirst("{", lxc.ss)
     # extract the name of the command e.g. \\cite
     name = isnothing(i) ? lxc.ss : subs(lxc.ss, 1:(first(i)-1))

@@ -27,6 +27,10 @@ J.def_GLOB_LXDEFS()
     mkpath(joinpath(J.JD_PATHS[:scripts], "output"))
 end
 
+# copying _libs/katex in the J.JD_PATHS[:libs] so that it can be used in testing
+# the js_prerender_math
+cp(joinpath(dirname(dirname(pathof(JuDoc))), "test", "_libs", "katex"), joinpath(J.JD_PATHS[:libs], "katex"))
+
 @testset "Set vars" begin
     d = Dict{String, Pair{Any, Tuple}}(
     	"a" => 0.5 => (Real,),

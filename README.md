@@ -12,7 +12,10 @@ I use it to generate [my website](https://tlienart.github.io).
 
 (_for more detailed instructions, read the Install section further on_)
 
-* `add https://github.com/tlienart/JuDoc.jl` in Julia ≥ 1.0.
+Assuming you have Julia ≥ 1.0:
+
+* `add https://github.com/tlienart/HTTP.jl` (this is a patched fork of `HTTP.jl` that allows `LiveServer.jl` to work properly, see [this issue](https://github.com/asprionj/LiveServer.jl/issues/48))
+* `add https://github.com/tlienart/JuDoc.jl`
 
 ```julia
 julia> using JuDoc
@@ -69,7 +72,7 @@ where the supported templates are currently:
 | `"vela"`      | Grav "Vela" ([example](https://demo.matthiasdanzinger.eu/vela/)) | JQuery + some JS for the side menu |
 | `"tufte"`      | Tufte CSS ([example (†)](https://edwardtufte.github.io/tufte-css/)) | extra font + stylesheet, no extra JS |
 
-(\dagger) the side notes are not implemented.
+(†) the side notes are not (yet) implemented.
 
 If you would like to contribute a template, please refer to the [JuDocTemplates.jl](https://github.com/tlienart/JuDocTemplates.jl) repository.
 
@@ -100,7 +103,8 @@ To install JuDoc, you need [Julia](https://julialang.org/) (1.0 or above) and Ju
 
 ```julia
 ] # enter package mode
-(v 1.0) > add https://github.com/tlienart/JuDoc.jl
+pkg> add https://github.com/tlienart/HTTP.jl
+pkg> add https://github.com/tlienart/JuDoc.jl
 ```
 
 ### Minifying

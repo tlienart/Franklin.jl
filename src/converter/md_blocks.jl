@@ -7,10 +7,10 @@ Helper function for `convert_inter_html` that processes an extracted block given
 function convert_block(β::B, lxcontext::LxContext) where B <: AbstractBlock
     # Return relevant interpolated string based on case
     βn = β.name
-    βn == :CODE_INLINE  && return md2html(β.ss, true)
-    βn == :CODE_BLOCK_L && return md2html(β.ss)
-    βn == :CODE_BLOCK   && return md2html(β.ss)
-    βn == :ESCAPE       && return chop(β.ss, head=3, tail=3)
+    βn == :CODE_INLINE    && return md2html(β.ss, true)
+    βn == :CODE_BLOCK_L   && return md2html(β.ss)
+    βn == :CODE_BLOCK     && return md2html(β.ss)
+    βn == :ESCAPE         && return chop(β.ss, head=3, tail=3)
 
     # Math block --> needs to call further processing to resolve possible latex
     βn ∈ MD_MATH_NAMES && return convert_mathblock(β, lxcontext.lxdefs)
@@ -85,5 +85,15 @@ function convert_mathblock(β::OCBlock, lxdefs::Vector{LxDef})
     end
     inner *= EOS
 
-    return anchor * (pm[3] * pm[4]) * convert_md_math(inner, lxdefs, from(β)) * (pm[5] * pm[6])
+    outp = anchor
+    # convert and attach the latex environment markers (e.g. begin{array})
+    conv = pm[4] * convert_md_math(inner, lxdefs, from(β)) * pm[5]
+
+    if JD_GLOB_VARS["prerender"].first
+        outp *= js_prerender_math(conv; display=(pm[3] ∈ ("\$\$", "\\[")))
+    else
+        # re-attach KaTex indicators of display (e.g. $ ... $ or $$  ... $$)
+        outp *= pm[3] * conv * pm[6]
+    end
+    return outp
 end

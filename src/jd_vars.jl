@@ -17,11 +17,12 @@ const JD_GLOB_VARS = Dict{String, Pair{Any, Tuple}}()
 Convenience function to allocate default values of the global site variables. This is called once,
 when JuDoc is started.
 """
-def_GLOB_VARS() = begin
+def_GLOB_VARS(; prerender::Bool=false) = begin
     empty!(JD_GLOB_VARS)
     JD_GLOB_VARS["author"]      = Pair("THE AUTHOR",   (String, Nothing))
     JD_GLOB_VARS["date_format"] = Pair("U dd, yyyy",   (String,))
     JD_GLOB_VARS["baseurl"]     = Pair(nothing,        (String, Nothing))
+    JD_GLOB_VARS["prerender"]   = Pair(prerender,      (Bool,))
     JD_GLOB_VARS["codetheme"]   = Pair(Themes.DefaultTheme, (Highlights.AbstractTheme, Nothing))
 end
 

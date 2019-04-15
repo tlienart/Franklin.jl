@@ -34,6 +34,8 @@ else
     error("Unhandled OS")
 end
 
+include("build.jl") # check if user has Node/minify
+
 # PARSING
 include("parser/tokens.jl")
 include("parser/ocblocks.jl")
@@ -57,6 +59,8 @@ include("converter/lx.jl")
 include("converter/html_hblocks.jl")
 include("converter/html_hfuns.jl")
 include("converter/html.jl")
+# > javascript
+include("converter/js_prerender.jl")
 
 # FILE PROCESSING
 include("jd_paths.jl")

@@ -46,14 +46,14 @@ end
 
 A single full pass of judoc looking at all watched files and processing them as appropriate.
 """
-function jd_fullpass(watched_files::NamedTuple, clear::Bool)
+function jd_fullpass(watched_files::NamedTuple, clear::Bool; prerender::Bool=false)
      # initiate page segments
      head    = read(joinpath(JD_PATHS[:in_html], "head.html"), String)
      pg_foot = read(joinpath(JD_PATHS[:in_html], "page_foot.html"), String)
      foot    = read(joinpath(JD_PATHS[:in_html], "foot.html"), String)
 
     # reset page variables and latex definitions
-    def_GLOB_VARS()
+    def_GLOB_VARS(; prerender=prerender)
     def_LOC_VARS()
     def_GLOB_LXDEFS()
 
@@ -102,7 +102,8 @@ processes them. Every 30 cycles, it checks whether any file was added or deleted
 updates the `watched_files`.
 """
 function jd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, clear::Bool,
-                 watched_files::NamedTuple, verb::Bool)
+                 watched_files::NamedTuple, verb::Bool;
+                 prerender::Bool=false)
     # every 50 cycles (5 seconds), scan directory to check for new or deleted files and
     # update dicts accordingly
     if mod(cycle_counter, 30) == 0
@@ -154,8 +155,18 @@ Runs JuDoc in the current directory. The named argument `clear` indicates whethe
 output dir or not, `verb` whether to display information about changes etc seen by the engine,
 `port` where to serve with LiveServer.
 """
-function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Bool=false)
+function serve(; clear::Bool=true,
+                 verb::Bool=false,
+                 port::Int=8000,
+                 single::Bool=false,
+                 prerender::Bool=false)
+
     JD_FOLDER_PATH[] = pwd()
+
+    if prerender && !JS_HAS_NODE
+        @warn "I couldn't find node and so will not be able to pre-render javascript."
+        prerender = false
+    end
 
     # set things up
     # -------------
@@ -165,7 +176,7 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
     # ---------------
     print("→ Initial full pass... ")
     start = time()
-    sig = jd_fullpass(watched_files, clear)
+    sig = jd_fullpass(watched_files, clear; prerender=prerender)
     sig < 0 && return sig
     time_it_took(start)
 
@@ -173,7 +184,8 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
     # -------------------------
     println("→ Starting the server")
     if !single
-        coreloopfun = (cntr, fw) -> jd_loop(cntr, fw, clear, watched_files, verb)
+        coreloopfun = (cntr, fw) -> jd_loop(cntr, fw, clear, watched_files, verb;
+                                            prerender=prerender)
         # start the liveserver in the current directory
         LiveServer.setverbose(verb)
         LiveServer.serve(port=port, coreloopfun=coreloopfun)
@@ -191,15 +203,15 @@ const JD_PY_MIN_NAME = ".__py_tmp_minscript.py"
 
 function publish(; minify=true, push=true)
     if minify
-        try
+        if !JD_HAS_MINIFY
+            @warn "I didn't find css_html_js_minify, you can install it via pip the output will "*
+                  "not be minified"
+        else
             print("Minifying .html and .css files...")
             write(JD_PY_MIN_NAME, JD_PY_MIN)
             run(`bash -c "python $JD_PY_MIN_NAME > /dev/null"`)
             rm(JD_PY_MIN_NAME)
             println(" [done] ✅")
-        catch err
-            println("\nCould not minify. Verify that you have css-html-js-minify installed (via pip) and that you use python 3.6+. Ignoring for now...\n")
-            @show err
         end
     end
     if push
