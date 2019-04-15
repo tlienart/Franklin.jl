@@ -43,8 +43,8 @@ const JD_MBLOCKS_PM = Dict{Symbol, Tuple{Int,Int,String,String,String,String}}(
     :MATH_A     => ( 1,  1, "\\(",  "", "", "\\)"),
     :MATH_B     => ( 2,  2, "\$\$", "", "", "\$\$"),
     :MATH_C     => ( 2,  2, "\\[",  "", "", "\\]"),
-    :MATH_ALIGN => (13, 11, "\$\$", "\\begin{aligned}",  "\\end{aligned}", "\$\$"),
-    :MATH_EQA   => (16, 14, "\$\$", "\\begin{array}{c}", "\\end{array}",   "\$\$"),
+    :MATH_ALIGN => (13, 11, "\\[", "\\begin{aligned}",  "\\end{aligned}", "\\]"),
+    :MATH_EQA   => (16, 14, "\\[", "\\begin{array}{c}", "\\end{array}",   "\\]"),
     :MATH_I     => ( 4,  4, "", "", "", "")
     )
 
@@ -93,7 +93,7 @@ function convert_mathblock(β::OCBlock, lxdefs::Vector{LxDef})
     # a MATH_I first plugging it back, e.g. $ \sin(x)+\cos(x) $ and then only JS. Should
     # not double up the JS pre-render!
     if (β.name != :MATH_I) && JD_GLOB_VARS["prerender"].first
-        outp *= js_prerender_math(conv; display=(pm[3] ∈ ("\$\$", "\\[")))
+        outp *= js_prerender_math(conv; display=(pm[3] == "\\["))
     else
         # re-attach KaTex indicators of display (e.g. $ ... $ or $$  ... $$)
         outp *= pm[3] * conv * pm[6]

@@ -131,7 +131,7 @@ function jd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, clear::Bool,
             if haskey(watched_files[:infra], fpair)
                 verb && print("\n... infra file modified --> full pass... ")
                 start = time()
-                jd_fullpass(watched_files, false)
+                jd_fullpass(watched_files, false; prerender=prerender)
                 verb && time_it_took(start)
             else
                 start = time()
