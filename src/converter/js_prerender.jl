@@ -25,36 +25,47 @@ function js_prerender_math(ms::AbstractString; display::Bool=true)
 end
 
 function js_prerender_math2(hs::AbstractString)
-    # everything was generated so is nicely paired (and not nested)
-    i_open  = [m.offset for m ∈ eachmatch(r"\\\(", hs)]
-    i_close = [m.offset for m ∈ eachmatch(r"\\\)", hs)]
-    d_open  = [m.offset for m ∈ eachmatch(r"\\\[", hs)]
-    d_close = [m.offset for m ∈ eachmatch(r"\\\]", hs)]
+    # look for \(, \[, \], \)
+    matches = collect(eachmatch(r"\\(\(|\[|\]|\))", hs))
 
-    # offsetstart - offsetstop - inline
-    ranges = Vector{Tuple{Int, Int, Bool}}()
+    @show matches
 
-    idx_i = 1
-    idx_d = 1
+    jsbuffer = IOBuffer()
+    write(jsbuffer, """
+            var katex = require("$(joinpath(JD_PATHS[:libs], "katex", "katex.min.js"))")
+            """)
 
-    while idx_i ≤ length(i_open) || idx_d ≤ length(d_open)
-        # inline or display next?
-        inline_next = i_open[idx_i] < d_open[idx_d]
-        if inline_next
-            push!(ranges, (i_open[idx_i], i_close[idx_i], true))
-            idx_i += 1
-        else
-            push!(ranges, (d_open[idx_d], d_close[idx_d], false))
-            idx_d += 1
-        end
+    splitter = "_>jdsplit<_"
+    for i ∈ 1:2:length(matches)-1
+        mo, mc = matches[i:i+1]
+        display = (mo.match == "\\[")
+        ms = subs(hs, mo.offset + 2, mc.offset - 1)
+        write(jsbuffer, """
+            var html = katex.renderToString("$(escape_string(ms))", {displayMode: $display})
+            console.log(html)
+            """)
+        i == length(matches)-1 || write(jsbuffer, """\nconsole.log("$splitter")\n""")
     end
+#    outf = tempname()
+    outf = "/Users/tlienart/Desktop/script.js"
+    write(outf, take!(jsbuffer))
+    outbuffer = IOBuffer()
+    run(pipeline(`node $outf`, stdout=outbuffer))
 
-    # for inline, need to go content (offset+2, offset-1) and out (:offset-1, offset+2:)
-    # if the indices are valid for the out part (should always be the case but still check)
+    out = String(take!(outbuffer))
+    kx_parts = split(out, splitter)
 
-    # 1) Form Javascript
-    # 2) Run Javascript with a splitter
-    # 3) Split output
-    # 4) re-construct HTML
-
+    # lace everything back together
+    htmlbuffer = IOBuffer()
+    head = 1
+    c = 1
+    for i ∈ 1:2:length(matches)-1
+        mo, mc = matches[i:i+1]
+        write(htmlbuffer, subs(hs, head, mo.offset - 1))
+        write(htmlbuffer, kx_parts[c])
+        head = mc.offset + 2
+        c += 1
+    end
+    head < lastindex(hs) && write(htmlbuffer, subs(hs, head, lastindex(hs)))
+    return String(take!(htmlbuffer))
 end

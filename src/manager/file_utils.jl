@@ -73,6 +73,10 @@ function write_page(root, file, head, pg_foot, foot)
     ###
     pg = build_page(head, content, pg_foot, foot)
 
+    if true
+        pg = js_prerender_math2(pg)
+    end
+
     ###
     # 5. write the html file where appropriate
     ###
