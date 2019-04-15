@@ -163,7 +163,7 @@ function serve(; clear::Bool=true,
 
     JD_FOLDER_PATH[] = pwd()
 
-    if prerender && !JS_HAS_NODE
+    if prerender && !JD_HAS_NODE
         @warn "I couldn't find node and so will not be able to pre-render javascript."
         prerender = false
     end

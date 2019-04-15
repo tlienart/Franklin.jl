@@ -89,7 +89,10 @@ function convert_mathblock(β::OCBlock, lxdefs::Vector{LxDef})
     # convert and attach the latex environment markers (e.g. begin{array})
     conv = pm[4] * convert_md_math(inner, lxdefs, from(β)) * pm[5]
 
-    if JD_GLOB_VARS["prerender"].first
+    # ignore recursive case! (e.g. if has something like $ \command $, it should be
+    # a MATH_I first plugging it back, e.g. $ \sin(x)+\cos(x) $ and then only JS. Should
+    # not double up the JS pre-render!
+    if (β.name != :MATH_I) && JD_GLOB_VARS["prerender"].first
         outp *= js_prerender_math(conv; display=(pm[3] ∈ ("\$\$", "\\[")))
     else
         # re-attach KaTex indicators of display (e.g. $ ... $ or $$  ... $$)

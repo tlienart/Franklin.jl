@@ -1,4 +1,3 @@
-
 # if the user has node, pre-rendering can be done
 const JD_HAS_NODE = try success(`node -v`); catch; false; end
 
