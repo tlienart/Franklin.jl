@@ -40,9 +40,9 @@ For instance, `\$ ... \$` will become `\\( ... \\)` chopping off 1 character at 
 back (`\$` sign).
 """
 const JD_MBLOCKS_PM = Dict{Symbol, Tuple{Int,Int,String,String,String,String}}(
-    :MATH_A     => ( 1,  1, "\\(",  "", "", "\\)"),
-    :MATH_B     => ( 2,  2, "\$\$", "", "", "\$\$"),
-    :MATH_C     => ( 2,  2, "\\[",  "", "", "\\]"),
+    :MATH_A     => ( 1,  1, "\\(", "", "", "\\)"),
+    :MATH_B     => ( 2,  2, "\\[", "", "", "\\]"),
+    :MATH_C     => ( 2,  2, "\\[", "", "", "\\]"),
     :MATH_ALIGN => (13, 11, "\\[", "\\begin{aligned}",  "\\end{aligned}", "\\]"),
     :MATH_EQA   => (16, 14, "\\[", "\\begin{array}{c}", "\\end{array}",   "\\]"),
     :MATH_I     => ( 4,  4, "", "", "", "")
@@ -85,18 +85,5 @@ function convert_mathblock(β::OCBlock, lxdefs::Vector{LxDef})
     end
     inner *= EOS
 
-    outp = anchor
-    # convert and attach the latex environment markers (e.g. begin{array})
-    conv = pm[4] * convert_md_math(inner, lxdefs, from(β)) * pm[5]
-
-    # ignore recursive case! (e.g. if has something like $ \command $, it should be
-    # a MATH_I first plugging it back, e.g. $ \sin(x)+\cos(x) $ and then only JS. Should
-    # not double up the JS pre-render!
-    if (β.name != :MATH_I) && JD_GLOB_VARS["prerender"].first
-        outp *= js_prerender_math(conv; display=(pm[3] == "\\["))
-    else
-        # re-attach KaTex indicators of display (e.g. $ ... $ or $$  ... $$)
-        outp *= pm[3] * conv * pm[6]
-    end
-    return outp
+    return anchor * pm[3] * pm[4] * convert_md_math(inner, lxdefs, from(β)) * pm[5] * pm[6]
 end

@@ -22,7 +22,6 @@ def_GLOB_VARS(; prerender::Bool=false) = begin
     JD_GLOB_VARS["author"]      = Pair("THE AUTHOR",   (String, Nothing))
     JD_GLOB_VARS["date_format"] = Pair("U dd, yyyy",   (String,))
     JD_GLOB_VARS["baseurl"]     = Pair(nothing,        (String, Nothing))
-    JD_GLOB_VARS["prerender"]   = Pair(prerender,      (Bool,))
     JD_GLOB_VARS["codetheme"]   = Pair(Themes.DefaultTheme, (Highlights.AbstractTheme, Nothing))
 end
 

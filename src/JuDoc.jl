@@ -12,7 +12,7 @@ const BIG_INT = typemax(Int)
 const JD_LEN_RANDSTRING = 4 # make this longer if you think you'll collide...
 const JD_SERVE_FIRSTCALL = Ref(true)
 
-export serve, publish, cleanpull, newsite
+export serve, publish, cleanpull, newsite, optimize
 
 const HIGHLIGHT = Dict{String,Pair{String,Any}}(
     "fortran"    => "!" => Lexers.FortranLexer,
@@ -70,6 +70,7 @@ include("jd_vars.jl")
 include("manager/dir_utils.jl")
 include("manager/file_utils.jl")
 include("manager/judoc.jl")
+include("manager/post_processing.jl")
 
 # MISC UTILS
 include("misc_utils.jl")
