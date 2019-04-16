@@ -89,7 +89,7 @@ end
 
 
 """
-    proces_file_err(case, fpair, clear_out_dir, head, pg_foot, foot, t)
+    process_file_err(case, fpair, head, pg_foot, foot, t; clear, prerender)
 
 Considers a source file which, depending on `case` could be a html file or a file in judoc markdown
 etc, located in a place described by `fpair`, processes it by converting it and adding appropriate
@@ -110,7 +110,7 @@ function process_file_err(case::Symbol, fpair::Pair{String, String}, head::Abstr
         opath = joinpath(out_path(fpair.first), fpair.second)
         # only copy it again if necessary (particularly relevant when the asset files
         # take quite a bit of space.
-        if clear_out_dir || !isfile(opath) || mtime(opath) < t
+        if clear || !isfile(opath) || mtime(opath) < t
             cp(joinpath(fpair...), opath, force=true)
         end
     else # case == :infra

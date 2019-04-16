@@ -1,15 +1,14 @@
 """
-    prepare_output_dir(clear_out_dir)
+    prepare_output_dir(clear)
 
 Prepare the output directory `JD_PATHS[:out]`.
 
-* `clear_out_dir` removes the content of the output directory if it exists to start from a blank
+* `clear=true` removes the content of the output directory if it exists to start from a blank
 slate
 """
-function prepare_output_dir(clear_out=true)
-
+function prepare_output_dir(clear=true)
     # if required to start from a blank slate -> remove the output dir
-    (clear_out & isdir(JD_PATHS[:out])) && rm(JD_PATHS[:out], recursive=true)
+    (clear & isdir(JD_PATHS[:out])) && rm(JD_PATHS[:out], recursive=true)
 
     # create the output dir and the css dir if necessary
     !isdir(JD_PATHS[:out]) && mkdir(JD_PATHS[:out])

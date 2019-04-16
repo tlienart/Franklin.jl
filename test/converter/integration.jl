@@ -23,7 +23,7 @@ end
         Then something like
         \eqa{ \E{f(X)} \in \R &\text{if}& f:\R\maptso\R }
         """ * J.EOS
-    @test st |> conv == "<p>Then something like \$\$\\begin{array}{c}  \\mathbb E\\left[ f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R \\end{array}\$\$</p>\n"
+    @test st |> conv == "<p>Then something like \\[\\begin{array}{c}  \\mathbb E\\left[ f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R \\end{array}\\]</p>\n"
 end
 
 
@@ -66,7 +66,7 @@ end
             \min_{x\in \R^n} \quad f(x)+i_C(x).
         $$
         """ * J.EOS
-    @test st |> conv == "\$\$\n    \\min_{x\\in \\mathbb R^n} \\quad f(x)+i_C(x).\n\$\$"
+    @test st |> conv == "\\[\n    \\min_{x\\in \\mathbb R^n} \\quad f(x)+i_C(x).\n\\]"
 end
 
 @testset "∫ insert" begin # see also #65
