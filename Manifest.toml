@@ -79,7 +79,9 @@ uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
 
 [[LiveServer]]
 deps = ["Crayons", "Documenter", "FileWatching", "HTTP", "Sockets", "Test"]
-path = "/Users/tlienart/.julia/dev/LiveServer.jl"
+git-tree-sha1 = "88ea8e077cdefb0d21e85db7500c9cda6e053c5e"
+repo-rev = "master"
+repo-url = "https://github.com/asprionj/LiveServer.jl"
 uuid = "16fef848-5104-11e9-1b77-fb7a48bbb589"
 version = "0.1.0"
 
