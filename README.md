@@ -108,7 +108,7 @@ pkg> add https://github.com/tlienart/JuDoc.jl
 
 ### Pre-rendering
 
-In order to be able to pre-render katex and highlighted code blocks (which reduces the amount of Javascript that needs to run on your webpages making your website faster), you only need to have `node` available on your system.
+In order to be able to pre-render katex and highlighted code blocks (which reduces the amount of Javascript that needs to run on your webpages making your website faster), you need to have `node` available on your system.
 
 You can test if you have it by doing
 
@@ -119,6 +119,23 @@ Process(`node -v`, ProcessExited(0))
 ```
 
 If the above command errors, you need to [install node](https://nodejs.org/en/).
+
+#### Highlight
+
+To pre-render things with `highlight.js`, you will need to have the `highlight.js` library on your system which you can install with `npm` (installed with node):
+
+```
+npm install highlight.js
+```
+
+(you may have to add a `sudo` in front of this).
+
+You can test your setup with
+
+```julia
+julia> success(`node -e "const hljs = require('highlight.js')"`)
+true
+```
 
 ### Minifying
 
@@ -142,3 +159,16 @@ If the above command fails, check that `pip3` is available on your system and ca
 ## Contributing
 
 Contributions and comments are welcome; some notes on how you could contribute are gathered [there](https://github.com/tlienart/JuDoc.jl/blob/master/CONTRIBUTING.md).
+
+## Licenses
+
+**Core**:
+
+* JuDoc, JuDocTemplates and LiveServer are all MIT licensed
+
+**External**:
+
+* KaTeX is [MIT licensed](https://github.com/KaTeX/KaTeX/blob/master/LICENSE)
+* Node's is [permissively licensed](https://github.com/nodejs/node/blob/master/LICENSE)
+* css-html-js-minify is [LGPL licensed](https://github.com/juancarlospaco/css-html-js-minify/blob/master/LICENCE.lgpl.txt)
+* highlight.js is [BSD licensed](https://github.com/highlightjs/highlight.js/blob/master/LICENSE)

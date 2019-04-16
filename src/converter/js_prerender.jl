@@ -8,6 +8,8 @@ function js_prerender_katex(hs::String)
     # look for \(, \) and \[, \] (we know they're paired because generated from markdown parsing)
     matches = collect(eachmatch(r"\\(\(|\[|\]|\))", hs))
 
+    isempty(matches) && return hs
+
     # buffer to write the JS script
     jsbuffer = IOBuffer()
     write(jsbuffer, """
@@ -59,3 +61,43 @@ function js_prerender_katex(hs::String)
 
     return String(take!(htmlbuffer))
 end
+
+
+# """
+#     js_prerender_highlight(hs::String)
+#
+# Takes a html string that may contain `<pre><code ... </code></pre>` blocks and use node and
+# highlight.js to pre-render them to HTML.
+# """
+# function js_prerender_highlight(hs::String)
+#     # look for "<pre><code" and "</code></pre>" these will have been automatically generated
+#     # and therefore we can neglect spaces etc.
+#     matches = collect(eachmatch(r"(<pre><code|</code></pre>)", hs))
+#
+#     isempty(matches) && return hs
+#
+#     # buffer to write the JS script
+#     jsbuffer = IOBuffer()
+#     write(jsbuffer, """
+#             var hl = require("$(joinpath(JD_PATHS[:libs], "highlight", "highlight.pack.js"))")
+#             """)
+#     # string to separate the output of the different blocks
+#     splitter = "_>jdsplit<_"
+#
+#     # go over each match and add the content to the jsbuffer
+#     for i ∈ 1:2:length(matches)-1
+#         # tokens are paired, no nesting
+#         mo, mc = matches[i:i+1]
+#         # check if it's a display style
+#         display = (mo.match == "\\[")
+#         # this is the content without the \( \) or \[ \]
+#         ms = subs(hs, mo.offset + 2, mc.offset - 1)
+#         # add to content of jsbuffer
+#         write(jsbuffer, """
+#             var html = katex.renderToString("$(escape_string(ms))", {displayMode: $display})
+#             console.log(html)
+#             """)
+#         # in between every block, write $splitter so that output can be split easily
+#         i == length(matches)-1 || write(jsbuffer, """\nconsole.log("$splitter")\n""")
+#     end
+# end
