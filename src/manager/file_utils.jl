@@ -58,8 +58,16 @@ function write_page(root, file, head, pg_foot, foot; prerender::Bool=false)
     pg = build_page(head, content, pg_foot, foot)
 
     if prerender
+        # KATEX
         pg = js_prerender_katex(pg)
-        JD_CAN_HIGHLIGHT && (pg = js_prerender_highlight(pg))
+        # HIGHLIGHT
+        if JD_CAN_HIGHLIGHT
+            pg = js_prerender_highlight(pg)
+            # remove script TODO: needs to be documented
+            pg = replace(pg, r"<script.*?(?:highlight\.pack\.js|initHighlightingOnLoad).*?<\/script>"=>"")
+        end
+        # remove katex scripts TODO: needs to be documented
+        pg = replace(pg, r"<script.*?(?:katex\.min\.js|auto-render\.min\.js|renderMathInElement).*?<\/script>"=>"")
     end
 
     # 5. write the html file where appropriate

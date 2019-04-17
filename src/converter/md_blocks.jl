@@ -8,7 +8,7 @@ function convert_block(β::B, lxcontext::LxContext) where B <: AbstractBlock
     # Return relevant interpolated string based on case
     βn = β.name
     βn == :CODE_INLINE    && return md2html(β.ss, true)
-    βn == :CODE_BLOCK_L   && return md2html(β.ss)
+    βn == :CODE_BLOCK_L   && return convert_code_block(β.ss)
     βn == :CODE_BLOCK     && return md2html(β.ss)
     βn == :ESCAPE         && return chop(β.ss, head=3, tail=3)
 
@@ -86,4 +86,12 @@ function convert_mathblock(β::OCBlock, lxdefs::Vector{LxDef})
     inner *= EOS
 
     return anchor * pm[3] * convert_md_math(inner, lxdefs, from(β)) * pm[4]
+end
+
+
+function convert_code_block(ss::AbstractString)
+    m = match(r"```([a-z-]*)\s*\n?((?:.|\n)*)```", ss)
+    lang = m.captures[1]
+    code = m.captures[2]
+    return "<pre><code class=$lang>$code</code></pre>"
 end

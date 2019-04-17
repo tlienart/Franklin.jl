@@ -67,7 +67,7 @@ uuid = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
 version = "0.20.0"
 
 [[JuDocTemplates]]
-git-tree-sha1 = "7ea057da5743f6070af604e74b55140a56f90630"
+git-tree-sha1 = "f578941d9b73072ab3f6e2a25db1562fb529469b"
 repo-rev = "master"
 repo-url = "https://github.com/tlienart/JuDocTemplates.jl"
 uuid = "6793090a-55ae-11e9-0511-73b91164f4ea"
@@ -81,7 +81,7 @@ uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
 
 [[LiveServer]]
 deps = ["Crayons", "Documenter", "FileWatching", "HTTP", "Sockets", "Test"]
-git-tree-sha1 = "88ea8e077cdefb0d21e85db7500c9cda6e053c5e"
+git-tree-sha1 = "cb7d253514ed8c7c92fe9288fce474ea8132ef43"
 repo-rev = "master"
 repo-url = "https://github.com/asprionj/LiveServer.jl"
 uuid = "16fef848-5104-11e9-1b77-fb7a48bbb589"

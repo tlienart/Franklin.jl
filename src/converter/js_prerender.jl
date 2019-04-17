@@ -55,8 +55,6 @@ function js_prerender_highlight(hs::String)
     jsbuffer = IOBuffer()
     write(jsbuffer, """const hljs = require('highlight.js');""")
 
-#    @show run(`node -e "$(String(take!(jsbuffer)))"`)
-
     # string to separate the output of the different blocks
     splitter = "_>jdsplit<_"
 
@@ -69,10 +67,10 @@ function js_prerender_highlight(hs::String)
 
         lang = co.captures[2]
         if lang === nothing
-            write(jsbuffer, """console.log("<pre><code>$cs</code></pre>");\n""")
+            write(jsbuffer, """console.log("<pre><code class=hljs>$cs</code></pre>");\n""")
         else
             # add to content of jsbuffer
-            write(jsbuffer, """console.log("<pre><code class=$lang>" + hljs.highlight("$lang", "$cs").value + "</code></pre>");""")
+            write(jsbuffer, """console.log("<pre><code class=\\"$lang hljs\\">" + hljs.highlight("$lang", "$cs").value + "</code></pre>");""")
         end
         # in between every block, write $splitter so that output can be split easily
         i == length(matches)-1 || write(jsbuffer, """console.log('$splitter');""")
