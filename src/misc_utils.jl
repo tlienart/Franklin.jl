@@ -43,6 +43,13 @@ Given a substring `ss`, returns the position in the parent string where the subs
 to(ss::SubString) = ss.offset + ss.ncodeunits
 
 
+"""
+    matchrange(m::RegexMatch)
+
+Returns the string span of a regex match. Assumes there's no unicode in the match.
+"""
+matchrange(m::RegexMatch) = m.offset .+ (0:(length(m.match)-1))
+
 # Other convenience functions
 
 """
