@@ -47,13 +47,13 @@ highlight.js to pre-render them to HTML.
 function js_prerender_highlight(hs::String)
     # look for "<pre><code" and "</code></pre>" these will have been automatically generated
     # and therefore the regex can be fairly strict with spaces etc
-    matches = collect(eachmatch(r"<pre><code class=\"?(?:language-)?(.*?)\"?\s*>|<\/code><\/pre>", hs))
+    matches = collect(eachmatch(r"<pre><code\s*(class=\"?(?:language-)?(.*?)\"?)?\s*>|<\/code><\/pre>", hs))
 
     isempty(matches) && return hs
 
     # buffer to write the JS script
     jsbuffer = IOBuffer()
-    write(jsbuffer, """const hljs = require('highlight.js');\n""")
+    write(jsbuffer, """const hljs = require('highlight.js');""")
 
 #    @show run(`node -e "$(String(take!(jsbuffer)))"`)
 
@@ -66,12 +66,16 @@ function js_prerender_highlight(hs::String)
         co, cc = matches[i:i+1]
         # core code
         cs = escape_string(subs(hs, matchrange(co).stop+1, matchrange(cc).start-1))
-        # add to content of jsbuffer
-        write(jsbuffer, """console.log('<pre><code class=$(co.captures[1])>' +
-                         hljs.highlight('$(co.captures[1])', '$(cs)').value +
-                        '$(cc.match)')\n""")
+
+        lang = co.captures[2]
+        if lang === nothing
+            write(jsbuffer, """console.log("<pre><code>$cs</code></pre>");\n""")
+        else
+            # add to content of jsbuffer
+            write(jsbuffer, """console.log("<pre><code class=$lang>" + hljs.highlight("$lang", "$cs").value + "</code></pre>");""")
+        end
         # in between every block, write $splitter so that output can be split easily
-        i == length(matches)-1 || write(jsbuffer, """console.log('$splitter')\n""")
+        i == length(matches)-1 || write(jsbuffer, """console.log('$splitter');""")
     end
     return js2html(hs, jsbuffer, matches, splitter)
 end
@@ -98,7 +102,7 @@ function js2html(hs::String, jsbuffer::IOBuffer, matches::Vector{RegexMatch}, sp
         mo, mc = matches[i:i+1]
         write(htmlbuffer, subs(hs, head, mo.offset - 1))
         write(htmlbuffer, parts[c])
-        head = mc.offset + 2
+        head = mc.offset + length(mc.match)
         c += 1
     end
     # add the rest of the document beyond the last mathblock

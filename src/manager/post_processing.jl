@@ -16,6 +16,10 @@ function optimize(; prerender::Bool=true, minify::Bool=true)
         @warn "I couldn't find node and so will not be able to pre-render javascript."
         prerender = false
     end
+    if prerender && !JD_CAN_HIGHLIGHT
+        @warn "I couldn't load 'highlight.js' so will not be able to pre-render code blocks. " *
+              "You can install it with `npm install highlight.js`."
+    end
     # re-do a (silent) full pass
     start = time()
     print("→ Full pass")
@@ -32,7 +36,7 @@ function optimize(; prerender::Bool=true, minify::Bool=true)
             start = time()
             print(rpad("→ Minifying *.[html|css] files...", 35))
             # copy the script to the current dir
-            cp(joinpath(dirname(pathof(JuDoc)), "scripts", "minify.py"), JD_PY_MIN_NAME)
+            cp(joinpath(dirname(pathof(JuDoc)), "scripts", "minify.py"), JD_PY_MIN_NAME; force=true)
             # run it
             run(`bash -c "python3 $JD_PY_MIN_NAME > /dev/null"`)
             # remove the script file

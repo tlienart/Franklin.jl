@@ -202,7 +202,7 @@ function resolve_input_plainoutput(fname::AbstractString)
         fp == "" || break
     end
     fp != "" || throw(ErrorException("I found an input command but not a relevant output file."))
-    return "<pre id=\"judoc-out-plain\"><code>$(read(fp, String))</code></pre>"
+    return "<pre><code>$(read(fp, String))</code></pre>"
 end
 
 """

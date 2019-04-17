@@ -59,6 +59,7 @@ function write_page(root, file, head, pg_foot, foot; prerender::Bool=false)
 
     if prerender
         pg = js_prerender_katex(pg)
+        JD_CAN_HIGHLIGHT && (pg = js_prerender_highlight(pg))
     end
 
     # 5. write the html file where appropriate
