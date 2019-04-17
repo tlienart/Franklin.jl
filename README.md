@@ -37,16 +37,17 @@ You can now modify the files in `MyNewSite/src` and see the changes being live-r
 **Supported**
 * allows LaTeX-like definition of commands (via `\newcommand{..}[.]{..}`)
 * allows easy inclusion of user-defined div-blocks via `@@divname ... @@` and raw-html via `~~~ ... ~~~`
-* maths rendered via [KaTeX](https://katex.org/), code via [highlight.js](highlightjs.org)
+* maths rendered via [KaTeX](https://katex.org/), code via [highlight.js](highlightjs.org) both can be pre-rendered (see further below)
 * seamless offline editing
 * within-page hyper-references for equations and citations
 * simple html templating
 * fast rendering (~5ms per page on warm session)
-* live preview (partly via [`browsersync`](https://browsersync.io/))
+* live preview (via [LiveServer.jl](https://github.com/asprionj/LiveServer.jl))
 * optimisation step for extra-light and fast website
   * pre-rendered KaTeX (requires `node`)
   * pre-rendered code highlighting (requires `node` and `highlight.js`)
   * minified output (via [`css-html-js-minify`](https://github.com/juancarlospaco/css-html-js-minify), requires `python3`)
+* an all-in-one "publish" step to compile, optimise and push your website
 
 **Coming**
 * more CSS  themes (a few are available, the aim is to get ±6 good ones as per [#112](https://github.com/tlienart/JuDoc.jl/issues/112), _suggestion/contribution for other ones are welcome_)
