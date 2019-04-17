@@ -44,7 +44,8 @@ You can now modify the files in `MyNewSite/src` and see the changes being live-r
 * fast rendering (~5ms per page on warm session)
 * live preview (partly via [`browsersync`](https://browsersync.io/))
 * optimisation step for light and fast website
-  * pre-rendered katex (requires `node`)
+  * pre-rendered KaTex (requires `node`)
+  * pre-rendered code highlighting (requires `node` and `highlight.js`)
   * minified output (via [`css-html-js-minify`](https://github.com/juancarlospaco/css-html-js-minify), requires `python3`)
 
 **Coming**

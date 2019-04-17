@@ -23,7 +23,7 @@ if J.JD_CAN_PRERENDER && J.JD_CAN_HIGHLIGHT
   @test occursin("""<span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>M</mi>""", jskx)
   jshl = J.js_prerender_highlight(hs)
   # conversion of the code
-  @test occursin("""<pre><code class=julia><span class="hljs-keyword">using</span>""", jshl)
+  @test occursin("""<pre><code class="julia hljs"><span class="hljs-keyword">using</span>""", jshl)
   @test occursin(raw"""<span class="hljs-string">"hello <span class="hljs-variable">$b</span>"</span>""", jshl)
 end
 end # if can prerender

@@ -56,7 +56,7 @@ end
         ```
         done
         """ * JuDoc.EOS
-    @test st |> conv == "<p>Some code <pre><code class=\"language-julia\">struct P\n    x::Real\nend</code></pre>\n done</p>\n"
+    @test st |> conv == "<p>Some code <pre><code class=julia>struct P\n    x::Real\nend\n</code></pre> done</p>\n"
 end
 
 @testset "∫ math-br" begin # see #73

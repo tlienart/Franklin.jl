@@ -90,5 +90,5 @@ end
     write(plain1, "2")
 
     r = J.resolve_input_plainoutput("script1.jl")
-    @test r == "<pre id=\"judoc-out-plain\"><code>2</code></pre>"
+    @test r == "<pre><code>2</code></pre>"
 end
