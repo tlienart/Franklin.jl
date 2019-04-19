@@ -105,34 +105,28 @@ function jd_fullpass(watched_files::NamedTuple; clear::Bool=false, verb::Bool=fa
     indexmd   = JD_PATHS[:in] => "index.md"
     indexhtml = JD_PATHS[:in] => "index.html"
 
-    # keep track of whether any page failed
-    err = false
-    # process index.md or index.html
-    if isfile(joinpath(indexmd...))
-        verb && print(rpad("→ src/index.md ", 40))
-        start = time()
-        r = process_file(:md, indexmd, head, pg_foot, foot; clear=clear, prerender=prerender)
-        r == -1 && (err = true)
-        verb && time_it_took(start)
-    elseif isfile(joinpath(indexhtml...))
-        verb && print(rpad("→ src/index.html ", 40))
-        start = time()
-        r = process_file(:html, indexhtml; clear=clear, prerender=prerender)
-        r == -1 && (err = true)
-        verb && time_it_took(start)
-    else
-        @warn "I didn't find an index.[md|html], there should be one. Ignoring."
+    tasks = Vector{Task}()
+
+    @sync begin
+        # process index.md or index.html
+        if isfile(joinpath(indexmd...))
+            push!(tasks, @async process_file(:md, indexmd, head, pg_foot, foot; clear=clear,
+                                             prerender=prerender))
+        elseif isfile(joinpath(indexhtml...))
+            push!(tasks, @async process_file(:html, indexhtml; clear=clear,
+                                             prerender=prerender))
+        else
+            @warn "I didn't find an index.[md|html], there should be one. Ignoring."
+        end
+        # process rest of the files
+        for (case, dict) ∈ pairs(watched_files), (fpair, t) ∈ dict
+            occursin("index.", fpair.second) && continue
+            push!(tasks, @async process_file(case, fpair, head, pg_foot, foot, t; clear=clear,
+                                             prerender=prerender))
+        end
     end
-    # process rest of the files
-    for (case, dict) ∈ pairs(watched_files), (fpair, t) ∈ dict
-        occursin("index.", fpair.second) && continue
-        verb && print(rpad("→ $(joinpath(fpair...)[length(JD_FOLDER_PATH[])+1:end]) ", 40))
-        start = time()
-        r = process_file(case, fpair, head, pg_foot, foot, t; clear=clear, prerender=prerender)
-        r == -1 && (err = true)
-        verb && time_it_took(start)
-    end
-    return -Int(err)
+    # return a negative signal if any task has failed
+    return -Int(any(t->t.result == -1, tasks))
 end
 
 
