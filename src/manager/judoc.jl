@@ -11,7 +11,7 @@ Keyword arguments:
 * `single=false`: whether to run a single pass or run continuously
 """
 function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Bool=false,
-                 prerender::Bool=false)
+                 prerender::Bool=false)::Int
     # set the global path
     JD_FOLDER_PATH[] = pwd()
     # construct the set of files to watch
@@ -32,7 +32,7 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
         LiveServer.setverbose(verb)
         LiveServer.serve(port=port, coreloopfun=coreloopfun)
     end
-    return nothing
+    return 0
 end
 
 
@@ -105,19 +105,21 @@ function jd_fullpass(watched_files::NamedTuple; clear::Bool=false, verb::Bool=fa
     indexmd   = JD_PATHS[:in] => "index.md"
     indexhtml = JD_PATHS[:in] => "index.html"
 
-    tasks = Vector{Task}()
+    # process index.md or index.html
+    s = 0
+    if isfile(joinpath(indexmd...))
+        s = process_file(:md, indexmd, head, pg_foot, foot; clear=clear,
+                         prerender=prerender)
+    elseif isfile(joinpath(indexhtml...))
+        s = process_file(:html, indexhtml, head, pg_foot, foot; clear=clear,
+                         prerender=prerender)
+    else
+        @warn "I didn't find an index.[md|html], there should be one. Ignoring."
+    end
 
+    # rest of the pages, done asynchronously
+    tasks = Vector{Task}()
     @sync begin
-        # process index.md or index.html
-        if isfile(joinpath(indexmd...))
-            push!(tasks, @async process_file(:md, indexmd, head, pg_foot, foot; clear=clear,
-                                             prerender=prerender))
-        elseif isfile(joinpath(indexhtml...))
-            push!(tasks, @async process_file(:html, indexhtml; clear=clear,
-                                             prerender=prerender))
-        else
-            @warn "I didn't find an index.[md|html], there should be one. Ignoring."
-        end
         # process rest of the files
         for (case, dict) ∈ pairs(watched_files), (fpair, t) ∈ dict
             occursin("index.", fpair.second) && continue
@@ -125,8 +127,8 @@ function jd_fullpass(watched_files::NamedTuple; clear::Bool=false, verb::Bool=fa
                                              prerender=prerender))
         end
     end
-    # return a negative signal if any task has failed
-    return -Int(any(t->t.result == -1, tasks))
+    # return -1 if any task has failed
+    return -Int(s < 0 || any(t->t.result < 0, tasks))
 end
 
 
@@ -143,7 +145,7 @@ Keyword arguments
 * `verb=false`:  whether to display messages
 """
 function jd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, watched_files::NamedTuple;
-                 clear::Bool=false, verb::Bool=false)
+                 clear::Bool=false, verb::Bool=false)::Nothing
     # every 30 cycles (3 seconds), scan directory to check for new or deleted files and
     # update dicts accordingly
     if mod(cycle_counter, 30) == 0

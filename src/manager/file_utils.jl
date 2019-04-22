@@ -33,7 +33,7 @@ end
 Take a path to an input markdown file (via `root` and `file`), then construct the appropriate HTML
 page (inserting `head`, `pg_foot` and `foot`) and finally write it at the appropriate place.
 """
-function write_page(root, file, head, pg_foot, foot; prerender::Bool=false)
+function write_page(root, file, head, pg_foot, foot; prerender::Bool=false)::Nothing
     # 0. create a dictionary with all the variables available to the page
     # 1. read the markdown into string, convert it and extract definitions
     # 2. eval the definitions and update the variable dictionary, also retrieve
@@ -86,6 +86,7 @@ function process_file(case::Symbol, fpair::Pair{String,String}, args...; kwargs.
     try
         process_file_err(case, fpair, args...; kwargs...)
     catch err
+        JD_DEBUG[] && throw(err)
         rp = fpair.first
         rp = rp[end-min(20, length(rp))+1 : end]
         println("\n... error processing '$(fpair.second)' in ...$rp.")
