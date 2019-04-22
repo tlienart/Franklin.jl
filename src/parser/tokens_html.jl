@@ -21,6 +21,11 @@ const HTML_TOKENS = Dict{Char, Vector{TokenFinder}}(
     ) # end dict
 
 
+"""
+    HTML_OCB
+
+List of HTML Open-Close blocks.
+"""
 const HTML_OCB = [
     # name        opening token    closing token     nestable
     # ------------------------------------------------------------
@@ -43,9 +48,16 @@ at this point. This second point might fix the first one by making sure that
 =#
 
 """
-    HBLOCK_IF
+    HBLOCK_IF_PAT
+    HBLOCK_ELSE_PAT
+    HBLOCK_ELSEIF_PAT
+    HBLOCK_END_PAT
+    HBLOCK_ISDEF_PAT
+    HBLOCK_ISNOTDEF_PAT
+    HBLOCK_ISPAGE_PAT
+    HBLOCK_ISNOTPAGE_PAT
 
-Regex to match `{{ if vname }}` where `vname` should refer to a boolean in the current scope.
+Regex for the different HTML tokens.
 """
 const HBLOCK_IF_PAT        = r"{{\s*if\s+([a-zA-Z]\S+)\s*}}"        # {{if v1}}
 const HBLOCK_ELSE_PAT      = r"{{\s*else\s*}}"                      # {{else}}
@@ -56,20 +68,40 @@ const HBLOCK_ISNOTDEF_PAT  = r"{{\s*isnotdef\s+([a-zA-Z]\S+)\s*}}"  # {{isnotdef
 const HBLOCK_ISPAGE_PAT    = r"{{\s*ispage\s+((.|\n)+?)}}"          # {{ispage p1 p2}}
 const HBLOCK_ISNOTPAGE_PAT = r"{{\s*isnotpage\s+((.|\n)+?)}}"       # {{isnotpage p1 p2}}
 
+"""
+    HIf <: AbstractBlock
+
+HTML token corresponding to `{{if var}}`.
+"""
 struct HIf <: AbstractBlock
     ss::SubString
     vname::String
 end
 
+"""
+    HElse <: AbstractBlock
+
+HTML token corresponding to `{{else}}`.
+"""
 struct HElse <: AbstractBlock
     ss::SubString
 end
 
+"""
+    HElseIf <: AbstractBlock
+
+HTML token corresponding to `{{elseif var}}`.
+"""
 struct HElseIf <: AbstractBlock
     ss::SubString
     vname::String
 end
 
+"""
+    HEnd <: AbstractBlock
+
+HTML token corresponding to `{{end}}`.
+"""
 struct HEnd <: AbstractBlock
     ss::SubString
 end
@@ -78,6 +110,11 @@ end
 # General conditional block based on a boolean variable
 # -----------------------------------------------------
 
+"""
+    HCond <: AbstractBlock
+
+HTML conditional block corresponding to `{{if var}} ... {{else}} ... {{end}}`.
+"""
 struct HCond <: AbstractBlock
     ss::SubString               # full block
     init_cond::String           # initial condition (has to exist)
@@ -89,16 +126,31 @@ end
 # Specific conditional block based on whether a var is defined
 # ------------------------------------------------------------
 
+"""
+    HIsDef <: AbstractBlock
+
+HTML token corresponding to `{{isdef var}}`.
+"""
 struct HIsDef <: AbstractBlock
     ss::SubString
     vname::String
 end
 
+"""
+    HIsNotDef <: AbstractBlock
+
+HTML token corresponding to `{{isnotdef var}}`.
+"""
 struct HIsNotDef <: AbstractBlock
     ss::SubString
     vname::String
 end
 
+"""
+    HCondDef <: AbstractBlock
+
+HTML conditional block corresponding to `{{is[not]def var}} ... {{end}}`.
+"""
 struct HCondDef <: AbstractBlock
     ss::SubString       # full block
     checkisdef::Bool    # true if @isdefined, false if !@isdefined
@@ -113,16 +165,31 @@ HCondDef(β::HIsNotDef, ss, action) = HCondDef(ss, false, β.vname, action)
 # is or isn't in a group of given pages
 # ------------------------------------------------------------
 
+"""
+    HCondDef <: AbstractBlock
+
+HTML token corresponding to `{{ispage path/page}}`.
+"""
 struct HIsPage <: AbstractBlock
     ss::SubString
     pages::Vector{<:AbstractString} # one or several pages
 end
 
+"""
+    HIsNotPage <: AbstractBlock
+
+HTML token corresponding to `{{isnotpage path/page}}`.
+"""
 struct HIsNotPage <: AbstractBlock
     ss::SubString
     pages::Vector{<:AbstractString}
 end
 
+"""
+    HCondPage <: AbstractBlock
+
+HTML conditional page block corresponding to `{{is[not]page path/page}} ... {{end}}`.
+"""
 struct HCondPage <: AbstractBlock
     ss::SubString                    # full block
     checkispage::Bool                # true for ispage false for isnotpage
@@ -149,6 +216,11 @@ Available functions are:
 const HBLOCK_FUN_PAT = r"{{\s*([a-z]\S+)\s+((.|\n)+?)}}"
 
 
+"""
+    HFun <: AbstractBlock
+
+HTML function block corresponding to `{{ fname p1 p2 ...}}`.
+"""
 struct HFun <: AbstractBlock
     ss::SubString
     fname::String

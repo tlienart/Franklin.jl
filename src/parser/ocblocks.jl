@@ -1,5 +1,5 @@
 """
-    find_ocblocks(tokens, otoken, ctoken; deactivate, nestable)
+    $SIGNATURES
 
 Find active blocks between an opening token (`otoken`) and a closing token `ctoken`. These can be
 nested (e.g. braces). Return the list of such blocks. If `deactivate` is `true`, all the tokens
@@ -43,19 +43,18 @@ function find_ocblocks(tokens::Vector{Token}, name::S, ocpair::Pair{S, S};
         span = ifelse((name == :LXB) & inmath, [i, j], i:j)
         active_tokens[span] .= false
     end
-
     return ocblocks, tokens[active_tokens]
 end
 
 
 """
-    ocbalance(token)
+    $SIGNATURES
 
 Helper function to update the inbalance counter when looking for the closing token of a block with
 nesting. Adds 1 if the token corresponds to an opening token, removes 1 if it's a closing token and
 0 otherwise.
 """
-function ocbalance(τ::Token, ocpair=(:LX_BRACE_OPEN => :LX_BRACE_CLOSE))
+function ocbalance(τ::Token, ocpair::Pair{Symbol,Symbol}=(:LX_BRACE_OPEN=>:LX_BRACE_CLOSE))::Int
     (τ.name == ocpair.first)  && return 1
     (τ.name == ocpair.second) && return -1
     return 0
@@ -63,13 +62,13 @@ end
 
 
 """
-    find_all_ocblocks(tokens, dict)
+    $SIGNATURES
 
 Convenience function to find all ocblocks e.g. such as `MD_OCBLOCKS`. Returns a vector of vectors
 of ocblocks.
 """
 function find_all_ocblocks(tokens::Vector{Token},
-                          ocblist::Vector{Pair{S, Tuple{Pair{S, S}, Bool}}};
+                          ocblist::Vector{Pair{S,Tuple{Pair{S,S},Bool}}};
                           inmath=false) where S <: Symbol
 
     ocbs_all = Vector{OCBlock}()
@@ -83,7 +82,7 @@ end
 
 
 """
-    merge_blocks(lvb)
+    $SIGNATURES
 
 Merge vectors of blocks by order of appearance of the blocks.
 """

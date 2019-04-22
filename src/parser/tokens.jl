@@ -1,5 +1,5 @@
 """
-    $TYPEDEF
+    AbstractBlock
 
 This is the supertype defining a section of the string into consideration which can be considered
 as a "block". For instance, `abc { ... } def` contains one "braces block" corresponding to the
@@ -17,7 +17,7 @@ str(β::AbstractBlock)  = str(β.ss)
 
 
 """
-    $TYPEDEF
+    Token <: AbstractBlock
 
 A token `τ::Token` denotes a part of the source string indicating a region that may need further
 processing. It is identified by a symbol `τ.name` (e.g.: `:MATH_ALIGN_OPEN`). Tokens are typically
@@ -33,7 +33,7 @@ end
 
 
 """
-    $TYPEDEF
+    OCBlock <: AbstractBlock
 
 Open-Close block, blocks that are defined by an opening `Token` and a closing `Token`, they may be
 nested. For instance braces block are formed of an opening `{` and a closing `}` and could be
@@ -104,7 +104,7 @@ const EOS = '⌑'
     SPACER
 
 Convenience list of characters that would correspond to a `\\s` regex. see also
-github.com/JuliaLang/julia/blob/master/base/strings/unicode.jl.
+https://github.com/JuliaLang/julia/blob/master/base/strings/unicode.jl.
 """
 const SPACER = [' ', '\n', '\t', '\v', '\f', '\r', '\u85', '\ua0', EOS]
 

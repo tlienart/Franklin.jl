@@ -44,13 +44,15 @@ mutable struct LxDef
     from::Int
     to  ::Int
 end
-LxDef(name, narg, def) = LxDef(name, narg, def, 0, 0)
+LxDef(name::String, narg::Int, def::SubString) = LxDef(name, narg, def, 0, 0)
+
 from(lxd::LxDef) = lxd.from
-to(lxd::LxDef) = lxd.to
+to(lxd::LxDef)   = lxd.to
 
 
 """
     pastdef(λ, a)
+    pastdef(vλ)
 
 Convenience function to mark a definition as having been defined in the context i.e.: earlier than
 any other definition appearing in the current page.

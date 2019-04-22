@@ -9,16 +9,17 @@ The format is:
 where [NARG] is optional (see `LX_NARG_PAT`).
 """
 function find_lxdefs(tokens::Vector{Token}, blocks::Vector{OCBlock})
-
+    # container for the definitions
     lxdefs = Vector{LxDef}()
-
+    # find braces `{` and `}`
     braces = filter(β -> β.name == :LXB, blocks)
     nbraces = length(braces)
-
+    # keep track of active tokens
     active_tokens = ones(Bool, length(tokens))
     active_blocks = ones(Bool, length(blocks))
 
-    # go over tokens, stop over the ones that indicate a newcommand
+    # go over active tokens, stop over the ones that indicate a newcommand
+    # deactivate the tokens that are within the scope of a newcommand
     for (i, τ) ∈ enumerate(tokens)
         # skip inactive tokens
         active_tokens[i] || continue
@@ -95,18 +96,17 @@ If no reference is found but `inmath=true`, we propagate and let KaTeX deal with
 is found, the reference is returned and will be accessed further down.
 """
 function retrieve_lxdefref(lxname::SubString, lxdefs::Vector{LxDef},
-                           inmath=false, offset=0)
-
+                           inmath::Bool=false, offset::Int=0)::Ref
+    # find lxdefs with matching name
     ks = findall(δ -> (δ.name == lxname), lxdefs)
+    # check that the def is before the usage
     fromlx = from(lxname) + offset
     filter!(k -> (fromlx > from(lxdefs[k])), ks)
-
     if isempty(ks)
         inmath || error("Command '$lxname' was not defined before it was used.")
         # not found but inmath --> let KaTex deal with it
-        return
+        return Ref(nothing)
     end
-
     return Ref(lxdefs, ks[end])
 end
 
@@ -132,7 +132,7 @@ function find_md_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
         lxname   = τ.ss
         lxdefref = retrieve_lxdefref(lxname, lxdefs, inmath, offset)
         # will only be nothing in a 'inmath' --> no failure, just ignore token
-        isnothing(lxdefref) && continue
+        isnothing(lxdefref[]) && continue
 
         # 2. retrieve number of arguments
         lxnarg = getindex(lxdefref).narg
