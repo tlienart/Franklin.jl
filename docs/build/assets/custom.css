@@ -1,0 +1,18 @@
+body {
+    font-family: Helvetica;
+    text-rendering: optimizeLegibility;
+    line-height: 1.5;
+    color: #363636;
+}
+
+article {
+    margin-left: 16em;
+}
+
+nav.toc {
+    width: 15em;
+}
+
+nav.toc ul li ul li.current ul.internal li a.toctext:before {
+    content:"• ";
+}
