@@ -1,14 +1,15 @@
 """
-    serve(; clear, verb,  port)
+    $SIGNATURES
 
 Runs JuDoc in the current directory.
 
 Keyword arguments:
 
-* `clear=false`:  whether to remove any existing output directory
-* `verb=false`:   whether to display messages
-* `port=8000`:    the port to use for the local server (should pick a number between 8000 and 9000)
-* `single=false`: whether to run a single pass or run continuously
+* `clear=false`:     whether to remove any existing output directory
+* `verb=false`:      whether to display messages
+* `port=8000`:       the port to use for the local server (should pick a number between 8000 and 9000)
+* `single=false`:    whether to run a single pass or run continuously
+* `prerender=false`: whether to pre-render javascript (KaTeX and highlight.js)
 """
 function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Bool=false,
                  prerender::Bool=false)::Int
@@ -37,7 +38,7 @@ end
 
 
 """
-    jd_setup(; clear::Bool=false)
+    $SIGNATURES
 
 Sets up the collection of watched files by doing an initial scan of the input directory.
 It also sets the paths variables and prepares the output directory.
@@ -73,8 +74,7 @@ end
 
 
 """
-    jd_fullpass(watched_files::NamedTuple; clear::Bool=false, verb:Bool=false,
-                prerender::Bool=false)
+    $SIGNATURES
 
 A single full pass of judoc looking at all watched files and processing them as appropriate.
 
@@ -133,7 +133,7 @@ end
 
 
 """
-    jd_loop(cycle_counter, filewatcher, watched_files; clear, verb)
+    $SIGNATURES
 
 This is the function that is continuously run, checks if files have been modified and if so,
 processes them. Every 30 cycles, it checks whether any file was added or deleted and consequently

@@ -28,7 +28,7 @@ end
 
 
 """
-    write_page(root, file, head, pg_foot, foot)
+    $SIGNATURES
 
 Take a path to an input markdown file (via `root` and `file`), then construct the appropriate HTML
 page (inserting `head`, `pg_foot` and `foot`) and finally write it at the appropriate place.
@@ -78,7 +78,7 @@ end
 
 
 """
-    process_file(case, fpair, args...; kwargs...)
+    $SIGNATURES
 
 See [`process_file_err`](@ref).
 """
@@ -99,7 +99,7 @@ end
 
 
 """
-    process_file_err(case, fpair, head, pg_foot, foot, t; clear, prerender)
+    $SIGNATURES
 
 Considers a source file which, depending on `case` could be a html file or a file in judoc markdown
 etc, located in a place described by `fpair`, processes it by converting it and adding appropriate
@@ -136,7 +136,7 @@ end
 
 
 """
-    change_ext(fname)
+    $SIGNATURES
 
 Convenience function to replace the extension of a filename with another.
 """
@@ -144,7 +144,7 @@ change_ext(fname, ext=".html") = splitext(fname)[1] * ext
 
 
 """
-    build_page(head, content, pg_foot, foot)
+    $SIGNATURES
 
 Convenience function to assemble the html out of its parts.
 """

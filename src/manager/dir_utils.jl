@@ -1,5 +1,5 @@
 """
-    prepare_output_dir(clear)
+    $SIGNATURES
 
 Prepare the output directory `JD_PATHS[:out]`.
 
@@ -19,7 +19,7 @@ end
 
 
 """
-    out_path(root)
+    $SIGNATURES
 
 Take a `root` path to an input file and convert to output path. If the output path does not exist,
 create it.
@@ -40,7 +40,7 @@ end
 
 
 """
-    scan_input_dir!(md_files, html_files, other_files, infra_files, verb)
+    $SIGNATURES
 
 Update the dictionaries referring to input files and their time of last change. The variable `verb`
 propagates verbosity.
@@ -96,7 +96,7 @@ end
 
 
 """
-    add_if_new_file!(dict, fpair)
+    $SIGNATURES
 
 Helper function, if `fpair` is not referenced in the dictionary (new file) add the entry to the
 dictionary with the time of last modification as val.

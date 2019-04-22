@@ -4,6 +4,7 @@ authors = ["Thibaut Lienart <tlienart@me.com>"]
 
 [deps]
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 Highlights = "eafb193a-b7ab-5a9e-9068-77385905fa72"
 JuDocTemplates = "6793090a-55ae-11e9-0511-73b91164f4ea"
 LiveServer = "16fef848-5104-11e9-1b77-fb7a48bbb589"
