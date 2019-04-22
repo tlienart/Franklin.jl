@@ -10,7 +10,7 @@
 
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
-    lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
+    lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
 
     @test length(braces) == 1
     @test J.content(braces[1]) == "blah"
@@ -46,7 +46,7 @@ end
 
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
-    lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
+    lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
     lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
 
     blocks2insert = J.merge_blocks(lxcoms, blocks)
@@ -66,7 +66,7 @@ end
 
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
-    lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
+    lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
     lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
 
     blocks2insert = J.merge_blocks(lxcoms, blocks)
@@ -97,7 +97,7 @@ end
 
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
-    lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
+    lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
     lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
 
     blocks2insert = J.merge_blocks(lxcoms, blocks)

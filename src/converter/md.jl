@@ -28,7 +28,7 @@ function convert_md(mds::String,
     filter!(τ -> τ.name != :LINE_RETURN, tokens)
 
     # Find newcommands (latex definitions), update active blocks/braces
-    lxdefs, tokens, braces, blocks = find_lxdefs(tokens, blocks)
+    lxdefs, tokens, braces, blocks = find_md_lxdefs(tokens, blocks)
     # if any lxdefs are given in the context, merge them. `pastdef` specifies
     # that the definitions appear "earlier"
     lprelx = length(pre_lxdefs)

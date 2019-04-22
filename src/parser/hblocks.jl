@@ -1,10 +1,10 @@
 """
-    qualify_html_hblocks(blocks)
+    $SIGNATURES
 
 Given `{{ ... }}` blocks, identify what kind of blocks they are and return a vector
 of qualified blocks of type `AbstractBlock`.
 """
-function qualify_html_hblocks(blocks::Vector{OCBlock})
+function qualify_html_hblocks(blocks::Vector{OCBlock})::Vector{AbstractBlock}
 
     qb = Vector{AbstractBlock}(undef, length(blocks))
 
@@ -48,13 +48,14 @@ end
 
 
 """
-    find_html_cblocks(qblocks)
+    $SIGNATURES
 
 Given qualified blocks `HIf`, `HElse` etc, construct a vector of the conditional blocks which
 contain the list of conditions etc. No nesting is allowed at the moment.
 """
-function find_html_cblocks(qblocks::Vector{AbstractBlock})
-
+function find_html_cblocks(qblocks::Vector{AbstractBlock}
+                           )::Tuple{Vector{HCond},Vector{AbstractBlock}}
+    # container for the conditional blocks
     cblocks = Vector{HCond}()
     isempty(qblocks) && return cblocks, qblocks
     active_qblocks = ones(Bool, length(qblocks))
@@ -104,12 +105,13 @@ end
 
 
 """
-    find_html_cdblocks(qblocks)
+    $SIGNATURES
 
 Given qualified blocks `HIsDef` or `HIsNotDef` build conditional page blocks.
 """
-function find_html_cdblocks(qblocks::Vector{AbstractBlock})
-
+function find_html_cdblocks(qblocks::Vector{AbstractBlock}
+                            )::Tuple{Vector{HCondDef},Vector{AbstractBlock}}
+    # container for the conditional blocks
     cdblocks = Vector{HCondDef}()
     isempty(qblocks) && return cdblocks, qblocks
     active_qblocks = ones(Bool, length(qblocks))
@@ -134,12 +136,13 @@ end
 
 
 """
-    find_html_cpblocks(qblocks)
+    $SIGNATURES
 
 Given qualified blocks `HIsPage` or `HIsNotPage` build conditional page blocks.
 """
-function find_html_cpblocks(qblocks::Vector{AbstractBlock})
-
+function find_html_cpblocks(qblocks::Vector{AbstractBlock}
+                            )::Tuple{Vector{HCondPage},Vector{AbstractBlock}}
+    # container for the conditional blocks
     cpblocks = Vector{HCondPage}()
     isempty(qblocks) && return cpblocks, qblocks
     active_qblocks = ones(Bool, length(qblocks))

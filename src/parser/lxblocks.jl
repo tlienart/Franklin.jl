@@ -1,5 +1,5 @@
 """
-    find_md_lxdefs(tokens, blocks)
+    $SIGNATURES
 
 Find `\\newcommand` elements and try to parse what follows to form a proper Latex command.
 Return a list of such elements.
@@ -8,7 +8,7 @@ The format is:
     \\newcommand{NAMING}[NARG]{DEFINING}
 where [NARG] is optional (see `LX_NARG_PAT`).
 """
-function find_lxdefs(tokens::Vector{Token}, blocks::Vector{OCBlock})
+function find_md_lxdefs(tokens::Vector{Token}, blocks::Vector{OCBlock})
     # container for the definitions
     lxdefs = Vector{LxDef}()
     # find braces `{` and `}`
@@ -89,7 +89,7 @@ end
 
 
 """
-    retrieve_lxdefref(lxname, lxdefs, inmath)
+    $SIGNATURES
 
 Retrieve the reference pointing to a `LxDef` corresponding to a given `lxname`.
 If no reference is found but `inmath=true`, we propagate and let KaTeX deal with it. If something
@@ -112,13 +112,14 @@ end
 
 
 """
-    find_md_lxcoms(lxtokens, lxdefs, braces, inmath, offset)
+    $SIGNATURES
 
 Find `\\command{arg1}{arg2}...` outside of `xblocks` and `lxdefs`.
 """
 function find_md_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
-                        braces::Vector{OCBlock}, offset=0; inmath=false)
-
+                        braces::Vector{OCBlock}, offset::Int=0;
+                        inmath::Bool=false)::Tuple{Vector{LxCom},Vector{Token}}
+    # containers for the lxcoms
     lxcoms   = Vector{LxCom}()
     active_τ = ones(Bool, length(tokens))
     nbraces  = length(braces)
@@ -178,6 +179,5 @@ function find_md_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
             end
         end
     end
-
     return lxcoms, tokens[active_τ]
 end

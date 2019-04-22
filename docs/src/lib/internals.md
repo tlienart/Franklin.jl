@@ -77,12 +77,14 @@ JuDoc.LxContext
 ```@docs
 JuDoc.pastdef
 JuDoc.getdef
-JuDoc.find_lxdefs
+JuDoc.find_md_lxdefs
+JuDoc.retrieve_lxdefref
+JuDoc.find_md_lxcoms
 ```
 
 ### HTML
 
-See `src/parser/tokens_html.jl`
+See `src/parser/tokens_html.jl` and `src/parser/hblocks.jl`.
 
 **Types** and **Constants**
 
@@ -115,6 +117,14 @@ JuDoc.HBLOCK_FUN_PAT
 JuDoc.HFun
 ```
 
+**Methods**
+
+```@docs
+JuDoc.qualify_html_hblocks
+JuDoc.find_html_cblocks
+JuDoc.find_html_cdblocks
+JuDoc.find_html_cpblocks
+```
 
 ## Compilation
 
