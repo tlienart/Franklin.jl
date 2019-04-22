@@ -25,20 +25,20 @@ function optimize(; prerender::Bool=true, minify::Bool=true)
     print("→ Full pass")
     withpre = ifelse(prerender, rpad(" with pre-rendering... ", 24), rpad("", 24))
     print(withpre)
-    serve(single=true, prerender=prerender)
+    succ = (serve(single=true, prerender=prerender) == 0)
     time_it_took(start)
 
     #
     # Minification
     #
-    if minify
+    if minify && succ
         if JD_CAN_MINIFY
             start = time()
             print(rpad("→ Minifying *.[html|css] files...", 35))
             # copy the script to the current dir
             cp(joinpath(dirname(pathof(JuDoc)), "scripts", "minify.py"), JD_PY_MIN_NAME; force=true)
             # run it
-            run(`bash -c "python3 $JD_PY_MIN_NAME > /dev/null"`)
+            succ = success(`bash -c "python3 $JD_PY_MIN_NAME > /dev/null"`)
             # remove the script file
             rm(JD_PY_MIN_NAME)
             time_it_took(start)
@@ -47,8 +47,7 @@ function optimize(; prerender::Bool=true, minify::Bool=true)
                   "not be minified."
         end
     end
-
-    return nothing
+    return succ
 end
 
 
@@ -67,15 +66,21 @@ Keyword arguments
 * `nopass=false`:   set this to true if you have already run `optimize` manually.
 """
 function publish(; prerender::Bool=true, minify::Bool=true, nopass::Bool=false)
-    nopass || optimize(prerender=prerender, minify=minify)
-    print("Pushing updates with Git...")
-    try
-        run(`bash -c "git add -A && git commit -m \"jd-update\" --quiet && git push --quiet"`,
-            wait=true)
-        println(" [done ✔]")
-    catch e
-        println("✘ Could not push updates to Github, verify your connection and try manually.\n")
-        @show e
+    succ = true
+    nopass || (succ = optimize(prerender=prerender, minify=minify))
+    if succ
+        time = start()
+        print(rpad("→ Pushing updates with git...", 35))
+        try
+            run(`bash -c "git add -A && git commit -m \"jd-update\" --quiet && git push --quiet"`,
+                wait=true)
+            time_it_took(start)
+        catch e
+            println("✘ Could not push updates, verify your connection and try manually.\n")
+            @show e
+        end
+    else
+        println("✘ Something went wrong in the optimisation step. Not pushing updates.")
     end
 end
 
