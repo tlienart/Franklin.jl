@@ -8,6 +8,8 @@ JuDoc is a simple **static site generator** (SSG) oriented towards technical blo
 The base syntax is markdown but it allows a subset of LaTeX (`\newcommand...`) and uses KaTeX to render the maths.
 I use it to generate [my website](https://tlienart.github.io).
 
+**Status**: the package is currently (April 2019) in a last phase before being officially announced on discourse (hopefully by the end of the month). I want to fix a few things and get rudimentary docs going before!
+
 ### Quick demo
 
 (_for more detailed instructions, read the Install section further on_)
