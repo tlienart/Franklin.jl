@@ -59,9 +59,10 @@ referencing.
 """
 const JD_LOC_EQDICT_COUNTER = randstring(JD_LEN_RANDSTRING+1)
 
-def_JD_LOC_EQDICT() = begin
+@inline function def_JD_LOC_EQDICT!()
     empty!(JD_LOC_EQDICT)
     JD_LOC_EQDICT[JD_LOC_EQDICT_COUNTER] = 0
+    return nothing
 end
 
 
@@ -72,7 +73,7 @@ Dictionary to keep track of bibliographical references on a page to allow citati
 """
 const JD_LOC_BIBREFDICT = Dict{String, String}()
 
-def_JD_LOC_BIBREFDICT() = empty!(JD_LOC_BIBREFDICT)
+def_JD_LOC_BIBREFDICT!() = (empty!(JD_LOC_BIBREFDICT); nothing)
 
 
 """

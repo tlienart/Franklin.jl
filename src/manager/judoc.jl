@@ -94,9 +94,9 @@ function jd_fullpass(watched_files::NamedTuple; clear::Bool=false, verb::Bool=fa
      foot    = read(joinpath(JD_PATHS[:in_html], "foot.html"), String)
 
     # reset page variables and latex definitions
-    def_GLOB_VARS()
-    def_LOC_VARS()
-    def_GLOB_LXDEFS()
+    def_GLOB_VARS!()
+    def_LOC_VARS!()
+    def_GLOB_LXDEFS!()
 
     # process configuration file
     process_config()

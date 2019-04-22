@@ -14,9 +14,9 @@ function convert_md(mds::String,
                     has_mddefs  = true)
 
     if !isrecursive
-        def_LOC_VARS()           # page-specific variables
-        def_JD_LOC_EQDICT()      # page-specific equation dict (hrefs)
-        def_JD_LOC_BIBREFDICT()  # page-specific reference dict (hrefs)
+        def_LOC_VARS!()           # page-specific variables
+        def_JD_LOC_EQDICT!()      # page-specific equation dict (hrefs)
+        def_JD_LOC_BIBREFDICT!()  # page-specific reference dict (hrefs)
     end
 
     # Tokenize

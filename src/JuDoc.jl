@@ -6,6 +6,7 @@ using Markdown
 using Dates # see jd_vars
 using Random
 using Highlights
+
 import LiveServer
 
 using DocStringExtensions: SIGNATURES, TYPEDEF
@@ -37,6 +38,13 @@ elseif Sys.iswindows()
 else
     error("Unhandled OS")
 end
+
+"""
+    JD_VAR_TYPE
+
+Type of the containers for page variables.
+"""
+const JD_VAR_TYPE = Dict{String,Pair{K,NTuple{N, DataType}} where {K, N}}
 
 include("build.jl") # check if user has Node/minify
 

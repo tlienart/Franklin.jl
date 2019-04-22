@@ -4,7 +4,7 @@
 Helper function to process an individual block when the block is a `HCond` such as `{{ if
 showauthor }} {{ fill author }} {{ end }}`.
 """
-function convert_hblock(β::HCond, allvars::Dict, fpath::AbstractString="")
+function convert_hblock(β::HCond, allvars::JD_VAR_TYPE, fpath::AbstractString="")
     # check that the bool vars exist
     allconds = [β.init_cond, β.sec_conds...]
     all(c -> haskey(allvars, c), allconds) || error("At least one of the booleans in a conditional html block could not be found. Verify.")
@@ -33,7 +33,7 @@ Helper function to process an individual block when the block is a `HIsDef` such
 author }} {{ fill author }} {{ end }}`. Which checks if a variable exists and if it does, applies
 something.
 """
-function convert_hblock(β::HCondDef, allvars::Dict, fpath::AbstractString="")
+function convert_hblock(β::HCondDef, allvars::JD_VAR_TYPE, fpath::AbstractString="")
     hasvar = haskey(allvars, β.vname)
     # check if the corresponding bool is true and if so, act accordingly
     doaction = ifelse(β.checkisdef, hasvar, !hasvar)
@@ -42,7 +42,7 @@ function convert_hblock(β::HCondDef, allvars::Dict, fpath::AbstractString="")
     return ""
 end
 
-function convert_hblock(β::HCondPage, allvars::Dict, fpath::AbstractString="")
+function convert_hblock(β::HCondPage, allvars::JD_VAR_TYPE, fpath::AbstractString="")
     # get the relative paths so assuming fpath == joinpath(JD_PATHS[:in], rel_path)
     rpath = replace(fpath, JD_PATHS[:in] => "")
     rpath = replace(rpath, Regex("^$(PATH_SEP)pages$(PATH_SEP)")=>"$(PATH_SEP)pub$(PATH_SEP)")

@@ -1,7 +1,7 @@
 # This set of tests directly uses the high-level `convert` functions
 # And checks the behaviour is as expected.
 
-J.def_GLOB_LXDEFS()
+J.def_GLOB_LXDEFS!()
 cmd = st -> J.convert_md(st, collect(values(J.JD_GLOB_LXDEFS)))
 chtml = t -> J.convert_html(t...)
 conv = st -> st |> cmd |> chtml

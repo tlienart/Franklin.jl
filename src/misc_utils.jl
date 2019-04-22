@@ -30,7 +30,7 @@ subs(s::AbstractString, range::UnitRange{Int})::SubString = SubString(s, range)
 
 
 """
-    from(ss)
+    $SIGNATURES
 
 Given a substring `ss`, returns the position in the parent string where the substring starts.
 
@@ -44,7 +44,7 @@ from(ss::SubString)::Int = nextind(str(ss), ss.offset)
 
 
 """
-    to(ss)
+    $SIGNATURES
 
 Given a substring `ss`, returns the position in the parent string where the substring ends.
 
@@ -58,7 +58,7 @@ to(ss::SubString)::Int = ss.offset + ss.ncodeunits
 
 
 """
-    matchrange(m::RegexMatch)
+    $SIGNATURES
 
 Returns the string span of a regex match. Assumes there is no unicode in the match.
 

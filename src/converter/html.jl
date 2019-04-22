@@ -4,7 +4,7 @@
 Convert a judoc html string into a html string (i.e. replace {{ ... }} blocks).
 """
 function convert_html(hs::AbstractString,
-                      allvars::Dict{String,Pair{Any,Tuple}},
+                      allvars::JD_VAR_TYPE,
                       fpath::AbstractString="")
     # Tokenize
     tokens = find_tokens(hs, HTML_TOKENS, HTML_1C_TOKENS)

@@ -1,8 +1,8 @@
 const td = mktempdir()
 J.JD_FOLDER_PATH[] = td
 
-J.def_GLOB_VARS()
-J.def_GLOB_LXDEFS()
+J.def_GLOB_VARS!()
+J.def_GLOB_LXDEFS!()
 
 @testset "Paths" begin
     P = J.set_paths!()
@@ -32,7 +32,7 @@ end
 cp(joinpath(dirname(dirname(pathof(JuDoc))), "test", "_libs", "katex"), joinpath(J.JD_PATHS[:libs], "katex"))
 
 @testset "Set vars" begin
-    d = Dict{String, Pair{Any, Tuple}}(
+    d = J.JD_VAR_TYPE(
     	"a" => 0.5 => (Real,),
     	"b" => "hello" => (String, Nothing))
     J.set_vars!(d, ["a"=>"5", "b"=>"nothing"])

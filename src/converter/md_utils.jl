@@ -6,20 +6,17 @@ that don't need to be further considered and don't contain anything else than ma
 The boolean `stripp` indicates whether to remove the inserted `<p>` and `</p>` by the base markdown
 processor, this is relevant for things that are parsed within latex commands etc.
 """
-function md2html(ss::AbstractString,
-                 stripp = false)
+function md2html(ss::AbstractString, stripp::Bool=false)::AbstractString
     isempty(ss) && return ss
 
     # Use the base Markdown -> Html converter
     partial = Markdown.html(Markdown.parse(ss))
 
     # In some cases, base converter adds <p>...</p>\n which we might not want
-    stripp && begin
-        startswith(partial, "<p>")  && (partial = chop(partial, head=3))
-        endswith(partial, "</p>") && (partial = chop(partial, tail=4))
-        endswith(partial, "</p>\n") && (partial = chop(partial, tail=5))
-    end
-
+    stripp || return partial
+    startswith(partial, "<p>")  && (partial = chop(partial, head=3))
+    endswith(partial, "</p>") && (partial = chop(partial, tail=4))
+    endswith(partial, "</p>\n") && (partial = chop(partial, tail=5))
     return partial
 end
 
