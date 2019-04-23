@@ -63,8 +63,8 @@ function convert_mathblock(β::OCBlock, lxdefs::Vector{LxDef})::String
 
     # convert the inside, decorate with KaTex and return, also act if
     # if the math block is a "display" one (with a number)
-    inner  = chop(β.ss, head=pm[1], tail=pm[2])
-    anchor = ""
+    inner = chop(β.ss, head=pm[1], tail=pm[2])
+    htmls = IOBuffer()
     if β.name ∉ [:MATH_A, :MATH_I]
         # NOTE: in the future if allow equation tags, then will need an `if`
         # here and only increment if there's no tag. For now just use numbers.
@@ -76,15 +76,15 @@ function convert_mathblock(β::OCBlock, lxdefs::Vector{LxDef})::String
         matched = match(r"\\label{(.*?)}", inner)
         if !isnothing(matched)
             name   = refstring(strip(matched.captures[1]))
-            anchor = "<a id=\"$name\"></a>"
+            write(htmls, "<a id=\"$name\"></a>")
             inner  = replace(inner, r"\\label{.*?}" => "")
             # store the label name and associated number
             JD_LOC_EQDICT[name] = JD_LOC_EQDICT[JD_LOC_EQDICT_COUNTER]
         end
     end
-    inner *= EOS
     # assemble the katex decorators, the resolved content etc
-    return prod((anchor, pm[3], convert_md_math(inner, lxdefs, from(β)), pm[4]))
+    write(htmls, pm[3], convert_md_math(inner * EOS, lxdefs, from(β)), pm[4])
+    return String(take!(htmls))
 end
 
 
