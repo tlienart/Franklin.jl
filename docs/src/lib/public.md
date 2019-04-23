@@ -6,4 +6,5 @@ Documentation for `JuDoc.jl`'s exported functions
 JuDoc.serve
 JuDoc.optimize
 JuDoc.publish
+JuDoc.cleanpull
 ```

@@ -163,6 +163,7 @@ JuDoc.hfun_insert
 JuDoc.hfun_href
 JuDoc.html_ahref
 JuDoc.html_div
+JuDoc.convert_hblock
 ```
 
 ### JavaScript

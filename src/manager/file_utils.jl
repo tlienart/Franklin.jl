@@ -1,11 +1,11 @@
 """
-    process_config()
+$(SIGNATURES)
 
 Checks for a `config.md` file in `JD_PATHS[:in]` and uses it to set the global variables referenced
 in `JD_GLOB_VARS` it also sets the global latex commands via `JD_GLOB_LXDEFS`. If the configuration
 file is not found a warning is shown.
 """
-function process_config()
+function process_config()::Nothing
     # read the config.md file if it is present
     config_path = joinpath(JD_PATHS[:in], "config.md")
     if isfile(config_path)
@@ -27,12 +27,13 @@ end
 
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Take a path to an input markdown file (via `root` and `file`), then construct the appropriate HTML
 page (inserting `head`, `pg_foot` and `foot`) and finally write it at the appropriate place.
 """
-function write_page(root, file, head, pg_foot, foot; prerender::Bool=false)::Nothing
+function write_page(root::String, file::String, head::String, pg_foot::String, foot::String;
+                    prerender::Bool=false)::Nothing
     # 0. create a dictionary with all the variables available to the page
     # 1. read the markdown into string, convert it and extract definitions
     # 2. eval the definitions and update the variable dictionary, also retrieve
@@ -77,11 +78,11 @@ end
 
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 See [`process_file_err`](@ref).
 """
-function process_file(case::Symbol, fpair::Pair{String,String}, args...; kwargs...)
+function process_file(case::Symbol, fpair::Pair{String,String}, args...; kwargs...)::Int
     try
         process_file_err(case, fpair, args...; kwargs...)
     catch err
@@ -98,7 +99,7 @@ end
 
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Considers a source file which, depending on `case` could be a html file or a file in judoc markdown
 etc, located in a place described by `fpair`, processes it by converting it and adding appropriate
@@ -107,7 +108,7 @@ caught in `process_file(args...)`.
 """
 function process_file_err(case::Symbol, fpair::Pair{String, String}, head::AbstractString="",
                           pg_foot::AbstractString="", foot::AbstractString="", t::Float64=0.;
-                          clear::Bool=false, prerender::Bool=false)
+                          clear::Bool=false, prerender::Bool=false)::Nothing
     if case == :md
         write_page(fpair..., head, pg_foot, foot; prerender=prerender)
     elseif case == :html
@@ -135,17 +136,17 @@ end
 
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Convenience function to replace the extension of a filename with another.
 """
-change_ext(fname, ext=".html") = splitext(fname)[1] * ext
+change_ext(fname::AbstractString, ext=".html")::String = splitext(fname)[1] * ext
 
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Convenience function to assemble the html out of its parts.
 """
-build_page(head, content, pg_foot, foot) =
+build_page(head::String, content::String, pg_foot::String, foot::String)::String =
     "$head\n<div class=\"jd-content\">\n$content\n$pg_foot\n</div>\n$foot"

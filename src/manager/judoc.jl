@@ -1,5 +1,5 @@
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Runs JuDoc in the current directory.
 
@@ -38,18 +38,18 @@ end
 
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Sets up the collection of watched files by doing an initial scan of the input directory.
 It also sets the paths variables and prepares the output directory.
 
-Keyword argument:
+**Keyword argument**
 
 * `clear=false`: whether to remove any existing output directory
 
 See also [`serve`](@ref).
 """
-function jd_setup(; clear::Bool=true)
+function jd_setup(; clear::Bool=true)::NamedTuple
     # . setting up:
     # -- reading and storing the path variables
     # -- setting up the output directory (see `clear`)
@@ -59,26 +59,24 @@ function jd_setup(; clear::Bool=true)
     # . recovering the list of files in the input dir we care about
     # -- these are stored in dictionaries, the key is the full path and the value is the time of
     # last change (useful for continuous monitoring)
-    md_files    = Dict{Pair{String, String}, Float64}()
-    html_files  = Dict{Pair{String, String}, Float64}()
-    other_files = Dict{Pair{String, String}, Float64}()
-    infra_files = Dict{Pair{String, String}, Float64}()
+    md_files    = JD_FILES_DICT()
+    html_files  = JD_FILES_DICT()
+    other_files = JD_FILES_DICT()
+    infra_files = JD_FILES_DICT()
     # named tuples of all the watched files
     watched_files = (md=md_files, html=html_files, other=other_files, infra=infra_files)
-
     # fill the dictionaries
     scan_input_dir!(watched_files...)
-
     return watched_files
 end
 
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 A single full pass of judoc looking at all watched files and processing them as appropriate.
 
-Keyword arguments:
+**Keyword arguments**
 
 * `clear=false`:     whether to remove any existing output directory
 * `verb=false`:      whether to display messages
@@ -87,7 +85,7 @@ Keyword arguments:
 See also [`jd_loop`](@ref), [`serve`](@ref) and [`publish`](@ref).
 """
 function jd_fullpass(watched_files::NamedTuple; clear::Bool=false, verb::Bool=false,
-                     prerender::Bool=false)
+                     prerender::Bool=false)::Int
      # initiate page segments
      head    = read(joinpath(JD_PATHS[:in_html], "head.html"), String)
      pg_foot = read(joinpath(JD_PATHS[:in_html], "page_foot.html"), String)
@@ -133,13 +131,13 @@ end
 
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 This is the function that is continuously run, checks if files have been modified and if so,
 processes them. Every 30 cycles, it checks whether any file was added or deleted and consequently
 updates the `watched_files`.
 
-Keyword arguments
+**Keyword arguments**
 
 * `clear=false`: whether to remove any existing output directory
 * `verb=false`:  whether to display messages

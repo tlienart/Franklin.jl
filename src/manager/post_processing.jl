@@ -1,14 +1,14 @@
 const JD_PY_MIN_NAME = ".__py_tmp_minscript.py"
 
 """
-    optimize(; prerender, minify)
+$(SIGNATURES)
 
 Does a full pass followed by a pre-rendering and minification step.
 
 * `prerender=true`: whether to pre-render katex and highlight.js (requires `node.js`)
 * `minify=true`:    whether to minify output (requires `python3` and `css_html_js_minify`)
 """
-function optimize(; prerender::Bool=true, minify::Bool=true)
+function optimize(; prerender::Bool=true, minify::Bool=true)::Int
     #
     # Prerendering
     #
@@ -52,20 +52,20 @@ end
 
 
 """
-    publish(; minify=true, prerender=true)
+$(SIGNATURES)
 
 This is a simple wrapper doing a git commit and git push without much fanciness. It assumes the
 current directory is a git folder.
 This will work in most simple scenarios (e.g. there's only one person updating the website).
 In other scenarios you should probably do this manually.
 
-Keyword arguments
+**Keyword arguments**
 
 * `prerender=true`: prerender javascript before pushing see [`optimize`](@ref)
 * `minify=true`:    minify output before pushing see [`optimize`](@ref)
 * `nopass=false`:   set this to true if you have already run `optimize` manually.
 """
-function publish(; prerender::Bool=true, minify::Bool=true, nopass::Bool=false)
+function publish(; prerender::Bool=true, minify::Bool=true, nopass::Bool=false)::Nothing
     succ = true
     nopass || (succ = optimize(prerender=prerender, minify=minify))
     if succ
@@ -82,16 +82,17 @@ function publish(; prerender::Bool=true, minify::Bool=true, nopass::Bool=false)
     else
         println("✘ Something went wrong in the optimisation step. Not pushing updates.")
     end
+    return nothing
 end
 
 
 """
-    cleanpull()
+$(SIGNATURES)
 
 Cleanpull allows you to pull from your remote git repository after having removed the local
 output directory. This will help avoid merge clashes.
 """
-function cleanpull()
+function cleanpull()::Nothing
     JD_FOLDER_PATH[] = pwd()
     set_paths!()
     if isdir(JD_PATHS[:out])
@@ -106,4 +107,5 @@ function cleanpull()
     catch e
         println("Could not pull updates from Github, verify your connection and try manually.\n")
     end
+    return nothing
 end
