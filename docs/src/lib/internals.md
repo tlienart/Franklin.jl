@@ -54,6 +54,7 @@ JuDoc.MD_OCB_MATH
 JuDoc.MD_OCB_IGNORE
 JuDoc.MD_MATH_NAMES
 JuDoc.JD_INSERT
+JuDoc.JD_MBLOCKS_PM
 ```
 
 **Methods**
@@ -64,6 +65,12 @@ JuDoc.convert_md_math
 JuDoc.form_inter_md
 JuDoc.convert_inter_html
 JuDoc.process_md_defs
+JuDoc.md2html
+JuDoc.from_ifsmaller
+JuDoc.deactivate_divs
+JuDoc.convert_block
+JuDoc.convert_mathblock
+JuDoc.convert_code_block
 ```
 
 ### LaTeX

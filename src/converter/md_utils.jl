@@ -1,5 +1,5 @@
 """
-    md2html(ss, stripp)
+$(SIGNATURES)
 
 Convenience function to call the base markdown to html converter on "simple" strings (i.e. strings
 that don't need to be further considered and don't contain anything else than markdown tokens).
@@ -14,28 +14,28 @@ function md2html(ss::AbstractString, stripp::Bool=false)::AbstractString
 
     # In some cases, base converter adds <p>...</p>\n which we might not want
     stripp || return partial
-    startswith(partial, "<p>")  && (partial = chop(partial, head=3))
-    endswith(partial, "</p>") && (partial = chop(partial, tail=4))
-    endswith(partial, "</p>\n") && (partial = chop(partial, tail=5))
+    startswith(partial, "<p>")    && (partial = chop(partial, head=3))
+    endswith(partial,   "</p>")   && return chop(partial, tail=4)
+    endswith(partial,   "</p>\n") && return chop(partial, tail=5)
     return partial
 end
 
 
 """
-    from_ifsmaller(v, idx, len)
+$(SIGNATURES)
 
 Convenience function to check if `idx` is smaller than the length of `v`, if it is, then return the starting point of `v[idx]` (via `from`), otherwise return `BIG_INT`.
 """
-from_ifsmaller(v::Vector, idx, len) = (idx > len) ? BIG_INT : from(v[idx])
+from_ifsmaller(v::Vector, idx::Int, len::Int)::Int = (idx > len) ? BIG_INT : from(v[idx])
 
 
 """
-    deactivate_divs
+$(SIGNATURES)
 
 Since divs are recursively processed, once they've been found, everything inside them needs to be
 deactivated and left for further re-processing to avoid double inclusion.
 """
-function deactivate_divs(blocks::Vector{OCBlock})
+function deactivate_divs(blocks::Vector{OCBlock})::Vector{OCBlock}
     active_blocks = ones(Bool, length(blocks))
     for (i, β) ∈ enumerate(blocks)
         fromβ, toβ = from(β), to(β)

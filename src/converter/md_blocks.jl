@@ -1,19 +1,19 @@
 """
-    convert_block(β, lxc)
+$(SIGNATURES)
 
 Helper function for `convert_inter_html` that processes an extracted block given a latex context
 `lxc` and returns the processed html that needs to be plugged in the final html.
 """
-function convert_block(β::B, lxcontext::LxContext) where B <: AbstractBlock
+function convert_block(β::AbstractBlock, lxcontext::LxContext)::AbstractString
     # Return relevant interpolated string based on case
     βn = β.name
-    βn == :CODE_INLINE    && return md2html(β.ss, true)
-    βn == :CODE_BLOCK_L   && return convert_code_block(β.ss)
-    βn == :CODE_BLOCK     && return md2html(β.ss)
-    βn == :ESCAPE         && return chop(β.ss, head=3, tail=3)
+    βn == :CODE_INLINE  && return md2html(β.ss, true)
+    βn == :CODE_BLOCK_L && return convert_code_block(β.ss)
+    βn == :CODE_BLOCK   && return md2html(β.ss)
+    βn == :ESCAPE       && return chop(β.ss, head=3, tail=3)
 
     # Math block --> needs to call further processing to resolve possible latex
-    βn ∈ MD_MATH_NAMES && return convert_mathblock(β, lxcontext.lxdefs)
+    βn ∈ MD_MATH_NAMES  && return convert_mathblock(β, lxcontext.lxdefs)
 
     # Div block --> need to process the block as a sub-element
     if βn == :DIV
@@ -30,7 +30,7 @@ convert_block(β::LxCom, λ::LxContext) = resolve_lxcom(β, λ.lxdefs)
 
 
 """
-    JD_MBLOCKS_PM
+JD_MBLOCKS_PM
 
 Dictionary to keep track of how math blocks are fenced in standard LaTeX and how these fences need
 to be adapted for compatibility with KaTeX. Each tuple contains the number of characters to chop
@@ -50,13 +50,12 @@ const JD_MBLOCKS_PM = Dict{Symbol, Tuple{Int,Int,String,String}}(
 
 
 """
-    convert_mathblock(β, s, lxdefs)
+$(SIGNATURES)
 
 Helper function for the math block case of `convert_block` taking the inside of a math block,
 resolving any latex command in it and returning the correct syntax that KaTeX can render.
 """
-function convert_mathblock(β::OCBlock, lxdefs::Vector{LxDef})
-
+function convert_mathblock(β::OCBlock, lxdefs::Vector{LxDef})::String
     # try to find the block out of `JD_MBLOCKS_PM`, if not found, error
     pm = get(JD_MBLOCKS_PM, β.name) do
         error("Unrecognised math block name.")
@@ -84,12 +83,17 @@ function convert_mathblock(β::OCBlock, lxdefs::Vector{LxDef})
         end
     end
     inner *= EOS
-
-    return anchor * pm[3] * convert_md_math(inner, lxdefs, from(β)) * pm[4]
+    # assemble the katex decorators, the resolved content etc
+    return prod((anchor, pm[3], convert_md_math(inner, lxdefs, from(β)), pm[4]))
 end
 
 
-function convert_code_block(ss::AbstractString)
+"""
+$(SIGNATURES)
+
+Helper function for the code block case of `convert_block`.
+"""
+function convert_code_block(ss::SubString)::String
     m = match(r"```([a-z-]*)\s*\n?((?:.|\n)*)```", ss)
     lang = m.captures[1]
     code = m.captures[2]
