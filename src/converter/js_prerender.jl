@@ -1,10 +1,10 @@
 """
-    js_prerender_katex(hs::String)
+$(SIGNATURES)
 
 Takes a html string that may contain inline katex blocks `\\(...\\)` or display katex blocks
 `\\[ ... \\]` and use node and katex to pre-render them to HTML.
 """
-function js_prerender_katex(hs::String)
+function js_prerender_katex(hs::String)::String
     # look for \(, \) and \[, \] (we know they're paired because generated from markdown parsing)
     matches = collect(eachmatch(r"\\(\(|\[|\]|\))", hs))
 
@@ -39,12 +39,12 @@ end
 
 
 """
-    js_prerender_highlight(hs::String)
+$(SIGNATURES)
 
 Takes a html string that may contain `<pre><code ... </code></pre>` blocks and use node and
 highlight.js to pre-render them to HTML.
 """
-function js_prerender_highlight(hs::String)
+function js_prerender_highlight(hs::String)::String
     # look for "<pre><code" and "</code></pre>" these will have been automatically generated
     # and therefore the regex can be fairly strict with spaces etc
     matches = collect(eachmatch(r"<pre><code\s*(class=\"?(?:language-)?(.*?)\"?)?\s*>|<\/code><\/pre>", hs))
@@ -80,11 +80,12 @@ end
 
 
 """
-    js2html(hs, jsbuffer, matches, splitter)
+$(SIGNATURES)
 
 Convenience function to run the content of `jsbuffer` with node, and lace the results with `hs`.
 """
-function js2html(hs::String, jsbuffer::IOBuffer, matches::Vector{RegexMatch}, splitter::String)
+function js2html(hs::String, jsbuffer::IOBuffer, matches::Vector{RegexMatch},
+                 splitter::String)::String
     # run it redirecting the output to a buffer
     outbuffer = IOBuffer()
     run(pipeline(`node -e "$(String(take!(jsbuffer)))"`, stdout=outbuffer))
@@ -94,17 +95,17 @@ function js2html(hs::String, jsbuffer::IOBuffer, matches::Vector{RegexMatch}, sp
     parts = split(out, splitter)
 
     # lace everything back together
-    htmlbuffer = IOBuffer()
+    htmls = IOBuffer()
     head, c = 1, 1
     for i ∈ 1:2:length(matches)-1
         mo, mc = matches[i:i+1]
-        write(htmlbuffer, subs(hs, head, mo.offset - 1))
-        write(htmlbuffer, parts[c])
+        write(htmls, subs(hs, head, mo.offset - 1))
+        write(htmls, parts[c])
         head = mc.offset + length(mc.match)
         c += 1
     end
     # add the rest of the document beyond the last mathblock
-    head < lastindex(hs) && write(htmlbuffer, subs(hs, head, lastindex(hs)))
+    head < lastindex(hs) && write(htmls, subs(hs, head, lastindex(hs)))
 
-    return String(take!(htmlbuffer))
+    return String(take!(htmls))
 end

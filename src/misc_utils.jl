@@ -5,7 +5,17 @@
 $(SIGNATURES)
 
 Returns the string corresponding to `s`: `s` itself if it is a string, or the parent string if `s`
-is a substring.
+is a substring. Do not confuse with `String(s::SubString)` which casts `s` into its own object.
+
+# Example
+
+```julia-repl
+julia> a = SubString("hello JuDoc", 3:8);
+julia> JuDoc.str(a)
+"hello JuDoc"
+julia> String(a)
+"llo Ju"
+```
 """
 str(s::String)::String    = s
 str(s::SubString)::String = s.string

@@ -115,7 +115,7 @@ JuDoc.resolve_input
 
 ### HTML
 
-See `src/parser/tokens_html.jl` and `src/parser/hblocks.jl`.
+See `src/parser/tokens_html.jl`, `src/parser/hblocks.jl` and `src/converter/html.jl`.
 
 **Types** and **Constants**
 
@@ -146,6 +146,7 @@ JuDoc.HIsNotPage
 JuDoc.HCondPage
 JuDoc.HBLOCK_FUN_PAT
 JuDoc.HFun
+JuDoc.JD_HTML_FUNS
 ```
 
 **Methods**
@@ -155,6 +156,23 @@ JuDoc.qualify_html_hblocks
 JuDoc.find_html_cblocks
 JuDoc.find_html_cdblocks
 JuDoc.find_html_cpblocks
+JuDoc.convert_html
+JuDoc.convert_hblock
+JuDoc.hfun_fill
+JuDoc.hfun_insert
+JuDoc.hfun_href
+JuDoc.html_ahref
+JuDoc.html_div
+```
+
+### JavaScript
+
+See `src/converter/js_prerender.jl`.
+
+```@docs
+JuDoc.js_prerender_katex
+JuDoc.js_prerender_highlight
+JuDoc.js2html
 ```
 
 ## Compilation

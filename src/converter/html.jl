@@ -1,11 +1,9 @@
 """
-    convert_html(hs, allvars)
+$(SIGNATURES)
 
-Convert a judoc html string into a html string (i.e. replace {{ ... }} blocks).
+Convert a judoc html string into a html string (i.e. replace `{{ ... }}` blocks).
 """
-function convert_html(hs::AbstractString,
-                      allvars::JD_VAR_TYPE,
-                      fpath::AbstractString="")
+function convert_html(hs::AbstractString, allvars::JD_VAR_TYPE, fpath::AbstractString="")::String
     # Tokenize
     tokens = find_tokens(hs, HTML_TOKENS, HTML_1C_TOKENS)
 
@@ -26,22 +24,22 @@ function convert_html(hs::AbstractString,
     hblocks = merge_blocks(qblocks, cblocks, cdblocks, cpblocks)
 
     # construct the final html
-    pieces = Vector{AbstractString}()
+    htmls = IOBuffer()
     head = 1
     for (i, hb) ∈ enumerate(hblocks)
         fromhb = from(hb)
-        (head < fromhb) && push!(pieces, subs(hs, head, prevind(hs, fromhb)))
-        push!(pieces, convert_hblock(hb, allvars, fpath))
+        (head < fromhb) && write(htmls, subs(hs, head, prevind(hs, fromhb)))
+        write(htmls, convert_hblock(hb, allvars, fpath))
         head = nextind(hs, to(hb))
     end
     strlen = lastindex(hs)
-    (head < strlen) && push!(pieces, subs(hs, head, strlen))
+    (head < strlen) && write(htmls, subs(hs, head, strlen))
 
-    fhs = prod(pieces)
+    fhs = String(take!(htmls))
     # if it ends with </p>\n but doesn't start with <p>, chop it off
     # this may happen if the first element parsed is an ocblock (not text)
     δ = ifelse(endswith(fhs, "</p>\n") && !startswith(fhs, "<p>"), 5, 0)
 
     isempty(fhs) && return ""
-    return chop(fhs, tail=δ)
+    return String(chop(fhs, tail=δ))
 end
