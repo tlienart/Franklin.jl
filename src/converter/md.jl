@@ -74,40 +74,54 @@ end
 
 
 """
-    convert_md_math(ms, lxdefs, offset)
+    $SIGNATURES
 
 Same as `convert_md` except tailored for conversion of the inside of a math block (no command
 definitions, restricted tokenisation to latex tokens). The offset keeps track of where the math
 block was, which is useful to check whether any of the latex command used in the block have not
 yet been defined.
+
+**Arguments**
+
+* `ms`:     the string to convert
+* `lxdefs`: existing latex definitions prior to the math block
+* `offset`: where the mathblock is with respect to the parent string
 """
-function convert_md_math(ms::String,
-                         lxdefs = Vector{LxDef}(),
-                         offset = 0)
+function convert_md_math(ms::String, lxdefs::Vector{LxDef}=Vector{LxDef}(), offset::Int=0)::String
+    #
+    # Parsing of the markdown string
+    # (to find latex command, latex definitions, math envs etc.)
+    #
 
-    # tokenize with restricted set, find braces
+    #> 1. Tokenize (with restricted set)
     tokens = find_tokens(ms, MD_TOKENS_LX, MD_1C_TOKENS_LX)
-    blocks, tokens = find_all_ocblocks(tokens, MD_OCB_ALL, inmath=true)
-    braces = filter(β -> β.name == :LXB, blocks) # should be all of them
 
-    # in a math environment -> pass a bool to indicate it as well as offset
+    #> 2. Find braces and drop line returns thereafter
+    blocks, tokens = find_all_ocblocks(tokens, MD_OCB_ALL, inmath=true)
+    braces = filter(β -> β.name == :LXB, blocks)
+
+    #> 3. Find latex commands (indicate we're in a math environment + offset)
     lxcoms, _ = find_md_lxcoms(tokens, lxdefs,  braces, offset; inmath=true)
 
-    # form the string (see `form_inter_md`, similar but fewer conditions)
+    #
+    # Forming of the pieces of html string
+    # (see `form_inter_md`, it's similar but simplified since there are fewer conditions)
+    #
+
     strlen   = prevind(ms, lastindex(ms))
     pieces   = Vector{AbstractString}()
     len_lxc  = length(lxcoms)
     next_lxc = iszero(len_lxc) ? BIG_INT : from(lxcoms[1])
 
+    # counters to keep track of where we are and which command we're looking at
     head, lxc_idx = 1, 1
-
-    while (next_lxc < BIG_INT) & (head < strlen)
+    # pieces = what's around latex commands and the resolved latex commands
+    while (next_lxc < BIG_INT) && (head < strlen)
         # add anything that may occur before the first command
-        (head < next_lxc) &&
-            push!(pieces, subs(ms, head, prevind(ms, next_lxc)))
-        # add the first command after resolving, bool to indicate that inmath
+        (head < next_lxc) && push!(pieces, subs(ms, head, prevind(ms, next_lxc)))
+        # add the first command after resolving, bool to indicate that we're in a math env
         push!(pieces, resolve_lxcom(lxcoms[lxc_idx], lxdefs, inmath=true))
-        # move the head
+        # move the head to after the lxcom and increment the com counter
         head     = nextind(ms, to(lxcoms[lxc_idx]))
         lxc_idx += 1
         next_lxc = from_ifsmaller(lxcoms, lxc_idx, len_lxc)
@@ -115,7 +129,7 @@ function convert_md_math(ms::String,
     # add anything after the last command
     (head <= strlen) && push!(pieces, chop(ms, head=prevind(ms, head), tail=1))
 
-    # combine everything
+    # form the html string by assembling the pieces
     return prod(pieces)
 end
 

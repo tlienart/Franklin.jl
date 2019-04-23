@@ -61,6 +61,7 @@ JuDoc.MD_MATH_NAMES
 
 ```@docs
 JuDoc.convert_md
+JuDoc.convert_md_math
 ```
 
 ### LaTeX
