@@ -16,3 +16,7 @@ nav.toc {
 nav.toc ul li ul li.current ul.internal li a.toctext:before {
     content:"• ";
 }
+
+pre > code.language-judoc {
+    color: #3030c9;
+}

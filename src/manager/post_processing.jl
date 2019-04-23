@@ -7,8 +7,12 @@ Does a full pass followed by a pre-rendering and minification step.
 
 * `prerender=true`: whether to pre-render katex and highlight.js (requires `node.js`)
 * `minify=true`:    whether to minify output (requires `python3` and `css_html_js_minify`)
+* `sig=false`:      whether to return an integer indicating success (see [`publish`](@ref))
+
+Note: if the prerendering is set to `true`, the minification will take longer as the HTML files
+will be larger (especially if you have lots of maths on pages).
 """
-function optimize(; prerender::Bool=true, minify::Bool=true)::Int
+function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false)::Union{Nothing,Bool}
     #
     # Prerendering
     #
@@ -23,7 +27,7 @@ function optimize(; prerender::Bool=true, minify::Bool=true)::Int
     # re-do a (silent) full pass
     start = time()
     print("→ Full pass")
-    withpre = ifelse(prerender, rpad(" with pre-rendering... ", 24), rpad("", 24))
+    withpre = ifelse(prerender, rpad(" (with pre-rendering)", 24), rpad(" (no pre-rendering)", 24))
     print(withpre)
     succ = (serve(single=true, prerender=prerender) == 0)
     time_it_took(start)
@@ -38,7 +42,7 @@ function optimize(; prerender::Bool=true, minify::Bool=true)::Int
             # copy the script to the current dir
             cp(joinpath(dirname(pathof(JuDoc)), "scripts", "minify.py"), JD_PY_MIN_NAME; force=true)
             # run it
-            succ = success(`bash -c "python3 $JD_PY_MIN_NAME > /dev/null"`)
+            succ = success(`python3 $JD_PY_MIN_NAME`)
             # remove the script file
             rm(JD_PY_MIN_NAME)
             time_it_took(start)
@@ -47,7 +51,7 @@ function optimize(; prerender::Bool=true, minify::Bool=true)::Int
                   "not be minified."
         end
     end
-    return succ
+    return ifelse(sig, succ, nothing)
 end
 
 
@@ -67,13 +71,14 @@ In other scenarios you should probably do this manually.
 """
 function publish(; prerender::Bool=true, minify::Bool=true, nopass::Bool=false)::Nothing
     succ = true
-    nopass || (succ = optimize(prerender=prerender, minify=minify))
+    nopass || (succ = optimize(prerender=prerender, minify=minify, sig=true))
     if succ
-        time = start()
+        start = time()
         print(rpad("→ Pushing updates with git...", 35))
         try
-            run(`bash -c "git add -A && git commit -m \"jd-update\" --quiet && git push --quiet"`,
-                wait=true)
+            run(`git add -A `)
+            run(`git commit -m "jd-update" --quiet`)
+            run(`git push --quiet`)
             time_it_took(start)
         catch e
             println("✘ Could not push updates, verify your connection and try manually.\n")
@@ -96,16 +101,17 @@ function cleanpull()::Nothing
     JD_FOLDER_PATH[] = pwd()
     set_paths!()
     if isdir(JD_PATHS[:out])
-        print("Removing local output dir...")
+        print(rpad("→ Removing local output dir...", 35))
         rm(JD_PATHS[:out], force=true, recursive=true)
-        println(" [done] ✔")
+        println(" [done ✔ ]")
     end
     try
-        print("Retrieving updates from GitHub...")
-        run(`bash -c "git pull --quiet"`, wait=true)
-        println(" [done] ✔")
+        print(rpad("→ Retrieving updates from the repository..."), 35)
+        run(`git pull --quiet`)
+        println(" [done ✔ ]")
     catch e
-        println("Could not pull updates from Github, verify your connection and try manually.\n")
+        println("✘ Could not pull updates, verify your connection and try manually.\n")
+        @show e
     end
     return nothing
 end

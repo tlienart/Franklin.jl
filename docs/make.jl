@@ -12,10 +12,10 @@ makedocs(
     authors  = "Thibaut Lienart",
     pages    = [
         "Home" => "index.md",
-        # "Manual" => [
-        #     "Functionalities" => "man/functionalities.md",
-        #     "Extending LiveServer" => "man/extending_ls.md"
-        #     ],
+        "Manual" => [
+             "Syntax" => "man/syntax.md",
+             "Templating" => "man/templating.md",
+            ],
         "Library" => [
             "Public"    => "lib/public.md",
             "Internals" => "lib/internals.md",

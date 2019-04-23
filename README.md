@@ -173,6 +173,6 @@ Contributions and comments are welcome; some notes on how you could contribute a
 **External**:
 
 * KaTeX is [MIT licensed](https://github.com/KaTeX/KaTeX/blob/master/LICENSE)
-* Node's is [permissively licensed](https://github.com/nodejs/node/blob/master/LICENSE)
+* Node's is essentially [MIT licensed](https://github.com/nodejs/node/blob/master/LICENSE)
 * css-html-js-minify is [LGPL licensed](https://github.com/juancarlospaco/css-html-js-minify/blob/master/LICENCE.lgpl.txt)
 * highlight.js is [BSD licensed](https://github.com/highlightjs/highlight.js/blob/master/LICENSE)

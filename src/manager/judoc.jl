@@ -103,30 +103,28 @@ function jd_fullpass(watched_files::NamedTuple; clear::Bool=false, verb::Bool=fa
     indexmd   = JD_PATHS[:in] => "index.md"
     indexhtml = JD_PATHS[:in] => "index.html"
 
-    # process index.md or index.html
-    s = 0
-    if isfile(joinpath(indexmd...))
-        s = process_file(:md, indexmd, head, pg_foot, foot; clear=clear,
-                         prerender=prerender)
-    elseif isfile(joinpath(indexhtml...))
-        s = process_file(:html, indexhtml, head, pg_foot, foot; clear=clear,
-                         prerender=prerender)
-    else
-        @warn "I didn't find an index.[md|html], there should be one. Ignoring."
-    end
-
     # rest of the pages, done asynchronously
     tasks = Vector{Task}()
     @sync begin
+        if isfile(joinpath(indexmd...))
+            push!(tasks, @async process_file(:md, indexmd, head, pg_foot, foot; clear=clear,
+                                             prerender=prerender))
+        elseif isfile(joinpath(indexhtml...))
+            push!(tasks, @async process_file(:html, indexhtml, head, pg_foot, foot; clear=clear,
+                                             prerender=prerender))
+        else
+            @warn "I didn't find an index.[md|html], there should be one. Ignoring."
+        end
         # process rest of the files
         for (case, dict) ∈ pairs(watched_files), (fpair, t) ∈ dict
             occursin("index.", fpair.second) && continue
+            sleep(0.001)
             push!(tasks, @async process_file(case, fpair, head, pg_foot, foot, t; clear=clear,
                                              prerender=prerender))
         end
     end
     # return -1 if any task has failed
-    return -Int(s < 0 || any(t->t.result < 0, tasks))
+    return -Int(any(t->t.result < 0, tasks))
 end
 
 
