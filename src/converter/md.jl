@@ -108,8 +108,9 @@ function convert_md_math(ms::String, lxdefs::Vector{LxDef}=Vector{LxDef}(), offs
     # (see `form_inter_md`, it's similar but simplified since there are fewer conditions)
     #
 
+    hbuf = IOBuffer()
+
     strlen   = prevind(ms, lastindex(ms))
-    pieces   = Vector{AbstractString}()
     len_lxc  = length(lxcoms)
     next_lxc = iszero(len_lxc) ? BIG_INT : from(lxcoms[1])
 
@@ -118,19 +119,17 @@ function convert_md_math(ms::String, lxdefs::Vector{LxDef}=Vector{LxDef}(), offs
     # pieces = what's around latex commands and the resolved latex commands
     while (next_lxc < BIG_INT) && (head < strlen)
         # add anything that may occur before the first command
-        (head < next_lxc) && push!(pieces, subs(ms, head, prevind(ms, next_lxc)))
+        (head < next_lxc) && write(hbuf, subs(ms, head, prevind(ms, next_lxc)))
         # add the first command after resolving, bool to indicate that we're in a math env
-        push!(pieces, resolve_lxcom(lxcoms[lxc_idx], lxdefs, inmath=true))
+        write(hbuf, resolve_lxcom(lxcoms[lxc_idx], lxdefs, inmath=true))
         # move the head to after the lxcom and increment the com counter
         head     = nextind(ms, to(lxcoms[lxc_idx]))
         lxc_idx += 1
         next_lxc = from_ifsmaller(lxcoms, lxc_idx, len_lxc)
     end
     # add anything after the last command
-    (head <= strlen) && push!(pieces, chop(ms, head=prevind(ms, head), tail=1))
-
-    # form the html string by assembling the pieces
-    return prod(pieces)
+    (head <= strlen) && write(hbuf, chop(ms, head=prevind(ms, head), tail=1))
+    return String(take!(hbuf))
 end
 
 
