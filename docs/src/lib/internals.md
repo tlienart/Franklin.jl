@@ -75,7 +75,7 @@ JuDoc.convert_code_block
 
 ### LaTeX
 
-See `src/parser/tokens_lx.jl`, `src/parser/lxblocks.jl`.
+See `src/parser/tokens_lx.jl`, `src/parser/lxblocks.jl` and `src/converter/lx.jl`.
 
 **Types** and **Constants**
 
@@ -86,6 +86,10 @@ JuDoc.LX_TOKENS
 JuDoc.LxDef
 JuDoc.LxCom
 JuDoc.LxContext
+JuDoc.JD_LOC_EQDICT
+JuDoc.JD_LOC_EQDICT_COUNTER
+JuDoc.JD_LOC_BIBREFDICT
+JuDoc.JD_REF_COMS
 ```
 
 **Methods**
@@ -96,6 +100,17 @@ JuDoc.getdef
 JuDoc.find_md_lxdefs
 JuDoc.retrieve_lxdefref
 JuDoc.find_md_lxcoms
+JuDoc.resolve_lxcom
+JuDoc.def_JD_LOC_EQDICT!
+JuDoc.def_JD_LOC_BIBREFDICT!
+JuDoc.form_biblabel
+JuDoc.form_href
+JuDoc.check_input_fname
+JuDoc.resolve_input_hlcode
+JuDoc.resolve_input_othercode
+JuDoc.resolve_input_plainoutput
+JuDoc.resolve_input_plotoutput
+JuDoc.resolve_input
 ```
 
 ### HTML
