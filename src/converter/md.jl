@@ -1,59 +1,74 @@
 """
-    convert_md(mds, pre_lxdefs; isrecursive, isconfig, has_mddefs)
+    $SIGNATURES
 
-Convert a judoc markdown file read as `mds` into a judoc html.
-- `pre_lxdefs` is a vector of `LxDef` that are already available.
-- `isrecursive` indicates whether the call is the parent call or a child call
-- `isconfig` indicates whether the file to convert is the configuration file
-- `has_mddefs` whether to look for definitions of page variables or not
+Convert a judoc markdown file read as `mds` into a judoc html string. Returns the html string as
+well as a dictionary of page variables.
+
+**Arguments**
+
+* `mds`:         the markdown string to process
+* `pre_lxdefs`:  a vector of `LxDef` that are already available.
+
+**Keyword arguments**
+
+* `isrecursive=false`: a bool indicating whether the call is the parent call or a child call
+* `isconfig=false`:    a bool indicating whether the file to convert is the configuration file
+* `has_mddefs=true`:   a bool indicating whether to look for definitions of page variables
 """
-function convert_md(mds::String,
-                    pre_lxdefs  = Vector{LxDef}();
-                    isrecursive = false,
-                    isconfig    = false,
-                    has_mddefs  = true)
-
+function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
+                    isrecursive::Bool=false, isconfig::Bool=false, has_mddefs::Bool=true
+                    )::Tuple{String,Union{Nothing,JD_VAR_TYPE}}
     if !isrecursive
         def_LOC_VARS!()           # page-specific variables
         def_JD_LOC_EQDICT!()      # page-specific equation dict (hrefs)
         def_JD_LOC_BIBREFDICT!()  # page-specific reference dict (hrefs)
     end
 
-    # Tokenize
+    #
+    # Parsing of the markdown string
+    # (to find latex command, latex definitions, math envs etc.)
+    #
+
+    #> 1. Tokenize
     tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
 
-    # Find all open-close blocks
+    #> 2. Open-Close blocks (OCBlocks)
+    #>> a. find them
     blocks, tokens = find_all_ocblocks(tokens, MD_OCB_ALL)
-    # now that blocks have been found, line-returns can be dropped
+    #>> b. now that blocks have been found, line-returns can be dropped
     filter!(τ -> τ.name != :LINE_RETURN, tokens)
 
-    # Find newcommands (latex definitions), update active blocks/braces
+    #> 3. LaTeX commands
+    #>> a. find "newcommands", update active blocks/braces
     lxdefs, tokens, braces, blocks = find_md_lxdefs(tokens, blocks)
-    # if any lxdefs are given in the context, merge them. `pastdef` specifies
-    # that the definitions appear "earlier"
+    #>> b. if any lxdefs are given in the context, merge them. `pastdef` specifies
+    # that the definitions appeared "earlier"
     lprelx = length(pre_lxdefs)
     (lprelx > 0) && (lxdefs = cat(pastdef(pre_lxdefs), lxdefs, dims=1))
-
-    # Find lxcoms
+    #>> c. find latex commands
     lxcoms, _ = find_md_lxcoms(tokens, lxdefs, braces)
 
-    # Process mddefs
+    #> 4. Page variable definition (mddefs)
     jd_vars = nothing
     has_mddefs && (jd_vars = process_md_defs(blocks, isconfig, lxdefs))
-    isconfig && return
+    isconfig && return "", jd_vars
 
-    # Merge all the blocks that will need further processing before insertion
+    #
+    # Forming of the html string
+    #
+
+    #> 1. Merge all the blocks that will need further processing before insertion
     blocks2insert = merge_blocks(lxcoms, deactivate_divs(blocks))
 
-    # form intermediate markdown + html
+    #> 2. Form intermediate markdown + html
     inter_md, mblocks = form_inter_md(mds, blocks2insert, lxdefs)
     inter_html = md2html(inter_md, isrecursive)
 
-    # plug resolved blocks in partial html to form the final html
+    #> 3. Plug resolved blocks in partial html to form the final html
     lxcontext = LxContext(lxcoms, lxdefs, braces)
     hstring   = convert_inter_html(inter_html, mblocks, lxcontext)
 
-    # Return the string + judoc variables if relevant
+    # Return the string + judoc variables
     return hstring, jd_vars
 end
 
@@ -254,7 +269,7 @@ end
 Convenience function to process markdown definitions `@def ...` as appropriate.
 """
 function process_md_defs(blocks::Vector{OCBlock}, isconfig::Bool,
-                         lxdefs::Vector{LxDef})
+                         lxdefs::Vector{LxDef})::Union{Nothing,JD_VAR_TYPE}
 
     mddefs = filter(β -> (β.name == :MD_DEF), blocks)
     assignments = Vector{Pair{String, String}}(undef, length(mddefs))

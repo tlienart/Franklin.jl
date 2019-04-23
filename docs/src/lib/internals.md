@@ -41,7 +41,7 @@ JuDoc.merge_blocks
 
 ### Markdown
 
-See `src/parser/tokens_md.jl`
+See `src/parser/tokens_md.jl` and `src/converter/md*`.
 
 **Constants**
 
@@ -55,6 +55,12 @@ JuDoc.MD_OCB
 JuDoc.MD_OCB_MATH
 JuDoc.MD_OCB_IGNORE
 JuDoc.MD_MATH_NAMES
+```
+
+**Methods**
+
+```@docs
+JuDoc.convert_md
 ```
 
 ### LaTeX

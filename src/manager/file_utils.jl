@@ -22,7 +22,6 @@ function process_config()
             stylesheet(stream, MIME("text/css"), JD_GLOB_VARS["codetheme"][1])
         end
     end
-
     return nothing
 end
 
