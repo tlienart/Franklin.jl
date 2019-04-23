@@ -104,11 +104,11 @@ function convert_md_math(ms::String, lxdefs::Vector{LxDef}=Vector{LxDef}(), offs
     lxcoms, _ = find_md_lxcoms(tokens, lxdefs,  braces, offset; inmath=true)
 
     #
-    # Forming of the pieces of html string
+    # Forming of the html string
     # (see `form_inter_md`, it's similar but simplified since there are fewer conditions)
     #
 
-    hbuf = IOBuffer()
+    htmls = IOBuffer()
 
     strlen   = prevind(ms, lastindex(ms))
     len_lxc  = length(lxcoms)
@@ -116,20 +116,19 @@ function convert_md_math(ms::String, lxdefs::Vector{LxDef}=Vector{LxDef}(), offs
 
     # counters to keep track of where we are and which command we're looking at
     head, lxc_idx = 1, 1
-    # pieces = what's around latex commands and the resolved latex commands
     while (next_lxc < BIG_INT) && (head < strlen)
         # add anything that may occur before the first command
-        (head < next_lxc) && write(hbuf, subs(ms, head, prevind(ms, next_lxc)))
+        (head < next_lxc) && write(htmls, subs(ms, head, prevind(ms, next_lxc)))
         # add the first command after resolving, bool to indicate that we're in a math env
-        write(hbuf, resolve_lxcom(lxcoms[lxc_idx], lxdefs, inmath=true))
+        write(htmls, resolve_lxcom(lxcoms[lxc_idx], lxdefs, inmath=true))
         # move the head to after the lxcom and increment the com counter
         head     = nextind(ms, to(lxcoms[lxc_idx]))
         lxc_idx += 1
         next_lxc = from_ifsmaller(lxcoms, lxc_idx, len_lxc)
     end
     # add anything after the last command
-    (head <= strlen) && write(hbuf, chop(ms, head=prevind(ms, head), tail=1))
-    return String(take!(hbuf))
+    (head <= strlen) && write(htmls, chop(ms, head=prevind(ms, head), tail=1))
+    return String(take!(htmls))
 end
 
 
@@ -161,7 +160,7 @@ function form_inter_md(mds::AbstractString, blocks::Vector{<:AbstractBlock},
                       lxdefs::Vector{LxDef})::Tuple{String, Vector{AbstractBlock}}
     # final character is the EOS character
     strlen  = prevind(mds, lastindex(mds))
-    pieces  = Vector{AbstractString}()
+    intermd = IOBuffer()
     # keep track of the matching blocks for each insert
     mblocks = Vector{AbstractBlock}()
 
@@ -185,17 +184,16 @@ function form_inter_md(mds::AbstractString, blocks::Vector{<:AbstractBlock},
     head, b_idx, lxd_idx = 1, 1, first_lxd
 
     while (nxtidx < BIG_INT) & (head < strlen)
-        # check if there's anything before head and next block and push it
-        (head < nxtidx) && push!(pieces, subs(mds, head, prevind(mds, nxtidx)))
-
+        # check if there's anything before head and next block and write it
+        (head < nxtidx) && write(intermd, subs(mds, head, prevind(mds, nxtidx)))
         # check whether it's a block first or a newcommand first
-        if b_or_lxd # it's a block, check if should be pushed
+        if b_or_lxd # it's a block, check if should be written
             β = blocks[b_idx]
             # check whether the block should be skipped
             if isa(β, OCBlock) && β.name ∈ MD_OCB_IGNORE
                 head = nextind(mds, to(β))
-            else # push
-                push!(pieces, JD_INSERT)
+            else
+                write(intermd, JD_INSERT)
                 push!(mblocks, β)
                 head = nextind(mds, to(blocks[b_idx]))
             end
@@ -212,10 +210,10 @@ function form_inter_md(mds::AbstractString, blocks::Vector{<:AbstractBlock},
         nxtidx = min(next_b, next_lxd)
     end
     # add whatever is after the last block
-    (head <= strlen) && push!(pieces, subs(mds, head, strlen))
+    (head <= strlen) && write(intermd, subs(mds, head, strlen))
 
     # combine everything and return
-    return prod(pieces), mblocks
+    return String(take!(intermd)), mblocks
 end
 
 
