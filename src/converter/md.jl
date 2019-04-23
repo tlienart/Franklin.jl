@@ -1,5 +1,5 @@
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Convert a judoc markdown file read as `mds` into a judoc html string. Returns the html string as
 well as a dictionary of page variables.
@@ -74,7 +74,7 @@ end
 
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Same as `convert_md` except tailored for conversion of the inside of a math block (no command
 definitions, restricted tokenisation to latex tokens). The offset keeps track of where the math
@@ -147,15 +147,19 @@ const JD_INSERT_LEN = length(JD_INSERT_)
 
 
 """
-    form_inter_md(mds, blocks, lxdefs)
+$(SIGNATURES)
 
 Form an intermediate MD file where special blocks are replaced by a marker (`JD_INSERT`) indicating
 that a piece will need to be plugged in there later.
-"""
-function form_inter_md(mds::AbstractString,
-                       blocks::Vector{<:AbstractBlock},
-                       lxdefs::Vector{LxDef})
 
+**Arguments**
+
+* `mds`:    the (sub)string to convert
+* `blocks`: vector of blocks
+* `lxdefs`: existing latex definitions prior to the math block
+"""
+function form_inter_md(mds::AbstractString, blocks::Vector{<:AbstractBlock},
+                      lxdefs::Vector{LxDef})::Tuple{String, Vector{AbstractBlock}}
     # final character is the EOS character
     strlen  = prevind(mds, lastindex(mds))
     pieces  = Vector{AbstractString}()
@@ -178,7 +182,7 @@ function form_inter_md(mds::AbstractString,
     b_or_lxd = (next_b < next_lxd)
     nxtidx = min(next_b, next_lxd)
 
-    # keep track of a few counters
+    # keep track of a few counters (where we are, which block, which command)
     head, b_idx, lxd_idx = 1, 1, first_lxd
 
     while (nxtidx < BIG_INT) & (head < strlen)
@@ -198,8 +202,8 @@ function form_inter_md(mds::AbstractString,
             end
             b_idx += 1
             next_b = from_ifsmaller(blocks, b_idx, len_b)
-
-        else # newcommand or ignore --> skip, increase counters, move head
+        else
+            # newcommand or ignore --> skip, increase counters, move head
             head     = nextind(mds, to(lxdefs[lxd_idx]))
             lxd_idx += 1
             next_lxd = from_ifsmaller(lxdefs, lxd_idx, len_lxd)
@@ -217,15 +221,20 @@ end
 
 
 """
-    convert_inter_html(ihtml, blocks, lxcontext)
+$(SIGNATURES)
 
 Take a partial markdown string with the `JD_INSERT` marker and plug in the appropriately processed
 block.
+
+**Arguments**
+
+* `ihtml`:     the intermediary html string (with `JD_INSERT`)
+* `blocks`:    vector of blocks
+* `lxcontext`: latex context
 """
 function convert_inter_html(ihtml::AbstractString,
                             blocks::Vector{<:AbstractBlock},
-                            lxcontext::LxContext)
-
+                            lxcontext::LxContext)::String
     # Find the JD_INSERT indicators
     allmatches = collect(eachmatch(JD_INSERT_PAT, ihtml))
     pieces = Vector{AbstractString}()
@@ -278,30 +287,46 @@ end
 
 
 """
-    process_md_defs(blocks, isconfig)
+$(SIGNATURES)
 
-Convenience function to process markdown definitions `@def ...` as appropriate.
+Convenience function to process markdown definitions `@def ...` as appropriate. Return a dictionary
+of local page variables or nothing in the case of the config file (which updates globally
+available page variable dictionaries).
+
+**Arguments**
+
+* `blocks`:    vector of active docs
+* `isconfig`:  whether the file being processed is the config file (--> global page variables)
+* `lxdefs`:    latex definitions
 """
 function process_md_defs(blocks::Vector{OCBlock}, isconfig::Bool,
                          lxdefs::Vector{LxDef})::Union{Nothing,JD_VAR_TYPE}
-
+    # Find all markdown definitions (MD_DEF) blocks
     mddefs = filter(β -> (β.name == :MD_DEF), blocks)
+    # empty container for the assignments
     assignments = Vector{Pair{String, String}}(undef, length(mddefs))
+    # go over the blocks, and extract the assignment
     for (i, mdd) ∈ enumerate(mddefs)
         matched = match(MD_DEF_PAT, mdd.ss)
-        isnothing(matched) && (@warn "Found delimiters for an @def environment but it didn't have the right @def var = .... Verify (will ignore for now)."; continue)
+        if isnothing(matched)
+            @warn "Found delimiters for an @def environment but it didn't have the right " *
+                  "@def var = ... format. Verify (ignoring for now)."
+            continue
+        end
         vname, vdef = matched.captures[1:2]
         assignments[i] = (String(vname) => String(vdef))
     end
+    # if we're currently looking at the config file, update the global page var dictionary
+    # JD_GLOB_VARS and store the latex definition globally as well in JD_GLOB_LXDEFS
     if isconfig
         isempty(assignments) || set_vars!(JD_GLOB_VARS, assignments)
         for lxd ∈ lxdefs
             JD_GLOB_LXDEFS[lxd.name] = lxd
         end
-        return
+        return nothing
     end
     # create variable dictionary for the page
-    # NOTE: assignments here may be empty, that's fine.
+    # NOTE: assignments here may be empty, that's fine (will be processed further down)
     jd_vars = merge(JD_GLOB_VARS, copy(JD_LOC_VARS))
     set_vars!(jd_vars, assignments)
     return jd_vars

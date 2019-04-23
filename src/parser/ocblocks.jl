@@ -1,5 +1,5 @@
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Find active blocks between an opening token (`otoken`) and a closing token `ctoken`. These can be
 nested (e.g. braces). Return the list of such blocks. If `deactivate` is `true`, all the tokens
@@ -48,7 +48,7 @@ end
 
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Helper function to update the inbalance counter when looking for the closing token of a block with
 nesting. Adds 1 if the token corresponds to an opening token, removes 1 if it's a closing token and
@@ -62,7 +62,7 @@ end
 
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Convenience function to find all ocblocks e.g. such as `MD_OCBLOCKS`. Returns a vector of vectors
 of ocblocks.
@@ -82,7 +82,7 @@ end
 
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Merge vectors of blocks by order of appearance of the blocks.
 """

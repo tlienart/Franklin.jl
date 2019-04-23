@@ -1,5 +1,5 @@
 """
-    MD_1C_TOKENS
+MD_1C_TOKENS
 
 Dictionary of single-char tokens for Markdown. Note that these characters are exclusive, they
 cannot appear again in a larger token.
@@ -12,7 +12,7 @@ const MD_1C_TOKENS = Dict{Char, Symbol}(
 
 
 """
-    MD_TOKENS_LX
+MD_TOKENS_LX
 
 Subset of `MD_1C_TOKENS` with only the latex tokens (for parsing what's in a math environment).
 """
@@ -23,7 +23,7 @@ const MD_1C_TOKENS_LX = Dict{Char, Symbol}(
 
 
 """
-    MD_TOKENS
+MD_TOKENS
 
 Dictionary of tokens for Markdown. Note that for each, there may be several possibilities to
 consider in which case the order is important: the first case that works will be taken.
@@ -69,7 +69,7 @@ marking it as a potential open brace, same for the close brace.
 
 
 """
-    MD_TOKENS_LX
+MD_TOKENS_LX
 
 Subset of `MD_TOKENS` with only the latex tokens (for parsing what's in a math environment).
 """
@@ -82,7 +82,7 @@ const MD_TOKENS_LX = Dict{Char, Vector{TokenFinder}}(
 
 
 """
-    MD_DEF_PAT
+MD_DEF_PAT
 
 Regex to match an assignment of the form
     @def var = value
@@ -92,7 +92,7 @@ const MD_DEF_PAT = r"@def\s+(\S+)\s*?=\s*?(\S.*)"
 
 
 """
-    MD_OCB
+MD_OCB
 
 Dictionary of Open-Close Blocks whose content should be deactivated (any token within their span
 should be marked as inactive) until further processing.
@@ -100,8 +100,6 @@ The keys are identifier for the type of block, the value is a pair with the open
 tokens followed by a boolean indicating whether the block is nestable or not.
 The only `OCBlock` not in this dictionary is the brace block since it should not deactivate its
 content which is needed to find latex definitions (see parser/markdown/find_blocks/find_md_lxdefs).
-
-Dev note: order matters.
 """
 const MD_OCB = [
     # name            opening token    closing token     nestable
@@ -117,13 +115,14 @@ const MD_OCB = [
     :DIV          => ((:DIV_OPEN     => :DIV_CLOSE    ), true ),
     ]
 #= NOTE:
-    [3] an `MD_DEF` goes from an `@def` to the next `\n` so no multiple-line
-    def are allowed.
+* [3] an `MD_DEF` goes from an `@def` to the next `\n` so no multiple-line
+def are allowed.
+* ordering matters!
 =#
 
 
 """
-    MD_OCB_MATH
+MD_OCB_MATH
 
 Same concept as `MD_OCB` but for math blocks, they can't be nested. Separating them from the other
 dictionary makes their processing easier.
@@ -140,17 +139,15 @@ const MD_OCB_MATH = [
     ]
 
 """
-    MD_OCB_ALL
+MD_OCB_ALL
 
 Combination of all `MD_OCB` in order.
-
-Dev note: the order in which these are stacked matters.
 """
-const MD_OCB_ALL = vcat(MD_OCB, MD_OCB_MATH)
+const MD_OCB_ALL = vcat(MD_OCB, MD_OCB_MATH) # order matters
 
 
 """
-    MD_OCB_IGNORE
+MD_OCB_IGNORE
 
 List of names of blocks that will need to be dropped at compile time.
 """
@@ -158,7 +155,7 @@ const MD_OCB_IGNORE = [:COMMENT, :MD_DEF]
 
 
 """
-    MD_MATH_NAMES
+MD_MATH_NAMES
 
 List of names of maths environments.
 """

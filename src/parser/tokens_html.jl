@@ -1,5 +1,5 @@
 """
-    HTML_1C_TOKENS
+HTML_1C_TOKENS
 
 Dictionary of single-char tokens for HTML. Note that these characters are
 exclusive, they cannot appear again in a larger token.
@@ -8,7 +8,7 @@ const HTML_1C_TOKENS = Dict{Char, Symbol}()
 
 
 """
-    HTML_TOKENS
+HTML_TOKENS
 
 Dictionary of tokens for HTML. Note that for each, there may be several possibilities to consider
 in which case the order is important: the first case that works will be taken.
@@ -22,7 +22,7 @@ const HTML_TOKENS = Dict{Char, Vector{TokenFinder}}(
 
 
 """
-    HTML_OCB
+HTML_OCB
 
 List of HTML Open-Close blocks.
 """
@@ -48,14 +48,14 @@ at this point. This second point might fix the first one by making sure that
 =#
 
 """
-    HBLOCK_IF_PAT
-    HBLOCK_ELSE_PAT
-    HBLOCK_ELSEIF_PAT
-    HBLOCK_END_PAT
-    HBLOCK_ISDEF_PAT
-    HBLOCK_ISNOTDEF_PAT
-    HBLOCK_ISPAGE_PAT
-    HBLOCK_ISNOTPAGE_PAT
+HBLOCK_IF_PAT
+HBLOCK_ELSE_PAT
+HBLOCK_ELSEIF_PAT
+HBLOCK_END_PAT
+HBLOCK_ISDEF_PAT
+HBLOCK_ISNOTDEF_PAT
+HBLOCK_ISPAGE_PAT
+HBLOCK_ISNOTPAGE_PAT
 
 Regex for the different HTML tokens.
 """
@@ -69,7 +69,7 @@ const HBLOCK_ISPAGE_PAT    = r"{{\s*ispage\s+((.|\n)+?)}}"          # {{ispage p
 const HBLOCK_ISNOTPAGE_PAT = r"{{\s*isnotpage\s+((.|\n)+?)}}"       # {{isnotpage p1 p2}}
 
 """
-    HIf <: AbstractBlock
+$(TYPEDEF)
 
 HTML token corresponding to `{{if var}}`.
 """
@@ -79,7 +79,7 @@ struct HIf <: AbstractBlock
 end
 
 """
-    HElse <: AbstractBlock
+$(TYPEDEF)
 
 HTML token corresponding to `{{else}}`.
 """
@@ -88,7 +88,7 @@ struct HElse <: AbstractBlock
 end
 
 """
-    HElseIf <: AbstractBlock
+$(TYPEDEF)
 
 HTML token corresponding to `{{elseif var}}`.
 """
@@ -98,7 +98,7 @@ struct HElseIf <: AbstractBlock
 end
 
 """
-    HEnd <: AbstractBlock
+$(TYPEDEF)
 
 HTML token corresponding to `{{end}}`.
 """
@@ -111,7 +111,7 @@ end
 # -----------------------------------------------------
 
 """
-    HCond <: AbstractBlock
+$(TYPEDEF)
 
 HTML conditional block corresponding to `{{if var}} ... {{else}} ... {{end}}`.
 """
@@ -127,7 +127,7 @@ end
 # ------------------------------------------------------------
 
 """
-    HIsDef <: AbstractBlock
+$(TYPEDEF)
 
 HTML token corresponding to `{{isdef var}}`.
 """
@@ -137,7 +137,7 @@ struct HIsDef <: AbstractBlock
 end
 
 """
-    HIsNotDef <: AbstractBlock
+$(TYPEDEF)
 
 HTML token corresponding to `{{isnotdef var}}`.
 """
@@ -147,7 +147,7 @@ struct HIsNotDef <: AbstractBlock
 end
 
 """
-    HCondDef <: AbstractBlock
+$(TYPEDEF)
 
 HTML conditional block corresponding to `{{is[not]def var}} ... {{end}}`.
 """
@@ -166,7 +166,7 @@ HCondDef(β::HIsNotDef, ss, action) = HCondDef(ss, false, β.vname, action)
 # ------------------------------------------------------------
 
 """
-    HCondDef <: AbstractBlock
+$(TYPEDEF)
 
 HTML token corresponding to `{{ispage path/page}}`.
 """
@@ -176,7 +176,7 @@ struct HIsPage <: AbstractBlock
 end
 
 """
-    HIsNotPage <: AbstractBlock
+$(TYPEDEF)
 
 HTML token corresponding to `{{isnotpage path/page}}`.
 """
@@ -186,7 +186,7 @@ struct HIsNotPage <: AbstractBlock
 end
 
 """
-    HCondPage <: AbstractBlock
+$(TYPEDEF)
 
 HTML conditional page block corresponding to `{{is[not]page path/page}} ... {{end}}`.
 """
@@ -204,7 +204,7 @@ FUNCTION BLOCKS
 =============== =#
 
 """
-    HBLOCK_FUN_PAT
+HBLOCK_FUN_PAT
 
 Regex to match `{{ fname param₁ param₂ }}` where `fname` is a html processing function and `paramᵢ`
 should refer to appropriate variables in the current scope.
@@ -217,7 +217,7 @@ const HBLOCK_FUN_PAT = r"{{\s*([a-z]\S+)\s+((.|\n)+?)}}"
 
 
 """
-    HFun <: AbstractBlock
+$(TYPEDEF)
 
 HTML function block corresponding to `{{ fname p1 p2 ...}}`.
 """

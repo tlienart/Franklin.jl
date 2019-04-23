@@ -2,7 +2,7 @@
 # Convenience functions to work with strings and substrings
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Returns the string corresponding to `s`: `s` itself if it is a string, or the parent string if `s`
 is a substring.
@@ -30,7 +30,7 @@ subs(s::AbstractString, range::UnitRange{Int})::SubString = SubString(s, range)
 
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Given a substring `ss`, returns the position in the parent string where the substring starts.
 
@@ -44,7 +44,7 @@ from(ss::SubString)::Int = nextind(str(ss), ss.offset)
 
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Given a substring `ss`, returns the position in the parent string where the substring ends.
 
@@ -58,7 +58,7 @@ to(ss::SubString)::Int = ss.offset + ss.ncodeunits
 
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Returns the string span of a regex match. Assumes there is no unicode in the match.
 
@@ -73,7 +73,7 @@ matchrange(m::RegexMatch)::UnitRange{Int} = m.offset .+ (0:(length(m.match)-1))
 # Other convenience functions
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Convenience function to display a time since `start`.
 """
@@ -88,7 +88,7 @@ end
 
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Convenience function to check if a variable is `nothing`. It is defined here to guarantee
 compatibility with Julia 1.0 (the function exists for Julia ≥ 1.1).
@@ -97,7 +97,7 @@ isnothing(x)::Bool = (x === nothing)
 
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Convenience function to denote a string as being in a math context in a recursive parsing
 situation. These blocks will be processed as math blocks but without adding KaTeX elements to it
@@ -111,7 +111,7 @@ mathenv(s::AbstractString)::String = "_\$>_$(s)_\$<_"
 
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Creates a random string pegged to `s` that we can use for hyper-references. We could just use the
 hash but it's quite long, here the length of the output is controlled  by `JD_LEN_RANDSTRING` which

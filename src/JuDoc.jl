@@ -9,7 +9,7 @@ using Highlights
 
 import LiveServer
 
-using DocStringExtensions: SIGNATURES
+using DocStringExtensions: SIGNATURES, TYPEDEF
 
 const BIG_INT = typemax(Int)
 const JD_LEN_RANDSTRING = 4 # make this longer if you think you'll collide...

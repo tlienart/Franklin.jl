@@ -1,5 +1,5 @@
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Find `\\newcommand` elements and try to parse what follows to form a proper Latex command.
 Return a list of such elements.
@@ -89,7 +89,7 @@ end
 
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Retrieve the reference pointing to a `LxDef` corresponding to a given `lxname`.
 If no reference is found but `inmath=true`, we propagate and let KaTeX deal with it. If something
@@ -112,7 +112,7 @@ end
 
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Find `\\command{arg1}{arg2}...` outside of `xblocks` and `lxdefs`.
 """

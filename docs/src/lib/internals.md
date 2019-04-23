@@ -15,8 +15,6 @@ See `src/parser/tokens.jl` and `src/parser/ocblocks.jl`
 ```@docs
 JuDoc.AbstractBlock
 JuDoc.Token
-JuDoc.AbstractBlock
-JuDoc.Token
 JuDoc.OCBlock
 JuDoc.EOS
 JuDoc.SPACER
@@ -55,6 +53,7 @@ JuDoc.MD_OCB
 JuDoc.MD_OCB_MATH
 JuDoc.MD_OCB_IGNORE
 JuDoc.MD_MATH_NAMES
+JuDoc.JD_INSERT
 ```
 
 **Methods**
@@ -62,6 +61,9 @@ JuDoc.MD_MATH_NAMES
 ```@docs
 JuDoc.convert_md
 JuDoc.convert_md_math
+JuDoc.form_inter_md
+JuDoc.convert_inter_html
+JuDoc.process_md_defs
 ```
 
 ### LaTeX

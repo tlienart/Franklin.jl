@@ -1,5 +1,5 @@
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Given `{{ ... }}` blocks, identify what kind of blocks they are and return a vector
 of qualified blocks of type `AbstractBlock`.
@@ -48,7 +48,7 @@ end
 
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Given qualified blocks `HIf`, `HElse` etc, construct a vector of the conditional blocks which
 contain the list of conditions etc. No nesting is allowed at the moment.
@@ -105,7 +105,7 @@ end
 
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Given qualified blocks `HIsDef` or `HIsNotDef` build conditional page blocks.
 """
@@ -136,7 +136,7 @@ end
 
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Given qualified blocks `HIsPage` or `HIsNotPage` build conditional page blocks.
 """

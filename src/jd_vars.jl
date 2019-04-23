@@ -12,7 +12,7 @@ const JD_GLOB_VARS = JD_VAR_TYPE()
 
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Convenience function to allocate default values of the global site variables. This is called once,
 when JuDoc is started.
@@ -39,7 +39,7 @@ const JD_LOC_VARS = JD_VAR_TYPE()
 
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Convenience function to allocate default values of page variables. This is called every time a page
 is processed.
@@ -90,7 +90,7 @@ Convenience functions related to the jd_vars
 ============================================= =#
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Convenience function taking a `DateTime` object and returning the corresponding formatted string
 with the format contained in `JD_GLOB_VARS["date_format"]`.
@@ -99,7 +99,7 @@ jd_date(d::DateTime)::AbstractString = Dates.format(d, JD_GLOB_VARS["date_format
 
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Checks if a data type `t` is a subtype of a tuple of accepted types `tt`.
 """
@@ -107,7 +107,7 @@ is_ok_type(t::DataType, tt::NTuple{N,DataType} where N)::Bool = any(<:(t, tᵢ) 
 
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Take a var dictionary `dict` and update the corresponding pair. This should only be used internally
 as it does not check the validity of `val`. See [`write_page`](@ref) where it is used to store a
@@ -121,7 +121,7 @@ set_vars, the key function to assign site variables
 ==================================================== =#
 
 """
-    $SIGNATURES
+$(SIGNATURES)
 
 Given a set of definitions `assignments`, update the variables dictionary `jd_vars`. Keys in
 `assignments` that do not match keys in `jd_vars` are ignored (a warning message is displayed).
