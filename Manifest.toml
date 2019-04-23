@@ -68,8 +68,6 @@ version = "0.20.0"
 
 [[JuDocTemplates]]
 git-tree-sha1 = "f578941d9b73072ab3f6e2a25db1562fb529469b"
-repo-rev = "master"
-repo-url = "https://github.com/tlienart/JuDocTemplates.jl"
 uuid = "6793090a-55ae-11e9-0511-73b91164f4ea"
 version = "0.1.0"
 
