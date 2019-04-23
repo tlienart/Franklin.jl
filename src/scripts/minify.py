@@ -3,17 +3,20 @@
 
 import os
 from css_html_js_minify import process_single_html_file as min_html
-from css_html_js_minify import process_single_css_file as min_css
+from css_html_js_minify import process_multiple_files as min_mult
+
+min_html("index.html", overwrite=True)
 
 # modify those if you're not using the standard output paths.
 CSS, PUB = "css/", "pub/"
-min_html("index.html", overwrite=True)
-for root, dirs, files in os.walk(PUB):
-    for fname in files:
-        if fname.endswith(".html"):
-            min_html(os.path.join(root, fname), overwrite=True)
-
-for root, dirs, files in os.walk(CSS):
-    for fname in files:
-        if fname.endswith(".css"):
-            min_css(os.path.join(root, fname), overwrite=True)
+min_mult(CSS, overwrite=True)
+min_mult(PUB, overwrite=True)
+# for root, dirs, files in os.walk(PUB):
+#     for fname in files:
+#         if fname.endswith(".html"):
+#             min_html(os.path.join(root, fname), overwrite=True)
+#
+# for root, dirs, files in os.walk(CSS):
+#     for fname in files:
+#         if fname.endswith(".css"):
+#             min_css(os.path.join(root, fname), overwrite=True)
