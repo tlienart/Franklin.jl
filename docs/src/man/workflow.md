@@ -32,9 +32,13 @@ and navigate in a browser to the corresponding address.
 
 ## Hosting the website
 
+(assumes github or gitlab)
+
 ## Optimisation step
 
 ## (git) synchronisation
+
+(assumes you have either git init or hosted the website on github/gitlab etc)
 
 - publish
 - cleanpull
