@@ -6,17 +6,23 @@ For the HTML templating syntax, see [Templating](@ref).
 A good way to become familiar with the JuDoc syntax is to generate a test-website and modify its `index.md` as explained in the [Quickstart](@ref) tutorial.
 Most of what is presented here is also shown in that example.
 
-**Content**:
+**Contents**:
 
 * [Basic syntax](#Basics-1)
-  * [maths](#Maths-1)
-  * [div blocks](#Div-blocks-1)
-  * [using raw HTML](#Using-raw-HTML-1)
+  * [Maths](#Maths-1)
+  * [Div blocks](#Div-blocks-1)
+  * [Using raw HTML](#Using-raw-HTML-1)
 * [LaTeX commands](#LaTeX-commands-1)
   * [Whitespaces](#Whitespaces-1)
   * [Nesting](#Nesting-1)
+  * [Local vs global](#Local-vs-global-1)
   * [Hyper-references](#Hyper-references-1)
 * [Insertions](#Insertions-1)
+  * [Folder structure](#Folder-structure-1)
+  * [Code](#Code-1)
+  * [Plain-text output](#Plain-text-output-1)
+  * [Plot output](#Plot-output-1)
+  * [Slicing up](#Slicing-up-1)  
 * [Page variables](#Page-variables-1)
 
 ## Basics
@@ -206,8 +212,227 @@ it will look like
 
 ![](../assets/ex-definition.png)
 
+### Local vs global
+
+The commands you define will be avaible _only_ in the page you define them in.
+However, if you would like to define commands that are _globally_ available to all pages, then you should simply put these definitions in `src/config.md`.
+
 ### Hyper-references
+
+Currently two types of hyper-references are supported:
+
+* for display math
+* for bibliography references
+
+The syntax for both is close to that of standard LaTeX (see below).
+
+To style the appearance of the links in CSS, use `.jd-content.eqref a` and `.jd-content.bibref a` classes; for instance:
+
+```css
+.jd-content .eqref a  {color: blue;}
+.jd-content .bibref a {color: green;}
+```
+
+#### Equations
+
+To label an equation, just use `\label{some label}` in the math environment and, to refer to it, use `\eqref{some label}`:
+
+```judoc
+Some equation:
+
+$$\exp(i\pi) + 1 = 0 \label{a cool equation}$$
+
+and you can refer to it in the text like so, equation \eqref{a cool equation}.
+```
+
+As in LaTeX, you can refer to several equations in one by separating names with commas: `\eqref{some label, some other}` (and so you should not use commas in your labels).
+
+#### Bibliography
+
+For bibliography references, you can use `\biblabel{short}{name}` to indicate a bibliography reference which will appear as a clickable link `(name)` or `name` and can be referred to by `short`:
+
+```judoc
+In the text you may refer to \citep{noether15, bezanson17} while in a bibliography section you would have
+
+* \biblabel{noether15}{Noether (1915)} **Noether**, Korper und Systeme rationaler Funktionen, 1915.
+* \biblabel{bezanson17}{Bezanson et al. (2017)} **Bezanson**, **Edelman**, **Karpinski** and **Shah**, [Julia: a fresh approach to numerical computing](https://julialang.org/publications/julia-fresh-approach-BEKS.pdf), SIAM review 2017.
+```
+
+The `name` argument therefore corresponds to how the bibligrophy reference will appear in the text.
+In the case above, the text will lead to `... refer to (Noether (1915), Bezanson et al. (2017)) while ...`.
+
+You can use
+
+* `\cite{short1, short2}` or `\citet{short3}`: will not add parentheses around the link(s),
+* `\citep{short4, short5}`: will add parentheses around the link(s).
+
+!!! note
+
+    In the future, there may be a possibility to define bibliography styles. I've not yet come
+    around to it but feel free to open an issue if you would like this or would like to suggest a
+    way to do it.
 
 ## Insertions
 
+Sometimes, when presenting code in a post, you would like to make sure the code works and it can be annoying to have to copy-paste it around then copy its output, especially if you decide to make modifications on the way in which case you have to repeat the process.
+For this reason, insertions can be convenient. The philosophy is:
+
+* keep your code snippets in `assets/scripts` where they can be run and their output can be saved, this can be compared to a `test/` folder in a Julia package,
+* run some or all of the snippets,
+* use `\input{...}{...}` in your markdown (see below) and when the website is updated, it will plug-in the most recent parts that have been generated.
+
+That way, if you modify the code, everything will be updated on the website too while ensuring that the code actually runs and generates the output you're displaying.
+
+!!! note
+
+    JuDoc is not meant to be a competitor to [Weave.jl](https://github.com/mpastell/Weave.jl) and
+    consequently does not run your code. This ensures that application of page modifications is not
+    massively slowed down by the execution of some code that appears in it (and would potentially
+    be executed every time you modify the page).
+    It is very much meant to be a two way process, one where you update/modify the code and one
+    where you compile the website which plugs in the relevant, updated, parts that have been produced.
+
+### Folder structure
+
+The folder structure for `assets/scripts` should resemble
+
+```
+.
+└──scripts
+    ├── generate_results.jl
+    ├── output
+    │   ├── script1.txt
+    │   └── script2.png
+    ├── script1.jl
+    └── script2.jl
+```
+
+Your scripts would be `script1.jl` and `script2.jl` these can contain `# hide` at the end of lines you do not want to show (`hide` is not case sensitive so `# HiDe` would be fine too).
+
+The `generate_results.jl` file should run the scripts and redirect outputs to the `assets/scripts/output` directory.
+We suggest you use something like this (if you generate an example website with [`newsite`](@ref), it's all in there) though you can of course modify it as you wish.
+
+```julia
+dir = @__DIR__
+
+"""
+    genplain(s)
+
+Small helper function to run some code and redirect the output (stdout) to a file.
+"""
+function genplain(s::String)
+    open(joinpath(dir, "output", "$(splitext(s)[1]).txt"), "w") do outf
+        redirect_stdout(outf) do
+            include(joinpath(dir, s))
+        end
+    end
+end
+
+# run `script1.jl` and redirect what it prints to `output/script1.txt`
+genplain("script1.jl")
+
+# run `script2.jl` which has a savefig(joinpath(@__DIR__, "output", "script2.png"))
+include("script2.jl")
+```
+
+The function `genplain("scriptname.jl")` just redirects the output of the script to `output/scriptname.txt`.
+So for instance if you have in `assets/scripts/script1.jl`
+
+```julia
+print("hello")
+```
+
+Then `genplain("script1.jl")` will generate `assets/scripts/output/script1.txt` with content
+
+```julia
+hello
+```
+
+!!! note
+
+    You could have scripts in any interpreted language here (`R`, `Python`, ...) as long as the structure is the same.
+
+### Code
+
+In order to insert the code of a script and have it highlighted you can use
+
+```judoc
+\input{julia}{script1.jl}
+```
+
+or `\input{code:julia}{script1.jl}`. This will insert the content of the file `assets/scripts/script1.jl` into a block that will be highlighted as julia code.
+
+### Plain-text output
+
+In order to insert the plain-text output of a script, you can use
+
+```judoc
+\input{output}{script1.jl}
+```
+
+or `\input{output:plain}{script1.jl}`. This will insert the content of the file `assets/scripts/script1.txt` into a non-highlighted code-block.
+
+### Plot output
+
+In order to insert a plot generated by a script, you can use
+
+```judoc
+\input{plot}{script1.jl}
+```
+
+or `\input{plot:id}{script1.jl}`. This will look for an image file with root name `assets/scripts/script1.ext` where `ext` is `gif, png, jp(e)g, svg`.
+If you use `plot:id` then it will look for an image file with root name `assets/scripts/script1id.ext`.
+
+The `plot:id` option is useful if you have a script that generates several plots for instance.
+
+### Slicing up
+
+The structure in the `generate_results.jl` effectively means that all your code is run as one big script.
+This also means that if you want to slice some of your code in several parts and show intermediate outputs (e.g. plots), well you can just do that by having a `script_1_p1.jl`, `script_1_p2.jl` etc. and then just use  `\input` multiple times.
+
 ## Page variables
+
+Page variables are a way to interact with the HTML templating.
+In essence, you can define variables in the markdown which can then be called or used in the HTML building blocks that are in `src/_html_parts/`.
+
+To define a page variable in markdown, write on a new line something like
+
+```judoc
+@def a_variable = "a value"
+```
+
+where whatever is after the `=` sign should be a valid Julia expression (Julia will try to parse it).
+Multiline definitions are not (yet) allowed but if you have a need for that, please open an issue.
+The idea is that these variables are likely to be rather simple: strings, bools, ints, dates, ...
+I don't yet see a usecase for more involved things.
+
+Once such a variable is defined you can use it with the templating syntax (see [Templating](@ref)).
+For instance in your `src/index.md` you could have
+
+```judoc
+@def contributors = "Chuck Norris"
+```
+
+and in your `src/_html_parts/head.html` you could have
+
+```html
+{{isdef contributors}}
+This page was written with the help of {{fill contributors}}
+{{end}}
+```
+
+since `contributors` is a _local page variable_ that is defined in `src/index.md`, the corresponding `index.html` will show "_This page was written with the help of Chuck Norris_"; however on any other page, this will not show (unless, again, you define `@def contributors = ...` there).
+
+You can also define _global page variables_ by simply putting the definition in the `src/config.md` file.
+For instance you may want to have a single main author across all pages and would then write
+
+```judoc
+@def author = "Septimia Zenobia"
+```
+
+in the `src/config.md` file.
+
+
+!!! note
+
+    Page variables are still somewhat rudimentary and while the syntax for declaring a variable will likely not change, the way they are used will almost certainly be refined in the future (see also [Templating](@ref)).

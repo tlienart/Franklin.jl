@@ -15,6 +15,7 @@ makedocs(
         "Manual" => [
              "Syntax" => "man/syntax.md",
              "Templating" => "man/templating.md",
+             "Workflow" => "man/workflow.md"
             ],
         "Library" => [
             "Public"    => "lib/public.md",
