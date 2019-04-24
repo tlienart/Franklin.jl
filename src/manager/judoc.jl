@@ -12,7 +12,7 @@ Keyword arguments:
 * `prerender=false`: whether to pre-render javascript (KaTeX and highlight.js)
 """
 function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Bool=false,
-                 prerender::Bool=false)::Int
+                 prerender::Bool=false)::Union{Nothing,Int}
     # set the global path
     JD_FOLDER_PATH[] = pwd()
     # construct the set of files to watch
@@ -33,7 +33,7 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
         LiveServer.setverbose(verb)
         LiveServer.serve(port=port, coreloopfun=coreloopfun)
     end
-    return 0
+    return nothing
 end
 
 

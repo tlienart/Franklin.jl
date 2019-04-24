@@ -52,7 +52,8 @@ if that's the case (useful to handle different layouts on different pages).
 function convert_hblock(β::HCondPage, allvars::JD_VAR_TYPE, fpath::AbstractString="")::String
     # get the relative paths so assuming fpath == joinpath(JD_PATHS[:in], rel_path)
     rpath = replace(fpath, JD_PATHS[:in] => "")
-    rpath = replace(rpath, Regex("^$(PATH_SEP)pages$(PATH_SEP)")=>"$(PATH_SEP)pub$(PATH_SEP)")
+    rpath = replace(rpath, Regex("^$(escape_string(PATH_SEP))pages$(escape_string(PATH_SEP))") =>
+                                 "$(PATH_SEP)pub$(PATH_SEP)")
     # rejoin and remove the extension
     rel_path = splitext(rpath)[1]
     # compare with β.pnames
