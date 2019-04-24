@@ -41,11 +41,11 @@ blockquote p {
     background-color: lemonchiffon;
 }
 
-[href^="http"] {
+[href^="http"]:not([href*="github.com/tlienart/JuDoc.jl"]) {
     color:green;
 }
 
-[href^="http"]::after {
+[href^="http"]:not([href*="github.com/tlienart/JuDoc.jl"])::after {
   content: '(external link)';
   display: inline-block;
   width: .7em;
