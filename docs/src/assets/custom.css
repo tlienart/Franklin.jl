@@ -20,3 +20,23 @@ nav.toc ul li ul li.current ul.internal li a.toctext:before {
 pre > code.language-judoc {
     color: #3030c9;
 }
+
+blockquote {
+    background-color: #e6f9f2;
+    font-style: italic;
+    border-left: 5px solid cadetblue;
+    padding-left: 5px;
+}
+blockquote p {
+    padding-top: 7px;
+    padding-bottom: 5px;
+}
+
+.admonition.important > .admonition-title {
+    visibility: hidden;
+    height: 0;
+}
+
+.admonition.important {
+    background-color: lemonchiffon;
+}
