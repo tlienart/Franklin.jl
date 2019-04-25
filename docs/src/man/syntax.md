@@ -24,6 +24,9 @@ Most of what is presented here is also shown in that example.
   * [Plot output](#Plot-output-1)
   * [Slicing up](#Slicing-up-1)  
 * [Page variables](#Page-variables-1)
+  * [Local page variables](#Local-page-variables-1)
+    * [Default variables](#Default-variables-1)
+  * [Global page variables](#Global-page-variables-1)
 
 ## Basics
 
@@ -395,13 +398,19 @@ This also means that if you want to slice some of your code in several parts and
 Page variables are a way to interact with the HTML templating.
 In essence, you can define variables in the markdown which can then be called or used in the HTML building blocks that are in `src/_html_parts/`.
 
-To define a page variable in markdown, write on a new line something like
+!!! note
+
+    Page variables are still somewhat rudimentary and while the syntax for declaring a variable will likely not change, the way they are used will almost certainly be refined in the future (see also [Templating](@ref)).
+
+### Local page variables
+
+The syntax to define a page variable in markdown is to write on a new line:
 
 ```judoc
-@def a_variable = "a value"
+@def variable_name = ...
 ```
 
-where whatever is after the `=` sign should be a valid Julia expression (Julia will try to parse it).
+where whatever is after the `=` sign should be a valid Julia expression (Julia will try to parse it and will throw an error if it can't).
 Multiline definitions are not (yet) allowed but if you have a need for that, please open an issue.
 The idea is that these variables are likely to be rather simple: strings, bools, ints, dates, ...
 I don't yet see a usecase for more involved things.
@@ -422,6 +431,28 @@ This page was written with the help of {{fill contributors}}
 ```
 
 since `contributors` is a _local page variable_ that is defined in `src/index.md`, the corresponding `index.html` will show "_This page was written with the help of Chuck Norris_"; however on any other page, this will not show (unless, again, you define `@def contributors = ...` there).
+See also [Templating](@ref) for how page variables can be used in the HTML.
+
+#### Default variables
+
+A few variables are already present and used in the basic templates (you can still modify their value though it has to match the type):
+
+| Name | Accepted types | Default value | Function |
+| :--- | :------------- | :------------ | :------- |
+| `title` | `Nothing`, `String` | `nothing` | title of the page (tab name)
+| `hasmath` | `Bool` | `true` | if `true` the KaTeX stylesheet and script will be added to the page
+| `hascode` | `Bool` | `false` | if `false` the highlight stylesheet and script will be added to the page
+| `date`    | `String`, `Date`, `Nothing` | `Date(1)` | a date variable
+
+Then there are some variables that are automatically assigned and that you should therefore not assign  yourself (but you can use them):
+
+| Name | Type | Value | Function |
+| :--- | :------------- | :------------ | :------- |
+| `jd_ctime` | `Date` | `stat(file).ctime` | page creation date
+| `jd_mtime` | `Date` | `stat(file).mtime` | last page modification date
+
+
+### Global page variables
 
 You can also define _global page variables_ by simply putting the definition in the `src/config.md` file.
 For instance you may want to have a single main author across all pages and would then write
@@ -432,7 +463,12 @@ For instance you may want to have a single main author across all pages and woul
 
 in the `src/config.md` file.
 
+You can overwrite global variables in any page by redefining it locally.
+For instance you could set `hasmath` globally to `false` and `hascode` globally to `true` and then modify it locally as appropriate.
 
-!!! note
+There are also a few pre-defined global variables:
 
-    Page variables are still somewhat rudimentary and while the syntax for declaring a variable will likely not change, the way they are used will almost certainly be refined in the future (see also [Templating](@ref)).
+| Name | Accepted types | Default value | Function |
+| :--- | :------------- | :------------ | :------- |
+| `author` | `String`, `Nothing` | `THE AUTHOR` | author (e.g. may appear in footer)
+| `date_format` | `String` | `U dd, yyyy` | a valid date format specifier

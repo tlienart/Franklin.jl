@@ -19,7 +19,7 @@ makedocs(
             ],
         "Library" => [
             "Public"    => "lib/public.md",
-            "Internals" => "lib/internals.md",
+            # "Internals" => "lib/internals.md",
             ],
         ], # end page
 )
