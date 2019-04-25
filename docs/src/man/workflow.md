@@ -66,6 +66,7 @@ In the `src/` folder, the structure is:
 
 The `index.md` will generate the site's landing page.
 The `pages/page1.md` would contain pages (you can have whatever subfolder structure you want in there, and will just have to adapt internal links appropriately).
+See also the [Syntax](@ref).
 
 !!! note
 
