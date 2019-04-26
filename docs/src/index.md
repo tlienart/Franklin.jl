@@ -1,7 +1,7 @@
 # JuDoc.jl - Documentation
 
-JuDoc is a simple **static site generator** (SSG) oriented towards technical blogging (code, maths, ...) with light, fast-loading pages.
-The base syntax is plain markdown but also supports the definition of LaTeX-like commands and their use in or outside of maths environments (see [Syntax](@ref)).
+JuDoc is a simple **static site generator** (SSG) oriented towards technical blogging (code, maths, ...) and light, fast-loading pages.
+The base syntax is plain markdown with a few extensions such as the ability to define and use LaTeX-like commands in or outside of maths environments (see [Syntax](@ref)).
 
 
 ## Installation
@@ -17,9 +17,9 @@ pkg> add https://github.com/tlienart/JuDoc.jl
 JuDoc allows a post-processing step which pre-renders highlighted code blocks and math environments and minifies all HTML and CSS.
 This step requires a few dependencies; they are _not required_ to run JuDoc.
 
-* [`node.js`](https://nodejs.org/en/) for the pre-rendering
-* [`python3`](https://www.python.org/downloads/) for the minification
-* [`git`](https://git-scm.com/downloads) for automating pushing and pulling to remote repository
+* [`node.js`](https://nodejs.org/en/) for the pre-rendering,
+* [`python3`](https://www.python.org/downloads/) for the minification,
+* [`git`](https://git-scm.com/downloads) for automating pushing and pulling to remote repository.
 
 Assuming you have those, you will then need to install `highlight.js` via `npm`:
 

@@ -9,6 +9,14 @@ article {
     margin-left: 16em;
 }
 
+@media only screen and (max-width:768px) {
+    article {
+        margin-left: 0;
+        padding: 3em, 0.9em, 0, 0.9em;
+        overflow-wrap: break-word;
+    }
+}
+
 nav.toc {
     width: 15em;
 }

@@ -13,9 +13,9 @@ makedocs(
     pages    = [
         "Home" => "index.md",
         "Manual" => [
+             "Workflow" => "man/workflow.md",
              "Syntax" => "man/syntax.md",
              "Templating" => "man/templating.md",
-             "Workflow" => "man/workflow.md"
             ],
         "Library" => [
             "Public"    => "lib/public.md",
