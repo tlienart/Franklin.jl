@@ -1,8 +1,8 @@
 # JuDoc
 
-| Status | Coverage |
-| :----: | :----: |
-| [![Build Status](https://travis-ci.org/tlienart/JuDoc.jl.svg?branch=master)](https://travis-ci.org/tlienart/JuDoc.jl) | [![codecov.io](http://codecov.io/github/tlienart/JuDoc.jl/coverage.svg?branch=master)](http://codecov.io/github/tlienart/JuDoc.jl?branch=master) |
+| Status | Coverage | Documentation |
+| :----: | :------: | :-----------: |
+| [![Build Status](https://travis-ci.org/tlienart/JuDoc.jl.svg?branch=master)](https://travis-ci.org/tlienart/JuDoc.jl) | [![codecov.io](http://codecov.io/github/tlienart/JuDoc.jl/coverage.svg?branch=master)](http://codecov.io/github/tlienart/JuDoc.jl?branch=master) | [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://tlienart.github.io/JuDoc.jl/dev) |
 
 JuDoc is a simple **static site generator** (SSG) oriented towards technical blogging (code, maths, ...) and written in Julia.
 The base syntax is markdown but it allows a subset of LaTeX (`\newcommand...`) and uses KaTeX to render the maths.
