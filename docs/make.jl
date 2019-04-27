@@ -16,10 +16,12 @@ makedocs(
              "Workflow" => "man/workflow.md",
              "Syntax" => "man/syntax.md",
              "Templating" => "man/templating.md",
+             "Contributing" => "man/contrib.md"
             ],
         "Library" => [
+            "Design"    => "lib/design.md",
             "Public"    => "lib/public.md",
-            # "Internals" => "lib/internals.md",
+            #"Internals" => "lib/internals.md",
             ],
         ], # end page
 )
