@@ -19,7 +19,7 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
     watched_files = jd_setup(clear=clear)
 
     # do a first full pass
-    verb && println("→ Initial full pass... ")
+    println("→ Initial full pass... ")
     start = time()
     sig = jd_fullpass(watched_files; clear=clear, verb=verb, prerender=prerender)
     sig < 0 && return sig
@@ -27,7 +27,7 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
 
     # start the continuous loop
     if !single
-        verb && println("→ Starting the server")
+        println("→ Starting the server...")
         coreloopfun = (cntr, fw) -> jd_loop(cntr, fw, watched_files; clear=clear, verb=verb)
         # start the liveserver in the current directory
         LiveServer.setverbose(verb)

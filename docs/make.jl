@@ -1,7 +1,7 @@
-using Documenter, JuDoc
+using Documenter, JuDoc, JuDocTemplates
 
 makedocs(
-    modules = [JuDoc],
+    modules = [JuDoc, JuDocTemplates],
     format = Documenter.HTML(
         # Use clean URLs, unless built as a "local" build
         prettyurls = !("local" in ARGS),

@@ -12,6 +12,7 @@ Most of what is presented here is also shown in that example.
   * [Maths](#Maths-1)
   * [Div blocks](#Div-blocks-1)
   * [Using raw HTML](#Using-raw-HTML-1)
+  * [Comments](#Comments-1)
 * [LaTeX commands](#LaTeX-commands-1)
   * [Whitespaces](#Whitespaces-1)
   * [Nesting](#Nesting-1)
@@ -40,9 +41,12 @@ One key difference with Git Flavored Markdown (GFM) is that inline HTML _should 
 
 ### Maths
 
-For maths elements the usage is similar to standard LaTeX; whitespaces and new-lines don't matter. If you want to write a dollar symbol, you can escape it like so: `\$`.
+For maths elements the usage is similar to standard LaTeX; whitespaces and new-lines don't matter.
+To see what you can and can't do in KaTeX, refer to [their docs](https://katex.org/docs/support_table.html) or [this page](https://utensil-site.github.io/available-in-katex/).
 
-* inline math with `$ ... $` e.g.:
+In JuDoc you can have
+
+* inline math with `$ ... $` (if you want to write a dollar symbol, you can escape it like so: `\$`) e.g.:
 
 ```judoc
 the function $ f(x)=\sin(x) $ is periodic, this is a dollar sign: \$.
@@ -74,7 +78,7 @@ b &=& 7 \end{eqnarray}
 
 !!! note
 
-    In LaTeX use of `eqnarray` tends to be discouraged due to possible interference with array column spacing. In JuDoc this will not happen. However it is identical with LaTeX in that the spacing around the `=` in a `eqnarray` is larger than in an `align`.
+    In LaTeX use of `eqnarray` tends to be discouraged due to possible interference with array column spacing. In JuDoc this will not happen. However it is identical with LaTeX in that the spacing around the `=` in a `eqnarray` is larger than in an `align` which you may prefer.
 
 !!! note
 
@@ -87,11 +91,9 @@ For instance, you may want to highlight some content with a light-yellow backgro
 
 ```judoc
 Some text then
-
 @@important
 Some important content
 @@
-
 and the rest of your text
 ```
 
@@ -117,7 +119,7 @@ These div blocks can be nested as in standard HTML.
 
 ### Using raw HTML
 
-You can inject HTML by using `~~~ ... ~~~` which can be useful if, for instance, you occasionally want to have a specific layout such as text next to an image:
+You can inject HTML by using `~~~ ... ~~~` which can be useful if, for instance, you occasionally want to use a specific layout such as text next to an image:
 
 ```judoc
 Some text here in the "standard" layout then you can inject raw HTML:
@@ -138,13 +140,38 @@ and subsequently continue with the standard layout.
 
 !!! note
 
-    In a raw HTML, you cannot use markdown, maths etc. For this reason, if you can, it is often preferable to use nested `@@divname...` blocks instead of raw HTML since those _can_ have markdown, maths, etc. in them.
+    In a raw HTML, you cannot use markdown, maths etc. For this reason, it is often preferable to use nested `@@divname...` blocks instead of raw HTML since those _can_ have markdown, maths, etc. in them.
+
+### Comments
+
+You can add comments in your markdown using HTML-like comments: `<!-- your comment -->` possibly on multiple lines.
+Note that comments are _not allowed_ in a math environment.
+So this:
+
+```judoc
+Some markdown here $\sin(\alpha+\beta)=\sin\alpha\cos\beta+\cos\alpha\sin\beta$ then
+<!--
+TODO: add other formulas
+-->
+and then some more markdown
+```
+
+is fine but:
+
+```judoc
+$$
+\exp(i\pi)+1 = 0 <!-- this is very pretty -->
+$$
+```
+
+is not.
+
 
 ## LaTeX commands
 
 JuDoc allows the definition of LaTeX-like commands which can be particularly useful for repeating elements be it in or out of math environments.
 
-Definition of commands is as in LaTeX (with the constraint that you _must_ use the `\newcommand{...}[...]{...}` format (see examples below).
+Definition of commands is as in LaTeX (with the constraint that you _must_ use the `\newcommand{...}[...]{...}` format; see examples below).
 
 **Example 1**: a command to get a ``\mathbb R`` in math environments:
 
@@ -177,14 +204,15 @@ There is a subtle difference: the first one introduces a space left of the argum
 In general whitespaces are irrelevant and will not show up and so the usual `#1` is the recommended setting.
 However, there are cases where the whitespace does appear and you don't want it to (e.g. if the command is preceded by something).
 In those cases, and provided there is no ambiguity (e.g.: chaining of commands), you can use `!#1` which will *not* insert the whitespace.
-As an example,
+For instance:
 
 ```judoc
 \newcommand{\pathwith}[1]{`/usr/local/bin/#1`}
 \newcommand{\pathwithout}[1]{`/usr/local/bin/!#1`}
 ```
 
-Using `\pathwith{hello}` will give `/usr/local/bin/ hello` which would be inappropriate whereas `\pathwithout{hello}` will give `usr/local/hello`.
+* `\pathwith{hello}` will give `/usr/local/bin/ hello` which would be inappropriate whereas
+* `\pathwithout{hello}` will give `usr/local/hello`.
 
 ### Nesting
 
@@ -217,15 +245,15 @@ it will look like
 
 ### Local vs global
 
-The commands you define will be avaible _only_ in the page you define them in.
+The commands you define will be available _only_ in the page you define them in.
 However, if you would like to define commands that are _globally_ available to all pages, then you should simply put these definitions in `src/config.md`.
 
 ### Hyper-references
 
 Currently two types of hyper-references are supported:
 
-* for display math
-* for bibliography references
+* for display math, and
+* for bibliography references.
 
 The syntax for both is close to that of standard LaTeX (see below).
 
@@ -261,8 +289,12 @@ In the text you may refer to \citep{noether15, bezanson17} while in a bibliograp
 * \biblabel{bezanson17}{Bezanson et al. (2017)} **Bezanson**, **Edelman**, **Karpinski** and **Shah**, [Julia: a fresh approach to numerical computing](https://julialang.org/publications/julia-fresh-approach-BEKS.pdf), SIAM review 2017.
 ```
 
-The `name` argument therefore corresponds to how the bibligrophy reference will appear in the text.
-In the case above, the text will lead to `... refer to (Noether (1915), Bezanson et al. (2017)) while ...`.
+The `name` argument therefore corresponds to how the bibliography reference will appear in the text.
+In the case above, the text will lead to
+
+```
+... refer to (Noether (1915), Bezanson et al. (2017)) while ...
+```
 
 You can use
 
@@ -271,9 +303,8 @@ You can use
 
 !!! note
 
-    In the future, there may be a possibility to define bibliography styles. I've not yet come
-    around to it but feel free to open an issue if you would like this or would like to suggest a
-    way to do it.
+    In the future, there may be a possibility to define specific bibliography styles.
+    I've not yet come around to it but feel free to open an issue if you would like this or would like to suggest a way to do it.
 
 ## Insertions
 
@@ -353,7 +384,7 @@ hello
 
 !!! note
 
-    You could have scripts in any interpreted language here (`R`, `Python`, ...) as long as the structure is the same.
+    You could have scripts in any language here (`R`, `Python`, ...) as long as the folder structure is the same.
 
 ### Code
 

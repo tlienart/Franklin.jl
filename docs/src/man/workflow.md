@@ -6,14 +6,16 @@ In this workflow it is assumed that you will eventually host your website on Git
 
 * [Local editing](#Local-editing-1)
   * [Structure](#Structure-1)
+* [Libraries](#Libraries-1)
+  * [Highlight](#Highlight-1)
 * [Hosting the website](#Hosting-the-website-1)
 * [Optimisation step](#Optimisation-step-1)
 * [(git) synchronisation](#(git)-synchronisation-1)
-  * [A possible problem and fix](#A-possible-problem-and-fix-1)
+  * [Merge conflicts](#Merge-conflicts-1)
 
 ## Local editing
 
-To get started, the easiest is to use the [`newsite`](@ref) to generate a website folder which you can then modify to your heart's content.
+To get started, the easiest is to use the [`newsite`](@ref) function to generate a website folder which you can then modify to your heart's content.
 The command takes one mandatory argument: the name of the folder, and you can specify a template with `template=...`:
 
 ```julia-repl
@@ -121,6 +123,42 @@ You could also have specific stylesheet that would only be loaded on specific pa
     ```
     I'm not 100% sure how useful that could be though so if you would like to see this happen, please open an issue!
 
+## Libraries
+
+If you used the [`newsite`](@ref) function to get started, then you should have a `libs/` folder with
+
+```
+.
+├── highlight/
+└── katex/
+```
+
+If you require other libraries to run your website, this is where you should put them while not forgetting to load them in your `_html_parts`; for instance in `foot_highlight.html` you will find:
+
+```html
+<script src="/libs/highlight/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
+```
+
+### Highlight
+
+If you used the [`newsite`](@ref) command then the `libs/highlight/` folder contains
+
+```
+.
+├── github.min.css
+└── highlight.pack.js
+```
+
+Of course if you want to change either how things look or which languages are supported, you should head to [highlightjs.org](https://highlightjs.org/download/), select the languages you want in the **Custom package** section, download the bundle and copy over the relevant files to `libs/highlight/`.
+By default, `bash`, `html/xml`, `python`, `julia`, `julia-repl`, `css`, `r`, `markdown`, `ini/TOML`, `ruby` and `yaml` are supported.
+
+Just remember to refer to the appropriate style-sheet in your HTML building blocks for instance `src/_html_parts/head_highlight.html`:
+
+```html
+<link rel="stylesheet" href="/libs/highlight/github.min.css">
+```
+
 ## Hosting the website
 
 In this section, the assumption is that you will host your website on GitHub.
@@ -171,9 +209,9 @@ serve()
 publish()
 ```
 
-### A possible problem and fix
+### Merge conflicts
 
-Since the `pub/` and `css/` and `index.html` folder are _generated_, it can sometimes cause git merge conflicts if, for instance, you have edited your website on computer A, optimised and published it and then subsequently pull on computer B where - say - the content hasn't been minified yet.
+Since the `pub/` and `css/` and `index.html` folder are _generated_, it can sometimes cause git merge conflicts if, for instance, you have edited your website on computer A, optimised and published it and then subsequently pulled on computer B where -- say -- the content hasn't been minified yet.
 This could cause messy merge conflicts that would be annoying to fix.
 An easy way to reduce this risk is to simply remove the generated folders and files before pulling.
 
