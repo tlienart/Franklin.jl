@@ -1,8 +1,8 @@
 # JuDoc
 
-| Status | Coverage | Documentation |
-| :----: | :------: | :-----------: |
-| [![Build Status](https://travis-ci.org/tlienart/JuDoc.jl.svg?branch=master)](https://travis-ci.org/tlienart/JuDoc.jl) | [![codecov.io](http://codecov.io/github/tlienart/JuDoc.jl/coverage.svg?branch=master)](http://codecov.io/github/tlienart/JuDoc.jl?branch=master) | [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://tlienart.github.io/JuDoc.jl/stable)[![](https://img.shields.io/badge/docs-dev-blue.svg)](https://tlienart.github.io/JuDoc.jl/dev) |
+| [MacOS/Linux] | Windows | Coverage | Documentation |
+| :-----------: | :-----: | :------: | :-----------: |
+| [![Build Status](https://travis-ci.org/tlienart/JuDoc.jl.svg?branch=master)](https://travis-ci.org/tlienart/JuDoc.jl) | [![AppVeyor](https://ci.appveyor.com/api/projects/status/github/tlienart/JuDoc.jl?branch=master&svg=true)](https://ci.appveyor.com/project/tlienart/JuDoc-jl) | [![codecov.io](http://codecov.io/github/tlienart/JuDoc.jl/coverage.svg?branch=master)](http://codecov.io/github/tlienart/JuDoc.jl?branch=master) | [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://tlienart.github.io/JuDoc.jl/stable) [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://tlienart.github.io/JuDoc.jl/dev) |
 
 JuDoc is a simple **static site generator** (SSG) oriented towards technical blogging (code, maths, ...) and light, fast-loading pages.
 The base syntax is plain markdown with a few extensions such as the ability to define and use LaTeX-like commands in or outside of maths environments.
