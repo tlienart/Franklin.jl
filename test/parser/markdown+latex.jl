@@ -66,7 +66,7 @@ end
 
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
-    lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
+    lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
 
     @test lxdefs[1].name == "\\E"
     @test lxdefs[1].narg == 1
@@ -97,7 +97,7 @@ end
 
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
-    lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
+    lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
 
     @test lxdefs[1].name == "\\com"
     @test lxdefs[1].narg == 0
@@ -115,12 +115,12 @@ end
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
     # Ill formed newcommand (needs two {...})
-    @test_throws ErrorException J.find_lxdefs(tokens, blocks)
+    @test_throws ErrorException J.find_md_lxdefs(tokens, blocks)
     st = raw"""abc \newcommand{abc} def""" * J.EOS
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
     # Ill formed newcommand (needs two {...})
-    @test_throws ErrorException J.find_lxdefs(tokens, blocks)
+    @test_throws ErrorException J.find_md_lxdefs(tokens, blocks)
 end
 
 
@@ -138,7 +138,7 @@ end
 
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
-    lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
+    lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
     lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
 
     @test lxcoms[1].ss == "\\com"
@@ -162,7 +162,7 @@ end
         """ * J.EOS
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
-    lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
+    lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
     # Command comb expects 1 argument and there should be no spaces ...
     @test_throws ErrorException J.find_md_lxcoms(tokens, lxdefs, braces)
 end
@@ -180,7 +180,7 @@ end
 
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
-    lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
+    lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
     lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
 
     @test lxdefs[1].name == "\\com" && lxdefs[1].narg == 0 &&  lxdefs[1].def == "blah"
@@ -204,7 +204,7 @@ end
 
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
-    lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
+    lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
     lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
 
     @test blocks[1].name == :COMMENT

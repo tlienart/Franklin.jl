@@ -1,15 +1,21 @@
 """
-    prepare_output_dir(clear_out_dir)
+JD_FILES_DICT
+
+Convenience type to keep track of files to watch.
+"""
+const JD_FILES_DICT = Dict{Pair{String, String}, Float64}
+
+"""
+$(SIGNATURES)
 
 Prepare the output directory `JD_PATHS[:out]`.
 
-* `clear_out_dir` removes the content of the output directory if it exists to start from a blank
+* `clear=true` removes the content of the output directory if it exists to start from a blank
 slate
 """
-function prepare_output_dir(clear_out=true)
-
+function prepare_output_dir(clear::Bool=true)::Nothing
     # if required to start from a blank slate -> remove the output dir
-    (clear_out & isdir(JD_PATHS[:out])) && rm(JD_PATHS[:out], recursive=true)
+    (clear & isdir(JD_PATHS[:out])) && rm(JD_PATHS[:out], recursive=true)
 
     # create the output dir and the css dir if necessary
     !isdir(JD_PATHS[:out]) && mkdir(JD_PATHS[:out])
@@ -20,13 +26,12 @@ end
 
 
 """
-    out_path(root)
+$(SIGNATURES)
 
 Take a `root` path to an input file and convert to output path. If the output path does not exist,
 create it.
 """
-function out_path(root::String)
-
+function out_path(root::String)::String
     len_in = lastindex(joinpath(JD_PATHS[:in], ""))
     length(root) <= len_in && return JD_PATHS[:f]
 
@@ -41,14 +46,14 @@ end
 
 
 """
-    scan_input_dir!(md_files, html_files, other_files, infra_files, verb)
+$(SIGNATURES)
 
 Update the dictionaries referring to input files and their time of last change. The variable `verb`
 propagates verbosity.
 """
-function scan_input_dir!(md_files, html_files, other_files, infra_files,
-                         verb = false)
-
+function scan_input_dir!(md_files::JD_FILES_DICT, html_files::JD_FILES_DICT,
+                         other_files::JD_FILES_DICT, infra_files::JD_FILES_DICT,
+                         verb::Bool=false)::Nothing
     # top level files (src/*)
     for file ∈ readdir(JD_PATHS[:in])
         isfile(joinpath(JD_PATHS[:in], file)) || continue
@@ -62,7 +67,6 @@ function scan_input_dir!(md_files, html_files, other_files, infra_files,
             add_if_new_file!(html_files, fpair, verb)
         end
     end
-
     # pages files (src/pages/*)
     for (root, _, files) ∈ walkdir(JD_PATHS[:in_pages])
         for file ∈ files
@@ -80,7 +84,6 @@ function scan_input_dir!(md_files, html_files, other_files, infra_files,
             end
         end
     end
-
     # infastructure files (src/_css/* and src/_html_parts/*)
     for d ∈ [:in_css, :in_html], (root, _, files) ∈ walkdir(JD_PATHS[d])
         for file ∈ files
@@ -91,23 +94,20 @@ function scan_input_dir!(md_files, html_files, other_files, infra_files,
             add_if_new_file!(infra_files, root=>file, verb)
         end
     end
-
-    return
+    return nothing
 end
 
 
 """
-    add_if_new_file!(dict, fpair)
+$(SIGNATURES)
 
 Helper function, if `fpair` is not referenced in the dictionary (new file) add the entry to the
 dictionary with the time of last modification as val.
 """
-function add_if_new_file!(dict, fpair, verb)
-
-    if !haskey(dict, fpair)
-        verb && println("tracking new file '$(fpair.second)'.")
-        dict[fpair] = mtime(joinpath(fpair...))
-    end
-
-    return
+function add_if_new_file!(dict::JD_FILES_DICT, fpair::Pair{String,String}, verb::Bool)::Nothing
+    haskey(dict, fpair) && return nothing
+    # it's a new file
+    verb && println("tracking new file '$(fpair.second)'.")
+    dict[fpair] = mtime(joinpath(fpair...))
+    return nothing
 end

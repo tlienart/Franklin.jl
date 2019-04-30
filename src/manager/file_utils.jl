@@ -1,11 +1,11 @@
 """
-    process_config()
+$(SIGNATURES)
 
 Checks for a `config.md` file in `JD_PATHS[:in]` and uses it to set the global variables referenced
 in `JD_GLOB_VARS` it also sets the global latex commands via `JD_GLOB_LXDEFS`. If the configuration
 file is not found a warning is shown.
 """
-function process_config()
+function process_config()::Nothing
     # read the config.md file if it is present
     config_path = joinpath(JD_PATHS[:in], "config.md")
     if isfile(config_path)
@@ -22,35 +22,23 @@ function process_config()
             stylesheet(stream, MIME("text/css"), JD_GLOB_VARS["codetheme"][1])
         end
     end
-
     return nothing
 end
 
 
 """
-    build_page(head, content, pg_foot, foot)
-
-Convenience function to assemble the html out of its parts.
-"""
-build_page(head, content, pg_foot, foot) =
-    "$head\n<div class=\"jd-content\">\n$content\n$pg_foot\n</div>\n$foot"
-
-
-"""
-    write_page(root, file, head, pg_foot, foot)
+$(SIGNATURES)
 
 Take a path to an input markdown file (via `root` and `file`), then construct the appropriate HTML
 page (inserting `head`, `pg_foot` and `foot`) and finally write it at the appropriate place.
 """
-function write_page(root, file, head, pg_foot, foot)
-
-    ###
+function write_page(root::String, file::String, head::String, pg_foot::String, foot::String;
+                    prerender::Bool=false)::Nothing
     # 0. create a dictionary with all the variables available to the page
     # 1. read the markdown into string, convert it and extract definitions
     # 2. eval the definitions and update the variable dictionary, also retrieve
     # document variables (time of creation, time of last modif) and add those
     # to the dictionary.
-    ###
     jd_vars = merge(JD_GLOB_VARS, copy(JD_LOC_VARS))
     fpath = joinpath(root, file)
     vJD_GLOB_LXDEFS = collect(values(JD_GLOB_LXDEFS))
@@ -61,53 +49,68 @@ function write_page(root, file, head, pg_foot, foot)
     set_var!(jd_vars, "jd_ctime", jd_date(unix2datetime(s.ctime)))
     set_var!(jd_vars, "jd_mtime", jd_date(unix2datetime(s.mtime)))
 
-    ###
-    # 3. process blocks in the html infra elements based on `jd_vars` (e.g.:
-    # add the date in the footer)
-    ###
+    # 3. process blocks in the html infra elements based on `jd_vars`
+    # (e.g.: add the date in the footer)
     content = convert_html(str(content), jd_vars, fpath)
     head, pg_foot, foot = (e->convert_html(e, jd_vars, fpath)).([head, pg_foot, foot])
 
-    ###
-    # 4. construct the page proper
-    ###
+    # 4. construct the page proper & prerender if needed
     pg = build_page(head, content, pg_foot, foot)
 
-    ###
+    if prerender
+        # KATEX
+        pg = js_prerender_katex(pg)
+        # HIGHLIGHT
+        if JD_CAN_HIGHLIGHT
+            pg = js_prerender_highlight(pg)
+            # remove script TODO: needs to be documented
+            pg = replace(pg, r"<script.*?(?:highlight\.pack\.js|initHighlightingOnLoad).*?<\/script>"=>"")
+        end
+        # remove katex scripts TODO: needs to be documented
+        pg = replace(pg, r"<script.*?(?:katex\.min\.js|auto-render\.min\.js|renderMathInElement).*?<\/script>"=>"")
+    end
+
     # 5. write the html file where appropriate
-    ###
     write(joinpath(out_path(root), change_ext(file)), pg)
 
     return nothing
 end
 
 
-function process_file(case, fpair, args...)
+"""
+$(SIGNATURES)
+
+See [`process_file_err`](@ref).
+"""
+function process_file(case::Symbol, fpair::Pair{String,String}, args...; kwargs...)::Int
     try
-        process_file_err(case, fpair, args...)
+        process_file_err(case, fpair, args...; kwargs...)
     catch err
+        JD_DEBUG[] && throw(err)
         rp = fpair.first
         rp = rp[end-min(20, length(rp))+1 : end]
-        println("\n... error processing '$(fpair.second)' in ...$rp.\n Verify, then start judoc again...\n")
+        println("\n... error processing '$(fpair.second)' in ...$rp.")
+        println("Verify, then start judoc again...\n")
         @show err
-        throw(ErrorException("jd-err"))
+        return -1
     end
-    return nothing
+    return 0
 end
 
 
 """
-    proces_file_err(case, fpair, clear_out_dir, head, pg_foot, foot, t)
+$(SIGNATURES)
 
 Considers a source file which, depending on `case` could be a html file or a file in judoc markdown
 etc, located in a place described by `fpair`, processes it by converting it and adding appropriate
 header and footer and writes it to the appropriate place. It can throw an error which will be
 caught in `process_file(args...)`.
 """
-function process_file_err(case, fpair, clear_out_dir,
-                          head="", pg_foot="", foot="", t=0.)
+function process_file_err(case::Symbol, fpair::Pair{String, String}, head::AbstractString="",
+                          pg_foot::AbstractString="", foot::AbstractString="", t::Float64=0.;
+                          clear::Bool=false, prerender::Bool=false)::Nothing
     if case == :md
-        write_page(fpair..., head, pg_foot, foot)
+        write_page(fpair..., head, pg_foot, foot; prerender=prerender)
     elseif case == :html
         fpath = joinpath(fpair...)
         raw_html = read(fpath, String)
@@ -115,9 +118,9 @@ function process_file_err(case, fpair, clear_out_dir,
         write(joinpath(out_path(fpair.first), fpair.second), proc_html)
     elseif case == :other
         opath = joinpath(out_path(fpair.first), fpair.second)
-        # only copy it again if necessary (particularly relevant)
-        # when the asset files take quite a bit of space.
-        if clear_out_dir || !isfile(opath) || mtime(opath) < t
+        # only copy it again if necessary (particularly relevant when the asset files
+        # take quite a bit of space.
+        if clear || !isfile(opath) || mtime(opath) < t
             cp(joinpath(fpair...), opath, force=true)
         end
     else # case == :infra
@@ -133,8 +136,17 @@ end
 
 
 """
-    change_ext(fname)
+$(SIGNATURES)
 
 Convenience function to replace the extension of a filename with another.
 """
-change_ext(fname, ext=".html") = splitext(fname)[1] * ext
+change_ext(fname::AbstractString, ext=".html")::String = splitext(fname)[1] * ext
+
+
+"""
+$(SIGNATURES)
+
+Convenience function to assemble the html out of its parts.
+"""
+build_page(head::String, content::String, pg_foot::String, foot::String)::String =
+    "$head\n<div class=\"jd-content\">\n$content\n$pg_foot\n</div>\n$foot"

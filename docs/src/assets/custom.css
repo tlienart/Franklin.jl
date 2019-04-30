@@ -1,0 +1,69 @@
+body {
+    font-family: Helvetica;
+    text-rendering: optimizeLegibility;
+    line-height: 1.5;
+    color: #363636;
+}
+
+article {
+    margin-left: 16em;
+}
+
+@media only screen and (max-width:768px) {
+    article {
+        margin-left: 0;
+        padding: 3em, 0.9em, 0, 0.9em;
+        overflow-wrap: break-word;
+    }
+}
+
+nav.toc {
+    width: 15em;
+}
+
+nav.toc ul li ul li.current ul.internal li a.toctext:before {
+    content:"• ";
+}
+
+pre > code.language-judoc {
+    color: #3030c9;
+}
+
+blockquote {
+    background-color: #e6f9f2;
+    font-style: italic;
+    border-left: 5px solid cadetblue;
+    padding-left: 5px;
+}
+blockquote p {
+    padding-top: 7px;
+    padding-bottom: 5px;
+}
+
+.admonition.important > .admonition-title {
+    visibility: hidden;
+    height: 0;
+}
+
+.admonition.important {
+    background-color: lemonchiffon;
+}
+
+[href^="http"]:not([href*="github.com/tlienart/JuDoc.jl"]) {
+    color:green;
+}
+
+[href^="http"]:not([href*="github.com/tlienart/JuDoc.jl"])::after {
+  content: '(external link)';
+  display: inline-block;
+  width: .7em;
+  height: .7em;
+  text-indent: .7em;
+  white-space: nowrap;
+  overflow: hidden;
+  background-image: url(https://upload.wikimedia.org/wikipedia/commons/4/44/Icon_External_Link.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+  margin-left: .1em;
+}

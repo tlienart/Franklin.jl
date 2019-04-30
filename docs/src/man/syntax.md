@@ -1,0 +1,505 @@
+# Syntax
+
+This page is about the modified markdown syntax that is used in JuDoc.
+For the HTML templating syntax, see [Templating](@ref).
+
+A good way to become familiar with the JuDoc syntax is to generate a test-website and modify its `index.md` as explained in the [Quickstart](@ref) tutorial.
+Most of what is presented here is also shown in that example.
+
+**Contents**:
+
+* [Basic syntax](#Basics-1)
+  * [Maths](#Maths-1)
+  * [Div blocks](#Div-blocks-1)
+  * [Using raw HTML](#Using-raw-HTML-1)
+  * [Comments](#Comments-1)
+* [LaTeX commands](#LaTeX-commands-1)
+  * [Whitespaces](#Whitespaces-1)
+  * [Nesting](#Nesting-1)
+  * [Local vs global](#Local-vs-global-1)
+  * [Hyper-references](#Hyper-references-1)
+* [Insertions](#Insertions-1)
+  * [Folder structure](#Folder-structure-1)
+  * [Code](#Code-1)
+  * [Plain-text output](#Plain-text-output-1)
+  * [Plot output](#Plot-output-1)
+  * [Slicing up](#Slicing-up-1)  
+* [Page variables](#Page-variables-1)
+  * [Local page variables](#Local-page-variables-1)
+    * [Default variables](#Default-variables-1)
+  * [Global page variables](#Global-page-variables-1)
+
+## Basics
+
+The basic syntax corresponds to standard markdown and the [markdown cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) is a great resource, in particular:
+
+* how to [insert images](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#images),
+* how to [insert code](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#code-and-syntax-highlighting),
+* how to [insert tables](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#tables).
+
+One key difference with Git Flavored Markdown (GFM) is that inline HTML _should not be used_ (see the section on injecting HTML below).
+
+### Maths
+
+For maths elements the usage is similar to standard LaTeX; whitespaces and new-lines don't matter.
+To see what you can and can't do in KaTeX, refer to [their docs](https://katex.org/docs/support_table.html) or [this page](https://utensil-site.github.io/available-in-katex/).
+
+In JuDoc you can have
+
+* inline math with `$ ... $` (if you want to write a dollar symbol, you can escape it like so: `\$`) e.g.:
+
+```judoc
+the function $ f(x)=\sin(x) $ is periodic, this is a dollar sign: \$.
+```
+
+* display math with `$$ ... $$` or `\[ ... \]` e.g.:
+
+```judoc
+the identity
+\[ \exp(i\pi)+1=0 \]
+is nice
+```
+
+* display + aligned math (1) with `\begin{align} ... \end{align}` e.g.:
+
+```judoc
+\begin{align}
+a&=5 \\
+b&=7 \end{align}
+```
+
+* display + aligned math (2) with `\begin{eqnarray} ... \end{eqnarray}` e.g.:
+
+```judoc
+\begin{eqnarray}
+a &=& 5 \\
+b &=& 7 \end{eqnarray}
+```
+
+!!! note
+
+    In LaTeX use of `eqnarray` tends to be discouraged due to possible interference with array column spacing. In JuDoc this will not happen. However it is identical with LaTeX in that the spacing around the `=` in a `eqnarray` is larger than in an `align` which you may prefer.
+
+!!! note
+
+    Currently all display-math equations are numbered by default.
+
+### Div blocks
+
+In order to locally style your content, you can use `@@divname ... @@` which will wrap some content in a `<div class="divname"> ... </div>` block which you can style as you wish in your CSS stylesheet.
+For instance, you may want to highlight some content with a light-yellow background, you can do this with:
+
+```judoc
+Some text then
+@@important
+Some important content
+@@
+and the rest of your text
+```
+
+and then, in your CSS, you could use
+
+```css
+.important {
+  background-color: lemonchiffon;
+  padding-left: 0.5em;
+  padding-top: 0.7em;
+  padding-bottom: 0.5em;
+  border-radius: 5px;
+}
+```
+
+which will look like
+
+!!! important
+
+    Some important content
+
+These div blocks can be nested as in standard HTML.
+
+### Using raw HTML
+
+You can inject HTML by using `~~~ ... ~~~` which can be useful if, for instance, you occasionally want to use a specific layout such as text next to an image:
+
+```judoc
+Some text here in the "standard" layout then you can inject raw HTML:
+
+~~~
+<div class="row">
+  <div class="container">
+    <img class="left" src="assets/infra/rndimg.jpg">
+    <p> Marine iguanas are truly splendid creatures. </p>
+    <p> Evolution is cool. </p>
+    <div style="clear: both"></div>      
+  </div>
+</div>
+~~~
+
+and subsequently continue with the standard layout.
+```
+
+!!! note
+
+    In a raw HTML, you cannot use markdown, maths etc. For this reason, it is often preferable to use nested `@@divname...` blocks instead of raw HTML since those _can_ have markdown, maths, etc. in them.
+
+### Comments
+
+You can add comments in your markdown using HTML-like comments: `<!-- your comment -->` possibly on multiple lines.
+Note that comments are _not allowed_ in a math environment.
+So this:
+
+```judoc
+Some markdown here $\sin(\alpha+\beta)=\sin\alpha\cos\beta+\cos\alpha\sin\beta$ then
+<!--
+TODO: add other formulas
+-->
+and then some more markdown
+```
+
+is fine but:
+
+```judoc
+$$
+\exp(i\pi)+1 = 0 <!-- this is very pretty -->
+$$
+```
+
+is not.
+
+
+## LaTeX commands
+
+JuDoc allows the definition of LaTeX-like commands which can be particularly useful for repeating elements be it in or out of math environments.
+
+Definition of commands is as in LaTeX (with the constraint that you _must_ use the `\newcommand{...}[...]{...}` format; see examples below).
+
+**Example 1**: a command to get a ``\mathbb R`` in math environments:
+
+```judoc
+\newcommand{\R}{\mathbb R}
+
+Let $f:\R\to\R$ a function...
+```
+
+**Example 2**: a command to get a ``\langle x, y \rangle`` in math environments:
+
+```judoc
+\newcommand{\scal}[1]{\left\langle #1 \right\rangle}
+```
+
+**Example 3**: a command to change the colour of the text outside of a math environment (note that inside a math environment you can use `\textcolor` which is defined in KaTeX; I'm using a different name here so that these two don't clash since commands defined in JuDoc take precedence):
+
+```judoc
+\newcommand{\col}[2]{~~~ <font color="#1">#2</font> ~~~}
+
+And then you can use \col{tomato}{colours} in your text and
+$$x + \textcolor{blue}{y} + z$$
+in your maths.
+```
+
+### Whitespaces
+
+In a JuDoc newcommand, to refer to an argument, you can use `#1` or `!#1`.
+There is a subtle difference: the first one introduces a space left of the argument (this allows to avoid ambiguous commands in general) and the second one does not.
+In general whitespaces are irrelevant and will not show up and so the usual `#1` is the recommended setting.
+However, there are cases where the whitespace does appear and you don't want it to (e.g. if the command is preceded by something).
+In those cases, and provided there is no ambiguity (e.g.: chaining of commands), you can use `!#1` which will *not* insert the whitespace.
+For instance:
+
+```judoc
+\newcommand{\pathwith}[1]{`/usr/local/bin/#1`}
+\newcommand{\pathwithout}[1]{`/usr/local/bin/!#1`}
+```
+
+* `\pathwith{hello}` will give `/usr/local/bin/ hello` which would be inappropriate whereas
+* `\pathwithout{hello}` will give `usr/local/hello`.
+
+### Nesting
+
+Using commands can be nested, again as in LaTeX and, moreover, you can throw in some markdown.
+Here is a somewhat more sophisticated example for a "definition" environment:
+
+```judoc
+\newcommand{\definition}[2]{@@definition **Definition**: (_!#1_) #2 @@}
+
+\definition{angle between vectors}{
+  Let $x, y \in \R^n$ denote two real vectors and let $\scal{\cdot, \cdot}$ denote
+  the inner product of two vectors. Then, the angle $\theta$ between $x$ and $y$ is
+  given by $$ \cos(\theta) = {\scal{x,y}\over \scal{x,x} \scal{y,y}} $$ }
+```
+
+with CSS
+
+```css
+.definition {
+    background-color: aliceblue;
+    border-left: 5px solid cornflowerblue;
+    border-radius: 10px;
+    padding: 10px;
+}
+```
+
+it will look like
+
+![](../assets/ex-definition.png)
+
+### Local vs global
+
+The commands you define will be available _only_ in the page you define them in.
+However, if you would like to define commands that are _globally_ available to all pages, then you should simply put these definitions in `src/config.md`.
+
+### Hyper-references
+
+Currently two types of hyper-references are supported:
+
+* for display math, and
+* for bibliography references.
+
+The syntax for both is close to that of standard LaTeX (see below).
+
+To style the appearance of the links in CSS, use `.jd-content.eqref a` and `.jd-content.bibref a` classes; for instance:
+
+```css
+.jd-content .eqref a  {color: blue;}
+.jd-content .bibref a {color: green;}
+```
+
+#### Equations
+
+To label an equation, just use `\label{some label}` in the math environment and, to refer to it, use `\eqref{some label}`:
+
+```judoc
+Some equation:
+
+$$\exp(i\pi) + 1 = 0 \label{a cool equation}$$
+
+and you can refer to it in the text like so, equation \eqref{a cool equation}.
+```
+
+As in LaTeX, you can refer to several equations in one by separating names with commas: `\eqref{some label, some other}` (and so you should not use commas in your labels).
+
+#### Bibliography
+
+For bibliography references, you can use `\biblabel{short}{name}` to indicate a bibliography reference which will appear as a clickable link `(name)` or `name` and can be referred to by `short`:
+
+```judoc
+In the text you may refer to \citep{noether15, bezanson17} while in a bibliography section you would have
+
+* \biblabel{noether15}{Noether (1915)} **Noether**, Korper und Systeme rationaler Funktionen, 1915.
+* \biblabel{bezanson17}{Bezanson et al. (2017)} **Bezanson**, **Edelman**, **Karpinski** and **Shah**, [Julia: a fresh approach to numerical computing](https://julialang.org/publications/julia-fresh-approach-BEKS.pdf), SIAM review 2017.
+```
+
+The `name` argument therefore corresponds to how the bibliography reference will appear in the text.
+In the case above, the text will lead to
+
+```
+... refer to (Noether (1915), Bezanson et al. (2017)) while ...
+```
+
+You can use
+
+* `\cite{short1, short2}` or `\citet{short3}`: will not add parentheses around the link(s),
+* `\citep{short4, short5}`: will add parentheses around the link(s).
+
+!!! note
+
+    In the future, there may be a possibility to define specific bibliography styles.
+    I've not yet come around to it but feel free to open an issue if you would like this or would like to suggest a way to do it.
+
+## Insertions
+
+Sometimes, when presenting code in a post, you would like to make sure the code works and it can be annoying to have to copy-paste it around then copy its output, especially if you decide to make modifications on the way in which case you have to repeat the process.
+For this reason, insertions can be convenient. The philosophy is:
+
+* keep your code snippets in `assets/scripts` where they can be run and their output can be saved, this can be compared to a `test/` folder in a Julia package,
+* run some or all of the snippets,
+* use `\input{...}{...}` in your markdown (see below) and when the website is updated, it will plug-in the most recent parts that have been generated.
+
+That way, if you modify the code, everything will be updated on the website too while ensuring that the code actually runs and generates the output you're displaying.
+
+!!! note
+
+    JuDoc is not meant to be a competitor to [Weave.jl](https://github.com/mpastell/Weave.jl) and
+    consequently does not run your code. This ensures that application of page modifications is not
+    massively slowed down by the execution of some code that appears in it (and would potentially
+    be executed every time you modify the page).
+    It is very much meant to be a two way process, one where you update/modify the code and one
+    where you compile the website which plugs in the relevant, updated, parts that have been produced.
+
+### Folder structure
+
+The folder structure for `assets/scripts` should resemble
+
+```
+.
+└──scripts
+    ├── generate_results.jl
+    ├── output
+    │   ├── script1.txt
+    │   └── script2.png
+    ├── script1.jl
+    └── script2.jl
+```
+
+Your scripts would be `script1.jl` and `script2.jl` these can contain `# hide` at the end of lines you do not want to show (`hide` is not case sensitive so `# HiDe` would be fine too).
+
+The `generate_results.jl` file should run the scripts and redirect outputs to the `assets/scripts/output` directory.
+We suggest you use something like this (if you generate an example website with [`newsite`](@ref), it's all in there) though you can of course modify it as you wish.
+
+```julia
+dir = @__DIR__
+
+"""
+    genplain(s)
+
+Small helper function to run some code and redirect the output (stdout) to a file.
+"""
+function genplain(s::String)
+    open(joinpath(dir, "output", "$(splitext(s)[1]).txt"), "w") do outf
+        redirect_stdout(outf) do
+            include(joinpath(dir, s))
+        end
+    end
+end
+
+# run `script1.jl` and redirect what it prints to `output/script1.txt`
+genplain("script1.jl")
+
+# run `script2.jl` which has a savefig(joinpath(@__DIR__, "output", "script2.png"))
+include("script2.jl")
+```
+
+The function `genplain("scriptname.jl")` just redirects the output of the script to `output/scriptname.txt`.
+So for instance if you have in `assets/scripts/script1.jl`
+
+```julia
+print("hello")
+```
+
+Then `genplain("script1.jl")` will generate `assets/scripts/output/script1.txt` with content
+
+```julia
+hello
+```
+
+!!! note
+
+    You could have scripts in any language here (`R`, `Python`, ...) as long as the folder structure is the same.
+
+### Code
+
+In order to insert the code of a script and have it highlighted you can use
+
+```judoc
+\input{julia}{script1.jl}
+```
+
+or `\input{code:julia}{script1.jl}`. This will insert the content of the file `assets/scripts/script1.jl` into a block that will be highlighted as julia code.
+
+### Plain-text output
+
+In order to insert the plain-text output of a script, you can use
+
+```judoc
+\input{output}{script1.jl}
+```
+
+or `\input{output:plain}{script1.jl}`. This will insert the content of the file `assets/scripts/script1.txt` into a non-highlighted code-block.
+
+### Plot output
+
+In order to insert a plot generated by a script, you can use
+
+```judoc
+\input{plot}{script1.jl}
+```
+
+or `\input{plot:id}{script1.jl}`. This will look for an image file with root name `assets/scripts/script1.ext` where `ext` is `gif, png, jp(e)g, svg`.
+If you use `plot:id` then it will look for an image file with root name `assets/scripts/script1id.ext`.
+
+The `plot:id` option is useful if you have a script that generates several plots for instance.
+
+### Slicing up
+
+The structure in the `generate_results.jl` effectively means that all your code is run as one big script.
+This also means that if you want to slice some of your code in several parts and show intermediate outputs (e.g. plots), well you can just do that by having a `script_1_p1.jl`, `script_1_p2.jl` etc. and then just use  `\input` multiple times.
+
+## Page variables
+
+Page variables are a way to interact with the HTML templating.
+In essence, you can define variables in the markdown which can then be called or used in the HTML building blocks that are in `src/_html_parts/`.
+
+!!! note
+
+    Page variables are still somewhat rudimentary and while the syntax for declaring a variable will likely not change, the way they are used will almost certainly be refined in the future (see also [Templating](@ref)).
+
+### Local page variables
+
+The syntax to define a page variable in markdown is to write on a new line:
+
+```judoc
+@def variable_name = ...
+```
+
+where whatever is after the `=` sign should be a valid Julia expression (Julia will try to parse it and will throw an error if it can't).
+Multiline definitions are not (yet) allowed but if you have a need for that, please open an issue.
+The idea is that these variables are likely to be rather simple: strings, bools, ints, dates, ...
+I don't yet see a usecase for more involved things.
+
+Once such a variable is defined you can use it with the templating syntax (see [Templating](@ref)).
+For instance in your `src/index.md` you could have
+
+```judoc
+@def contributors = "Chuck Norris"
+```
+
+and in your `src/_html_parts/head.html` you could have
+
+```html
+{{isdef contributors}}
+This page was written with the help of {{fill contributors}}
+{{end}}
+```
+
+since `contributors` is a _local page variable_ that is defined in `src/index.md`, the corresponding `index.html` will show "_This page was written with the help of Chuck Norris_"; however on any other page, this will not show (unless, again, you define `@def contributors = ...` there).
+See also [Templating](@ref) for how page variables can be used in the HTML.
+
+#### Default variables
+
+A few variables are already present and used in the basic templates (you can still modify their value though it has to match the type):
+
+| Name | Accepted types | Default value | Function |
+| :--- | :------------- | :------------ | :------- |
+| `title` | `Nothing`, `String` | `nothing` | title of the page (tab name)
+| `hasmath` | `Bool` | `true` | if `true` the KaTeX stylesheet and script will be added to the page
+| `hascode` | `Bool` | `false` | if `false` the highlight stylesheet and script will be added to the page
+| `date`    | `String`, `Date`, `Nothing` | `Date(1)` | a date variable
+
+Then there are some variables that are automatically assigned and that you should therefore not assign  yourself (but you can use them):
+
+| Name | Type | Value | Function |
+| :--- | :------------- | :------------ | :------- |
+| `jd_ctime` | `Date` | `stat(file).ctime` | page creation date
+| `jd_mtime` | `Date` | `stat(file).mtime` | last page modification date
+
+
+### Global page variables
+
+You can also define _global page variables_ by simply putting the definition in the `src/config.md` file.
+For instance you may want to have a single main author across all pages and would then write
+
+```judoc
+@def author = "Septimia Zenobia"
+```
+
+in the `src/config.md` file.
+
+You can overwrite global variables in any page by redefining it locally.
+For instance you could set `hasmath` globally to `false` and `hascode` globally to `true` and then modify it locally as appropriate.
+
+There are also a few pre-defined global variables:
+
+| Name | Accepted types | Default value | Function |
+| :--- | :------------- | :------------ | :------- |
+| `author` | `String`, `Nothing` | `THE AUTHOR` | author (e.g. may appear in footer)
+| `date_format` | `String` | `U dd, yyyy` | a valid date format specifier

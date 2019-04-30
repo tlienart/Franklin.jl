@@ -1,5 +1,5 @@
 """
-    LX_NAME_PAT
+LX_NAME_PAT
 
 Regex to find the name in a new command within a brace block. For example:
     \\newcommand{\\com}[2]{def}
@@ -9,7 +9,7 @@ const LX_NAME_PAT = r"^\s*(\\[a-zA-Z]+)\s*$"
 
 
 """
-    LX_NARG_PAT
+LX_NARG_PAT
 
 Regex to find the number of argument in a new command (if it is given). For example:
     \\newcommand{\\com}[2]{def}
@@ -20,7 +20,7 @@ const LX_NARG_PAT = r"\s*(\[\s*(\d)\s*\])?\s*"
 
 
 """
-    LX_TOKENS
+LX_TOKENS
 
 List of names of latex tokens. (See markdown tokens)
 """
@@ -28,7 +28,7 @@ const LX_TOKENS = [:LX_BRACE_OPEN, :LX_BRACE_CLOSE, :LX_COMMAND]
 
 
 """
-    LxDef
+$(TYPEDEF)
 
 Structure to keep track of the definition of a latex command declared via a
 `\newcommand{\name}[narg]{def}`.
@@ -44,13 +44,15 @@ mutable struct LxDef
     from::Int
     to  ::Int
 end
-LxDef(name, narg, def) = LxDef(name, narg, def, 0, 0)
+LxDef(name::String, narg::Int, def::SubString) = LxDef(name, narg, def, 0, 0)
+
 from(lxd::LxDef) = lxd.from
-to(lxd::LxDef) = lxd.to
+to(lxd::LxDef)   = lxd.to
 
 
 """
     pastdef(λ, a)
+    pastdef(vλ)
 
 Convenience function to mark a definition as having been defined in the context i.e.: earlier than
 any other definition appearing in the current page.
@@ -70,7 +72,7 @@ end
 
 
 """
-    LxCom <: AbstractBlock
+$(TYPEDEF)
 
 A `LxCom` has a similar content as a `Block`, with the addition of the definition and a vector of
 brace blocks.
@@ -86,7 +88,7 @@ to(lxc::LxCom) = to(lxc.ss)
 
 
 """
-    getdef(lxc)
+$(SIGNATURES)
 
 For a given `LxCom`, retrieve the definition attached to the corresponding `LxDef` via the
 reference.
@@ -95,7 +97,7 @@ getdef(lxc::LxCom) = getindex(lxc.lxdef).def
 
 
 """
-    LxContext
+$(TYPEDEF)
 
 Convenience structure to keep track of the latex commands and braces.
 """

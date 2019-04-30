@@ -11,8 +11,8 @@
        * \biblabel{bardenet17}{Bardenet et al., 2017} **Bardenet**, **Doucet** and **Holmes**: *On Markov Chain Monte Carlo Methods for Tall Data*, 2017.
     """ * J.EOS;
 
-    J.def_GLOB_VARS()
-    J.def_GLOB_LXDEFS()
+    J.def_GLOB_VARS!()
+    J.def_GLOB_LXDEFS!()
 
     m, _ = J.convert_md(st, collect(values(J.JD_GLOB_LXDEFS)))
 
@@ -28,9 +28,9 @@
     @test J.JD_LOC_BIBREFDICT[h2] == "Amari and Douglas., 1998"
     @test J.JD_LOC_BIBREFDICT[h3] == "Bardenet et al., 2017"
 
-    h = J.convert_html(m, Dict{String,Pair{Any,Tuple}}())
+    h = J.convert_html(m, J.JD_VAR_TYPE())
 
-    @test occursin("<a id=\"$h1\"></a>\$\$ x = x \$\$", h)
+    @test occursin("<a id=\"$h1\"></a>\\[ x = x \\]", h)
     @test occursin("<li><p><a id=\"$h2\"></a> <strong>Amari</strong> and <strong>Douglas</strong>: <em>Why Natural Gradient</em>, 1998.</p>\n</li>", h)
     @test occursin("<li><p><a id=\"$h3\"></a> <strong>Bardenet</strong>, <strong>Doucet</strong> and <strong>Holmes</strong>: <em>On Markov Chain Monte Carlo Methods for Tall Data</em>, 2017.</p>\n</li>", h)
 
@@ -90,5 +90,5 @@ end
     write(plain1, "2")
 
     r = J.resolve_input_plainoutput("script1.jl")
-    @test r == "<pre id=\"judoc-out-plain\"><code>2</code></pre>"
+    @test r == "<pre><code>2</code></pre>"
 end

@@ -1,5 +1,5 @@
 """
-    JD_HTML_FUNS
+JD_HTML_FUNS
 
 Dictionary for special html functions. They can take two variables, the first one `π` refers to the
 arguments passed to the function, the second one `ν` refers to the page variables (i.e. the
@@ -13,14 +13,14 @@ const JD_HTML_FUNS = Dict{String, Function}(
 
 
 """
-    convert_hblock(β, allvars, fpath)
+$(SIGNATURES)
 
 Helper function to process an individual block when it's a `HFun` such as `{{ fill author }}`.
 Dev Note: `fpath` is (currently) unused but is passed to all `convert_hblock` functions.
 See [`convert_html`](@ref).
 """
-function convert_hblock(β::HFun, allvars::Dict, ::AbstractString="")
-
+function convert_hblock(β::HFun, allvars::JD_VAR_TYPE, ::AbstractString="")::String
+    # normalise function name and apply the function
     fn = lowercase(β.fname)
     haskey(JD_HTML_FUNS, fn) && return JD_HTML_FUNS[fn](β.params, allvars)
 
@@ -31,15 +31,15 @@ end
 
 
 """
-    hfun_fill(params, allvars)
+$(SIGNATURES)
 
 H-Function of the form `{{ fill vname }}` to plug in the content of a jd-var `vname` (assuming it
 can be represented as a string).
 """
-function hfun_fill(params::Vector{String}, allvars::Dict)
-
+function hfun_fill(params::Vector{String}, allvars::JD_VAR_TYPE)::String
+    # check params
     length(params) == 1 || error("I found a {{fill ...}} with more than one parameter. Verify.")
-
+    # fill
     replacement = ""
     vname = params[1]
     if haskey(allvars, vname)
@@ -49,23 +49,22 @@ function hfun_fill(params::Vector{String}, allvars::Dict)
     else
         @warn "I found a '{{fill $vname}}' but I do not know the variable '$vname'. Ignoring."
     end
-
     return replacement
 end
 
 
 """
-    hfun_insert(params)
+$(SIGNATURES)
 
 H-Function of the form `{{ insert fpath }}` to plug in the content of a file at `fpath`. Note that
 the base path is assumed to be `JD_PATHS[:in_html]` so paths have to be expressed relative to that.
 Note that (at the moment) the content is inserted "as is" without further processing which means
 that any `{{...}}` block in the inserted content will be displayed "as is".
 """
-function hfun_insert(params::Vector{String})
-
+function hfun_insert(params::Vector{String})::String
+    # check params
     length(params) == 1 || error("I found an {{insert ...}} block with more than one parameter. Verify.")
-
+    # apply
     replacement = ""
     fpath = joinpath(JD_PATHS[:in_html], params[1])
     if isfile(fpath)
@@ -73,15 +72,18 @@ function hfun_insert(params::Vector{String})
     else
         @warn "I found an {{insert ...}} block and tried to insert '$fpath' but I couldn't find the file. Ignoring."
     end
-
     return replacement
 end
 
+"""
+$(SIGNATURES)
 
-function hfun_href(params::Vector{String})
-
+H-Function of the form `{{href ... }}`.
+"""
+function hfun_href(params::Vector{String})::String
+    # check params
     length(params) == 2 || error("I found an {{href ...}} block and expected 2 parameters but got $(length(params)). Verify.")
-
+    # apply
     replacement = "<b>??</b>"
     dname, hkey = params[1], params[2]
     if params[1] == "EQR"
@@ -93,22 +95,21 @@ function hfun_href(params::Vector{String})
     else
         @warn "Unknown dictionary name $dname in {{href ...}}. Ignoring"
     end
-
     return replacement
 end
 
 
 """
-    html_href(key, name)
+$(SIGNATURES)
 
 Convenience function to introduce a hyper reference.
 """
-html_ahref(key, name) = "<a href=\"#$key\">$name</a>"
+html_ahref(key::AbstractString, name::Union{Int,String})::String = "<a href=\"#$key\">$name</a>"
 
 
 """
-    html_div(cname, content)
+$(SIGNATURES)
 
 Convenience function to introduce a div block.
 """
-html_div(cname, content) = "<div class=\"$cname\">$content</div>\n"
+html_div(name::AbstractString, in::AbstractString)::String = "<div class=\"$name\">$in</div>\n"

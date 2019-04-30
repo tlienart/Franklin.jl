@@ -30,4 +30,6 @@ include("converter/html.jl")     # ✅ oct 12, 2018
 println("🍺")
 println("INTEGRATION")
 include("converter/integration.jl") # ✅  april 10, 2019
+println("PRE-RENDERING")
+include("converter/js_prerender.jl")
 println("🍻🍻🍻")

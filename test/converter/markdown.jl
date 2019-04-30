@@ -10,7 +10,7 @@
 
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
-    lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
+    lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
 
     @test length(braces) == 1
     @test J.content(braces[1]) == "blah"
@@ -46,7 +46,7 @@ end
 
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
-    lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
+    lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
     lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
 
     blocks2insert = J.merge_blocks(lxcoms, blocks)
@@ -62,11 +62,11 @@ end
         \eqa{\sin^2(x)+\cos^2(x) &=& 1}
         """ * J.EOS
 
-    J.def_JD_LOC_EQDICT()
+    J.def_JD_LOC_EQDICT!()
 
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
-    lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
+    lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
     lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
 
     blocks2insert = J.merge_blocks(lxcoms, blocks)
@@ -78,10 +78,10 @@ end
     lxcontext = J.LxContext(lxcoms, lxdefs, braces)
 
     @test J.convert_block(blocks2insert[1], lxcontext) == "<div class=\"d\">.</div>\n"
-    @test J.convert_block(blocks2insert[2], lxcontext) == "\$\$\\begin{array}{c} \\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\$\$"
+    @test J.convert_block(blocks2insert[2], lxcontext) == "\\[\\begin{array}{c} \\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\\]"
 
     hstring = J.convert_inter_html(inter_html, blocks2insert, lxcontext)
-    @test hstring == "<p>ab<div class=\"d\">.</div>\n \$\$\\begin{array}{c} \\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\$\$</p>\n"
+    @test hstring == "<p>ab<div class=\"d\">.</div>\n \\[\\begin{array}{c} \\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\\]</p>\n"
 end
 
 
@@ -97,7 +97,7 @@ end
 
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
-    lxdefs, tokens, braces, blocks = J.find_lxdefs(tokens, blocks)
+    lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
     lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
 
     blocks2insert = J.merge_blocks(lxcoms, blocks)

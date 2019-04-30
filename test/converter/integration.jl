@@ -1,7 +1,7 @@
 # This set of tests directly uses the high-level `convert` functions
 # And checks the behaviour is as expected.
 
-J.def_GLOB_LXDEFS()
+J.def_GLOB_LXDEFS!()
 cmd = st -> J.convert_md(st, collect(values(J.JD_GLOB_LXDEFS)))
 chtml = t -> J.convert_html(t...)
 conv = st -> st |> cmd |> chtml
@@ -23,7 +23,7 @@ end
         Then something like
         \eqa{ \E{f(X)} \in \R &\text{if}& f:\R\maptso\R }
         """ * J.EOS
-    @test st |> conv == "<p>Then something like \$\$\\begin{array}{c}  \\mathbb E\\left[ f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R \\end{array}\$\$</p>\n"
+    @test st |> conv == "<p>Then something like \\[\\begin{array}{c}  \\mathbb E\\left[ f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R \\end{array}\\]</p>\n"
 end
 
 
@@ -56,7 +56,7 @@ end
         ```
         done
         """ * JuDoc.EOS
-    @test st |> conv == "<p>Some code <pre><code class=\"language-julia\">struct P\n    x::Real\nend</code></pre>\n done</p>\n"
+    @test st |> conv == "<p>Some code <pre><code class=julia>struct P\n    x::Real\nend\n</code></pre> done</p>\n"
 end
 
 @testset "∫ math-br" begin # see #73
@@ -66,7 +66,7 @@ end
             \min_{x\in \R^n} \quad f(x)+i_C(x).
         $$
         """ * J.EOS
-    @test st |> conv == "\$\$\n    \\min_{x\\in \\mathbb R^n} \\quad f(x)+i_C(x).\n\$\$"
+    @test st |> conv == "\\[\n    \\min_{x\\in \\mathbb R^n} \\quad f(x)+i_C(x).\n\\]"
 end
 
 @testset "∫ insert" begin # see also #65
