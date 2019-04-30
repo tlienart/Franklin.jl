@@ -57,3 +57,20 @@ end
     @test λ('c') == true
     @test λ('[') == false
 end
+
+
+@testset "timeittook" begin
+    start = time()
+    sleep(0.5)
+
+    d = mktempdir()
+    f = joinpath(d, "a.txt")
+    open(f, "w") do outf
+        redirect_stdout(outf) do
+            J.time_it_took(start)
+        end
+    end
+    r = read(f, String)
+    m = match(r"\[done\s*(.*?)ms\]", r)
+    @test parse(Float64, m.captures[1]) ≥ 500
+end
