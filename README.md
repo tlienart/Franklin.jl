@@ -9,6 +9,8 @@ The base syntax is plain markdown with a few extensions such as the ability to d
 
 See [the docs](https://tlienart.github.io/JuDoc.jl/stable) for more information.
 
+See [my website](https://tlienart.github.io) to see how things could look.
+
 ### Quick demo
 
 With Julia ≥ 1.0:
