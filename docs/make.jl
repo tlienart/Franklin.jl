@@ -21,7 +21,7 @@ makedocs(
         "Library" => [
             "Design"    => "lib/design.md",
             "Public"    => "lib/public.md",
-            #"Internals" => "lib/internals.md",
+            "Internals" => "lib/internals.md",
             ],
         ], # end page
 )
