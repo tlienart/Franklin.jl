@@ -14,8 +14,8 @@ Most of what is presented here is also shown in that example.
   * [Using raw HTML](#Using-raw-HTML-1)
   * [Comments](#Comments-1)
 * [LaTeX commands](#LaTeX-commands-1)
-  * [Whitespaces](#Whitespaces-1)
   * [Nesting](#Nesting-1)
+  * [Whitespaces](#Whitespaces-1)
   * [Local vs global](#Local-vs-global-1)
   * [Hyper-references](#Hyper-references-1)
 * [Insertions](#Insertions-1)
@@ -83,6 +83,9 @@ b &=& 7 \end{eqnarray}
 !!! note
 
     Currently all display-math equations are numbered by default.
+
+A final element to keep in mind is that you should surround inequality operators with whitespaces in order to avoid ambiguous commands in KaTeX.
+So in particular, both: `$0< C$` or `$0 < C$` are fine but `0 <C` isn't.
 
 ### Div blocks
 
@@ -197,22 +200,9 @@ $$x + \textcolor{blue}{y} + z$$
 in your maths.
 ```
 
-### Whitespaces
+!!! note
 
-In a JuDoc newcommand, to refer to an argument, you can use `#1` or `!#1`.
-There is a subtle difference: the first one introduces a space left of the argument (this allows to avoid ambiguous commands in general) and the second one does not.
-In general whitespaces are irrelevant and will not show up and so the usual `#1` is the recommended setting.
-However, there are cases where the whitespace does appear and you don't want it to (e.g. if the command is preceded by something).
-In those cases, and provided there is no ambiguity (e.g.: chaining of commands), you can use `!#1` which will *not* insert the whitespace.
-For instance:
-
-```judoc
-\newcommand{\pathwith}[1]{`/usr/local/bin/#1`}
-\newcommand{\pathwithout}[1]{`/usr/local/bin/!#1`}
-```
-
-* `\pathwith{hello}` will give `/usr/local/bin/ hello` which would be inappropriate whereas
-* `\pathwithout{hello}` will give `usr/local/hello`.
+    Command names should currently only contain letters. This could be relaxed, for instance to allow underscore and numbers (since JuDoc strictly enforces the use of braces around command arguments, it wouldn't be ambiguous). If you think that would be useful, please open an issue.
 
 ### Nesting
 
@@ -243,9 +233,40 @@ it will look like
 
 ![](../assets/ex-definition.png)
 
+Of course, you can also nest definitions:
+
+```judoc
+\newcommand{\norm}[2]{\left\|#1\right\|_{#2}}
+\newcommand{\anorm}[1]{\norm{#1}{1}}
+\newcommand{\bnorm}[1]{\norm{#1}{2}}
+
+Let $x\in\R^n$, there exists $0 < C_1 \le C_2$ such that
+
+$$ C_1 \anorm{x} \le \bnorm{x} \le C_2\anorm{x}. $$
+```
+
+where the final equation would look like ``C_1 \|x\|_1 \le \|x\|_2 \le C_2\|x\|_1``.
+
+### Whitespaces
+
+In a JuDoc newcommand, to refer to an argument, you can use `#1` or `!#1`.
+There is a subtle difference: the first one introduces a space left of the argument (this allows to avoid ambiguous commands in general) and the second one does not.
+In general whitespaces are irrelevant and will not show up and so the usual `#1` is the recommended setting.
+However, there are cases where the whitespace does appear and you don't want it to (e.g. outside a math environment if the command is directly preceded by something).
+In those cases, and provided there is no ambiguity (e.g.: due to chaining commands), you can use `!#1` which will *not* insert the whitespace.
+For instance:
+
+```judoc
+\newcommand{\pathwith}[1]{`/usr/local/bin/#1`}
+\newcommand{\pathwithout}[1]{`/usr/local/bin/!#1`}
+```
+
+* `\pathwith{hello}` will give `/usr/local/bin/ hello` which would be inappropriate whereas
+* `\pathwithout{hello}` will give `usr/local/hello`.
+
 ### Local vs global
 
-The commands you define will be available _only_ in the page you define them in.
+The commands you define will be available _only_ within the page you define them in.
 However, if you would like to define commands that are _globally_ available to all pages, then you should simply put these definitions in `src/config.md`.
 
 ### Hyper-references
