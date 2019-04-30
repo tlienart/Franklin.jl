@@ -223,7 +223,7 @@ $(SIGNATURES)
 Internal function to read a plot outputted by script `fname`, possibly named with `id`. See also
 [`resolve_input`](@ref).
 """
-function resolve_input_plotoutput(fname::AbstractString, id::String="")::String
+function resolve_input_plotoutput(fname::AbstractString, id::AbstractString="")::String
     fp = check_input_fname(fname)
     # find an img in output that has the same root name
     d, fn = splitdir(fname)
