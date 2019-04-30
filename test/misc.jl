@@ -12,11 +12,15 @@
 
     sst = SubString("blah✅💕and etcσ⭒ but ∃⫙∀ done", 1:27)
     @test J.to(sst) == 27
+
+    s = "aabccabcdefabcg"
+    for m ∈ eachmatch(r"abc", s)
+        @test s[J.matchrange(m)] == "abc"
+    end
 end
 
 
 @testset "ocblock" begin
-
     st = "This is a block <!--comment--> and done"
     τ = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     ocb = J.OCBlock(:COMMENT, (τ[1]=>τ[2]))
@@ -52,4 +56,21 @@ end
     @test b == false
     @test λ('c') == true
     @test λ('[') == false
+end
+
+
+@testset "timeittook" begin
+    start = time()
+    sleep(0.5)
+
+    d = mktempdir()
+    f = joinpath(d, "a.txt")
+    open(f, "w") do outf
+        redirect_stdout(outf) do
+            J.time_it_took(start)
+        end
+    end
+    r = read(f, String)
+    m = match(r"\[done\s*(.*?)ms\]", r)
+    @test parse(Float64, m.captures[1]) ≥ 500
 end

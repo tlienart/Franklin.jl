@@ -2,7 +2,8 @@
     st = raw"""
        Some string
        $$ x = x \label{eq 1}$$
-       then as per \citet{amari98b} also this \citep{bardenet17}.
+       then as per \citet{amari98b} also this \citep{bardenet17} and
+       \cite{amari98b, bardenet17}
        Reference to equation: \eqref{eq 1}.
 
        Then maybe some text etc.
@@ -37,6 +38,7 @@
     @test occursin("<span class=\"eqref\">(<a href=\"#$h1\">1</a>)</span>", h)
     @test occursin("<span class=\"bibref\"><a href=\"#$h2\">Amari and Douglas., 1998</a></span>", h)
     @test occursin("<span class=\"bibref\">(<a href=\"#$h3\">Bardenet et al., 2017</a>)</span>", h)
+    @test occursin("<span class=\"bibref\"><a href=\"#$h2\">Amari and Douglas., 1998</a>, <a href=\"#$h3\">Bardenet et al., 2017</a></span>", h)
 end
 
 
