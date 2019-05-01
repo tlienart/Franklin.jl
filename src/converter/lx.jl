@@ -57,7 +57,7 @@ JD_LOC_EQDICT_COUNTER
 Counter to keep track of equation numbers as they appear along the page, this helps with equation
 referencing.
 """
-const JD_LOC_EQDICT_COUNTER = randstring(JD_LEN_RANDSTRING+1)
+const JD_LOC_EQDICT_COUNTER = "COUNTER_" * randstring(JD_LEN_RANDSTRING)
 
 """
 $(SIGNATURES)
@@ -106,7 +106,6 @@ Given a latex command such as `\\eqref{abc}`, hash the reference (here `abc`), c
 dictionary `d` has an entry corresponding to that hash and return the appropriate HTML for it.
 """
 function form_href(lxc::LxCom, dname::String; parens="("=>")", class="href")::String
-
     ct = content(lxc.braces[1])   # "r1, r2, r3"
     refs = strip.(split(ct, ",")) # ["r1", "r2", "r3"]
     names = refstring.(refs)

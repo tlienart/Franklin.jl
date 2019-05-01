@@ -29,7 +29,7 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false)::U
     print("→ Full pass")
     withpre = ifelse(prerender, rpad(" (with pre-rendering)", 24), rpad(" (no pre-rendering)", 24))
     print(withpre)
-    succ = (serve(single=true, prerender=prerender) == 0)
+    succ = (serve(single=true, prerender=prerender, nomess=true) === nothing)
     time_it_took(start)
 
     #
