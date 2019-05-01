@@ -57,6 +57,8 @@ function scan_input_dir!(md_files::JD_FILES_DICT, html_files::JD_FILES_DICT,
     # top level files (src/*)
     for file ∈ readdir(JD_PATHS[:in])
         isfile(joinpath(JD_PATHS[:in], file)) || continue
+        # skip if it has to be ignored
+        file ∈ JD_IGNORE_FILES && continue
         fname, fext = splitext(file)
         fpair = (JD_PATHS[:in] => file)
         if file == "config.md"
