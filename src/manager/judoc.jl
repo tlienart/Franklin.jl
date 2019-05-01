@@ -10,16 +10,19 @@ Keyword arguments:
 * `port=8000`:       the port to use for the local server (should pick a number between 8000 and 9000)
 * `single=false`:    whether to run a single pass or run continuously
 * `prerender=false`: whether to pre-render javascript (KaTeX and highlight.js)
+* `nomess=false`:    suppresses all messages (internal use).
 """
 function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Bool=false,
-                 prerender::Bool=false)::Union{Nothing,Int}
+                 prerender::Bool=false, nomess::Bool=false)::Union{Nothing,Int}
     # set the global path
     JD_FOLDER_PATH[] = pwd()
     # construct the set of files to watch
     watched_files = jd_setup(clear=clear)
 
+    nomess && (verb = false)
+
     # do a first full pass
-    println("→ Initial full pass... ")
+    nomess || println("→ Initial full pass... ")
     start = time()
     sig = jd_fullpass(watched_files; clear=clear, verb=verb, prerender=prerender)
     sig < 0 && return sig
@@ -27,7 +30,7 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
 
     # start the continuous loop
     if !single
-        println("→ Starting the server...")
+        nomess || println("→ Starting the server...")
         coreloopfun = (cntr, fw) -> jd_loop(cntr, fw, watched_files; clear=clear, verb=verb)
         # start the liveserver in the current directory
         LiveServer.setverbose(verb)
@@ -91,9 +94,8 @@ function jd_fullpass(watched_files::NamedTuple; clear::Bool=false, verb::Bool=fa
      pg_foot = read(joinpath(JD_PATHS[:in_html], "page_foot.html"), String)
      foot    = read(joinpath(JD_PATHS[:in_html], "foot.html"), String)
 
-    # reset page variables and latex definitions
+    # reset global page variables and latex definitions
     def_GLOB_VARS!()
-    def_LOC_VARS!()
     def_GLOB_LXDEFS!()
 
     # process configuration file
@@ -104,27 +106,26 @@ function jd_fullpass(watched_files::NamedTuple; clear::Bool=false, verb::Bool=fa
     indexhtml = JD_PATHS[:in] => "index.html"
 
     # rest of the pages, done asynchronously
-    tasks = Vector{Task}()
+    s = 0
     @sync begin
         if isfile(joinpath(indexmd...))
-            push!(tasks, @async process_file(:md, indexmd, head, pg_foot, foot; clear=clear,
-                                             prerender=prerender))
+            s += process_file(:md, indexmd, head, pg_foot, foot; clear=clear,
+                              prerender=prerender)
         elseif isfile(joinpath(indexhtml...))
-            push!(tasks, @async process_file(:html, indexhtml, head, pg_foot, foot; clear=clear,
-                                             prerender=prerender))
+            s += process_file(:html, indexhtml, head, pg_foot, foot; clear=clear,
+                              prerender=prerender)
         else
             @warn "I didn't find an index.[md|html], there should be one. Ignoring."
         end
         # process rest of the files
         for (case, dict) ∈ pairs(watched_files), (fpair, t) ∈ dict
             occursin("index.", fpair.second) && continue
-            sleep(0.001)
-            push!(tasks, @async process_file(case, fpair, head, pg_foot, foot, t; clear=clear,
-                                             prerender=prerender))
+            s += process_file(case, fpair, head, pg_foot, foot, t; clear=clear,
+                              prerender=prerender)
         end
     end
     # return -1 if any task has failed
-    return -Int(any(t->t.result < 0, tasks))
+    return ifelse(s<0, -1, 0)
 end
 
 
