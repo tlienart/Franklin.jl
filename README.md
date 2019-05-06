@@ -37,6 +37,11 @@ julia> serve()
 
 You can now modify the files in `MyNewSite/src` and see the changes being live-rendered in your browser.
 
+## Associated repositories
+
+* [LiveServer.jl](https://github.com/asprionj/LiveServer.jl) a package coded with [Jonas Asprion](https://github.com/asprionj) to render and watch the content of a local folder in the browser.
+* [JuDocTemplates.jl](https://github.com/tlienart/JuDocTemplates.jl) the repositories where JuDoc themes/templates are developed.
+
 ## Licenses
 
 **Core**:
