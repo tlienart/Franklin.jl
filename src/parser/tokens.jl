@@ -49,7 +49,7 @@ $(SIGNATURES)
 Shorthand constructor to instantiate an `OCBlock` inferring the associated substring from the
 `ocpair` (since it's the substring in between the tokens).
 """
-OCBlock(η::Symbol, ω::Pair{Token,Token}) =
+OCBlock(η::Symbol, ω::Pair{Token,Token}, nestable::Bool=false) =
     OCBlock(η, ω, subs(str(ω.first), from(ω.first), to(ω.second)))
 
 

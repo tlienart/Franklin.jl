@@ -150,3 +150,8 @@ end
         """ * J.EOS
     st |> conv == "<div class=\"emptydiv\"><div class=\"emptycore\"></div>\n</div>\n"
 end
+
+@testset "HTML escape" begin # see #151
+    st = read(joinpath(D, "151.md"), String)
+    st |> conv == "<p>aaa \n<pre><code class=\"julia\">\n\"\"\"\n    A\n\nB\n\n# C\n```jldoctest\nD\n```\n\"\"\"\nfunction bar(x, y)\nE\nend\n</code></pre>\n bbb</p>\n"
+end
