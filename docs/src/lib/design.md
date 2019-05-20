@@ -64,7 +64,7 @@ julia> JuDoc.from(t[1])
 julia> ocb, _ = JuDoc.find_all_ocblocks(t, JuDoc.MD_OCB_ALL);
 julia> ocb
 1-element Array{JuDoc.OCBlock,1}:
- JuDoc.OCBlock(:MATH_A, JuDoc.Token(:MATH_A, "\$") => JuDoc.Token(:MATH_A, "\$"), "\$x=5\$")
+ JuDoc.OCBlock(:MATH_A, JuDoc.Token(:MATH_A, "\$") => JuDoc.Token(:MATH_A, "\$"), "\$x=5\$", false)
 
 julia> JuDoc.from(ocb[1])
 8
@@ -185,7 +185,7 @@ JuDoc.LxCom(
    "\\foo{hello}",
    Base.RefArray{...}(...),
    JuDoc.OCBlock[JuDoc.OCBlock(:LXB, JuDoc.Token(:LXB_OPEN, "{") => JuDoc.Token(:LXB_CLOSE, "}"),
-   "{hello}")])
+   "{hello}", true)])
 
 ```
 

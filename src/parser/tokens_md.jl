@@ -120,6 +120,14 @@ def are allowed.
 * ordering matters!
 =#
 
+"""
+MD_OCB_ESC
+
+Blocks that will be escaped (their content will not be further processed).
+Corresponds to the non-nestable elements of `MD_OCB`.
+"""
+const MD_OCB_ESC = [e.first for e ∈ MD_OCB if !e.second[2]]
+
 
 """
 MD_OCB_MATH
