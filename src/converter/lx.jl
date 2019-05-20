@@ -242,7 +242,7 @@ function resolve_input_plotoutput(fname::AbstractString, id::AbstractString=""):
         fp == "" || break
     end
     fp != "" || throw(ErrorException("I found an input command but not a relevant output plot."))
-    return "<img src=\"assets/scripts/output/$(joinpath(d, fp))\" id=\"judoc-out-plot\"/>"
+    return "<img src=\"/assets/scripts/output/$(joinpath(d, fp))\" id=\"judoc-out-plot\"/>"
 end
 
 """
