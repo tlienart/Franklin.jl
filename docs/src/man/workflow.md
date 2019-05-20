@@ -236,16 +236,17 @@ publish()
 ## Literate programming (and blogging) with Literate.jl
 
 You can use Fredrik Ekre's [Literate.jl](https://github.com/fredrikekre/Literate.jl) package to create Markdown pages suitable for including in your JuDoc workflow. Literate.jl lets you write everything in a Julia source file, including your code, comments, tests, generated plots, and so on. When you execute the Julia file, all your code runs, and you can arrange for Literate.jl to write output such as Markdown-formatted text (and/or Jupyter notebooks) to suitable files.
+Literate.jl's syntax relies on various different flavours of comment, some of which are shown in the simple example below.
 
-Literate.jl's syntax relies on various different flavors of comment, some of which are shown in the simple example below.
-
-All non-Julia code has to be commented, of course. Markdown markup language is applied immediately after the first `# `. You can see the `>` Markdown quote syntax and the `##` Markdown header level 2 syntax.
-
+All non-Julia code has to be commented.
+Markdown markup language is applied immediately after the first `# `.
+You can see the `>` Markdown quote syntax and the `##` Markdown header level 2 syntax.
 Lines preceded by `#jl` are not included in the Markdown output.
+Lines ending with `#src` are evaluated when you run the Julia file, but are not copied into the Markdown output file.
+Lines beginning with `#src` are Julia comments that don't make it as far as the Markdown file.
 
-Lines ending with `#src` are evaluated when you run the Julia file, but are not copied into the Markdown output file. Lines beginning with `#src` are Julia comments that don't make it as far as the Markdown file.
-
-You can see from the final five lines that, when you run this file in Julia, the final step is to run the `Literate.markdown` function, taking the name of the Julia source file (`functionoftheweek.jl`) as input, and writing a new Markdown file to the directory `src/pages/` as `fotw_floorceil.md`. Finally, if the JuDoc server is running, you'll find the generated HTML page as `/pub/fotw_floorceil.html`.
+You can see from the final five lines in the example that, when you run this file in Julia, the final step is to run the `Literate.markdown` function, taking the name of the Julia source file (`functionoftheweek.jl`) as input, and writing a new Markdown file to the directory `src/pages/` as `fotw_floorceil.md`.
+Finally, if the JuDoc server is running, you'll find the generated HTML page as `/pub/fotw_floorceil.html`.
 
 `````
 #jl This is a Julia source file!
@@ -296,7 +297,8 @@ Literate.markdown("functionoftheweek.jl",  #src
 
 `````
 
-When this Julia file is executed, the resulting Markdown output will look like the listing below. Notice that the two JuDoc `@def` lines have survived the journey from Julia to Markdown intact, and will now be actively available for the JuDoc generation process.
+When this Julia file is executed, the resulting Markdown output will look like the listing below.
+Notice that the two JuDoc `@def` lines have survived the journey from Julia to Markdown intact, and will now be actively available for the JuDoc generation process.
 
 `````
 @def title = "Function of the week: floorceil()"
