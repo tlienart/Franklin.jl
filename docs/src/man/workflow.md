@@ -12,6 +12,7 @@ In this workflow it is assumed that you will eventually host your website on Git
 * [Optimisation step](#Optimisation-step-1)
 * [(git) synchronisation](#(git)-synchronisation-1)
   * [Merge conflicts](#Merge-conflicts-1)
+* [0000000Literate programming (and blogging) with Literate.jl](#Literate-programming-(and-blogging)-with-Literate.jl-1)
 
 ## Local editing
 
@@ -231,3 +232,108 @@ serve()
 # ...
 publish()
 ```
+
+## Literate programming (and blogging) with Literate.jl
+
+You can use Fredrik Ekre's [Literate.jl](https://github.com/fredrikekre/Literate.jl) package to create Markdown pages suitable for including in your JuDoc workflow. Literate.jl lets you write everything in a Julia source file, including your code, comments, tests, generated plots, and so on. When you execute the Julia file, all your code runs, and you can arrange for Literate.jl to write output such as Markdown-formatted text (and/or Jupyter notebooks) to suitable files.
+
+Literate.jl's syntax relies on various different flavors of comment, some of which are shown in the simple example below.
+
+All non-Julia code has to be commented, of course. Markdown markup language is applied immediately after the first `# `. You can see the `>` Markdown quote syntax and the `##` Markdown header level 2 syntax.
+
+Lines preceded by `#jl` are not included in the Markdown output.
+
+Lines ending with `#src` are evaluated when you run the Julia file, but are not copied into the Markdown output file. Lines beginning with `#src` are Julia comments that don't make it as far as the Markdown file.
+
+You can see from the final five lines that, when you run this file in Julia, the final step is to run the `Literate.markdown` function, taking the name of the Julia source file (`functionoftheweek.jl`) as input, and writing a new Markdown file to the directory `src/pages/` as `fotw_floorceil.md`. Finally, if the JuDoc server is running, you'll find the generated HTML page as `/pub/fotw_floorceil.html`.
+
+`````
+#jl This is a Julia source file!
+
+# @def title = "Function of the week: floorceil()"
+# @def hascode = true
+
+# > To be, or not to be. That's what they reckon.
+
+# ## Function of the week: floorceil()
+
+# Welcome to another weekly post in which I present a cool Julia function that I've just discovered. This week it's the turn of `floorceil()`. It might sound like something that comes in a tin, but in fact it's a useful function in the Dates module that returns two Dates or DateTimes, one before, and one after, the specified time by a certain unit of time.
+
+# For example:
+
+using Dates
+
+Dates.now()
+
+#
+# 2019-05-09T11:29:23.913
+#
+#src # would be nice if the output from commands could be included!
+
+Dates.floorceil(now(), Dates.Month(1))
+
+#
+# (2019-05-01T00:00:00, 2019-06-01T00:00:00)
+#
+
+# and you can see that the result contains the beginning and the end of the month that includes the present time of day.
+
+a, b = (Dates.floorceil(now(), Dates.Month(1)));
+Dates.canonicalize(Dates.CompoundPeriod(b - a))
+
+#
+# 4 weeks, 3 days
+#
+
+# That's all for today. Until next time!
+
+#src Lines with this tag appear only in this Julia source file.
+using Literate                             #src
+Literate.markdown("functionoftheweek.jl",  #src
+    "src/pages/",                          #src
+    name="fotw_floorceil",                 #src
+    documenter=false)                      #src
+
+`````
+
+When this Julia file is executed, the resulting Markdown output will look like the listing below. Notice that the two JuDoc `@def` lines have survived the journey from Julia to Markdown intact, and will now be actively available for the JuDoc generation process.
+
+`````
+@def title = "Function of the week: floorceil()"
+@def hascode = true
+
+> To be, or not to be. That's what they reckon.
+
+## Function of the week: floorceil()
+
+Welcome to another weekly post in which I present a cool Julia function that I've just discovered. This week it's the turn of `floorceil()`. It might sound like something that comes in a tin, but in fact it's a useful function in the Dates module that returns two Dates or DateTimes, one before, and one after, the specified time by a certain unit of time.
+
+For example:
+
+```julia
+using Dates
+
+Dates.now()
+```
+
+2019-05-09T11:29:23.913
+
+```julia
+Dates.floorceil(now(), Dates.Month(1))
+```
+
+(2019-05-01T00:00:00, 2019-06-01T00:00:00)
+
+and you can see that the result contains the beginning and the end of the month that includes the present time of day.
+
+```julia
+a, b = (Dates.floorceil(now(), Dates.Month(1)));
+Dates.canonicalize(Dates.CompoundPeriod(b - a))
+```
+
+4 weeks, 3 days
+
+That's all for today. Until next time!
+
+*This page was generated using [Literate.jl](https://github.com/fredrikekre/Literate.jl).*
+`````
