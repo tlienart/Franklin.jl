@@ -12,7 +12,7 @@ In this workflow it is assumed that you will eventually host your website on Git
 * [Optimisation step](#Optimisation-step-1)
 * [(git) synchronisation](#(git)-synchronisation-1)
   * [Merge conflicts](#Merge-conflicts-1)
-* [0000000Literate programming (and blogging) with Literate.jl](#Literate-programming-(and-blogging)-with-Literate.jl-1)
+* [Literate programming (and blogging) with Literate.jl](#Literate-programming-(and-blogging)-with-Literate.jl-1)
 
 ## Local editing
 
