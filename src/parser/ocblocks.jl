@@ -83,33 +83,20 @@ function find_all_ocblocks(tokens::Vector{Token},
     # To fix this, we browse the escape blocks in backwards order and check if there is any other
     # block within it.
     i = length(ocbs_all)
-    ignore = Int[]
+    active = ones(Bool, i)
+    all_heads = from.(ocbs_all)
     while i > 1
         cur_ocb = ocbs_all[i]
-        if cur_ocb.name ∈ MD_OCB_ESC
-           cur_head, cur_tail = from(cur_ocb), to(cur_ocb)
-           # find the first block before the ith one which has its head after the current head
-           # this will often be nothing but if it itsn't, then it should be ignored
-           kf = findfirst(k -> cur_head < from(ocbs_all[k]) < cur_tail, 1:i-1)
-           if !isnothing(kf)
-               append!(ignore, kf:i-1)
-               i = kf - 1
-           else
-               i -= 1
-           end
-        else
-            i -= 1
+        if active[i] && cur_ocb.name ∈ MD_OCB_ESC
+            # find all blocks within the span of this block, deactivate all of them
+            cur_head = all_heads[i]
+            cur_tail = to(cur_ocb)
+            mask = filter(j -> active[j] && cur_head < all_heads[j] < cur_tail, 1:i-1)
+            active[mask] .= false
         end
+        i -= 1
     end
-    # for (i,ocbi) ∈ enumerate(ocbs_all)
-    #     @show i
-    #     @show ocbi
-    #     @show from(ocbi)
-    #     @show to(ocbi)
-    # end
-    # @show ignore
-    deleteat!(ocbs_all, ignore)
-
+    deleteat!(ocbs_all, map(!, active))
     return ocbs_all, tokens
 end
 
