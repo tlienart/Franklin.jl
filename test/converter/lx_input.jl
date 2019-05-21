@@ -19,5 +19,5 @@ J.JD_PATHS[:scripts] = joinpath(dirname(dirname(pathof(JuDoc))), "test", "_dummi
 
     @test occursin("Some string <pre><code class=\"language-julia\">$(read(joinpath(J.JD_PATHS[:scripts], "s1.jl"), String))</code></pre>", h)
     @test occursin("Then maybe <pre><code>$(read(joinpath(J.JD_PATHS[:scripts], "output", "s1.txt"), String))</code></pre>", h)
-    @test occursin("Finally img: <img src=\"assets/scripts/output/s1a.png\" id=\"judoc-out-plot\"/> done.", h)
+    @test occursin("Finally img: <img src=\"/assets/scripts/output/s1a.png\" id=\"judoc-out-plot\"/> done.", h)
 end

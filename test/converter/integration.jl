@@ -153,5 +153,5 @@ end
 
 @testset "HTML escape" begin # see #151
     st = read(joinpath(D, "151.md"), String)
-    st |> conv == "<p>aaa \n<pre><code class=\"julia\">\n\"\"\"\n    A\n\nB\n\n# C\n```jldoctest\nD\n```\n\"\"\"\nfunction bar(x, y)\nE\nend\n</code></pre>\n bbb</p>\n"
+    @test st |> conv == "<pre><code class=julia>add OhMyREPL#master\n</code></pre>\n<p>AAA</p>\n\n<pre><code class=\"julia\">\"\"\"\n    bar(x[, y])\n\nBBB\n\n# Examples\n```jldoctest\nD\n```\n\"\"\"\nfunction bar(x, y)\n    ...\nend\n</code></pre>\n\n<p>For complex functions with multiple arguments use a argument list, also if there are many keyword arguments use <code>&lt;keyword arguments&gt;</code>:</p>\n\n<pre><code class=\"julia\">\"\"\"\n    matdiag(diag, nr, nc; &ltkeyword arguments&gt)\n\nCreate Matrix with number `vdiag` on the super- or subdiagonals and `vndiag`\nin the rest.\n\n# Arguments\n- `diag::Number`: `Number` to write into created super- or subdiagonal\n\n# Examples\n```jldoctest\njulia> matdiag(true, 5, 5, sr=2, ec=3)\n```\n\"\"\"\nfunction\nmatdiag(diag::Number, nr::Integer, nc::Integer;)\n    ...\nend\n</code></pre>\n"
 end

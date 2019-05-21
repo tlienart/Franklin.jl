@@ -34,6 +34,8 @@ where the supported templates are currently:
 | `"pure-sm"`   | Pure "Side-Menu" ([example](https://purecss.io/layouts/side-menu/)) | small JS for the side menu  |
 | `"vela"`      | Grav "Vela" ([example](https://demo.matthiasdanzinger.eu/vela/)) | JQuery + some JS for the side menu |
 | `"tufte"`      | Tufte CSS ([example](https://edwardtufte.github.io/tufte-css/)) | extra font + stylesheet, no extra JS |
+| `"hyde"`      | Poole/Hyde ([example](http://hyde.getpoole.com)) | minimal cruft, no extra JS |
+| `"lanyon"`    | Poole/Lanyon ([example](http://lanyon.getpoole.com)) | minimal cruft, no extra JS |
 
 Once you have done that, you can serve your website once in the folder doing
 
