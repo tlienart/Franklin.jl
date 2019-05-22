@@ -50,20 +50,6 @@ blockquote p {
 }
 
 [href^="http"]:not([href*="github.com/tlienart/JuDoc.jl"]) {
-    color:green;
-}
-
-[href^="http"]:not([href*="github.com/tlienart/JuDoc.jl"])::after {
-  content: '(external link)';
-  display: inline-block;
-  width: .7em;
-  height: .7em;
-  text-indent: .7em;
-  white-space: nowrap;
-  overflow: hidden;
-  background-image: url(https://upload.wikimedia.org/wikipedia/commons/4/44/Icon_External_Link.svg);
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 100%;
-  margin-left: .1em;
+    color: #134293;
+    text-decoration: underline;
 }

@@ -1,6 +1,6 @@
 # Workflow
 
-In this workflow it is assumed that you will eventually host your website on GitHub or GitLab but it shouldn't be hard to adapt to your particular case.
+In this section it is assumed that you will eventually host your website on GitHub or GitLab but it shouldn't be hard to adapt to your particular case if you intend to self-host or use another service.
 
 **Contents**:
 
@@ -25,19 +25,11 @@ julia> newsite("Test"; template="pure-sm")
 → Use `serve()` from `JuDoc` to see the website in your browser.
 ```
 
-where the supported templates are currently:
+```@raw html
+Click <a href="https://tlienart.github.io/JuDocTemplates.jl/" target="_blank" rel="noopener noreferrer">here</a> for a demo of the supported templates (opens in a new tab).
+```
 
-| Name          | Adapted from  | Comment  |
-| :------------- | :-------------| :-----    |
-| `"basic"`     | N/A ([example](https://tlienart.github.io/)) | minimal cruft, no extra JS |
-| `"hypertext"` | Grav "Hypertext" ([example](http://hypertext.artofthesmart.com/)) | minimal cruft, no extra JS |
-| `"pure-sm"`   | Pure "Side-Menu" ([example](https://purecss.io/layouts/side-menu/)) | small JS for the side menu  |
-| `"vela"`      | Grav "Vela" ([example](https://demo.matthiasdanzinger.eu/vela/)) | JQuery + some JS for the side menu |
-| `"tufte"`      | Tufte CSS ([example](https://edwardtufte.github.io/tufte-css/)) | extra font + stylesheet, no extra JS |
-| `"hyde"`      | Poole/Hyde ([example](http://hyde.getpoole.com)) | minimal cruft, no extra JS |
-| `"lanyon"`    | Poole/Lanyon ([example](http://lanyon.getpoole.com)) | minimal cruft, no extra JS |
-
-Once you have done that, you can serve your website once in the folder doing
+Once you have created a new site with the template of your choice and are in the corresponding folder (`newsite` will `cd` to the new folder) you can serve your website with
 
 ```julia-repl
 julia> serve()
@@ -105,7 +97,7 @@ See also the [Syntax](@ref).
 The files in `_html_parts/` are the building blocks that will go around the (processed) content contained in the `*.md` pages.
 So the `head.html` will be inserted before, the `foot.html` after etc.
 Adjusting these will help you make sure the site has the exact layout you want.
-The layout can also depend on the page you're on if it uses `{{ispage path/to/page}} ... {{end}}`  (see [`Templating`](@ref)).
+The layout can also depend on the page you're on if it uses `{{ispage path/to/page}} ... {{end}}`  (see [Templating](@ref)).
 
 **CSS**
 

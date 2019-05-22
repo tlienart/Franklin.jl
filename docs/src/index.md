@@ -1,9 +1,14 @@
 # JuDoc.jl - Documentation
 
 JuDoc is a simple **static site generator** (SSG) oriented towards technical blogging (code, maths, ...) and light, fast-loading pages.
-The base syntax is plain markdown with a few extensions such as the ability to define and use LaTeX-like commands in or outside of maths environments (see [Syntax](@ref)).
+The base syntax is plain markdown with a few extensions such as the ability to define and use LaTeX-like commands in or outside of maths environments (see the [Syntax](@ref) section).
 
 For a short list of features see [here](#About-1).
+
+```@raw html
+For a demo of available templates, see <a href="https://tlienart.github.io/JuDocTemplates.jl/" target="_blank" rel="noopener noreferrer">here</a> (opens in a new tab).
+```
+
 
 !!! note
 
@@ -20,10 +25,10 @@ pkg> add JuDoc
 ### External dependencies
 
 JuDoc allows a post-processing step which pre-renders highlighted code blocks and math environments and minifies generated HTML and CSS.
-This step requires a few external dependencies; they are _not required_ to run JuDoc:
+This step requires a few external dependencies:
 
-* [`node.js`](https://nodejs.org/en/) for the pre-rendering step,
-* [`python3`](https://www.python.org/downloads/) for the minification step,
+* [`node.js`](https://nodejs.org/en/) for the pre-rendering of KaTeX and code highlighting,
+* [`python3`](https://www.python.org/downloads/) for the minification of the site,
 * [`git`](https://git-scm.com/downloads) for automating pushing and pulling to a remote repository.
 
 Assuming you have those, you will then need to install `highlight.js` via `npm`:
@@ -32,13 +37,23 @@ Assuming you have those, you will then need to install `highlight.js` via `npm`:
 [sudo] npm install -g highlight.js
 ```
 
-and the python package [`css_html_js_minify`](https://github.com/juancarlospaco/css-html-js-minify) which you can install with `pip3`:
+and the python package [`css_html_js_minify`](https://github.com/juancarlospaco/css-html-js-minify) which you can install with `pip3` (if you have python3, JuDoc will try to do this for you):
 
 ```bash
 pip3 install css_html_js_minify
 ```
 
-## Quick-start
+If you have installed these dependencies after installing JuDoc, you will need to re-build the package with
+
+```julia-repl
+pkg> build JuDoc
+```
+
+!!! note
+
+    These external dependencies are **not required** to run JuDoc, they are just recommended to benefit from some of the post-processing machinery such as [`optimize`](@ref) or [`publish`](@ref).
+
+## Quick start
 
 Change directory to an appropriate sandbox location on your computer, start Julia and:
 
@@ -77,7 +92,7 @@ You can see what the corresponding website looks like by opening a browser at th
 The key folder in which you should work is `src/`.
 For instance, a good way to become familiar with JuDoc's extended markdown syntax is to head to `src/index.md` and modify its content while keeping an eye in a browser on `http://localhost:8000/index.html`.
 
-Once you've had a feel for the basic syntax, head over to the [Workflow](@ref) section of the manual for more information on the folder structure etc.
+Once you've had a feel for the basic syntax, head over to the [Workflow](@ref) section of the manual for more information on available templates, the folder structure etc.
 
 ## About
 
@@ -87,7 +102,7 @@ This is a partial list of JuDoc's features that you may find interesting/useful;
 
 * LaTeX-like definition of commands (via `\newcommand{..}[.]{..}`)
 * inclusion of user-defined div-blocks via `@@divname ... @@` and raw-html via `~~~ ... ~~~`
-* maths rendered via [KaTeX](https://katex.org/), code via [highlight.js](highlightjs.org) both can be pre-rendered (see further below)
+* maths rendered via [KaTeX](https://katex.org/), code via [highlight.js](https://highlightjs.org) both can be pre-rendered (see further below)
 * hyper-references for equations and citations
 * simple html templating
 * fast rendering (~5ms per page on warm session)
@@ -100,7 +115,7 @@ This is a partial list of JuDoc's features that you may find interesting/useful;
 
 ### Why?
 
-There is a multitude of [static site generators](https://www.staticgen.com/) out there so why bother with yet another one, and is this one worth your time?
+There is a multitude of [static site generators](https://www.staticgen.com/) out there so why bother with yet another one? and is this one worth your time?
 
 I didn't start working on JuDoc hoping to "beat" mature and sophisticated generators like Hugo etc.
 Rather, a few years back I was using Jacob Mattingley's [Jemdoc](http://jemdoc.jaboc.net/using.html) package in Python with Wonseok Shin's [neat extension](https://github.com/wsshin/jemdoc_mathjax) for MathJax support and decided I wanted to build something similar in Julia (whence the name) and improve on the few things I didn't like.

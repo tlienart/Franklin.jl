@@ -3,7 +3,7 @@
 This page is about the modified markdown syntax that is used in JuDoc.
 For the HTML templating syntax, see [Templating](@ref).
 
-A good way to become familiar with the JuDoc syntax is to generate a test-website and modify its `index.md` as explained in the [Quickstart](@ref) tutorial.
+A good way to become familiar with the JuDoc syntax is to generate a test-website and modify its `index.md` as explained in the [Quick start](@ref) tutorial.
 Most of what is presented here is also shown in that example.
 
 **Contents**:

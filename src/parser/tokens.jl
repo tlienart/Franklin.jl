@@ -21,7 +21,7 @@ A token `τ::Token` denotes a part of the source string indicating a region that
 processing. It is identified by a symbol `τ.name` (e.g.: `:MATH_ALIGN_OPEN`). Tokens are typically
 used in this code to identify delimiters of environments. For instance, `abc \$ ... \$ def`
 contains two tokens `:MATH_A` associated with the `\$` sign. Together they delimit here an inline
-math expression. See also [`LxBlock`](@ref).
+math expression.
 """
 struct Token <: AbstractBlock
     name::Symbol

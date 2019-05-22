@@ -44,9 +44,11 @@ JuDoc.HTML_OCB
 ```
 
 ```@docs
+JuDoc.isexactly
 JuDoc.find_tokens
 JuDoc.find_all_ocblocks
 JuDoc.find_md_lxdefs
+JuDoc.find_md_lxcoms
 JuDoc.qualify_html_hblocks
 JuDoc.find_html_cblocks
 JuDoc.JuDoc.find_html_cdblocks

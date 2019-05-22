@@ -27,5 +27,5 @@ makedocs(
 )
 
 deploydocs(
-    repo = "github.com/tlienart/JuDoc.jl.git"
+    repo = "github.com/tlienart/JuDoc.jl.git",
 )
