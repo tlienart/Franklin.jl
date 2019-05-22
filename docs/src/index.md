@@ -98,20 +98,20 @@ Once you've had a feel for the basic syntax, head over to the [Workflow](@ref) s
 
 ### Features
 
-This is a partial list of JuDoc's features that you may find interesting/useful; head to the manual part of the docs for more details.
+This is a partial list of JuDoc's features that you may find interesting/useful; head to the Manual part of the docs for more details.
 
-* LaTeX-like definition of commands (via `\newcommand{..}[.]{..}`)
-* inclusion of user-defined div-blocks via `@@divname ... @@` and raw-html via `~~~ ... ~~~`
-* maths rendered via [KaTeX](https://katex.org/), code via [highlight.js](https://highlightjs.org) both can be pre-rendered (see further below)
-* hyper-references for equations and citations
-* simple html templating
+* ([docs](man/syntax/#LaTeX-commands-1)) LaTeX-like definition of commands (via `\newcommand{..}[.]{..}`)
+* ([docs](man/syntax/#Div-blocks-1)) inclusion of user-defined div-blocks via `@@divname ... @@` and raw-html via `~~~ ... ~~~`
+* ([docs](man/syntax/#Maths-1)) maths rendered via [KaTeX](https://katex.org/), code via [highlight.js](https://highlightjs.org) both can be pre-rendered (see further below)
+* ([docs](man/syntax/#Hyper-references-1)) hyper-references for equations and citations
+* ([docs](man/templating/)) simple html templating
 * fast rendering (~5ms per page on warm session)
 * live preview (via [LiveServer.jl](https://github.com/asprionj/LiveServer.jl))
-* optimisation step to speed up wepage rendering:
+* ([docs](man/workflow/#Optimisation-step-1)) optimisation step to speed up wepage rendering:
   * pre-rendered KaTeX (requires `node`)
   * pre-rendered code highlighting (requires `node` and `highlight.js`)
   * minified output (via [`css-html-js-minify`](https://github.com/juancarlospaco/css-html-js-minify), requires `python3`)
-* all-in-one "publish" step to compile, optimise and push your website
+* ([docs](man/workflow/#(git)-synchronisation-1)) all-in-one "publish" step to compile, optimise and push your website
 
 ### Why?
 
@@ -153,4 +153,4 @@ If you think JuDoc could help you but you're not sure or you seem to be blocked 
 * Node's is essentially [MIT licensed](https://github.com/nodejs/node/blob/master/LICENSE),
 * css-html-js-minify is [LGPL licensed](https://github.com/juancarlospaco/css-html-js-minify/blob/master/LICENCE.lgpl.txt),
 * highlight.js is [BSD licensed](https://github.com/highlightjs/highlight.js/blob/master/LICENSE),
-* git is GPL licensed.
+* git is [GPL licensed](https://git-scm.com/about/free-and-open-source).
