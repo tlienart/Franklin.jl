@@ -55,7 +55,7 @@ Here the `fill` function simply tries to find a page variable `"title"` and plac
 <title>Title for page 1</title>
 ```
 
-See [Function blocks](#Function-blocks-1) for more such functions that can be used.
+See [function blocks](#Function-blocks-1) for additional such functions that can be used.
 
 !!! note
 
@@ -64,15 +64,17 @@ See [Function blocks](#Function-blocks-1) for more such functions that can be us
 ## Conditional blocks
 
 It will often be handy to do things in your layout conditional on specific variables.
+For instance you may want to highlight elements in your navbar depending on which page you're on.
+
 Three types of conditional blocks are allowed:
 
 * a "classical" conditional block with `if`, `elseif`, `else` that accepts page variables that have boolean value,
 * a conditional block that does something provided a variable exists (or not),
-* a conditional block that does something depending on whether the page is a specific one (or not a specific one).
+* a conditional block that does something depending on whether the page is a specific one (or not).
 
 !!! note
 
-    Nesting of conditional blocks is currently **not allowed**  but shouldn't be hard to implement and will likely be supported in the near future.
+    Nesting of conditional blocks is currently **not allowed**  but shouldn't be hard to implement and will likely be supported in the future.
 
 ### Base conditional blocks
 
@@ -149,7 +151,7 @@ which add a class to a `<li>` object depending on the page that indicate which l
 
 !!! note
 
-    As the def blocks above, these blocks do not yet accept `{{else}}` statements.
+    As for the def blocks above, these blocks do not yet accept `{{else}}` statements.
 
 ## Function blocks
 

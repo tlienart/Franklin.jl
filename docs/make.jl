@@ -16,7 +16,8 @@ makedocs(
              "Workflow" => "man/workflow.md",
              "Syntax" => "man/syntax.md",
              "Templating" => "man/templating.md",
-             "Contributing" => "man/contrib.md"
+             "Themes" => "man/themes.md"
+             "Contributing" => "man/contrib.md",
             ],
         "Library" => [
             "Design"    => "lib/design.md",

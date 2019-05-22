@@ -12,7 +12,7 @@ In this section it is assumed that you will eventually host your website on GitH
 * [Optimisation step](#Optimisation-step-1)
 * [(git) synchronisation](#(git)-synchronisation-1)
   * [Merge conflicts](#Merge-conflicts-1)
-* [Literate programming (and blogging) with Literate.jl](#Literate-programming-(and-blogging)-with-Literate.jl-1)
+* [Using Literate.jl](#Using-Literate.jl-1)
 
 ## Local editing
 
@@ -131,7 +131,7 @@ While this will be imperceptible if you only have a few light assets, it could s
 
 ## Libraries
 
-If you used the [`newsite`](@ref) function to get started, then you should have a `libs/` folder with
+Assuming you used the [`newsite`](@ref) function to get started, you have a `libs/` folder with
 
 ```
 .
@@ -139,16 +139,18 @@ If you used the [`newsite`](@ref) function to get started, then you should have 
 └── katex/
 ```
 
-If you require other libraries to run your website, this is where you should put them while not forgetting to load them in your `_html_parts`; for instance in `foot_highlight.html` you will find:
+If you require other libraries to run your website, this is where you should put them while not forgetting to load them in your `_html_parts`; for instance in the default `foot_highlight.html` you will find:
 
 ```html
 <script src="/libs/highlight/highlight.pack.js"></script>
 <script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
 ```
 
+which loads and applies `highlight.js`.
+
 ### Highlight
 
-If you used the [`newsite`](@ref) command then the `libs/highlight/` folder contains
+Assuming you used the [`newsite`](@ref) function to get started, you have the `libs/highlight/` folder with
 
 ```
 .
@@ -156,10 +158,10 @@ If you used the [`newsite`](@ref) command then the `libs/highlight/` folder cont
 └── highlight.pack.js
 ```
 
-Of course if you want to change either how things look or which languages are supported, you should head to [highlightjs.org](https://highlightjs.org/download/), select the languages you want in the **Custom package** section, download the bundle and copy over the relevant files to `libs/highlight/`.
+If you want to change either how things look or which languages are supported, you should head to [highlightjs.org](https://highlightjs.org/download/), select the languages you want in the **Custom package** section, download the bundle and copy over the relevant files to `libs/highlight/`.
 By default, `bash`, `html/xml`, `python`, `julia`, `julia-repl`, `css`, `r`, `markdown`, `ini/TOML`, `ruby` and `yaml` are supported.
 
-Just remember to refer to the appropriate style-sheet in your HTML building blocks for instance `src/_html_parts/head_highlight.html`:
+Just remember to refer to the appropriate style-sheet in your HTML building blocks for instance the default `src/_html_parts/head_highlight.html` contains:
 
 ```html
 <link rel="stylesheet" href="/libs/highlight/github.min.css">
@@ -190,7 +192,7 @@ That step can:
 
 Those steps (which you can opt out of using the appropriate keyword `prerender=false` or `minify=false`) may lead to faster loading pages.
 
-In order to run this optimisation step, you will need some [Dependencies](#Dependencies-1) but if you don't have them, JuDoc will tell you and ignore the corresponding step.
+In order to run this optimisation step, you will need some [dependencies](/#External-dependencies-1) but if you don't have them, JuDoc will tell you and ignore the corresponding step.
 Note also that doing a full pass of pre-rendering and minifying may take a few seconds depending on how many pages you have.
 
 ## (git) synchronisation
@@ -238,7 +240,9 @@ serve()
 publish()
 ```
 
-## Literate programming (and blogging) with Literate.jl
+## Using Literate.jl
+
+(_Thanks to [@cormullion](https://github.com/cormullion) for this section_)
 
 You can use Fredrik Ekre's [Literate.jl](https://github.com/fredrikekre/Literate.jl) package to create Markdown pages suitable for including in your JuDoc workflow. Literate.jl lets you write everything in a Julia source file, including your code, comments, tests, generated plots, and so on. When you execute the Julia file, all your code runs, and you can arrange for Literate.jl to write output such as Markdown-formatted text (and/or Jupyter notebooks) to suitable files.
 Literate.jl's syntax relies on various different flavours of comment, some of which are shown in the simple example below.
@@ -249,6 +253,7 @@ You can see the `>` Markdown quote syntax and the `##` Markdown header level 2 s
 Lines preceded by `#jl` are not included in the Markdown output.
 Lines ending with `#src` are evaluated when you run the Julia file, but are not copied into the Markdown output file.
 Lines beginning with `#src` are Julia comments that don't make it as far as the Markdown file.
+Refer to [Literate.jl's docs](https://fredrikekre.github.io/Literate.jl/stable/) for more information.
 
 You can see from the final five lines in the example that, when you run this file in Julia, the final step is to run the `Literate.markdown` function, taking the name of the Julia source file (`functionoftheweek.jl`) as input, and writing a new Markdown file to the directory `src/pages/` as `fotw_floorceil.md`.
 Finally, if the JuDoc server is running, you'll find the generated HTML page as `/pub/fotw_floorceil.html`.
@@ -263,7 +268,11 @@ Finally, if the JuDoc server is running, you'll find the generated HTML page as 
 
 # ## Function of the week: floorceil()
 
-# Welcome to another weekly post in which I present a cool Julia function that I've just discovered. This week it's the turn of `floorceil()`. It might sound like something that comes in a tin, but in fact it's a useful function in the Dates module that returns two Dates or DateTimes, one before, and one after, the specified time by a certain unit of time.
+# Welcome to another weekly post in which I present a cool Julia function that I've
+# just discovered. This week it's the turn of `floorceil()`. It might sound like
+# something that comes in a tin, but in fact it's a useful function in the Dates module
+# that returns two Dates or DateTimes, one before, and one after, the specified time by
+# a certain unit of time.
 
 # For example:
 
@@ -282,7 +291,8 @@ Dates.floorceil(now(), Dates.Month(1))
 # (2019-05-01T00:00:00, 2019-06-01T00:00:00)
 #
 
-# and you can see that the result contains the beginning and the end of the month that includes the present time of day.
+# and you can see that the result contains the beginning and the end of the month
+# that includes the present time of day.
 
 a, b = (Dates.floorceil(now(), Dates.Month(1)));
 Dates.canonicalize(Dates.CompoundPeriod(b - a))
@@ -313,7 +323,11 @@ Notice that the two JuDoc `@def` lines have survived the journey from Julia to M
 
 ## Function of the week: floorceil()
 
-Welcome to another weekly post in which I present a cool Julia function that I've just discovered. This week it's the turn of `floorceil()`. It might sound like something that comes in a tin, but in fact it's a useful function in the Dates module that returns two Dates or DateTimes, one before, and one after, the specified time by a certain unit of time.
+Welcome to another weekly post in which I present a cool Julia function that I've
+just discovered. This week it's the turn of `floorceil()`. It might sound like
+something that comes in a tin, but in fact it's a useful function in the Dates module
+that returns two Dates or DateTimes, one before, and one after, the specified time by
+a certain unit of time.
 
 For example:
 
@@ -331,7 +345,8 @@ Dates.floorceil(now(), Dates.Month(1))
 
 (2019-05-01T00:00:00, 2019-06-01T00:00:00)
 
-and you can see that the result contains the beginning and the end of the month that includes the present time of day.
+and you can see that the result contains the beginning and the end of the month
+that includes the present time of day.
 
 ```julia
 a, b = (Dates.floorceil(now(), Dates.Month(1)));
