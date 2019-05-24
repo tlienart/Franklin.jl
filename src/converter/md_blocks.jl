@@ -74,7 +74,7 @@ function convert_mathblock(β::OCBlock, lxdefs::Vector{LxDef})::String
 
         # check if there's a label, if there is, add that to the dictionary
         matched = match(r"\\label{(.*?)}", inner)
-        
+
         if !isnothing(matched)
             name   = refstring(strip(matched.captures[1]))
             write(htmls, "<a id=\"$name\"></a>")
@@ -95,8 +95,35 @@ $(SIGNATURES)
 Helper function for the code block case of `convert_block`.
 """
 function convert_code_block(ss::SubString)::String
-    m = match(r"```([a-z-]*)\s*\n?((?:.|\n)*)```", ss)
+    m = match(r"```([a-z-]*)(\:[a-zA-Z\\\/-_\.]+)?\s*\n?((?:.|\n)*)```", ss)
     lang = m.captures[1]
-    code = m.captures[2]
-    return "<pre><code class=$lang>$code</code></pre>"
+    path = m.captures[2]
+    code = m.captures[3]
+
+    if isnothing(path)
+        return "<pre><code class=$lang>$code</code></pre>"
+    end
+
+    path = path[2:end]
+
+    # TODO
+    # 1. write
+    # 2. execute and write output
+    # 3. input code as if it went through `\input{julia}{...}` (so that
+    # can use #HIDE)
+
+    return ""
 end
+
+a = """
+```julia blah blah```
+"""
+b = """
+```julia:/assets/scripts/s1.jl blah blah```
+"""
+
+ab = chop(a, head=0, tail=1)
+bb = chop(b, head=0, tail=1)
+
+convert_code_block(ab)
+convert_code_block(bb)
