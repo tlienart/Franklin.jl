@@ -103,14 +103,41 @@ function convert_code_block(ss::SubString)::String
     if isnothing(path)
         return "<pre><code class=$lang>$code</code></pre>"
     end
+    if lang!="julia"
+        @warn "Eval of non-julia code blocks is not supported at the moment"
+        return "<pre><code class=$lang>$code</code></pre>"
+    end
 
+    # Here we have a julia code block that was provided with a script path
+    # It will consequently be
+    #   1. written to script file
+    #   2. evaled
+    #   3. its output redirected to an output file
+    #   4. inserted after scrapping out lines (see resolve_input)
+
+    # path currently has an indicative `:` we don't care about
     path = path[2:end]
 
+    @assert length(path) > 1 "code block path doesn't look proper"
+
+    # step 1: write the code block to file (XXX assumption that the path is proper)
+    if path[1] == '/'
+        path = joinpath(JD_PATHS[:f], path[2:end])
+    elseif path[1:2] == './'
+        # TODO relative path
+        @error "(eval block relpath) not implemented yet"
+    else
+        # append assets
+        path = joinpath(JD_PATHS[:assets], path)
+    end
+    endswith(path, ".jl") || (path *= ".jl")
+    write(path, code)
+
+    # step 2: execute the code while redirecting the output to file (note that everything is
+    # ran in one big sequence of scripts so in particular if there are 3 code blocks on the
+    # same page then the second and third one can use whatever is defined or loaded in the first
+    # (it also has access to scope of other pages but it's really not recommended to use that)
     # TODO
-    # 1. write
-    # 2. execute and write output
-    # 3. input code as if it went through `\input{julia}{...}` (so that
-    # can use #HIDE)
 
     return ""
 end
