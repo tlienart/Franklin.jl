@@ -110,10 +110,9 @@ function convert_code_block(ss::SubString)::String
 
     # Here we have a julia code block that was provided with a script path
     # It will consequently be
-    #   1. written to script file
-    #   2. evaled
-    #   3. its output redirected to an output file
-    #   4. inserted after scrapping out lines (see resolve_input)
+    #   1. written to script file unless it's already there
+    #   2. evaled (unless a file was there and output file is present), redirect out
+    #   3. inserted after scrapping out lines (see resolve_input)
 
     # path currently has an indicative `:` we don't care about
     path = path[2:end]
@@ -123,7 +122,7 @@ function convert_code_block(ss::SubString)::String
     # step 1: write the code block to file (XXX assumption that the path is proper)
     if path[1] == '/'
         path = joinpath(JD_PATHS[:f], path[2:end])
-    elseif path[1:2] == './'
+    elseif path[1:2] == "./"
         # TODO relative path
         @error "(eval block relpath) not implemented yet"
     else
@@ -131,26 +130,27 @@ function convert_code_block(ss::SubString)::String
         path = joinpath(JD_PATHS[:assets], path)
     end
     endswith(path, ".jl") || (path *= ".jl")
-    write(path, code)
 
-    # step 2: execute the code while redirecting the output to file (note that everything is
-    # ran in one big sequence of scripts so in particular if there are 3 code blocks on the
-    # same page then the second and third one can use whatever is defined or loaded in the first
-    # (it also has access to scope of other pages but it's really not recommended to use that)
-    # TODO
+    out_path, fname = splitdir(path)
+    out_name = splitext(fname)[1] * ".out"
 
-    return ""
+    # > 1.b check whether the file already exists and if so compare content
+    do_eval = !isfile(path) || read(path, String) != code || !isfile(out_path)
+
+    if do_eval
+        write(path, code)
+        # step 2: execute the code while redirecting the output to file (note that
+        # everything is ran in one big sequence of scripts so in particular if there
+        # are 3 code blocks on the same page then the second and third one can use
+        # whatever is defined or loaded in the first (it also has access to scope of
+        # other pages but it's really not recommended to exploit that)
+        open(joinpath(out_path, out_name), "w") do outf
+            redirect_stdout(outf)  do
+                include(path)
+            end
+        end
+    end
+
+    # step 3, insertion of code stripping of "hide" lines.
+    return resolve_input_hlcode(path, "julia"; use_hl=false)
 end
-
-a = """
-```julia blah blah```
-"""
-b = """
-```julia:/assets/scripts/s1.jl blah blah```
-"""
-
-ab = chop(a, head=0, tail=1)
-bb = chop(b, head=0, tail=1)
-
-convert_code_block(ab)
-convert_code_block(bb)

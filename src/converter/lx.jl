@@ -155,7 +155,7 @@ Internal function to read the content of a script file and highlight it using `H
 See also [`resolve_input`](@ref).
 """
 function resolve_input_hlcode(fname::AbstractString, lang::AbstractString;
-                              use_hl::Bool=true)::String
+                              use_hl::Bool=false)::String
     fp = check_input_fname(fname)
     # Read the file while ignoring lines that are flagged with something like `# HIDE`
     comsym, lexer = HIGHLIGHT[lang]
