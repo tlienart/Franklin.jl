@@ -55,7 +55,6 @@ function set_paths!()::Dict{Symbol,String}
     JD_PATHS[:out_css]  = joinpath(JD_PATHS[:f],      "css")
     JD_PATHS[:libs]     = joinpath(JD_PATHS[:f],      "libs")
     JD_PATHS[:assets]   = joinpath(JD_PATHS[:f],      "assets")
-    JD_PATHS[:scripts]  = joinpath(JD_PATHS[:assets], "scripts")
 
     return JD_PATHS
 end

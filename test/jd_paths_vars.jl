@@ -14,7 +14,6 @@ J.def_GLOB_LXDEFS!()
     @test J.JD_PATHS[:libs]    == joinpath(td, "libs")
     @test J.JD_PATHS[:out]     == joinpath(td, "pub")
     @test J.JD_PATHS[:out_css] == joinpath(td, "css")
-    @test J.JD_PATHS[:scripts] == joinpath(td, "assets", "scripts")
 
     @test P == J.JD_PATHS
 
@@ -23,8 +22,7 @@ J.def_GLOB_LXDEFS!()
     mkdir(J.JD_PATHS[:libs])
     mkdir(J.JD_PATHS[:in_css])
     mkdir(J.JD_PATHS[:in_html])
-    mkpath(J.JD_PATHS[:scripts])
-    mkpath(joinpath(J.JD_PATHS[:scripts], "output"))
+    mkdir(J.JD_PATHS[:assets])
 end
 
 # copying _libs/katex in the J.JD_PATHS[:libs] so that it can be used in testing

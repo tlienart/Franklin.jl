@@ -11,13 +11,13 @@ import LiveServer
 
 using DocStringExtensions: SIGNATURES, TYPEDEF
 
+export serve, publish, cleanpull, newsite, optimize
+
 const BIG_INT = typemax(Int)
 const JD_LEN_RANDSTRING = 4 # make this longer if you think you'll collide...
 const JD_SERVE_FIRSTCALL = Ref(true)
 
 const JD_DEBUG = Ref(false)
-
-export serve, publish, cleanpull, newsite, optimize
 
 const HIGHLIGHT = Dict{String,Pair{String,Any}}(
     "fortran"    => "!" => Lexers.FortranLexer,

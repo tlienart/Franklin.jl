@@ -132,6 +132,7 @@ function convert_code_block(ss::SubString)::String
     endswith(path, ".jl") || (path *= ".jl")
 
     out_path, fname = splitdir(path)
+    out_path = mkpath(joinpath(out_path, "output"))
     out_name = splitext(fname)[1] * ".out"
 
     # > 1.b check whether the file already exists and if so compare content

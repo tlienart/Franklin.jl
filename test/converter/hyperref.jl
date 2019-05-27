@@ -66,31 +66,3 @@ end
 
     m == "<p>Then something like  \$\$\\begin{array}{c}  \\mathbb E\\left[ f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R\\end{array}\$\$ and then  <a id=\"$h1\"></a>\$\$\\begin{array}{c}  1+1 &=&2 \\end{array}\$\$ but further  <a id=\"$h2\"></a>\$\$\\begin{array}{c}  1 &=& 1 \\end{array}\$\$ and finally a  <span class=\"eqref)\">({{href EQR $h1}})</span> and maybe  <span class=\"eqref)\">({{href EQR $h2}})</span>.</p>\n"
 end
-
-
-@testset "Input" begin
-    #
-    # check_input_fname
-    #
-    script1 = joinpath(J.JD_PATHS[:scripts], "script1.jl")
-    write(script1, "1+1")
-    @test J.check_input_fname("script1.jl") == script1
-    @test_throws ArgumentError J.check_input_fname("script2.jl")
-
-    #
-    # resolve_input_hlcode
-    #
-    r = J.resolve_input_hlcode("script1.jl", "julia", use_hl=false)
-    r2 = J.resolve_input_othercode("script1.jl", "julia")
-    @test r == "<pre><code class=\"language-julia\">1+1\n</code></pre>"
-    @test r2 == "<pre><code class=\"language-julia\">1+1</code></pre>"
-
-    #
-    # resolve_input_plainoutput
-    #
-    plain1 = joinpath(J.JD_PATHS[:scripts], "output", "script1.zog")
-    write(plain1, "2")
-
-    r = J.resolve_input_plainoutput("script1.jl")
-    @test r == "<pre><code>2</code></pre>"
-end
