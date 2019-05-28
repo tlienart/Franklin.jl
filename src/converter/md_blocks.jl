@@ -101,11 +101,11 @@ function convert_code_block(ss::SubString)::String
     code = m.captures[3]
 
     if isnothing(path)
-        return "<pre><code class=$lang>$code</code></pre>"
+        return "<pre><code class=\"language-$lang\">$code</code></pre>"
     end
     if lang!="julia"
         @warn "Eval of non-julia code blocks is not supported at the moment"
-        return "<pre><code class=$lang>$code</code></pre>"
+        return "<pre><code class=\"language-$lang\">$code</code></pre>"
     end
 
     # Here we have a julia code block that was provided with a script path

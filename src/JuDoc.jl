@@ -27,6 +27,13 @@ const HIGHLIGHT = Dict{String,Pair{String,Any}}(
     "r"          => "#" => Lexers.RLexer,
     "toml"       => "#" => Lexers.TOMLLexer)
 
+const LANG_EXT = Dict{String,String}(
+    "julia"   => ".jl",
+    "python"  => ".py",
+    "r"       => ".r",
+    "fortran" => ".f90",
+    "matlab"  => ".m")
+
 const JUDOC_PATH = splitdir(pathof(JuDoc))[1] # .../JuDoc/src
 const TEMPL_PATH = joinpath(JUDOC_PATH, "templates")
 

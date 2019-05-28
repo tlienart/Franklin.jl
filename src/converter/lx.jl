@@ -144,10 +144,29 @@ as the file name; it also checks that the dir exists. It returns the full path t
 path of the directory containing the file, and the name of the file without extension.
 See also [`resolve_input`](@ref).
 """
-function check_input_frpath(frpath::AbstractString)::NTuple{3,String}
+function check_input_frpath(frpath::AbstractString, lang::AbstractString="")::NTuple{3,String}
+    if isempty(splitext(frpath)[2])
+        ext = get(LANG_EXT, lang) do
+            ".xx"
+        end
+        frpath *= ext
+    end
     fpath = normpath(joinpath(JD_PATHS[:assets], frpath))
-    isfile(fpath) || throw(ArgumentError("Couldn't find $fpath when trying to resolve \\input."))
     dir, fname = splitdir(fpath)
+    # see fill_extension, this is the case where nothing came up
+    if endswith(fname, ".xx")
+        # try to find a file with whatever extension otherwise throw an error
+        files = readdir(dir)
+        fn = splitext(fname)[1]
+        k = findfirst(e -> splitext(e)[1] == fn, files)
+        k === nothing && throw(ArgumentError("Couldn't find a relevant file when trying to " *
+                                             "resolve an \\input command. (given: $frpath)"))
+        fname = files[k]
+        fpath = joinpath(dir, fname)
+    elseif !isfile(fpath)
+        throw(ArgumentError("Couldn't find a relevant file when trying to resolve an \\input " *
+                            "command. (given: $frpath)"))
+    end
     return fpath, dir, splitext(fname)[1]
 end
 
