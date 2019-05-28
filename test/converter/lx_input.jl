@@ -15,8 +15,8 @@
     #
     r = J.resolve_input_hlcode("script1.jl", "julia", use_hl=false)
     r2 = J.resolve_input_othercode("script1.jl", "julia")
-    @test r == "<pre><code class=\"language-julia\">1+1\n</code></pre>"
-    @test r2 == "<pre><code class=\"language-julia\">1+1</code></pre>"
+    @test r == "<pre><code class=\"language-julia\">1+1</code></pre>"
+    @test r2 == r
 
     #
     # resolve_input_plainoutput
@@ -50,7 +50,7 @@ end
     m, _ = J.convert_md(st, collect(values(J.JD_GLOB_LXDEFS)))
     h = J.convert_html(m, J.JD_VAR_TYPE())
 
-    @test occursin("Some string <pre><code class=\"language-julia\">$(read(joinpath(J.JD_PATHS[:assets], "s1.jl"), String))</code></pre>", h)
+    @test occursin("<p>Some string <pre><code class=\"language-julia\">$(read(joinpath(J.JD_PATHS[:assets], "s1.jl"), String))</code></pre>", h)
     @test occursin("Then maybe <pre><code>$(read(joinpath(J.JD_PATHS[:assets], "output", "s1.out"), String))</code></pre>", h)
     @test occursin("Finally img: <img src=\"/assets/output/s1a.png\" id=\"judoc-out-plot\"/> done.", h)
 end

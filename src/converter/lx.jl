@@ -173,12 +173,14 @@ function resolve_input_hlcode(frpath::AbstractString, lang::AbstractString;
              write(io_in, "\n")
         end
     end
+    code = String(take!(io_in))
+    endswith(code, "\n") && (code = chop(code, tail=1))
     if use_hl
         io_out = IOBuffer()
-        highlight(io_out, MIME("text/html"), String(take!(io_in)), lexer)
+        highlight(io_out, MIME("text/html"), code, lexer)
         return String(take!(io_out))
     end
-    return "<pre><code class=\"language-$lang\">$(String(take!(io_in)))</code></pre>"
+    return "<pre><code class=\"language-$lang\">$code</code></pre>"
 end
 
 
@@ -221,6 +223,8 @@ function resolve_input_plotoutput(frpath::AbstractString, id::AbstractString="")
     # will throw an error if frpath doesn't exist
     _, dir, fname = check_input_frpath(frpath)
     plt_name = fname * id
+    # relative dir /assets/...
+    reldir = normpath(joinpath("/assets/", dirname(frpath)))
     # find a plt in output that has the same root name
     out_path = joinpath(dir, "output")
     isdir(out_path) || throw(ErrorException("I found an input plot but not output dir."))
@@ -229,7 +233,7 @@ function resolve_input_plotoutput(frpath::AbstractString, id::AbstractString="")
         for (f, e) ∈ splitext.(files)
             lc_e = lowercase(e)
             if f == plt_name && lc_e ∈ (".gif", ".jpg", ".jpeg", ".png", ".svg")
-                out_file = joinpath(out_path, plt_name * lc_e)
+                out_file = joinpath(reldir, "output", plt_name * lc_e)
                 break
             end
         end
@@ -238,7 +242,7 @@ function resolve_input_plotoutput(frpath::AbstractString, id::AbstractString="")
     # error if no file found
     out_file != "" || throw(ErrorException("I found an input plot but no relevant output plot."))
     # wrap it in img block
-    return "<img src=\"/assets/scripts/output/$(out_file)\" id=\"judoc-out-plot\"/>"
+    return "<img src=\"$(out_file)\" id=\"judoc-out-plot\"/>"
 end
 
 
