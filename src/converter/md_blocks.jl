@@ -122,10 +122,11 @@ function convert_code_block(ss::SubString)::String
     out_path, fname = splitdir(path)
     out_path = mkpath(joinpath(out_path, "output"))
     out_name = splitext(fname)[1] * ".out"
+    out_path = joinpath(out_path, out_name)
 
     # > 1.b check whether the file already exists and if so compare content
     do_eval = !isfile(path) || read(path, String) != code || !isfile(out_path)
-
+    
     if do_eval
         write(path, code)
         # step 2: execute the code while redirecting the output to file (note that
@@ -133,7 +134,7 @@ function convert_code_block(ss::SubString)::String
         # are 3 code blocks on the same page then the second and third one can use
         # whatever is defined or loaded in the first (it also has access to scope of
         # other pages but it's really not recommended to exploit that)
-        open(joinpath(out_path, out_name), "w") do outf
+        open(out_path, "w") do outf
             redirect_stdout(outf)  do
                 Main.include(path)
             end
