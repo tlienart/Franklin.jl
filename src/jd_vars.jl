@@ -50,8 +50,9 @@ is processed.
     JD_LOC_VARS["hasmath"]  = Pair(true,    (Bool,))
     JD_LOC_VARS["hascode"]  = Pair(false,   (Bool,))
     JD_LOC_VARS["date"]     = Pair(Date(1), (String, Date, Nothing))
-    JD_LOC_VARS["jd_ctime"] = Pair(Date(1), (Date,))
-    JD_LOC_VARS["jd_mtime"] = Pair(Date(1), (Date,))
+    JD_LOC_VARS["jd_ctime"] = Pair(Date(1), (Date,))   # time of creation
+    JD_LOC_VARS["jd_mtime"] = Pair(Date(1), (Date,))   # time of last modification
+    JD_LOC_VARS["jd_rpath"] = Pair("",      (String,)) # local path to file src/[...]/blah.md
     return nothing
 end
 

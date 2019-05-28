@@ -52,3 +52,62 @@ end
 
     @test occursin("code: <pre><code class=\"language-python\">a = 5\nprint(a**2)\n</code></pre> done.", h)
 end
+
+@testset "Eval (rel-input)" begin
+    st = raw"""
+        Simple code:
+        ```julia:/scripts/test2
+        a = 5
+        print(a^2)
+        ```
+        then:
+        \input{output}{/scripts/test2}
+        done.
+        """ * J.EOS
+
+    J.def_GLOB_VARS!()
+    J.def_GLOB_LXDEFS!()
+
+    m, _ = J.convert_md(st, collect(values(J.JD_GLOB_LXDEFS)))
+    h = J.convert_html(m, J.JD_VAR_TYPE())
+
+    spath = joinpath(J.JD_PATHS[:f], "scripts", "test2.jl")
+    @test isfile(spath)
+    @test read(spath, String) == "a = 5\nprint(a^2)\n"
+
+    opath = joinpath(J.JD_PATHS[:f], "scripts", "output", "test2.out")
+    @test isfile(opath)
+    @test read(opath, String) == "25"
+
+    @test occursin("code: <pre><code class=\"language-julia\">a = 5\nprint(a^2)</code></pre>", h)
+    @test occursin("then: <pre><code>25</code></pre> done.", h)
+
+    # ------------
+
+    J.JD_CURPATH[] = joinpath(J.JD_PATHS[:in], "pages", "pg1.md")[lastindex(J.JD_PATHS[:in])+2:end]
+
+    st = raw"""
+        Simple code:
+        ```julia:./code/test2
+        a = 5
+        print(a^2)
+        ```
+        then:
+        \input{output}{./code/test2}
+        done.
+        """ * J.EOS
+
+    m, _ = J.convert_md(st, collect(values(J.JD_GLOB_LXDEFS)))
+    h = J.convert_html(m, J.JD_VAR_TYPE())
+
+    spath = joinpath(J.JD_PATHS[:assets], "pages", "code", "test2.jl")
+    @test isfile(spath)
+    @test read(spath, String) == "a = 5\nprint(a^2)\n"
+
+    opath = joinpath(J.JD_PATHS[:assets], "pages", "code", "output" ,"test2.out")
+    @test isfile(opath)
+    @test read(opath, String) == "25"
+
+    @test occursin("code: <pre><code class=\"language-julia\">a = 5\nprint(a^2)</code></pre>", h)
+    @test occursin("then: <pre><code>25</code></pre> done.", h)
+end

@@ -4,11 +4,11 @@
     #
     script1 = joinpath(J.JD_PATHS[:assets], "script1.jl")
     write(script1, "1+1")
-    fp, d, fn = J.check_input_frpath("script1.jl")
+    fp, d, fn = J.check_input_rpath("script1.jl")
     @test fp == script1
     @test d == J.JD_PATHS[:assets]
     @test fn == "script1"
-    @test_throws ArgumentError J.check_input_frpath("script2.jl")
+    @test_throws ArgumentError J.check_input_rpath("script2.jl")
 
     #
     # resolve_input_hlcode

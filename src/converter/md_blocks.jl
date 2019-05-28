@@ -96,39 +96,27 @@ Helper function for the code block case of `convert_block`.
 """
 function convert_code_block(ss::SubString)::String
     m = match(r"```([a-z-]*)(\:[a-zA-Z\\\/-_\.]+)?\s*\n?((?:.|\n)*)```", ss)
-    lang = m.captures[1]
-    path = m.captures[2]
-    code = m.captures[3]
+    lang  = m.captures[1]
+    rpath = m.captures[2]
+    code  = m.captures[3]
 
-    if isnothing(path)
+    if isnothing(rpath)
         return "<pre><code class=\"language-$lang\">$code</code></pre>"
     end
     if lang!="julia"
         @warn "Eval of non-julia code blocks is not supported at the moment"
         return "<pre><code class=\"language-$lang\">$code</code></pre>"
     end
+    # path currently has an indicative `:` we don't care about
+    rpath = rpath[2:end]
 
     # Here we have a julia code block that was provided with a script path
     # It will consequently be
     #   1. written to script file unless it's already there
     #   2. evaled (unless a file was there and output file is present), redirect out
     #   3. inserted after scrapping out lines (see resolve_input)
+    path = resolve_assets_rpath(rpath)
 
-    # path currently has an indicative `:` we don't care about
-    path = path[2:end]
-
-    @assert length(path) > 1 "code block path doesn't look proper"
-
-    # step 1: write the code block to file (XXX assumption that the path is proper)
-    if path[1] == '/'
-        path = joinpath(JD_PATHS[:f], path[2:end])
-    elseif path[1:2] == "./"
-        # TODO relative path
-        @error "(eval block relpath) not implemented yet"
-    else
-        # append assets
-        path = joinpath(JD_PATHS[:assets], path)
-    end
     endswith(path, ".jl") || (path *= ".jl")
 
     out_path, fname = splitdir(path)
@@ -147,11 +135,11 @@ function convert_code_block(ss::SubString)::String
         # other pages but it's really not recommended to exploit that)
         open(joinpath(out_path, out_name), "w") do outf
             redirect_stdout(outf)  do
-                include(path)
+                Main.include(path)
             end
         end
     end
 
     # step 3, insertion of code stripping of "hide" lines.
-    return resolve_input_hlcode(path, "julia"; use_hl=false)
+    return resolve_input_hlcode(rpath, "julia"; use_hl=false)
 end
