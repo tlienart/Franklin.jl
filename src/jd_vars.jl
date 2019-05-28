@@ -82,6 +82,7 @@ the site. See [`resolve_lxcom`](@ref).
     JD_GLOB_LXDEFS["\\biblabel"] = LxDef("\\biblabel", 2, SubString(""))
     # inclusion
     JD_GLOB_LXDEFS["\\input"]    = LxDef("\\input",    2, SubString(""))
+    JD_GLOB_LXDEFS["\\output"]   = LxDef("\\output",   1, SubString(""))
     return nothing
 end
 

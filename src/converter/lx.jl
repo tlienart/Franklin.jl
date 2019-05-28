@@ -13,6 +13,7 @@ function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef}; inmath::Bool=false)::S
     # sort special commands where the input depends on context (see hyperrefs and inputs)
     haskey(JD_REF_COMS, name) && return JD_REF_COMS[name](lxc)
     (name == "\\input")       && return resolve_input(lxc)
+    (name == "\\output")      && return resolve_output(lxc)
 
     # retrieve the definition attached to the command
     lxdef = getdef(lxc)
@@ -324,4 +325,15 @@ function resolve_input(lxc::LxCom)::String
             return resolve_input_othercode(rpath, qualifier)
         end
     end
+end
+
+
+"""
+$SIGNATURES
+
+Internal function to resolve a `\\output{rpath}` (finds the output and shows it).
+"""
+function resolve_output(lxc::LxCom)::String
+    rpath = strip(content(lxc.braces[1])) # [assets]/subpath/script{.jl}
+    return resolve_input_plainoutput(rpath)
 end
