@@ -90,10 +90,18 @@ def_JD_LOC_BIBREFDICT!() = (empty!(JD_LOC_BIBREFDICT); nothing)
 """
 $(SIGNATURES)
 
+Given a `label` command, replace it with an html anchor.
+"""
+add_label(λ::LxCom)::String = "<a id=\"$(refstring(strip(content(λ.braces[1]))))\"></a>"
+
+
+"""
+$(SIGNATURES)
+
 Given a `biblabel` command, update `JD_LOC_BIBREFDICT` to keep track of the reference so that it
 can be linked with a hyperreference.
 """
-function form_biblabel(λ::LxCom)::String
+function add_biblabel(λ::LxCom)::String
     name = refstring(strip(content(λ.braces[1])))
     JD_LOC_BIBREFDICT[name] = content(λ.braces[2])
     return "<a id=\"$name\"></a>"
@@ -133,7 +141,8 @@ const JD_REF_COMS = Dict{String, Function}(
     "\\cite"     => (λ -> form_href(λ, "BIBR"; parens=""=>"", class="bibref")),
     "\\citet"    => (λ -> form_href(λ, "BIBR"; parens=""=>"", class="bibref")),
     "\\citep"    => (λ -> form_href(λ, "BIBR"; class="bibref")),
-    "\\biblabel" => form_biblabel,
+    "\\biblabel" => add_biblabel,
+    "\\label"    => add_label,
     )
 
 

@@ -79,6 +79,7 @@ the site. See [`resolve_lxcom`](@ref).
     JD_GLOB_LXDEFS["\\cite"]     = LxDef("\\cite",     1, SubString(""))
     JD_GLOB_LXDEFS["\\citet"]    = LxDef("\\citet",    1, SubString(""))
     JD_GLOB_LXDEFS["\\citep"]    = LxDef("\\citep",    1, SubString(""))
+    JD_GLOB_LXDEFS["\\label"]    = LxDef("\\label",    1, SubString(""))
     JD_GLOB_LXDEFS["\\biblabel"] = LxDef("\\biblabel", 2, SubString(""))
     # inclusion
     JD_GLOB_LXDEFS["\\input"]    = LxDef("\\input",    2, SubString(""))
