@@ -4,7 +4,6 @@ using JuDocTemplates
 
 using Markdown
 using Dates # see jd_vars
-using Random
 using Highlights
 
 import LiveServer
@@ -20,9 +19,6 @@ export serve, publish, cleanpull, newsite, optimize
 
 """Big number when we want things to be far."""
 const BIG_INT = typemax(Int)
-
-"""Length of random strings used to represent hyperrefs."""
-const JD_LEN_RANDSTRING = 4 # make this longer if you think you'll collide...
 
 """Flag for debug mode."""
 const JD_DEBUG = Ref(false)

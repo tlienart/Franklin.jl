@@ -16,6 +16,15 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
                  prerender::Bool=false, nomess::Bool=false)::Union{Nothing,Int}
     # set the global path
     JD_FOLDER_PATH[] = pwd()
+
+    # brief check to see if we're in a folder that looks promising, otherwise stop
+    # and tell the user to check (#155)
+    if !isdir(joinpath(JD_FOLDER_PATH[], "src"))
+        throw(ArgumentError("The current directory doesn't have a src/ folder. " *
+                            "Please change directory to a valid JuDoc folder."))
+    end
+
+
     # construct the set of files to watch
     watched_files = jd_setup(clear=clear)
 

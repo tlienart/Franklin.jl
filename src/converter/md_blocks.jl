@@ -76,7 +76,7 @@ function convert_mathblock(β::OCBlock, lxdefs::Vector{LxDef})::String
         matched = match(r"\\label{(.*?)}", inner)
 
         if !isnothing(matched)
-            name   = refstring(strip(matched.captures[1]))
+            name   = refstring(matched.captures[1])
             write(htmls, "<a id=\"$name\"></a>")
             inner  = replace(inner, r"\\label{.*?}" => "")
             # store the label name and associated number
