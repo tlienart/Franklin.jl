@@ -167,3 +167,4 @@ function resolve_assets_rpath(rpath::AbstractString)::String
     # this is a full path relative to the assets folder for instance `blah/img1.png` would
     # correspond to `/assets/blah/img1.png`
     return normpath(joinpath(JD_PATHS[:assets], joinrp(rpath)))
+end
