@@ -9,8 +9,8 @@ processor, this is relevant for things that are parsed within latex commands etc
 function md2html(ss::AbstractString, stripp::Bool=false)::AbstractString
     isempty(ss) && return ss
 
-    # Use the base Markdown -> Html converter
-    partial = Markdown.html(Markdown.parse(ss))
+    # Use the base Markdown -> Html converter and post process headers
+    partial = ss |> Markdown.parse |> Markdown.html |> make_headers_links
 
     # In some cases, base converter adds <p>...</p>\n which we might not want
     stripp || return partial
@@ -47,3 +47,14 @@ function deactivate_divs(blocks::Vector{OCBlock})::Vector{OCBlock}
     end
     return blocks[active_blocks]
 end
+
+
+"""
+$(SIGNATURES)
+
+By default the Base Markdown to HTML converter simply converts `## ...` into headers but not
+linkable ones; this is annoying for generation of table of contents etc (and references in
+general) so this function does just that.
+"""
+make_headers_links(html::String)::String =
+    replace(html, r"<h([1-6])>(.*?)</"=>s"<h\1><a href=\"#$\">\2</")
