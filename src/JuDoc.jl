@@ -4,7 +4,6 @@ using JuDocTemplates
 
 using Markdown
 using Dates # see jd_vars
-using Random
 using Highlights
 
 import LiveServer
@@ -12,7 +11,6 @@ import LiveServer
 using DocStringExtensions: SIGNATURES, TYPEDEF
 
 const BIG_INT = typemax(Int)
-const JD_LEN_RANDSTRING = 4 # make this longer if you think you'll collide...
 const JD_SERVE_FIRSTCALL = Ref(true)
 
 const JD_DEBUG = Ref(false)

@@ -1,4 +1,4 @@
-using JuDoc, Random, Test
+using JuDoc, Test
 const J = JuDoc
 const D = joinpath(dirname(dirname(pathof(JuDoc))), "test", "_dummies")
 

@@ -56,5 +56,16 @@ By default the Base Markdown to HTML converter simply converts `## ...` into hea
 linkable ones; this is annoying for generation of table of contents etc (and references in
 general) so this function does just that.
 """
-make_headers_links(html::String)::String =
-    replace(html, r"<h([1-6])>(.*?)</"=>s"<h\1><a href=\"#$\">\2</")
+function header_ref(h::String)::String
+    io = IOBuffer()
+    head = 1
+    for m ∈ eachmatch(r"<h([1-6])>(.*?)</h[1-6]>", h)
+        write(io, subs(h, head:m.offset-1))
+        level = m.captures[1]
+        name  = m.captures[2]
+        write(io, "<h$(level)><a id=\"$(refstring(name))\"></a>$(name)</h$(level)>")
+        head = m.offset + lastindex(m.match)
+    end
+    write(io, subs(h, head:lastindex(h)))
+    return String(take!(io))
+end
