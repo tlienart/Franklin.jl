@@ -57,7 +57,7 @@ JD_LOC_EQDICT_COUNTER
 Counter to keep track of equation numbers as they appear along the page, this helps with equation
 referencing.
 """
-const JD_LOC_EQDICT_COUNTER = "COUNTER_" * randstring(JD_LEN_RANDSTRING)
+const JD_LOC_EQDICT_COUNTER = "COUNTER_XC0q"
 
 """
 $(SIGNATURES)

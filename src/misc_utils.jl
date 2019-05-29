@@ -123,8 +123,15 @@ mathenv(s::AbstractString)::String = "_\$>_$(s)_\$<_"
 """
 $(SIGNATURES)
 
-Creates a random string pegged to `s` that we can use for hyper-references. We could just use the
-hash but it's quite long, here the length of the output is controlled  by `JD_LEN_RANDSTRING` which
-is set to 4 by default.
+Takes a string `s` and replace spaces by underscores so that that we can use it
+for hyper-references. So for instance `"aa  bb"` will become `aa-bb`.
+It also defensively removes any non-word character so for instance `"aa bb !"` will be `"aa-bb"`
 """
-refstring(s::AbstractString)::String = randstring(MersenneTwister(hash(s)), JD_LEN_RANDSTRING)
+function refstring(s::AbstractString)::String
+    # remove non-word characters
+    st = replace(s, r"&#[0-9]+;" => "")
+    st = replace(st, r"[^a-zA-Z0-9_\-\s]" => "")
+    st = replace(lowercase(strip(st)), r"\s+" => "-")
+    isempty(st) && return string(hash(s))
+    return st
+end

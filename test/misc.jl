@@ -74,3 +74,14 @@ end
     m = match(r"\[done\s*(.*?)ms\]", r)
     @test parse(Float64, m.captures[1]) ≥ 500
 end
+
+
+@testset "refstring" begin
+    @test J.refstring("aa  bb") == "aa-bb"
+    @test J.refstring("aa  bb !") == "aa-bb"
+    @test J.refstring("aa-bb-!") == "aa-bb-"
+    @test J.refstring("aa 🔺 bb") == "aa-bb"
+    @test J.refstring("aaa 0 bb s:2  df") == "aaa-0-bb-s2-df"
+    @test J.refstring("🔺🔺") == string(hash("🔺🔺"))
+    @test J.refstring("blah&#33;") == "blah"
+end
