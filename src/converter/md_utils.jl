@@ -10,7 +10,7 @@ function md2html(ss::AbstractString, stripp::Bool=false)::AbstractString
     isempty(ss) && return ss
 
     # Use the base Markdown -> Html converter and post process headers
-    partial = ss |> Markdown.parse |> Markdown.html |> make_headers_links
+    partial = ss |> Markdown.parse |> Markdown.html |> make_header_refs
 
     # In some cases, base converter adds <p>...</p>\n which we might not want
     stripp || return partial
@@ -56,14 +56,15 @@ By default the Base Markdown to HTML converter simply converts `## ...` into hea
 linkable ones; this is annoying for generation of table of contents etc (and references in
 general) so this function does just that.
 """
-function header_ref(h::String)::String
+function make_header_refs(h::String)::String
     io = IOBuffer()
     head = 1
     for m ∈ eachmatch(r"<h([1-6])>(.*?)</h[1-6]>", h)
         write(io, subs(h, head:m.offset-1))
         level = m.captures[1]
         name  = m.captures[2]
-        write(io, "<h$(level)><a id=\"$(refstring(name))\"></a>$(name)</h$(level)>")
+        ref   = refstring(name)
+        write(io, "<h$level><a id=\"$ref\" href=\"#$ref\">$name</a></h$level>")
         head = m.offset + lastindex(m.match)
     end
     write(io, subs(h, head:lastindex(h)))

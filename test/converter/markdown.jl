@@ -111,3 +111,18 @@ end
     hstring = J.convert_inter_html(inter_html, blocks2insert, lxcontext)
     @test hstring == "<p>text A1 text A2 blah and \nescape B1\n  text C1 \\(\\mathrm{ b}\\) text C2  then part1: AA and part2: BB.</p>\n"
 end
+
+
+@testset "headers" begin
+    st = """
+        # Title
+        and then
+        ## Subtitle cool!
+        done
+        """
+    h = st |> Markdown.parse |> Markdown.html
+    r = J.make_header_refs(h)
+    @test occursin("<h1><a id=\"title\" href=\"#title\">Title</a></h1>", r)
+    @test occursin("<h2><a id=\"subtitle-cool\" href=\"#subtitle-cool\">Subtitle cool&#33;</a></h2>", r)
+    @test occursin("<p>done</p>", r)
+end
