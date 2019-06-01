@@ -5,6 +5,7 @@ Runs JuDoc in the current directory.
 
 Keyword arguments:
 
+* `head = "head.html"`:     allows you to use a custom head.html. Useful for github pages for projects. 
 * `clear=false`:     whether to remove any existing output directory
 * `verb=false`:      whether to display messages
 * `port=8000`:       the port to use for the local server (should pick a number between 8000 and 9000)
@@ -12,17 +13,17 @@ Keyword arguments:
 * `prerender=false`: whether to pre-render javascript (KaTeX and highlight.js)
 * `nomess=false`:    suppresses all messages (internal use).
 """
-function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Bool=false,
+function serve(;head::String="head.html", clear::Bool=true, verb::Bool=false, port::Int=8000, single::Bool=false,
                  prerender::Bool=false, nomess::Bool=false)::Union{Nothing,Int}
     # set the global path
     JD_FOLDER_PATH[] = pwd()
 
     # brief check to see if we're in a folder that looks promising, otherwise stop
-    # and tell the user to check (#155)
-    if !isdir(joinpath(JD_FOLDER_PATH[], "src"))
-        throw(ArgumentError("The current directory doesn't have a src/ folder. " *
-                            "Please change directory to a valid JuDoc folder."))
-    end
+       # and tell the user to check (#155)
+       if !isdir(joinpath(JD_FOLDER_PATH[], "src"))
+           throw(ArgumentError("The current directory doesn't have a src/ folder. " *
+                               "Please change directory to a valid JuDoc folder."))
+       end
 
 
     # construct the set of files to watch
@@ -33,7 +34,7 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
     # do a first full pass
     nomess || println("→ Initial full pass... ")
     start = time()
-    sig = jd_fullpass(watched_files; clear=clear, verb=verb, prerender=prerender)
+    sig = jd_fullpass(head,watched_files; clear=clear, verb=verb, prerender=prerender)
     sig < 0 && return sig
     verb && (print(rpad("\n✔ full pass...", 40)); time_it_took(start); println(""))
 
@@ -96,10 +97,10 @@ A single full pass of judoc looking at all watched files and processing them as 
 
 See also [`jd_loop`](@ref), [`serve`](@ref) and [`publish`](@ref).
 """
-function jd_fullpass(watched_files::NamedTuple; clear::Bool=false, verb::Bool=false,
+function jd_fullpass(head,watched_files::NamedTuple; clear::Bool=false, verb::Bool=false,
                      prerender::Bool=false)::Int
      # initiate page segments
-     head    = read(joinpath(JD_PATHS[:in_html], "head.html"), String)
+     head    = read(joinpath(JD_PATHS[:in_html], head), String)
      pg_foot = read(joinpath(JD_PATHS[:in_html], "page_foot.html"), String)
      foot    = read(joinpath(JD_PATHS[:in_html], "foot.html"), String)
 
