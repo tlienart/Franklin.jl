@@ -3,10 +3,10 @@
 JuDoc is a simple **static site generator** (SSG) oriented towards technical blogging (code, maths, ...) and light, fast-loading pages.
 The base syntax is plain markdown with a few extensions such as the ability to define and use LaTeX-like commands in or outside of maths environments (see the [Syntax](@ref) section).
 
-For a short list of features see [here](#About-1).
+➡ For a short list of features see [here](#About-1).
 
 ```@raw html
-For a demo of available templates, see <a href="https://tlienart.github.io/JuDocTemplates.jl/" target="_blank" rel="noopener noreferrer">here</a> (opens in a new tab).
+➡ For a demo of available templates, see <a href="https://tlienart.github.io/JuDocTemplates.jl/" target="_blank" rel="noopener noreferrer">here</a> (opens in a new tab).
 ```
 
 

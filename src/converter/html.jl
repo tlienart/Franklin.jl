@@ -15,7 +15,7 @@ function convert_html(hs::AbstractString, allvars::JD_VAR_TYPE, fpath::AbstractS
     qblocks = qualify_html_hblocks(hblocks)
     # Find overall conditional blocks (if ... elseif ... else ...  end)
     cblocks, qblocks = find_html_cblocks(qblocks)
-    # Find conditional def blocks (ifdef / ifndef)
+    # Find conditional def blocks (isdef / isnotdef)
     cdblocks, qblocks = find_html_cdblocks(qblocks)
     # Find conditional page blocks (ispage / isnotpage)
     cpblocks, qblocks = find_html_cpblocks(qblocks)
