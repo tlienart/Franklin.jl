@@ -95,8 +95,52 @@ $(SIGNATURES)
 Helper function for the code block case of `convert_block`.
 """
 function convert_code_block(ss::SubString)::String
-    m = match(r"```([a-z-]*)\s*\n?((?:.|\n)*)```", ss)
-    lang = m.captures[1]
-    code = m.captures[2]
-    return "<pre><code class=$lang>$code</code></pre>"
+    m = match(r"```([a-z-]*)(\:[a-zA-Z\\\/-_\.]+)?\s*\n?((?:.|\n)*)```", ss)
+    lang  = m.captures[1]
+    rpath = m.captures[2]
+    code  = m.captures[3]
+
+    if isnothing(rpath)
+        return "<pre><code class=\"language-$lang\">$code</code></pre>"
+    end
+    if lang!="julia"
+        @warn "Eval of non-julia code blocks is not supported at the moment"
+        return "<pre><code class=\"language-$lang\">$code</code></pre>"
+    end
+    # path currently has an indicative `:` we don't care about
+    rpath = rpath[2:end]
+
+    # Here we have a julia code block that was provided with a script path
+    # It will consequently be
+    #   1. written to script file unless it's already there
+    #   2. evaled (unless a file was there and output file is present), redirect out
+    #   3. inserted after scrapping out lines (see resolve_input)
+    path = resolve_assets_rpath(rpath)
+
+    endswith(path, ".jl") || (path *= ".jl")
+
+    out_path, fname = splitdir(path)
+    out_path = mkpath(joinpath(out_path, "output"))
+    out_name = splitext(fname)[1] * ".out"
+    out_path = joinpath(out_path, out_name)
+
+    # > 1.b check whether the file already exists and if so compare content
+    do_eval = !isfile(path) || read(path, String) != code || !isfile(out_path)
+    
+    if do_eval
+        write(path, code)
+        # step 2: execute the code while redirecting the output to file (note that
+        # everything is ran in one big sequence of scripts so in particular if there
+        # are 3 code blocks on the same page then the second and third one can use
+        # whatever is defined or loaded in the first (it also has access to scope of
+        # other pages but it's really not recommended to exploit that)
+        open(out_path, "w") do outf
+            redirect_stdout(outf)  do
+                Main.include(path)
+            end
+        end
+    end
+
+    # step 3, insertion of code stripping of "hide" lines.
+    return resolve_input_hlcode(rpath, "julia"; use_hl=false)
 end

@@ -3,10 +3,10 @@
 JuDoc is a simple **static site generator** (SSG) oriented towards technical blogging (code, maths, ...) and light, fast-loading pages.
 The base syntax is plain markdown with a few extensions such as the ability to define and use LaTeX-like commands in or outside of maths environments (see the [Syntax](@ref) section).
 
-For a short list of features see [here](#About-1).
+➡ For a list of the key features see [here](#About-1).
 
 ```@raw html
-For a demo of available templates, see <a href="https://tlienart.github.io/JuDocTemplates.jl/" target="_blank" rel="noopener noreferrer">here</a> (opens in a new tab).
+➡ For a demo of available templates, see <a href="https://tlienart.github.io/JuDocTemplates.jl/" target="_blank" rel="noopener noreferrer">here</a> (opens in a new tab).
 ```
 
 
@@ -112,6 +112,12 @@ This is a partial list of JuDoc's features that you may find interesting/useful;
   * pre-rendered code highlighting (requires `node` and `highlight.js`)
   * minified output (via [`css-html-js-minify`](https://github.com/juancarlospaco/css-html-js-minify), requires `python3`)
 * ([docs](man/workflow/#(git)-synchronisation-1)) all-in-one "publish" step to compile, optimise and push your website
+
+There are a few features to deal with code:
+
+* ([docs](man/syntax/#Insertions-1)) insertion of code blocks with or without live-evaluation (a bit like [Weave.jl](https://github.com/mpastell/Weave.jl)),
+* ([docs](man/workflow/#Using-Literate.jl-1)) working with [Literate.jl](https://github.com/fredrikekre/Literate.jl)
+
 
 ### Why?
 

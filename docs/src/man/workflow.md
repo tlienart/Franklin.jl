@@ -102,7 +102,7 @@ The layout can also depend on the page you're on if it uses `{{ispage path/to/pa
 
 **CSS**
 
-Unsurprisingly, the style sheets in `_css/` will help you tune the way your site looks.
+The style sheets in `_css/` will help you tune the way your site looks.
 The `judoc.css` is the stylesheet that corresponds more specifically to the styling of the `.jd-content` div and all that goes in it, it is usually the first style-sheet that should be loaded.
 The simplest way to adjust the style easily would be to define your own stylesheet `_css/adjustments.css` and it be the last stylesheet loaded in `_html_parts/head.html` so that you can easily overwrite whatever properties you don't like and define your own.
 You could also have specific stylesheet that would only be loaded on specific pages using `{{ispages ...}}` (see [Templating](@ref)).
@@ -159,7 +159,7 @@ Assuming you used the [`newsite`](@ref) function to get started, you have the `l
 ```
 
 If you want to change either how things look or which languages are supported, you should head to [highlightjs.org](https://highlightjs.org/download/), select the languages you want in the **Custom package** section, download the bundle and copy over the relevant files to `libs/highlight/`.
-By default, `bash`, `html/xml`, `python`, `julia`, `julia-repl`, `css`, `r`, `markdown`, `ini/TOML`, `ruby` and `yaml` are supported.
+By default, the files that are created with [`newsite`](@ref) allow highlighting for `bash`, `html/xml`, `python`, `julia`, `julia-repl`, `css`, `r`, `markdown`, `ini/TOML`, `ruby` and `yaml`.
 
 Just remember to refer to the appropriate style-sheet in your HTML building blocks for instance the default `src/_html_parts/head_highlight.html` contains:
 
@@ -181,6 +181,14 @@ On GitHub/GitLab, the first step is to create a repository that would be accepta
 Once the repository is created, clone it on your computer, remove whatever is in it if it wasn't empty and copy over the content of the website folder (so if you had done `newsite("Test/")` then you'd copy over the content of the folder `Test` into the newly cloned folder `username.github.io/`).
 
 Now just do the usual `git add`, `commit` and `push` and your site will be live in a matter of minutes.
+
+### Hosting the website as a project website
+
+You may want to host your website not as a user website on `username.github.io/` but as a project website on `username.github.io/project/`.
+
+```@raw html
+<span style="color:red;">TBD</span>, see <a href="https://github.com/tlienart/JuDoc.jl/issues/162">issue #162</a>.
+```
 
 ## Optimisation step
 

@@ -17,7 +17,12 @@ JuDoc.process_file_err
 ```@docs
 JuDoc.write_page
 JuDoc.convert_md
+JuDoc.form_inter_md
+JuDoc.md2html
+JuDoc.convert_inter_html
+JuDoc.convert_block
 JuDoc.convert_html
+JuDoc.convert_hblock
 JuDoc.build_page
 ```
 

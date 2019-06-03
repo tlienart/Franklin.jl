@@ -114,9 +114,9 @@ function jd_fullpass(watched_files::NamedTuple; clear::Bool=false, verb::Bool=fa
     indexmd   = JD_PATHS[:in] => "index.md"
     indexhtml = JD_PATHS[:in] => "index.html"
 
-    # rest of the pages, done asynchronously
+    # rest of the pages
     s = 0
-    @sync begin
+    begin
         if isfile(joinpath(indexmd...))
             s += process_file(:md, indexmd, head, pg_foot, foot; clear=clear,
                               prerender=prerender)
@@ -133,7 +133,7 @@ function jd_fullpass(watched_files::NamedTuple; clear::Bool=false, verb::Bool=fa
                               prerender=prerender)
         end
     end
-    # return -1 if any task has failed
+    # return -1 if any page
     return ifelse(s<0, -1, 0)
 end
 

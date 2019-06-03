@@ -135,3 +135,36 @@ function refstring(s::AbstractString)::String
     isempty(st) && return string(hash(s))
     return st
 end
+
+
+"""
+$(SIGNATURES)
+
+Internal function to take a unix path, split it along `/` and re-join it (which will lead to the
+same path on unix but not on windows). Only used in [`resolve_assets_rpath`](@ref).
+"""
+joinrp(rpath::AbstractString) = joinpath(split(rpath, '/')...)
+
+"""
+$(SIGNATURES)
+
+Internal function to resolve a relative path. See [`convert_code_block`](@ref) and
+[`resolve_input`](@ref).
+"""
+function resolve_assets_rpath(rpath::AbstractString)::String
+    @assert length(rpath) > 1 "relative path '$rpath' doesn't seem right"
+    if startswith(rpath, "/")
+        # this is a full path starting from the website root folder so for instance
+        # `/assets/blah/img1.png`
+        return normpath(joinpath(JD_PATHS[:f], joinrp(rpath[2:end])))
+    elseif startswith(rpath, "./")
+        # this is a path relative to the assets folder with the same path as the calling file so
+        # for instance if calling from `src/pages/pg1.md` with `./im1.png` it would refer to
+        # /assets/pages/im1.png
+        @assert length(rpath) > 2 "relative path '$rpath' doesn't seem right"
+        return normpath(joinpath(JD_PATHS[:assets], dirname(JD_CURPATH[]), joinrp(rpath[3:end])))
+    end
+    # this is a full path relative to the assets folder for instance `blah/img1.png` would
+    # correspond to `/assets/blah/img1.png`
+    return normpath(joinpath(JD_PATHS[:assets], joinrp(rpath)))
+end

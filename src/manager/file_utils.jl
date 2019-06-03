@@ -45,9 +45,15 @@ function write_page(root::String, file::String, head::String, pg_foot::String, f
     (content, jd_vars) = convert_md(read(fpath, String) * EOS, vJD_GLOB_LXDEFS)
 
     # adding document variables to the dictionary
+    # note that some won't change and so it's not necessary to do this every time
+    # but it takes negligible time to do this so ¯\_(ツ)_/¯ (and it's less annoying than
+    # to keep tabs on which file has already been treated etc).
     s = stat(fpath)
     set_var!(jd_vars, "jd_ctime", jd_date(unix2datetime(s.ctime)))
     set_var!(jd_vars, "jd_mtime", jd_date(unix2datetime(s.mtime)))
+    relpath = fpath[lastindex(JD_PATHS[:in])+2:end] # f1/blah/page1.md or index.md etc...
+    set_var!(jd_vars, "jd_rpath", relpath)
+    JD_CURPATH[] = relpath
 
     # 3. process blocks in the html infra elements based on `jd_vars`
     # (e.g.: add the date in the footer)

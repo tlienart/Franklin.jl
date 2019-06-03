@@ -50,8 +50,9 @@ is processed.
     JD_LOC_VARS["hasmath"]  = Pair(true,    (Bool,))
     JD_LOC_VARS["hascode"]  = Pair(false,   (Bool,))
     JD_LOC_VARS["date"]     = Pair(Date(1), (String, Date, Nothing))
-    JD_LOC_VARS["jd_ctime"] = Pair(Date(1), (Date,))
-    JD_LOC_VARS["jd_mtime"] = Pair(Date(1), (Date,))
+    JD_LOC_VARS["jd_ctime"] = Pair(Date(1), (Date,))   # time of creation
+    JD_LOC_VARS["jd_mtime"] = Pair(Date(1), (Date,))   # time of last modification
+    JD_LOC_VARS["jd_rpath"] = Pair("",      (String,)) # local path to file src/[...]/blah.md
     return nothing
 end
 
@@ -78,9 +79,11 @@ the site. See [`resolve_lxcom`](@ref).
     JD_GLOB_LXDEFS["\\cite"]     = LxDef("\\cite",     1, SubString(""))
     JD_GLOB_LXDEFS["\\citet"]    = LxDef("\\citet",    1, SubString(""))
     JD_GLOB_LXDEFS["\\citep"]    = LxDef("\\citep",    1, SubString(""))
+    JD_GLOB_LXDEFS["\\label"]    = LxDef("\\label",    1, SubString(""))
     JD_GLOB_LXDEFS["\\biblabel"] = LxDef("\\biblabel", 2, SubString(""))
     # inclusion
     JD_GLOB_LXDEFS["\\input"]    = LxDef("\\input",    2, SubString(""))
+    JD_GLOB_LXDEFS["\\output"]   = LxDef("\\output",   1, SubString(""))
     return nothing
 end
 

@@ -8,27 +8,27 @@ This page aims to shed some light on how JuDoc works and how the code is structu
 
 The overarching sequence for the initial _full pass_ is:
 
-1. retrieve the paths to files that should be processed (see [`JuDoc.jd_setup`](@ref)),
-1. process all files (see [`JuDoc.jd_fullpass`](@ref))
+1. retrieve the paths to files that should be processed ([`JuDoc.jd_setup`](@ref)),
+1. process all files ([`JuDoc.jd_fullpass`](@ref))
    * if it's a markdown file convert it to HTML (see below),
    * place generated file in appropriate locations.
 
-In general the user will use `serve()` which triggers a full pass followed by a loop that re-processes files individually upon modifications (see [`JuDoc.jd_loop`](@ref)).
+In general the user will use `serve()` which triggers a full pass followed by a loop that re-processes files individually upon modifications ([`JuDoc.jd_loop`](@ref)).
 
 ### File processing
 
-The file processing is controlled by the function [`JuDoc.process_file`](@ref) which, itself, is a thin wrapper around the function [`JuDoc.process_file_err`](@ref).
+The file processing is controlled by the function [`JuDoc.process_file`](@ref) which, itself, is a thin wrapper around the function [`JuDoc.process_file_err`](@ref) (the first one processes any errors that may be generated during the processing of files).
 There are three types of files:
 
 * markdown files (`.md`) which are parsed and converted into HTML,
-* HTML files (`.html`) which are parsed and re-generated after solving any templating commands there may be,
+* HTML files (`.html`) which are parsed and re-generated after solving any templating commands they may contain,
 * other files which are just copied over to the relevant location.
 
 In the case of markdown files, the function [`JuDoc.write_page`](@ref) is called and is formed of 3 key stages:
 
-1. parsing of the markdown (see [`JuDoc.convert_md`](@ref))
-1. conversion to HTML and assembly of different blocks into one page (see [`JuDoc.convert_html`](@ref) and [`JuDoc.build_page`](@ref)),
-1. writing the HTML in the appropriate location, possibly after pre-rendering javascript (see [`JuDoc.js_prerender_katex`](@ref), [`JuDoc.js_prerender_highlight`](@ref)).
+1. parsing of the markdown ([`JuDoc.convert_md`](@ref))
+1. conversion to HTML and assembly of different blocks into one page ([`JuDoc.convert_html`](@ref) and [`JuDoc.build_page`](@ref)),
+1. writing the HTML in the appropriate location, possibly after pre-rendering javascript ([`JuDoc.js_prerender_katex`](@ref), [`JuDoc.js_prerender_highlight`](@ref)).
 
 
 ## Parsing
@@ -75,7 +75,7 @@ julia> JuDoc.to(ocb[2])
 
 ### Finding Tokens
 
-The function [`JuDoc.find_tokens`](@ref) takes content, reads it from left to right and returns a list of `Token`.
+The function [`JuDoc.find_tokens`](@ref) takes content, reads it from left to right and returns a list of `Token`s.
 It takes a string, and two "token dictionaries".
 The first one describes tokens that span _multiple characters_ while the second one correspond to tokens that span _a single character_.
 
@@ -160,18 +160,18 @@ julia> ocb[1].ss
 
 ```
 
-When a token has been snapped up in a ocblock, it is marked as inactive.
+When a token has been snapped up in a ocblock, it is marked as inactive so that it doesn't get re-processed.
 
 ### LaTeX blocks
 
 When parsing a markdown file, after finding tokens and ocblocks, JuDoc tries to find [`JuDoc.LxDef`](@ref) and [`JuDoc.LxCom`](@ref) blocks (also `AbstractBlock`).
 
-The first one corresponds to LaTeX definitions of the form `\newcommand{\name}[narg]{def}` while the second one corresponds to LaTeX commands such as `\foo` or `\foo{bar}` or `\foo{bar}{baz}` etc.
+The first one corresponds to LaTeX _definitions_ of the form `\newcommand{\name}[narg]{def}` while the second one corresponds to LaTeX _commands_ such as `\foo` or `\foo{bar}` or `\foo{bar}{baz}` etc.
 
 The function [`JuDoc.find_md_lxdefs`](@ref) takes a vector of active tokens and a ocblocks and finds sequences that match the format of a newcommand.
 Its counterpart, [`JuDoc.find_md_lxcoms`](@ref) takes a vector of active tokens and definitions and ocblocks and finds sequences that match the format of a command.
 
-```julia
+```julia-repl
 julia> s = raw"a \newcommand{\foo}[1]{_blah #1_} and \foo{hello} done.";
 julia> t = JuDoc.find_tokens(s, JuDoc.MD_TOKENS, JuDoc.MD_1C_TOKENS);
 julia> ocb, t = JuDoc.find_all_ocblocks(t, JuDoc.MD_OCB);
@@ -210,9 +210,33 @@ These blocks can then be assembled in larger blocks such as `HCond` (correspondi
 
 ## Conversion
 
-TBD
-
 ### Markdown conversion
 
+The core function corresponding to the conversion of a markdown document is, as mentioned before, [`JuDoc.convert_md`](@ref).
+The first part corresponds to the parsing discussed above to find:
+
+1. tokens
+1. open/close blocks
+1. LaTeX-like definitions
+1. LaTeX-like commands
+1. Markdown definitions (e.g. `@def x = 5`)
+
+This parsing step creates a number of _blocks_ which each have to be processed in turn.
+The function [`JuDoc.form_inter_md`](@ref) takes the vector of all blocks and latex definitions and forms an intermediate markdown where places where an insertion must occur are marked with `##JDINSERT##`.
+This intermediate markdown is then fed to the function [`JuDoc.md2html`](@ref) which wraps around Julia's Markdown to HTML.
+
+Finally the function [`JuDoc.convert_inter_html`](@ref) takes the partial markdown and inserts the appropriately processed blocks where the `##JDINSERT##` are.
+The function [`JuDoc.convert_block`](@ref) takes care of how blocks are converted before insertion (for instance how a math block should be properly fenced).
 
 ### HTML conversion
+
+The core function corresponding to the conversion of a html document is, as mentioned before, [`JuDoc.convert_html`](@ref).
+The first part corresponds to the parsing discussed above to find:
+
+1. tokens
+1. open/close blocks
+1. conditional blocks (`if ... elseif ... else ... end`)
+1. conditional def blocks (`isdef ... end`)
+1. conditional page blocks (`ifpage ... end`)
+
+The final HTML page is written by sequentially writing what's between the blocks and then replacing the blocks by the appropriate content using the function [`JuDoc.convert_hblock`](@ref).

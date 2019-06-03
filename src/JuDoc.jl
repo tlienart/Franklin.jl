@@ -10,13 +10,20 @@ import LiveServer
 
 using DocStringExtensions: SIGNATURES, TYPEDEF
 
-const BIG_INT = typemax(Int)
-const JD_SERVE_FIRSTCALL = Ref(true)
-
-const JD_DEBUG = Ref(false)
-
 export serve, publish, cleanpull, newsite, optimize
 
+# -----------------------------------------------------------------------------
+#
+# CONSTANTS
+#
+
+"""Big number when we want things to be far."""
+const BIG_INT = typemax(Int)
+
+"""Flag for debug mode."""
+const JD_DEBUG = Ref(false)
+
+"""Dict to keep track of languages and how comments are indicated."""
 const HIGHLIGHT = Dict{String,Pair{String,Any}}(
     "fortran"    => "!" => Lexers.FortranLexer,
     "julia-repl" => "#" => Lexers.JuliaConsoleLexer,
@@ -25,11 +32,23 @@ const HIGHLIGHT = Dict{String,Pair{String,Any}}(
     "r"          => "#" => Lexers.RLexer,
     "toml"       => "#" => Lexers.TOMLLexer)
 
+"""Dict to keep track of languages and their extensions."""
+const LANG_EXT = Dict{String,String}(
+    "julia"   => ".jl",
+    "python"  => ".py",
+    "r"       => ".r",
+    "fortran" => ".f90",
+    "matlab"  => ".m")
+
+"""Path to the JuDoc repo."""
 const JUDOC_PATH = splitdir(pathof(JuDoc))[1] # .../JuDoc/src
+
+"""Path to some temporary folder that will be used by JuDoc."""
 const TEMPL_PATH = joinpath(JUDOC_PATH, "templates")
 
 # copied from Base/path.jl
 if Sys.isunix()
+    """Indicator for directory separation on the OS."""
     const PATH_SEP = "/"
 elseif Sys.iswindows()
     const PATH_SEP = "\\"
@@ -37,12 +56,13 @@ else
     error("Unhandled OS")
 end
 
-"""
-    JD_VAR_TYPE
-
-Type of the containers for page variables.
-"""
+"""Type of the containers for page variables."""
 const JD_VAR_TYPE = Dict{String,Pair{K,NTuple{N, DataType}} where {K, N}}
+
+"""Relative path to the current file being processed."""
+const JD_CURPATH = Ref("")
+
+# -----------------------------------------------------------------------------
 
 include("build.jl") # check if user has Node/minify
 
