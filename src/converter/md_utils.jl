@@ -10,7 +10,7 @@ function md2html(ss::AbstractString, stripp::Bool=false)::AbstractString
     isempty(ss) && return ss
 
     # Use the base Markdown -> Html converter and post process headers
-    partial = ss |> Markdown.parse |> Markdown.html |> make_header_refs
+    partial = ss |> fix_inserts |> Markdown.parse |> Markdown.html |> make_header_refs
 
     # In some cases, base converter adds <p>...</p>\n which we might not want
     stripp || return partial
@@ -47,6 +47,18 @@ function deactivate_divs(blocks::Vector{OCBlock})::Vector{OCBlock}
     end
     return blocks[active_blocks]
 end
+
+"""
+$(SIGNATURES)
+
+The insertion token have whitespaces around them: ` ##JDINSERT## `, this mostly helps but causes
+a problem when combined with italic or bold markdown mode since `_blah_` works but not `_ blah _`.
+This function looks for any occurrence of `[\\*_] ##JDINSERT##` or the opposite and removes the
+extraneous whitespace.
+"""
+fix_inserts(s::AbstractString)::String =
+    replace(replace(s, r"([\*_]) ##JDINSERT##" => s"\1##JDINSERT##"),
+                       r"##JDINSERT## ([\*_])" => s"##JDINSERT##\1")
 
 
 """
