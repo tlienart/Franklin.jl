@@ -36,7 +36,7 @@ require `katex.min.js`
 =#
 const JD_CAN_PRERENDER = try success(`$NODE -v`); catch; false; end
 const JD_CAN_HIGHLIGHT = try success(`$NODE -e "require('highlight.js')"`); catch;
-                             false; end
+                                 false; end
 
 #=
 Minification
@@ -44,11 +44,12 @@ Minification
 - Here we check there is python3, and pip3, and then if we fail to import, we try to
 use pip3 to install it.
 =#
-const JD_HAS_PY3    = try success(`$PY -V`); catch; false; end
-const JD_HAS_PIP3   = try success(`$PIP -V`); catch; false; end
+const JD_HAS_PY3    = try success(`$([e for e in PY]) -V`); catch; false; end
+const JD_HAS_PIP3   = try success(`$([e for e in PIP]) -V`); catch; false; end
 const JD_CAN_MINIFY = JD_HAS_PY3 && JD_HAS_PIP3 &&
-                      try success(`$PY -m "import css_html_js_minify"`) ||
-                          success(`$PIP install css_html_js_minify`); catch; false; end
+                      try success(`$([e for e in PY]) -m "import css_html_js_minify"`) ||
+                          success(`$([e for e in PIP]) install css_html_js_minify`); catch;
+                              false; end
 
 #=
 Information to the user
@@ -66,11 +67,10 @@ end
 
 JD_CAN_MINIFY || begin
     if JD_HAS_PY3
-        println("✘ Couldn't find css_html_js_minify (`$PY -m \"import css_html_js_minify\"` " *
-                "failed).\n" *
+        println("✘ Couldn't find css_html_js_minify (`$([e for e in PY]) -m \"import css_html_js_minify\"` failed).\n" *
                 """→ It is required for minification but is not necessary to run JuDoc (cf docs).""")
     else
-        println("""✘ Couldn't find python3 (`$PY -V` failed).
+        println("""✘ Couldn't find python3 (`$([e for e in PY]) -V` failed).
                 → It is required for minification but not necessary to run JuDoc (cf docs).""")
     end
 end
