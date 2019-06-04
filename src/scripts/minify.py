@@ -24,10 +24,17 @@ for root, dirs, files in os.walk(CSS):
         if fname.endswith(".css"):
             css_files.append(os.path.join(root, fname))
 
-pool = Pool(cpu_count())
+if os.name == 'nt':
+    # multiprocessing doesn't seem to go well with windows...
+    for file in html_files:
+        min_html(file, overwrite=True)
+    for file in css_files:
+        min_css(file, overwrite=True)
+else:
+    pool = Pool(cpu_count())
 
-pool.map_async(partial(min_html, overwrite=True), html_files)
-pool.map_async(partial(min_css, overwrite=True), css_files)
+    pool.map_async(partial(min_html, overwrite=True), html_files)
+    pool.map_async(partial(min_css, overwrite=True), css_files)
 
-pool.close()
-pool.join()
+    pool.close()
+    pool.join()
