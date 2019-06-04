@@ -57,20 +57,20 @@ Information to the user
 =#
 JD_CAN_HIGHLIGHT || begin
     JD_CAN_PRERENDER || begin
-        println("""✘ Couldn't find node.js (`node -v` failed).
+        println("""✘ Couldn't find node.js (`$NODE -v` failed).
                 → It is required for pre-rendering KaTeX and highlight.js but is not necessary to run JuDoc (cf docs).""")
     end
-    println("""✘ Couldn't find highlight.js (`node -e "require('highlight.js')"` failed).
+    println("""✘ Couldn't find highlight.js (`$NODE -e "require('highlight.js')"` failed).
             → It is required for pre-rendering highlight.js but is not necessary to run JuDoc (cf docs).""")
 end
 
 JD_CAN_MINIFY || begin
     if JD_HAS_PY3
-        println("✘ Couldn't find css_html_js_minify (`python3 -m \"import css_html_js_minify\"` " *
+        println("✘ Couldn't find css_html_js_minify (`$PY -m \"import css_html_js_minify\"` " *
                 "failed).\n" *
                 """→ It is required for minification but is not necessary to run JuDoc (cf docs).""")
     else
-        println("""✘ Couldn't find python3 (`python3 -V` failed).
+        println("""✘ Couldn't find python3 (`$PY -V` failed).
                 → It is required for minification but not necessary to run JuDoc (cf docs).""")
     end
 end
