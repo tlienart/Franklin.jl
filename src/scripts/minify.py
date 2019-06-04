@@ -8,7 +8,7 @@ from multiprocessing import Pool, cpu_count
 from functools import partial
 
 # modify those if you're not using the standard output paths.
-CSS, PUB = "css/", "pub/"
+CSS, PUB = "css", "pub"
 
 html_files = ["index.html"]
 
