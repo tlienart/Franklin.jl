@@ -1,12 +1,42 @@
+const PY = begin
+    if "PYTHON3" ∈ keys(ENV)
+        ENV["PYTHON3"]
+    else
+        if Sys.iswindows()
+            "py -3"
+        else
+            "python3"
+        end
+    end
+end
+const PIP = begin
+    if "PIP3" ∈ keys(ENV)
+        ENV["PIP3"]
+    else
+        if Sys.iswindows()
+            "py -3 -m pip"
+        else
+            "pip3"
+        end
+    end
+end
+const NODE = begin
+    if "NODE" ∈ keys(ENV)
+        ENV["NODE"]
+    else
+        "node"
+    end
+end
+
 #=
 Pre-rendering
 - In order to prerender KaTeX, the only thing that is required is `node` and then we can just
 require `katex.min.js`
 - For highlights, we need `node` and also to have the `highlight.js` installed via `npm`.
 =#
-const JD_CAN_PRERENDER = try success(`node -v`); catch; false; end
-const JD_CAN_HIGHLIGHT = try success(`node -e "require('highlight.js')"`); catch;
-                             false; end
+const JD_CAN_PRERENDER = try success(`$NODE -v`); catch; false; end
+const JD_CAN_HIGHLIGHT = try success(`$NODE -e "require('highlight.js')"`); catch;
+                                 false; end
 
 #=
 Minification
@@ -14,11 +44,12 @@ Minification
 - Here we check there is python3, and pip3, and then if we fail to import, we try to
 use pip3 to install it.
 =#
-const JD_HAS_PY3    = try success(`python3 -V`); catch; false; end
-const JD_HAS_PIP3   = try success(`pip3 -V`); catch; false; end
+const JD_HAS_PY3    = try success(`$([e for e in split(PY)]) -V`); catch; false; end
+const JD_HAS_PIP3   = try success(`$([e for e in split(PIP)]) -V`); catch; false; end
 const JD_CAN_MINIFY = JD_HAS_PY3 && JD_HAS_PIP3 &&
-                      try success(`python3 -m "import css_html_js_minify"`) ||
-                          success(`pip3 install css_html_js_minify`); catch; false; end
+                      try success(`$([e for e in split(PY)]) -m "import css_html_js_minify"`) ||
+                          success(`$([e for e in split(PIP)]) install css_html_js_minify`); catch;
+                              false; end
 
 #=
 Information to the user
@@ -27,20 +58,19 @@ Information to the user
 =#
 JD_CAN_HIGHLIGHT || begin
     JD_CAN_PRERENDER || begin
-        println("""✘ Couldn't find node.js (`node -v` failed).
+        println("""✘ Couldn't find node.js (`$NODE -v` failed).
                 → It is required for pre-rendering KaTeX and highlight.js but is not necessary to run JuDoc (cf docs).""")
     end
-    println("""✘ Couldn't find highlight.js (`node -e "require('highlight.js')"` failed).
+    println("""✘ Couldn't find highlight.js (`$NODE -e "require('highlight.js')"` failed).
             → It is required for pre-rendering highlight.js but is not necessary to run JuDoc (cf docs).""")
 end
 
 JD_CAN_MINIFY || begin
     if JD_HAS_PY3
-        println("✘ Couldn't find css_html_js_minify (`python3 -m \"import css_html_js_minify\"` " *
-                "failed).\n" *
+        println("✘ Couldn't find css_html_js_minify (`$([e for e in split(PY)]) -m \"import css_html_js_minify\"` failed).\n" *
                 """→ It is required for minification but is not necessary to run JuDoc (cf docs).""")
     else
-        println("""✘ Couldn't find python3 (`python3 -V` failed).
+        println("""✘ Couldn't find python3 (`$([e for e in split(PY)]) -V` failed).
                 → It is required for minification but not necessary to run JuDoc (cf docs).""")
     end
 end

@@ -42,7 +42,7 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false)::U
             # copy the script to the current dir
             cp(joinpath(dirname(pathof(JuDoc)), "scripts", "minify.py"), JD_PY_MIN_NAME; force=true)
             # run it
-            succ = success(`python3 $JD_PY_MIN_NAME`)
+            succ = success(`$([e for e in split(PY)]) $JD_PY_MIN_NAME`)
             # remove the script file
             rm(JD_PY_MIN_NAME)
             time_it_took(start)

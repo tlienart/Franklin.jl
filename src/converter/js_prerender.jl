@@ -13,7 +13,7 @@ function js_prerender_katex(hs::String)::String
     # buffer to write the JS script
     jsbuffer = IOBuffer()
     write(jsbuffer, """
-            const katex = require("$(joinpath(JD_PATHS[:libs], "katex", "katex.min.js"))");
+            const katex = require("$(escape_string(joinpath(JD_PATHS[:libs], "katex", "katex.min.js")))");
             """)
     # string to separate the output of the different blocks
     splitter = "_>jdsplit<_"
@@ -88,7 +88,7 @@ function js2html(hs::String, jsbuffer::IOBuffer, matches::Vector{RegexMatch},
                  splitter::String)::String
     # run it redirecting the output to a buffer
     outbuffer = IOBuffer()
-    run(pipeline(`node -e "$(String(take!(jsbuffer)))"`, stdout=outbuffer))
+    run(pipeline(`$NODE -e "$(String(take!(jsbuffer)))"`, stdout=outbuffer))
 
     # read the buffer and split it using $splitter
     out = String(take!(outbuffer))
