@@ -1,11 +1,41 @@
+const PY = begin
+    if "PYTHON3" ∈ keys(ENV)
+        ENV["PYTHON3"]
+    else
+        if Sys.iswindows()
+            "py -3"
+        else
+            "python3"
+        end
+    end
+end
+const PIP = begin
+    if "PIP3" ∈ keys(ENV)
+        ENV["PIP3"]
+    else
+        if Sys.iswindows()
+            "py -3 -m pip"
+        else
+            "pip3"
+        end
+    end
+end
+const NODE = begin
+    if "NODE" ∈ keys(ENV)
+        ENV["NODE"]
+    else
+        "node"
+    end
+end
+
 #=
 Pre-rendering
 - In order to prerender KaTeX, the only thing that is required is `node` and then we can just
 require `katex.min.js`
 - For highlights, we need `node` and also to have the `highlight.js` installed via `npm`.
 =#
-const JD_CAN_PRERENDER = try success(`node -v`); catch; false; end
-const JD_CAN_HIGHLIGHT = try success(`node -e "require('highlight.js')"`); catch;
+const JD_CAN_PRERENDER = try success(`$NODE -v`); catch; false; end
+const JD_CAN_HIGHLIGHT = try success(`$NODE -e "require('highlight.js')"`); catch;
                              false; end
 
 #=
@@ -14,11 +44,11 @@ Minification
 - Here we check there is python3, and pip3, and then if we fail to import, we try to
 use pip3 to install it.
 =#
-const JD_HAS_PY3    = try success(`python3 -V`); catch; false; end
-const JD_HAS_PIP3   = try success(`pip3 -V`); catch; false; end
+const JD_HAS_PY3    = try success(`$PY -V`); catch; false; end
+const JD_HAS_PIP3   = try success(`$PIP -V`); catch; false; end
 const JD_CAN_MINIFY = JD_HAS_PY3 && JD_HAS_PIP3 &&
-                      try success(`python3 -m "import css_html_js_minify"`) ||
-                          success(`pip3 install css_html_js_minify`); catch; false; end
+                      try success(`$PY -m "import css_html_js_minify"`) ||
+                          success(`$PIP install css_html_js_minify`); catch; false; end
 
 #=
 Information to the user
