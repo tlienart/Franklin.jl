@@ -13,7 +13,7 @@ function js_prerender_katex(hs::String)::String
     # buffer to write the JS script
     jsbuffer = IOBuffer()
     write(jsbuffer, """
-            const katex = require("$(joinpath(JD_PATHS[:libs], "katex", "katex.min.js"))");
+            const katex = require("$(escape_string(joinpath(JD_PATHS[:libs], "katex", "katex.min.js")))");
             """)
     # string to separate the output of the different blocks
     splitter = "_>jdsplit<_"
