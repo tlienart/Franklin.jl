@@ -33,7 +33,7 @@ Take a path to an input markdown file (via `root` and `file`), then construct th
 page (inserting `head`, `pg_foot` and `foot`) and finally write it at the appropriate place.
 """
 function write_page(root::String, file::String, head::String, pg_foot::String, foot::String;
-                    prerender::Bool=false)::Nothing
+                    prerender::Bool=false, isoptim::Bool=false)::Nothing
     # 0. create a dictionary with all the variables available to the page
     # 1. read the markdown into string, convert it and extract definitions
     # 2. eval the definitions and update the variable dictionary, also retrieve
@@ -76,6 +76,10 @@ function write_page(root::String, file::String, head::String, pg_foot::String, f
         pg = replace(pg, r"<script.*?(?:katex\.min\.js|auto-render\.min\.js|renderMathInElement).*?<\/script>"=>"")
     end
 
+    if !isempty(JD_GLOB_VARS["prepath"]) && isoptim
+        pg = fix_links(pg)
+    end
+
     # 5. write the html file where appropriate
     write(joinpath(out_path(root), change_ext(file)), pg)
 
@@ -114,13 +118,13 @@ caught in `process_file(args...)`.
 """
 function process_file_err(case::Symbol, fpair::Pair{String, String}, head::AbstractString="",
                           pg_foot::AbstractString="", foot::AbstractString="", t::Float64=0.;
-                          clear::Bool=false, prerender::Bool=false)::Nothing
+                          clear::Bool=false, prerender::Bool=false, isoptim::Bool=false)::Nothing
     if case == :md
-        write_page(fpair..., head, pg_foot, foot; prerender=prerender)
+        write_page(fpair..., head, pg_foot, foot; prerender=prerender, isoptim=isoptim)
     elseif case == :html
         fpath = joinpath(fpair...)
         raw_html = read(fpath, String)
-        proc_html = convert_html(raw_html, JD_GLOB_VARS, fpath)
+        proc_html = convert_html(raw_html, JD_GLOB_VARS, fpath; isoptim=isoptim)
         write(joinpath(out_path(fpair.first), fpair.second), proc_html)
     elseif case == :other
         opath = joinpath(out_path(fpair.first), fpair.second)
@@ -156,3 +160,16 @@ Convenience function to assemble the html out of its parts.
 """
 build_page(head::String, content::String, pg_foot::String, foot::String)::String =
     "$head\n<div class=\"jd-content\">\n$content\n$pg_foot\n</div>\n$foot"
+
+
+"""
+$(SIGNATURES)
+
+for a project website, for instance `username.github.io/project/` all paths should eventually
+be pre-prended with `/project/`. This would happen just before you publish the website.
+"""
+function fix_links(pg::String)::String
+    pp = strip(JD_GLOB_VARS["prepath"].first, '/')
+    ss = SubstitutionString("\\1=\"/$(pp)/")
+    return replace(pg, r"(src|href)\s*?=\s*?\"\/" => ss)
+end
