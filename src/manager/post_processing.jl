@@ -8,11 +8,13 @@ Does a full pass followed by a pre-rendering and minification step.
 * `prerender=true`: whether to pre-render katex and highlight.js (requires `node.js`)
 * `minify=true`:    whether to minify output (requires `python3` and `css_html_js_minify`)
 * `sig=false`:      whether to return an integer indicating success (see [`publish`](@ref))
+* `prepath=`
 
 Note: if the prerendering is set to `true`, the minification will take longer as the HTML files
 will be larger (especially if you have lots of maths on pages).
 """
-function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false)::Union{Nothing,Bool}
+function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
+                    prepath::String="")::Union{Nothing,Bool}
     #
     # Prerendering
     #
@@ -24,12 +26,13 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false)::U
         @warn "I couldn't load 'highlight.js' so will not be able to pre-render code blocks. " *
               "You can install it with `npm install highlight.js`."
     end
+    isempty(prepath) || (JD_GLOB_VARS["prepath"] = prepath)
     # re-do a (silent) full pass
     start = time()
     print("→ Full pass")
     withpre = ifelse(prerender, rpad(" (with pre-rendering)", 24), rpad(" (no pre-rendering)", 24))
     print(withpre)
-    succ = (serve(single=true, prerender=prerender, nomess=true) === nothing)
+    succ = (serve(single=true, prerender=prerender, nomess=true, isoptim=true) === nothing)
     time_it_took(start)
 
     #
@@ -69,9 +72,12 @@ In other scenarios you should probably do this manually.
 * `minify=true`:    minify output before pushing see [`optimize`](@ref)
 * `nopass=false`:   set this to true if you have already run `optimize` manually.
 """
-function publish(; prerender::Bool=true, minify::Bool=true, nopass::Bool=false)::Nothing
+function publish(; prerender::Bool=true, minify::Bool=true, nopass::Bool=false,
+                   prepath::String="")::Nothing
     succ = true
-    nopass || (succ = optimize(prerender=prerender, minify=minify, sig=true))
+    if nopass || !isempty(prepath)
+        succ = optimize(prerender=prerender, minify=minify, sig=true, prepath=prepath)
+    end
     if succ
         start = time()
         print(rpad("→ Pushing updates with git...", 35))

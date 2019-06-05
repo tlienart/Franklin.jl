@@ -11,9 +11,12 @@ Keyword arguments:
 * `single=false`:    whether to run a single pass or run continuously
 * `prerender=false`: whether to pre-render javascript (KaTeX and highlight.js)
 * `nomess=false`:    suppresses all messages (internal use).
+* `isoptim=false`:   whether we're in an optimisation phase or not (if so, links are fixed in case
+                     of a project website, see [`write_page`](@ref).
 """
 function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Bool=false,
-                 prerender::Bool=false, nomess::Bool=false)::Union{Nothing,Int}
+                 prerender::Bool=false, nomess::Bool=false, isoptim::Bool=false
+                 )::Union{Nothing,Int}
     # set the global path
     JD_FOLDER_PATH[] = pwd()
 
@@ -33,7 +36,7 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
     # do a first full pass
     nomess || println("→ Initial full pass... ")
     start = time()
-    sig = jd_fullpass(watched_files; clear=clear, verb=verb, prerender=prerender)
+    sig = jd_fullpass(watched_files; clear=clear, verb=verb, prerender=prerender, isoptim=isoptim)
     sig < 0 && return sig
     verb && (print(rpad("\n✔ full pass...", 40)); time_it_took(start); println(""))
 
@@ -97,7 +100,7 @@ A single full pass of judoc looking at all watched files and processing them as 
 See also [`jd_loop`](@ref), [`serve`](@ref) and [`publish`](@ref).
 """
 function jd_fullpass(watched_files::NamedTuple; clear::Bool=false, verb::Bool=false,
-                     prerender::Bool=false)::Int
+                     prerender::Bool=false, isoptim::Bool=false)::Int
      # initiate page segments
      head    = read(joinpath(JD_PATHS[:in_html], "head.html"), String)
      pg_foot = read(joinpath(JD_PATHS[:in_html], "page_foot.html"), String)
@@ -119,10 +122,10 @@ function jd_fullpass(watched_files::NamedTuple; clear::Bool=false, verb::Bool=fa
     begin
         if isfile(joinpath(indexmd...))
             s += process_file(:md, indexmd, head, pg_foot, foot; clear=clear,
-                              prerender=prerender)
+                              prerender=prerender, isoptim=isoptim)
         elseif isfile(joinpath(indexhtml...))
             s += process_file(:html, indexhtml, head, pg_foot, foot; clear=clear,
-                              prerender=prerender)
+                              prerender=prerender, isoptim=isoptim)
         else
             @warn "I didn't find an index.[md|html], there should be one. Ignoring."
         end
@@ -130,7 +133,7 @@ function jd_fullpass(watched_files::NamedTuple; clear::Bool=false, verb::Bool=fa
         for (case, dict) ∈ pairs(watched_files), (fpair, t) ∈ dict
             occursin("index.", fpair.second) && continue
             s += process_file(case, fpair, head, pg_foot, foot, t; clear=clear,
-                              prerender=prerender)
+                              prerender=prerender, isoptim=isoptim)
         end
     end
     # return -1 if any page

@@ -23,6 +23,7 @@ when JuDoc is started.
     JD_GLOB_VARS["date_format"] = Pair("U dd, yyyy",   (String,))
     JD_GLOB_VARS["baseurl"]     = Pair(nothing,        (String, Nothing))
     JD_GLOB_VARS["codetheme"]   = Pair(Themes.DefaultTheme, (Highlights.AbstractTheme, Nothing))
+    JD_GLOB_VARS["prepath"]     = Pair("",             (String,))
     return nothing
 end
 

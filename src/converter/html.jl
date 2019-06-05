@@ -3,7 +3,8 @@ $(SIGNATURES)
 
 Convert a judoc html string into a html string (i.e. replace `{{ ... }}` blocks).
 """
-function convert_html(hs::AbstractString, allvars::JD_VAR_TYPE, fpath::AbstractString="")::String
+function convert_html(hs::AbstractString, allvars::JD_VAR_TYPE, fpath::AbstractString="";
+                      isoptim::Bool=false)::String
     # Tokenize
     tokens = find_tokens(hs, HTML_TOKENS, HTML_1C_TOKENS)
 
@@ -41,5 +42,10 @@ function convert_html(hs::AbstractString, allvars::JD_VAR_TYPE, fpath::AbstractS
     δ = ifelse(endswith(fhs, "</p>\n") && !startswith(fhs, "<p>"), 5, 0)
 
     isempty(fhs) && return ""
+
+    if !isempty(JD_GLOB_VARS["prepath"]) && isoptim
+        fhs = fix_links(fhs)
+    end
+
     return String(chop(fhs, tail=δ))
 end
