@@ -75,7 +75,7 @@ In other scenarios you should probably do this manually.
 function publish(; prerender::Bool=true, minify::Bool=true, nopass::Bool=false,
                    prepath::String="")::Nothing
     succ = true
-    if nopass || !isempty(prepath)
+    if !isempty(prepath) || !nopass
         succ = optimize(prerender=prerender, minify=minify, sig=true, prepath=prepath)
     end
     if succ
