@@ -40,8 +40,13 @@ function write_page(root::String, file::String, head::String, pg_foot::String, f
     # document variables (time of creation, time of last modif) and add those
     # to the dictionary.
     jd_vars = merge(JD_GLOB_VARS, copy(JD_LOC_VARS))
-    fpath = joinpath(root, file)
-    vJD_GLOB_LXDEFS = collect(values(JD_GLOB_LXDEFS))
+    fpath   = joinpath(root, file)
+     # The curpath is the relative path starting after /src/ so for instance:
+     # f1/blah/page1.md or index.md etc... this is useful in the code evaluation and management
+     # of paths
+    JD_CURPATH[] = fpath[lastindex(JD_PATHS[:in])+2:end]
+
+    vJD_GLOB_LXDEFS    = collect(values(JD_GLOB_LXDEFS))
     (content, jd_vars) = convert_md(read(fpath, String) * EOS, vJD_GLOB_LXDEFS)
 
     # adding document variables to the dictionary
@@ -51,9 +56,7 @@ function write_page(root::String, file::String, head::String, pg_foot::String, f
     s = stat(fpath)
     set_var!(jd_vars, "jd_ctime", jd_date(unix2datetime(s.ctime)))
     set_var!(jd_vars, "jd_mtime", jd_date(unix2datetime(s.mtime)))
-    relpath = fpath[lastindex(JD_PATHS[:in])+2:end] # f1/blah/page1.md or index.md etc...
-    set_var!(jd_vars, "jd_rpath", relpath)
-    JD_CURPATH[] = relpath
+    set_var!(jd_vars, "jd_rpath", JD_CURPATH[])
 
     # 3. process blocks in the html infra elements based on `jd_vars`
     # (e.g.: add the date in the footer)
