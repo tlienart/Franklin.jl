@@ -58,8 +58,6 @@ $(SIGNATURES)
 
 H-Function of the form `{{ insert fpath }}` to plug in the content of a file at `fpath`. Note that
 the base path is assumed to be `JD_PATHS[:in_html]` so paths have to be expressed relative to that.
-Note that (at the moment) the content is inserted "as is" without further processing which means
-that any `{{...}}` block in the inserted content will be displayed "as is".
 """
 function hfun_insert(params::Vector{String})::String
     # check params
@@ -68,7 +66,7 @@ function hfun_insert(params::Vector{String})::String
     replacement = ""
     fpath = joinpath(JD_PATHS[:in_html], params[1])
     if isfile(fpath)
-        replacement = read(fpath, String)
+        replacement = convert_html(read(fpath, String), merge(JD_GLOB_VARS, JD_LOC_VARS))
     else
         @warn "I found an {{insert ...}} block and tried to insert '$fpath' but I couldn't find the file. Ignoring."
     end
