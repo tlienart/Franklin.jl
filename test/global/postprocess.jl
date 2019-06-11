@@ -1,6 +1,13 @@
 @testset "Generation and optimisation" begin
     isdir("basic") && rm("basic", recursive=true, force=true)
     newsite("basic")
+
+    try
+        using LinearAlgebra
+    catch
+        import Pkg; Pkg.add("LinearAlgebra");
+    end
+
     serve(single=true)
     # ---------------
     @test all(isdir, ("assets", "css", "libs", "pub", "src"))

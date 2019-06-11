@@ -2,13 +2,6 @@ using JuDoc, Test, Markdown
 const J = JuDoc
 const D = joinpath(dirname(dirname(pathof(JuDoc))), "test", "_dummies")
 
-try
-    TRAVIS
-    import Pkg; Pkg.add("LinearAlgebra");
-catch
-    nothing
-end
-
 # NOTE this first file MUST be included before running the rest of the tests
 # otherwise you may get an error like "key 0x099191234..." was not found or
 # saying that the key :in doesn't exist or something along those lines
