@@ -13,7 +13,7 @@
     #
     # resolve_input_hlcode
     #
-    r = J.resolve_input_hlcode("script1.jl", "julia", use_hl=false)
+    r = J.resolve_input_hlcode("script1.jl", "julia")
     r2 = J.resolve_input_othercode("script1.jl", "julia")
     @test r == "<pre><code class=\"language-julia\">1+1</code></pre>"
     @test r2 == r

@@ -13,15 +13,6 @@ function process_config()::Nothing
     else
         @warn "I didn't find a config file. Ignoring."
     end
-
-    if JD_GLOB_VARS["codetheme"].first !== nothing
-        path = joinpath(JD_PATHS[:out_css], "highlight.css")
-        # NOTE: will overwrite (every time config.md is modified)
-        isdir(JD_PATHS[:out_css]) || mkpath(JD_PATHS[:out_css])
-        open(path, "w+") do stream
-            stylesheet(stream, MIME("text/css"), JD_GLOB_VARS["codetheme"][1])
-        end
-    end
     return nothing
 end
 

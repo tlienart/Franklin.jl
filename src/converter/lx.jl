@@ -157,8 +157,8 @@ See also [`resolve_input`](@ref).
 function check_input_rpath(rpath::AbstractString, lang::AbstractString="")::NTuple{3,String}
     fpath = resolve_assets_rpath(rpath)
     if isempty(splitext(fpath)[2])
-        ext = get(LANG_EXT, lang) do
-            ".xx"
+        ext, _ = get(CODE_LANG, lang) do
+            (".xx", nothing)
         end
         fpath *= ext
     end
@@ -188,11 +188,10 @@ $(SIGNATURES)
 Internal function to read the content of a script file and highlight it using either highlight.js
 or `Highlights.jl`. See also [`resolve_input`](@ref).
 """
-function resolve_input_hlcode(rpath::AbstractString, lang::AbstractString;
-                              use_hl::Bool=false)::String
+function resolve_input_hlcode(rpath::AbstractString, lang::AbstractString)::String
     fpath, _, _ = check_input_rpath(rpath)
     # Read the file while ignoring lines that are flagged with something like `# HIDE`
-    comsym, lexer = HIGHLIGHT[lang]
+    _, comsym = CODE_LANG[lang]
     hide = Regex("\\s$(comsym)(\\s)*?(?i)hide")
     io_in = IOBuffer()
     open(fpath, "r") do f
@@ -205,11 +204,11 @@ function resolve_input_hlcode(rpath::AbstractString, lang::AbstractString;
     end
     code = String(take!(io_in))
     endswith(code, "\n") && (code = chop(code, tail=1))
-    if use_hl
-        io_out = IOBuffer()
-        highlight(io_out, MIME("text/html"), code, lexer)
-        return String(take!(io_out))
-    end
+    # if use_hl
+    #     io_out = IOBuffer()
+    #     highlight(io_out, MIME("text/html"), code, lexer)
+    #     return String(take!(io_out))
+    # end
     return "<pre><code class=\"language-$lang\">$code</code></pre>"
 end
 
@@ -301,9 +300,13 @@ function resolve_input(lxc::LxCom)::String
         p1, p2 = split(qualifier, ":")
         # code:julia
         if p1 == "code"
-            if p2 ∈ ("julia", "fortran", "julia-repl", "matlab", "r", "toml")
-                return resolve_input_hlcode(rpath, p2; use_hl=false)
-            else # another language descriptor, let the user do that with highlights.js
+            if p2 ∈ keys(CODE_LANG)
+                # these are codes for which we know how they're commented and can use the
+                # HIDE trick (see HIGHLIGHT and resolve_input_hlcode)
+                return resolve_input_hlcode(rpath, p2)
+            else
+                # another language descriptor, let the user do that with highlights.js
+                # note that the HIDE trick will not work here.
                 return resolve_input_othercode(rpath, qualifier)
             end
         # output:plain
@@ -329,7 +332,7 @@ function resolve_input(lxc::LxCom)::String
         # elseif qualifier == "table"
         #     return resolve_input_tableoutput(rpath)
         elseif qualifier ∈ ("julia", "fortran", "julia-repl", "matlab", "r", "toml")
-            return resolve_input_hlcode(rpath, qualifier; use_hl=false)
+            return resolve_input_hlcode(rpath, qualifier)
         else # assume it's another language descriptor, let the user do that with highlights.js
             return resolve_input_othercode(rpath, qualifier)
         end

@@ -88,6 +88,7 @@ function js2html(hs::String, jsbuffer::IOBuffer, matches::Vector{RegexMatch},
                  splitter::String)::String
     # run it redirecting the output to a buffer
     outbuffer = IOBuffer()
+
     run(pipeline(`$NODE -e "$(String(take!(jsbuffer)))"`, stdout=outbuffer))
 
     # read the buffer and split it using $splitter

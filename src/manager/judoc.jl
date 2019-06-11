@@ -108,11 +108,11 @@ function jd_fullpass(watched_files::NamedTuple; clear::Bool=false, verb::Bool=fa
 
     # reset global page variables and latex definitions
     # NOTE: need to keep track of pre-path if specified, see optimize
-    prepath = JD_GLOB_VARS["prepath"]
+    prepath = get(JD_GLOB_VARS, "prepath", nothing)
     def_GLOB_VARS!()
     def_GLOB_LXDEFS!()
     # reinsert prepath if specified
-    !isempty(prepath.first) && (JD_GLOB_VARS["prepath"] = prepath)
+    isnothing(prepath) || (JD_GLOB_VARS["prepath"] = prepath)
 
     # process configuration file
     process_config()

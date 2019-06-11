@@ -6,7 +6,6 @@ version = "0.1.3"
 [deps]
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
-Highlights = "eafb193a-b7ab-5a9e-9068-77385905fa72"
 JuDocTemplates = "6793090a-55ae-11e9-0511-73b91164f4ea"
 LiveServer = "16fef848-5104-11e9-1b77-fb7a48bbb589"
 Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
@@ -14,7 +13,6 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [compat]
 DocStringExtensions = ">= 0.7.0"
-Highlights = ">= 0.3.0"
 JuDocTemplates = ">= 0.1.0"
 LiveServer = ">= 0.3.0"
 julia = "^1.0.0"

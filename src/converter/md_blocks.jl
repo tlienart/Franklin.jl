@@ -142,5 +142,5 @@ function convert_code_block(ss::SubString)::String
     end
 
     # step 3, insertion of code stripping of "hide" lines.
-    return resolve_input_hlcode(rpath, "julia"; use_hl=false)
+    return resolve_input_hlcode(rpath, "julia")
 end

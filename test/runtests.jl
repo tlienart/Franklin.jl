@@ -40,10 +40,15 @@ println("INTEGRATION")
 include("global/utils.jl")
 include("global/cases1.jl")
 include("global/cases2.jl")
-include("global/postprocess.jl")
-println("🍺")
 
-println("PRE-RENDERING")
-include("converter/js_prerender.jl")
+begin
+    # create temp dir to do complete integration testing (has to be here in order
+    # to locally play nice with node variables etc, otherwise it's a big headache)
+    p = normpath(joinpath(D, "..", "__tmp"));
+    isdir(p) && rm(p, recursive=true, force=true)
+    mkdir(p); cd(p)
+    include("global/postprocess.jl");
+    cd(".."); rm(p, recursive=true, force=true)
+end
 
 println("🥳  🥳  🥳  🥳 ")

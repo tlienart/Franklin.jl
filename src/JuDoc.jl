@@ -4,7 +4,6 @@ using JuDocTemplates
 
 using Markdown
 using Dates # see jd_vars
-using Highlights
 
 import LiveServer
 
@@ -23,22 +22,21 @@ const BIG_INT = typemax(Int)
 """Flag for debug mode."""
 const JD_DEBUG = Ref(false)
 
-"""Dict to keep track of languages and how comments are indicated."""
-const HIGHLIGHT = Dict{String,Pair{String,Any}}(
-    "fortran"    => "!" => Lexers.FortranLexer,
-    "julia-repl" => "#" => Lexers.JuliaConsoleLexer,
-    "julia"      => "#" => Lexers.JuliaLexer,
-    "matlab"     => "%" => Lexers.MatlabLexer,
-    "r"          => "#" => Lexers.RLexer,
-    "toml"       => "#" => Lexers.TOMLLexer)
-
-"""Dict to keep track of languages and their extensions."""
-const LANG_EXT = Dict{String,String}(
-    "julia"   => ".jl",
-    "python"  => ".py",
-    "r"       => ".r",
-    "fortran" => ".f90",
-    "matlab"  => ".m")
+"""Dict to keep track of languages and how comments are indicated and their extensions."""
+const CODE_LANG = Dict{String,NTuple{2,String}}(
+    "c"          => (".c",    "//"),
+    "cpp"        => (".cpp",  "//"),
+    "fortran"    => (".f90",  "!"),
+    "go"         => (".go",   "//"),
+    "javascript" => (".js",   "//"),
+    "julia"      => (".jl",   "#"),
+    "julia-repl" => (".jl",   "#"),
+    "lua"        => (".lua",  "--"),
+    "matlab"     => (".m",    "%"),
+    "python"     => (".py",   "#"),
+    "r"          => (".r",    "#"),
+    "toml"       => (".toml", "#"),
+    )
 
 """Path to the JuDoc repo."""
 const JUDOC_PATH = splitdir(pathof(JuDoc))[1] # .../JuDoc/src

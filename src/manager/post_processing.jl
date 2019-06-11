@@ -26,7 +26,9 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
         @warn "I couldn't load 'highlight.js' so will not be able to pre-render code blocks. " *
               "You can install it with `npm install highlight.js`."
     end
-    isempty(prepath) || (JD_GLOB_VARS["prepath"] = prepath => (String, ))
+    if !isempty(prepath)
+        JD_GLOB_VARS["prepath"] = prepath => (String, )
+    end
     # re-do a (silent) full pass
     start = time()
     print("→ Full pass")
