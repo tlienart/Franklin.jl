@@ -2,10 +2,8 @@
     isdir("basic") && rm("basic", recursive=true, force=true)
     newsite("basic")
 
-    try
-        using LinearAlgebra
-    catch
-        import Pkg; Pkg.add("LinearAlgebra");
+    if get(ENV, "CI", false)
+        import Pkg; Pkg.add("LinearAlgebra"); using LinearAlgebra;
     end
 
     serve(single=true)
