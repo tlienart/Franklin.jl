@@ -98,22 +98,6 @@ end
     @test occursin("then: <pre><code>25</code></pre> done.", h)
 end
 
-@testset "Eval code (module)" begin
-    h = raw"""
-        Simple code:
-        ```julia:scripts/test1
-        using LinearAlgebra
-        a = [5, 2, 3, 4]
-        print(dot(a, a))
-        ```
-        then:
-        \input{output}{scripts/test1}
-        done.
-        """ * J.EOS |> seval
-    # dot(a, a) == 54
-    @test occursin("then: <pre><code>54</code></pre> done.", h)
-end
-
 @testset "Eval code (img)" begin
     h = raw"""
         Simple code:
