@@ -43,7 +43,7 @@ function convert_html(hs::AbstractString, allvars::JD_VAR_TYPE, fpath::AbstractS
 
     isempty(fhs) && return ""
 
-    if !isempty(JD_GLOB_VARS["prepath"]) && isoptim
+    if !isempty(JD_GLOB_VARS["prepath"].first) && isoptim
         fhs = fix_links(fhs)
     end
 

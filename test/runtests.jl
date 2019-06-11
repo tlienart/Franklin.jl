@@ -40,6 +40,7 @@ println("INTEGRATION")
 include("global/utils.jl")
 include("global/cases1.jl")
 include("global/cases2.jl")
+include("global/postprocess.jl")
 println("🍺")
 
 println("PRE-RENDERING")

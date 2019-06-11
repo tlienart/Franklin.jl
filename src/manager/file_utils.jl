@@ -79,6 +79,7 @@ function write_page(root::String, file::String, head::String, pg_foot::String, f
         pg = replace(pg, r"<script.*?(?:katex\.min\.js|auto-render\.min\.js|renderMathInElement).*?<\/script>"=>"")
     end
 
+    # append pre-path if required (see optimize)
     if !isempty(JD_GLOB_VARS["prepath"].first) && isoptim
         pg = fix_links(pg)
     end
