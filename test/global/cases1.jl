@@ -1,19 +1,15 @@
-# This set of tests directly uses the high-level `convert` functions
-# And checks the behaviour is as expected.
-
-J.def_GLOB_LXDEFS!()
-cmd = st -> J.convert_md(st, collect(values(J.JD_GLOB_LXDEFS)))
-chtml = t -> J.convert_html(t...)
-conv = st -> st |> cmd |> chtml
-
 @testset "∫ newcom" begin
     st = raw"""
         \newcommand{ \coma }[ 1]{hello #1}
         \newcommand{ \comb} [2 ]{\coma{#1}, goodbye #1, #2!}
         Then \comb{auth1}{auth2}.
         """ * J.EOS
-    @test st |> conv == "<p>Then hello   auth1, goodbye  auth1,  auth2&#33;.</p>\n"
+    @test isapproxstr(st |> conv,
+            """<p>
+            Then hello auth1, goodbye auth1, auth2$(Markdown.htmlesc("!")).
+            </p>""")
 end
+
 
 @testset "∫ math" begin
     st = raw"""
@@ -23,7 +19,11 @@ end
         Then something like
         \eqa{ \E{f(X)} \in \R &\text{if}& f:\R\maptso\R }
         """ * J.EOS
-    @test st |> conv == "<p>Then something like \\[\\begin{array}{c}  \\mathbb E\\left[ f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R \\end{array}\\]</p>\n"
+    @test isapproxstr(st |> conv,
+            """<p>
+            Then something like
+            \\[\\begin{array}{c} \\mathbb E\\left[ f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R \\end{array}\\]
+            </p>""")
 end
 
 
@@ -37,14 +37,21 @@ end
     @test st |> conv == "⭒A⭒\n◲A◲"
 end
 
+
 @testset "∫ div" begin # see #74
     st = raw"""
         Etc and `~~~` but hey.
         @@dd but `x` and `y`? @@
         done
         """ * JuDoc.EOS
-    @test st |> conv == "<p>Etc and <code>~~~</code> but hey. <div class=\"dd\">but <code>x</code> and <code>y</code>? </div>\n done</p>\n"
+    @test isapproxstr(st |> conv,
+            """<p>
+            Etc and <code>~~~</code> but hey.
+            <div class=\"dd\">but <code>x</code> and <code>y</code>? </div>
+            done
+            </p>""")
 end
+
 
 @testset "∫ code-l" begin
     st = raw"""
@@ -56,8 +63,17 @@ end
         ```
         done
         """ * JuDoc.EOS
-    @test st |> conv == "<p>Some code <pre><code class=\"language-julia\">struct P\n    x::Real\nend\n</code></pre> done</p>\n"
+    @test isapproxstr(st |> conv,
+            """<p>
+            Some code
+            <pre><code class=\"language-julia\">
+            struct P
+                x::Real
+            end
+            </code></pre>
+            done</p>""")
 end
+
 
 @testset "∫ math-br" begin # see #73
     st = raw"""
@@ -66,8 +82,10 @@ end
             \min_{x\in \R^n} \quad f(x)+i_C(x).
         $$
         """ * J.EOS
-    @test st |> conv == "\\[\n    \\min_{x\\in \\mathbb R^n} \\quad f(x)+i_C(x).\n\\]"
+    @test isapproxstr(st |> conv,
+            """\\[ \\min_{x\\in \\mathbb R^n} \\quad f(x)+i_C(x). \\]""")
 end
+
 
 @testset "∫ insert" begin # see also #65
     st = raw"""
@@ -102,8 +120,14 @@ end
         * \com{aaa} tt
         * ss \com{bbb}
         """ * J.EOS
-    @test st |> conv == "<p>blah †a†\n<ul>\n<li><p>†aaa† tt</p>\n</li>\n<li><p>ss †bbb†</p>\n</li>\n</ul>\n"
+    @test isapproxstr(st |> conv,
+            """<p>blah †a†
+            <ul>
+               <li><p>†aaa† tt</p></li>
+               <li><p>ss †bbb†</p></li>
+            </ul>""")
 end
+
 
 @testset "∫ br-rge" begin # see #70
     st = raw"""
@@ -114,8 +138,14 @@ end
            exhibit B
            $\E[X] = \scal{\mu, \nu}$
            end.""" * J.EOS
-    @test st |> conv == "<p>exhibit A \\(\\left\\langle \\mu, \\nu\\right\\rangle = \\mathbb E[X]\\) exhibit B \\(\\mathbb E[X] = \\left\\langle \\mu, \\nu\\right\\rangle\\) end.</p>\n"
+    @test isapproxstr(st |> conv,
+            """<p>exhibit A
+            \\(\\left\\langle \\mu, \\nu\\right\\rangle = \\mathbb E[X]\\)
+            exhibit B
+            \\(\\mathbb E[X] = \\left\\langle \\mu, \\nu\\right\\rangle\\)
+            end.</p>""")
 end
+
 
 @testset "∫ cond" begin
     stv(var1, var2) = """
@@ -132,6 +162,7 @@ end
     @test stv(false, false) |> conv == "<p>start \n targ3 \n done</p>\n"
 end
 
+
 @testset "∫ recurs" begin # see #97
     st = raw"""
         | A | B |
@@ -139,7 +170,12 @@ end
         | C | D |
         """ * J.EOS
 
-    @test st |> conv == "<table><tr><th>A</th><th>B</th></tr><tr><td>C</td><td>D</td></tr></table>\n"
+    @test isapproxstr(st |> conv,
+            """<table>
+                 <tr><th>A</th><th>B</th></tr>
+                 <tr><td>C</td><td>D</td></tr>
+               </table>""")
+
     @test J.convert_md(st, isrecursive=true) |> chtml == st |> conv
 
     st = raw"""
@@ -149,11 +185,6 @@ end
         @@
         """ * J.EOS
     st |> conv == "<div class=\"emptydiv\"><div class=\"emptycore\"></div>\n</div>\n"
-end
-
-@testset "HTML escape" begin # see issue #151
-    st = read(joinpath(D, "151.md"), String)
-    @test st |> conv == "<pre><code class=\"language-julia\">add OhMyREPL#master\n</code></pre>\n<p>AAA</p>\n\n<pre><code class=\"language-julia\">\"\"\"\n    bar(x[, y])\n\nBBB\n\n# Examples\n```jldoctest\nD\n```\n\"\"\"\nfunction bar(x, y)\n    ...\nend\n</code></pre>\n\n<p>For complex functions with multiple arguments use a argument list, also if there are many keyword arguments use <code>&lt;keyword arguments&gt;</code>:</p>\n\n<pre><code class=\"language-julia\">\"\"\"\n    matdiag(diag, nr, nc; &ltkeyword arguments&gt)\n\nCreate Matrix with number `vdiag` on the super- or subdiagonals and `vndiag`\nin the rest.\n\n# Arguments\n- `diag::Number`: `Number` to write into created super- or subdiagonal\n\n# Examples\n```jldoctest\njulia> matdiag(true, 5, 5, sr=2, ec=3)\n```\n\"\"\"\nfunction\nmatdiag(diag::Number, nr::Integer, nc::Integer;)\n    ...\nend\n</code></pre>\n"
 end
 
 

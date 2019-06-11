@@ -37,7 +37,12 @@ include("converter/lx_input.jl")
 println("🍺")
 
 println("INTEGRATION")
-include("converter/integration.jl")
+include("global/utils.jl")
+include("global/cases1.jl")
+include("global/cases2.jl")
+println("🍺")
+
 println("PRE-RENDERING")
 include("converter/js_prerender.jl")
+
 println("🥳  🥳  🥳  🥳 ")
