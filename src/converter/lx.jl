@@ -338,14 +338,3 @@ function resolve_input(lxc::LxCom)::String
         end
     end
 end
-
-
-"""
-$SIGNATURES
-
-Internal function to resolve a `\\output{rpath}` (finds the output and shows it).
-"""
-function resolve_output(lxc::LxCom)::String
-    rpath = strip(content(lxc.braces[1])) # [assets]/subpath/script{.jl}
-    return resolve_input_plainoutput(rpath)
-end

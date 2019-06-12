@@ -64,6 +64,7 @@ List of latex definitions accessible to all pages. This is filled when the confi
 """
 const JD_GLOB_LXDEFS = Dict{String, LxDef}()
 
+const EMPTYSS = SubString("")
 
 """
     def_GLOB_LXDEFS!
@@ -74,15 +75,16 @@ the site. See [`resolve_lxcom`](@ref).
 @inline function def_GLOB_LXDEFS!()::Nothing
     empty!(JD_GLOB_LXDEFS)
     # hyperreferences
-    JD_GLOB_LXDEFS["\\eqref"]    = LxDef("\\eqref",    1, SubString(""))
-    JD_GLOB_LXDEFS["\\cite"]     = LxDef("\\cite",     1, SubString(""))
-    JD_GLOB_LXDEFS["\\citet"]    = LxDef("\\citet",    1, SubString(""))
-    JD_GLOB_LXDEFS["\\citep"]    = LxDef("\\citep",    1, SubString(""))
-    JD_GLOB_LXDEFS["\\label"]    = LxDef("\\label",    1, SubString(""))
-    JD_GLOB_LXDEFS["\\biblabel"] = LxDef("\\biblabel", 2, SubString(""))
+    JD_GLOB_LXDEFS["\\eqref"]    = LxDef("\\eqref",    1, EMPTYSS)
+    JD_GLOB_LXDEFS["\\cite"]     = LxDef("\\cite",     1, EMPTYSS)
+    JD_GLOB_LXDEFS["\\citet"]    = LxDef("\\citet",    1, EMPTYSS)
+    JD_GLOB_LXDEFS["\\citep"]    = LxDef("\\citep",    1, EMPTYSS)
+    JD_GLOB_LXDEFS["\\label"]    = LxDef("\\label",    1, EMPTYSS)
+    JD_GLOB_LXDEFS["\\biblabel"] = LxDef("\\biblabel", 2, EMPTYSS)
     # inclusion
-    JD_GLOB_LXDEFS["\\input"]    = LxDef("\\input",    2, SubString(""))
-    JD_GLOB_LXDEFS["\\output"]   = LxDef("\\output",   1, SubString(""))
+    JD_GLOB_LXDEFS["\\input"]    = LxDef("\\input",    2, EMPTYSS)
+    JD_GLOB_LXDEFS["\\output"]   = LxDef("\\output",   1, EMPTYSS)
+    JD_GLOB_LXDEFS["\\fig"]      = LxDef("\\fig",      1, EMPTYSS)
     return nothing
 end
 
