@@ -140,3 +140,15 @@ end
     # errors silently
     @test occursin("then: <pre><code></code></pre>", h)
 end
+
+@testset "Eval code (no-julia)" begin
+    h = raw"""
+        Simple code:
+        ```python:scripts/test1
+        sqrt(-1)
+        ```
+        done.
+        """ * J.EOS
+
+    @test (@test_logs (:warn, "Eval of non-julia code blocks is not supported at the moment") h |> seval) == "<p>Simple code: <pre><code class=\"language-python\">sqrt(-1)\n</code></pre> done.</p>\n"
+end
