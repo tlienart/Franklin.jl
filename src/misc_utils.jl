@@ -25,6 +25,7 @@ str(s::SubString)::String = s.string
     subs(s, from, to)
     subs(s, from)
     subs(s, range)
+    subs(s)
 
 Convenience functions to take a substring of a string.
 
@@ -37,7 +38,7 @@ julia> JuDoc.subs("hello", 2:4)
 subs(s::AbstractString, from::Int, to::Int)::SubString    = SubString(s, from, to)
 subs(s::AbstractString, from::Int)::SubString             = subs(s, from, from)
 subs(s::AbstractString, range::UnitRange{Int})::SubString = SubString(s, range)
-
+subs(s::AbstractString) = SubString(s)
 
 """
 $(SIGNATURES)
@@ -149,7 +150,7 @@ joinrp(rpath::AbstractString) = joinpath(split(rpath, '/')...)
 $(SIGNATURES)
 
 Internal function to resolve a relative path. See [`convert_code_block`](@ref) and
-[`resolve_input`](@ref).
+[`resolve_lx_input`](@ref).
 """
 function resolve_assets_rpath(rpath::AbstractString)::String
     @assert length(rpath) > 1 "relative path '$rpath' doesn't seem right"

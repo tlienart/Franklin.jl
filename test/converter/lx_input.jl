@@ -11,21 +11,21 @@
     @test_throws ArgumentError J.check_input_rpath("script2.jl")
 
     #
-    # resolve_input_hlcode
+    # resolve_lx_input_hlcode
     #
-    r = J.resolve_input_hlcode("script1.jl", "julia")
-    r2 = J.resolve_input_othercode("script1.jl", "julia")
+    r = J.resolve_lx_input_hlcode("script1.jl", "julia")
+    r2 = J.resolve_lx_input_othercode("script1.jl", "julia")
     @test r == "<pre><code class=\"language-julia\">1+1</code></pre>"
     @test r2 == r
 
     #
-    # resolve_input_plainoutput
+    # resolve_lx_input_plainoutput
     #
     mkpath(joinpath(J.JD_PATHS[:assets], "output"))
     plain1 = joinpath(J.JD_PATHS[:assets], "output", "script1.out")
     write(plain1, "2")
 
-    r = J.resolve_input_plainoutput("script1.jl")
+    r = J.resolve_lx_input_plainoutput("script1.jl")
     @test r == "<pre><code>2</code></pre>"
 end
 

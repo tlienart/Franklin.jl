@@ -48,6 +48,15 @@ function deactivate_divs(blocks::Vector{OCBlock})::Vector{OCBlock}
     return blocks[active_blocks]
 end
 
+
+"""
+$(SIGNATURES)
+
+Insertion of a visible red message in HTML to show there was a problem.
+"""
+jd_show_err(mess::String="") = "~~~<span style=\"color:red;\">// $mess //</span>~~~"
+
+
 """
 $(SIGNATURES)
 

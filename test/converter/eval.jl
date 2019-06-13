@@ -8,7 +8,7 @@ end
 
 @testset "Eval code" begin
     # see `converter/md_blocks:convert_code_block`
-    # see `converter/lx/resolve_input_*`
+    # see `converter/lx/resolve_lx_input_*`
     # --------------------------------------------
     h = raw"""
         Simple code:
