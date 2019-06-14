@@ -144,7 +144,11 @@ $(SIGNATURES)
 Internal function to take a path and return a unix version of the path (if it isn't already).
 Used in [`resolve_assets_rpath`](@ref).
 """
-unixify(rp::String)::String = Sys.isunix() ? rp : replace(rp, "\\"=>"/")
+function unixify(rp::String)::String
+    cand = Sys.isunix() ? rp : replace(rp, "\\"=>"/")
+    endswith(cand, "/") || isempty(cand) || return cand * "/"
+    return cand
+end
 
 
 """

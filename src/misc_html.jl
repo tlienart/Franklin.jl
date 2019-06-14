@@ -17,7 +17,7 @@ $(SIGNATURES)
 
 Convenience function to introduce a div block.
 """
-html_div(name::AbstractString, in::AbstractString) = "<div class=\"$name\">$in</div>\n"
+html_div(name::AbstractString, in::AbstractString) = "<div class=\"$name\">$in</div>"
 
 """
 $(SIGNATURES)
