@@ -51,8 +51,8 @@ function write_page(root::String, file::String, head::String, pg_foot::String, f
 
     # 3. process blocks in the html infra elements based on `jd_vars`
     # (e.g.: add the date in the footer)
-    content = convert_html(str(content), jd_vars, fpath)
-    head, pg_foot, foot = (e->convert_html(e, jd_vars, fpath)).([head, pg_foot, foot])
+    content = convert_html(str(content), jd_vars)
+    head, pg_foot, foot = (e->convert_html(e, jd_vars)).([head, pg_foot, foot])
 
     # 4. construct the page proper & prerender if needed
     pg = build_page(head, content, pg_foot, foot)
@@ -119,7 +119,7 @@ function process_file_err(case::Symbol, fpair::Pair{String, String}, head::Abstr
     elseif case == :html
         fpath = joinpath(fpair...)
         raw_html = read(fpath, String)
-        proc_html = convert_html(raw_html, JD_GLOB_VARS, fpath; isoptim=isoptim)
+        proc_html = convert_html(raw_html, JD_GLOB_VARS; isoptim=isoptim)
         write(joinpath(out_path(fpair.first), fpair.second), proc_html)
     elseif case == :other
         opath = joinpath(out_path(fpair.first), fpair.second)
