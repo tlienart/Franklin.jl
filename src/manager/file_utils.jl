@@ -35,7 +35,7 @@ function write_page(root::String, file::String, head::String, pg_foot::String, f
      # The curpath is the relative path starting after /src/ so for instance:
      # f1/blah/page1.md or index.md etc... this is useful in the code evaluation and management
      # of paths
-    JD_CURPATH[] = fpath[lastindex(JD_PATHS[:in])+2:end]
+    JD_CURPATH[] = fpath[lastindex(JD_PATHS[:in])+length(PATH_SEP)+1:end]
 
     vJD_GLOB_LXDEFS    = collect(values(JD_GLOB_LXDEFS))
     (content, jd_vars) = convert_md(read(fpath, String) * EOS, vJD_GLOB_LXDEFS)

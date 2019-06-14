@@ -86,28 +86,12 @@ function hfun_href(params::Vector{String})::String
     dname, hkey = params[1], params[2]
     if params[1] == "EQR"
         haskey(JD_LOC_EQDICT, hkey) || return replacement
-        replacement = html_ahref(hkey, JD_LOC_EQDICT[hkey])
+        replacement = html_ahref_key(hkey, JD_LOC_EQDICT[hkey])
     elseif params[1] == "BIBR"
         haskey(JD_LOC_BIBREFDICT, hkey) || return replacement
-        replacement = html_ahref(hkey, JD_LOC_BIBREFDICT[hkey])
+        replacement = html_ahref_key(hkey, JD_LOC_BIBREFDICT[hkey])
     else
         @warn "Unknown dictionary name $dname in {{href ...}}. Ignoring"
     end
     return replacement
 end
-
-
-"""
-$(SIGNATURES)
-
-Convenience function to introduce a hyper reference.
-"""
-html_ahref(key::AbstractString, name::Union{Int,String})::String = "<a href=\"#$key\">$name</a>"
-
-
-"""
-$(SIGNATURES)
-
-Convenience function to introduce a div block.
-"""
-html_div(name::AbstractString, in::AbstractString)::String = "<div class=\"$name\">$in</div>\n"

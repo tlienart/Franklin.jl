@@ -103,5 +103,6 @@ include("manager/post_processing.jl")
 
 # MISC UTILS
 include("misc_utils.jl")
+include("misc_html.jl")
 
 end # module

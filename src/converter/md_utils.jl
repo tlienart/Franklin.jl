@@ -52,14 +52,6 @@ end
 """
 $(SIGNATURES)
 
-Insertion of a visible red message in HTML to show there was a problem.
-"""
-jd_show_err(mess::String="") = "~~~<span style=\"color:red;\">// $mess //</span>~~~"
-
-
-"""
-$(SIGNATURES)
-
 The insertion token have whitespaces around them: ` ##JDINSERT## `, this mostly helps but causes
 a problem when combined with italic or bold markdown mode since `_blah_` works but not `_ blah _`.
 This function looks for any occurrence of `[\\*_] ##JDINSERT##` or the opposite and removes the

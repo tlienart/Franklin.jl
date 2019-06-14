@@ -10,6 +10,7 @@ function resolve_lx_output(lxc::LxCom)::String
     return resolve_lx_input_plainoutput(rpath)
 end
 
+
 """
 $SIGNATURES
 
@@ -18,7 +19,7 @@ Internal function to resolve a `\\figalt{alt}{rpath}` (finds a plot and includes
 function resolve_lx_figalt(lxc::LxCom)::String
     rpath = strip(content(lxc.braces[2]))
     alt = strip(content(lxc.braces[1]))
-    path = resolve_assets_rpath(rpath)
+    path = resolve_assets_rpath(rpath; canonical=false)
     fdir, fext = splitext(path)
     # there are several cases
     # A. a path with no extension --> guess extension
@@ -28,35 +29,38 @@ function resolve_lx_figalt(lxc::LxCom)::String
     # both in the relpath and if not found and if /output/ not already the last subdir
     candext = ifelse(isempty(fext), (".png", ".jpeg", ".jpg", ".svg", ".gif"), (fext,))
     for ext ∈ candext
-        candpath = joinpath(fdir, ext)
-        isfile(candpath) && return "![$alt]($candpath)"
+        candpath = fdir * ext
+        syspath  = joinpath(JD_PATHS[:f], split(candpath, '/')...)
+        isfile(syspath) && return html_img(candpath, alt)
     end
     # now try in the output dir just in case (provided we weren't already looking there)
     p1, p2 = splitdir(fdir)
     if splitdir(p1)[2] != "output"
         for ext ∈ candext
             if splitdir(p1)[2] != "output"
-                candpath = joinpath(p1, "output", p2, ext)
-                isfile(candpath) && return "![$alt]($candpath)"
+                candpath = joinpath(p1, "output", p2 * ext)
+                syspath  = joinpath(JD_PATHS[:f], split(candpath, '/')...)
+                isfile(syspath) && return html_img(candpath, alt)
             end
         end
     end
-    return jd_show_err("![$alt]($path) -> file not found")
+    return html_err("image matching '$path' not found")
 end
 
 
 """
 $SIGNATURES
 
-Internal function to resolve a `\\file{alt}{rpath}` (finds a file and includes it with link name).
+Internal function to resolve a `\\file{name}{rpath}` (finds a file and includes it with link name).
 Note that while `\\figalt` is tolerant to extensions not being specified, this one is not.
 """
 function resolve_lx_file(lxc::LxCom)::String
     rpath = strip(content(lxc.braces[2]))
-    alt = strip(content(lxc.braces[1]))
-    path = resolve_assets_rpath(rpath)
-    isfile(path) && return " [$alt]($path) "
-    return jd_show_err("![$alt]($path) -> file not found")
+    name = strip(content(lxc.braces[1]))
+    path = resolve_assets_rpath(rpath; canonical=false)
+    syspath = joinpath(JD_PATHS[:f], split(path, '/')...)
+    isfile(syspath) && return html_ahref(path, name)
+    return html_err("file matching '$path' not found")
 end
 
 

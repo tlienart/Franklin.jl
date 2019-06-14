@@ -52,5 +52,5 @@ end
 
     @test occursin("<p>Some string <pre><code class=\"language-julia\">$(read(joinpath(J.JD_PATHS[:assets], "s1.jl"), String))</code></pre>", h)
     @test occursin("Then maybe <pre><code>$(read(joinpath(J.JD_PATHS[:assets], "output", "s1.out"), String))</code></pre>", h)
-    @test occursin("Finally img: <img src=\"/assets/output/s1a.png\" id=\"judoc-out-plot\"/> done.", h)
+    @test occursin("Finally img: <img src=\"/assets/output/s1a.png\" alt=\"\"> done.", h)
 end

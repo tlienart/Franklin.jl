@@ -13,29 +13,25 @@ function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef}; inmath::Bool=false)::S
     # sort special commands where the input depends on context (see hyperrefs and inputs)
     haskey(JD_REF_COMS, name) && return JD_REF_COMS[name](lxc)
     name == "\\input"         && return resolve_lx_input(lxc)
+    name ∈ keys(JD_LX_SIMPLE) && return JD_LX_SIMPLE[name](lxc)
 
-    partial = ""
-    if name ∈ keys(JD_LX_SIMPLE)
-        partial = JD_LX_SIMPLE[name](lxc)
-    else
-        # retrieve the definition attached to the command
-        lxdef = getdef(lxc)
-        # lxdef = nothing means we're inmath & not found -> let KaTeX deal with it
-        isnothing(lxdef) && return lxc.ss
-        # lxdef = something -> maybe inmath + found; retrieve & apply
-        partial = lxdef
-        for (argnum, β) ∈ enumerate(lxc.braces)
-            # space sensitive "unsafe" one
-            # e.g. blah/!#1 --> blah/blah but note that
-            # \command!#1 --> \commandblah and \commandblah would not be found
-            partial = replace(partial, "!#$argnum" => content(β))
-            # non-space sensitive "safe" one
-            # e.g. blah/#1 --> blah/ blah but note that
-            # \command#1 --> \command blah and no error.
-            partial = replace(partial, "#$argnum" => " " * content(β))
-        end
-        partial = ifelse(inmath, mathenv(partial), partial) * EOS
+    # retrieve the definition attached to the command
+    lxdef = getdef(lxc)
+    # lxdef = nothing means we're inmath & not found -> let KaTeX deal with it
+    isnothing(lxdef) && return lxc.ss
+    # lxdef = something -> maybe inmath + found; retrieve & apply
+    partial = lxdef
+    for (argnum, β) ∈ enumerate(lxc.braces)
+        # space sensitive "unsafe" one
+        # e.g. blah/!#1 --> blah/blah but note that
+        # \command!#1 --> \commandblah and \commandblah would not be found
+        partial = replace(partial, "!#$argnum" => content(β))
+        # non-space sensitive "safe" one
+        # e.g. blah/#1 --> blah/ blah but note that
+        # \command#1 --> \command blah and no error.
+        partial = replace(partial, "#$argnum" => " " * content(β))
     end
+    partial = ifelse(inmath, mathenv(partial), partial) * EOS
     # reprocess (we don't care about jd_vars=nothing)
     plug, _ = convert_md(partial, lxdefs, isrecursive=true,
                          isconfig=false, has_mddefs=false)
@@ -156,9 +152,13 @@ Internal function to resolve a relative path to `/assets/` and return the resolv
 as the file name; it also checks that the dir exists. It returns the full path to the file, the
 path of the directory containing the file, and the name of the file without extension.
 See also [`resolve_lx_input`](@ref).
+Note: rpath here is always a UNIX path while the output correspond to SYSTEM paths.
 """
 function check_input_rpath(rpath::AbstractString, lang::AbstractString="")::NTuple{3,String}
-    fpath = resolve_assets_rpath(rpath)
+    # find the full system path to the asset
+    fpath = resolve_assets_rpath(rpath; canonical=true)
+
+    # check if an extension is given, if not, consider it's `.xx` with language `nothing`
     if isempty(splitext(fpath)[2])
         ext, _ = get(CODE_LANG, lang) do
             (".xx", nothing)
@@ -169,7 +169,7 @@ function check_input_rpath(rpath::AbstractString, lang::AbstractString="")::NTup
 
     # see fill_extension, this is the case where nothing came up
     if endswith(fname, ".xx")
-        # try to find a file with whatever extension otherwise throw an error
+        # try to find a file with the same root and any extension otherwise throw an error
         files = readdir(dir)
         fn = splitext(fname)[1]
         k = findfirst(e -> splitext(e)[1] == fn, files)
@@ -188,8 +188,7 @@ end
 """
 $(SIGNATURES)
 
-Internal function to read the content of a script file and highlight it using either highlight.js
-or `Highlights.jl`. See also [`resolve_lx_input`](@ref).
+Internal function to read the content of a script file. See also [`resolve_lx_input`](@ref).
 """
 function resolve_lx_input_hlcode(rpath::AbstractString, lang::AbstractString)::String
     fpath, _, _ = check_input_rpath(rpath)
@@ -207,12 +206,7 @@ function resolve_lx_input_hlcode(rpath::AbstractString, lang::AbstractString)::S
     end
     code = String(take!(io_in))
     endswith(code, "\n") && (code = chop(code, tail=1))
-    # if use_hl
-    #     io_out = IOBuffer()
-    #     highlight(io_out, MIME("text/html"), code, lexer)
-    #     return String(take!(io_out))
-    # end
-    return "<pre><code class=\"language-$lang\">$code</code></pre>"
+    return html_code(code, lang)
 end
 
 
@@ -224,7 +218,7 @@ also [`resolve_lx_input`](@ref).
 """
 function resolve_lx_input_othercode(rpath::AbstractString, lang::AbstractString)::String
     fpath, _, _ = check_input_rpath(rpath)
-    return "<pre><code class=\"language-$lang\">$(read(fpath, String))</code></pre>"
+    return html_code(read(fpath, String), lang)
 end
 
 
@@ -241,7 +235,7 @@ function resolve_lx_input_plainoutput(rpath::AbstractString)::String
     # check if the output file exists
     isfile(out_file) || throw(ErrorException("I found an \\input but no relevant output file."))
     # return the content in a pre block
-    return "<pre><code>$(read(out_file, String))</code></pre>"
+    return html_code(read(out_file, String))
 end
 
 
@@ -274,7 +268,7 @@ function resolve_lx_input_plotoutput(rpath::AbstractString, id::AbstractString="
     # error if no file found
     out_file != "" || throw(ErrorException("I found an input plot but no relevant output plot."))
     # wrap it in img block
-    return "<img src=\"$(out_file)\" id=\"judoc-out-plot\"/>"
+    return html_img(out_file)
 end
 
 

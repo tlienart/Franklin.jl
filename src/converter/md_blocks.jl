@@ -115,7 +115,7 @@ function convert_code_block(ss::SubString)::String
     #   1. written to script file unless it's already there
     #   2. evaled (unless a file was there and output file is present), redirect out
     #   3. inserted after scrapping out lines (see resolve_lx_input)
-    path = resolve_assets_rpath(rpath)
+    path = resolve_assets_rpath(rpath; canonical=true)
 
     endswith(path, ".jl") || (path *= ".jl")
 
