@@ -77,11 +77,11 @@ end
     inter_html = J.md2html(inter_md)
     lxcontext = J.LxContext(lxcoms, lxdefs, braces)
 
-    @test J.convert_block(blocks2insert[1], lxcontext) == "<div class=\"d\">.</div>\n"
+    @test J.convert_block(blocks2insert[1], lxcontext) == "<div class=\"d\">.</div>"
     @test J.convert_block(blocks2insert[2], lxcontext) == "\\[\\begin{array}{c} \\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\\]"
 
     hstring = J.convert_inter_html(inter_html, blocks2insert, lxcontext)
-    @test hstring == "<p>ab<div class=\"d\">.</div>\n \\[\\begin{array}{c} \\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\\]</p>\n"
+    @test hstring == "<p>ab<div class=\"d\">.</div> \\[\\begin{array}{c} \\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\\]</p>\n"
 end
 
 
