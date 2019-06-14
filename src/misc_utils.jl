@@ -146,6 +146,7 @@ Used in [`resolve_assets_rpath`](@ref).
 """
 function unixify(rp::String)::String
     cand = Sys.isunix() ? rp : replace(rp, "\\"=>"/")
+    isempty(splitext(cand)[2]) || return cand
     endswith(cand, "/") || isempty(cand) || return cand * "/"
     return cand
 end

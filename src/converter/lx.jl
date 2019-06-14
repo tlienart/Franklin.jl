@@ -243,14 +243,12 @@ end
 $(SIGNATURES)
 
 Internal function to read a plot outputted by script `rpath`, possibly named with `id`. See also
-[`resolve_lx_input`](@ref).
+[`resolve_lx_input`](@ref). The commands `\\fig` and `\\figalt` should be preferred.
 """
 function resolve_lx_input_plotoutput(rpath::AbstractString, id::AbstractString="")::String
     # will throw an error if rpath doesn't exist
     _, dir, fname = check_input_rpath(rpath)
     plt_name = fname * id
-    # relative dir /assets/...
-    reldir = normpath(joinpath("/assets/", dirname(rpath)))
     # find a plt in output that has the same root name
     out_path = joinpath(dir, "output")
     isdir(out_path) || throw(ErrorException("I found an input plot but not output dir."))
@@ -259,7 +257,7 @@ function resolve_lx_input_plotoutput(rpath::AbstractString, id::AbstractString="
         for (f, e) ∈ splitext.(files)
             lc_e = lowercase(e)
             if f == plt_name && lc_e ∈ (".gif", ".jpg", ".jpeg", ".png", ".svg")
-                out_file = joinpath(reldir, "output", plt_name * lc_e)
+                out_file = unixify(joinpath("/assets", dirname(rpath), "output", plt_name * lc_e))
                 break
             end
         end
