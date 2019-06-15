@@ -2,7 +2,7 @@
     isdir("basic") && rm("basic", recursive=true, force=true)
     newsite("basic")
 
-    if get(ENV, "CI", "false") == "true"
+    if get(ENV, "CI", "false") == "true" || Sys.iswindows()
         import Pkg; Pkg.add("LinearAlgebra"); using LinearAlgebra;
     end
 
