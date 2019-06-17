@@ -11,3 +11,12 @@ conv  = st -> st |> cmd |> chtml
 # spaces, this is very convenient. Use == if want to check exact strings.
 isapproxstr(s1::String, s2::String) =
     isequal(map(s->replace(s, r"\s|\n"=>""), (s1, s2))...)
+
+# this is a slightly ridiculous requirement but apparently the `eval` blocks
+# don't play well with Travis nor windows while testing, so you just need to forcibly
+# specify that LinearAlgebra and Random are used (even though the included block says
+# the same thing).
+if get(ENV, "CI", "false") == "true" || Sys.iswindows()
+    import Pkg; Pkg.add("LinearAlgebra"); Pkg.add("Random");
+    using LinearAlgebra, Random;
+end
