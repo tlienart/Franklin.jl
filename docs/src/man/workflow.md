@@ -9,6 +9,7 @@ In this section it is assumed that you will eventually host your website on GitH
 * [Libraries](#Libraries-1)
   * [Highlight](#Highlight-1)
 * [Hosting the website](#Hosting-the-website-1)
+  * [Hosting the website as a project website](#Hosting-the-website-as-a-project-website-1)
 * [Optimisation step](#Optimisation-step-1)
 * [(git) synchronisation](#(git)-synchronisation-1)
   * [Merge conflicts](#Merge-conflicts-1)
@@ -185,10 +186,21 @@ Now just do the usual `git add`, `commit` and `push` and your site will be live 
 ### Hosting the website as a project website
 
 You may want to host your website not as a user website on `username.github.io/` but as a project website on `username.github.io/project/`.
+For this to work well, the only thing that is required is to have all links start with `/project/` instead of just `/` (the default).
+JuDoc makes this easy to do this as a final step before publication.
 
-```@raw html
-<span style="color:red;">TBD</span>, see <a href="https://github.com/tlienart/JuDoc.jl/issues/162">issue #162</a>.
+The best way to do it is:
+
+1. specify a `prepath` global variable in your `src/config.md` file by adding a line: `@def prepath = "project"`,
+1. use [`optimize`](@ref) and/or [`publish`](@ref) (even if you don't do the minification or the prerendering).
+
+Alternatively, you can specify the `prepath` when calling `optimize` or `publish` so for instance:
+
+```julia-repl
+julia> optimize(prerender=false, minify=false, prepath="project")
 ```
+
+will do a pass over all generated pages and make sure all paths are prepended with `/project/`.
 
 ## Optimisation step
 
