@@ -19,7 +19,6 @@
         presize1 = stat(joinpath("css", "basic.css")).size
         presize2 = stat("index.html").size
         optimize(prerender=false)
-        Sys.iswindows() && sleep(0.2)
         @test stat(joinpath("css", "basic.css")).size < presize1
         @test stat("index.html").size < presize2
     end
