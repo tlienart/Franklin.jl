@@ -2,8 +2,9 @@
     isdir("basic") && rm("basic", recursive=true, force=true)
     newsite("basic")
 
-    if get(ENV, "CI", "false") == "true"
-        import Pkg; Pkg.add("LinearAlgebra"); using LinearAlgebra;
+    if get(ENV, "CI", "false") == "true" || Sys.iswindows()
+        import Pkg; Pkg.add("LinearAlgebra"); Pkg.add("Random");
+        using LinearAlgebra, Random;
     end
 
     serve(single=true)

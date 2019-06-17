@@ -114,8 +114,8 @@ function convert_code_block(ss::SubString)::String
     # It will consequently be
     #   1. written to script file unless it's already there
     #   2. evaled (unless a file was there and output file is present), redirect out
-    #   3. inserted after scrapping out lines (see resolve_input)
-    path = resolve_assets_rpath(rpath)
+    #   3. inserted after scrapping out lines (see resolve_lx_input)
+    path = resolve_assets_rpath(rpath; canonical=true)
 
     endswith(path, ".jl") || (path *= ".jl")
 
@@ -142,5 +142,5 @@ function convert_code_block(ss::SubString)::String
     end
 
     # step 3, insertion of code stripping of "hide" lines.
-    return resolve_input_hlcode(rpath, "julia")
+    return resolve_lx_input_hlcode(rpath, "julia")
 end

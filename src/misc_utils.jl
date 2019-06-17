@@ -25,6 +25,7 @@ str(s::SubString)::String = s.string
     subs(s, from, to)
     subs(s, from)
     subs(s, range)
+    subs(s)
 
 Convenience functions to take a substring of a string.
 
@@ -37,7 +38,7 @@ julia> JuDoc.subs("hello", 2:4)
 subs(s::AbstractString, from::Int, to::Int)::SubString    = SubString(s, from, to)
 subs(s::AbstractString, from::Int)::SubString             = subs(s, from, from)
 subs(s::AbstractString, range::UnitRange{Int})::SubString = SubString(s, range)
-
+subs(s::AbstractString) = SubString(s)
 
 """
 $(SIGNATURES)
@@ -140,31 +141,56 @@ end
 """
 $(SIGNATURES)
 
+Internal function to take a path and return a unix version of the path (if it isn't already).
+Used in [`resolve_assets_rpath`](@ref).
+"""
+function unixify(rp::String)::String
+    cand = Sys.isunix() ? rp : replace(rp, "\\"=>"/")
+    isempty(splitext(cand)[2]) || return cand
+    endswith(cand, "/") || isempty(cand) || return cand * "/"
+    return cand
+end
+
+
+"""
+$(SIGNATURES)
 Internal function to take a unix path, split it along `/` and re-join it (which will lead to the
 same path on unix but not on windows). Only used in [`resolve_assets_rpath`](@ref).
 """
 joinrp(rpath::AbstractString) = joinpath(split(rpath, '/')...)
 
+
 """
 $(SIGNATURES)
 
-Internal function to resolve a relative path. See [`convert_code_block`](@ref) and
-[`resolve_input`](@ref).
+Internal function to resolve a relative path. See [`convert_code_blo
+    ck`](@ref) and
+[`resolve_lx_input`](@ref).
+As an example, let's say you have the path `./blah/blih.txt` somewhere in `src/pages/page1.md`.
+The `./` indicates that the path should be reproduced in `/assets/` and so it will lead to
+`/assets/pages/blah/blih.txt`.
+In the `canonical=false` mode, the returned path is a UNIX path (irrelevant of your platform);
+these paths can be given to html anchors (refs, img, ...).
+In the `canonical=true` mode, the path is a valid path on the local system. These paths can be
+given to Julia to read or write things.
 """
-function resolve_assets_rpath(rpath::AbstractString)::String
+function resolve_assets_rpath(rpath::AbstractString; canonical::Bool=false)::String
     @assert length(rpath) > 1 "relative path '$rpath' doesn't seem right"
     if startswith(rpath, "/")
         # this is a full path starting from the website root folder so for instance
-        # `/assets/blah/img1.png`
+        # `/assets/blah/img1.png`; just return that
+        canonical || return rpath
         return normpath(joinpath(JD_PATHS[:f], joinrp(rpath[2:end])))
     elseif startswith(rpath, "./")
         # this is a path relative to the assets folder with the same path as the calling file so
         # for instance if calling from `src/pages/pg1.md` with `./im1.png` it would refer to
         # /assets/pages/im1.png
         @assert length(rpath) > 2 "relative path '$rpath' doesn't seem right"
+        canonical || return "/assets/" * unixify(dirname(JD_CURPATH[])) * rpath[3:end]
         return normpath(joinpath(JD_PATHS[:assets], dirname(JD_CURPATH[]), joinrp(rpath[3:end])))
     end
     # this is a full path relative to the assets folder for instance `blah/img1.png` would
     # correspond to `/assets/blah/img1.png`
+    canonical || return "/assets/" * rpath
     return normpath(joinpath(JD_PATHS[:assets], joinrp(rpath)))
 end

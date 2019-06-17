@@ -47,14 +47,14 @@ function set_paths!()::Dict{Symbol,String}
     # functions such as JuDoc.publish point to the right dirs/files.
 
     JD_PATHS[:f]        = normpath(JD_FOLDER_PATH[])
-    JD_PATHS[:in]       = joinpath(JD_PATHS[:f],      "src")
-    JD_PATHS[:in_pages] = joinpath(JD_PATHS[:in],     "pages")
-    JD_PATHS[:in_css]   = joinpath(JD_PATHS[:in],     "_css")
-    JD_PATHS[:in_html]  = joinpath(JD_PATHS[:in],     "_html_parts")
-    JD_PATHS[:out]      = joinpath(JD_PATHS[:f],      "pub")
-    JD_PATHS[:out_css]  = joinpath(JD_PATHS[:f],      "css")
-    JD_PATHS[:libs]     = joinpath(JD_PATHS[:f],      "libs")
-    JD_PATHS[:assets]   = joinpath(JD_PATHS[:f],      "assets")
+    JD_PATHS[:in]       = joinpath(JD_PATHS[:f],  "src")
+    JD_PATHS[:in_pages] = joinpath(JD_PATHS[:in], "pages")
+    JD_PATHS[:in_css]   = joinpath(JD_PATHS[:in], "_css")
+    JD_PATHS[:in_html]  = joinpath(JD_PATHS[:in], "_html_parts")
+    JD_PATHS[:out]      = joinpath(JD_PATHS[:f],  "pub")
+    JD_PATHS[:out_css]  = joinpath(JD_PATHS[:f],  "css")
+    JD_PATHS[:libs]     = joinpath(JD_PATHS[:f],  "libs")
+    JD_PATHS[:assets]   = joinpath(JD_PATHS[:f],  "assets")
 
     return JD_PATHS
 end

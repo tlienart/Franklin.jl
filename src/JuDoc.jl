@@ -83,6 +83,7 @@ include("converter/md_utils.jl")
 include("converter/md.jl")
 # > latex
 include("converter/lx.jl")
+include("converter/lx_simple.jl")
 # > html
 include("converter/html_hblocks.jl")
 include("converter/html_hfuns.jl")
@@ -102,5 +103,6 @@ include("manager/post_processing.jl")
 
 # MISC UTILS
 include("misc_utils.jl")
+include("misc_html.jl")
 
 end # module

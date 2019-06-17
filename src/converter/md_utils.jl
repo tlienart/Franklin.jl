@@ -48,6 +48,7 @@ function deactivate_divs(blocks::Vector{OCBlock})::Vector{OCBlock}
     return blocks[active_blocks]
 end
 
+
 """
 $(SIGNATURES)
 

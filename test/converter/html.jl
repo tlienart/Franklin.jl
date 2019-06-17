@@ -136,8 +136,8 @@ end
     allvars = J.JD_VAR_TYPE()
 
     hs = raw"""
-        Some text then {{ ispage /index.html }} blah {{ end }} but
-        {{isnotpage /src/blah.html /src/ya/xx}} blih {{end}} done.
+        Some text then {{ ispage index.html }} blah {{ end }} but
+        {{isnotpage blah.html ya/xx}} blih {{end}} done.
         """
 
     tokens = J.find_tokens(hs, J.HTML_TOKENS, J.HTML_1C_TOKENS)
@@ -145,11 +145,11 @@ end
     qblocks = J.qualify_html_hblocks(hblocks)
 
     @test qblocks[1] isa J.HIsPage
-    @test qblocks[1].pages[1] == "/index.html"
+    @test qblocks[1].pages[1] == "index.html"
     @test qblocks[2] isa J.HEnd
     @test qblocks[3] isa J.HIsNotPage
-    @test qblocks[3].pages[1] == "/src/blah.html"
-    @test qblocks[3].pages[2] == "/src/ya/xx"
+    @test qblocks[3].pages[1] == "blah.html"
+    @test qblocks[3].pages[2] == "ya/xx"
 
     cblocks, qblocks = J.find_html_cblocks(qblocks)
     @test isempty(cblocks)
@@ -159,25 +159,29 @@ end
 
     @test isempty(qblocks)
     @test cpblocks[1].checkispage == true
-    @test cpblocks[1].pages[1] == "/index.html"
+    @test cpblocks[1].pages[1] == "index.html"
     @test cpblocks[1].action == " blah "
     @test cpblocks[2].checkispage == false
-    @test cpblocks[2].pages[1] == "/src/blah.html"
+    @test cpblocks[2].pages[1] == "blah.html"
 
     hblocks = J.merge_blocks(qblocks, cblocks, cdblocks, cpblocks)
 
     @test hblocks[1] isa J.HCondPage
     @test hblocks[1].pages == cpblocks[1].pages
 
-    @test J.convert_hblock(hblocks[1], allvars, "/index.md") == " blah "
-    @test J.convert_hblock(hblocks[1], allvars, "/indosdfx.md") == ""
-    @test J.convert_hblock(hblocks[2], allvars, "/index.md") == " blih "
-    @test J.convert_hblock(hblocks[2], allvars, "/src/blah.html") == ""
-
-    convhbs = [J.convert_hblock(hb, allvars, "/index.md") for hb ∈ hblocks]
+    J.JD_CURPATH[] = "index.md"
+    @test J.convert_hblock(hblocks[1], allvars) == " blah "
+    J.JD_CURPATH[] = "indosdf.md"
+    @test J.convert_hblock(hblocks[1], allvars) == ""
+    J.JD_CURPATH[] = "index.md"
+    @test J.convert_hblock(hblocks[2], allvars) == " blih "
+    J.JD_CURPATH[] = "blah.md"
+    @test J.convert_hblock(hblocks[2], allvars) == ""
+    J.JD_CURPATH[] = "index.md"
+    convhbs = [J.convert_hblock(hb, allvars) for hb ∈ hblocks]
 
     @test convhbs[1] == " blah " # condition is met
     @test convhbs[2] == " blih " # condition is met
-
-    @test J.convert_html(hs, allvars, joinpath(J.JD_PATHS[:in], "index.md")) == "Some text then  blah  but\n blih  done.\n"
+    J.JD_CURPATH[] = "index.md"
+    @test J.convert_html(hs, allvars) == "Some text then  blah  but\n blih  done.\n"
 end

@@ -12,8 +12,8 @@ function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef}; inmath::Bool=false)::S
 
     # sort special commands where the input depends on context (see hyperrefs and inputs)
     haskey(JD_REF_COMS, name) && return JD_REF_COMS[name](lxc)
-    (name == "\\input")       && return resolve_input(lxc)
-    (name == "\\output")      && return resolve_output(lxc)
+    name == "\\input"         && return resolve_lx_input(lxc)
+    name ∈ keys(JD_LX_SIMPLE) && return JD_LX_SIMPLE[name](lxc)
 
     # retrieve the definition attached to the command
     lxdef = getdef(lxc)
@@ -32,7 +32,6 @@ function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef}; inmath::Bool=false)::S
         partial = replace(partial, "#$argnum" => " " * content(β))
     end
     partial = ifelse(inmath, mathenv(partial), partial) * EOS
-
     # reprocess (we don't care about jd_vars=nothing)
     plug, _ = convert_md(partial, lxdefs, isrecursive=true,
                          isconfig=false, has_mddefs=false)
@@ -152,10 +151,14 @@ $(SIGNATURES)
 Internal function to resolve a relative path to `/assets/` and return the resolved dir as well
 as the file name; it also checks that the dir exists. It returns the full path to the file, the
 path of the directory containing the file, and the name of the file without extension.
-See also [`resolve_input`](@ref).
+See also [`resolve_lx_input`](@ref).
+Note: rpath here is always a UNIX path while the output correspond to SYSTEM paths.
 """
 function check_input_rpath(rpath::AbstractString, lang::AbstractString="")::NTuple{3,String}
-    fpath = resolve_assets_rpath(rpath)
+    # find the full system path to the asset
+    fpath = resolve_assets_rpath(rpath; canonical=true)
+
+    # check if an extension is given, if not, consider it's `.xx` with language `nothing`
     if isempty(splitext(fpath)[2])
         ext, _ = get(CODE_LANG, lang) do
             (".xx", nothing)
@@ -166,7 +169,7 @@ function check_input_rpath(rpath::AbstractString, lang::AbstractString="")::NTup
 
     # see fill_extension, this is the case where nothing came up
     if endswith(fname, ".xx")
-        # try to find a file with whatever extension otherwise throw an error
+        # try to find a file with the same root and any extension otherwise throw an error
         files = readdir(dir)
         fn = splitext(fname)[1]
         k = findfirst(e -> splitext(e)[1] == fn, files)
@@ -185,10 +188,9 @@ end
 """
 $(SIGNATURES)
 
-Internal function to read the content of a script file and highlight it using either highlight.js
-or `Highlights.jl`. See also [`resolve_input`](@ref).
+Internal function to read the content of a script file. See also [`resolve_lx_input`](@ref).
 """
-function resolve_input_hlcode(rpath::AbstractString, lang::AbstractString)::String
+function resolve_lx_input_hlcode(rpath::AbstractString, lang::AbstractString)::String
     fpath, _, _ = check_input_rpath(rpath)
     # Read the file while ignoring lines that are flagged with something like `# HIDE`
     _, comsym = CODE_LANG[lang]
@@ -204,12 +206,7 @@ function resolve_input_hlcode(rpath::AbstractString, lang::AbstractString)::Stri
     end
     code = String(take!(io_in))
     endswith(code, "\n") && (code = chop(code, tail=1))
-    # if use_hl
-    #     io_out = IOBuffer()
-    #     highlight(io_out, MIME("text/html"), code, lexer)
-    #     return String(take!(io_out))
-    # end
-    return "<pre><code class=\"language-$lang\">$code</code></pre>"
+    return html_code(code, lang)
 end
 
 
@@ -217,11 +214,11 @@ end
 $(SIGNATURES)
 
 Internal function to read the content of a script file and highlight it using `highlight.js`. See
-also [`resolve_input`](@ref).
+also [`resolve_lx_input`](@ref).
 """
-function resolve_input_othercode(rpath::AbstractString, lang::AbstractString)::String
+function resolve_lx_input_othercode(rpath::AbstractString, lang::AbstractString)::String
     fpath, _, _ = check_input_rpath(rpath)
-    return "<pre><code class=\"language-$lang\">$(read(fpath, String))</code></pre>"
+    return html_code(read(fpath, String), lang)
 end
 
 
@@ -229,16 +226,16 @@ end
 $(SIGNATURES)
 
 Internal function to read the raw output of the execution of a file and display it in a pre block.
-See also [`resolve_input`](@ref).
+See also [`resolve_lx_input`](@ref).
 """
-function resolve_input_plainoutput(rpath::AbstractString)::String
+function resolve_lx_input_plainoutput(rpath::AbstractString)::String
     # will throw an error if rpath doesn't exist
     _, dir, fname = check_input_rpath(rpath)
     out_file = joinpath(dir, "output", fname * ".out")
     # check if the output file exists
     isfile(out_file) || throw(ErrorException("I found an \\input but no relevant output file."))
     # return the content in a pre block
-    return "<pre><code>$(read(out_file, String))</code></pre>"
+    return html_code(read(out_file, String))
 end
 
 
@@ -246,14 +243,12 @@ end
 $(SIGNATURES)
 
 Internal function to read a plot outputted by script `rpath`, possibly named with `id`. See also
-[`resolve_input`](@ref).
+[`resolve_lx_input`](@ref). The commands `\\fig` and `\\figalt` should be preferred.
 """
-function resolve_input_plotoutput(rpath::AbstractString, id::AbstractString="")::String
+function resolve_lx_input_plotoutput(rpath::AbstractString, id::AbstractString="")::String
     # will throw an error if rpath doesn't exist
     _, dir, fname = check_input_rpath(rpath)
     plt_name = fname * id
-    # relative dir /assets/...
-    reldir = normpath(joinpath("/assets/", dirname(rpath)))
     # find a plt in output that has the same root name
     out_path = joinpath(dir, "output")
     isdir(out_path) || throw(ErrorException("I found an input plot but not output dir."))
@@ -262,7 +257,7 @@ function resolve_input_plotoutput(rpath::AbstractString, id::AbstractString=""):
         for (f, e) ∈ splitext.(files)
             lc_e = lowercase(e)
             if f == plt_name && lc_e ∈ (".gif", ".jpg", ".jpeg", ".png", ".svg")
-                out_file = joinpath(reldir, "output", plt_name * lc_e)
+                out_file = unixify(joinpath("/assets", dirname(rpath), "output", plt_name * lc_e))
                 break
             end
         end
@@ -271,7 +266,7 @@ function resolve_input_plotoutput(rpath::AbstractString, id::AbstractString=""):
     # error if no file found
     out_file != "" || throw(ErrorException("I found an input plot but no relevant output plot."))
     # wrap it in img block
-    return "<img src=\"$(out_file)\" id=\"judoc-out-plot\"/>"
+    return html_img(out_file)
 end
 
 
@@ -292,7 +287,7 @@ Different actions can be taken based on the first bracket:
 it will try to find an image with the same root name ending with `id.ext` where `id` can help
 identify a specific image if several are generated by the script, typically a number will be used.
 """
-function resolve_input(lxc::LxCom)::String
+function resolve_lx_input(lxc::LxCom)::String
     qualifier = lowercase(strip(content(lxc.braces[1])))  # `code:julia`
     rpath = strip(content(lxc.braces[2])) # [assets]/subpath/script{.jl}
 
@@ -302,50 +297,39 @@ function resolve_input(lxc::LxCom)::String
         if p1 == "code"
             if p2 ∈ keys(CODE_LANG)
                 # these are codes for which we know how they're commented and can use the
-                # HIDE trick (see HIGHLIGHT and resolve_input_hlcode)
-                return resolve_input_hlcode(rpath, p2)
+                # HIDE trick (see HIGHLIGHT and resolve_lx_input_hlcode)
+                return resolve_lx_input_hlcode(rpath, p2)
             else
                 # another language descriptor, let the user do that with highlights.js
                 # note that the HIDE trick will not work here.
-                return resolve_input_othercode(rpath, qualifier)
+                return resolve_lx_input_othercode(rpath, qualifier)
             end
         # output:plain
         elseif p1 == "output"
             if p2 == "plain"
-                return resolve_input_plainoutput(rpath)
+                return resolve_lx_input_plainoutput(rpath)
             # elseif p2 == "table"
-            #     return resolve_input_tableoutput(rpath)
+            #     return resolve_lx_input_tableoutput(rpath)
             else
                 throw(ArgumentError("I found an \\input but couldn't interpret \"$qualifier\"."))
             end
         # plot:id
         elseif p1 == "plot"
-            return resolve_input_plotoutput(rpath, p2)
+            return resolve_lx_input_plotoutput(rpath, p2)
         else
             throw(ArgumentError("I found an \\input but couldn't interpret \"$qualifier\"."))
         end
     else
         if qualifier == "output"
-            return resolve_input_plainoutput(rpath)
+            return resolve_lx_input_plainoutput(rpath)
         elseif qualifier == "plot"
-            return resolve_input_plotoutput(rpath)
+            return resolve_lx_input_plotoutput(rpath)
         # elseif qualifier == "table"
-        #     return resolve_input_tableoutput(rpath)
+        #     return resolve_lx_input_tableoutput(rpath)
         elseif qualifier ∈ ("julia", "fortran", "julia-repl", "matlab", "r", "toml")
-            return resolve_input_hlcode(rpath, qualifier)
+            return resolve_lx_input_hlcode(rpath, qualifier)
         else # assume it's another language descriptor, let the user do that with highlights.js
-            return resolve_input_othercode(rpath, qualifier)
+            return resolve_lx_input_othercode(rpath, qualifier)
         end
     end
-end
-
-
-"""
-$SIGNATURES
-
-Internal function to resolve a `\\output{rpath}` (finds the output and shows it).
-"""
-function resolve_output(lxc::LxCom)::String
-    rpath = strip(content(lxc.braces[1])) # [assets]/subpath/script{.jl}
-    return resolve_input_plainoutput(rpath)
 end
