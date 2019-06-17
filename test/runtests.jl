@@ -45,11 +45,15 @@ begin
     # create temp dir to do complete integration testing (has to be here in order
     # to locally play nice with node variables etc, otherwise it's a big headache)
     p = normpath(joinpath(D, "..", "__tmp"));
-    isdir(p) && rm(p, recursive=true, force=true)
-    mkdir(p); cd(p)
-    include("global/postprocess.jl");
-    Sys.iswindows() && chmod(p, 0o777, recursive=true)
-    cd(".."); rm(p, recursive=true, force=true)
+    if isdir(p)
+        Sys.iswindows() && chmod(p, 0o777; recursive=true)
+        rm(p; recursive=true, force=true)
+    end
+    # make dir, go in it, do the tests, get out
+    mkdir(p); cd(p); include("global/postprocess.jl");  cd("..")
+    # clean up
+    Sys.iswindows() && chmod(p, 0o777; recursive=true)
+    rm(p; recursive=true, force=true)
 end
 
 println("🥳  🥳  🥳  🥳 ")
