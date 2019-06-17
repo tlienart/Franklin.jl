@@ -44,15 +44,11 @@ include("global/cases2.jl")
 begin
     # create temp dir to do complete integration testing (has to be here in order
     # to locally play nice with node variables etc, otherwise it's a big headache)
-    p = normpath(joinpath(D, "..", "__tmp"));
-    if isdir(p)
-        Sys.iswindows() && chmod(p, 0o777; recursive=true)
-        rm(p; recursive=true, force=true)
-    end
-    # make dir, go in it, do the tests, get out
-    mkdir(p); cd(p); include("global/postprocess.jl");  cd("..")
+    p = joinpath(D, "..", "__tmp");
+    # make dir, go in it, do the tests, then get completely out (otherwise windows
+    # can't delete the folder)
+    mkdir(p); cd(p); include("global/postprocess.jl");  cd(joinpath(D, ".."))
     # clean up
-    Sys.iswindows() && chmod(p, 0o777; recursive=true)
     rm(p; recursive=true, force=true)
 end
 

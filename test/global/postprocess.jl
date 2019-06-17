@@ -3,7 +3,8 @@
     newsite("basic")
 
     if get(ENV, "CI", "false") == "true" || Sys.iswindows()
-        import Pkg; Pkg.add("LinearAlgebra"); using LinearAlgebra;
+        import Pkg; Pkg.add("LinearAlgebra"); Pkg.add("Random");
+        using LinearAlgebra, Random;
     end
 
     serve(single=true)
