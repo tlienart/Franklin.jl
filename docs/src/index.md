@@ -14,6 +14,16 @@ The base syntax is plain markdown with a few extensions such as the ability to d
 
     This package is still young and issues should be expected, comments, questions, bug reports etc. are welcome to make it better, see also the [Contributing](@ref) section.
 
+On this page:
+
+* [Installation](#Installation-1)
+  * [External dependencies](#External-dependencies-1)
+* [Quick start](#Quick-start-1)
+* [About](#About-1)
+  * [Features](#Features-1)
+  * [Why?](#Why?-1)
+  * [Licenses](#Licenses-1)
+
 ## Installation
 
 With Julia ≥ 1.0,
@@ -24,7 +34,7 @@ pkg> add JuDoc
 
 ### External dependencies
 
-JuDoc allows a post-processing step which pre-renders highlighted code blocks and math environments and minifies generated HTML and CSS.
+JuDoc allows a post-processing step (see [`optimize`](@ref)) which pre-renders highlighted code blocks and math environments and minifies generated HTML and CSS.
 This step requires a few external dependencies:
 
 * [`node.js`](https://nodejs.org/en/) for the pre-rendering of KaTeX and code highlighting,
@@ -40,18 +50,53 @@ Assuming you have those, you will then need to install `highlight.js` via `npm`:
 and the python package [`css_html_js_minify`](https://github.com/juancarlospaco/css-html-js-minify) which you can install with `pip3` (if you have python3, JuDoc will try to do this for you):
 
 ```bash
-pip3 install css_html_js_minify
+pip3 install css_html_js_minify # mac/linux
+py -3 -m pip install css_html_js_minify # windows
 ```
 
-If you have installed these dependencies after installing JuDoc, you will need to re-build the package with
+If you've installed these dependencies _after_ adding JuDoc, you will need to re-build the package with
 
 ```julia-repl
 pkg> build JuDoc
 ```
 
+You can subsequently check whether `JuDoc` was able to find them by looking at:
+
+```julia-repl
+julia> using JuDoc
+julia> JuDoc.JD_CAN_PRERENDER
+true
+julia> JuDoc.JD_CAN_HIGHLIGHT
+true
+julia> JuDoc.JD_CAN_MINIFY
+true
+```
+
 !!! note
 
     These external dependencies are **not required** to run JuDoc, they are just recommended to benefit from some of the post-processing machinery such as [`optimize`](@ref) or [`publish`](@ref).
+
+**Troubleshooting**:
+
+If JuDoc complains that it can't find a dependency while you believe that it is installed on your computer, you may have to help JuDoc know how to call the dependency.
+For this, you can specify in your `.julia/config/startup.jl`:
+
+```julia
+ENV["PYTHON3"] = "python3"
+ENV["PIP3"] = "pip3"
+ENV["NODE"] = "node"
+```
+
+replace the values by however python 3, node and pip are called on your computer i.e., whatever makes the following commands work:
+
+```julia
+julia> success(`python3 -V`)
+true
+julia> success(`pip3 -v`)
+true
+julia> success(`node -v`)
+true
+```
 
 ## Quick start
 
