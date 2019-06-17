@@ -20,3 +20,12 @@ if get(ENV, "CI", "false") == "true" || Sys.iswindows()
     import Pkg; Pkg.add("LinearAlgebra"); Pkg.add("Random");
     using LinearAlgebra, Random;
 end
+
+# takes md input and outputs the html (good for integration testing)
+function seval(st)
+    J.def_GLOB_VARS!()
+    J.def_GLOB_LXDEFS!()
+    m, _ = J.convert_md(st, collect(values(J.JD_GLOB_LXDEFS)))
+    h = J.convert_html(m, J.JD_VAR_TYPE())
+    return h
+end

@@ -22,9 +22,11 @@ html_div(name::AbstractString, in::AbstractString) = "<div class=\"$name\">$in</
 """
 $(SIGNATURES)
 
-Convenience function to introduce an image.
+Convenience function to introduce an image. The alt is escaped just in case the user adds quotation
+marks in the alt string.
 """
-html_img(src::AbstractString, alt::AbstractString="") = "<img src=\"$src\" alt=\"$alt\">"
+html_img(src::AbstractString, alt::AbstractString="") =
+    "<img src=\"$src\" alt=\"$(Markdown.htmlesc(alt))\">"
 
 """
 $(SIGNATURES)

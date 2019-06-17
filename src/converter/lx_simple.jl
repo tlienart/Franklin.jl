@@ -37,11 +37,9 @@ function resolve_lx_figalt(lxc::LxCom)::String
     p1, p2 = splitdir(fdir)
     if splitdir(p1)[2] != "output"
         for ext ∈ candext
-            if splitdir(p1)[2] != "output"
-                candpath = joinpath(p1, "output", p2 * ext)
-                syspath  = joinpath(JD_PATHS[:f], split(candpath, '/')...)
-                isfile(syspath) && return html_img(candpath, alt)
-            end
+            candpath = joinpath(p1, "output", p2 * ext)
+            syspath  = joinpath(JD_PATHS[:f], split(candpath, '/')...)
+            isfile(syspath) && return html_img(candpath, alt)
         end
     end
     return html_err("image matching '$path' not found")
