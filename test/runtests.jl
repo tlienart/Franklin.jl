@@ -48,6 +48,7 @@ begin
     isdir(p) && rm(p, recursive=true, force=true)
     mkdir(p); cd(p)
     include("global/postprocess.jl");
+    Sys.iswindows() && chmod(p, 0o777, recursive=true)
     cd(".."); rm(p, recursive=true, force=true)
 end
 
