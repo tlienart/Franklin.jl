@@ -2,11 +2,6 @@
     isdir("basic") && rm("basic", recursive=true, force=true)
     newsite("basic")
 
-    if get(ENV, "CI", "false") == "true" || Sys.iswindows()
-        import Pkg; Pkg.add("LinearAlgebra"); Pkg.add("Random");
-        using LinearAlgebra, Random;
-    end
-
     serve(single=true)
     # ---------------
     @test all(isdir, ("assets", "css", "libs", "pub", "src"))

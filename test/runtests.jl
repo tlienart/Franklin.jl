@@ -6,6 +6,7 @@ const D = joinpath(dirname(dirname(pathof(JuDoc))), "test", "_dummies")
 # otherwise you may get an error like "key 0x099191234..." was not found or
 # saying that the key :in doesn't exist or something along those lines
 include("jd_paths_vars.jl")
+include("test_utils.jl")
 
 include("misc.jl")
 
@@ -33,11 +34,12 @@ include("converter/html.jl")
 println("🍺")
 
 println("CONVERTER/LX")
+include("converter/eval.jl")
 include("converter/lx_input.jl")
+include("converter/lx_simple.jl")
 println("🍺")
 
 println("INTEGRATION")
-include("global/utils.jl")
 include("global/cases1.jl")
 include("global/cases2.jl")
 

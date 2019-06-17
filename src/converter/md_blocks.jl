@@ -136,7 +136,11 @@ function convert_code_block(ss::SubString)::String
         # other pages but it's really not recommended to exploit that)
         open(out_path, "w") do outf
             redirect_stdout(outf)  do
-                Main.include(path)
+                try
+                    Main.include(path)
+                catch
+                    print("There was an error running the code.")
+                end
             end
         end
     end
