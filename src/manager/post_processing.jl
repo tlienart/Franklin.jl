@@ -114,7 +114,7 @@ function cleanpull()::Nothing
         println(" [done ✔ ]")
     end
     try
-        print(rpad("→ Retrieving updates from the repository..."), 35)
+        print(rpad("→ Retrieving updates from the repository...", 35))
         run(`git pull --quiet`)
         println(" [done ✔ ]")
     catch e
