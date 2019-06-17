@@ -35,4 +35,17 @@
 end
 
 @testset "file" begin
+    write(joinpath(J.JD_PATHS[:assets], "blah.pdf"), "pdf code")
+    h = raw"""
+        View \file{the file}{/assets/blah.pdf} here.
+        """ |> seval
+    @test isapproxstr(h, """
+            <p>View <a href=\"/assets/blah.pdf\">the file</a> here.</p>
+            """)
+    h = raw"""
+        View \file{no file}{/assets/blih.pdf} here.
+        """ |> seval
+    @test isapproxstr(h, """
+            <p>View $(J.html_err("file matching '/assets/blih.pdf' not found")) here.</p>
+            """)
 end
