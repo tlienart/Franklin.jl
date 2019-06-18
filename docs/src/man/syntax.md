@@ -276,14 +276,15 @@ However, if you would like to define commands that are _globally_ available to a
 
 ### Hyper-references
 
-Currently two types of hyper-references are supported:
+Three types of hyper-references are supported:
 
-* for display math, and
-* for bibliography references.
+* for display math,
+* for bibliography references,
+* for specific anchor points in the page.
 
-The syntax for both is close to that of standard LaTeX (see below).
+The syntax for all three is close to that of standard LaTeX (see below).
 
-To style the appearance of the links in CSS, use `.jd-content.eqref a` and `.jd-content.bibref a` classes; for instance:
+To style the appearance of the maths or bib links in CSS, use `.jd-content.eqref a` and `.jd-content.bibref a` classes; for instance:
 
 ```css
 .jd-content .eqref a  {color: blue;}
@@ -334,6 +335,40 @@ As in LaTeX, if the reference is undefined, the command will be replaced by **(?
 
     In the future, there may be a possibility to define specific bibliography styles.
     I've not yet come around to it but feel free to open an issue if you would like this or would like to suggest a way to do it.
+
+#### Anchor points
+
+You can specify anchor points on the page by using `\label{name of the anchor}` anywhere on the page outside of maths environment.
+This will insert an anchor:
+
+```html
+<a id="name-of-the-anchor"></a>
+```
+
+You can subsequently add a link to it on the same page:
+
+```judoc
+[link to it](#name-of-the-anchor)
+```
+
+or from another page by prepending it with the path to the page, for instance:
+
+```judoc
+[link to it](/index.html#name-of-the-anchor)
+```
+
+Note also that all section headers are anchor points for instance
+
+```judoc
+### Some subtitle
+```
+
+can be linked to with `#some-subtitle`.
+
+!!! note
+
+    In the future, a number will be appended to anchor-points corresponding to section headers so that if you have two headers with the same name, the links can be differentiated (issue [#180](https://github.com/tlienart/JuDoc.jl/issues/180)). (Same as Documenter.jl.)
+
 
 ## Code insertions
 
