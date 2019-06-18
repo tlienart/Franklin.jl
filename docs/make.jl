@@ -18,6 +18,7 @@ makedocs(
              "Templating" => "man/templating.md",
              "Themes" => "man/themes.md",
              "Contributing" => "man/contrib.md",
+             "Troubleshooting" => "man/troubleshooting.md",
             ],
         "Library" => [
             "Design"    => "lib/design.md",
