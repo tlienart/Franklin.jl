@@ -194,16 +194,26 @@ function resolve_lx_input_hlcode(rpath::AbstractString, lang::AbstractString)::S
     fpath, _, _ = check_input_rpath(rpath)
     # Read the file while ignoring lines that are flagged with something like `# HIDE`
     _, comsym = CODE_LANG[lang]
-    hide = Regex("\\s$(comsym)(\\s)*?(?i)hide")
+    hide = Regex(raw"(?:^|[^\S\r\n]*?)#(\s)*?(?i)hide(all)?")
     io_in = IOBuffer()
     open(fpath, "r") do f
         for line ∈ readlines(f)
-             # - if there is a \s#\s+HIDE , skip that line
-             match(hide, line) === nothing || continue
-             write(io_in, line)
-             write(io_in, "\n")
+            # - if there is a \s#\s+HIDE , skip that line
+            m = match(hide, line)
+            if m === nothing
+                write(io_in, line)
+                write(io_in, "\n")
+            else
+                # does it have a "all" or not?
+                (m.captures[2] === nothing) && continue
+                # it does have an "all"
+                hideall = true
+                break
+            end
+
         end
     end
+    hideall && take!(io_in) # discard the content
     code = String(take!(io_in))
     endswith(code, "\n") && (code = chop(code, tail=1))
     return html_code(code, lang)
