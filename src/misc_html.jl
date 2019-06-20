@@ -34,6 +34,7 @@ $(SIGNATURES)
 Convenience function to introduce an image.
 """
 function html_code(c::AbstractString, lang::AbstractString="")
+    isempty(c) && return ""
     isempty(lang) && return "<pre><code>$c</code></pre>"
     return "<pre><code class=\"language-$lang\">$c</code></pre>"
 end

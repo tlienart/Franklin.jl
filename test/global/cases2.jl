@@ -45,3 +45,16 @@
             end
             </code></pre>""")
 end
+
+
+# see issue #182
+@testset "Code blocks" begin
+    st = read(joinpath(D, "182.md"), String)
+    @test isapproxstr(st |> conv, """
+            <p>Code block:</p>
+
+            The <em>average</em> temperature is <strong>19.5°C</strong>.
+
+            <p>The end.</p>
+            """)
+end
