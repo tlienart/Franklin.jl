@@ -378,21 +378,21 @@ Sometimes, when presenting code in a post, you would like to make sure the code 
 In JuDoc there are two ways to do this.
 
 1. For Julia, a live-evaluation of code blocks is supported not unlike the [Weave.jl](https://github.com/mpastell/Weave.jl) package,
-1. For all language, you can run the script separately and insert the code and/or the output of the code in the page.
+1. For all languages, you can run the script separately and insert the code and/or the output of the code in the page.
 
 ### On-the-fly evaluation
 
 !!! note
 
     **Evaluation time**: it is important to realise that when the code block is created or modified and the page is saved, it will trigger a page compilation that will _wait_ for the evaluation of the code block to complete. So if your code block takes a long time to execute, the page will not be updated before that's done.
-    That being said, if you don't modify the code block, it will only be executed _once_ as the output is saved to file.
+    That being said, if you don't modify the code block, it will only be executed **once** as the output is saved to file.
 
 !!! note
 
     **Sandboxing**: on-the-fly evaluation of code blocks is still a bit experimental. Among other things, the code is _not sandboxed_ which means that if you have two code blocks one after the other, the second one has access to what's defined in the first. This is natural within the same page, but it also works _across_ pages. However it would be really bad practice to rely on this as the order in which pages are compiled is not always the same.
     In short: take a page as one Julia notebook and pay attention to all your variables and functions to be defined on that page.
 
-Code blocks that should not be evaluated should be added without anything special so for instance:
+Code blocks that should not be evaluated should be added as per standard markdown, so for instance:
 
 `````judoc
 ```julia
@@ -400,7 +400,7 @@ a = 10
 ```
 `````
 
-Code blocks that should be evaluated should be added with `julia:path/to/script` where `path/to/script` indicates _where_ the script corresponding to the code block will be saved.
+Code blocks that should be evaluated should be added with `julia:path/to/script` where `path/to/script` indicates _where_ the script corresponding to the code block will be saved (**note**: the given path _must_ be in UNIX format)
 
 `````judoc
 ```julia:./code/ex1
@@ -415,7 +415,7 @@ What this will do is:
 1. run the code and capture its output (`STDOUT`) and write it to `/assets/[subpath]/code/output/ex1.out`
 
 The `[subpath]` here is the _exact same sub-path structure_ than to the page where the code block is inserted.
-So to clarify, let's say you wrote the above code-block in
+To clarify, let's say you wrote the above code-block in
 
 ```
 /src/pages/folder1/page1.md
@@ -431,15 +431,15 @@ then with the syntax above, the script will be saved in
 
 There are three ways you can specify where the script corresponding to a code-block should be saved.
 
-1. `./[p]/script` is as above, it will write the code block to `/assets/[subpath]/p/script.jl` where `subpath` corresponds to the sub-path of the page where the code block is inserted (path below `/src/`)
-1. `p/script` will write the code block to `/assets/p/script.jl`
-1. `/p/script` will write the code block to `/p/script.jl`
+1. relative to the page: `./[p]/script` is as above, it will write the code block to `/assets/[subpath]/p/script.jl` where `subpath` corresponds to the sub-path of the page where the code block is inserted (path below `/src/`)
+1. relative to the assets dir: `p/script` will write the code block to `/assets/p/script.jl`
+1. full path: `/p/script` will write the code block to `/p/script.jl`
 
-**Note**: when code blocks are evaluated and their output (`STDOUT`) is captured, it saved at `[path]/output/script.out` where `[path]` is what precedes `script.jl` in the cases above.
+**Note**: when code blocks are evaluated, their output (`STDOUT`) is captured and saved at `[path]/output/script.out` where `[path]` is what precedes `script.jl` in the cases above.
 
 #### Inserting the output
 
-Ok so let's say you've added the following code block:
+Let's say you've added the following code block:
 
 `````judoc
 ```julia:./code_pg1/ex1
@@ -449,7 +449,7 @@ a = [1, 2, 3]
 ```
 `````
 
-In order to show the output, just write
+In order to show the raw output, just write
 
 ```judoc
 \output{./code_pg1/ex1}
@@ -461,13 +461,35 @@ which in the present example will introduce exactly the following HTML
 <pre><code>dot(a, a) = 14</code></pre>
 ```
 
-which will look like
+and will look like
 
 ```
 dot(a, a) = 14
 ```
 
 If you now change the vector `a` in the code block, the page will be re-compiled with the code-block re-evaluated and the new output will be shown.
+
+If you would like the output to appear as text (not a code block), you can use `\textoutput` instead.
+Here's an example:
+
+`````judoc
+```julia:./code_pg1/ex2
+using Statistics
+temps = (15, 15, 14, 16, 18, 19, 20, 12, 10, 24)
+println("The _average_ temperature is **$(mean(temps))°C**.")
+```
+\\textoutput{./code_pg1/ex2}
+`````
+
+Which will appear as:
+
+```julia
+using Statistics
+temps = (15, 15, 14, 16, 18, 19, 20, 12, 10, 24)
+println("The _average_ temperature is **$(mean(temps))°C**.")
+```
+
+The _average_ temperature is **16.3°C**.
 
 #### Hiding lines
 
@@ -480,6 +502,22 @@ a = [1, 2, 3]
 @show dot(a, a)
 ```
 `````
+
+You could also hide the entire code block if you only care about the output, for this put a `# hideall` on any line:
+
+`````judoc
+```julia:./code_pg1/ex2
+#hideall
+using Statistics
+temps = (15, 15, 14, 16, 18, 19, 20, 12, 10, 24)
+println("The _average_ temperature is **$(mean(temps))°C**.")
+```
+\\textoutput{./code_pg1/ex2}
+`````
+
+Which will appear as just:
+
+The _average_ temperature is **16.3°C**.
 
 ### Separate evaluation
 
