@@ -55,5 +55,5 @@ begin
     # clean up
     rm(p; recursive=true, force=true)
 end
-
+cd(dirname(dirname(pathof(JuDoc))))
 println("😅 😅 😅 😅")
