@@ -44,8 +44,10 @@ This step requires a few external dependencies:
 Assuming you have those, you will then need to install `highlight.js` via `npm`:
 
 ```bash
-[sudo] npm install --save -g highlight.js
+[sudo] npm install -g highlight.js
 ```
+
+(you _may_ need to add `--save` to make this work well, see if the tests below work and if not, try again with `--save`)
 
 and the python package [`css_html_js_minify`](https://github.com/juancarlospaco/css-html-js-minify) which you can install with `pip3` (if you have python3, JuDoc will try to do this for you):
 
