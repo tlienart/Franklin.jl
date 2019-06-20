@@ -15,26 +15,35 @@ function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef}; inmath::Bool=false)::S
     name == "\\input"         && return resolve_lx_input(lxc)
     name ∈ keys(JD_LX_SIMPLE) && return JD_LX_SIMPLE[name](lxc)
 
-    # retrieve the definition attached to the command
-    lxdef = getdef(lxc)
-    # lxdef = nothing means we're inmath & not found -> let KaTeX deal with it
-    isnothing(lxdef) && return lxc.ss
-    # lxdef = something -> maybe inmath + found; retrieve & apply
-    partial = lxdef
-    for (argnum, β) ∈ enumerate(lxc.braces)
-        # space sensitive "unsafe" one
-        # e.g. blah/!#1 --> blah/blah but note that
-        # \command!#1 --> \commandblah and \commandblah would not be found
-        partial = replace(partial, "!#$argnum" => content(β))
-        # non-space sensitive "safe" one
-        # e.g. blah/#1 --> blah/ blah but note that
-        # \command#1 --> \command blah and no error.
-        partial = replace(partial, "#$argnum" => " " * content(β))
+    # In subsequent case, whatever the command inserts will be re-parsed (in case the insertion
+    # contains further commands or markdown); partial corresponds to what the command corresponds
+    # to before re-processing.
+    partial = ""
+
+    if name ∈ keys(JD_LX_SIMPLE_REPROC)
+        partial = JD_LX_SIMPLE_REPROC[name](lxc)
+    else
+        # retrieve the definition attached to the command
+        lxdef = getdef(lxc)
+        # lxdef = nothing means we're inmath & not found -> let KaTeX deal with it
+        isnothing(lxdef) && return lxc.ss
+        # lxdef = something -> maybe inmath + found; retrieve & apply
+        partial = lxdef
+        for (argnum, β) ∈ enumerate(lxc.braces)
+            # space sensitive "unsafe" one
+            # e.g. blah/!#1 --> blah/blah but note that
+            # \command!#1 --> \commandblah and \commandblah would not be found
+            partial = replace(partial, "!#$argnum" => content(β))
+            # non-space sensitive "safe" one
+            # e.g. blah/#1 --> blah/ blah but note that
+            # \command#1 --> \command blah and no error.
+            partial = replace(partial, "#$argnum" => " " * content(β))
+        end
+        partial = ifelse(inmath, mathenv(partial), partial) * EOS
     end
-    partial = ifelse(inmath, mathenv(partial), partial) * EOS
+
     # reprocess (we don't care about jd_vars=nothing)
-    plug, _ = convert_md(partial, lxdefs, isrecursive=true,
-                         isconfig=false, has_mddefs=false)
+    plug, _ = convert_md(partial, lxdefs, isrecursive=true, isconfig=false, has_mddefs=false)
     return plug
 end
 
@@ -195,6 +204,7 @@ function resolve_lx_input_hlcode(rpath::AbstractString, lang::AbstractString)::S
     # Read the file while ignoring lines that are flagged with something like `# HIDE`
     _, comsym = CODE_LANG[lang]
     hide = Regex(raw"(?:^|[^\S\r\n]*?)#(\s)*?(?i)hide(all)?")
+    hideall = false
     io_in = IOBuffer()
     open(fpath, "r") do f
         for line ∈ readlines(f)
@@ -238,14 +248,15 @@ $(SIGNATURES)
 Internal function to read the raw output of the execution of a file and display it in a pre block.
 See also [`resolve_lx_input`](@ref).
 """
-function resolve_lx_input_plainoutput(rpath::AbstractString)::String
+function resolve_lx_input_plainoutput(rpath::AbstractString, reproc::Bool=false)::String
     # will throw an error if rpath doesn't exist
     _, dir, fname = check_input_rpath(rpath)
     out_file = joinpath(dir, "output", fname * ".out")
     # check if the output file exists
     isfile(out_file) || throw(ErrorException("I found an \\input but no relevant output file."))
     # return the content in a pre block
-    return html_code(read(out_file, String))
+    reproc || return html_code(read(out_file, String))
+    return read(out_file, String)
 end
 
 

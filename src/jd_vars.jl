@@ -82,11 +82,12 @@ the site. See [`resolve_lxcom`](@ref).
     JD_GLOB_LXDEFS["\\label"]    = LxDef("\\label",    1, EMPTYSS)
     JD_GLOB_LXDEFS["\\biblabel"] = LxDef("\\biblabel", 2, EMPTYSS)
     # inclusion
-    JD_GLOB_LXDEFS["\\input"]  = LxDef("\\input",    2, EMPTYSS)
-    JD_GLOB_LXDEFS["\\output"] = LxDef("\\output",   1, EMPTYSS)
-    JD_GLOB_LXDEFS["\\figalt"] = LxDef("\\figalt",   2, EMPTYSS)
-    JD_GLOB_LXDEFS["\\fig"]    = LxDef("\\fig",      1, subs("\\figalt{}{#1}"))
-    JD_GLOB_LXDEFS["\\file"]   = LxDef("\\file",     2, subs("[#1]()"))
+    JD_GLOB_LXDEFS["\\input"]      = LxDef("\\input",      2, EMPTYSS)
+    JD_GLOB_LXDEFS["\\output"]     = LxDef("\\output",     1, EMPTYSS)
+    JD_GLOB_LXDEFS["\\textoutput"] = LxDef("\\textoutput", 1, EMPTYSS)
+    JD_GLOB_LXDEFS["\\figalt"]     = LxDef("\\figalt",     2, EMPTYSS)
+    JD_GLOB_LXDEFS["\\fig"]        = LxDef("\\fig",        1, subs("\\figalt{}{#1}"))
+    JD_GLOB_LXDEFS["\\file"]       = LxDef("\\file",       2, subs("[#1]()"))
     # text formatting
     JD_GLOB_LXDEFS["\\underline"] = LxDef("\\underline", 1,
                             subs("~~~<span style=\"text-decoration:underline;\">!#1</span>~~~"))

@@ -47,6 +47,8 @@ begin
     # create temp dir to do complete integration testing (has to be here in order
     # to locally play nice with node variables etc, otherwise it's a big headache)
     p = joinpath(D, "..", "__tmp");
+    # after errors, this may not have been deleted properly
+    isdir(p) && rm(p; recursive=true, force=true)
     # make dir, go in it, do the tests, then get completely out (otherwise windows
     # can't delete the folder)
     mkdir(p); cd(p); include("global/postprocess.jl");  cd(joinpath(D, ".."))
@@ -54,4 +56,4 @@ begin
     rm(p; recursive=true, force=true)
 end
 
-println("🥳  🥳  🥳  🥳 ")
+println("😅 😅 😅 😅")
