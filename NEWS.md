@@ -15,10 +15,10 @@ Thanks a lot to @Invarianz, @cserteGT3 and @mbaz for help and feedback leading t
 
 **Bug fixes**
 
-* better error message if starting the server from the wrong dir (#155)
-* numerous fixes for windows (read-only files, paths errors, installation instructions, ...) (#179, #177, #174, #167, #160)
-* fix an issue when mixing code, italic/bold (whitespace issue) (#163)
-* (_in 1.3_) fix an issue with parsing of nested code blocks within an escape block and paths issues (#151, #150)
+* better error message if starting the server from the wrong dir ([#155](https://github.com/tlienart/JuDoc.jl/issues/155))
+* numerous fixes for windows (read-only files, paths errors, installation instructions, ...) ([#179](https://github.com/tlienart/JuDoc.jl/issues/179), [#177](https://github.com/tlienart/JuDoc.jl/issues/177), [#174](https://github.com/tlienart/JuDoc.jl/issues/174), [#167](https://github.com/tlienart/JuDoc.jl/issues/167), [#16](https://github.com/tlienart/JuDoc.jl/issues/16)0)
+* fix an issue when mixing code, italic/bold (whitespace issue) ([#163](https://github.com/tlienart/JuDoc.jl/issues/163))
+* (_in 1.3_) fix an issue with parsing of nested code blocks within an escape block and paths issues ([#151](https://github.com/tlienart/JuDoc.jl/issues/151), [#15](https://github.com/tlienart/JuDoc.jl/issues/15)0)
 * (_in 1.2_) fix a problem with the use of `@async` which caused hyper references to fail
 * (_in 1.1_) fix toml issues and bumped KaTeX up to 0.10.2
 
