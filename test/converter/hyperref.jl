@@ -29,7 +29,7 @@
     @test J.JD_LOC_BIBREFDICT[h2] == "Amari and Douglas., 1998"
     @test J.JD_LOC_BIBREFDICT[h3] == "Bardenet et al., 2017"
 
-    h = J.convert_html(m, J.JD_VAR_TYPE())
+    h = J.convert_html(m, J.PAGE_VAR_TYPE())
 
     @test occursin("<a id=\"$h1\"></a>\\[ x = x \\]", h)
     @test occursin("<li><p><a id=\"$h2\"></a> <strong>Amari</strong> and <strong>Douglas</strong>: <em>Why Natural Gradient</em>, 1998.</p>\n</li>", h)

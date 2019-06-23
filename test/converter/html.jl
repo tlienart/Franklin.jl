@@ -1,5 +1,5 @@
 @testset "Cblock+h-fill" begin
-    allvars = J.JD_VAR_TYPE(
+    allvars = J.PAGE_VAR_TYPE(
         "v1" => "INPUT1" => (String,),
         "b1" => false => (Bool,),
         "b2" => true  => (Bool,))
@@ -62,7 +62,7 @@ end
     hs = raw"""
         Trying to insert: {{ insert temp.rnd }} and see.
         """
-    allvars = J.JD_VAR_TYPE()
+    allvars = J.PAGE_VAR_TYPE()
     @test J.convert_html(hs, allvars) == "Trying to insert: some random text to insert and see.\n"
 
     hs = raw"""Trying to insert: {{ insert nope.rnd }} and see."""
@@ -74,7 +74,7 @@ end
 
 
 @testset "cond-insert" begin
-    allvars = J.JD_VAR_TYPE(
+    allvars = J.PAGE_VAR_TYPE(
         "author" => "Stefan Zweig" => (String, Nothing),
         "date_format" => "U dd, yyyy" => (String,),
         "isnotes" => true => (Bool,))
@@ -85,7 +85,7 @@ end
 
 
 @testset "cond-insert 2" begin
-    allvars = J.JD_VAR_TYPE(
+    allvars = J.PAGE_VAR_TYPE(
         "author" => "Stefan Zweig" => (String, Nothing),
         "date_format" => "U dd, yyyy" => (String,),
         "isnotes" => true => (Bool,))
@@ -98,7 +98,7 @@ end
 end
 
 @testset "escape-coms" begin
-    allvars = J.JD_VAR_TYPE(
+    allvars = J.PAGE_VAR_TYPE(
         "author" => "Stefan Zweig" => (String, Nothing),
         "date_format" => "U dd, yyyy" => (String,),
         "isnotes" => true => (Bool,))
@@ -109,7 +109,7 @@ end
 
 
 @testset "Cblock+empty" begin # refers to #96
-    allvars = J.JD_VAR_TYPE(
+    allvars = J.PAGE_VAR_TYPE(
         "b1" => false => (Bool,),
         "b2" => true => (Bool,))
 
@@ -133,7 +133,7 @@ end
 
 
 @testset "Cond ispage" begin
-    allvars = J.JD_VAR_TYPE()
+    allvars = J.PAGE_VAR_TYPE()
 
     hs = raw"""
         Some text then {{ ispage index.html }} blah {{ end }} but

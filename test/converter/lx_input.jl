@@ -48,7 +48,7 @@ end
     J.def_GLOB_LXDEFS!()
 
     m, _ = J.convert_md(st, collect(values(J.JD_GLOB_LXDEFS)))
-    h = J.convert_html(m, J.JD_VAR_TYPE())
+    h = J.convert_html(m, J.PAGE_VAR_TYPE())
 
     @test occursin("<p>Some string <pre><code class=\"language-julia\">$(read(joinpath(J.JD_PATHS[:assets], "s1.jl"), String))</code></pre>", h)
     @test occursin("Then maybe <pre><code>$(read(joinpath(J.JD_PATHS[:assets], "output", "s1.out"), String))</code></pre>", h)

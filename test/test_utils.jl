@@ -26,6 +26,6 @@ function seval(st)
     J.def_GLOB_VARS!()
     J.def_GLOB_LXDEFS!()
     m, _ = J.convert_md(st, collect(values(J.JD_GLOB_LXDEFS)))
-    h = J.convert_html(m, J.JD_VAR_TYPE())
+    h = J.convert_html(m, J.PAGE_VAR_TYPE())
     return h
 end

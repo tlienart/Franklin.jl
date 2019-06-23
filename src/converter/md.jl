@@ -17,7 +17,7 @@ well as a dictionary of page variables.
 """
 function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
                     isrecursive::Bool=false, isconfig::Bool=false, has_mddefs::Bool=true
-                    )::Tuple{String,Union{Nothing,JD_VAR_TYPE}}
+                    )::Tuple{String,Union{Nothing,PAGE_VAR_TYPE}}
     if !isrecursive
         def_LOC_VARS!()           # page-specific variables
         def_JD_LOC_EQDICT!()      # page-specific equation dict (hrefs)
@@ -295,7 +295,7 @@ available page variable dictionaries).
 * `lxdefs`:    latex definitions
 """
 function process_md_defs(blocks::Vector{OCBlock}, isconfig::Bool,
-                         lxdefs::Vector{LxDef})::Union{Nothing,JD_VAR_TYPE}
+                         lxdefs::Vector{LxDef})::Union{Nothing,PAGE_VAR_TYPE}
     # Find all markdown definitions (MD_DEF) blocks
     mddefs = filter(β -> (β.name == :MD_DEF), blocks)
     # empty container for the assignments

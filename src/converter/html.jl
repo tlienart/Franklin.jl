@@ -3,7 +3,7 @@ $(SIGNATURES)
 
 Convert a judoc html string into a html string (i.e. replace `{{ ... }}` blocks).
 """
-function convert_html(hs::AbstractString, allvars::JD_VAR_TYPE; isoptim::Bool=false)::String
+function convert_html(hs::AbstractString, allvars::PAGE_VAR_TYPE; isoptim::Bool=false)::String
     # Tokenize
     tokens = find_tokens(hs, HTML_TOKENS, HTML_1C_TOKENS)
 

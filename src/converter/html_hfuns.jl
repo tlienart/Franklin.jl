@@ -19,7 +19,7 @@ Helper function to process an individual block when it's a `HFun` such as `{{ fi
 Dev Note: `fpath` is (currently) unused but is passed to all `convert_hblock` functions.
 See [`convert_html`](@ref).
 """
-function convert_hblock(β::HFun, allvars::JD_VAR_TYPE, ::AbstractString="")::String
+function convert_hblock(β::HFun, allvars::PAGE_VAR_TYPE, ::AbstractString="")::String
     # normalise function name and apply the function
     fn = lowercase(β.fname)
     haskey(JD_HTML_FUNS, fn) && return JD_HTML_FUNS[fn](β.params, allvars)
@@ -36,7 +36,7 @@ $(SIGNATURES)
 H-Function of the form `{{ fill vname }}` to plug in the content of a jd-var `vname` (assuming it
 can be represented as a string).
 """
-function hfun_fill(params::Vector{String}, allvars::JD_VAR_TYPE)::String
+function hfun_fill(params::Vector{String}, allvars::PAGE_VAR_TYPE)::String
     # check params
     length(params) == 1 || error("I found a {{fill ...}} with more than one parameter. Verify.")
     # fill
