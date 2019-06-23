@@ -38,9 +38,6 @@ const CODE_LANG = Dict{String,NTuple{2,String}}(
     "toml"       => (".toml", "#"),
     )
 
-"""Path to the JuDoc repo."""
-const JUDOC_PATH = splitdir(pathof(JuDoc))[1] # .../JuDoc/src
-
 # copied from Base/path.jl
 if Sys.isunix()
     """Indicator for directory separation on the OS."""
