@@ -51,7 +51,7 @@ if that's the case (useful to handle different layouts on different pages).
 """
 function convert_hblock(β::HCondPage, allvars::JD_VAR_TYPE)::String
     # current path is relative to /src/ for instance /src/pages/blah.md -> pages/blah.md
-    rpath = JD_CURPATH[]
+    rpath = CUR_PATH[]
     # replace the `pages/` by `pub/`
     rpath = replace(rpath, Regex("^pages$(escape_string(PATH_SEP))") => "pub$(PATH_SEP)")
     # remove the extension

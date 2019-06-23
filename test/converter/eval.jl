@@ -67,7 +67,7 @@ end
 
     # ------------
 
-    J.JD_CURPATH[] = joinpath(J.JD_PATHS[:in], "pages", "pg1.md")[lastindex(J.JD_PATHS[:in])+2:end]
+    J.CUR_PATH[] = joinpath(J.JD_PATHS[:in], "pages", "pg1.md")[lastindex(J.JD_PATHS[:in])+2:end]
 
     h = raw"""
         Simple code:

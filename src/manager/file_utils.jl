@@ -35,7 +35,7 @@ function write_page(root::String, file::String, head::String, pg_foot::String, f
      # The curpath is the relative path starting after /src/ so for instance:
      # f1/blah/page1.md or index.md etc... this is useful in the code evaluation and management
      # of paths
-    JD_CURPATH[] = fpath[lastindex(JD_PATHS[:in])+length(PATH_SEP)+1:end]
+    CUR_PATH[] = fpath[lastindex(JD_PATHS[:in])+length(PATH_SEP)+1:end]
 
     vJD_GLOB_LXDEFS    = collect(values(JD_GLOB_LXDEFS))
     (content, jd_vars) = convert_md(read(fpath, String) * EOS, vJD_GLOB_LXDEFS)
@@ -47,7 +47,7 @@ function write_page(root::String, file::String, head::String, pg_foot::String, f
     s = stat(fpath)
     set_var!(jd_vars, "jd_ctime", jd_date(unix2datetime(s.ctime)))
     set_var!(jd_vars, "jd_mtime", jd_date(unix2datetime(s.mtime)))
-    set_var!(jd_vars, "jd_rpath", JD_CURPATH[])
+    set_var!(jd_vars, "jd_rpath", CUR_PATH[])
 
     # 3. process blocks in the html infra elements based on `jd_vars`
     # (e.g.: add the date in the footer)

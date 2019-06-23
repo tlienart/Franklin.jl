@@ -169,19 +169,19 @@ end
     @test hblocks[1] isa J.HCondPage
     @test hblocks[1].pages == cpblocks[1].pages
 
-    J.JD_CURPATH[] = "index.md"
+    J.CUR_PATH[] = "index.md"
     @test J.convert_hblock(hblocks[1], allvars) == " blah "
-    J.JD_CURPATH[] = "indosdf.md"
+    J.CUR_PATH[] = "indosdf.md"
     @test J.convert_hblock(hblocks[1], allvars) == ""
-    J.JD_CURPATH[] = "index.md"
+    J.CUR_PATH[] = "index.md"
     @test J.convert_hblock(hblocks[2], allvars) == " blih "
-    J.JD_CURPATH[] = "blah.md"
+    J.CUR_PATH[] = "blah.md"
     @test J.convert_hblock(hblocks[2], allvars) == ""
-    J.JD_CURPATH[] = "index.md"
+    J.CUR_PATH[] = "index.md"
     convhbs = [J.convert_hblock(hb, allvars) for hb ∈ hblocks]
 
     @test convhbs[1] == " blah " # condition is met
     @test convhbs[2] == " blih " # condition is met
-    J.JD_CURPATH[] = "index.md"
+    J.CUR_PATH[] = "index.md"
     @test J.convert_html(hs, allvars) == "Some text then  blah  but\n blih  done.\n"
 end

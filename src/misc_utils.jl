@@ -186,8 +186,8 @@ function resolve_assets_rpath(rpath::AbstractString; canonical::Bool=false)::Str
         # for instance if calling from `src/pages/pg1.md` with `./im1.png` it would refer to
         # /assets/pages/im1.png
         @assert length(rpath) > 2 "relative path '$rpath' doesn't seem right"
-        canonical || return "/assets/" * unixify(dirname(JD_CURPATH[])) * rpath[3:end]
-        return normpath(joinpath(JD_PATHS[:assets], dirname(JD_CURPATH[]), joinrp(rpath[3:end])))
+        canonical || return "/assets/" * unixify(dirname(CUR_PATH[])) * rpath[3:end]
+        return normpath(joinpath(JD_PATHS[:assets], dirname(CUR_PATH[]), joinrp(rpath[3:end])))
     end
     # this is a full path relative to the assets folder for instance `blah/img1.png` would
     # correspond to `/assets/blah/img1.png`

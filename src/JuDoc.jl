@@ -48,11 +48,11 @@ else
     error("Unhandled OS")
 end
 
-"""Type of the containers for page variables."""
+"""Type of the containers for page variables (local and global)."""
 const JD_VAR_TYPE = Dict{String,Pair{K,NTuple{N, DataType}} where {K, N}}
 
-"""Relative path to the current file being processed."""
-const JD_CURPATH = Ref("")
+"""Relative path to the current file being processed by JuDoc."""
+const CUR_PATH = Ref("")
 
 # -----------------------------------------------------------------------------
 

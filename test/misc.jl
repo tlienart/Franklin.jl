@@ -90,7 +90,7 @@ end
 @testset "paths" begin
     @test J.unixify(pwd()) == replace(pwd(), J.PATH_SEP => "/") * "/"
     #
-    J.JD_CURPATH[] = "cpA/cpB/"
+    J.CUR_PATH[] = "cpA/cpB/"
     # non-canonical mode
     @test J.resolve_assets_rpath("./hello/goodbye") == "/assets/cpA/cpB/hello/goodbye"
     @test J.resolve_assets_rpath("/blah/blih.txt") == "/blah/blih.txt"
