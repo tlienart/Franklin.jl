@@ -46,7 +46,7 @@ function set_paths!()::Dict{Symbol,String}
     # Particularly for the output dir. If you do, check for example that
     # functions such as JuDoc.publish point to the right dirs/files.
 
-    PATHS[:folder]        = normpath(FOLDER_PATH[])
+    PATHS[:folder]    = normpath(FOLDER_PATH[])
     PATHS[:src]       = joinpath(PATHS[:folder],  "src")
     PATHS[:src_pages] = joinpath(PATHS[:src],     "pages")
     PATHS[:src_css]   = joinpath(PATHS[:src],     "_css")
