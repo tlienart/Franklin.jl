@@ -1,5 +1,5 @@
 """
-    JD_GLOB_VARS
+    GLOBAL_PAGE_VARS
 
 Dictionary of variables assumed to be set for the entire website. Entries have the format
 KEY => PAIR where KEY is a string (e.g.: "author") and PAIR is a pair where the first element is
@@ -8,7 +8,7 @@ for that value. (e.g.: "THE AUTHOR" => (String, Nothing))
 
 DEVNOTE: marked as constant for perf reasons but can be modified since Dict.
 """
-const JD_GLOB_VARS = PAGE_VAR_TYPE()
+const GLOBAL_PAGE_VARS = PAGE_VARS_TYPE()
 
 
 """
@@ -17,24 +17,24 @@ $(SIGNATURES)
 Convenience function to allocate default values of the global site variables. This is called once,
 when JuDoc is started.
 """
-@inline function def_GLOB_VARS!()::Nothing
-    empty!(JD_GLOB_VARS)
-    JD_GLOB_VARS["author"]      = Pair("THE AUTHOR",   (String, Nothing))
-    JD_GLOB_VARS["date_format"] = Pair("U dd, yyyy",   (String,))
-    JD_GLOB_VARS["prepath"]     = Pair("",             (String,))
+@inline function def_GLOBAL_PAGE_VARS!()::Nothing
+    empty!(GLOBAL_PAGE_VARS)
+    GLOBAL_PAGE_VARS["author"]      = Pair("THE AUTHOR",   (String, Nothing))
+    GLOBAL_PAGE_VARS["date_format"] = Pair("U dd, yyyy",   (String,))
+    GLOBAL_PAGE_VARS["prepath"]     = Pair("",             (String,))
     return nothing
 end
 
 
 """
-    JD_LOC_VARS
+    LOCAL_PAGE_VARS
 
 Dictionary of variables copied and then set for each page (through definitions). Entries have the
-same format as for `JD_GLOB_VARS`.
+same format as for `GLOBAL_PAGE_VARS`.
 
 DEVNOTE: marked as constant for perf reasons but can be modified since Dict.
 """
-const JD_LOC_VARS = PAGE_VAR_TYPE()
+const LOCAL_PAGE_VARS = PAGE_VARS_TYPE()
 
 
 """
@@ -43,15 +43,15 @@ $(SIGNATURES)
 Convenience function to allocate default values of page variables. This is called every time a page
 is processed.
 """
-@inline function def_LOC_VARS!()::Nothing
-    empty!(JD_LOC_VARS)
-    JD_LOC_VARS["title"]    = Pair(nothing, (String, Nothing))
-    JD_LOC_VARS["hasmath"]  = Pair(true,    (Bool,))
-    JD_LOC_VARS["hascode"]  = Pair(false,   (Bool,))
-    JD_LOC_VARS["date"]     = Pair(Date(1), (String, Date, Nothing))
-    JD_LOC_VARS["jd_ctime"] = Pair(Date(1), (Date,))   # time of creation
-    JD_LOC_VARS["jd_mtime"] = Pair(Date(1), (Date,))   # time of last modification
-    JD_LOC_VARS["jd_rpath"] = Pair("",      (String,)) # local path to file src/[...]/blah.md
+@inline function def_LOCAL_PAGE_VARS!()::Nothing
+    empty!(LOCAL_PAGE_VARS)
+    LOCAL_PAGE_VARS["title"]    = Pair(nothing, (String, Nothing))
+    LOCAL_PAGE_VARS["hasmath"]  = Pair(true,    (Bool,))
+    LOCAL_PAGE_VARS["hascode"]  = Pair(false,   (Bool,))
+    LOCAL_PAGE_VARS["date"]     = Pair(Date(1), (String, Date, Nothing))
+    LOCAL_PAGE_VARS["jd_ctime"] = Pair(Date(1), (Date,))   # time of creation
+    LOCAL_PAGE_VARS["jd_mtime"] = Pair(Date(1), (Date,))   # time of last modification
+    LOCAL_PAGE_VARS["jd_rpath"] = Pair("",      (String,)) # local path to file src/[...]/blah.md
     return nothing
 end
 
@@ -105,9 +105,9 @@ Convenience functions related to the jd_vars
 $(SIGNATURES)
 
 Convenience function taking a `DateTime` object and returning the corresponding formatted string
-with the format contained in `JD_GLOB_VARS["date_format"]`.
+with the format contained in `GLOBAL_PAGE_VARS["date_format"]`.
 """
-jd_date(d::DateTime)::AbstractString = Dates.format(d, JD_GLOB_VARS["date_format"].first)
+jd_date(d::DateTime)::AbstractString = Dates.format(d, GLOBAL_PAGE_VARS["date_format"].first)
 
 
 """
@@ -125,7 +125,7 @@ Take a var dictionary `dict` and update the corresponding pair. This should only
 as it does not check the validity of `val`. See [`write_page`](@ref) where it is used to store a
 file's creation and last modification time.
 """
-set_var!(d::PAGE_VAR_TYPE, k::K, v) where K = (d[k] = Pair(v, d[k].second); nothing)
+set_var!(d::PAGE_VARS_TYPE, k::K, v) where K = (d[k] = Pair(v, d[k].second); nothing)
 
 
 #= =================================================
@@ -150,7 +150,7 @@ Dict{String,Pair{K,Tuple{DataType}} where K} with 2 entries:
   "a" => 5.0=>(Real,)
 ```
 """
-function set_vars!(jd_vars::PAGE_VAR_TYPE, assignments::Vector{Pair{String,String}})::PAGE_VAR_TYPE
+function set_vars!(jd_vars::PAGE_VARS_TYPE, assignments::Vector{Pair{String,String}})::PAGE_VARS_TYPE
     # if there's no assignment, cut it short
     isempty(assignments) && return jd_vars
     # process each assignment in turn

@@ -17,9 +17,9 @@ well as a dictionary of page variables.
 """
 function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
                     isrecursive::Bool=false, isconfig::Bool=false, has_mddefs::Bool=true
-                    )::Tuple{String,Union{Nothing,PAGE_VAR_TYPE}}
+                    )::Tuple{String,Union{Nothing,PAGE_VARS_TYPE}}
     if !isrecursive
-        def_LOC_VARS!()           # page-specific variables
+        def_LOCAL_PAGE_VARS!()           # page-specific variables
         def_JD_LOC_EQDICT!()      # page-specific equation dict (hrefs)
         def_JD_LOC_BIBREFDICT!()  # page-specific reference dict (hrefs)
     end
@@ -295,7 +295,7 @@ available page variable dictionaries).
 * `lxdefs`:    latex definitions
 """
 function process_md_defs(blocks::Vector{OCBlock}, isconfig::Bool,
-                         lxdefs::Vector{LxDef})::Union{Nothing,PAGE_VAR_TYPE}
+                         lxdefs::Vector{LxDef})::Union{Nothing,PAGE_VARS_TYPE}
     # Find all markdown definitions (MD_DEF) blocks
     mddefs = filter(β -> (β.name == :MD_DEF), blocks)
     # empty container for the assignments
@@ -312,9 +312,9 @@ function process_md_defs(blocks::Vector{OCBlock}, isconfig::Bool,
         assignments[i] = (String(vname) => String(vdef))
     end
     # if we're currently looking at the config file, update the global page var dictionary
-    # JD_GLOB_VARS and store the latex definition globally as well in JD_GLOB_LXDEFS
+    # GLOBAL_PAGE_VARS and store the latex definition globally as well in JD_GLOB_LXDEFS
     if isconfig
-        isempty(assignments) || set_vars!(JD_GLOB_VARS, assignments)
+        isempty(assignments) || set_vars!(GLOBAL_PAGE_VARS, assignments)
         for lxd ∈ lxdefs
             JD_GLOB_LXDEFS[lxd.name] = lxd
         end
@@ -322,7 +322,7 @@ function process_md_defs(blocks::Vector{OCBlock}, isconfig::Bool,
     end
     # create variable dictionary for the page
     # NOTE: assignments here may be empty, that's fine (will be processed further down)
-    jd_vars = merge(JD_GLOB_VARS, copy(JD_LOC_VARS))
+    jd_vars = merge(GLOBAL_PAGE_VARS, copy(LOCAL_PAGE_VARS))
     set_vars!(jd_vars, assignments)
     return jd_vars
 end

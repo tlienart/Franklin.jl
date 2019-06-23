@@ -27,7 +27,7 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
               "You can install it with `npm install highlight.js`."
     end
     if !isempty(prepath)
-        JD_GLOB_VARS["prepath"] = prepath => (String, )
+        GLOBAL_PAGE_VARS["prepath"] = prepath => (String, )
     end
     # re-do a (silent) full pass
     start = time()

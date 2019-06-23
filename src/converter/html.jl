@@ -3,7 +3,7 @@ $(SIGNATURES)
 
 Convert a judoc html string into a html string (i.e. replace `{{ ... }}` blocks).
 """
-function convert_html(hs::AbstractString, allvars::PAGE_VAR_TYPE; isoptim::Bool=false)::String
+function convert_html(hs::AbstractString, allvars::PAGE_VARS_TYPE; isoptim::Bool=false)::String
     # Tokenize
     tokens = find_tokens(hs, HTML_TOKENS, HTML_1C_TOKENS)
 
@@ -42,7 +42,7 @@ function convert_html(hs::AbstractString, allvars::PAGE_VAR_TYPE; isoptim::Bool=
 
     isempty(fhs) && return ""
 
-    if !isempty(JD_GLOB_VARS["prepath"].first) && isoptim
+    if !isempty(GLOBAL_PAGE_VARS["prepath"].first) && isoptim
         fhs = fix_links(fhs)
     end
 

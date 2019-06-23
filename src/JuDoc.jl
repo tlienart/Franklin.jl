@@ -49,7 +49,7 @@ else
 end
 
 """Type of the containers for page variables (local and global)."""
-const PAGE_VAR_TYPE = Dict{String,Pair{K,NTuple{N, DataType}} where {K, N}}
+const PAGE_VARS_TYPE = Dict{String,Pair{K,NTuple{N, DataType}} where {K, N}}
 
 """Relative path to the current file being processed by JuDoc."""
 const CUR_PATH = Ref("")

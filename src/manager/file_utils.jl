@@ -2,7 +2,7 @@
 $(SIGNATURES)
 
 Checks for a `config.md` file in `JD_PATHS[:in]` and uses it to set the global variables referenced
-in `JD_GLOB_VARS` it also sets the global latex commands via `JD_GLOB_LXDEFS`. If the configuration
+in `GLOBAL_PAGE_VARS` it also sets the global latex commands via `JD_GLOB_LXDEFS`. If the configuration
 file is not found a warning is shown.
 """
 function process_config()::Nothing
@@ -30,7 +30,7 @@ function write_page(root::String, file::String, head::String, pg_foot::String, f
     # 2. eval the definitions and update the variable dictionary, also retrieve
     # document variables (time of creation, time of last modif) and add those
     # to the dictionary.
-    jd_vars = merge(JD_GLOB_VARS, copy(JD_LOC_VARS))
+    jd_vars = merge(GLOBAL_PAGE_VARS, copy(LOCAL_PAGE_VARS))
     fpath   = joinpath(root, file)
      # The curpath is the relative path starting after /src/ so for instance:
      # f1/blah/page1.md or index.md etc... this is useful in the code evaluation and management
@@ -71,7 +71,7 @@ function write_page(root::String, file::String, head::String, pg_foot::String, f
     end
 
     # append pre-path if required (see optimize)
-    if !isempty(JD_GLOB_VARS["prepath"].first) && isoptim
+    if !isempty(GLOBAL_PAGE_VARS["prepath"].first) && isoptim
         pg = fix_links(pg)
     end
 
@@ -119,7 +119,7 @@ function process_file_err(case::Symbol, fpair::Pair{String, String}, head::Abstr
     elseif case == :html
         fpath = joinpath(fpair...)
         raw_html = read(fpath, String)
-        proc_html = convert_html(raw_html, JD_GLOB_VARS; isoptim=isoptim)
+        proc_html = convert_html(raw_html, GLOBAL_PAGE_VARS; isoptim=isoptim)
         write(joinpath(out_path(fpair.first), fpair.second), proc_html)
     elseif case == :other
         opath = joinpath(out_path(fpair.first), fpair.second)
@@ -164,7 +164,7 @@ for a project website, for instance `username.github.io/project/` all paths shou
 be pre-prended with `/project/`. This would happen just before you publish the website.
 """
 function fix_links(pg::String)::String
-    pp = strip(JD_GLOB_VARS["prepath"].first, '/')
+    pp = strip(GLOBAL_PAGE_VARS["prepath"].first, '/')
     ss = SubstitutionString("\\1=\"/$(pp)/")
     return replace(pg, r"(src|href)\s*?=\s*?\"\/" => ss)
 end

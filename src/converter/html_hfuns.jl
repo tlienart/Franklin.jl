@@ -19,7 +19,7 @@ Helper function to process an individual block when it's a `HFun` such as `{{ fi
 Dev Note: `fpath` is (currently) unused but is passed to all `convert_hblock` functions.
 See [`convert_html`](@ref).
 """
-function convert_hblock(β::HFun, allvars::PAGE_VAR_TYPE, ::AbstractString="")::String
+function convert_hblock(β::HFun, allvars::PAGE_VARS_TYPE, ::AbstractString="")::String
     # normalise function name and apply the function
     fn = lowercase(β.fname)
     haskey(JD_HTML_FUNS, fn) && return JD_HTML_FUNS[fn](β.params, allvars)
@@ -36,7 +36,7 @@ $(SIGNATURES)
 H-Function of the form `{{ fill vname }}` to plug in the content of a jd-var `vname` (assuming it
 can be represented as a string).
 """
-function hfun_fill(params::Vector{String}, allvars::PAGE_VAR_TYPE)::String
+function hfun_fill(params::Vector{String}, allvars::PAGE_VARS_TYPE)::String
     # check params
     length(params) == 1 || error("I found a {{fill ...}} with more than one parameter. Verify.")
     # fill
@@ -66,7 +66,7 @@ function hfun_insert(params::Vector{String})::String
     replacement = ""
     fpath = joinpath(JD_PATHS[:in_html], split(params[1], "/")...)
     if isfile(fpath)
-        replacement = convert_html(read(fpath, String), merge(JD_GLOB_VARS, JD_LOC_VARS))
+        replacement = convert_html(read(fpath, String), merge(GLOBAL_PAGE_VARS, LOCAL_PAGE_VARS))
     else
         @warn "I found an {{insert ...}} block and tried to insert '$fpath' but I couldn't find the file. Ignoring."
     end
