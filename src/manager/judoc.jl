@@ -102,9 +102,9 @@ See also [`jd_loop`](@ref), [`serve`](@ref) and [`publish`](@ref).
 function jd_fullpass(watched_files::NamedTuple; clear::Bool=false, verb::Bool=false,
                      prerender::Bool=false, isoptim::Bool=false)::Int
      # initiate page segments
-     head    = read(joinpath(PATHS[:in_html], "head.html"), String)
-     pg_foot = read(joinpath(PATHS[:in_html], "page_foot.html"), String)
-     foot    = read(joinpath(PATHS[:in_html], "foot.html"), String)
+     head    = read(joinpath(PATHS[:src_html], "head.html"), String)
+     pg_foot = read(joinpath(PATHS[:src_html], "page_foot.html"), String)
+     foot    = read(joinpath(PATHS[:src_html], "foot.html"), String)
 
     # reset global page variables and latex definitions
     # NOTE: need to keep track of pre-path if specified, see optimize
@@ -118,8 +118,8 @@ function jd_fullpass(watched_files::NamedTuple; clear::Bool=false, verb::Bool=fa
     process_config()
 
     # looking for an index file to process
-    indexmd   = PATHS[:in] => "index.md"
-    indexhtml = PATHS[:in] => "index.html"
+    indexmd   = PATHS[:src] => "index.md"
+    indexhtml = PATHS[:src] => "index.html"
 
     # rest of the pages
     s = 0
@@ -192,9 +192,9 @@ function jd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, watched_files::Na
                 start = time()
                 # TODO, ideally these would only be read if they've changed. Not super important
                 # but just not necessary. (Fixing may be a bit of a pain though)
-                head    = read(joinpath(PATHS[:in_html], "head.html"), String)
-                pg_foot = read(joinpath(PATHS[:in_html], "page_foot.html"), String)
-                foot    = read(joinpath(PATHS[:in_html], "foot.html"), String)
+                head    = read(joinpath(PATHS[:src_html], "head.html"), String)
+                pg_foot = read(joinpath(PATHS[:src_html], "page_foot.html"), String)
+                foot    = read(joinpath(PATHS[:src_html], "foot.html"), String)
                 process_file(case, fpair, head, pg_foot, foot, cur_t; clear=false, prerender=false)
                 verb && time_it_took(start)
             end

@@ -180,7 +180,7 @@ function resolve_assets_rpath(rpath::AbstractString; canonical::Bool=false)::Str
         # this is a full path starting from the website root folder so for instance
         # `/assets/blah/img1.png`; just return that
         canonical || return rpath
-        return normpath(joinpath(PATHS[:f], joinrp(rpath[2:end])))
+        return normpath(joinpath(PATHS[:folder], joinrp(rpath[2:end])))
     elseif startswith(rpath, "./")
         # this is a path relative to the assets folder with the same path as the calling file so
         # for instance if calling from `src/pages/pg1.md` with `./im1.png` it would refer to

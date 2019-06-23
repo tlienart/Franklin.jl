@@ -1,13 +1,13 @@
 """
 $(SIGNATURES)
 
-Checks for a `config.md` file in `PATHS[:in]` and uses it to set the global variables referenced
+Checks for a `config.md` file in `PATHS[:src]` and uses it to set the global variables referenced
 in `GLOBAL_PAGE_VARS` it also sets the global latex commands via `GLOBAL_LXDEFS`. If the configuration
 file is not found a warning is shown.
 """
 function process_config()::Nothing
     # read the config.md file if it is present
-    config_path = joinpath(PATHS[:in], "config.md")
+    config_path = joinpath(PATHS[:src], "config.md")
     if isfile(config_path)
         convert_md(read(config_path, String) * EOS; isconfig=true)
     else
@@ -35,7 +35,7 @@ function write_page(root::String, file::String, head::String, pg_foot::String, f
      # The curpath is the relative path starting after /src/ so for instance:
      # f1/blah/page1.md or index.md etc... this is useful in the code evaluation and management
      # of paths
-    CUR_PATH[] = fpath[lastindex(PATHS[:in])+length(PATH_SEP)+1:end]
+    CUR_PATH[] = fpath[lastindex(PATHS[:src])+length(PATH_SEP)+1:end]
 
     vGLOBAL_LXDEFS    = collect(values(GLOBAL_LXDEFS))
     (content, jd_vars) = convert_md(read(fpath, String) * EOS, vGLOBAL_LXDEFS)
@@ -132,7 +132,7 @@ function process_file_err(case::Symbol, fpair::Pair{String, String}, head::Abstr
         # copy over css files
         # NOTE some processing may be further added here later on.
         if splitext(fpair.second)[2] == ".css"
-            cp(joinpath(fpair...), joinpath(PATHS[:out_css], fpair.second),
+            cp(joinpath(fpair...), joinpath(PATHS[:css], fpair.second),
                 force=true)
         end
     end

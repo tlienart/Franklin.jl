@@ -54,11 +54,11 @@ end
         done.
         """ * J.EOS |> seval
 
-    spath = joinpath(J.PATHS[:f], "scripts", "test2.jl")
+    spath = joinpath(J.PATHS[:folder], "scripts", "test2.jl")
     @test isfile(spath)
     @test occursin("a = 5\nprint(a^2)", read(spath, String))
 
-    opath = joinpath(J.PATHS[:f], "scripts", "output", "test2.out")
+    opath = joinpath(J.PATHS[:folder], "scripts", "output", "test2.out")
     @test isfile(opath)
     @test read(opath, String) == "25"
 
@@ -67,7 +67,7 @@ end
 
     # ------------
 
-    J.CUR_PATH[] = joinpath(J.PATHS[:in], "pages", "pg1.md")[lastindex(J.PATHS[:in])+2:end]
+    J.CUR_PATH[] = joinpath(J.PATHS[:src], "pages", "pg1.md")[lastindex(J.PATHS[:src])+2:end]
 
     h = raw"""
         Simple code:

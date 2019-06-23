@@ -97,7 +97,7 @@ end
     @test J.resolve_assets_rpath("blah/blih.txt") == "/assets/blah/blih.txt"
     # canonical mode
     @test J.resolve_assets_rpath("./hello/goodbye"; canonical=true) == joinpath(J.PATHS[:assets], "cpA", "cpB", "hello", "goodbye")
-    @test J.resolve_assets_rpath("/blah/blih.txt"; canonical=true) == joinpath(J.PATHS[:f], "blah", "blih.txt")
+    @test J.resolve_assets_rpath("/blah/blih.txt"; canonical=true) == joinpath(J.PATHS[:folder], "blah", "blih.txt")
     @test J.resolve_assets_rpath("blah/blih.txt"; canonical=true) == joinpath(J.PATHS[:assets], "blah", "blih.txt")
 end
 

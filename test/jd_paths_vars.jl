@@ -7,21 +7,21 @@ J.def_GLOB_LXDEFS!()
 @testset "Paths" begin
     P = J.set_paths!()
 
-    @test J.PATHS[:f]       == td
-    @test J.PATHS[:in]      == joinpath(td, "src")
-    @test J.PATHS[:in_css]  == joinpath(td, "src", "_css")
-    @test J.PATHS[:in_html] == joinpath(td, "src", "_html_parts")
+    @test J.PATHS[:folder]       == td
+    @test J.PATHS[:src]      == joinpath(td, "src")
+    @test J.PATHS[:src_css]  == joinpath(td, "src", "_css")
+    @test J.PATHS[:src_html] == joinpath(td, "src", "_html_parts")
     @test J.PATHS[:libs]    == joinpath(td, "libs")
-    @test J.PATHS[:out]     == joinpath(td, "pub")
-    @test J.PATHS[:out_css] == joinpath(td, "css")
+    @test J.PATHS[:pub]     == joinpath(td, "pub")
+    @test J.PATHS[:css] == joinpath(td, "css")
 
     @test P == J.PATHS
 
-    mkdir(J.PATHS[:in])
-    mkdir(J.PATHS[:in_pages])
+    mkdir(J.PATHS[:src])
+    mkdir(J.PATHS[:src_pages])
     mkdir(J.PATHS[:libs])
-    mkdir(J.PATHS[:in_css])
-    mkdir(J.PATHS[:in_html])
+    mkdir(J.PATHS[:src_css])
+    mkdir(J.PATHS[:src_html])
     mkdir(J.PATHS[:assets])
 end
 

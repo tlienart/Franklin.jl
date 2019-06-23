@@ -108,9 +108,9 @@ output directory. This will help avoid merge clashes.
 function cleanpull()::Nothing
     FOLDER_PATH[] = pwd()
     set_paths!()
-    if isdir(PATHS[:out])
+    if isdir(PATHS[:pub])
         print(rpad("→ Removing local output dir...", 35))
-        rm(PATHS[:out], force=true, recursive=true)
+        rm(PATHS[:pub], force=true, recursive=true)
         println(" [done ✔ ]")
     end
     try

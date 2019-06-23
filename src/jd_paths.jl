@@ -26,7 +26,7 @@ const INFRA_FILES = [".html", ".css"]
     PATHS
 
 Dictionary for the paths of the input folders and the output folders. The simpler case only
-requires the main input folder to be defined i.e. `PATHS[:in]` and infers the others via the
+requires the main input folder to be defined i.e. `PATHS[:src]` and infers the others via the
 `set_paths!()` function.
 """
 const PATHS = Dict{Symbol,String}()
@@ -46,15 +46,15 @@ function set_paths!()::Dict{Symbol,String}
     # Particularly for the output dir. If you do, check for example that
     # functions such as JuDoc.publish point to the right dirs/files.
 
-    PATHS[:f]        = normpath(FOLDER_PATH[])
-    PATHS[:in]       = joinpath(PATHS[:f],  "src")
-    PATHS[:in_pages] = joinpath(PATHS[:in], "pages")
-    PATHS[:in_css]   = joinpath(PATHS[:in], "_css")
-    PATHS[:in_html]  = joinpath(PATHS[:in], "_html_parts")
-    PATHS[:out]      = joinpath(PATHS[:f],  "pub")
-    PATHS[:out_css]  = joinpath(PATHS[:f],  "css")
-    PATHS[:libs]     = joinpath(PATHS[:f],  "libs")
-    PATHS[:assets]   = joinpath(PATHS[:f],  "assets")
+    PATHS[:folder]        = normpath(FOLDER_PATH[])
+    PATHS[:src]       = joinpath(PATHS[:folder],  "src")
+    PATHS[:src_pages] = joinpath(PATHS[:src],     "pages")
+    PATHS[:src_css]   = joinpath(PATHS[:src],     "_css")
+    PATHS[:src_html]  = joinpath(PATHS[:src],     "_html_parts")
+    PATHS[:pub]       = joinpath(PATHS[:folder],  "pub")
+    PATHS[:css]       = joinpath(PATHS[:folder],  "css")
+    PATHS[:libs]      = joinpath(PATHS[:folder],  "libs")
+    PATHS[:assets]    = joinpath(PATHS[:folder],  "assets")
 
     return PATHS
 end
