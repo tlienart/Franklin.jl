@@ -41,9 +41,6 @@ const CODE_LANG = Dict{String,NTuple{2,String}}(
 """Path to the JuDoc repo."""
 const JUDOC_PATH = splitdir(pathof(JuDoc))[1] # .../JuDoc/src
 
-"""Path to some temporary folder that will be used by JuDoc."""
-const TEMPL_PATH = joinpath(JUDOC_PATH, "templates")
-
 # copied from Base/path.jl
 if Sys.isunix()
     """Indicator for directory separation on the OS."""
