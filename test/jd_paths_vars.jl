@@ -1,5 +1,5 @@
 const td = mktempdir()
-J.JD_FOLDER_PATH[] = td
+J.FOLDER_PATH[] = td
 
 J.def_GLOBAL_PAGE_VARS!()
 J.def_GLOB_LXDEFS!()
@@ -7,27 +7,27 @@ J.def_GLOB_LXDEFS!()
 @testset "Paths" begin
     P = J.set_paths!()
 
-    @test J.JD_PATHS[:f]       == td
-    @test J.JD_PATHS[:in]      == joinpath(td, "src")
-    @test J.JD_PATHS[:in_css]  == joinpath(td, "src", "_css")
-    @test J.JD_PATHS[:in_html] == joinpath(td, "src", "_html_parts")
-    @test J.JD_PATHS[:libs]    == joinpath(td, "libs")
-    @test J.JD_PATHS[:out]     == joinpath(td, "pub")
-    @test J.JD_PATHS[:out_css] == joinpath(td, "css")
+    @test J.PATHS[:f]       == td
+    @test J.PATHS[:in]      == joinpath(td, "src")
+    @test J.PATHS[:in_css]  == joinpath(td, "src", "_css")
+    @test J.PATHS[:in_html] == joinpath(td, "src", "_html_parts")
+    @test J.PATHS[:libs]    == joinpath(td, "libs")
+    @test J.PATHS[:out]     == joinpath(td, "pub")
+    @test J.PATHS[:out_css] == joinpath(td, "css")
 
-    @test P == J.JD_PATHS
+    @test P == J.PATHS
 
-    mkdir(J.JD_PATHS[:in])
-    mkdir(J.JD_PATHS[:in_pages])
-    mkdir(J.JD_PATHS[:libs])
-    mkdir(J.JD_PATHS[:in_css])
-    mkdir(J.JD_PATHS[:in_html])
-    mkdir(J.JD_PATHS[:assets])
+    mkdir(J.PATHS[:in])
+    mkdir(J.PATHS[:in_pages])
+    mkdir(J.PATHS[:libs])
+    mkdir(J.PATHS[:in_css])
+    mkdir(J.PATHS[:in_html])
+    mkdir(J.PATHS[:assets])
 end
 
-# copying _libs/katex in the J.JD_PATHS[:libs] so that it can be used in testing
+# copying _libs/katex in the J.PATHS[:libs] so that it can be used in testing
 # the js_prerender_math
-cp(joinpath(dirname(dirname(pathof(JuDoc))), "test", "_libs", "katex"), joinpath(J.JD_PATHS[:libs], "katex"))
+cp(joinpath(dirname(dirname(pathof(JuDoc))), "test", "_libs", "katex"), joinpath(J.PATHS[:libs], "katex"))
 
 @testset "Set vars" begin
     d = J.PAGE_VARS_TYPE(

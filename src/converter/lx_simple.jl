@@ -39,7 +39,7 @@ function resolve_lx_figalt(lxc::LxCom)::String
     candext = ifelse(isempty(fext), (".png", ".jpeg", ".jpg", ".svg", ".gif"), (fext,))
     for ext ∈ candext
         candpath = fdir * ext
-        syspath  = joinpath(JD_PATHS[:f], split(candpath, '/')...)
+        syspath  = joinpath(PATHS[:f], split(candpath, '/')...)
         isfile(syspath) && return html_img(candpath, alt)
     end
     # now try in the output dir just in case (provided we weren't already looking there)
@@ -47,7 +47,7 @@ function resolve_lx_figalt(lxc::LxCom)::String
     if splitdir(p1)[2] != "output"
         for ext ∈ candext
             candpath = joinpath(p1, "output", p2 * ext)
-            syspath  = joinpath(JD_PATHS[:f], split(candpath, '/')...)
+            syspath  = joinpath(PATHS[:f], split(candpath, '/')...)
             isfile(syspath) && return html_img(candpath, alt)
         end
     end
@@ -65,7 +65,7 @@ function resolve_lx_file(lxc::LxCom)::String
     rpath = strip(content(lxc.braces[2]))
     name = strip(content(lxc.braces[1]))
     path = resolve_assets_rpath(rpath; canonical=false)
-    syspath = joinpath(JD_PATHS[:f], split(path, '/')...)
+    syspath = joinpath(PATHS[:f], split(path, '/')...)
     isfile(syspath) && return html_ahref(path, name)
     return html_err("file matching '$path' not found")
 end

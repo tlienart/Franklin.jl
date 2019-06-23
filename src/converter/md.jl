@@ -312,11 +312,11 @@ function process_md_defs(blocks::Vector{OCBlock}, isconfig::Bool,
         assignments[i] = (String(vname) => String(vdef))
     end
     # if we're currently looking at the config file, update the global page var dictionary
-    # GLOBAL_PAGE_VARS and store the latex definition globally as well in JD_GLOB_LXDEFS
+    # GLOBAL_PAGE_VARS and store the latex definition globally as well in GLOBAL_LXDEFS
     if isconfig
         isempty(assignments) || set_vars!(GLOBAL_PAGE_VARS, assignments)
         for lxd ∈ lxdefs
-            JD_GLOB_LXDEFS[lxd.name] = lxd
+            GLOBAL_LXDEFS[lxd.name] = lxd
         end
         return nothing
     end

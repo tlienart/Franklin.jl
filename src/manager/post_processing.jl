@@ -106,11 +106,11 @@ Cleanpull allows you to pull from your remote git repository after having remove
 output directory. This will help avoid merge clashes.
 """
 function cleanpull()::Nothing
-    JD_FOLDER_PATH[] = pwd()
+    FOLDER_PATH[] = pwd()
     set_paths!()
-    if isdir(JD_PATHS[:out])
+    if isdir(PATHS[:out])
         print(rpad("→ Removing local output dir...", 35))
-        rm(JD_PATHS[:out], force=true, recursive=true)
+        rm(PATHS[:out], force=true, recursive=true)
         println(" [done ✔ ]")
     end
     try

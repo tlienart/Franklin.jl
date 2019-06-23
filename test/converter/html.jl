@@ -57,7 +57,7 @@ end
 
 @testset "h-insert" begin
     # Julia 0.7 complains if there's no global here.
-    global temp_rnd = joinpath(J.JD_PATHS[:in_html], "temp.rnd")
+    global temp_rnd = joinpath(J.PATHS[:in_html], "temp.rnd")
     write(temp_rnd, "some random text to insert")
     hs = raw"""
         Trying to insert: {{ insert temp.rnd }} and see.
@@ -69,7 +69,7 @@ end
     tokens = J.find_tokens(hs, J.HTML_TOKENS, J.HTML_1C_TOKENS)
     hblocks, tokens = J.find_all_ocblocks(tokens, J.HTML_OCB)
     qblocks = J.qualify_html_hblocks(hblocks)
-    @test (@test_logs (:warn, "I found an {{insert ...}} block and tried to insert '$(joinpath(J.JD_PATHS[:in_html], "nope.rnd"))' but I couldn't find the file. Ignoring.") J.convert_hblock(qblocks[1], allvars)) == ""
+    @test (@test_logs (:warn, "I found an {{insert ...}} block and tried to insert '$(joinpath(J.PATHS[:in_html], "nope.rnd"))' but I couldn't find the file. Ignoring.") J.convert_hblock(qblocks[1], allvars)) == ""
 end
 
 

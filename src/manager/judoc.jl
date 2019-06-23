@@ -18,11 +18,11 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
                  prerender::Bool=false, nomess::Bool=false, isoptim::Bool=false
                  )::Union{Nothing,Int}
     # set the global path
-    JD_FOLDER_PATH[] = pwd()
+    FOLDER_PATH[] = pwd()
 
     # brief check to see if we're in a folder that looks promising, otherwise stop
     # and tell the user to check (#155)
-    if !isdir(joinpath(JD_FOLDER_PATH[], "src"))
+    if !isdir(joinpath(FOLDER_PATH[], "src"))
         throw(ArgumentError("The current directory doesn't have a src/ folder. " *
                             "Please change directory to a valid JuDoc folder."))
     end
@@ -102,9 +102,9 @@ See also [`jd_loop`](@ref), [`serve`](@ref) and [`publish`](@ref).
 function jd_fullpass(watched_files::NamedTuple; clear::Bool=false, verb::Bool=false,
                      prerender::Bool=false, isoptim::Bool=false)::Int
      # initiate page segments
-     head    = read(joinpath(JD_PATHS[:in_html], "head.html"), String)
-     pg_foot = read(joinpath(JD_PATHS[:in_html], "page_foot.html"), String)
-     foot    = read(joinpath(JD_PATHS[:in_html], "foot.html"), String)
+     head    = read(joinpath(PATHS[:in_html], "head.html"), String)
+     pg_foot = read(joinpath(PATHS[:in_html], "page_foot.html"), String)
+     foot    = read(joinpath(PATHS[:in_html], "foot.html"), String)
 
     # reset global page variables and latex definitions
     # NOTE: need to keep track of pre-path if specified, see optimize
@@ -118,8 +118,8 @@ function jd_fullpass(watched_files::NamedTuple; clear::Bool=false, verb::Bool=fa
     process_config()
 
     # looking for an index file to process
-    indexmd   = JD_PATHS[:in] => "index.md"
-    indexhtml = JD_PATHS[:in] => "index.html"
+    indexmd   = PATHS[:in] => "index.md"
+    indexhtml = PATHS[:in] => "index.html"
 
     # rest of the pages
     s = 0
@@ -179,7 +179,7 @@ function jd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, watched_files::Na
             cur_t = mtime(fpath)
             cur_t <= t && continue
             # if there was then the file has been modified and should be re-processed + copied
-            verb && print(rpad("→ file $(fpath[length(JD_FOLDER_PATH[])+1:end]) was modified ", 30))
+            verb && print(rpad("→ file $(fpath[length(FOLDER_PATH[])+1:end]) was modified ", 30))
             dict[fpair] = cur_t
             # if it's an infra_file
             if haskey(watched_files[:infra], fpair)
@@ -192,9 +192,9 @@ function jd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, watched_files::Na
                 start = time()
                 # TODO, ideally these would only be read if they've changed. Not super important
                 # but just not necessary. (Fixing may be a bit of a pain though)
-                head    = read(joinpath(JD_PATHS[:in_html], "head.html"), String)
-                pg_foot = read(joinpath(JD_PATHS[:in_html], "page_foot.html"), String)
-                foot    = read(joinpath(JD_PATHS[:in_html], "foot.html"), String)
+                head    = read(joinpath(PATHS[:in_html], "head.html"), String)
+                pg_foot = read(joinpath(PATHS[:in_html], "page_foot.html"), String)
+                foot    = read(joinpath(PATHS[:in_html], "foot.html"), String)
                 process_file(case, fpair, head, pg_foot, foot, cur_t; clear=false, prerender=false)
                 verb && time_it_took(start)
             end

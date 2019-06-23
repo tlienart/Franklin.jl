@@ -57,14 +57,14 @@ end
 
 
 """
-    JD_GLOB_LXDEFS
+    GLOBAL_LXDEFS
 
 List of latex definitions accessible to all pages. This is filled when the config file is read
 (via manager/file_utils/process_config).
 """
-const JD_GLOB_LXDEFS = Dict{String, LxDef}()
+const GLOBAL_LXDEFS = Dict{String, LxDef}()
 
-const EMPTYSS = SubString("")
+const EMPTY_SS = SubString("")
 
 """
     def_GLOB_LXDEFS!
@@ -73,25 +73,25 @@ Convenience function to allocate default values of global latex commands accessi
 the site. See [`resolve_lxcom`](@ref).
 """
 @inline function def_GLOB_LXDEFS!()::Nothing
-    empty!(JD_GLOB_LXDEFS)
+    empty!(GLOBAL_LXDEFS)
     # hyperreferences
-    JD_GLOB_LXDEFS["\\eqref"]    = LxDef("\\eqref",    1, EMPTYSS)
-    JD_GLOB_LXDEFS["\\cite"]     = LxDef("\\cite",     1, EMPTYSS)
-    JD_GLOB_LXDEFS["\\citet"]    = LxDef("\\citet",    1, EMPTYSS)
-    JD_GLOB_LXDEFS["\\citep"]    = LxDef("\\citep",    1, EMPTYSS)
-    JD_GLOB_LXDEFS["\\label"]    = LxDef("\\label",    1, EMPTYSS)
-    JD_GLOB_LXDEFS["\\biblabel"] = LxDef("\\biblabel", 2, EMPTYSS)
+    GLOBAL_LXDEFS["\\eqref"]    = LxDef("\\eqref",    1, EMPTY_SS)
+    GLOBAL_LXDEFS["\\cite"]     = LxDef("\\cite",     1, EMPTY_SS)
+    GLOBAL_LXDEFS["\\citet"]    = LxDef("\\citet",    1, EMPTY_SS)
+    GLOBAL_LXDEFS["\\citep"]    = LxDef("\\citep",    1, EMPTY_SS)
+    GLOBAL_LXDEFS["\\label"]    = LxDef("\\label",    1, EMPTY_SS)
+    GLOBAL_LXDEFS["\\biblabel"] = LxDef("\\biblabel", 2, EMPTY_SS)
     # inclusion
-    JD_GLOB_LXDEFS["\\input"]      = LxDef("\\input",      2, EMPTYSS)
-    JD_GLOB_LXDEFS["\\output"]     = LxDef("\\output",     1, EMPTYSS)
-    JD_GLOB_LXDEFS["\\textoutput"] = LxDef("\\textoutput", 1, EMPTYSS)
-    JD_GLOB_LXDEFS["\\figalt"]     = LxDef("\\figalt",     2, EMPTYSS)
-    JD_GLOB_LXDEFS["\\fig"]        = LxDef("\\fig",        1, subs("\\figalt{}{#1}"))
-    JD_GLOB_LXDEFS["\\file"]       = LxDef("\\file",       2, subs("[#1]()"))
+    GLOBAL_LXDEFS["\\input"]      = LxDef("\\input",      2, EMPTY_SS)
+    GLOBAL_LXDEFS["\\output"]     = LxDef("\\output",     1, EMPTY_SS)
+    GLOBAL_LXDEFS["\\textoutput"] = LxDef("\\textoutput", 1, EMPTY_SS)
+    GLOBAL_LXDEFS["\\figalt"]     = LxDef("\\figalt",     2, EMPTY_SS)
+    GLOBAL_LXDEFS["\\fig"]        = LxDef("\\fig",        1, subs("\\figalt{}{#1}"))
+    GLOBAL_LXDEFS["\\file"]       = LxDef("\\file",       2, subs("[#1]()"))
     # text formatting
-    JD_GLOB_LXDEFS["\\underline"] = LxDef("\\underline", 1,
+    GLOBAL_LXDEFS["\\underline"] = LxDef("\\underline", 1,
                             subs("~~~<span style=\"text-decoration:underline;\">!#1</span>~~~"))
-    JD_GLOB_LXDEFS["\\textcss"]   = LxDef("\\underline", 2,
+    GLOBAL_LXDEFS["\\textcss"]   = LxDef("\\underline", 2,
                             subs("~~~<span style=\"!#1\">!#2</span>~~~"))
     return nothing
 end
@@ -115,7 +115,7 @@ $(SIGNATURES)
 
 Checks if a data type `t` is a subtype of a tuple of accepted types `tt`.
 """
-is_ok_type(t::DataType, tt::NTuple{N,DataType} where N)::Bool = any(<:(t, tᵢ) for tᵢ ∈ tt)
+check_type(t::DataType, tt::NTuple{N,DataType} where N)::Bool = any(<:(t, tᵢ) for tᵢ ∈ tt)
 
 
 """
@@ -174,7 +174,7 @@ function set_vars!(jd_vars::PAGE_VARS_TYPE, assignments::Vector{Pair{String,Stri
             # if the retrieved value has the right type, assign it to the corresponding key
             type_tmp  = typeof(tmp)
             acc_types = jd_vars[key].second
-            if is_ok_type(type_tmp, acc_types)
+            if check_type(type_tmp, acc_types)
                 jd_vars[key] = Pair(tmp, acc_types)
             else
                 @warn "Doc var '$key' (type(s): $acc_types) can't be set to value '$tmp' (type: $type_tmp). Assignment ignored."

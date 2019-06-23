@@ -15,7 +15,7 @@
     J.def_GLOBAL_PAGE_VARS!()
     J.def_GLOB_LXDEFS!()
 
-    m, _ = J.convert_md(st, collect(values(J.JD_GLOB_LXDEFS)))
+    m, _ = J.convert_md(st, collect(values(J.GLOBAL_LXDEFS)))
 
     h1 = J.refstring("eq 1")
     h2 = J.refstring("amari98b")
@@ -55,7 +55,7 @@ end
         \eqa{ 1 &=& 1 \label{beyond hope}}
         and finally a \eqref{eq:a trivial one} and maybe \eqref{beyond hope}.
         """ * J.EOS
-    m, _ = J.convert_md(st, collect(values(J.JD_GLOB_LXDEFS)))
+    m, _ = J.convert_md(st, collect(values(J.GLOBAL_LXDEFS)))
 
     @test J.JD_LOC_EQDICT[J.JD_LOC_EQDICT_COUNTER] == 3
     @test J.JD_LOC_EQDICT[J.refstring("eq:a trivial one")] == 2

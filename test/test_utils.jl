@@ -2,7 +2,7 @@
 # And checks the behaviour is as expected.
 
 J.def_GLOB_LXDEFS!()
-cmd   = st -> J.convert_md(st, collect(values(J.JD_GLOB_LXDEFS)))
+cmd   = st -> J.convert_md(st, collect(values(J.GLOBAL_LXDEFS)))
 chtml = t -> J.convert_html(t...)
 conv  = st -> st |> cmd |> chtml
 
@@ -25,7 +25,7 @@ end
 function seval(st)
     J.def_GLOBAL_PAGE_VARS!()
     J.def_GLOB_LXDEFS!()
-    m, _ = J.convert_md(st, collect(values(J.JD_GLOB_LXDEFS)))
+    m, _ = J.convert_md(st, collect(values(J.GLOBAL_LXDEFS)))
     h = J.convert_html(m, J.PAGE_VARS_TYPE())
     return h
 end
