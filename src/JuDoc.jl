@@ -20,7 +20,7 @@ export serve, publish, cleanpull, newsite, optimize
 const BIG_INT = typemax(Int)
 
 """Flag for debug mode."""
-const JD_DEBUG = Ref(false)
+const DEBUG_MODE = Ref(false)
 
 """Dict to keep track of languages and how comments are indicated and their extensions."""
 const CODE_LANG = Dict{String,NTuple{2,String}}(

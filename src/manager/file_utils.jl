@@ -91,7 +91,7 @@ function process_file(case::Symbol, fpair::Pair{String,String}, args...; kwargs.
     try
         process_file_err(case, fpair, args...; kwargs...)
     catch err
-        JD_DEBUG[] && throw(err)
+        DEBUG_MODE[] && throw(err)
         rp = fpair.first
         rp = rp[end-min(20, length(rp))+1 : end]
         println("\n... error processing '$(fpair.second)' in ...$rp.")
