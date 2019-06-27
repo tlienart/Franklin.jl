@@ -49,7 +49,7 @@ else
 end
 
 """Type of the containers for page variables (local and global)."""
-const PAGE_VARS_TYPE = Dict{String,Pair{K,NTuple{N, DataType}} where {K, N}}
+const PageVars = Dict{String,Pair{K,NTuple{N, DataType}} where {K, N}}
 
 """Relative path to the current file being processed by JuDoc."""
 const CUR_PATH = Ref("")
@@ -79,8 +79,8 @@ include("converter/md.jl")
 include("converter/lx.jl")
 include("converter/lx_simple.jl")
 # > html
-include("converter/html_hblocks.jl")
-include("converter/html_hfuns.jl")
+include("converter/html_blocks.jl")
+include("converter/html_functions.jl")
 include("converter/html.jl")
 # > javascript
 include("converter/js_prerender.jl")
@@ -98,5 +98,8 @@ include("manager/post_processing.jl")
 # MISC UTILS
 include("misc_utils.jl")
 include("misc_html.jl")
+
+# ERROR TYPES
+include("error_types.jl")
 
 end # module

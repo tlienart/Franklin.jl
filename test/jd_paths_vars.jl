@@ -30,7 +30,7 @@ end
 cp(joinpath(dirname(dirname(pathof(JuDoc))), "test", "_libs", "katex"), joinpath(J.PATHS[:libs], "katex"))
 
 @testset "Set vars" begin
-    d = J.PAGE_VARS_TYPE(
+    d = J.PageVars(
     	"a" => 0.5 => (Real,),
     	"b" => "hello" => (String, Nothing))
     J.set_vars!(d, ["a"=>"5", "b"=>"nothing"])

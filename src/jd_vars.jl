@@ -8,7 +8,7 @@ for that value. (e.g.: "THE AUTHOR" => (String, Nothing))
 
 DEVNOTE: marked as constant for perf reasons but can be modified since Dict.
 """
-const GLOBAL_PAGE_VARS = PAGE_VARS_TYPE()
+const GLOBAL_PAGE_VARS = PageVars()
 
 
 """
@@ -34,7 +34,7 @@ same format as for `GLOBAL_PAGE_VARS`.
 
 DEVNOTE: marked as constant for perf reasons but can be modified since Dict.
 """
-const LOCAL_PAGE_VARS = PAGE_VARS_TYPE()
+const LOCAL_PAGE_VARS = PageVars()
 
 
 """
@@ -125,7 +125,7 @@ Take a var dictionary `dict` and update the corresponding pair. This should only
 as it does not check the validity of `val`. See [`write_page`](@ref) where it is used to store a
 file's creation and last modification time.
 """
-set_var!(d::PAGE_VARS_TYPE, k::K, v) where K = (d[k] = Pair(v, d[k].second); nothing)
+set_var!(d::PageVars, k::K, v) where K = (d[k] = Pair(v, d[k].second); nothing)
 
 
 #= =================================================
@@ -150,7 +150,7 @@ Dict{String,Pair{K,Tuple{DataType}} where K} with 2 entries:
   "a" => 5.0=>(Real,)
 ```
 """
-function set_vars!(jd_vars::PAGE_VARS_TYPE, assignments::Vector{Pair{String,String}})::PAGE_VARS_TYPE
+function set_vars!(jd_vars::PageVars, assignments::Vector{Pair{String,String}})::PageVars
     # if there's no assignment, cut it short
     isempty(assignments) && return jd_vars
     # process each assignment in turn
