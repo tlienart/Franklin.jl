@@ -1,7 +1,7 @@
 # This set of tests directly uses the high-level `convert` functions
 # And checks the behaviour is as expected.
 
-J.def_GLOB_LXDEFS!()
+J.def_GLOBAL_LXDEFS!()
 cmd   = st -> J.convert_md(st, collect(values(J.GLOBAL_LXDEFS)))
 chtml = t -> J.convert_html(t...)
 conv  = st -> st |> cmd |> chtml
@@ -24,7 +24,7 @@ end
 # takes md input and outputs the html (good for integration testing)
 function seval(st)
     J.def_GLOBAL_PAGE_VARS!()
-    J.def_GLOB_LXDEFS!()
+    J.def_GLOBAL_LXDEFS!()
     m, _ = J.convert_md(st, collect(values(J.GLOBAL_LXDEFS)))
     h = J.convert_html(m, J.PageVars())
     return h

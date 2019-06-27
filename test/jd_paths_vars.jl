@@ -2,7 +2,7 @@ const td = mktempdir()
 J.FOLDER_PATH[] = td
 
 J.def_GLOBAL_PAGE_VARS!()
-J.def_GLOB_LXDEFS!()
+J.def_GLOBAL_LXDEFS!()
 
 @testset "Paths" begin
     P = J.set_paths!()

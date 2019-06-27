@@ -67,12 +67,12 @@ const GLOBAL_LXDEFS = Dict{String, LxDef}()
 const EMPTY_SS = SubString("")
 
 """
-    def_GLOB_LXDEFS!
+    def_GLOBAL_LXDEFS!
 
 Convenience function to allocate default values of global latex commands accessible throughout
 the site. See [`resolve_lxcom`](@ref).
 """
-@inline function def_GLOB_LXDEFS!()::Nothing
+@inline function def_GLOBAL_LXDEFS!()::Nothing
     empty!(GLOBAL_LXDEFS)
     # hyperreferences
     GLOBAL_LXDEFS["\\eqref"]    = LxDef("\\eqref",    1, EMPTY_SS)

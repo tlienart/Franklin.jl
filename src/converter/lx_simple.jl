@@ -1,13 +1,15 @@
-# See src/jd_vars : def_GLOB_LXDEFS
+# See src/jd_vars : def_GLOBAL_LXDEFS
 
 """
 $SIGNATURES
 
 Internal function to resolve a `\\output{rpath}` (finds the output and shows it in a pre block).
+The `reprocess` argument indicates whether the output should be processed as judoc markdown or
+inserted as is.
 """
-function resolve_lx_output(lxc::LxCom, reproc::Bool=false)::String
+function resolve_lx_output(lxc::LxCom, reprocess::Bool=false)::String
     rpath = strip(content(lxc.braces[1])) # [assets]/subpath/script{.jl}
-    return resolve_lx_input_plainoutput(rpath, reproc)
+    return resolve_lx_input_plainoutput(rpath, reprocess)
 end
 
 

@@ -111,5 +111,5 @@ end
     @test J.html_img("src", "alt") == "<img src=\"src\" alt=\"alt\">"
     @test J.html_code("code") == "<pre><code>code</code></pre>"
     @test J.html_code("code", "lang") == "<pre><code class=\"language-lang\">code</code></pre>"
-    @test J.html_err("blah") == "<span style=\"color:red;\">// blah //</span>"
+    @test J.html_err("blah") == "<p><span style=\"color:red;\">// blah //</span></p>"
 end

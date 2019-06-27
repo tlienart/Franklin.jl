@@ -110,7 +110,7 @@ function jd_fullpass(watched_files::NamedTuple; clear::Bool=false, verb::Bool=fa
     # NOTE: need to keep track of pre-path if specified, see optimize
     prepath = get(GLOBAL_PAGE_VARS, "prepath", nothing)
     def_GLOBAL_PAGE_VARS!()
-    def_GLOB_LXDEFS!()
+    def_GLOBAL_LXDEFS!()
     # reinsert prepath if specified
     isnothing(prepath) || (GLOBAL_PAGE_VARS["prepath"] = prepath)
 
