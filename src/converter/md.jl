@@ -20,8 +20,8 @@ function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
                     )::Tuple{String,Union{Nothing,PageVars}}
     if !isrecursive
         def_LOCAL_PAGE_VARS!()           # page-specific variables
-        def_JD_LOC_EQDICT!()      # page-specific equation dict (hrefs)
-        def_JD_LOC_BIBREFDICT!()  # page-specific reference dict (hrefs)
+        def_PAGE_EQREFS!()      # page-specific equation dict (hrefs)
+        def_PAGE_BIBREFS!()  # page-specific reference dict (hrefs)
     end
 
     #
@@ -133,21 +133,21 @@ end
 
 
 """
-    JD_INSERT
+    INSERT
 
 String that is plugged as a placeholder of blocks that need further processing. The spaces allow to
 handle overzealous inclusion of `<p>...</p>` from the base Markdown to HTML conversion.
 """
-const JD_INSERT     = " ##JDINSERT## "
-const JD_INSERT_    = strip(JD_INSERT)
-const JD_INSERT_PAT = Regex(JD_INSERT_)
-const JD_INSERT_LEN = length(JD_INSERT_)
+const INSERT     = " ##JDINSERT## "
+const INSERT_    = strip(INSERT)
+const INSERT_PAT = Regex(INSERT_)
+const INSERT_LEN = length(INSERT_)
 
 
 """
 $(SIGNATURES)
 
-Form an intermediate MD file where special blocks are replaced by a marker (`JD_INSERT`) indicating
+Form an intermediate MD file where special blocks are replaced by a marker (`INSERT`) indicating
 that a piece will need to be plugged in there later.
 
 **Arguments**
@@ -193,7 +193,7 @@ function form_inter_md(mds::AbstractString, blocks::Vector{<:AbstractBlock},
             if isa(β, OCBlock) && β.name ∈ MD_OCB_IGNORE
                 head = nextind(mds, to(β))
             else
-                write(intermd, JD_INSERT)
+                write(intermd, INSERT)
                 push!(mblocks, β)
                 head = nextind(mds, to(blocks[b_idx]))
             end
@@ -220,20 +220,20 @@ end
 """
 $(SIGNATURES)
 
-Take a partial markdown string with the `JD_INSERT` marker and plug in the appropriately processed
+Take a partial markdown string with the `INSERT` marker and plug in the appropriately processed
 block.
 
 **Arguments**
 
-* `ihtml`:     the intermediary html string (with `JD_INSERT`)
+* `ihtml`:     the intermediary html string (with `INSERT`)
 * `blocks`:    vector of blocks
 * `lxcontext`: latex context
 """
 function convert_inter_html(ihtml::AbstractString,
                             blocks::Vector{<:AbstractBlock},
                             lxcontext::LxContext)::String
-    # Find the JD_INSERT indicators
-    allmatches = collect(eachmatch(JD_INSERT_PAT, ihtml))
+    # Find the INSERT indicators
+    allmatches = collect(eachmatch(INSERT_PAT, ihtml))
     strlen = lastindex(ihtml)
 
     # write the pieces of the final html in order, gradually processing the blocks to insert
@@ -257,7 +257,7 @@ function convert_inter_html(ihtml::AbstractString,
         !(hasli1) && (c1a > 0) && ihtml[c1a:c1b] == "<p>" && (δ1 = 3)
 
         # => case 2
-        iend = m.offset + JD_INSERT_LEN
+        iend = m.offset + INSERT_LEN
         c2a  = nextind(ihtml, iend)
         c2b  = nextind(ihtml, iend, 4)  # </p*
         c20  = nextind(ihtml, iend, 10) # </p>\n</li*
@@ -274,7 +274,7 @@ function convert_inter_html(ihtml::AbstractString,
         # store the resolved block
         write(htmls, convert_block(blocks[i], lxcontext))
     end
-    # store whatever is after the last JD_INSERT if anything
+    # store whatever is after the last INSERT if anything
     (head ≤ strlen) && write(htmls, subs(ihtml, head:strlen))
     # return the full string
     return String(take!(htmls))

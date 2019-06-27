@@ -164,8 +164,8 @@ const MD_OCB_IGNORE = [:COMMENT, :MD_DEF]
 
 
 """
-MD_MATH_NAMES
+MATH_BLOCKS_NAMES
 
 List of names of maths environments.
 """
-const MD_MATH_NAMES = [e.first for e ∈ MD_OCB_MATH]
+const MATH_BLOCKS_NAMES = [e.first for e ∈ MD_OCB_MATH]

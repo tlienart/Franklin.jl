@@ -74,10 +74,10 @@ function jd_setup(; clear::Bool=true)::NamedTuple
     # . recovering the list of files in the input dir we care about
     # -- these are stored in dictionaries, the key is the full path and the value is the time of
     # last change (useful for continuous monitoring)
-    md_files    = JD_FILES_DICT()
-    html_files  = JD_FILES_DICT()
-    other_files = JD_FILES_DICT()
-    infra_files = JD_FILES_DICT()
+    md_files    = TrackedFiles()
+    html_files  = TrackedFiles()
+    other_files = TrackedFiles()
+    infra_files = TrackedFiles()
     # named tuples of all the watched files
     watched_files = (md=md_files, html=html_files, other=other_files, infra=infra_files)
     # fill the dictionaries

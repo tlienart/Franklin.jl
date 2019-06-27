@@ -1,9 +1,10 @@
 """
-JD_FILES_DICT
+TrackedFiles
 
 Convenience type to keep track of files to watch.
 """
-const JD_FILES_DICT = Dict{Pair{String, String}, Float64}
+const TrackedFiles = Dict{Pair{String, String}, Float64}
+
 
 """
 $(SIGNATURES)
@@ -16,11 +17,9 @@ slate
 function prepare_output_dir(clear::Bool=true)::Nothing
     # if required to start from a blank slate -> remove the output dir
     (clear & isdir(PATHS[:pub])) && rm(PATHS[:pub], recursive=true)
-
     # create the output dir and the css dir if necessary
     !isdir(PATHS[:pub]) && mkdir(PATHS[:pub])
     !isdir(PATHS[:css]) && mkdir(PATHS[:css])
-
     return nothing
 end
 
@@ -34,13 +33,12 @@ create it.
 function out_path(root::String)::String
     len_in = lastindex(joinpath(PATHS[:src], ""))
     length(root) <= len_in && return PATHS[:folder]
-
     dpath = root[nextind(root, len_in):end]
-
+    # construct the out path
     f_out_path = joinpath(PATHS[:folder], dpath)
     f_out_path = replace(f_out_path, r"([^a-zA-Z\d\s_:])pages" => s"\1pub")
+    # if it doesn't exist, make the path
     !ispath(f_out_path) && mkpath(f_out_path)
-
     return f_out_path
 end
 
@@ -51,8 +49,8 @@ $(SIGNATURES)
 Update the dictionaries referring to input files and their time of last change. The variable `verb`
 propagates verbosity.
 """
-function scan_input_dir!(md_files::JD_FILES_DICT, html_files::JD_FILES_DICT,
-                         other_files::JD_FILES_DICT, infra_files::JD_FILES_DICT,
+function scan_input_dir!(md_files::TrackedFiles, html_files::TrackedFiles,
+                         other_files::TrackedFiles, infra_files::TrackedFiles,
                          verb::Bool=false)::Nothing
     # top level files (src/*)
     for file ∈ readdir(PATHS[:src])
@@ -106,7 +104,7 @@ $(SIGNATURES)
 Helper function, if `fpair` is not referenced in the dictionary (new file) add the entry to the
 dictionary with the time of last modification as val.
 """
-function add_if_new_file!(dict::JD_FILES_DICT, fpair::Pair{String,String}, verb::Bool)::Nothing
+function add_if_new_file!(dict::TrackedFiles, fpair::Pair{String,String}, verb::Bool)::Nothing
     haskey(dict, fpair) && return nothing
     # it's a new file
     verb && println("tracking new file '$(fpair.second)'.")

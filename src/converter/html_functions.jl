@@ -92,11 +92,11 @@ function hfun_href(params::Vector{String})::String
     replacement = "<b>??</b>"
     dname, hkey = params[1], params[2]
     if params[1] == "EQR"
-        haskey(JD_LOC_EQDICT, hkey) || return replacement
-        replacement = html_ahref_key(hkey, JD_LOC_EQDICT[hkey])
+        haskey(PAGE_EQREFS, hkey) || return replacement
+        replacement = html_ahref_key(hkey, PAGE_EQREFS[hkey])
     elseif params[1] == "BIBR"
-        haskey(JD_LOC_BIBREFDICT, hkey) || return replacement
-        replacement = html_ahref_key(hkey, JD_LOC_BIBREFDICT[hkey])
+        haskey(PAGE_BIBREFS, hkey) || return replacement
+        replacement = html_ahref_key(hkey, PAGE_BIBREFS[hkey])
     else
         @warn "Unknown dictionary name $dname in {{href ...}}. Ignoring"
     end

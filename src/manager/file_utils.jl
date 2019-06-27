@@ -37,8 +37,7 @@ function write_page(root::String, file::String, head::String, pg_foot::String, f
      # of paths
     CUR_PATH[] = fpath[lastindex(PATHS[:src])+length(PATH_SEP)+1:end]
 
-    vGLOBAL_LXDEFS    = collect(values(GLOBAL_LXDEFS))
-    (content, jd_vars) = convert_md(read(fpath, String) * EOS, vGLOBAL_LXDEFS)
+    (content, jd_vars) = convert_md(read(fpath, String) * EOS, collect(values(GLOBAL_LXDEFS)))
 
     # adding document variables to the dictionary
     # note that some won't change and so it's not necessary to do this every time
@@ -56,20 +55,18 @@ function write_page(root::String, file::String, head::String, pg_foot::String, f
 
     # 4. construct the page proper & prerender if needed
     pg = build_page(head, content, pg_foot, foot)
-
     if prerender
         # KATEX
         pg = js_prerender_katex(pg)
         # HIGHLIGHT
         if JD_CAN_HIGHLIGHT
             pg = js_prerender_highlight(pg)
-            # remove script TODO: needs to be documented
+            # remove script
             pg = replace(pg, r"<script.*?(?:highlight\.pack\.js|initHighlightingOnLoad).*?<\/script>"=>"")
         end
-        # remove katex scripts TODO: needs to be documented
+        # remove katex scripts
         pg = replace(pg, r"<script.*?(?:katex\.min\.js|auto-render\.min\.js|renderMathInElement).*?<\/script>"=>"")
     end
-
     # append pre-path if required (see optimize)
     if !isempty(GLOBAL_PAGE_VARS["prepath"].first) && isoptim
         pg = fix_links(pg)
@@ -77,7 +74,6 @@ function write_page(root::String, file::String, head::String, pg_foot::String, f
 
     # 5. write the html file where appropriate
     write(joinpath(out_path(root), change_ext(file)), pg)
-
     return nothing
 end
 

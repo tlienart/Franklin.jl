@@ -21,13 +21,13 @@
     h2 = J.refstring("amari98b")
     h3 = J.refstring("bardenet17")
 
-    @test haskey(J.JD_LOC_EQDICT,     h1)
-    @test haskey(J.JD_LOC_BIBREFDICT, h2)
-    @test haskey(J.JD_LOC_BIBREFDICT, h3)
+    @test haskey(J.PAGE_EQREFS,     h1)
+    @test haskey(J.PAGE_BIBREFS, h2)
+    @test haskey(J.PAGE_BIBREFS, h3)
 
-    @test J.JD_LOC_EQDICT[h1]     == 1 # first equation
-    @test J.JD_LOC_BIBREFDICT[h2] == "Amari and Douglas., 1998"
-    @test J.JD_LOC_BIBREFDICT[h3] == "Bardenet et al., 2017"
+    @test J.PAGE_EQREFS[h1]     == 1 # first equation
+    @test J.PAGE_BIBREFS[h2] == "Amari and Douglas., 1998"
+    @test J.PAGE_BIBREFS[h3] == "Bardenet et al., 2017"
 
     h = J.convert_html(m, J.PageVars())
 
@@ -57,9 +57,9 @@ end
         """ * J.EOS
     m, _ = J.convert_md(st, collect(values(J.GLOBAL_LXDEFS)))
 
-    @test J.JD_LOC_EQDICT[J.JD_LOC_EQDICT_COUNTER] == 3
-    @test J.JD_LOC_EQDICT[J.refstring("eq:a trivial one")] == 2
-    @test J.JD_LOC_EQDICT[J.refstring("beyond hope")] == 3
+    @test J.PAGE_EQREFS[J.PAGE_EQREFS_COUNTER] == 3
+    @test J.PAGE_EQREFS[J.refstring("eq:a trivial one")] == 2
+    @test J.PAGE_EQREFS[J.refstring("beyond hope")] == 3
 
     h1 = J.refstring("eq:a trivial one")
     h2 = J.refstring("beyond hope")
