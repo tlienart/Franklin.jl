@@ -26,14 +26,18 @@ function find_ocblocks(tokens::Vector{Token}, name::S, ocpair::Pair{S, S};
                 j += 1
                 inbalance += ocbalance(tokens[j], ocpair)
             end
-            (inbalance > 0) && error("I found at least one opening token '$(ocpair.first)' that " *
-                                     " is not closed properly.")
+            if inbalance > 0
+                throw(OCBlockError("I found at least one opening  token " *
+                                   "'$(ocpair.first)' that is not closed properly."))
+            end
         else
             # seek forward to find the first closing token
             j = findfirst(cτ -> (cτ.name == ocpair.second), tokens[i+1:end])
             # error if no closing token is found
-            isnothing(j) && error("Found the opening token '$(τ.name)' but not the " *
-                                  "corresponding closing token.")
+            if isnothing(j)
+                throw(OCBlockError("I found the opening token '$(τ.name)' but not " *
+                                   "the corresponding closing token."))
+            end
             j += i
         end
         push!(ocblocks, OCBlock(name, τ => tokens[j]))

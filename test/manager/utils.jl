@@ -101,5 +101,5 @@ end
 @testset "Err procfile" begin
     write(temp_index, "blah blah { blih etc")
     println("🐝 Testing error message...:")
-    @test_throws ErrorException JuDoc.process_file_err(:md, JuDoc.PATHS[:src] => "index.md"; clear=false)
+    @test_throws J.OCBlockError JuDoc.process_file_err(:md, JuDoc.PATHS[:src] => "index.md"; clear=false)
 end
