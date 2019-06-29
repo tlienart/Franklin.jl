@@ -90,15 +90,15 @@ end
 @testset "paths" begin
     @test J.unixify(pwd()) == replace(pwd(), J.PATH_SEP => "/") * "/"
     #
-    J.JD_CURPATH[] = "cpA/cpB/"
+    J.CUR_PATH[] = "cpA/cpB/"
     # non-canonical mode
     @test J.resolve_assets_rpath("./hello/goodbye") == "/assets/cpA/cpB/hello/goodbye"
     @test J.resolve_assets_rpath("/blah/blih.txt") == "/blah/blih.txt"
     @test J.resolve_assets_rpath("blah/blih.txt") == "/assets/blah/blih.txt"
     # canonical mode
-    @test J.resolve_assets_rpath("./hello/goodbye"; canonical=true) == joinpath(J.JD_PATHS[:assets], "cpA", "cpB", "hello", "goodbye")
-    @test J.resolve_assets_rpath("/blah/blih.txt"; canonical=true) == joinpath(J.JD_PATHS[:f], "blah", "blih.txt")
-    @test J.resolve_assets_rpath("blah/blih.txt"; canonical=true) == joinpath(J.JD_PATHS[:assets], "blah", "blih.txt")
+    @test J.resolve_assets_rpath("./hello/goodbye"; canonical=true) == joinpath(J.PATHS[:assets], "cpA", "cpB", "hello", "goodbye")
+    @test J.resolve_assets_rpath("/blah/blih.txt"; canonical=true) == joinpath(J.PATHS[:folder], "blah", "blih.txt")
+    @test J.resolve_assets_rpath("blah/blih.txt"; canonical=true) == joinpath(J.PATHS[:assets], "blah", "blih.txt")
 end
 
 
@@ -111,5 +111,5 @@ end
     @test J.html_img("src", "alt") == "<img src=\"src\" alt=\"alt\">"
     @test J.html_code("code") == "<pre><code>code</code></pre>"
     @test J.html_code("code", "lang") == "<pre><code class=\"language-lang\">code</code></pre>"
-    @test J.html_err("blah") == "<span style=\"color:red;\">// blah //</span>"
+    @test J.html_err("blah") == "<p><span style=\"color:red;\">// blah //</span></p>"
 end

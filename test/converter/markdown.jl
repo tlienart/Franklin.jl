@@ -62,7 +62,7 @@ end
         \eqa{\sin^2(x)+\cos^2(x) &=& 1}
         """ * J.EOS
 
-    J.def_JD_LOC_EQDICT!()
+    J.def_PAGE_EQREFS!()
 
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)

@@ -27,7 +27,7 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
               "You can install it with `npm install highlight.js`."
     end
     if !isempty(prepath)
-        JD_GLOB_VARS["prepath"] = prepath => (String, )
+        GLOBAL_PAGE_VARS["prepath"] = prepath => (String, )
     end
     # re-do a (silent) full pass
     start = time()
@@ -106,11 +106,11 @@ Cleanpull allows you to pull from your remote git repository after having remove
 output directory. This will help avoid merge clashes.
 """
 function cleanpull()::Nothing
-    JD_FOLDER_PATH[] = pwd()
+    FOLDER_PATH[] = pwd()
     set_paths!()
-    if isdir(JD_PATHS[:out])
+    if isdir(PATHS[:pub])
         print(rpad("→ Removing local output dir...", 35))
-        rm(JD_PATHS[:out], force=true, recursive=true)
+        rm(PATHS[:pub], force=true, recursive=true)
         println(" [done ✔ ]")
     end
     try

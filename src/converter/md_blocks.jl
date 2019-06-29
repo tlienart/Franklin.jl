@@ -13,7 +13,7 @@ function convert_block(β::AbstractBlock, lxcontext::LxContext)::AbstractString
     βn == :ESCAPE       && return chop(β.ss, head=3, tail=3)
 
     # Math block --> needs to call further processing to resolve possible latex
-    βn ∈ MD_MATH_NAMES  && return convert_mathblock(β, lxcontext.lxdefs)
+    βn ∈ MATH_BLOCKS_NAMES && return convert_math_block(β, lxcontext.lxdefs)
 
     # Div block --> need to process the block as a sub-element
     if βn == :DIV
@@ -30,7 +30,7 @@ convert_block(β::LxCom, λ::LxContext) = resolve_lxcom(β, λ.lxdefs)
 
 
 """
-JD_MBLOCKS_PM
+MATH_BLOCKS_PARENS
 
 Dictionary to keep track of how math blocks are fenced in standard LaTeX and how these fences need
 to be adapted for compatibility with KaTeX. Each tuple contains the number of characters to chop
@@ -39,7 +39,7 @@ replacement.
 For instance, `\$ ... \$` will become `\\( ... \\)` chopping off 1 character at the front and the
 back (`\$` sign).
 """
-const JD_MBLOCKS_PM = Dict{Symbol, Tuple{Int,Int,String,String}}(
+const MATH_BLOCKS_PARENS = Dict{Symbol, Tuple{Int,Int,String,String}}(
     :MATH_A     => ( 1,  1, "\\(", "\\)"),
     :MATH_B     => ( 2,  2, "\\[", "\\]"),
     :MATH_C     => ( 2,  2, "\\[", "\\]"),
@@ -55,10 +55,10 @@ $(SIGNATURES)
 Helper function for the math block case of `convert_block` taking the inside of a math block,
 resolving any latex command in it and returning the correct syntax that KaTeX can render.
 """
-function convert_mathblock(β::OCBlock, lxdefs::Vector{LxDef})::String
-    # try to find the block out of `JD_MBLOCKS_PM`, if not found, error
-    pm = get(JD_MBLOCKS_PM, β.name) do
-        error("Unrecognised math block name.")
+function convert_math_block(β::OCBlock, lxdefs::Vector{LxDef})::String
+    # try to find the block out of `MATH_BLOCKS_PARENS`, if not found, error
+    pm = get(MATH_BLOCKS_PARENS, β.name) do
+        throw(MathBlockError("Unrecognised math block name."))
     end
 
     # convert the inside, decorate with KaTex and return, also act if
@@ -70,7 +70,7 @@ function convert_mathblock(β::OCBlock, lxdefs::Vector{LxDef})::String
         # here and only increment if there's no tag. For now just use numbers.
 
         # increment equation counter
-        JD_LOC_EQDICT[JD_LOC_EQDICT_COUNTER] += 1
+        PAGE_EQREFS[PAGE_EQREFS_COUNTER] += 1
 
         # check if there's a label, if there is, add that to the dictionary
         matched = match(r"\\label{(.*?)}", inner)
@@ -80,7 +80,7 @@ function convert_mathblock(β::OCBlock, lxdefs::Vector{LxDef})::String
             write(htmls, "<a id=\"$name\"></a>")
             inner  = replace(inner, r"\\label{.*?}" => "")
             # store the label name and associated number
-            JD_LOC_EQDICT[name] = JD_LOC_EQDICT[JD_LOC_EQDICT_COUNTER]
+            PAGE_EQREFS[name] = PAGE_EQREFS[PAGE_EQREFS_COUNTER]
         end
     end
     # assemble the katex decorators, the resolved content etc

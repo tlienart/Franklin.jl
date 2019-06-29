@@ -11,17 +11,17 @@ function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef}; inmath::Bool=false)::S
     name = isnothing(i) ? lxc.ss : subs(lxc.ss, 1:(first(i)-1))
 
     # sort special commands where the input depends on context (see hyperrefs and inputs)
-    haskey(JD_REF_COMS, name) && return JD_REF_COMS[name](lxc)
+    haskey(LXCOM_HREF, name)  && return LXCOM_HREF[name](lxc)
     name == "\\input"         && return resolve_lx_input(lxc)
-    name ∈ keys(JD_LX_SIMPLE) && return JD_LX_SIMPLE[name](lxc)
+    name ∈ keys(LXCOM_SIMPLE) && return LXCOM_SIMPLE[name](lxc)
 
     # In subsequent case, whatever the command inserts will be re-parsed (in case the insertion
     # contains further commands or markdown); partial corresponds to what the command corresponds
     # to before re-processing.
     partial = ""
 
-    if name ∈ keys(JD_LX_SIMPLE_REPROC)
-        partial = JD_LX_SIMPLE_REPROC[name](lxc)
+    if name ∈ keys(LXCOM_SIMPLE_REPROCESS)
+        partial = LXCOM_SIMPLE_REPROCESS[name](lxc)
     else
         # retrieve the definition attached to the command
         lxdef = getdef(lxc)
@@ -52,47 +52,48 @@ Hyper references
 ================== =#
 
 """
-JD_LOC_EQDICT
+PAGE_EQREFS
 
 Dictionary to keep track of equations that are labelled on a page to allow references within the
 page.
 """
-const JD_LOC_EQDICT = Dict{String, Int}()
+const PAGE_EQREFS = Dict{String, Int}()
 
 
 """
-JD_LOC_EQDICT_COUNTER
+PAGE_EQREFS_COUNTER
 
 Counter to keep track of equation numbers as they appear along the page, this helps with equation
-referencing.
+referencing. (The `_XC0q` is just a random string to avoid clashes).
 """
-const JD_LOC_EQDICT_COUNTER = "COUNTER_XC0q"
+const PAGE_EQREFS_COUNTER = "COUNTER_XC0q"
+
 
 """
 $(SIGNATURES)
 
-Reset the JD_LOC_EQDICT dictionary.
+Reset the PAGE_EQREFS dictionary.
 """
-@inline function def_JD_LOC_EQDICT!()
-    empty!(JD_LOC_EQDICT)
-    JD_LOC_EQDICT[JD_LOC_EQDICT_COUNTER] = 0
+@inline function def_PAGE_EQREFS!()
+    empty!(PAGE_EQREFS)
+    PAGE_EQREFS[PAGE_EQREFS_COUNTER] = 0
     return nothing
 end
 
 
 """
-JD_LOC_BIBREFDICT
+PAGE_BIBREFS
 
 Dictionary to keep track of bibliographical references on a page to allow citation within the page.
 """
-const JD_LOC_BIBREFDICT = Dict{String, String}()
+const PAGE_BIBREFS = Dict{String, String}()
 
 """
 $(SIGNATURES)
 
-Reset the JD_LOC_BIBREFDICT dictionary.
+Reset the PAGE_BIBREFS dictionary.
 """
-def_JD_LOC_BIBREFDICT!() = (empty!(JD_LOC_BIBREFDICT); nothing)
+def_PAGE_BIBREFS!() = (empty!(PAGE_BIBREFS); nothing)
 
 
 """
@@ -106,12 +107,12 @@ add_label(λ::LxCom)::String = "<a id=\"$(refstring(strip(content(λ.braces[1]))
 """
 $(SIGNATURES)
 
-Given a `biblabel` command, update `JD_LOC_BIBREFDICT` to keep track of the reference so that it
+Given a `biblabel` command, update `PAGE_BIBREFS` to keep track of the reference so that it
 can be linked with a hyperreference.
 """
 function add_biblabel(λ::LxCom)::String
     name = refstring(strip(content(λ.braces[1])))
-    JD_LOC_BIBREFDICT[name] = content(λ.braces[2])
+    PAGE_BIBREFS[name] = content(λ.braces[2])
     return "<a id=\"$name\"></a>"
 end
 
@@ -139,12 +140,12 @@ end
 
 
 """
-JD_REF_COMS
+LXCOM_HREF
 
 Dictionary for latex commands related to hyperreference for which a specific replacement that
 depends on context is constructed.
 """
-const JD_REF_COMS = Dict{String, Function}(
+const LXCOM_HREF = Dict{String, Function}(
     "\\eqref"    => (λ -> form_href(λ, "EQR";  class="eqref")),
     "\\cite"     => (λ -> form_href(λ, "BIBR"; parens=""=>"", class="bibref")),
     "\\citet"    => (λ -> form_href(λ, "BIBR"; parens=""=>"", class="bibref")),
@@ -176,14 +177,19 @@ function check_input_rpath(rpath::AbstractString, lang::AbstractString="")::NTup
     end
     dir, fname = splitdir(fpath)
 
+    # TODO: probably better to not throw an "argumenterror" here but maybe use html_err
+    # (though the return type needs to be adjusted accordingly and it shouldn't be propagated)
+
     # see fill_extension, this is the case where nothing came up
     if endswith(fname, ".xx")
         # try to find a file with the same root and any extension otherwise throw an error
         files = readdir(dir)
         fn = splitext(fname)[1]
         k = findfirst(e -> splitext(e)[1] == fn, files)
-        k === nothing && throw(ArgumentError("Couldn't find a relevant file when trying to " *
-                                             "resolve an \\input command. (given: $rpath)"))
+        if k === nothing
+            throw(ArgumentError("Couldn't find a relevant file when trying to " *
+                                "resolve an \\input command. (given: $rpath)"))
+        end
         fname = files[k]
         fpath = joinpath(dir, fname)
     elseif !isfile(fpath)

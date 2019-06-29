@@ -17,11 +17,11 @@ well as a dictionary of page variables.
 """
 function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
                     isrecursive::Bool=false, isconfig::Bool=false, has_mddefs::Bool=true
-                    )::Tuple{String,Union{Nothing,JD_VAR_TYPE}}
+                    )::Tuple{String,Union{Nothing,PageVars}}
     if !isrecursive
-        def_LOC_VARS!()           # page-specific variables
-        def_JD_LOC_EQDICT!()      # page-specific equation dict (hrefs)
-        def_JD_LOC_BIBREFDICT!()  # page-specific reference dict (hrefs)
+        def_LOCAL_PAGE_VARS!()           # page-specific variables
+        def_PAGE_EQREFS!()      # page-specific equation dict (hrefs)
+        def_PAGE_BIBREFS!()  # page-specific reference dict (hrefs)
     end
 
     #
@@ -133,21 +133,21 @@ end
 
 
 """
-    JD_INSERT
+    INSERT
 
 String that is plugged as a placeholder of blocks that need further processing. The spaces allow to
 handle overzealous inclusion of `<p>...</p>` from the base Markdown to HTML conversion.
 """
-const JD_INSERT     = " ##JDINSERT## "
-const JD_INSERT_    = strip(JD_INSERT)
-const JD_INSERT_PAT = Regex(JD_INSERT_)
-const JD_INSERT_LEN = length(JD_INSERT_)
+const INSERT     = " ##JDINSERT## "
+const INSERT_    = strip(INSERT)
+const INSERT_PAT = Regex(INSERT_)
+const INSERT_LEN = length(INSERT_)
 
 
 """
 $(SIGNATURES)
 
-Form an intermediate MD file where special blocks are replaced by a marker (`JD_INSERT`) indicating
+Form an intermediate MD file where special blocks are replaced by a marker (`INSERT`) indicating
 that a piece will need to be plugged in there later.
 
 **Arguments**
@@ -193,7 +193,7 @@ function form_inter_md(mds::AbstractString, blocks::Vector{<:AbstractBlock},
             if isa(β, OCBlock) && β.name ∈ MD_OCB_IGNORE
                 head = nextind(mds, to(β))
             else
-                write(intermd, JD_INSERT)
+                write(intermd, INSERT)
                 push!(mblocks, β)
                 head = nextind(mds, to(blocks[b_idx]))
             end
@@ -220,20 +220,20 @@ end
 """
 $(SIGNATURES)
 
-Take a partial markdown string with the `JD_INSERT` marker and plug in the appropriately processed
+Take a partial markdown string with the `INSERT` marker and plug in the appropriately processed
 block.
 
 **Arguments**
 
-* `ihtml`:     the intermediary html string (with `JD_INSERT`)
+* `ihtml`:     the intermediary html string (with `INSERT`)
 * `blocks`:    vector of blocks
 * `lxcontext`: latex context
 """
 function convert_inter_html(ihtml::AbstractString,
                             blocks::Vector{<:AbstractBlock},
                             lxcontext::LxContext)::String
-    # Find the JD_INSERT indicators
-    allmatches = collect(eachmatch(JD_INSERT_PAT, ihtml))
+    # Find the INSERT indicators
+    allmatches = collect(eachmatch(INSERT_PAT, ihtml))
     strlen = lastindex(ihtml)
 
     # write the pieces of the final html in order, gradually processing the blocks to insert
@@ -257,7 +257,7 @@ function convert_inter_html(ihtml::AbstractString,
         !(hasli1) && (c1a > 0) && ihtml[c1a:c1b] == "<p>" && (δ1 = 3)
 
         # => case 2
-        iend = m.offset + JD_INSERT_LEN
+        iend = m.offset + INSERT_LEN
         c2a  = nextind(ihtml, iend)
         c2b  = nextind(ihtml, iend, 4)  # </p*
         c20  = nextind(ihtml, iend, 10) # </p>\n</li*
@@ -274,7 +274,7 @@ function convert_inter_html(ihtml::AbstractString,
         # store the resolved block
         write(htmls, convert_block(blocks[i], lxcontext))
     end
-    # store whatever is after the last JD_INSERT if anything
+    # store whatever is after the last INSERT if anything
     (head ≤ strlen) && write(htmls, subs(ihtml, head:strlen))
     # return the full string
     return String(take!(htmls))
@@ -295,7 +295,7 @@ available page variable dictionaries).
 * `lxdefs`:    latex definitions
 """
 function process_md_defs(blocks::Vector{OCBlock}, isconfig::Bool,
-                         lxdefs::Vector{LxDef})::Union{Nothing,JD_VAR_TYPE}
+                         lxdefs::Vector{LxDef})::Union{Nothing,PageVars}
     # Find all markdown definitions (MD_DEF) blocks
     mddefs = filter(β -> (β.name == :MD_DEF), blocks)
     # empty container for the assignments
@@ -312,17 +312,17 @@ function process_md_defs(blocks::Vector{OCBlock}, isconfig::Bool,
         assignments[i] = (String(vname) => String(vdef))
     end
     # if we're currently looking at the config file, update the global page var dictionary
-    # JD_GLOB_VARS and store the latex definition globally as well in JD_GLOB_LXDEFS
+    # GLOBAL_PAGE_VARS and store the latex definition globally as well in GLOBAL_LXDEFS
     if isconfig
-        isempty(assignments) || set_vars!(JD_GLOB_VARS, assignments)
+        isempty(assignments) || set_vars!(GLOBAL_PAGE_VARS, assignments)
         for lxd ∈ lxdefs
-            JD_GLOB_LXDEFS[lxd.name] = lxd
+            GLOBAL_LXDEFS[lxd.name] = lxd
         end
         return nothing
     end
     # create variable dictionary for the page
     # NOTE: assignments here may be empty, that's fine (will be processed further down)
-    jd_vars = merge(JD_GLOB_VARS, copy(JD_LOC_VARS))
+    jd_vars = merge(GLOBAL_PAGE_VARS, copy(LOCAL_PAGE_VARS))
     set_vars!(jd_vars, assignments)
     return jd_vars
 end

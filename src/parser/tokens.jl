@@ -103,7 +103,7 @@ SPACER
 Convenience list of characters that would correspond to a `\\s` regex. see also
 https://github.com/JuliaLang/julia/blob/master/base/strings/unicode.jl.
 """
-const SPACER = [' ', '\n', '\t', '\v', '\f', '\r', '\u85', '\ua0', EOS]
+const SPACER = (' ', '\n', '\t', '\v', '\f', '\r', '\u85', '\ua0', EOS)
 
 
 """

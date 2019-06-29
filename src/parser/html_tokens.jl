@@ -136,6 +136,7 @@ struct HIsDef <: AbstractBlock
     vname::String
 end
 
+
 """
 $(TYPEDEF)
 
@@ -145,6 +146,7 @@ struct HIsNotDef <: AbstractBlock
     ss::SubString
     vname::String
 end
+
 
 """
 $(TYPEDEF)
@@ -175,6 +177,7 @@ struct HIsPage <: AbstractBlock
     pages::Vector{<:AbstractString} # one or several pages
 end
 
+
 """
 $(TYPEDEF)
 
@@ -184,6 +187,7 @@ struct HIsNotPage <: AbstractBlock
     ss::SubString
     pages::Vector{<:AbstractString}
 end
+
 
 """
 $(TYPEDEF)
@@ -204,7 +208,7 @@ FUNCTION BLOCKS
 =============== =#
 
 """
-HBLOCK_FUN_PAT
+$(TYPEDEF)
 
 Regex to match `{{ fname param₁ param₂ }}` where `fname` is a html processing function and `paramᵢ`
 should refer to appropriate variables in the current scope.

@@ -20,7 +20,7 @@ export serve, publish, cleanpull, newsite, optimize
 const BIG_INT = typemax(Int)
 
 """Flag for debug mode."""
-const JD_DEBUG = Ref(false)
+const DEBUG_MODE = Ref(false)
 
 """Dict to keep track of languages and how comments are indicated and their extensions."""
 const CODE_LANG = Dict{String,NTuple{2,String}}(
@@ -38,12 +38,6 @@ const CODE_LANG = Dict{String,NTuple{2,String}}(
     "toml"       => (".toml", "#"),
     )
 
-"""Path to the JuDoc repo."""
-const JUDOC_PATH = splitdir(pathof(JuDoc))[1] # .../JuDoc/src
-
-"""Path to some temporary folder that will be used by JuDoc."""
-const TEMPL_PATH = joinpath(JUDOC_PATH, "templates")
-
 # copied from Base/path.jl
 if Sys.isunix()
     """Indicator for directory separation on the OS."""
@@ -54,11 +48,11 @@ else
     error("Unhandled OS")
 end
 
-"""Type of the containers for page variables."""
-const JD_VAR_TYPE = Dict{String,Pair{K,NTuple{N, DataType}} where {K, N}}
+"""Type of the containers for page variables (local and global)."""
+const PageVars = Dict{String,Pair{K,NTuple{N, DataType}} where {K, N}}
 
-"""Relative path to the current file being processed."""
-const JD_CURPATH = Ref("")
+"""Relative path to the current file being processed by JuDoc."""
+const CUR_PATH = Ref("")
 
 # -----------------------------------------------------------------------------
 
@@ -68,13 +62,13 @@ include("build.jl") # check if user has Node/minify
 include("parser/tokens.jl")
 include("parser/ocblocks.jl")
 # > latex
-include("parser/tokens_lx.jl")
-include("parser/lxblocks.jl")
+include("parser/lx_tokens.jl")
+include("parser/lx_blocks.jl")
 # > markdown
-include("parser/tokens_md.jl")
+include("parser/md_tokens.jl")
 # > html
-include("parser/tokens_html.jl")
-include("parser/hblocks.jl")
+include("parser/html_tokens.jl")
+include("parser/html_blocks.jl")
 
 # CONVERSION
 # > markdown
@@ -85,8 +79,8 @@ include("converter/md.jl")
 include("converter/lx.jl")
 include("converter/lx_simple.jl")
 # > html
-include("converter/html_hblocks.jl")
-include("converter/html_hfuns.jl")
+include("converter/html_blocks.jl")
+include("converter/html_functions.jl")
 include("converter/html.jl")
 # > javascript
 include("converter/js_prerender.jl")
@@ -104,5 +98,8 @@ include("manager/post_processing.jl")
 # MISC UTILS
 include("misc_utils.jl")
 include("misc_html.jl")
+
+# ERROR TYPES
+include("error_types.jl")
 
 end # module

@@ -1,5 +1,5 @@
 """
-    JD_GLOB_VARS
+GLOBAL_PAGE_VARS
 
 Dictionary of variables assumed to be set for the entire website. Entries have the format
 KEY => PAIR where KEY is a string (e.g.: "author") and PAIR is a pair where the first element is
@@ -8,7 +8,7 @@ for that value. (e.g.: "THE AUTHOR" => (String, Nothing))
 
 DEVNOTE: marked as constant for perf reasons but can be modified since Dict.
 """
-const JD_GLOB_VARS = JD_VAR_TYPE()
+const GLOBAL_PAGE_VARS = PageVars()
 
 
 """
@@ -17,24 +17,24 @@ $(SIGNATURES)
 Convenience function to allocate default values of the global site variables. This is called once,
 when JuDoc is started.
 """
-@inline function def_GLOB_VARS!()::Nothing
-    empty!(JD_GLOB_VARS)
-    JD_GLOB_VARS["author"]      = Pair("THE AUTHOR",   (String, Nothing))
-    JD_GLOB_VARS["date_format"] = Pair("U dd, yyyy",   (String,))
-    JD_GLOB_VARS["prepath"]     = Pair("",             (String,))
+@inline function def_GLOBAL_PAGE_VARS!()::Nothing
+    empty!(GLOBAL_PAGE_VARS)
+    GLOBAL_PAGE_VARS["author"]      = Pair("THE AUTHOR",   (String, Nothing))
+    GLOBAL_PAGE_VARS["date_format"] = Pair("U dd, yyyy",   (String,))
+    GLOBAL_PAGE_VARS["prepath"]     = Pair("",             (String,))
     return nothing
 end
 
 
 """
-    JD_LOC_VARS
+LOCAL_PAGE_VARS
 
 Dictionary of variables copied and then set for each page (through definitions). Entries have the
-same format as for `JD_GLOB_VARS`.
+same format as for `GLOBAL_PAGE_VARS`.
 
 DEVNOTE: marked as constant for perf reasons but can be modified since Dict.
 """
-const JD_LOC_VARS = JD_VAR_TYPE()
+const LOCAL_PAGE_VARS = PageVars()
 
 
 """
@@ -43,55 +43,62 @@ $(SIGNATURES)
 Convenience function to allocate default values of page variables. This is called every time a page
 is processed.
 """
-@inline function def_LOC_VARS!()::Nothing
-    empty!(JD_LOC_VARS)
-    JD_LOC_VARS["title"]    = Pair(nothing, (String, Nothing))
-    JD_LOC_VARS["hasmath"]  = Pair(true,    (Bool,))
-    JD_LOC_VARS["hascode"]  = Pair(false,   (Bool,))
-    JD_LOC_VARS["date"]     = Pair(Date(1), (String, Date, Nothing))
-    JD_LOC_VARS["jd_ctime"] = Pair(Date(1), (Date,))   # time of creation
-    JD_LOC_VARS["jd_mtime"] = Pair(Date(1), (Date,))   # time of last modification
-    JD_LOC_VARS["jd_rpath"] = Pair("",      (String,)) # local path to file src/[...]/blah.md
+@inline function def_LOCAL_PAGE_VARS!()::Nothing
+    empty!(LOCAL_PAGE_VARS)
+    LOCAL_PAGE_VARS["title"]    = Pair(nothing, (String, Nothing))
+    LOCAL_PAGE_VARS["hasmath"]  = Pair(true,    (Bool,))
+    LOCAL_PAGE_VARS["hascode"]  = Pair(false,   (Bool,))
+    LOCAL_PAGE_VARS["date"]     = Pair(Date(1), (String, Date, Nothing))
+    LOCAL_PAGE_VARS["jd_ctime"] = Pair(Date(1), (Date,))   # time of creation
+    LOCAL_PAGE_VARS["jd_mtime"] = Pair(Date(1), (Date,))   # time of last modification
+    LOCAL_PAGE_VARS["jd_rpath"] = Pair("",      (String,)) # local path to file src/[...]/blah.md
     return nothing
 end
 
 
 """
-    JD_GLOB_LXDEFS
+GLOBAL_LXDEFS
 
 List of latex definitions accessible to all pages. This is filled when the config file is read
 (via manager/file_utils/process_config).
 """
-const JD_GLOB_LXDEFS = Dict{String, LxDef}()
+const GLOBAL_LXDEFS = Dict{String, LxDef}()
 
-const EMPTYSS = SubString("")
 
 """
-    def_GLOB_LXDEFS!
+EMPTY_SS
+
+Convenience constant for an empty substring, used in LXDEFS.
+"""
+const EMPTY_SS = SubString("")
+
+
+"""
+$(SIGNATURES)
 
 Convenience function to allocate default values of global latex commands accessible throughout
 the site. See [`resolve_lxcom`](@ref).
 """
-@inline function def_GLOB_LXDEFS!()::Nothing
-    empty!(JD_GLOB_LXDEFS)
+@inline function def_GLOBAL_LXDEFS!()::Nothing
+    empty!(GLOBAL_LXDEFS)
     # hyperreferences
-    JD_GLOB_LXDEFS["\\eqref"]    = LxDef("\\eqref",    1, EMPTYSS)
-    JD_GLOB_LXDEFS["\\cite"]     = LxDef("\\cite",     1, EMPTYSS)
-    JD_GLOB_LXDEFS["\\citet"]    = LxDef("\\citet",    1, EMPTYSS)
-    JD_GLOB_LXDEFS["\\citep"]    = LxDef("\\citep",    1, EMPTYSS)
-    JD_GLOB_LXDEFS["\\label"]    = LxDef("\\label",    1, EMPTYSS)
-    JD_GLOB_LXDEFS["\\biblabel"] = LxDef("\\biblabel", 2, EMPTYSS)
+    GLOBAL_LXDEFS["\\eqref"]    = LxDef("\\eqref",    1, EMPTY_SS)
+    GLOBAL_LXDEFS["\\cite"]     = LxDef("\\cite",     1, EMPTY_SS)
+    GLOBAL_LXDEFS["\\citet"]    = LxDef("\\citet",    1, EMPTY_SS)
+    GLOBAL_LXDEFS["\\citep"]    = LxDef("\\citep",    1, EMPTY_SS)
+    GLOBAL_LXDEFS["\\label"]    = LxDef("\\label",    1, EMPTY_SS)
+    GLOBAL_LXDEFS["\\biblabel"] = LxDef("\\biblabel", 2, EMPTY_SS)
     # inclusion
-    JD_GLOB_LXDEFS["\\input"]      = LxDef("\\input",      2, EMPTYSS)
-    JD_GLOB_LXDEFS["\\output"]     = LxDef("\\output",     1, EMPTYSS)
-    JD_GLOB_LXDEFS["\\textoutput"] = LxDef("\\textoutput", 1, EMPTYSS)
-    JD_GLOB_LXDEFS["\\figalt"]     = LxDef("\\figalt",     2, EMPTYSS)
-    JD_GLOB_LXDEFS["\\fig"]        = LxDef("\\fig",        1, subs("\\figalt{}{#1}"))
-    JD_GLOB_LXDEFS["\\file"]       = LxDef("\\file",       2, subs("[#1]()"))
+    GLOBAL_LXDEFS["\\input"]      = LxDef("\\input",      2, EMPTY_SS)
+    GLOBAL_LXDEFS["\\output"]     = LxDef("\\output",     1, EMPTY_SS)
+    GLOBAL_LXDEFS["\\textoutput"] = LxDef("\\textoutput", 1, EMPTY_SS)
+    GLOBAL_LXDEFS["\\figalt"]     = LxDef("\\figalt",     2, EMPTY_SS)
+    GLOBAL_LXDEFS["\\fig"]        = LxDef("\\fig",        1, subs("\\figalt{}{#1}"))
+    GLOBAL_LXDEFS["\\file"]       = LxDef("\\file",       2, subs("[#1]()"))
     # text formatting
-    JD_GLOB_LXDEFS["\\underline"] = LxDef("\\underline", 1,
+    GLOBAL_LXDEFS["\\underline"] = LxDef("\\underline", 1,
                             subs("~~~<span style=\"text-decoration:underline;\">!#1</span>~~~"))
-    JD_GLOB_LXDEFS["\\textcss"]   = LxDef("\\underline", 2,
+    GLOBAL_LXDEFS["\\textcss"]   = LxDef("\\underline", 2,
                             subs("~~~<span style=\"!#1\">!#2</span>~~~"))
     return nothing
 end
@@ -105,9 +112,9 @@ Convenience functions related to the jd_vars
 $(SIGNATURES)
 
 Convenience function taking a `DateTime` object and returning the corresponding formatted string
-with the format contained in `JD_GLOB_VARS["date_format"]`.
+with the format contained in `GLOBAL_PAGE_VARS["date_format"]`.
 """
-jd_date(d::DateTime)::AbstractString = Dates.format(d, JD_GLOB_VARS["date_format"].first)
+jd_date(d::DateTime)::AbstractString = Dates.format(d, GLOBAL_PAGE_VARS["date_format"].first)
 
 
 """
@@ -115,7 +122,7 @@ $(SIGNATURES)
 
 Checks if a data type `t` is a subtype of a tuple of accepted types `tt`.
 """
-is_ok_type(t::DataType, tt::NTuple{N,DataType} where N)::Bool = any(<:(t, tᵢ) for tᵢ ∈ tt)
+check_type(t::DataType, tt::NTuple{N,DataType} where N)::Bool = any(<:(t, tᵢ) for tᵢ ∈ tt)
 
 
 """
@@ -125,7 +132,7 @@ Take a var dictionary `dict` and update the corresponding pair. This should only
 as it does not check the validity of `val`. See [`write_page`](@ref) where it is used to store a
 file's creation and last modification time.
 """
-set_var!(d::JD_VAR_TYPE, k::K, v) where K = (d[k] = Pair(v, d[k].second); nothing)
+set_var!(d::PageVars, k::K, v) where K = (d[k] = Pair(v, d[k].second); nothing)
 
 
 #= =================================================
@@ -150,7 +157,7 @@ Dict{String,Pair{K,Tuple{DataType}} where K} with 2 entries:
   "a" => 5.0=>(Real,)
 ```
 """
-function set_vars!(jd_vars::JD_VAR_TYPE, assignments::Vector{Pair{String,String}})::JD_VAR_TYPE
+function set_vars!(jd_vars::PageVars, assignments::Vector{Pair{String,String}})::PageVars
     # if there's no assignment, cut it short
     isempty(assignments) && return jd_vars
     # process each assignment in turn
@@ -174,7 +181,7 @@ function set_vars!(jd_vars::JD_VAR_TYPE, assignments::Vector{Pair{String,String}
             # if the retrieved value has the right type, assign it to the corresponding key
             type_tmp  = typeof(tmp)
             acc_types = jd_vars[key].second
-            if is_ok_type(type_tmp, acc_types)
+            if check_type(type_tmp, acc_types)
                 jd_vars[key] = Pair(tmp, acc_types)
             else
                 @warn "Doc var '$key' (type(s): $acc_types) can't be set to value '$tmp' (type: $type_tmp). Assignment ignored."

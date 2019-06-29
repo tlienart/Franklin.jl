@@ -1,13 +1,13 @@
 """
 $(SIGNATURES)
 
-Checks for a `config.md` file in `JD_PATHS[:in]` and uses it to set the global variables referenced
-in `JD_GLOB_VARS` it also sets the global latex commands via `JD_GLOB_LXDEFS`. If the configuration
+Checks for a `config.md` file in `PATHS[:src]` and uses it to set the global variables referenced
+in `GLOBAL_PAGE_VARS` it also sets the global latex commands via `GLOBAL_LXDEFS`. If the configuration
 file is not found a warning is shown.
 """
 function process_config()::Nothing
     # read the config.md file if it is present
-    config_path = joinpath(JD_PATHS[:in], "config.md")
+    config_path = joinpath(PATHS[:src], "config.md")
     if isfile(config_path)
         convert_md(read(config_path, String) * EOS; isconfig=true)
     else
@@ -30,15 +30,14 @@ function write_page(root::String, file::String, head::String, pg_foot::String, f
     # 2. eval the definitions and update the variable dictionary, also retrieve
     # document variables (time of creation, time of last modif) and add those
     # to the dictionary.
-    jd_vars = merge(JD_GLOB_VARS, copy(JD_LOC_VARS))
+    jd_vars = merge(GLOBAL_PAGE_VARS, copy(LOCAL_PAGE_VARS))
     fpath   = joinpath(root, file)
      # The curpath is the relative path starting after /src/ so for instance:
      # f1/blah/page1.md or index.md etc... this is useful in the code evaluation and management
      # of paths
-    JD_CURPATH[] = fpath[lastindex(JD_PATHS[:in])+length(PATH_SEP)+1:end]
+    CUR_PATH[] = fpath[lastindex(PATHS[:src])+length(PATH_SEP)+1:end]
 
-    vJD_GLOB_LXDEFS    = collect(values(JD_GLOB_LXDEFS))
-    (content, jd_vars) = convert_md(read(fpath, String) * EOS, vJD_GLOB_LXDEFS)
+    (content, jd_vars) = convert_md(read(fpath, String) * EOS, collect(values(GLOBAL_LXDEFS)))
 
     # adding document variables to the dictionary
     # note that some won't change and so it's not necessary to do this every time
@@ -47,7 +46,7 @@ function write_page(root::String, file::String, head::String, pg_foot::String, f
     s = stat(fpath)
     set_var!(jd_vars, "jd_ctime", jd_date(unix2datetime(s.ctime)))
     set_var!(jd_vars, "jd_mtime", jd_date(unix2datetime(s.mtime)))
-    set_var!(jd_vars, "jd_rpath", JD_CURPATH[])
+    set_var!(jd_vars, "jd_rpath", CUR_PATH[])
 
     # 3. process blocks in the html infra elements based on `jd_vars`
     # (e.g.: add the date in the footer)
@@ -56,28 +55,25 @@ function write_page(root::String, file::String, head::String, pg_foot::String, f
 
     # 4. construct the page proper & prerender if needed
     pg = build_page(head, content, pg_foot, foot)
-
     if prerender
         # KATEX
         pg = js_prerender_katex(pg)
         # HIGHLIGHT
         if JD_CAN_HIGHLIGHT
             pg = js_prerender_highlight(pg)
-            # remove script TODO: needs to be documented
+            # remove script
             pg = replace(pg, r"<script.*?(?:highlight\.pack\.js|initHighlightingOnLoad).*?<\/script>"=>"")
         end
-        # remove katex scripts TODO: needs to be documented
+        # remove katex scripts
         pg = replace(pg, r"<script.*?(?:katex\.min\.js|auto-render\.min\.js|renderMathInElement).*?<\/script>"=>"")
     end
-
     # append pre-path if required (see optimize)
-    if !isempty(JD_GLOB_VARS["prepath"].first) && isoptim
+    if !isempty(GLOBAL_PAGE_VARS["prepath"].first) && isoptim
         pg = fix_links(pg)
     end
 
     # 5. write the html file where appropriate
     write(joinpath(out_path(root), change_ext(file)), pg)
-
     return nothing
 end
 
@@ -91,7 +87,7 @@ function process_file(case::Symbol, fpair::Pair{String,String}, args...; kwargs.
     try
         process_file_err(case, fpair, args...; kwargs...)
     catch err
-        JD_DEBUG[] && throw(err)
+        DEBUG_MODE[] && throw(err)
         rp = fpair.first
         rp = rp[end-min(20, length(rp))+1 : end]
         println("\n... error processing '$(fpair.second)' in ...$rp.")
@@ -119,7 +115,7 @@ function process_file_err(case::Symbol, fpair::Pair{String, String}, head::Abstr
     elseif case == :html
         fpath = joinpath(fpair...)
         raw_html = read(fpath, String)
-        proc_html = convert_html(raw_html, JD_GLOB_VARS; isoptim=isoptim)
+        proc_html = convert_html(raw_html, GLOBAL_PAGE_VARS; isoptim=isoptim)
         write(joinpath(out_path(fpair.first), fpair.second), proc_html)
     elseif case == :other
         opath = joinpath(out_path(fpair.first), fpair.second)
@@ -132,7 +128,7 @@ function process_file_err(case::Symbol, fpair::Pair{String, String}, head::Abstr
         # copy over css files
         # NOTE some processing may be further added here later on.
         if splitext(fpair.second)[2] == ".css"
-            cp(joinpath(fpair...), joinpath(JD_PATHS[:out_css], fpair.second),
+            cp(joinpath(fpair...), joinpath(PATHS[:css], fpair.second),
                 force=true)
         end
     end
@@ -164,7 +160,7 @@ for a project website, for instance `username.github.io/project/` all paths shou
 be pre-prended with `/project/`. This would happen just before you publish the website.
 """
 function fix_links(pg::String)::String
-    pp = strip(JD_GLOB_VARS["prepath"].first, '/')
+    pp = strip(GLOBAL_PAGE_VARS["prepath"].first, '/')
     ss = SubstitutionString("\\1=\"/$(pp)/")
     return replace(pg, r"(src|href)\s*?=\s*?\"\/" => ss)
 end

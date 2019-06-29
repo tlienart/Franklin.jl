@@ -1,26 +1,25 @@
 """
-JD_FILES_DICT
+TrackedFiles
 
 Convenience type to keep track of files to watch.
 """
-const JD_FILES_DICT = Dict{Pair{String, String}, Float64}
+const TrackedFiles = Dict{Pair{String, String}, Float64}
+
 
 """
 $(SIGNATURES)
 
-Prepare the output directory `JD_PATHS[:out]`.
+Prepare the output directory `PATHS[:pub]`.
 
 * `clear=true` removes the content of the output directory if it exists to start from a blank
 slate
 """
 function prepare_output_dir(clear::Bool=true)::Nothing
     # if required to start from a blank slate -> remove the output dir
-    (clear & isdir(JD_PATHS[:out])) && rm(JD_PATHS[:out], recursive=true)
-
+    (clear & isdir(PATHS[:pub])) && rm(PATHS[:pub], recursive=true)
     # create the output dir and the css dir if necessary
-    !isdir(JD_PATHS[:out]) && mkdir(JD_PATHS[:out])
-    !isdir(JD_PATHS[:out_css]) && mkdir(JD_PATHS[:out_css])
-
+    !isdir(PATHS[:pub]) && mkdir(PATHS[:pub])
+    !isdir(PATHS[:css]) && mkdir(PATHS[:css])
     return nothing
 end
 
@@ -32,15 +31,14 @@ Take a `root` path to an input file and convert to output path. If the output pa
 create it.
 """
 function out_path(root::String)::String
-    len_in = lastindex(joinpath(JD_PATHS[:in], ""))
-    length(root) <= len_in && return JD_PATHS[:f]
-
+    len_in = lastindex(joinpath(PATHS[:src], ""))
+    length(root) <= len_in && return PATHS[:folder]
     dpath = root[nextind(root, len_in):end]
-
-    f_out_path = joinpath(JD_PATHS[:f], dpath)
+    # construct the out path
+    f_out_path = joinpath(PATHS[:folder], dpath)
     f_out_path = replace(f_out_path, r"([^a-zA-Z\d\s_:])pages" => s"\1pub")
+    # if it doesn't exist, make the path
     !ispath(f_out_path) && mkpath(f_out_path)
-
     return f_out_path
 end
 
@@ -51,16 +49,16 @@ $(SIGNATURES)
 Update the dictionaries referring to input files and their time of last change. The variable `verb`
 propagates verbosity.
 """
-function scan_input_dir!(md_files::JD_FILES_DICT, html_files::JD_FILES_DICT,
-                         other_files::JD_FILES_DICT, infra_files::JD_FILES_DICT,
+function scan_input_dir!(md_files::TrackedFiles, html_files::TrackedFiles,
+                         other_files::TrackedFiles, infra_files::TrackedFiles,
                          verb::Bool=false)::Nothing
     # top level files (src/*)
-    for file ∈ readdir(JD_PATHS[:in])
-        isfile(joinpath(JD_PATHS[:in], file)) || continue
+    for file ∈ readdir(PATHS[:src])
+        isfile(joinpath(PATHS[:src], file)) || continue
         # skip if it has to be ignored
-        file ∈ JD_IGNORE_FILES && continue
+        file ∈ IGNORE_FILES && continue
         fname, fext = splitext(file)
-        fpair = (JD_PATHS[:in] => file)
+        fpair = (PATHS[:src] => file)
         if file == "config.md"
             add_if_new_file!(infra_files, fpair, verb)
         elseif fext == ".md"
@@ -70,11 +68,11 @@ function scan_input_dir!(md_files::JD_FILES_DICT, html_files::JD_FILES_DICT,
         end
     end
     # pages files (src/pages/*)
-    for (root, _, files) ∈ walkdir(JD_PATHS[:in_pages])
+    for (root, _, files) ∈ walkdir(PATHS[:src_pages])
         for file ∈ files
             isfile(joinpath(root, file)) || continue
             # skip if it has to be ignored
-            file ∈ JD_IGNORE_FILES && continue
+            file ∈ IGNORE_FILES && continue
             fname, fext = splitext(file)
             fpair = (root => file)
             if fext == ".md"
@@ -87,12 +85,12 @@ function scan_input_dir!(md_files::JD_FILES_DICT, html_files::JD_FILES_DICT,
         end
     end
     # infastructure files (src/_css/* and src/_html_parts/*)
-    for d ∈ [:in_css, :in_html], (root, _, files) ∈ walkdir(JD_PATHS[d])
+    for d ∈ [:src_css, :src_html], (root, _, files) ∈ walkdir(PATHS[d])
         for file ∈ files
             isfile(joinpath(root, file)) || continue
             fname, fext = splitext(file)
-            # skipping files that are not of the type JD_INFRA_EXT
-            fext ∉ JD_INFRA_EXT && continue
+            # skipping files that are not of the type INFRA_FILES
+            fext ∉ INFRA_FILES && continue
             add_if_new_file!(infra_files, root=>file, verb)
         end
     end
@@ -106,7 +104,7 @@ $(SIGNATURES)
 Helper function, if `fpair` is not referenced in the dictionary (new file) add the entry to the
 dictionary with the time of last modification as val.
 """
-function add_if_new_file!(dict::JD_FILES_DICT, fpair::Pair{String,String}, verb::Bool)::Nothing
+function add_if_new_file!(dict::TrackedFiles, fpair::Pair{String,String}, verb::Bool)::Nothing
     haskey(dict, fpair) && return nothing
     # it's a new file
     verb && println("tracking new file '$(fpair.second)'.")

@@ -29,38 +29,39 @@ Dictionary of tokens for Markdown. Note that for each, there may be several poss
 consider in which case the order is important: the first case that works will be taken.
 """
 const MD_TOKENS = Dict{Char, Vector{TokenFinder}}(
-    '<' => [ isexactly("<!--") => :COMMENT_OPEN ],   # <!-- ...
-    '-' => [ isexactly("-->")  => :COMMENT_CLOSE ],  #      ... -->
-    '~' => [ isexactly("~~~")  => :ESCAPE ],         # ~~~  ... ~~~
-    '\\' => [
-        isexactly("\\{")  => :INACTIVE,              # See note [^1]
-        isexactly("\\}")  => :INACTIVE,              # See note [^1]
-        isexactly("\\\$") => :INACTIVE,              # See note [^1]
-        isexactly("\\[")  => :MATH_C_OPEN,           # \[ ...
-        isexactly("\\]")  => :MATH_C_CLOSE,          #    ... \]
-        isexactly("\\begin{align}")    => :MATH_ALIGN_OPEN,
-        isexactly("\\end{align}")      => :MATH_ALIGN_CLOSE,
-        isexactly("\\begin{eqnarray}") => :MATH_EQA_OPEN,
-        isexactly("\\end{eqnarray}")   => :MATH_EQA_CLOSE,
-        isexactly("\\newcommand")      => :LX_NEWCOMMAND,
-        incrlook((_, c) -> α(c))       => :LX_COMMAND ], # \command⎵*
-    '@' => [
-        isexactly("@def", [' '])  => :MD_DEF_OPEN,    # @def var = ...
-        isexactly("@@", SPACER)   => :DIV_CLOSE,      # @@⎵*
-        incrlook((i, c) ->
-            ifelse(i==1, c=='@', α(c, ['-']))) => :DIV_OPEN ], # @@dname
-    '$' => [
-        isexactly("\$", ['$'], false) => :MATH_A,    # $⎵*
-        isexactly("\$\$") => :MATH_B,                # $$⎵*
-    ],
-    '_' => [
-        isexactly("_\$>_") => :MATH_I_OPEN,
-        isexactly("_\$<_") => :MATH_I_CLOSE,
-    ],
-    '`' => [
-        isexactly("`", ['`'], false) => :CODE_SINGLE,             # `⎵*
-        isexactly("```", SPACER) => :CODE,                        # ```⎵*
-        incrlook((i, c) -> i∈[1,2] ? c=='`' : α(c)) => :CODE_L ], # ``lang*
+    '<'  => [ isexactly("<!--") => :COMMENT_OPEN,     # <!-- ...
+             ],
+    '-'  => [ isexactly("-->")  => :COMMENT_CLOSE,    #      ... -->
+             ],
+    '~'  => [ isexactly("~~~")  => :ESCAPE,           # ~~~  ... ~~~
+             ],
+    '\\' => [ isexactly("\\{")  => :INACTIVE,         # See note [^1]
+              isexactly("\\}")  => :INACTIVE,         # See note [^1]
+              isexactly("\\\$") => :INACTIVE,         # See note [^1]
+              isexactly("\\[")  => :MATH_C_OPEN,      # \[ ...
+              isexactly("\\]")  => :MATH_C_CLOSE,     #    ... \]
+              isexactly("\\begin{align}")    => :MATH_ALIGN_OPEN,
+              isexactly("\\end{align}")      => :MATH_ALIGN_CLOSE,
+              isexactly("\\begin{eqnarray}") => :MATH_EQA_OPEN,
+              isexactly("\\end{eqnarray}")   => :MATH_EQA_CLOSE,
+              isexactly("\\newcommand")      => :LX_NEWCOMMAND,
+              incrlook((_, c) -> α(c))       => :LX_COMMAND,    # \command⎵*
+             ],
+    '@'  => [ isexactly("@def", [' '])  => :MD_DEF_OPEN,  # @def var = ...
+              isexactly("@@", SPACER)   => :DIV_CLOSE,    # @@⎵*
+              incrlook((i, c) ->
+                    ifelse(i==1, c=='@', α(c, ['-']))) => :DIV_OPEN, # @@dname
+             ],
+    '$'  => [ isexactly("\$", ['$'], false) => :MATH_A,  # $⎵*
+              isexactly("\$\$") => :MATH_B,              # $$⎵*
+             ],
+    '_'  => [ isexactly("_\$>_") => :MATH_I_OPEN,   # internal use when resolving a latex command
+              isexactly("_\$<_") => :MATH_I_CLOSE,  # within mathenv (e.g. \R <> \mathbb R)
+             ],
+    '`'  => [ isexactly("`", ['`'], false) => :CODE_SINGLE,             # `⎵*
+              isexactly("```", SPACER) => :CODE,                        # ```⎵*
+              incrlook((i, c) -> i∈[1,2] ? c=='`' : α(c)) => :CODE_L,   # ``lang*
+             ],
     ) # end dict
 #= NOTE
 [1] capturing \{ here will force the head to move after it thereby not
@@ -163,8 +164,8 @@ const MD_OCB_IGNORE = [:COMMENT, :MD_DEF]
 
 
 """
-MD_MATH_NAMES
+MATH_BLOCKS_NAMES
 
 List of names of maths environments.
 """
-const MD_MATH_NAMES = [e.first for e ∈ MD_OCB_MATH]
+const MATH_BLOCKS_NAMES = [e.first for e ∈ MD_OCB_MATH]

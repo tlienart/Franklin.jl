@@ -44,4 +44,4 @@ $(SIGNATURES)
 
 Insertion of a visible red message in HTML to show there was a problem.
 """
-html_err(mess::String="") = "<span style=\"color:red;\">// $mess //</span>"
+html_err(mess::String="") = "<p><span style=\"color:red;\">// $mess //</span></p>"

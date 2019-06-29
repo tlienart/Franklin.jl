@@ -1,5 +1,5 @@
 @testset "Cblock+h-fill" begin
-    allvars = J.JD_VAR_TYPE(
+    allvars = J.PageVars(
         "v1" => "INPUT1" => (String,),
         "b1" => false => (Bool,),
         "b2" => true  => (Bool,))
@@ -22,7 +22,7 @@
     cblocks, qblocks = J.find_html_cblocks(qblocks)
     cdblocks, qblocks = J.find_html_cdblocks(qblocks)
     hblocks = J.merge_blocks(qblocks, cblocks, cdblocks)
-    convhbs = [J.convert_hblock(hb, allvars) for hb ∈ hblocks]
+    convhbs = [J.convert_html_block(hb, allvars) for hb ∈ hblocks]
     @test convhbs[1] == "INPUT1"
     @test convhbs[2] == "\nother stuff\n"
     @test J.convert_html(hs, allvars) == "Some text then INPUT1 and\n\nother stuff\n\nfinal text\n"
@@ -36,13 +36,13 @@
     cblocks, qblocks = J.find_html_cblocks(qblocks)
     cdblocks, qblocks = J.find_html_cdblocks(qblocks)
     hblocks = J.merge_blocks(qblocks, cblocks, cdblocks)
-    @test J.convert_hblock(hblocks[1], allvars) == ""
+    @test J.convert_html_block(hblocks[1], allvars) == ""
 
     hs = raw"""abc {{ fill nope }} ... """
     tokens = J.find_tokens(hs, J.HTML_TOKENS, J.HTML_1C_TOKENS)
     hblocks, tokens = J.find_all_ocblocks(tokens, J.HTML_OCB)
     qblocks = J.qualify_html_hblocks(hblocks)
-    @test (@test_logs (:warn, "I found a '{{fill nope}}' but I do not know the variable 'nope'. Ignoring.") J.convert_hblock(qblocks[1], allvars)) == ""
+    @test (@test_logs (:warn, "I found a '{{fill nope}}' but I do not know the variable 'nope'. Ignoring.") J.convert_html_block(qblocks[1], allvars)) == ""
 
     hs = raw"""
         unknown function {{ unknown fun }} and see.
@@ -51,30 +51,30 @@
     hblocks, tokens = J.find_all_ocblocks(tokens, J.HTML_OCB)
     qblocks = J.qualify_html_hblocks(hblocks)
     @test qblocks[1] isa J.HFun
-    @test (@test_logs (:warn, "I found a function block '{{unknown ...}}' but I don't recognise this function name. Ignoring.") J.convert_hblock(qblocks[1], allvars)) == ""
+    @test (@test_logs (:warn, "I found a function block '{{unknown ...}}' but don't recognise the function name. Ignoring.") J.convert_html_block(qblocks[1], allvars)) == ""
 end
 
 
 @testset "h-insert" begin
     # Julia 0.7 complains if there's no global here.
-    global temp_rnd = joinpath(J.JD_PATHS[:in_html], "temp.rnd")
+    global temp_rnd = joinpath(J.PATHS[:src_html], "temp.rnd")
     write(temp_rnd, "some random text to insert")
     hs = raw"""
         Trying to insert: {{ insert temp.rnd }} and see.
         """
-    allvars = J.JD_VAR_TYPE()
+    allvars = J.PageVars()
     @test J.convert_html(hs, allvars) == "Trying to insert: some random text to insert and see.\n"
 
     hs = raw"""Trying to insert: {{ insert nope.rnd }} and see."""
     tokens = J.find_tokens(hs, J.HTML_TOKENS, J.HTML_1C_TOKENS)
     hblocks, tokens = J.find_all_ocblocks(tokens, J.HTML_OCB)
     qblocks = J.qualify_html_hblocks(hblocks)
-    @test (@test_logs (:warn, "I found an {{insert ...}} block and tried to insert '$(joinpath(J.JD_PATHS[:in_html], "nope.rnd"))' but I couldn't find the file. Ignoring.") J.convert_hblock(qblocks[1], allvars)) == ""
+    @test (@test_logs (:warn, "I found an {{insert ...}} block and tried to insert '$(joinpath(J.PATHS[:src_html], "nope.rnd"))' but I couldn't find the file. Ignoring.") J.convert_html_block(qblocks[1], allvars)) == ""
 end
 
 
 @testset "cond-insert" begin
-    allvars = J.JD_VAR_TYPE(
+    allvars = J.PageVars(
         "author" => "Stefan Zweig" => (String, Nothing),
         "date_format" => "U dd, yyyy" => (String,),
         "isnotes" => true => (Bool,))
@@ -85,7 +85,7 @@ end
 
 
 @testset "cond-insert 2" begin
-    allvars = J.JD_VAR_TYPE(
+    allvars = J.PageVars(
         "author" => "Stefan Zweig" => (String, Nothing),
         "date_format" => "U dd, yyyy" => (String,),
         "isnotes" => true => (Bool,))
@@ -98,7 +98,7 @@ end
 end
 
 @testset "escape-coms" begin
-    allvars = J.JD_VAR_TYPE(
+    allvars = J.PageVars(
         "author" => "Stefan Zweig" => (String, Nothing),
         "date_format" => "U dd, yyyy" => (String,),
         "isnotes" => true => (Bool,))
@@ -109,7 +109,7 @@ end
 
 
 @testset "Cblock+empty" begin # refers to #96
-    allvars = J.JD_VAR_TYPE(
+    allvars = J.PageVars(
         "b1" => false => (Bool,),
         "b2" => true => (Bool,))
 
@@ -133,7 +133,7 @@ end
 
 
 @testset "Cond ispage" begin
-    allvars = J.JD_VAR_TYPE()
+    allvars = J.PageVars()
 
     hs = raw"""
         Some text then {{ ispage index.html }} blah {{ end }} but
@@ -169,19 +169,19 @@ end
     @test hblocks[1] isa J.HCondPage
     @test hblocks[1].pages == cpblocks[1].pages
 
-    J.JD_CURPATH[] = "index.md"
-    @test J.convert_hblock(hblocks[1], allvars) == " blah "
-    J.JD_CURPATH[] = "indosdf.md"
-    @test J.convert_hblock(hblocks[1], allvars) == ""
-    J.JD_CURPATH[] = "index.md"
-    @test J.convert_hblock(hblocks[2], allvars) == " blih "
-    J.JD_CURPATH[] = "blah.md"
-    @test J.convert_hblock(hblocks[2], allvars) == ""
-    J.JD_CURPATH[] = "index.md"
-    convhbs = [J.convert_hblock(hb, allvars) for hb ∈ hblocks]
+    J.CUR_PATH[] = "index.md"
+    @test J.convert_html_block(hblocks[1], allvars) == " blah "
+    J.CUR_PATH[] = "indosdf.md"
+    @test J.convert_html_block(hblocks[1], allvars) == ""
+    J.CUR_PATH[] = "index.md"
+    @test J.convert_html_block(hblocks[2], allvars) == " blih "
+    J.CUR_PATH[] = "blah.md"
+    @test J.convert_html_block(hblocks[2], allvars) == ""
+    J.CUR_PATH[] = "index.md"
+    convhbs = [J.convert_html_block(hb, allvars) for hb ∈ hblocks]
 
     @test convhbs[1] == " blah " # condition is met
     @test convhbs[2] == " blih " # condition is met
-    J.JD_CURPATH[] = "index.md"
+    J.CUR_PATH[] = "index.md"
     @test J.convert_html(hs, allvars) == "Some text then  blah  but\n blih  done.\n"
 end

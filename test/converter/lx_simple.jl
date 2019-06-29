@@ -1,5 +1,5 @@
 @testset "figalt, fig" begin
-    write(joinpath(J.JD_PATHS[:assets], "testimg.png"), "png code")
+    write(joinpath(J.PATHS[:assets], "testimg.png"), "png code")
     h = raw"""
         A figure:
         \figalt{fig 1}{/assets/testimg.png}
@@ -14,7 +14,7 @@
             <img src=\"/assets/testimg.png\" alt=\"\">
             Done.</p>
             """)
-    p = mkpath(joinpath(J.JD_PATHS[:assets], "output"))
+    p = mkpath(joinpath(J.PATHS[:assets], "output"))
     write(joinpath(p, "testimg_2.png"), "png code")
     h = raw"""
         Another figure:
@@ -35,7 +35,7 @@
 end
 
 @testset "file" begin
-    write(joinpath(J.JD_PATHS[:assets], "blah.pdf"), "pdf code")
+    write(joinpath(J.PATHS[:assets], "blah.pdf"), "pdf code")
     h = raw"""
         View \file{the file}{/assets/blah.pdf} here.
         """ |> seval

@@ -41,7 +41,8 @@ function qualify_html_hblocks(blocks::Vector{OCBlock})::Vector{AbstractBlock}
         m = match(HBLOCK_FUN_PAT, β.ss)
         isnothing(m) || (qb[i] = HFun(β.ss, m.captures[1], split(m.captures[2])); continue)
 
-        error("I found a HBlock that did not match anything, verify '$ts'")
+        throw(HTMLBlockError("I found a HBlock that did not match anything, " *
+                             "verify '$ts'"))
     end
     return qb
 end
@@ -67,7 +68,9 @@ function find_html_cblocks(qblocks::Vector{AbstractBlock}
 
         # look forward until the next `{{ end }}` block
         k = findfirst(cβ -> (typeof(cβ) == HEnd), qblocks[i+1:end])
-        isnothing(k) && error("Found an {{if ...}} block but no matching {{end}} block. ")
+        if isnothing(k)
+            throw(HTMLBlockError("Found an {{if ...}} block but no matching {{end}} block. "))
+        end
 
         n_between = k - 1
         k += i
@@ -122,7 +125,9 @@ function find_html_cdblocks(qblocks::Vector{AbstractBlock}
         (typeof(β) ∈ (HIsDef, HIsNotDef)) || continue
         # look forward until next `{{end}} block
         k = findfirst(cβ -> (typeof(cβ) == HEnd), qblocks[i+1:end])
-        isnothing(k) && error("Found an {{if(n)def ...}} block but no matching {{end}} block.")
+        if isnothing(k)
+            throw(HTMLBlockError("Found an {{if(n)def ...}} block but no matching {{end}} block."))
+        end
         k += i
         endβ = qblocks[k]
         hcondss = subs(str(β), from(β), to(endβ))
@@ -153,7 +158,10 @@ function find_html_cpblocks(qblocks::Vector{AbstractBlock}
         (typeof(β) ∈ (HIsPage, HIsNotPage)) || continue
         # look forward until next `{{end}} block
         k = findfirst(cβ -> (typeof(cβ) == HEnd), qblocks[i+1:end])
-        isnothing(k) && error("Found an {{is(not)page ...}} block but no matching {{end}} block.")
+        if isnothing(k)
+            throw(HTMLBlockError("Found an {{is(not)page ...}} block but no matching {{end}} " *
+                                 "block."))
+        end
         k += i
         endβ = qblocks[k]
         hcondss = subs(str(β), from(β), to(endβ))
