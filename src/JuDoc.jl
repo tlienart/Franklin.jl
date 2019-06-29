@@ -62,13 +62,13 @@ include("build.jl") # check if user has Node/minify
 include("parser/tokens.jl")
 include("parser/ocblocks.jl")
 # > latex
-include("parser/tokens_lx.jl")
-include("parser/lxblocks.jl")
+include("parser/lx_tokens.jl")
+include("parser/lx_blocks.jl")
 # > markdown
-include("parser/tokens_md.jl")
+include("parser/md_tokens.jl")
 # > html
-include("parser/tokens_html.jl")
-include("parser/hblocks.jl")
+include("parser/html_tokens.jl")
+include("parser/html_blocks.jl")
 
 # CONVERSION
 # > markdown
