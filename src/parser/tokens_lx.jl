@@ -24,7 +24,7 @@ LX_TOKENS
 
 List of names of latex tokens. (See markdown tokens)
 """
-const LX_TOKENS = [:LX_BRACE_OPEN, :LX_BRACE_CLOSE, :LX_COMMAND]
+const LX_TOKENS = (:LX_BRACE_OPEN, :LX_BRACE_CLOSE, :LX_COMMAND)
 
 
 """
@@ -58,7 +58,6 @@ Convenience function to mark a definition as having been defined in the context 
 any other definition appearing in the current page.
 """
 pastdef(λ::LxDef, a::Int) = LxDef(λ.name, λ.narg, λ.def, a, a + (λ.to-λ.from))
-
 function pastdef(vλ::Vector{LxDef})
     # put the past defs far back but preserve order
     vλc = deepcopy(vλ)

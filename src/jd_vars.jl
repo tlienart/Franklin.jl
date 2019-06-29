@@ -1,5 +1,5 @@
 """
-    GLOBAL_PAGE_VARS
+GLOBAL_PAGE_VARS
 
 Dictionary of variables assumed to be set for the entire website. Entries have the format
 KEY => PAIR where KEY is a string (e.g.: "author") and PAIR is a pair where the first element is
@@ -27,7 +27,7 @@ end
 
 
 """
-    LOCAL_PAGE_VARS
+LOCAL_PAGE_VARS
 
 Dictionary of variables copied and then set for each page (through definitions). Entries have the
 same format as for `GLOBAL_PAGE_VARS`.
@@ -57,17 +57,24 @@ end
 
 
 """
-    GLOBAL_LXDEFS
+GLOBAL_LXDEFS
 
 List of latex definitions accessible to all pages. This is filled when the config file is read
 (via manager/file_utils/process_config).
 """
 const GLOBAL_LXDEFS = Dict{String, LxDef}()
 
-const EMPTY_SS = SubString("")
 
 """
-    def_GLOBAL_LXDEFS!
+EMPTY_SS
+
+Convenience constant for an empty substring, used in LXDEFS.
+"""
+const EMPTY_SS = SubString("")
+
+
+"""
+$(SIGNATURES)
 
 Convenience function to allocate default values of global latex commands accessible throughout
 the site. See [`resolve_lxcom`](@ref).

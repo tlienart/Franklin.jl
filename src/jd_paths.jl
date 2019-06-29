@@ -1,5 +1,5 @@
 """
-    FOLDER_PATH
+FOLDER_PATH
 
 Container to keep track of where JuDoc is being run.
 """
@@ -7,7 +7,7 @@ const FOLDER_PATH = Ref{String}()
 
 
 """
-    IGNORE_FILES
+IGNORE_FILES
 
 Collection of file names that will be ignored at compile time.
 """
@@ -15,7 +15,7 @@ const IGNORE_FILES = [".DS_Store"]
 
 
 """
-    INFRA_EXT
+INFRA_EXT
 
 Collection of file extensions considered as potential infrastructure files.
 """
@@ -23,7 +23,7 @@ const INFRA_FILES = [".html", ".css"]
 
 
 """
-    PATHS
+PATHS
 
 Dictionary for the paths of the input folders and the output folders. The simpler case only
 requires the main input folder to be defined i.e. `PATHS[:src]` and infers the others via the
@@ -33,7 +33,7 @@ const PATHS = Dict{Symbol,String}()
 
 
 """
-    set_paths!()
+$(SIGNATURES)
 
 This assigns all the paths where files will be read and written with root the `FOLDER_PATH`
 which is assigned at runtime.
