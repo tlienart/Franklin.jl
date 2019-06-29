@@ -58,7 +58,7 @@ resolving any latex command in it and returning the correct syntax that KaTeX ca
 function convert_math_block(β::OCBlock, lxdefs::Vector{LxDef})::String
     # try to find the block out of `MATH_BLOCKS_PARENS`, if not found, error
     pm = get(MATH_BLOCKS_PARENS, β.name) do
-        error("Unrecognised math block name.")
+        throw(MathBlockError("Unrecognised math block name."))
     end
 
     # convert the inside, decorate with KaTex and return, also act if

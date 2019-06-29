@@ -16,6 +16,11 @@ struct LxComError <: Exception
     m::String
 end
 
+"""A math block name failed to parse."""
+struct MathBlockError <: Exception
+    m::String
+end
+
 #
 # HTML related
 #
