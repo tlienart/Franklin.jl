@@ -37,6 +37,8 @@ function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
     blocks, tokens = find_all_ocblocks(tokens, MD_OCB_ALL)
     #>> b. now that blocks have been found, line-returns can be dropped
     filter!(τ -> τ.name != :LINE_RETURN, tokens)
+    #>> c. filter out "fake headers" (opening ### are not at the start of the line)
+    filter!(β -> validate_header_block(β), blocks)
 
     #> 3. LaTeX commands
     #>> a. find "newcommands", update active blocks/braces

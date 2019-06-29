@@ -52,6 +52,7 @@ const MD_TOKENS = Dict{Char, Vector{TokenFinder}}(
               incrlook((i, c) ->
                     ifelse(i==1, c=='@', α(c, ['-']))) => :DIV_OPEN, # @@dname
              ],
+    '#'  => [ incrlook((i, c) -> c=="#" && i <= 6) => :HEADER_OPEN ], # See note [^2]
     '$'  => [ isexactly("\$", ['$'], false) => :MATH_A,  # $⎵*
               isexactly("\$\$") => :MATH_B,              # $$⎵*
              ],
@@ -66,7 +67,7 @@ const MD_TOKENS = Dict{Char, Vector{TokenFinder}}(
 #= NOTE
 [1] capturing \{ here will force the head to move after it thereby not
 marking it as a potential open brace, same for the close brace.
-[2] check if these are still useful. =#
+[2] similar to @def except that it must be at the start of the line. =#
 
 
 """
@@ -111,6 +112,7 @@ const MD_OCB = [
     :CODE_INLINE  => ((:CODE_SINGLE  => :CODE_SINGLE  ), false),
     :ESCAPE       => ((:ESCAPE       => :ESCAPE       ), false),
     # ------------------------------------------------------------
+    :HEADER       => ((:HEADER_OPEN  => :LINE_RETURN  ), false),
     :MD_DEF       => ((:MD_DEF_OPEN  => :LINE_RETURN  ), false), # see [^3]
     :LXB          => ((:LXB_OPEN     => :LXB_CLOSE    ), true ),
     :DIV          => ((:DIV_OPEN     => :DIV_CLOSE    ), true ),
