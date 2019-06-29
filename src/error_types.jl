@@ -6,6 +6,16 @@ struct OCBlockError <: Exception
     m::String
 end
 
+"""A `\\newcommand` was not parsed properly."""
+struct LxDefError <: Exception
+    m::String
+end
+
+"""A latex command was found but could not be processed properly."""
+struct LxComError <: Exception
+    m::String
+end
+
 #
 # HTML related
 #

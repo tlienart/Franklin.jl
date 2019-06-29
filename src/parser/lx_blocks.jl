@@ -31,7 +31,7 @@ function find_md_lxdefs(tokens::Vector{Token}, blocks::Vector{OCBlock})
         k = findfirst(β -> (fromτ < from(β)), braces)
         # there must be two brace blocks after the newcommand (name, def)
         if isnothing(k) || !(1 <= k < nbraces)
-            error("Ill formed newcommand (needs two {...})")
+            throw(LxDefError("Ill formed newcommand (needs two {...})"))
         end
 
         # try to find a number of arg between these two first {...} to see
@@ -43,8 +43,10 @@ function find_md_lxdefs(tokens::Vector{Token}, blocks::Vector{OCBlock})
         # optional spaces (specification of the number of arguments)
         if !isempty(rge)
             lxnarg = match(LX_NARG_PAT, subs(str(braces[k]), rge))
-            isnothing(lxnarg) && error("Ill formed newcommand (where I expected the "*
-                                       "specification of the number of arguments).")
+            if isnothing(lxnarg)
+                throw(LxDefError("Ill formed newcommand (where I expected the "*
+                                 "specification of the number of arguments)."))
+            end
             matched = lxnarg.captures[2]
             lxnarg = isnothing(matched) ? 0 : parse(Int, matched)
         end
@@ -54,8 +56,10 @@ function find_md_lxdefs(tokens::Vector{Token}, blocks::Vector{OCBlock})
         defining_braces = braces[k+1]
         # try to find a valid command name in the first set of braces
         matched = match(LX_NAME_PAT, content(naming_braces))
-        isnothing(matched) && error("Invalid definition of a new command expected a command " *
-                                    "name of the form `\\command`.")
+        if isnothing(matched)
+            throw(LxDefError("Invalid definition of a new command expected a command name " *
+                             "of the form `\\command`."))
+        end
 
         # keep track of the command name, definition and where it stops
         lxname = matched.captures[1]
@@ -103,7 +107,9 @@ function retrieve_lxdefref(lxname::SubString, lxdefs::Vector{LxDef},
     fromlx = from(lxname) + offset
     filter!(k -> (fromlx > from(lxdefs[k])), ks)
     if isempty(ks)
-        inmath || error("Command '$lxname' was not defined before it was used.")
+        if !inmath
+            throw(LxComError("Command '$lxname' was used before it was defined."))
+        end
         # not found but inmath --> let KaTex deal with it
         return Ref(nothing)
     end
@@ -149,8 +155,9 @@ function find_md_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
             b1_idx = findfirst(β -> (from(β) == nxtidx), braces)
             # --> it needs to exist + there should be enough braces left
             if isnothing(b1_idx) || (b1_idx + lxnarg - 1 > nbraces)
-                error("Command '$lxname' expects $lxnarg argument(s) and there should be no " *
-                      "space(s) between the command name and the first brace: \\com{arg1}...")
+                throw(LxComError("Command '$lxname' expects $lxnarg argument(s) and there " *
+                                 "should be no space(s) between the command name and the first " *
+                                 "brace: \\com{arg1}..."))
             end
 
             # --> examine candidate braces, there should be no spaces between
@@ -158,8 +165,8 @@ function find_md_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
             cand_braces = braces[b1_idx:b1_idx+lxnarg-1]
             for bidx ∈ 1:lxnarg-1
                 if (to(cand_braces[bidx]) + 1 != from(cand_braces[bidx+1]))
-                    error("Argument braces should not be separated by space(s): \\com{arg1}{arg2}...
-                           Verify a '$lxname' command.")
+                    throw(LxComError("Argument braces should not be separated by space(s): " *
+                                     "\\com{arg1}{arg2}... Verify a '$lxname' command."))
                 end
             end
 

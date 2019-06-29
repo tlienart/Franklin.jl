@@ -115,12 +115,12 @@ end
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
     # Ill formed newcommand (needs two {...})
-    @test_throws ErrorException J.find_md_lxdefs(tokens, blocks)
+    @test_throws J.LxDefError J.find_md_lxdefs(tokens, blocks)
     st = raw"""abc \newcommand{abc} def""" * J.EOS
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
     # Ill formed newcommand (needs two {...})
-    @test_throws ErrorException J.find_md_lxdefs(tokens, blocks)
+    @test_throws J.LxDefError J.find_md_lxdefs(tokens, blocks)
 end
 
 
@@ -164,7 +164,7 @@ end
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
     lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
     # Command comb expects 1 argument and there should be no spaces ...
-    @test_throws ErrorException J.find_md_lxcoms(tokens, lxdefs, braces)
+    @test_throws J.LxComError J.find_md_lxcoms(tokens, lxdefs, braces)
 end
 
 
