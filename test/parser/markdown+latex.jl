@@ -202,14 +202,22 @@ end
         end \com{B}.
         """ * J.EOS
 
+# XXX XXX
+# NOTE: here, why does it not find the comment block before finding the H2 one???
+# NOTE: there's something to be said about not consuming LINE_RETURN so that can be used
+# as closing token **multiple time**.
+# XXX XXX
+
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
+    filter!(β -> J.validate_header_block(β), blocks)
     lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
     lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
 
     @test blocks[1].name == :COMMENT
     @test J.content(blocks[1]) == " comment "
-    @test blocks[2].name == :COMMENT
+    @test blocks[2].name == :H2
+    @test J.content(blocks[2])
     @test J.content(blocks[2]) == " ✅ 19/9/999 "
     @test blocks[3].name == :MD_DEF
     @test J.content(blocks[3]) == " title = \"Convex Optimisation I\""
@@ -224,4 +232,25 @@ end
     @test b2i[3].ss == "<!-- comment -->"
     @test b2i[4].ss == "<!-- ✅ 19/9/999 -->"
     @test b2i[5].ss == "\\com{B}"
+end
+
+
+@testset "Header blocks" begin
+    # st = raw"""
+    #     # t1
+    #     1
+    #     ## t2
+    #     2 ## trick
+    #     ### t3
+    #     3
+    #     #### t4
+    #     4
+    #     ##### t5
+    #     5
+    #     ###### t6
+    #     6
+    #     """ * J.EOS
+    st = raw"""# t1 """
+    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
+    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
 end

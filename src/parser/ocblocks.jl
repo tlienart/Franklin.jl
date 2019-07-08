@@ -5,18 +5,18 @@ Find active blocks between an opening token (`otoken`) and a closing token `ctok
 nested (e.g. braces). Return the list of such blocks. If `deactivate` is `true`, all the tokens
 within the block will be marked as inactive (for further, separate processing).
 """
-function find_ocblocks(tokens::Vector{Token}, name::S, ocpair::Pair{S, S};
-                         nestable=false, inmath=false) where S <: Symbol
+function find_ocblocks(tokens::Vector{Token}, name::Symbol, ocproto::OCProto; inmath=false)
 
     ntokens       = length(tokens)
     active_tokens = ones(Bool, length(tokens))
     ocblocks      = Vector{OCBlock}()
+    nestable      = ocproto.n
 
     # go over active tokens check if there's an opening token
     # if so look for the closing one and push
     for (i, τ) ∈ enumerate(tokens)
         # only consider active and opening tokens
-        (active_tokens[i] & (τ.name == ocpair.first)) || continue
+        (active_tokens[i] & (τ.name == ocproto.o)) || continue
         # if nestable, need to keep track of the balance
         if nestable
             # inbalance ≥ 0, 0 if all opening tokens are closed
@@ -24,15 +24,15 @@ function find_ocblocks(tokens::Vector{Token}, name::S, ocpair::Pair{S, S};
             j = i # index for the closing token
             while !iszero(inbalance) & (j < ntokens)
                 j += 1
-                inbalance += ocbalance(tokens[j], ocpair)
+                inbalance += ocbalance(tokens[j], ocproto)
             end
             if inbalance > 0
                 throw(OCBlockError("I found at least one opening  token " *
-                                   "'$(ocpair.first)' that is not closed properly."))
+                                   "'$(ocproto.o)' that is not closed properly."))
             end
         else
             # seek forward to find the first closing token
-            j = findfirst(cτ -> (cτ.name == ocpair.second), tokens[i+1:end])
+            j = findfirst(cτ -> (cτ.name ∈ ocproto.c), tokens[i+1:end])
             # error if no closing token is found
             if isnothing(j)
                 throw(OCBlockError("I found the opening token '$(τ.name)' but not " *
@@ -58,9 +58,9 @@ Helper function to update the inbalance counter when looking for the closing tok
 nesting. Adds 1 if the token corresponds to an opening token, removes 1 if it's a closing token and
 0 otherwise.
 """
-function ocbalance(τ::Token, ocpair::Pair{Symbol,Symbol}=(:LX_BRACE_OPEN=>:LX_BRACE_CLOSE))::Int
-    (τ.name == ocpair.first)  && return 1
-    (τ.name == ocpair.second) && return -1
+function ocbalance(τ::Token, ocp::OCProto)::Int
+    (τ.name == ocp.o) && return 1
+    (τ.name ∈  ocp.c) && return -1
     return 0
 end
 
@@ -71,14 +71,12 @@ $(SIGNATURES)
 Convenience function to find all ocblocks e.g. such as `MD_OCBLOCKS`. Returns a vector of vectors
 of ocblocks.
 """
-function find_all_ocblocks(tokens::Vector{Token},
-                          ocblist::Vector{Pair{S,Tuple{Pair{S,S},Bool}}};
-                          inmath=false) where S <: Symbol
+function find_all_ocblocks(tokens::Vector{Token}, ocplist::Vector{Pair{Symbol,OCProto{N}}} where N;
+                           inmath=false)
 
     ocbs_all = Vector{OCBlock}()
-    for (name, (ocpair, nestable)) ∈ ocblist
-        ocbs, tokens = find_ocblocks(tokens, name, ocpair;
-                                     nestable=nestable, inmath=inmath)
+    for (name, ocp) ∈ ocplist
+        ocbs, tokens = find_ocblocks(tokens, name, ocp; inmath=inmath)
         append!(ocbs_all, ocbs)
     end
 

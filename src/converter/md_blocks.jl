@@ -23,6 +23,9 @@ function convert_block(β::AbstractBlock, lxcontext::LxContext)::AbstractString
         return html_div(name, ct)
     end
 
+    # Header block --> need to reprocess (e.g. if colors used in title) and wrap in html header
+    # TODO TODO TODO TODO
+
     # default case, ignore block (should not happen)
     return ""
 end

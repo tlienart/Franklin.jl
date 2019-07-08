@@ -7,7 +7,8 @@ cannot appear again in a larger token.
 const MD_1C_TOKENS = Dict{Char, Symbol}(
     '{'  => :LXB_OPEN,
     '}'  => :LXB_CLOSE,
-    '\n' => :LINE_RETURN
+    '\n' => :LINE_RETURN,
+    EOS  => :EOS,
     )
 
 
@@ -52,7 +53,13 @@ const MD_TOKENS = Dict{Char, Vector{TokenFinder}}(
               incrlook((i, c) ->
                     ifelse(i==1, c=='@', α(c, ['-']))) => :DIV_OPEN, # @@dname
              ],
-    '#'  => [ incrlook((i, c) -> c=="#" && i <= 6) => :HEADER_OPEN ], # See note [^2]
+    '#'  => [ isexactly("#",       [' ']) => :H1_OPEN, # see note [^2]
+              isexactly("##",      [' ']) => :H2_OPEN,
+              isexactly("###",     [' ']) => :H3_OPEN,
+              isexactly("#####",   [' ']) => :H4_OPEN,
+              isexactly("######",  [' ']) => :H5_OPEN,
+              isexactly("#######", [' ']) => :H6_OPEN,
+             ],
     '$'  => [ isexactly("\$", ['$'], false) => :MATH_A,  # $⎵*
               isexactly("\$\$") => :MATH_B,              # $$⎵*
              ],
@@ -104,21 +111,28 @@ The only `OCBlock` not in this dictionary is the brace block since it should not
 content which is needed to find latex definitions (see parser/markdown/find_blocks/find_md_lxdefs).
 """
 const MD_OCB = [
-    # name            opening token    closing token     nestable
-    # ------------------------------------------------------------
-    :COMMENT      => ((:COMMENT_OPEN => :COMMENT_CLOSE), false),
-    :CODE_BLOCK_L => ((:CODE_L       => :CODE         ), false),
-    :CODE_BLOCK   => ((:CODE         => :CODE         ), false),
-    :CODE_INLINE  => ((:CODE_SINGLE  => :CODE_SINGLE  ), false),
-    :ESCAPE       => ((:ESCAPE       => :ESCAPE       ), false),
-    # ------------------------------------------------------------
-    :HEADER       => ((:HEADER_OPEN  => :LINE_RETURN  ), false),
-    :MD_DEF       => ((:MD_DEF_OPEN  => :LINE_RETURN  ), false), # see [^3]
-    :LXB          => ((:LXB_OPEN     => :LXB_CLOSE    ), true ),
-    :DIV          => ((:DIV_OPEN     => :DIV_CLOSE    ), true ),
+    # name                   opening token    closing token(s)         nestable
+    # -------------------------------------------------------------------------
+    :COMMENT      => OCProto(:COMMENT_OPEN, (:COMMENT_CLOSE,),       false),
+    :CODE_BLOCK_L => OCProto(:CODE_L,       (:CODE,),                false),
+    :CODE_BLOCK   => OCProto(:CODE,         (:CODE,),                false),
+    :CODE_INLINE  => OCProto(:CODE_SINGLE,  (:CODE_SINGLE,),         false),
+    :ESCAPE       => OCProto(:ESCAPE,       (:ESCAPE,),              false),
+    # -------------------------------------------------------------------------
+    :H1           => OCProto(:H1_OPEN,      (:LINE_RETURN, :EOS),    false), # see [^3]
+    :H2           => OCProto(:H2_OPEN,      (:LINE_RETURN, :EOS),    false),
+    :H3           => OCProto(:H3_OPEN,      (:LINE_RETURN, :EOS),    false),
+    :H4           => OCProto(:H4_OPEN,      (:LINE_RETURN, :EOS),    false),
+    :H5           => OCProto(:H5_OPEN,      (:LINE_RETURN, :EOS),    false),
+    :H6           => OCProto(:H6_OPEN,      (:LINE_RETURN, :EOS),    false),
+    :MD_DEF       => OCProto(:MD_DEF_OPEN,  (:LINE_RETURN, :EOS),    false), # see [^4]
+    :LXB          => OCProto(:LXB_OPEN,     (:LXB_CLOSE,),           true ),
+    :DIV          => OCProto(:DIV_OPEN,     (:DIV_CLOSE,),           true ),
     ]
 #= NOTE:
-* [3] an `MD_DEF` goes from an `@def` to the next `\n` so no multiple-line
+* [3] a header can be closed by either a line return or an end of string (for instance in the case
+where a user defines a latex command like so: \newcommand{\section}{# blah} (no line return).)
+* [4] an `MD_DEF` goes from an `@def` to the next `\n` so no multiple-line
 def are allowed.
 * ordering matters!
 =#
@@ -129,7 +143,7 @@ MD_OCB_ESC
 Blocks that will be escaped (their content will not be further processed).
 Corresponds to the non-nestable elements of `MD_OCB`.
 """
-const MD_OCB_ESC = [e.first for e ∈ MD_OCB if !e.second[2]]
+const MD_OCB_ESC = [e.first for e ∈ MD_OCB if !e.second.n]
 
 
 """
@@ -137,16 +151,15 @@ MD_OCB_MATH
 
 Same concept as `MD_OCB` but for math blocks, they can't be nested. Separating them from the other
 dictionary makes their processing easier.
-
 Dev note: order does not matter.
 """
 const MD_OCB_MATH = [
-    :MATH_A     => ((:MATH_A          => :MATH_A          ), false),
-    :MATH_B     => ((:MATH_B          => :MATH_B          ), false),
-    :MATH_C     => ((:MATH_C_OPEN     => :MATH_C_CLOSE    ), false),
-    :MATH_I     => ((:MATH_I_OPEN     => :MATH_I_CLOSE    ), false),
-    :MATH_ALIGN => ((:MATH_ALIGN_OPEN => :MATH_ALIGN_CLOSE), false),
-    :MATH_EQA   => ((:MATH_EQA_OPEN   => :MATH_EQA_CLOSE  ), false),
+    :MATH_A     => OCProto(:MATH_A,          (:MATH_A,),           false),
+    :MATH_B     => OCProto(:MATH_B,          (:MATH_B,),           false),
+    :MATH_C     => OCProto(:MATH_C_OPEN,     (:MATH_C_CLOSE,),     false),
+    :MATH_I     => OCProto(:MATH_I_OPEN,     (:MATH_I_CLOSE,),     false),
+    :MATH_ALIGN => OCProto(:MATH_ALIGN_OPEN, (:MATH_ALIGN_CLOSE,), false),
+    :MATH_EQA   => OCProto(:MATH_EQA_OPEN,   (:MATH_EQA_CLOSE,),   false),
     ]
 
 """
