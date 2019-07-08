@@ -138,8 +138,8 @@ function convert_code_block(ss::SubString)::String
             redirect_stdout(outf)  do
                 try
                     Main.include(path)
-                catch
-                    print("There was an error running the code.")
+                catch e
+                    print("There was an error running the code: $e.")
                 end
             end
         end
