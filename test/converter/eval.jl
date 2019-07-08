@@ -132,8 +132,7 @@ end
         done.
         """ * J.EOS |> seval
     # errors silently
-    @test occursin("then: <pre><code>There was an error running the code:", h)
-    @test occursin("DomainError", h)
+    @test occursin("then: <pre><code>There was an error running the code: DomainError", h)
 end
 
 @testset "Eval code (no-julia)" begin

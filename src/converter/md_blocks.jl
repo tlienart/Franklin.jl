@@ -139,7 +139,7 @@ function convert_code_block(ss::SubString)::String
                 try
                     Main.include(path)
                 catch e
-                    print("There was an error running the code: $e.")
+                    print("There was an error running the code: $(e.error).")
                 end
             end
         end
