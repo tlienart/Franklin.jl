@@ -132,7 +132,7 @@ end
         done.
         """ * J.EOS |> seval
     # errors silently
-    @test occursin("then: <pre><code>There was an error running the code.</code></pre>", h)
+    @test occursin("then: <pre><code>There was an error running the code: DomainError", h)
 end
 
 @testset "Eval code (no-julia)" begin
@@ -145,4 +145,31 @@ end
         """ * J.EOS
 
     @test (@test_logs (:warn, "Eval of non-julia code blocks is not supported at the moment") h |> seval) == "<p>Simple code: <pre><code class=\"language-python\">sqrt(-1)\n</code></pre> done.</p>\n"
+end
+
+# temporary fix for 186: make error appear and also use `abspath` in internal include
+@testset "eval #186" begin
+    h = raw"""
+        Simple code:
+        ```julia:scripts/test186
+        fn = "tempf.jl"
+        write(fn, "a = 1+1")
+        println("Is this a file? $(isfile(fn))")
+        include(abspath(fn))
+        println("Now: $a")
+        rm(fn)
+        ```
+        done.
+        \output{scripts/test186}
+        """ * J.EOS |> seval
+    @test isapproxstr(h, raw"""
+            <p>Simple code: <pre><code class="language-julia">fn = "tempf.jl"
+            write(fn, "a = 1+1")
+            println("Is this a file? $(isfile(fn))")
+            include(abspath(fn))
+            println("Now: $a")
+            rm(fn)</code></pre> done. <pre><code>Is this a file? true
+            Now: 2
+            </code></pre></p>
+            """)
 end
