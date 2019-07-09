@@ -8,6 +8,7 @@ function convert_block(β::AbstractBlock, lxcontext::LxContext)::AbstractString
     # Return relevant interpolated string based on case
     βn = β.name
     βn ∈  MD_HEADER     && return convert_header(β)
+    βn == :LINE_SKIP    && return "<p></p>"
     βn == :CODE_INLINE  && return md2html(β.ss, true)
     βn == :CODE_BLOCK_L && return convert_code_block(β.ss)
     βn == :CODE_BLOCK   && return md2html(β.ss)

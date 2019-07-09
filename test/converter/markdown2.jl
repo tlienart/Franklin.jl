@@ -43,6 +43,7 @@ end
         done.
         """ * J.EOS |> seval
     @test isapproxstr(h, raw"""
+        <div class=\"jd-toc\">
         <ol>
           <ol>
             <li><a href=\"#hello_jd\">Hello <code>jd</code></li>
@@ -52,6 +53,7 @@ end
             <li><a href=\"#done\">Done</li>
           </ol>
         </ol>
+        </div>
         <h2><a id=\"hello_jd\" href=\"#hello_jd\">Hello <code>jd</code></a></h2>
         <h3><a id=\"goodbye\" href=\"#goodbye\">Goodbye&#33;</a></h3>
         <h2><a id=\"done\" href=\"#done\">Done</a></h2>
