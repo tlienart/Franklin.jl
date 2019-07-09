@@ -57,6 +57,24 @@ end
 
 
 """
+PAGE_HEADERS
+
+Keep track of seen headers. The key amounts to the ordering (~ordered dict), the value contains
+the title, the occurence (1, ...) and the level (1, ..., 6).
+"""
+const PAGE_HEADERS = Dict{Int, Tuple{AbstractString,Int,Int}}()
+
+
+"""
+$(SIGNATURES)
+"""
+@inline function def_PAGE_HEADERS!()::Nothing
+    empty!(PAGE_HEADERS)
+    return nothing
+end
+
+
+"""
 GLOBAL_LXDEFS
 
 List of latex definitions accessible to all pages. This is filled when the config file is read

@@ -78,6 +78,7 @@ end
 
 @testset "refstring" begin
     @test J.refstring("aa  bb") == "aa-bb"
+    @test J.refstring("aa <code>bb</code>") == "aa-bb"
     @test J.refstring("aa  bb !") == "aa-bb"
     @test J.refstring("aa-bb-!") == "aa-bb-"
     @test J.refstring("aa 🔺 bb") == "aa-bb"

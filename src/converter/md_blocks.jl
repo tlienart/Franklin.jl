@@ -96,9 +96,18 @@ $(SIGNATURES)
 Helper function for the case of a header block (H1, ..., H6).
 """
 function convert_header(β::OCBlock)::String
-    hk = lowercase(string(β.name))
+    hk       = lowercase(string(β.name))
     title, _ = convert_md(content(β) * EOS; isrecursive=true, has_mddefs=false)
-    return "<$hk>" * title * "</$hk>"
+    # check if the header has appeared before
+    rstitle  = refstring(title)
+    level    = parse(Int, hk[2])
+    occur    = (hv[2] for hv ∈ values(PAGE_HEADERS) if hv[1] == rstitle)
+    occur    = isempty(occur) ? 0 : maximum(occur)
+    # save in list of headers
+    PAGE_HEADERS[length(PAGE_HEADERS)+1] = (rstitle, occur+1, level)
+    # return the title
+    key = ifelse(occur==0, rstitle, "$rstitle-$(occur+1)")
+    return "<$hk><a id=\"$key\" href=\"#$key\">$title</a></$hk>"
 end
 
 

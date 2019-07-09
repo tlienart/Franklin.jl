@@ -20,6 +20,7 @@ function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
                     )::Tuple{String,Union{Nothing,PageVars}}
     if !isrecursive
         def_LOCAL_PAGE_VARS!()  # page-specific variables
+        def_PAGE_HEADERS!()     # all the headers
         def_PAGE_EQREFS!()      # page-specific equation dict (hrefs)
         def_PAGE_BIBREFS!()     # page-specific reference dict (hrefs)
     end
