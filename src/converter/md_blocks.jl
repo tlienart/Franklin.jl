@@ -101,13 +101,13 @@ function convert_header(β::OCBlock)::String
     # check if the header has appeared before
     rstitle  = refstring(title)
     level    = parse(Int, hk[2])
-    occur    = (hv[2] for hv ∈ values(PAGE_HEADERS) if hv[1] == rstitle)
+    occur    = (hv[3] for hv ∈ values(PAGE_HEADERS) if hv[2] == rstitle)
     occur    = isempty(occur) ? 0 : maximum(occur)
+    rstitle  = ifelse(occur==0, rstitle, "$(rstitle)_$(occur+1)")
     # save in list of headers
-    PAGE_HEADERS[length(PAGE_HEADERS)+1] = (rstitle, occur+1, level)
+    PAGE_HEADERS[length(PAGE_HEADERS)+1] = (title, rstitle, occur+1, level)
     # return the title
-    key = ifelse(occur==0, rstitle, "$rstitle-$(occur+1)")
-    return "<$hk><a id=\"$key\" href=\"#$key\">$title</a></$hk>"
+    return "<$hk><a id=\"$rstitle\" href=\"#$rstitle\">$title</a></$hk>"
 end
 
 

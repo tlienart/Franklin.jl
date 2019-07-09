@@ -77,12 +77,12 @@ end
 
 
 @testset "refstring" begin
-    @test J.refstring("aa  bb") == "aa-bb"
-    @test J.refstring("aa <code>bb</code>") == "aa-bb"
-    @test J.refstring("aa  bb !") == "aa-bb"
+    @test J.refstring("aa  bb") == "aa_bb"
+    @test J.refstring("aa <code>bb</code>") == "aa_bb"
+    @test J.refstring("aa  bb !") == "aa_bb"
     @test J.refstring("aa-bb-!") == "aa-bb-"
-    @test J.refstring("aa 🔺 bb") == "aa-bb"
-    @test J.refstring("aaa 0 bb s:2  df") == "aaa-0-bb-s2-df"
+    @test J.refstring("aa 🔺 bb") == "aa_bb"
+    @test J.refstring("aaa 0 bb s:2  df") == "aaa_0_bb_s2_df"
     @test J.refstring("🔺🔺") == string(hash("🔺🔺"))
     @test J.refstring("blah&#33;") == "blah"
 end

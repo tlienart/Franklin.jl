@@ -270,11 +270,11 @@ end
         1
         <h2><a id=\"t2\" href=\"#t2\">t2</a></h2>
         2
-        <h2><a id=\"t3-blah-etc\" href=\"#t3-blah-etc\">t3 <code>blah</code> etc</a></h2>
+        <h2><a id=\"t3_blah_etc\" href=\"#t3_blah_etc\">t3 <code>blah</code> etc</a></h2>
         3
         <h3><a id=\"t4\" href=\"#t4\">t4</a></h3>
         4
-        <h3><a id=\"t2-2\" href=\"#t2-2\">t2</a></h3>
+        <h3><a id=\"t2_2\" href=\"#t2_2\">t2</a></h3>
         5
         """)
 end

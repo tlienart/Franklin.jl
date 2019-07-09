@@ -21,11 +21,11 @@
     h2 = J.refstring("amari98b")
     h3 = J.refstring("bardenet17")
 
-    @test haskey(J.PAGE_EQREFS,     h1)
+    @test haskey(J.PAGE_EQREFS,  h1)
     @test haskey(J.PAGE_BIBREFS, h2)
     @test haskey(J.PAGE_BIBREFS, h3)
 
-    @test J.PAGE_EQREFS[h1]     == 1 # first equation
+    @test J.PAGE_EQREFS[h1]  == 1 # first equation
     @test J.PAGE_BIBREFS[h2] == "Amari and Douglas., 1998"
     @test J.PAGE_BIBREFS[h3] == "Bardenet et al., 2017"
 

@@ -121,6 +121,6 @@ end
         done
         """ |> seval
     @test occursin("<h1><a id=\"title\" href=\"#title\">Title</a></h1>", h)
-    @test occursin("<h2><a id=\"subtitle-cool\" href=\"#subtitle-cool\">Subtitle cool&#33;</a></h2>", h)
+    @test occursin("<h2><a id=\"subtitle_cool\" href=\"#subtitle_cool\">Subtitle cool&#33;</a></h2>", h)
     @test occursin("done", h)
 end

@@ -125,8 +125,8 @@ mathenv(s::AbstractString)::String = "_\$>_$(s)_\$<_"
 $(SIGNATURES)
 
 Takes a string `s` and replace spaces by underscores so that that we can use it
-for hyper-references. So for instance `"aa  bb"` will become `aa-bb`.
-It also defensively removes any non-word character so for instance `"aa bb !"` will be `"aa-bb"`
+for hyper-references. So for instance `"aa  bb"` will become `aa_bb`.
+It also defensively removes any non-word character so for instance `"aa bb !"` will be `"aa_bb"`
 """
 function refstring(s::AbstractString)::String
     # remove html tags
@@ -135,7 +135,7 @@ function refstring(s::AbstractString)::String
     st = replace(st, r"&#[0-9]+;" => "")
     st = replace(st, r"[^a-zA-Z0-9_\-\s]" => "")
     # replace spaces by dashes
-    st = replace(lowercase(strip(st)), r"\s+" => "-")
+    st = replace(lowercase(strip(st)), r"\s+" => "_")
     # in unlikely event we don't have anything here, return the hash of orig string
     isempty(st) && return string(hash(s))
     return st
