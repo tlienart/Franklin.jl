@@ -7,6 +7,7 @@ Helper function for `convert_inter_html` that processes an extracted block given
 function convert_block(β::AbstractBlock, lxcontext::LxContext)::AbstractString
     # Return relevant interpolated string based on case
     βn = β.name
+    βn ∈  MD_HEADER     && return convert_header(β)
     βn == :CODE_INLINE  && return md2html(β.ss, true)
     βn == :CODE_BLOCK_L && return convert_code_block(β.ss)
     βn == :CODE_BLOCK   && return md2html(β.ss)
@@ -22,9 +23,6 @@ function convert_block(β::AbstractBlock, lxcontext::LxContext)::AbstractString
         name = chop(otok(β).ss, head=2, tail=0)
         return html_div(name, ct)
     end
-
-    # Header block --> need to reprocess (e.g. if colors used in title) and wrap in html header
-    # TODO TODO TODO TODO
 
     # default case, ignore block (should not happen)
     return ""
@@ -89,6 +87,18 @@ function convert_math_block(β::OCBlock, lxdefs::Vector{LxDef})::String
     # assemble the katex decorators, the resolved content etc
     write(htmls, pm[3], convert_md_math(inner * EOS, lxdefs, from(β)), pm[4])
     return String(take!(htmls))
+end
+
+
+"""
+$(SIGNATURES)
+
+Helper function for the case of a header block (H1, ..., H6).
+"""
+function convert_header(β::OCBlock)::String
+    hk = lowercase(string(β.name))
+    title, _ = convert_md(content(β) * EOS; isrecursive=true, has_mddefs=false)
+    return "<$hk>" * title * "</$hk>"
 end
 
 

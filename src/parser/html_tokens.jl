@@ -27,8 +27,8 @@ HTML_OCB
 List of HTML Open-Close blocks.
 """
 const HTML_OCB = [
-    # name        opening token    closing token(s)     reprocess content
-    # -------------------------------------------------------------------
+    # name        opening token    closing token(s)     nestable
+    # ----------------------------------------------------------
     OCProto(:COMMENT, :COMMENT_OPEN, (:COMMENT_CLOSE,), false),
     OCProto(:H_BLOCK, :H_BLOCK_OPEN, (:H_BLOCK_CLOSE,), true)
     ]

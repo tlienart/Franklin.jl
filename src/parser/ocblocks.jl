@@ -10,15 +10,15 @@ function find_ocblocks(tokens::Vector{Token}, ocproto::OCProto; inmath=false)
     ntokens       = length(tokens)
     active_tokens = ones(Bool, length(tokens))
     ocblocks      = Vector{OCBlock}()
-    reprocess     = ocproto.repr
+    nestable      = ocproto.nest
 
     # go over active tokens check if there's an opening token
     # if so look for the closing one and push
     for (i, τ) ∈ enumerate(tokens)
         # only consider active and opening tokens
         (active_tokens[i] & (τ.name == ocproto.otok)) || continue
-        # if reprocess, need to keep track of the balance
-        if reprocess
+        # if nestable, need to keep track of the balance
+        if nestable
             # inbalance ≥ 0, 0 if all opening tokens are closed
             inbalance = 1 # we've seen an opening token
             j = i # index for the closing token

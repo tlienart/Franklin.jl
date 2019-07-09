@@ -111,20 +111,21 @@ The only `OCBlock` not in this dictionary is the brace block since it should not
 content which is needed to find latex definitions (see parser/markdown/find_blocks/find_md_lxdefs).
 """
 const MD_OCB = [
-    # name                 opening token   closing token(s)     reprocess content
-    # -------------------------------------------------------------------------------
+    # name                 opening token   closing token(s)     nestable
+    # ------------------------------------------------------------------
     OCProto(:COMMENT,      :COMMENT_OPEN, (:COMMENT_CLOSE,),    false),
     OCProto(:CODE_BLOCK_L, :CODE_L,       (:CODE,),             false),
     OCProto(:CODE_BLOCK,   :CODE,         (:CODE,),             false),
     OCProto(:CODE_INLINE,  :CODE_SINGLE,  (:CODE_SINGLE,),      false),
     OCProto(:ESCAPE,       :ESCAPE,       (:ESCAPE,),           false),
-    # -------------------------------------------------------------------------------
-    OCProto(:H1,           :H1_OPEN,      (:LINE_RETURN, :EOS), true), # see [^3]
-    OCProto(:H2,           :H2_OPEN,      (:LINE_RETURN, :EOS), true),
-    OCProto(:H3,           :H3_OPEN,      (:LINE_RETURN, :EOS), true),
-    OCProto(:H4,           :H4_OPEN,      (:LINE_RETURN, :EOS), true),
-    OCProto(:H5,           :H5_OPEN,      (:LINE_RETURN, :EOS), true),
-    OCProto(:H6,           :H6_OPEN,      (:LINE_RETURN, :EOS), true),
+    # ------------------------------------------------------------------
+    OCProto(:H1,           :H1_OPEN,      (:LINE_RETURN, :EOS), false), # see [^3]
+    OCProto(:H2,           :H2_OPEN,      (:LINE_RETURN, :EOS), false),
+    OCProto(:H3,           :H3_OPEN,      (:LINE_RETURN, :EOS), false),
+    OCProto(:H4,           :H4_OPEN,      (:LINE_RETURN, :EOS), false),
+    OCProto(:H5,           :H5_OPEN,      (:LINE_RETURN, :EOS), false),
+    OCProto(:H6,           :H6_OPEN,      (:LINE_RETURN, :EOS), false),
+    # ------------------------------------------------------------------
     OCProto(:MD_DEF,       :MD_DEF_OPEN,  (:LINE_RETURN, :EOS), false), # see [^4]
     OCProto(:LXB,          :LXB_OPEN,     (:LXB_CLOSE,),        true ),
     OCProto(:DIV,          :DIV_OPEN,     (:DIV_CLOSE,),        true ),
@@ -138,12 +139,21 @@ def are allowed.
 =#
 
 """
+MD_HEADER
+
+All header symbols.
+"""
+const MD_HEADER = (:H1, :H2, :H3, :H4, :H5, :H6)
+
+
+
+"""
 MD_OCB_ESC
 
 Blocks that will be escaped (their content will not be further processed).
 Corresponds to the "non-reprocess" elements of `MD_OCB`.
 """
-const MD_OCB_ESC = [e.name for e ∈ MD_OCB if !e.repr]
+const MD_OCB_ESC = [e.name for e ∈ MD_OCB if !e.nest]
 
 
 """

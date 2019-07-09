@@ -210,12 +210,10 @@ end
 
     @test blocks[1].name == :COMMENT
     @test J.content(blocks[1]) == " comment "
-    @test blocks[2].name == :COMMENT
-    @test J.content(blocks[2]) == " ✅ 19/9/999 "
-    @test blocks[3].name == :H2
-    @test J.content(blocks[3]) == " blah <!-- ✅ 19/9/999 -->"
-    @test blocks[4].name == :MD_DEF
-    @test J.content(blocks[4]) == " title = \"Convex Optimisation I\""
+    @test blocks[2].name == :H2
+    @test J.content(blocks[2]) == " blah <!-- ✅ 19/9/999 -->"
+    @test blocks[3].name == :MD_DEF
+    @test J.content(blocks[3]) == " title = \"Convex Optimisation I\""
 
     @test lxcoms[1].ss == "\\com{A}"
     @test lxcoms[2].ss == "\\com{B}"
@@ -226,8 +224,7 @@ end
     @test b2i[2].ss == "\\com{A}"
     @test b2i[3].ss == "<!-- comment -->"
     @test b2i[4].ss == "## blah <!-- ✅ 19/9/999 -->\n"
-    @test b2i[5].ss == "<!-- ✅ 19/9/999 -->"
-    @test b2i[6].ss == "\\com{B}"
+    @test b2i[5].ss == "\\com{B}"
 end
 
 
@@ -255,4 +252,25 @@ end
     @test blocks[4].name == :H4
     @test blocks[5].name == :H5
     @test blocks[6].name == :H6
+
+    h = raw"""
+        # t1
+        1
+        ## t2
+        2
+        ## t3 `blah` etc
+        3
+        ### t4 <!-- title -->
+        4
+        """ * J.EOS |> seval
+    @test isapproxstr(h, """
+        <h1>t1</h1>
+        1
+        <h2>t2</h2>
+        2
+        <h2>t3 <code>blah</code> etc</h2>
+        3
+        <h3>t4</h3>
+        4
+        """)
 end

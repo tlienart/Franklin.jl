@@ -40,7 +40,7 @@ struct OCProto
     name::Symbol
     otok::Symbol
     ctok::NTuple{N, Symbol} where N
-    repr::Bool # whether the content of the block should be reprocessed
+    nest::Bool
 end
 
 
