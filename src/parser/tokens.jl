@@ -36,10 +36,11 @@ Prototype for an open-close block (see [`OCBlock`](@ref)) with the symbol of the
 (e.g. `:MATH_A`) and a corresponding list of closing tokens (e.g. `(:MATH_A,)`).
 See also their definitions in `parser/md_tokens.jl`.
 """
-struct OCProto{N}
-    o::Symbol
-    c::NTuple{N, Symbol}
-    n::Bool
+struct OCProto
+    name::Symbol
+    otok::Symbol
+    ctok::NTuple{N, Symbol} where N
+    repr::Bool # whether the content of the block should be reprocessed
 end
 
 

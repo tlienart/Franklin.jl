@@ -57,7 +57,7 @@ ignore the block.
 """
 function validate_header_block(β::OCBlock)::Bool
     # skip non-header blocks
-    β.name == :HEADER || return true
+    β.name ∈ (:H1, :H2, :H3, :H4, :H5, :H6) || return true
     # if it's a header block, have a look at the opening token
     τ = otok(β)
     # check if it overlaps with the first character
