@@ -32,3 +32,29 @@ end
     @test imd == "A _ ##JDINSERT##  C  ##JDINSERT## _ E"
     @test ih == "<p>A <em>##JDINSERT##  C  ##JDINSERT##</em> E</p>\n"
 end
+
+
+@testset "TOC"  begin
+    h = raw"""
+        \toc
+        ## Hello `jd`
+        ### Goodbye!
+        ## Done
+        done.
+        """ * J.EOS |> seval
+    @test isapproxstr(h, raw"""
+        <ol>
+          <ol>
+            <li><a href=\"#hello_jd\">Hello <code>jd</code></li>
+            <ol>
+              <li><a href=\"#goodbye\">Goodbye&#33;</li>
+            </ol>
+            <li><a href=\"#done\">Done</li>
+          </ol>
+        </ol>
+        <h2><a id=\"hello_jd\" href=\"#hello_jd\">Hello <code>jd</code></a></h2>
+        <h3><a id=\"goodbye\" href=\"#goodbye\">Goodbye&#33;</a></h3>
+        <h2><a id=\"done\" href=\"#done\">Done</a></h2>
+        done.
+        """)
+end

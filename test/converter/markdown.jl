@@ -114,15 +114,13 @@ end
 
 
 @testset "headers" begin
-    st = """
+    h = """
         # Title
         and then
         ## Subtitle cool!
         done
-        """
-    h = st |> Markdown.parse |> Markdown.html
-    r = J.make_header_refs(h)
-    @test occursin("<h1><a id=\"title\" href=\"#title\">Title</a></h1>", r)
-    @test occursin("<h2><a id=\"subtitle-cool\" href=\"#subtitle-cool\">Subtitle cool&#33;</a></h2>", r)
-    @test occursin("<p>done</p>", r)
+        """ |> seval
+    @test occursin("<h1><a id=\"title\" href=\"#title\">Title</a></h1>", h)
+    @test occursin("<h2><a id=\"subtitle_cool\" href=\"#subtitle_cool\">Subtitle cool&#33;</a></h2>", h)
+    @test occursin("done", h)
 end

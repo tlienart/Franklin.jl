@@ -1,18 +1,4 @@
 """
-HTML_FUNCTIONS
-
-Dictionary for special html functions. They can take two variables, the first one `π` refers to the
-arguments passed to the function, the second one `ν` refers to the page variables (i.e. the
-context) available to the function.
-"""
-const HTML_FUNCTIONS = Dict{String, Function}(
-    "fill"   => ((π, ν) -> hfun_fill(π, ν)),
-    "insert" => ((π, _) -> hfun_insert(π)),
-    "href"   => ((π, _) -> hfun_href(π)),
-    )
-
-
-"""
 $(SIGNATURES)
 
 Helper function to process an individual block when it's a `HFun` such as `{{ fill author }}`.
@@ -102,3 +88,54 @@ function hfun_href(params::Vector{String})::String
     end
     return replacement
 end
+
+
+"""
+$(SIGNATURES)
+
+H-Function of the form `{{toc}}` (table of contents).
+"""
+function hfun_toc()::String
+    inner  = ""
+    curlvl = 1
+    for i ∈ 1:length(PAGE_HEADERS)
+        h = PAGE_HEADERS[i]
+        lvl = h[4]
+        if lvl < curlvl
+            # how many levels?
+            δ = curlvl - lvl
+            curlvl = lvl
+            for i = 1:δ
+                inner *= "</ol>"
+            end
+        elseif lvl > curlvl
+            # how many levels?
+            δ = lvl - curlvl
+            curlvl = lvl
+            for i = 1:δ
+                inner *= "<ol>"
+            end
+        end
+        inner *= "<li><a href=\"#$(h[2])\">$(h[1])</li>"
+    end
+    # close at whatever level we are
+    for i = curlvl:-1:2
+        inner *= "</ol>"
+    end
+    toc = "<ol>" * inner * "</ol>"
+end
+
+
+"""
+HTML_FUNCTIONS
+
+Dictionary for special html functions. They can take two variables, the first one `π` refers to the
+arguments passed to the function, the second one `ν` refers to the page variables (i.e. the
+context) available to the function.
+"""
+const HTML_FUNCTIONS = Dict{String, Function}(
+    "fill"   => ((π, ν) -> hfun_fill(π, ν)),
+    "insert" => ((π, _) -> hfun_insert(π)),
+    "href"   => ((π, _) -> hfun_href(π)),
+    "toc"    => ((_, _) -> hfun_toc()),
+    )

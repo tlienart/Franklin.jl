@@ -27,10 +27,10 @@ HTML_OCB
 List of HTML Open-Close blocks.
 """
 const HTML_OCB = [
-    # name        opening token    closing token     nestable
-    # ------------------------------------------------------------
-    :COMMENT => ((:COMMENT_OPEN => :COMMENT_CLOSE), false),
-    :H_BLOCK => ((:H_BLOCK_OPEN => :H_BLOCK_CLOSE), true)
+    # name        opening token    closing token(s)     nestable
+    # ----------------------------------------------------------
+    OCProto(:COMMENT, :COMMENT_OPEN, (:COMMENT_CLOSE,), false),
+    OCProto(:H_BLOCK, :H_BLOCK_OPEN, (:H_BLOCK_CLOSE,), true)
     ]
 
 #= ===============
@@ -208,7 +208,7 @@ FUNCTION BLOCKS
 =============== =#
 
 """
-$(TYPEDEF)
+HBLOCK_FUN_PAT
 
 Regex to match `{{ fname param₁ param₂ }}` where `fname` is a html processing function and `paramᵢ`
 should refer to appropriate variables in the current scope.
@@ -230,3 +230,19 @@ struct HFun <: AbstractBlock
     fname::String
     params::Vector{String}
 end
+
+
+"""
+HBLOCK_TOC_PAT
+
+Insertion for a table of contents.
+"""
+const HBLOCK_TOC_PAT = r"{{\s*toc\s*}}"
+
+
+"""
+$(TYPEDEF)
+
+Empty struct to keep the same taxonomy.
+"""
+struct HToc <: AbstractBlock end

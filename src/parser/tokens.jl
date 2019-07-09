@@ -32,6 +32,21 @@ end
 """
 $(TYPEDEF)
 
+Prototype for an open-close block (see [`OCBlock`](@ref)) with the symbol of the opening token
+(e.g. `:MATH_A`) and a corresponding list of closing tokens (e.g. `(:MATH_A,)`).
+See also their definitions in `parser/md_tokens.jl`.
+"""
+struct OCProto
+    name::Symbol
+    otok::Symbol
+    ctok::NTuple{N, Symbol} where N
+    nest::Bool
+end
+
+
+"""
+$(TYPEDEF)
+
 Open-Close block, blocks that are defined by an opening `Token` and a closing `Token`, they may be
 nested. For instance braces block are formed of an opening `{` and a closing `}` and could be
 nested.

@@ -7,7 +7,8 @@ cannot appear again in a larger token.
 const MD_1C_TOKENS = Dict{Char, Symbol}(
     '{'  => :LXB_OPEN,
     '}'  => :LXB_CLOSE,
-    '\n' => :LINE_RETURN
+    '\n' => :LINE_RETURN,
+    EOS  => :EOS,
     )
 
 
@@ -52,6 +53,13 @@ const MD_TOKENS = Dict{Char, Vector{TokenFinder}}(
               incrlook((i, c) ->
                     ifelse(i==1, c=='@', α(c, ['-']))) => :DIV_OPEN, # @@dname
              ],
+    '#'  => [ isexactly("#",      [' ']) => :H1_OPEN, # see note [^2]
+              isexactly("##",     [' ']) => :H2_OPEN,
+              isexactly("###",    [' ']) => :H3_OPEN,
+              isexactly("####",   [' ']) => :H4_OPEN,
+              isexactly("#####",  [' ']) => :H5_OPEN,
+              isexactly("######", [' ']) => :H6_OPEN,
+             ],
     '$'  => [ isexactly("\$", ['$'], false) => :MATH_A,  # $⎵*
               isexactly("\$\$") => :MATH_B,              # $$⎵*
              ],
@@ -66,7 +74,7 @@ const MD_TOKENS = Dict{Char, Vector{TokenFinder}}(
 #= NOTE
 [1] capturing \{ here will force the head to move after it thereby not
 marking it as a potential open brace, same for the close brace.
-[2] check if these are still useful. =#
+[2] similar to @def except that it must be at the start of the line. =#
 
 
 """
@@ -98,36 +106,54 @@ MD_OCB
 Dictionary of Open-Close Blocks whose content should be deactivated (any token within their span
 should be marked as inactive) until further processing.
 The keys are identifier for the type of block, the value is a pair with the opening and closing
-tokens followed by a boolean indicating whether the block is nestable or not.
+tokens followed by a boolean indicating whether the content of the block should be reprocessed.
 The only `OCBlock` not in this dictionary is the brace block since it should not deactivate its
 content which is needed to find latex definitions (see parser/markdown/find_blocks/find_md_lxdefs).
 """
 const MD_OCB = [
-    # name            opening token    closing token     nestable
-    # ------------------------------------------------------------
-    :COMMENT      => ((:COMMENT_OPEN => :COMMENT_CLOSE), false),
-    :CODE_BLOCK_L => ((:CODE_L       => :CODE         ), false),
-    :CODE_BLOCK   => ((:CODE         => :CODE         ), false),
-    :CODE_INLINE  => ((:CODE_SINGLE  => :CODE_SINGLE  ), false),
-    :ESCAPE       => ((:ESCAPE       => :ESCAPE       ), false),
-    # ------------------------------------------------------------
-    :MD_DEF       => ((:MD_DEF_OPEN  => :LINE_RETURN  ), false), # see [^3]
-    :LXB          => ((:LXB_OPEN     => :LXB_CLOSE    ), true ),
-    :DIV          => ((:DIV_OPEN     => :DIV_CLOSE    ), true ),
+    # name                 opening token   closing token(s)     nestable
+    # ------------------------------------------------------------------
+    OCProto(:COMMENT,      :COMMENT_OPEN, (:COMMENT_CLOSE,),    false),
+    OCProto(:CODE_BLOCK_L, :CODE_L,       (:CODE,),             false),
+    OCProto(:CODE_BLOCK,   :CODE,         (:CODE,),             false),
+    OCProto(:CODE_INLINE,  :CODE_SINGLE,  (:CODE_SINGLE,),      false),
+    OCProto(:ESCAPE,       :ESCAPE,       (:ESCAPE,),           false),
+    # ------------------------------------------------------------------
+    OCProto(:H1,           :H1_OPEN,      (:LINE_RETURN, :EOS), false), # see [^3]
+    OCProto(:H2,           :H2_OPEN,      (:LINE_RETURN, :EOS), false),
+    OCProto(:H3,           :H3_OPEN,      (:LINE_RETURN, :EOS), false),
+    OCProto(:H4,           :H4_OPEN,      (:LINE_RETURN, :EOS), false),
+    OCProto(:H5,           :H5_OPEN,      (:LINE_RETURN, :EOS), false),
+    OCProto(:H6,           :H6_OPEN,      (:LINE_RETURN, :EOS), false),
+    # ------------------------------------------------------------------
+    OCProto(:MD_DEF,       :MD_DEF_OPEN,  (:LINE_RETURN, :EOS), false), # see [^4]
+    OCProto(:LXB,          :LXB_OPEN,     (:LXB_CLOSE,),        true ),
+    OCProto(:DIV,          :DIV_OPEN,     (:DIV_CLOSE,),        true ),
     ]
 #= NOTE:
-* [3] an `MD_DEF` goes from an `@def` to the next `\n` so no multiple-line
+* [3] a header can be closed by either a line return or an end of string (for instance in the case
+where a user defines a latex command like so: \newcommand{\section}{# blah} (no line return).)
+* [4] an `MD_DEF` goes from an `@def` to the next `\n` so no multiple-line
 def are allowed.
 * ordering matters!
 =#
 
 """
+MD_HEADER
+
+All header symbols.
+"""
+const MD_HEADER = (:H1, :H2, :H3, :H4, :H5, :H6)
+
+
+
+"""
 MD_OCB_ESC
 
 Blocks that will be escaped (their content will not be further processed).
-Corresponds to the non-nestable elements of `MD_OCB`.
+Corresponds to the "non-reprocess" elements of `MD_OCB`.
 """
-const MD_OCB_ESC = [e.first for e ∈ MD_OCB if !e.second[2]]
+const MD_OCB_ESC = [e.name for e ∈ MD_OCB if !e.nest]
 
 
 """
@@ -135,16 +161,15 @@ MD_OCB_MATH
 
 Same concept as `MD_OCB` but for math blocks, they can't be nested. Separating them from the other
 dictionary makes their processing easier.
-
 Dev note: order does not matter.
 """
 const MD_OCB_MATH = [
-    :MATH_A     => ((:MATH_A          => :MATH_A          ), false),
-    :MATH_B     => ((:MATH_B          => :MATH_B          ), false),
-    :MATH_C     => ((:MATH_C_OPEN     => :MATH_C_CLOSE    ), false),
-    :MATH_I     => ((:MATH_I_OPEN     => :MATH_I_CLOSE    ), false),
-    :MATH_ALIGN => ((:MATH_ALIGN_OPEN => :MATH_ALIGN_CLOSE), false),
-    :MATH_EQA   => ((:MATH_EQA_OPEN   => :MATH_EQA_CLOSE  ), false),
+    OCProto(:MATH_A,     :MATH_A,          (:MATH_A,),           false),
+    OCProto(:MATH_B,     :MATH_B,          (:MATH_B,),           false),
+    OCProto(:MATH_C,     :MATH_C_OPEN,     (:MATH_C_CLOSE,),     false),
+    OCProto(:MATH_I,     :MATH_I_OPEN,     (:MATH_I_CLOSE,),     false),
+    OCProto(:MATH_ALIGN, :MATH_ALIGN_OPEN, (:MATH_ALIGN_CLOSE,), false),
+    OCProto(:MATH_EQA,   :MATH_EQA_OPEN,   (:MATH_EQA_CLOSE,),   false),
     ]
 
 """
@@ -168,4 +193,4 @@ MATH_BLOCKS_NAMES
 
 List of names of maths environments.
 """
-const MATH_BLOCKS_NAMES = [e.first for e ∈ MD_OCB_MATH]
+const MATH_BLOCKS_NAMES = [e.name for e ∈ MD_OCB_MATH]

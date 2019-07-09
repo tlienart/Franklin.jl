@@ -204,13 +204,14 @@ end
 
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
+    filter!(β -> J.validate_header_block(β), blocks)
     lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
     lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
 
     @test blocks[1].name == :COMMENT
     @test J.content(blocks[1]) == " comment "
-    @test blocks[2].name == :COMMENT
-    @test J.content(blocks[2]) == " ✅ 19/9/999 "
+    @test blocks[2].name == :H2
+    @test J.content(blocks[2]) == " blah <!-- ✅ 19/9/999 -->"
     @test blocks[3].name == :MD_DEF
     @test J.content(blocks[3]) == " title = \"Convex Optimisation I\""
 
@@ -222,6 +223,58 @@ end
     @test b2i[1].ss == "@def title = \"Convex Optimisation I\"\n"
     @test b2i[2].ss == "\\com{A}"
     @test b2i[3].ss == "<!-- comment -->"
-    @test b2i[4].ss == "<!-- ✅ 19/9/999 -->"
+    @test b2i[4].ss == "## blah <!-- ✅ 19/9/999 -->\n"
     @test b2i[5].ss == "\\com{B}"
+end
+
+
+@testset "Header blocks" begin
+    st = raw"""
+        # t1
+        1
+        ## t2
+        2 ## trick
+        ### t3
+        3
+        #### t4
+        4
+        ##### t5
+        5
+        ###### t6
+        6
+        """ * J.EOS
+    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
+    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
+    filter!(β -> J.validate_header_block(β), blocks)
+    @test blocks[1].name == :H1
+    @test blocks[2].name == :H2
+    @test blocks[3].name == :H3
+    @test blocks[4].name == :H4
+    @test blocks[5].name == :H5
+    @test blocks[6].name == :H6
+
+    h = raw"""
+        # t1
+        1
+        ## t2
+        2
+        ## t3 `blah` etc
+        3
+        ### t4 <!-- title -->
+        4
+        ### t2
+        5
+        """ * J.EOS |> seval
+    @test isapproxstr(h, """
+        <h1><a id=\"t1\" href=\"#t1\">t1</a></h1>
+        1
+        <h2><a id=\"t2\" href=\"#t2\">t2</a></h2>
+        2
+        <h2><a id=\"t3_blah_etc\" href=\"#t3_blah_etc\">t3 <code>blah</code> etc</a></h2>
+        3
+        <h3><a id=\"t4\" href=\"#t4\">t4</a></h3>
+        4
+        <h3><a id=\"t2_2\" href=\"#t2_2\">t2</a></h3>
+        5
+        """)
 end

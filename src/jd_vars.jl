@@ -57,6 +57,24 @@ end
 
 
 """
+PAGE_HEADERS
+
+Keep track of seen headers. The key amounts to the ordering (~ordered dict), the value contains
+the title, the refstring version of the title, the occurence number and the level (1, ..., 6).
+"""
+const PAGE_HEADERS = Dict{Int, Tuple{AbstractString,AbstractString,Int,Int}}()
+
+
+"""
+$(SIGNATURES)
+"""
+@inline function def_PAGE_HEADERS!()::Nothing
+    empty!(PAGE_HEADERS)
+    return nothing
+end
+
+
+"""
 GLOBAL_LXDEFS
 
 List of latex definitions accessible to all pages. This is filled when the config file is read
@@ -88,6 +106,8 @@ the site. See [`resolve_lxcom`](@ref).
     GLOBAL_LXDEFS["\\citep"]    = LxDef("\\citep",    1, EMPTY_SS)
     GLOBAL_LXDEFS["\\label"]    = LxDef("\\label",    1, EMPTY_SS)
     GLOBAL_LXDEFS["\\biblabel"] = LxDef("\\biblabel", 2, EMPTY_SS)
+    GLOBAL_LXDEFS["\\toc"]      = LxDef("\\toc",      0, subs("~~~{{toc}}~~~"))
+    GLOBAL_LXDEFS["\\tableofcontents"] = LxDef("\\tableofcontents", 0, subs("~~~{{toc}}~~~"))
     # inclusion
     GLOBAL_LXDEFS["\\input"]      = LxDef("\\input",      2, EMPTY_SS)
     GLOBAL_LXDEFS["\\output"]     = LxDef("\\output",     1, EMPTY_SS)

@@ -7,6 +7,7 @@ Helper function for `convert_inter_html` that processes an extracted block given
 function convert_block(β::AbstractBlock, lxcontext::LxContext)::AbstractString
     # Return relevant interpolated string based on case
     βn = β.name
+    βn ∈  MD_HEADER     && return convert_header(β)
     βn == :CODE_INLINE  && return md2html(β.ss, true)
     βn == :CODE_BLOCK_L && return convert_code_block(β.ss)
     βn == :CODE_BLOCK   && return md2html(β.ss)
@@ -86,6 +87,27 @@ function convert_math_block(β::OCBlock, lxdefs::Vector{LxDef})::String
     # assemble the katex decorators, the resolved content etc
     write(htmls, pm[3], convert_md_math(inner * EOS, lxdefs, from(β)), pm[4])
     return String(take!(htmls))
+end
+
+
+"""
+$(SIGNATURES)
+
+Helper function for the case of a header block (H1, ..., H6).
+"""
+function convert_header(β::OCBlock)::String
+    hk       = lowercase(string(β.name))
+    title, _ = convert_md(content(β) * EOS; isrecursive=true, has_mddefs=false)
+    # check if the header has appeared before
+    rstitle  = refstring(title)
+    level    = parse(Int, hk[2])
+    occur    = (hv[3] for hv ∈ values(PAGE_HEADERS) if hv[2] == rstitle)
+    occur    = isempty(occur) ? 0 : maximum(occur)
+    rstitle  = ifelse(occur==0, rstitle, "$(rstitle)_$(occur+1)")
+    # save in list of headers
+    PAGE_HEADERS[length(PAGE_HEADERS)+1] = (title, rstitle, occur+1, level)
+    # return the title
+    return "<$hk><a id=\"$rstitle\" href=\"#$rstitle\">$title</a></$hk>"
 end
 
 

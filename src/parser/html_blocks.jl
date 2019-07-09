@@ -40,9 +40,13 @@ function qualify_html_hblocks(blocks::Vector{OCBlock})::Vector{AbstractBlock}
         # function block {{ fname v1 v2 ... }}
         m = match(HBLOCK_FUN_PAT, β.ss)
         isnothing(m) || (qb[i] = HFun(β.ss, m.captures[1], split(m.captures[2])); continue)
+        # ---
+        # function toc {{toc}}
+        m = match(HBLOCK_TOC_PAT, β.ss)
+        isnothing(m) || (qb[i] = HFun(β.ss, "toc", String[]); continue)
 
         throw(HTMLBlockError("I found a HBlock that did not match anything, " *
-                             "verify '$ts'"))
+                             "verify '$(β.ss)'"))
     end
     return qb
 end
