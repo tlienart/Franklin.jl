@@ -36,11 +36,11 @@ const MD_TOKENS = Dict{Char, Vector{TokenFinder}}(
              ],
     '~'  => [ isexactly("~~~")  => :ESCAPE,           # ~~~  ... ~~~
              ],
-    '\\' => [ isexactly("\\{")  => :INACTIVE,         # See note [^1]
-              isexactly("\\}")  => :INACTIVE,         # See note [^1]
-              isexactly("\\\$") => :INACTIVE,         # See note [^1]
-              isexactly("\\[")  => :MATH_C_OPEN,      # \[ ...
-              isexactly("\\]")  => :MATH_C_CLOSE,     #    ... \]
+    '\\' => [ isexactly("\\{")        => :INACTIVE,         # See note [^1]
+              isexactly("\\}")        => :INACTIVE,         # See note [^1]
+              isexactly("\\\$")       => :INACTIVE,         # See note [^1]
+              isexactly("\\[")        => :MATH_C_OPEN,      # \[ ...
+              isexactly("\\]")        => :MATH_C_CLOSE,     #    ... \]
               isexactly("\\begin{align}")    => :MATH_ALIGN_OPEN,
               isexactly("\\end{align}")      => :MATH_ALIGN_CLOSE,
               isexactly("\\begin{eqnarray}") => :MATH_EQA_OPEN,

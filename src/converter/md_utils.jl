@@ -10,7 +10,7 @@ function md2html(ss::AbstractString, stripp::Bool=false)::AbstractString
     isempty(ss) && return ss
 
     # Use the base Markdown -> Html converter and post process headers
-    partial = ss |> fix_inserts |> Markdown.parse |> Markdown.html
+    partial = ss |> fix_inserts |> Markdown.parse |> Markdown.html |> fix_lineskips
 
     # In some cases, base converter adds <p>...</p>\n which we might not want
     stripp || return partial
@@ -81,3 +81,11 @@ extraneous whitespace.
 fix_inserts(s::AbstractString)::String =
     replace(replace(s, r"([\*_]) ##JDINSERT##" => s"\1##JDINSERT##"),
                        r"##JDINSERT## ([\*_])" => s"##JDINSERT##\1")
+
+
+"""
+$(SIGNATURES)
+
+Allow the use of latex-like `\\` to force a line skip.
+"""
+fix_lineskips(s::AbstractString)::String = replace(s, r"\\\\" => "<br/>")

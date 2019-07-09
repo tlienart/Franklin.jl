@@ -278,3 +278,11 @@ end
         5
         """)
 end
+
+
+@testset "Line skip" begin
+    h = raw"""
+        Hello \\ goodbye
+        """ |> seval
+    @test isapproxstr(h, """<p>Hello <br/> goodbye</p>""")
+end
