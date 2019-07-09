@@ -122,7 +122,7 @@ function hfun_toc()::String
     for i = curlvl:-1:2
         inner *= "</ol>"
     end
-    toc = "<ol>" * inner * "</ol>"
+    toc = "<div class=\"jd-toc\"><ol>" * inner * "</ol></div>"
 end
 
 
