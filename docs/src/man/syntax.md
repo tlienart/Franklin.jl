@@ -11,6 +11,7 @@ Most of what is presented here is also shown in that example.
 * [Basic syntax](#Basics-1)
   * [Maths](#Maths-1)
   * [Div blocks](#Div-blocks-1)
+  * [Table of contents](#Table-of-contents-1)
   * [Using raw HTML](#Using-raw-HTML-1)
   * [Comments](#Comments-1)
 * [LaTeX commands](#LaTeX-commands-1)
@@ -125,6 +126,11 @@ which will look like
     Some important content
 
 These div blocks can be nested as in standard HTML.
+
+### Table of contents
+
+JuDoc can insert automatically generated table of contents simply by using `\toc` or `\tableofcontents` somewhere appropriate in your markdown.
+The table of contents will be generated in a `jd-toc` div block, so if you would like to modify the styling, you should modify `.jd-toc ol`, `.jd-toc li` etc in your CSS.
 
 ### Using raw HTML
 
