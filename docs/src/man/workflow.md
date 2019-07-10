@@ -183,6 +183,34 @@ Once the repository is created, clone it on your computer, remove whatever is in
 
 Now just do the usual `git add`, `commit` and `push` and your site will be live in a matter of minutes.
 
+### Gitlab users
+
+On Gitlab, there are two small differences:
+
+1. your website needs to eventually be in a `public/` directory of the repository,
+1. you need to specify a CI/CD script that tells Gitlab how to deploy the site.
+
+Luckily both of these can be done in one shot, all you need to do is add a script as follows in your repository:
+
+```yaml
+pages:
+  stage: deploy
+  script:
+    - mkdir .public
+    - cp -r * .public
+    - mv .public public
+  artifacts:
+    paths:
+      - public
+  only:
+    - master
+```
+
+The only non-trivial bit is the `script:` section: the only thing it does is tell the runner to copy all your files in a `public/` "virtual" directory.
+Note that this will _not_ physically create a directory in your repo, rather it will, on Gitlab, make sure the files are located in such a way that they can be rendered.
+
+**Note**: if for some reason your repository is private and you would like to avoid for some files to be in the `public/` folder, then just add a couple of lines in the `script:` part removing  (`rm`) the files you don't want to put there (e.g. sensitive data files).
+
 ### Hosting the website as a project website
 
 You may want to host your website not as a user website on `username.github.io/` but as a project website on `username.github.io/project/`.
