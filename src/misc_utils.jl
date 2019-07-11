@@ -88,13 +88,22 @@ $(SIGNATURES)
 
 Convenience function to display a time since `start`.
 """
-function time_it_took(start::Float64)::Nothing
+function time_it_took(start::Float64)
     comp_time = time() - start
     mess = comp_time > 60 ? "$(round(comp_time/60;   digits=1))m" :
            comp_time >  1 ? "$(round(comp_time;      digits=1))s" :
                             "$(round(comp_time*1000; digits=1))ms"
-    println("[done $(lpad(mess, 6))]")
-    return nothing
+    return "[done $(lpad(mess, 6))]"
+end
+
+```
+$(SIGNATURES)
+
+Nicer printing of processes.
+```
+function print_final(startmsg::AbstractString, starttime::Float64)::Nothing
+    tit = time_it_took(starttime)
+    println("\r$startmsg$tit")
 end
 
 

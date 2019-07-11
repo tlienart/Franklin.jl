@@ -38,7 +38,8 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
     start = time()
     sig = jd_fullpass(watched_files; clear=clear, verb=verb, prerender=prerender, isoptim=isoptim)
     sig < 0 && return sig
-    verb && (print(rpad("\n✔ full pass...", 40)); time_it_took(start); println(""))
+    fmsg = rpad("✔ full pass...", 40)
+    verb && (println(""); print(fmsg); print_final(fmsg, start); println(""))
 
     # start the continuous loop
     if !single
@@ -179,16 +180,19 @@ function jd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, watched_files::Na
             cur_t = mtime(fpath)
             cur_t <= t && continue
             # if there was then the file has been modified and should be re-processed + copied
-            verb && print(rpad("→ file $(fpath[length(FOLDER_PATH[])+1:end]) was modified ", 30))
+            fmsg = rpad("→ file $(fpath[length(FOLDER_PATH[])+1:end]) was modified ", 30)
+            verb && print(fmsg)
             dict[fpair] = cur_t
             # if it's an infra_file
             if haskey(watched_files[:infra], fpair)
+                #TODO: couldn't test this branch
                 verb && println("→ full pass...")
                 start = time()
                 jd_fullpass(watched_files; clear=false, verb=false, prerender=false)
-                verb && (print(rpad("\n✔ full pass...", 15)); time_it_took(start); println(""))
+                verb && (print_final(rpad("✔ full pass...", 15), start); println(""))
             else
-                verb && print(rpad("→ updating... ", 15))
+                fmsg = fmsg * rpad("→ updating... ", 15)
+                verb && print("\r" * fmsg)
                 start = time()
                 # TODO, ideally these would only be read if they've changed. Not super important
                 # but just not necessary. (Fixing may be a bit of a pain though)
@@ -196,7 +200,7 @@ function jd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, watched_files::Na
                 pg_foot = read(joinpath(PATHS[:src_html], "page_foot.html"), String)
                 foot    = read(joinpath(PATHS[:src_html], "foot.html"), String)
                 process_file(case, fpair, head, pg_foot, foot, cur_t; clear=false, prerender=false)
-                verb && time_it_took(start)
+                verb && print_final(fmsg, start)
             end
         end
     end
