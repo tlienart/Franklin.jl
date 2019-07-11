@@ -73,9 +73,10 @@ In other scenarios you should probably do this manually.
 * `prerender=true`: prerender javascript before pushing see [`optimize`](@ref)
 * `minify=true`:    minify output before pushing see [`optimize`](@ref)
 * `nopass=false`:   set this to true if you have already run `optimize` manually.
+* `message="jd-update"`: add commit message.
 """
 function publish(; prerender::Bool=true, minify::Bool=true, nopass::Bool=false,
-                   prepath::String="", commitmsg::String="jd-update")::Nothing
+                   prepath::String="", message::String="jd-update")::Nothing
     succ = true
     if !isempty(prepath) || !nopass
         succ = optimize(prerender=prerender, minify=minify, sig=true, prepath=prepath)
@@ -85,7 +86,7 @@ function publish(; prerender::Bool=true, minify::Bool=true, nopass::Bool=false,
         print(rpad("→ Pushing updates with git...", 35))
         try
             run(`git add -A `)
-            run(`git commit -m "$commitmsg" --quiet`)
+            run(`git commit -m "$message" --quiet`)
             run(`git push --quiet`)
             time_it_took(start)
         catch e
