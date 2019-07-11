@@ -36,7 +36,7 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
     withpre = fmsg * ifelse(prerender, rpad(" (with pre-rendering)", 24), rpad(" (no pre-rendering)", 24))
     print(withpre)
     succ = (serve(single=true, prerender=prerender, nomess=true, isoptim=true) === nothing)
-    printend(withpre, start)
+    print_final(withpre, start)
 
     #
     # Minification
@@ -52,7 +52,7 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
             succ = success(`$([e for e in split(PY)]) $JD_PY_MIN_NAME`)
             # remove the script file
             rm(JD_PY_MIN_NAME)
-            printend(mmsg, start)
+            print_final(mmsg, start)
         else
             @warn "I didn't find css_html_js_minify, you can install it via pip the output will "*
                   "not be minified."
@@ -90,7 +90,7 @@ function publish(; prerender::Bool=true, minify::Bool=true, nopass::Bool=false,
             run(`git add -A `)
             run(`git commit -m "jd-update" --quiet`)
             run(`git push --quiet`)
-            printend(pubmsg, start)
+            print_final(pubmsg, start)
         catch e
             println("✘ Could not push updates, verify your connection and try manually.\n")
             @show e

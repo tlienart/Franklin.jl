@@ -39,7 +39,7 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
     sig = jd_fullpass(watched_files; clear=clear, verb=verb, prerender=prerender, isoptim=isoptim)
     sig < 0 && return sig
     fmsg = rpad("✔ full pass...", 40)
-    verb && (println(""); print(fmsg); printend(fmsg, start); println(""))
+    verb && (println(""); print(fmsg); print_final(fmsg, start); println(""))
 
     # start the continuous loop
     if !single
@@ -189,7 +189,7 @@ function jd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, watched_files::Na
                 verb && println("→ full pass...")
                 start = time()
                 jd_fullpass(watched_files; clear=false, verb=false, prerender=false)
-                verb && (printend(rpad("✔ full pass...", 15), start); println(""))
+                verb && (print_final(rpad("✔ full pass...", 15), start); println(""))
             else
                 fmsg = fmsg * rpad("→ updating... ", 15)
                 verb && print("\r" * fmsg)
@@ -200,7 +200,7 @@ function jd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, watched_files::Na
                 pg_foot = read(joinpath(PATHS[:src_html], "page_foot.html"), String)
                 foot    = read(joinpath(PATHS[:src_html], "foot.html"), String)
                 process_file(case, fpair, head, pg_foot, foot, cur_t; clear=false, prerender=false)
-                verb && printend(fmsg, start)
+                verb && print_final(fmsg, start)
             end
         end
     end

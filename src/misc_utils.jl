@@ -101,7 +101,7 @@ $(SIGNATURES)
 
 Nicer printing of processes.
 ```
-function printend(startmsg::AbstractString, starttime::Float64)::Nothing
+function print_final(startmsg::AbstractString, starttime::Float64)::Nothing
     tit = time_it_took(starttime)
     println("\r$startmsg$tit")
 end
