@@ -75,7 +75,7 @@ In other scenarios you should probably do this manually.
 * `nopass=false`:   set this to true if you have already run `optimize` manually.
 """
 function publish(; prerender::Bool=true, minify::Bool=true, nopass::Bool=false,
-                   prepath::String="")::Nothing
+                   prepath::String="", commitmsg::String="jd-update")::Nothing
     succ = true
     if !isempty(prepath) || !nopass
         succ = optimize(prerender=prerender, minify=minify, sig=true, prepath=prepath)
@@ -85,7 +85,7 @@ function publish(; prerender::Bool=true, minify::Bool=true, nopass::Bool=false,
         print(rpad("→ Pushing updates with git...", 35))
         try
             run(`git add -A `)
-            run(`git commit -m "jd-update" --quiet`)
+            run(`git commit -m "$commitmsg" --quiet`)
             run(`git push --quiet`)
             time_it_took(start)
         catch e
