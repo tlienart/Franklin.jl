@@ -67,7 +67,7 @@ end
     f = joinpath(d, "a.txt")
     open(f, "w") do outf
         redirect_stdout(outf) do
-            J.time_it_took(start)
+            J.printend("elapsing",start)
         end
     end
     r = read(f, String)
