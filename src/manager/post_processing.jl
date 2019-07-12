@@ -54,8 +54,8 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
             rm(JD_PY_MIN_NAME)
             print_final(mmsg, start)
         else
-            @warn "I didn't find css_html_js_minify, you can install it via pip the output will "*
-                  "not be minified."
+            @warn "I didn't find css_html_js_minify, you can install it via pip."*
+                  "The output will not be minified."
         end
     end
     return ifelse(sig, succ, nothing)
