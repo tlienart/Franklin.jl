@@ -36,7 +36,7 @@ cp(joinpath(dirname(dirname(pathof(JuDoc))), "test", "_libs", "katex"), joinpath
     J.set_vars!(d, ["a"=>"5", "b"=>"nothing"])
 
     @test d["a"].first == 5
-    @test d["b"].first == nothing
+    @test d["b"].first === nothing
 
     @test_logs (:warn, "Doc var 'a' (type(s): (Real,)) can't be set to value 'blah' (type: String). Assignment ignored.") J.set_vars!(d, ["a"=>"\"blah\""])
     @test_logs (:error, "I got an error (of type 'DomainError') trying to evaluate '__tmp__ = sqrt(-1)', fix the assignment.") J.set_vars!(d, ["a"=> "sqrt(-1)"])
