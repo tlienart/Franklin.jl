@@ -54,3 +54,14 @@ end
     @test occursin("Then maybe <pre><code>$(read(joinpath(J.PATHS[:assets], "output", "s1.out"), String))</code></pre>", h)
     @test occursin("Finally img: <img src=\"/assets/output/s1a.png\" alt=\"\"> done.", h)
 end
+
+@testset  "Input MD" begin
+    mkpath(joinpath(J.PATHS[:assets], "ccc"))
+    fp = joinpath(J.PATHS[:assets], "ccc", "asset1.md")
+    write(fp, "blah **blih**")
+    st = raw"""
+        Some string
+        \textinput{ccc/asset1}
+        """ * J.EOS;
+    @test isapproxstr(st |> conv, "<p>Some string blah <strong>blih</strong></p>")
+end

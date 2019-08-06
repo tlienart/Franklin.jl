@@ -112,6 +112,7 @@ the site. See [`resolve_lxcom`](@ref).
     GLOBAL_LXDEFS["\\input"]      = LxDef("\\input",      2, EMPTY_SS)
     GLOBAL_LXDEFS["\\output"]     = LxDef("\\output",     1, EMPTY_SS)
     GLOBAL_LXDEFS["\\textoutput"] = LxDef("\\textoutput", 1, EMPTY_SS)
+    GLOBAL_LXDEFS["\\textinput"]  = LxDef("\\textinput", 1, EMPTY_SS)
     GLOBAL_LXDEFS["\\figalt"]     = LxDef("\\figalt",     2, EMPTY_SS)
     GLOBAL_LXDEFS["\\fig"]        = LxDef("\\fig",        1, subs("\\figalt{}{#1}"))
     GLOBAL_LXDEFS["\\file"]       = LxDef("\\file",       2, subs("[#1]()"))

@@ -262,7 +262,23 @@ function resolve_lx_input_plainoutput(rpath::AbstractString, reproc::Bool=false)
     isfile(out_file) || throw(ErrorException("I found an \\input but no relevant output file."))
     # return the content in a pre block
     reproc || return html_code(read(out_file, String))
-    return read(out_file, String)
+    return read(out_file, String) * EOS
+end
+
+
+"""
+$(SIGNATURES)
+
+Internal function to read a file at a specified path and just plug it in. (Corresponds to what a
+simple `\\input` command does in LaTeX).
+See also [`resolve_lx_textinput`](@ref).
+"""
+function resolve_lx_input_textfile(rpath::AbstractString)::String
+    # find the full system path to the asset
+    fpath = resolve_assets_rpath(rpath; canonical=true)
+    isempty(splitext(fpath)[2]) && (fpath *= ".md")
+    isfile(fpath) || throw(ErrorException("I found a \\textinput but no relevant file."))
+    return read(fpath, String) * EOS
 end
 
 
@@ -351,8 +367,6 @@ function resolve_lx_input(lxc::LxCom)::String
             return resolve_lx_input_plainoutput(rpath)
         elseif qualifier == "plot"
             return resolve_lx_input_plotoutput(rpath)
-        # elseif qualifier == "table"
-        #     return resolve_lx_input_tableoutput(rpath)
         elseif qualifier ∈ ("julia", "fortran", "julia-repl", "matlab", "r", "toml")
             return resolve_lx_input_hlcode(rpath, qualifier)
         else # assume it's another language descriptor, let the user do that with highlights.js
