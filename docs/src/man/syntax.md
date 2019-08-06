@@ -658,7 +658,7 @@ Again, you could use the default markdown way `[name](full_path)` but, as for th
 ### Inserting markdown
 
 In some situation, you may have some markdown in a file which you may want to include somewhere else.
-This can be achieved thanks to the  `\textoutput{path}` commmand.
+This can be achieved thanks to the  `\textinput{path}` commmand.
 The path specification is as the other commands, and the text will be formatted.
 
 As an example you could have in `/assets/ccc/sidefile.md`:
