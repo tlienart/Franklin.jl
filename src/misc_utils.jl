@@ -176,8 +176,7 @@ joinrp(rpath::AbstractString) = joinpath(split(rpath, '/')...)
 """
 $(SIGNATURES)
 
-Internal function to resolve a relative path. See [`convert_code_blo
-    ck`](@ref) and
+Internal function to resolve a relative path. See [`convert_code_block`](@ref) and
 [`resolve_lx_input`](@ref).
 As an example, let's say you have the path `./blah/blih.txt` somewhere in `src/pages/page1.md`.
 The `./` indicates that the path should be reproduced in `/assets/` and so it will lead to
