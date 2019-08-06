@@ -30,6 +30,9 @@ Most of what is presented here is also shown in that example.
     * [Plot output](#Plot-output-1)
     * [Slicing up](#Slicing-up-1)
 * [File insertions](#File-insertions-1)
+    * [Inserting a figure](#Inserting-a-figure-1)
+    * [Linking a file](#Linking-a-file-1)
+    * [Inserting markdown](#Inserting-markdown-1)
 * [Page variables](#Page-variables-1)
   * [Local page variables](#Local-page-variables-1)
     * [Default variables](#Default-variables-1)
@@ -651,6 +654,32 @@ The command
 * `\file{name}{path}`
 is a convenient way to link to a local asset (e.g. a pdf file).
 Again, you could use the default markdown way `[name](full_path)` but, as for the fig commands, this allows the use of relative paths.
+
+### Inserting markdown
+
+In some situation, you may have some markdown in a file which you may want to include somewhere else.
+This can be achieved thanks to the  `\textoutput{path}` commmand.
+The path specification is as the other commands, and the text will be formatted.
+
+As an example you could have in `/assets/ccc/sidefile.md`:
+
+```judoc
+some **markdown** in a side file.
+```
+
+where in `/src/index.md`:
+
+```judoc
+This is the index then \textinput{ccc/sidefile}
+```
+
+and this will be equivalent to just having in `/src/index.md`:
+
+```judoc
+This is the index then some **markdown** in a side file.
+```
+
+**Note**: if you don't specify a file extension, `.md` is appended to the specified path.
 
 ## Page variables
 
