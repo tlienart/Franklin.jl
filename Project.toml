@@ -5,6 +5,7 @@ version = "0.2.0"
 
 [deps]
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 JuDocTemplates = "6793090a-55ae-11e9-0511-73b91164f4ea"
 LiveServer = "16fef848-5104-11e9-1b77-fb7a48bbb589"

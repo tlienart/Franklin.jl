@@ -116,6 +116,7 @@ the site. See [`resolve_lxcom`](@ref).
     GLOBAL_LXDEFS["\\figalt"]     = LxDef("\\figalt",     2, EMPTY_SS)
     GLOBAL_LXDEFS["\\fig"]        = LxDef("\\fig",        1, subs("\\figalt{}{#1}"))
     GLOBAL_LXDEFS["\\file"]       = LxDef("\\file",       2, subs("[#1]()"))
+    GLOBAL_LXDEFS["\\tableinput"] = LxDef("\\tableinput", 2, EMPTY_SS)
     # text formatting
     GLOBAL_LXDEFS["\\underline"] = LxDef("\\underline", 1,
                             subs("~~~<span style=\"text-decoration:underline;\">!#1</span>~~~"))
