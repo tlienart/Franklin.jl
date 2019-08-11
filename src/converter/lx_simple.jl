@@ -71,6 +71,66 @@ end
 """
 $SIGNATURES
 
+Internal function to process an array of strings to markdown table (in one single string).
+Header can be specified.
+"""
+function csv2md(csvcontent, header)::String
+    @assert size(csvcontent,2) == size(header,1) "Header must be the same length as the data."
+    csvcontent[1,:] = header
+    return csv2md(csvcontent)
+end
+
+
+"""
+$SIGNATURES
+
+Internal function to process an array of strings to markdown table (in one single string).
+"""
+function csv2md(csvcontent)::String
+    #should we strip?
+    #csvcontent = strip.(csvcontent)
+    structured = wraptable(csvcontent)
+
+    io = IOBuffer()
+    for i in 1:size(structured,1)
+        for j in 1:size(structured,2)
+            print(io, structured[i,j])
+        end
+        print(io,'\n')
+    end
+    return String(take!(io))
+end
+
+
+"""
+$SIGNATURES
+
+Internal function to format an array of strings to markdown.
+"""
+function wraptable(A)::Array{String,2}
+    cols = 1:size(A,2)
+    # width of each coloumn: longest+2
+    cl = [ maximum(length.(A[:,i])) for i in cols] .+2
+    A = [ ' '*a for a in A]
+
+    padded = Array{eltype(A)}(undef, size(A,1)+1, size(A,2))
+    # pad every coloumn
+    for i in cols
+        padded[[1,3:end...],i] = rpad.(A[:,i], Ref(cl[i]))
+    end
+    # header separator
+    padded[2,:] = [ ' '*repeat("-", i-2)*' ' for i in cl]
+    # coloumn separators
+    padded = padded .* '|'
+    padded[:,1] = '|' .* padded[:,1]
+
+    padded
+end
+
+
+"""
+$SIGNATURES
+
 Internal function to resolve a `\\file{name}{rpath}` (finds a file and includes it with link name).
 Note that while `\\figalt` is tolerant to extensions not being specified, this one is not.
 """
