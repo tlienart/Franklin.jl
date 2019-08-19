@@ -47,8 +47,6 @@ Assuming you have those, you will then need to install `highlight.js` via `npm`:
 [sudo] npm install -g highlight.js
 ```
 
-(you _may_ need to add `--save` to make this work well, see if the tests below work and if not, try again with `--save`)
-
 and the python package [`css_html_js_minify`](https://github.com/juancarlospaco/css-html-js-minify) which you can install with `pip3` (if you have python3, JuDoc will try to do this for you):
 
 ```bash
@@ -78,7 +76,7 @@ true
 
     These external dependencies are **not required** to run JuDoc, they are just recommended to benefit from some of the post-processing machinery such as [`optimize`](@ref) or [`publish`](@ref).
 
-**Troubleshooting**:
+### Troubleshooting
 
 If JuDoc complains that it can't find a dependency while you believe that it is installed on your computer, you may have to help JuDoc know how to call the dependency.
 For this, you can specify in your `.julia/config/startup.jl`:
@@ -99,6 +97,13 @@ true
 julia> success(`node -v`)
 true
 ```
+
+#### Highlight.js
+
+If you have issues with getting highlight.js to work, you should give these a try:
+
+* On Windows you _may_ need to add the following to your environment variables ([source](https://stackoverflow.com/a/26480275)): `NODE_PATH=%AppData%\npm\node_modules`
+* You _may_ need to use the `--save` switch ([source](https://stackoverflow.com/a/30886703)): `[sudo] npm install -g --save highlight.js`
 
 ## Quick start
 
