@@ -49,3 +49,41 @@ end
             <p>View $(J.html_err("file matching '/assets/blih.pdf' not found")) here.</p>
             """)
 end
+
+@testset "table" begin
+    testcsv = "h1,h2,h3\nstring1, 1.567, 0\n,,\n l i n e ,.158,99999999"
+    write(joinpath(J.PATHS[:assets], "testcsv.csv"), testcsv)
+    # no header specified
+    h = raw"""
+        A table:
+        \tableinput{}{/assets/testcsv.csv}
+        Done.
+        """ |> seval
+    shouldbe = """<p>A table: <table><tr><th>h1</th><th>h2</th><th>h3</th></tr>
+            <tr><td>string1</td><td>1.567</td><td>0</td></tr>
+            <tr><td></td><td></td><td></td></tr>
+            <tr><td>l i n e</td><td>.158</td><td>99999999</td></tr></table>
+            Done.</p>"""
+    @test isapproxstr(h, shouldbe)
+    # header specified
+    h = raw"""
+        A table:
+        \tableinput{A,B,C}{/assets/testcsv.csv}
+        Done.
+        """ |> seval
+    shouldbe = """<p>A table: <table><tr><th>A</th><th>B</th><th>C</th></tr>
+            <tr><td>string1</td><td>1.567</td><td>0</td></tr>
+            <tr><td></td><td></td><td></td></tr>
+            <tr><td>l i n e</td><td>.158</td><td>99999999</td></tr></table>
+            Done.</p>"""
+    @test isapproxstr(h, shouldbe)
+    # wrong header
+    h = raw"""
+        A table:
+        \tableinput{,}{/assets/testcsv.csv}
+        Done.
+        """ |> seval
+    shouldbe = """<p>A table: <p><span style=\"color:red;\">// header (2) and table (3) size does not match //</span></p>
+            Done.</p>"""
+    @test isapproxstr(h, shouldbe)
+end
