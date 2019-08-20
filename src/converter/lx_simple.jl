@@ -109,44 +109,22 @@ function csv2md(path, header)::String
     if ! isempty(header)
         csvcontent[1,:] = split(header, ",")
     end
-    #should we strip?
-    #csvcontent = strip.(csvcontent)
-    structured = wraptable(csvcontent)
-
+    tablesize = size(csvcontent)
     io = IOBuffer()
-    for i in 1:size(structured,1)
-        for j in 1:size(structured,2)
-            print(io, structured[i,j])
+    # writing the header
+    for a in csvcontent[1,:]
+        write(io, "| ", a, " ")
+    end
+    # writing end of header & header separator
+    write(io, "|\n|", repeat( " ----- |", tablesize[2]), "\n")
+    # writing content
+    for i in 2:tablesize[1]
+        for j in 1:tablesize[2]
+            write(io, "| ", csvcontent[i,j], " ")
         end
-        print(io,'\n')
+        write(io, "|\n")
     end
     return String(take!(io))
-end
-
-
-"""
-$SIGNATURES
-
-Internal function to format an array of strings to markdown.
-"""
-function wraptable(A)::Array{String,2}
-    cols = 1:size(A,2)
-    # width of each coloumn: longest+2
-    cl = [ maximum(length.(A[:,i])) for i in cols] .+2
-    A = [ ' '*a for a in A]
-
-    padded = Array{eltype(A)}(undef, size(A,1)+1, size(A,2))
-    # pad every coloumn
-    for i in cols
-        padded[[1,3:end...],i] = rpad.(A[:,i], Ref(cl[i]))
-    end
-    # header separator
-    padded[2,:] = [ ' '*repeat("-", i-2)*' ' for i in cl]
-    # coloumn separators
-    padded = padded .* '|'
-    padded[:,1] = '|' .* padded[:,1]
-
-    padded
 end
 
 
