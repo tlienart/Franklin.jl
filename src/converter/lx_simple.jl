@@ -85,14 +85,14 @@ function resolve_lx_tableinput(lxc::LxCom)::String
     # both in the relpath and if not found and if /output/ not already the last subdir
     syspath  = joinpath(PATHS[:folder], split(path, '/')...)
     if isfile(syspath)
-        return md2html(csv2md(syspath, header))
+        return csv2html(syspath, header)
     end
     # now try in the output dir just in case (provided we weren't already looking there)
     p1, p2 = splitdir(fdir)
     if splitdir(p1)[2] != "output"
         candpath = joinpath(p1, "output", p2 * fext)
         syspath  = joinpath(PATHS[:folder], split(candpath, '/')...)
-        isfile(syspath) && return md2html(csv2md(syspath, header))
+        isfile(syspath) && return csv2html(syspath, header)
     end
     return html_err("table matching '$path' not found")
 end
@@ -104,12 +104,16 @@ $SIGNATURES
 Internal function to process an array of strings to markdown table (in one single string).
 If header is empty, the first row of the file will be used for header.
 """
-function csv2md(path, header)::String
+function csv2html(path, header)::String
     csvcontent = readdlm(path, ',', String, header=false)
-    if ! isempty(header)
-        csvcontent[1,:] = split(header, ",")
-    end
     tablesize = size(csvcontent)
+    # replacing header
+    if ! isempty(header)
+        newheader = split(header, ",")
+        hs = size(newheader,1)
+        hs != tablesize[2] && return html_err("header ($hs) and table ($(tablesize[2])) size does not match")
+        csvcontent[1,:] = newheader
+    end
     io = IOBuffer()
     # writing the header
     for a in csvcontent[1,:]
@@ -124,7 +128,7 @@ function csv2md(path, header)::String
         end
         write(io, "|\n")
     end
-    return String(take!(io))
+    return md2html(String(take!(io)))
 end
 
 
