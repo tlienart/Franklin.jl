@@ -83,7 +83,7 @@ end
         \tableinput{,}{/assets/testcsv.csv}
         Done.
         """ |> seval
-    shouldbe = """<p>A table: <p><span style=\"color:red;\">// header (2) and table (3) size does not match //</span></p>
+    shouldbe = """<p>A table: <p><span style=\"color:red;\">// header size (2) and number of columns (3) do not match //</span></p>
             Done.</p>"""
     @test isapproxstr(h, shouldbe)
 end

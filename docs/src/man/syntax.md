@@ -687,7 +687,9 @@ You can insert tables directly from CSV files with the `\tableinput{header}{path
 If you generate the file on-the-fly, you should follow this example:
 `````judoc
 ```julia:./tableinput/gen
-testcsv = "h1,h2,h3\n152,some string, 1.5f0\n0,another string,2.87"
+testcsv = "h1,h2,h3
+152,some string, 1.5f0
+0,another string,2.87"
 write("assets/pages/tableinput/testcsv.csv", testcsv)
 ```
 `````
@@ -701,8 +703,8 @@ Which will result in:
 | --- | -------------- | ----- |
 | 152 | some string    | 1.5f0 |
 | 0   | another string | 2.87  |
-
-or if you want to specify the headers:
+In this case given no header was specified in the call, a header was generated from the first line in the CSV (here: h1, h2).
+If you want, you can specify the header:
 `````judoc
 \tableinput{custom h1, custom h2, custom h3}{./tableinput/testcsv.csv}
 `````
@@ -724,7 +726,7 @@ Or you can include an existing CSV file (`assets/test2.csv`):
 There's a couple of rules that you have to keep in mind when using the `\tableinput{}{}` command:
 * The CSV file must have a header line.
 * Columns must be separated with comma (`,`).
-* If header is specified, its length must be matched with the table in the file.
+* If a header is specified, its length must match the number of columns of the file.
 
 ## Page variables
 
