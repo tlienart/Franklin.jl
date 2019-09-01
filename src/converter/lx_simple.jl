@@ -107,20 +107,24 @@ If header is empty, the first row of the file will be used for header.
 function csv2html(path, header)::String
     csvcontent = readdlm(path, ',', String, header=false)
     nrows, ncols = size(csvcontent)
-    # replacing header
+    io = IOBuffer()
+    # writing the header
     if ! isempty(header)
+        # header provided
         newheader = split(header, ",")
         hs = size(newheader,1)
         hs != ncols && return html_err("header size ($hs) and number of columns ($ncols) do not match")
-        csvcontent[1,:] = newheader
+        write(io, prod("| " * h * " " for h in newheader))
+        rowrange = 1:nrows
+    else
+        # header from csv file
+        write(io, prod("| " * csvcontent[1, i] * " " for i in 1:ncols))
+        rowrange = 2:nrows
     end
-    io = IOBuffer()
-    # writing the header
-    write(io, prod("| " * csvcontent[1, i] * " " for i in 1:ncols))
     # writing end of header & header separator
     write(io, "|\n|", repeat( " ----- |", ncols), "\n")
     # writing content
-    for i in 2:nrows
+    for i in rowrange
         for j in 1:ncols
             write(io, "| ", csvcontent[i,j], " ")
         end

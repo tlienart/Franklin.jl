@@ -50,7 +50,7 @@ end
             """)
 end
 
-@testset "table" begin
+@testset "table: source with header" begin
     testcsv = "h1,h2,h3\nstring1, 1.567, 0\n,,\n l i n e ,.158,99999999"
     write(joinpath(J.PATHS[:assets], "testcsv.csv"), testcsv)
     # no header specified
@@ -72,6 +72,7 @@ end
         Done.
         """ |> seval
     shouldbe = """<p>A table: <table><tr><th>A</th><th>B</th><th>C</th></tr>
+            <tr><td>h1</td><td>h2</td><td>h3</td></tr>
             <tr><td>string1</td><td>1.567</td><td>0</td></tr>
             <tr><td></td><td></td><td></td></tr>
             <tr><td>l i n e</td><td>.158</td><td>99999999</td></tr></table>
@@ -81,6 +82,43 @@ end
     h = raw"""
         A table:
         \tableinput{,}{/assets/testcsv.csv}
+        Done.
+        """ |> seval
+    shouldbe = """<p>A table: <p><span style=\"color:red;\">// header size (2) and number of columns (3) do not match //</span></p>
+            Done.</p>"""
+    @test isapproxstr(h, shouldbe)
+end
+
+@testset "table: source without header" begin
+    testcsv = "string1, 1.567, 0\n,,\n l i n e ,.158,99999999"
+    write(joinpath(J.PATHS[:assets], "testcsv.csv"), testcsv)
+    # no header specified
+    h = raw"""
+        A table:
+        \tableinput{}{/assets/testcsv.csv}
+        Done.
+        """ |> seval
+    shouldbe = """<p>A table: <table><tr><th>string1</th><th>1.567</th><th>0</th></tr>
+            <tr><td></td><td></td><td></td></tr>
+            <tr><td>l i n e</td><td>.158</td><td>99999999</td></tr></table>
+            Done.</p>"""
+    @test isapproxstr(h, shouldbe)
+    # header specified
+    h = raw"""
+        A table:
+        \tableinput{A,B,C}{/assets/testcsv.csv}
+        Done.
+        """ |> seval
+    shouldbe = """<p>A table: <table><tr><th>A</th><th>B</th><th>C</th></tr>
+            <tr><td>string1</td><td>1.567</td><td>0</td></tr>
+            <tr><td></td><td></td><td></td></tr>
+            <tr><td>l i n e</td><td>.158</td><td>99999999</td></tr></table>
+            Done.</p>"""
+    @test isapproxstr(h, shouldbe)
+    # wrong header
+    h = raw"""
+        A table:
+        \tableinput{A,B}{/assets/testcsv.csv}
         Done.
         """ |> seval
     shouldbe = """<p>A table: <p><span style=\"color:red;\">// header size (2) and number of columns (3) do not match //</span></p>
