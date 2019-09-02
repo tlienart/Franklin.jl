@@ -706,7 +706,7 @@ Which will result in:
 | 0   | another string | 2.87  |
 In this case given no header was specified in the call, a header was generated from the first line in the CSV (here: h1, h2, h3).
 
-If you're file doesn't have a header, you can specify it in the call:
+If your file doesn't have a header, you can specify it in the call:
 `````judoc
 ```julia:./tableinput/gen
 testcsv = "152,some string, 1.5f0
@@ -728,8 +728,9 @@ With the above in mind, you can also include existing CSV files.
      The look of the table will be defined by your CSS stylesheet.
 
 There's a couple of rules that you have to keep in mind when using the `\tableinput{}{}` command:
-* Columns must be separated with comma (`,`).
-* If a header is specified, its length must match the number of columns of the file.
+
+* Columns must be separated by a comma (`,`).
+* If a header is specified, its length must match the number of columns in the file.
 
 ## Page variables
 

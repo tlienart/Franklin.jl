@@ -2,7 +2,7 @@
 
 ## v0.2
 
-Thanks a lot to @Invarianz, @cserteGT3 and @mbaz for help and feedback leading to this version.
+Thanks a lot to [@Invarianz](https://github.com/Invarianz), [@cserteGT3](https://github.com/cserteGT3) and [@mbaz](https://github.com/mbaz) for help and feedback leading to this version.
 
 **Features**
 
