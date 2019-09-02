@@ -33,6 +33,7 @@ Most of what is presented here is also shown in that example.
     * [Inserting a figure](#Inserting-a-figure-1)
     * [Linking a file](#Linking-a-file-1)
     * [Inserting markdown](#Inserting-markdown-1)
+    * [Inserting a table](#Inserting-a-table-1)
 * [Page variables](#Page-variables-1)
   * [Local page variables](#Local-page-variables-1)
     * [Default variables](#Default-variables-1)
@@ -680,6 +681,55 @@ This is the index then some **markdown** in a side file.
 ```
 
 **Note**: if you don't specify a file extension, `.md` is appended to the specified path.
+
+### Inserting a table
+
+You can insert tables directly from CSV files with the `\tableinput{header}{path}` command.
+If you generate the file on-the-fly, you should follow this example:
+`````judoc
+```julia:./tableinput/gen
+testcsv = "h1,h2,h3
+152,some string, 1.5f0
+0,another string,2.87"
+write("assets/pages/tableinput/testcsv.csv", testcsv)
+```
+`````
+Then you can insert the table with:
+`````judoc
+\tableinput{}{./tableinput/testcsv.csv}
+`````
+Which will result in:
+
+| h1  | h2             | h3    |
+| --- | -------------- | ----- |
+| 152 | some string    | 1.5f0 |
+| 0   | another string | 2.87  |
+In this case given no header was specified in the call, a header was generated from the first line in the CSV (here: h1, h2, h3).
+
+If you're file doesn't have a header, you can specify it in the call:
+`````judoc
+```julia:./tableinput/gen
+testcsv = "152,some string, 1.5f0
+0,another string,2.87"
+write("assets/pages/tableinput/testcsv2.csv", testcsv)
+
+\tableinput{custom h1,custom h2,custom h3}{./tableinput/testcsv2.csv}
+`````
+
+| custom h1 | custom h2      | custom h3 |
+| --------- | -------------- | --------- |
+| 152       | some string    | 1.5f0     |
+| 0         | another string | 2.87      |
+
+With the above in mind, you can also include existing CSV files.
+
+!!! note
+
+     The look of the table will be defined by your CSS stylesheet.
+
+There's a couple of rules that you have to keep in mind when using the `\tableinput{}{}` command:
+* Columns must be separated with comma (`,`).
+* If a header is specified, its length must match the number of columns of the file.
 
 ## Page variables
 
