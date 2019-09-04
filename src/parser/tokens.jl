@@ -32,6 +32,19 @@ end
 """
 $(TYPEDEF)
 
+A special block to wrap special characters like like a html entity and have it left unaffected
+by the Markdown to HTML transformation so that it can be  inserted "as is" in the HTML.
+"""
+struct HTML_SPCH <: AbstractBlock
+    ss::SubString
+    r::String
+end
+HTML_SPCH(ss) = HTML_SPCH(ss, "")
+
+
+"""
+$(TYPEDEF)
+
 Prototype for an open-close block (see [`OCBlock`](@ref)) with the symbol of the opening token
 (e.g. `:MATH_A`) and a corresponding list of closing tokens (e.g. `(:MATH_A,)`).
 See also their definitions in `parser/md_tokens.jl`.
@@ -163,7 +176,7 @@ $(SIGNATURES)
 
 Check whether `c` is a letter or is in a vector of character `ac`.
 """
-α(c::Char, ac::Vector{Char}=Vector{Char}())::Bool = isletter(c) || (c ∈ ac)
+α(c::Char, ac::NTuple{K,Char}=()) where {K} = isletter(c) || (c ∈ ac)
 
 
 """
@@ -175,6 +188,36 @@ soon as a character fails to verify `λ(c)`.
 See also [`isexactly`](@ref).
 """
 incrlook(λ::Function) = (0, false, λ)
+
+"""
+$(SIGNATURES)
+
+In combination with `incrlook`, checks to see if we have something that looks like a @@div
+describing the opening of a div block. Triggering char is a first `@`.
+"""
+is_div_open(i::Int, c::Char) = (i == 1 && return c == '@'; return α(c, ('-',)))
+
+"""
+$(SIGNATURES)
+
+In combination with `incrlook`, checks to see if we have something that looks like a triple
+backtick followed by a valid combination of letter defining a language. Triggering char is a
+first backtick.
+"""
+function is_language(i::Int, c::Char)
+    i < 3  && return c=='`'  # ` followed by `` forms the opening ```
+    i == 3 && return α(c)    # must be a letter
+    return α(c, ('-',))      # can be a letter or a hyphen, for instance ```objective-c
+end
+
+"""
+$(SIGNATURES)
+
+In combination with `incrlook`, checks to see if we have something that looks like a html entity.
+Note that there can be fake matches, so this will need to be validated later on; if validated
+it will be treated as HTML; otherwise it will be shown as markdown. Triggerin char is a `&`.
+"""
+is_html_entity(i::Int, c::Char) = α(c, ('#',';','0','1','2','3','4','5','6','7','8','9','0'))
 
 
 """

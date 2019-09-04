@@ -38,7 +38,7 @@ function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
     blocks, tokens = find_all_ocblocks(tokens, MD_OCB_ALL)
     #>> b. now that blocks have been found, line-returns can be dropped
     filter!(τ -> τ.name != :LINE_RETURN, tokens)
-    #>> c. filter out "fake headers" (opening ### are not at the start of the line)
+    #>> c. filter out "fake headers" (opening ### that are not at the start of a line)
     filter!(β -> validate_header_block(β), blocks)
 
     #> 3. LaTeX commands
@@ -56,16 +56,20 @@ function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
     has_mddefs && (jd_vars = process_md_defs(blocks, isconfig, lxdefs))
     isconfig && return "", jd_vars
 
+    #> 5. Process special characters and html entities so that they can be injected
+    # as they are in the HTML later
+    sp_chars = find_special_chars(tokens)
+
     #
     # Forming of the html string
     #
 
     #> 1. Merge all the blocks that will need further processing before insertion
-    blocks2insert = merge_blocks(lxcoms, deactivate_divs(blocks))
+    blocks2insert = merge_blocks(lxcoms, deactivate_divs(blocks), sp_chars)
 
     #> 2. Form intermediate markdown + html
     inter_md, mblocks = form_inter_md(mds, blocks2insert, lxdefs)
-    inter_html = md2html(inter_md, isrecursive)
+    inter_html = md2html(inter_md; stripp=isrecursive)
 
     #> 3. Plug resolved blocks in partial html to form the final html
     lxcontext = LxContext(lxcoms, lxdefs, braces)

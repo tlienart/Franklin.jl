@@ -46,12 +46,14 @@ const MD_TOKENS = Dict{Char, Vector{TokenFinder}}(
               isexactly("\\begin{eqnarray}") => :MATH_EQA_OPEN,
               isexactly("\\end{eqnarray}")   => :MATH_EQA_CLOSE,
               isexactly("\\newcommand")      => :LX_NEWCOMMAND,
-              incrlook((_, c) -> α(c))       => :LX_COMMAND,    # \command⎵*
+              isexactly("\\\\")              => :CHAR_LINEBREAK, # will be replaced by <br/>
+              isexactly("\\", [' '])         => :CHAR_BACKSPACE, # will be replaced by &#92;
+              isexactly("\\`")               => :CHAR_BACKTICK,  # will be replaced by &#96;
+              incrlook((_, c) -> α(c))       => :LX_COMMAND,     # \command⎵*
              ],
     '@'  => [ isexactly("@def", [' '])  => :MD_DEF_OPEN,  # @def var = ...
               isexactly("@@", SPACER)   => :DIV_CLOSE,    # @@⎵*
-              incrlook((i, c) ->
-                    ifelse(i==1, c=='@', α(c, ['-']))) => :DIV_OPEN, # @@dname
+              incrlook(is_div_open)     => :DIV_OPEN, # @@dname
              ],
     '#'  => [ isexactly("#",      [' ']) => :H1_OPEN, # see note [^2]
               isexactly("##",     [' ']) => :H2_OPEN,
@@ -60,15 +62,17 @@ const MD_TOKENS = Dict{Char, Vector{TokenFinder}}(
               isexactly("#####",  [' ']) => :H5_OPEN,
               isexactly("######", [' ']) => :H6_OPEN,
              ],
+    '&'  => [ incrlook(is_html_entity) => :CHAR_HTML_ENTITY,
+             ],
     '$'  => [ isexactly("\$", ['$'], false) => :MATH_A,  # $⎵*
               isexactly("\$\$") => :MATH_B,              # $$⎵*
              ],
     '_'  => [ isexactly("_\$>_") => :MATH_I_OPEN,   # internal use when resolving a latex command
               isexactly("_\$<_") => :MATH_I_CLOSE,  # within mathenv (e.g. \R <> \mathbb R)
              ],
-    '`'  => [ isexactly("`", ['`'], false) => :CODE_SINGLE,             # `⎵*
-              isexactly("```", SPACER) => :CODE,                        # ```⎵*
-              incrlook((i, c) -> i∈[1,2] ? c=='`' : α(c)) => :CODE_L,   # ``lang*
+    '`'  => [ isexactly("`", ['`'], false) => :CODE_SINGLE, # `⎵*
+              isexactly("```", SPACER)     => :CODE,        # ```⎵*
+              incrlook(is_language)        => :CODE_L,      # ```lang*
              ],
     ) # end dict
 #= NOTE

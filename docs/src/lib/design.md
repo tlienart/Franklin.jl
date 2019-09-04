@@ -109,7 +109,7 @@ For instance, let's consider markdown tokens that start with `@`:
 '@' => [
      isexactly("@def", [' '])  => :MD_DEF_OPEN,
      isexactly("@@", SPACER)   => :DIV_CLOSE,
-     incrlook((i, c) -> ifelse(i==1, c=='@', α(c, ['-']))) => :DIV_OPEN ],
+     incrlook((i, c) -> ifelse(i==1, c=='@', α(c, ('-',)))) => :DIV_OPEN ],
 ```
 
 The vector of `TokenFinder` contains three rules:

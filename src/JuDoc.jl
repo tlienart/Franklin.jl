@@ -67,6 +67,7 @@ include("parser/lx_tokens.jl")
 include("parser/lx_blocks.jl")
 # > markdown
 include("parser/md_tokens.jl")
+include("parser/md_chars.jl")
 # > html
 include("parser/html_tokens.jl")
 include("parser/html_blocks.jl")
