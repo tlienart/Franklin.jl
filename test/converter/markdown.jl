@@ -8,9 +8,8 @@
         * a last element
         """ * J.EOS
 
-    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
-    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
-    lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
+    steps = explore_md_steps(st)
+    lxdefs, tokens, braces, blocks, lxcoms = steps[:latex]
 
     @test length(braces) == 1
     @test J.content(braces[1]) == "blah"
@@ -19,9 +18,7 @@
     @test blocks[1].name == :MATH_A
     @test J.content(blocks[1]) == "f"
 
-    lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
-
-    blocks2insert = J.merge_blocks(lxcoms, blocks)
+    blocks2insert, = steps[:blocks2insert]
 
     inter_md, mblocks = J.form_inter_md(st, blocks2insert, lxdefs)
     @test inter_md == "\n\nA list\n*  ##JDINSERT##  and  ##JDINSERT## \n*  ##JDINSERT##  is a function\n* a last element\n"
@@ -44,14 +41,7 @@ end
         done
         """
 
-    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
-    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
-    lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
-    lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
-
-    blocks2insert = J.merge_blocks(lxcoms, blocks)
-
-    inter_md, mblocks = J.form_inter_md(st, blocks2insert, lxdefs)
+    inter_md, = explore_md_steps(st)[:inter_md]
     @test inter_md == " ##JDINSERT## \nfinally ⊙⊙𝛴⊙ and\n ##JDINSERT## \ndone"
 end
 
@@ -62,19 +52,13 @@ end
         \eqa{\sin^2(x)+\cos^2(x) &=& 1}
         """ * J.EOS
 
-    J.def_PAGE_EQREFS!()
-
-    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
-    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
-    lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
-    lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
-
-    blocks2insert = J.merge_blocks(lxcoms, blocks)
-
-    inter_md, mblocks = J.form_inter_md(st, blocks2insert, lxdefs)
+    steps = explore_md_steps(st)
+    lxdefs, tokens, braces, blocks, lxcoms = steps[:latex]
+    blocks2insert, = steps[:blocks2insert]
+    inter_md, mblocks = steps[:inter_md]
     @test inter_md == "ab ##JDINSERT## \n ##JDINSERT## \n"
 
-    inter_html = J.md2html(inter_md)
+    inter_html, = steps[:inter_html]
     lxcontext = J.LxContext(lxcoms, lxdefs, braces)
 
     @test J.convert_block(blocks2insert[1], lxcontext) == "<div class=\"d\">.</div>"
@@ -95,18 +79,16 @@ end
         \newcommand{\comc}[ 2]{part1:#1 and part2:#2} then \comc{AA}{BB}.
         """ * J.EOS
 
-    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
-    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
-    lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
-    lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
+    steps = explore_md_steps(st)
+    lxdefs, tokens, braces, blocks, lxcoms = steps[:latex]
+    blocks2insert, = steps[:blocks2insert]
+    inter_md, mblocks = steps[:inter_md]
+    inter_html, = steps[:inter_html]
 
-    blocks2insert = J.merge_blocks(lxcoms, blocks)
-
-    inter_md, mblocks = J.form_inter_md(st, blocks2insert, lxdefs)
     @test inter_md == "text A1 text A2  ##JDINSERT##  and\n ##JDINSERT## \n text C1  ##JDINSERT##  text C2\n then  ##JDINSERT## .\n"
 
-    inter_html = J.md2html(inter_md)
     @test inter_html == "<p>text A1 text A2  ##JDINSERT##  and  ##JDINSERT##   text C1  ##JDINSERT##  text C2  then  ##JDINSERT## .</p>\n"
+
     lxcontext = J.LxContext(lxcoms, lxdefs, braces)
     hstring = J.convert_inter_html(inter_html, blocks2insert, lxcontext)
     @test hstring == "<p>text A1 text A2 blah and \nescape B1\n  text C1 \\(\\mathrm{ b}\\) text C2  then part1: AA and part2: BB.</p>\n"

@@ -5,13 +5,15 @@ Helper function for `convert_inter_html` that processes an extracted block given
 `lxc` and returns the processed html that needs to be plugged in the final html.
 """
 function convert_block(β::AbstractBlock, lxcontext::LxContext)::AbstractString
+    # case for special characters / html entities
+    β isa HTML_SPCH     && return ifelse(isempty(β.r), β.ss, β.r)
+
     # Return relevant interpolated string based on case
     βn = β.name
     βn ∈  MD_HEADER     && return convert_header(β)
-    βn == :LINE_SKIP    && return "<p></p>"
-    βn == :CODE_INLINE  && return md2html(β.ss, true)
+    βn == :CODE_INLINE  && return md2html(β.ss; stripp=true, code=true)
     βn == :CODE_BLOCK_L && return convert_code_block(β.ss)
-    βn == :CODE_BLOCK   && return md2html(β.ss)
+    βn == :CODE_BLOCK   && return md2html(β.ss; code=true)
     βn == :ESCAPE       && return chop(β.ss, head=3, tail=3)
 
     # Math block --> needs to call further processing to resolve possible latex
