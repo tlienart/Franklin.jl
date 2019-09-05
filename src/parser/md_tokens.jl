@@ -49,7 +49,7 @@ const MD_TOKENS = Dict{Char, Vector{TokenFinder}}(
               isexactly("\\\\")              => :CHAR_LINEBREAK, # will be replaced by <br/>
               isexactly("\\", (' ',))        => :CHAR_BACKSPACE, # will be replaced by &#92;
               isexactly("\\`")               => :CHAR_BACKTICK,  # will be replaced by &#96;
-              incrlook((_, c, _) -> α(c))    => :LX_COMMAND,     # \command⎵*
+              incrlook((_, c) -> α(c))       => :LX_COMMAND,     # \command⎵*
              ],
     '@'  => [ isexactly("@def", (' ',)) => :MD_DEF_OPEN,  # @def var = ...
               isexactly("@@", SPACER)   => :DIV_CLOSE,    # @@⎵*
