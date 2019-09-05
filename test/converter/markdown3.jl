@@ -144,3 +144,22 @@ end
                         whereas the <code>Hello</code> after the <code>run</code>
                         command is printed output.</p>""")
 end
+
+
+@testset "i198" begin
+    st = raw"""
+            Essentially three things are imitated from LaTeX
+            1. you can introduce definitions using `\newcommand`
+            1. you can use hyper-references with `\eqref`, `\cite`, ...
+            1. you can show nice maths (via KaTeX)
+            """ * J.EOS
+
+    @test isapproxstr(st |> seval, raw"""
+                    <p>Essentially three things are imitated from LaTeX</p>
+                    <ol>
+                        <li><p>you can introduce definitions using <code>\newcommand</code></p></li>
+                        <li><p>you can use hyper-references with <code>\eqref</code>, <code>\cite</code>, ...</p></li>
+                        <li><p>you can show nice maths &#40;via KaTeX&#41;</p></li>
+                    </ol>
+                    """)
+end
