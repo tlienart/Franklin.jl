@@ -1,3 +1,6 @@
+# NOTE: theses tests focus on speciall characters, html entities
+# escaping things etc.
+
 @testset "Backslashes" begin # see issue #205
     st = raw"""
         Hello \ blah \ end
@@ -37,4 +40,30 @@
                 <pre><code>A \ b</code></pre>
                 done</p>
                 """)
+end
+
+@testset "Backslashes2" begin # see issue #205
+    st = raw"""
+        Hello \ blah \ end
+        and `B \ c` end \\ and
+        ```
+        A \ b
+        ```
+        done
+        """ * J.EOS
+    steps = explore_md_steps(st)
+    tokens, = steps[:tokenization]
+    @test tokens[7].name == :CHAR_LINEBREAK
+    h = st |> seval
+    @test isapproxstr(st |> seval, """
+                        <p>Hello &#92; blah &#92; end
+                        and <code>B \ c</code> end <br/> and
+                        <pre><code>A \ b</code></pre>
+                        done</p>
+                        """)
+end
+
+@testset "Backtick" begin # see issue #205
+    st = raw"""Blah \` etc""" * J.EOS
+    @test isapproxstr(st |> seval, "<p>Blah &#96; etc</p>")
 end
