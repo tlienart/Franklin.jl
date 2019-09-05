@@ -157,7 +157,7 @@ julia> s
 5
 ```
 """
-function isexactly(refstring::AbstractString, follow=Vector{Char}(),
+function isexactly(refstring::AbstractString, follow::NTuple{K,Char} where K = (),
                    isfollowed=true)::Tuple{Int,Bool,Function}
     # number of steps from the start character
     steps = prevind(refstring, lastindex(refstring))
