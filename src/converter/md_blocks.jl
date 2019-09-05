@@ -10,11 +10,11 @@ function convert_block(β::AbstractBlock, lxcontext::LxContext)::AbstractString
 
     # Return relevant interpolated string based on case
     βn = β.name
-    βn ∈  MD_HEADER     && return convert_header(β)
-    βn == :CODE_INLINE  && return md2html(β.ss; stripp=true, code=true)
-    βn == :CODE_BLOCK_L && return convert_code_block(β.ss)
-    βn == :CODE_BLOCK   && return md2html(β.ss; code=true)
-    βn == :ESCAPE       && return chop(β.ss, head=3, tail=3)
+    βn ∈  MD_HEADER        && return convert_header(β)
+    βn == :CODE_INLINE     && return md2html(β.ss; stripp=true, code=true)
+    βn == :CODE_BLOCK_LANG && return convert_code_block(β.ss)
+    βn == :CODE_BLOCK      && return md2html(β.ss; code=true)
+    βn == :ESCAPE          && return chop(β.ss, head=3, tail=3)
 
     # Math block --> needs to call further processing to resolve possible latex
     βn ∈ MATH_BLOCKS_NAMES && return convert_math_block(β, lxcontext.lxdefs)

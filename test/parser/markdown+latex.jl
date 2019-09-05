@@ -78,7 +78,7 @@ end
     @test lxdefs[3].def  == "\\mathbb R"
 
     @test blocks[2].name == :ESCAPE
-    @test blocks[1].name == :CODE_BLOCK_L
+    @test blocks[1].name == :CODE_BLOCK_LANG
 
     lxcoms, tokens = J.find_md_lxcoms(tokens, lxdefs, braces)
 
@@ -138,7 +138,7 @@ end
     @test lxcoms[1].ss == "\\com"
     @test lxcoms[2].ss == "\\comb{blah}"
 
-    @test blocks[1].name == :CODE_BLOCK_L
+    @test blocks[1].name == :CODE_BLOCK_LANG
     @test blocks[1].ss == "```julia\nf(x) = x^2\n```"
     @test J.content(blocks[1]) == "\nf(x) = x^2\n"
 

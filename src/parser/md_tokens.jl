@@ -47,32 +47,33 @@ const MD_TOKENS = Dict{Char, Vector{TokenFinder}}(
               isexactly("\\end{eqnarray}")   => :MATH_EQA_CLOSE,
               isexactly("\\newcommand")      => :LX_NEWCOMMAND,
               isexactly("\\\\")              => :CHAR_LINEBREAK, # will be replaced by <br/>
-              isexactly("\\", [' '])         => :CHAR_BACKSPACE, # will be replaced by &#92;
+              isexactly("\\", (' ',))        => :CHAR_BACKSPACE, # will be replaced by &#92;
               isexactly("\\`")               => :CHAR_BACKTICK,  # will be replaced by &#96;
               incrlook((_, c) -> α(c))       => :LX_COMMAND,     # \command⎵*
              ],
-    '@'  => [ isexactly("@def", [' '])  => :MD_DEF_OPEN,  # @def var = ...
+    '@'  => [ isexactly("@def", (' ',)) => :MD_DEF_OPEN,  # @def var = ...
               isexactly("@@", SPACER)   => :DIV_CLOSE,    # @@⎵*
               incrlook(is_div_open)     => :DIV_OPEN, # @@dname
              ],
-    '#'  => [ isexactly("#",      [' ']) => :H1_OPEN, # see note [^2]
-              isexactly("##",     [' ']) => :H2_OPEN,
-              isexactly("###",    [' ']) => :H3_OPEN,
-              isexactly("####",   [' ']) => :H4_OPEN,
-              isexactly("#####",  [' ']) => :H5_OPEN,
-              isexactly("######", [' ']) => :H6_OPEN,
+    '#'  => [ isexactly("#",      (' ',)) => :H1_OPEN, # see note [^2]
+              isexactly("##",     (' ',)) => :H2_OPEN,
+              isexactly("###",    (' ',)) => :H3_OPEN,
+              isexactly("####",   (' ',)) => :H4_OPEN,
+              isexactly("#####",  (' ',)) => :H5_OPEN,
+              isexactly("######", (' ',)) => :H6_OPEN,
              ],
     '&'  => [ incrlook(is_html_entity) => :CHAR_HTML_ENTITY,
              ],
-    '$'  => [ isexactly("\$", ['$'], false) => :MATH_A,  # $⎵*
+    '$'  => [ isexactly("\$", ('$',), false) => :MATH_A,  # $⎵*
               isexactly("\$\$") => :MATH_B,              # $$⎵*
              ],
     '_'  => [ isexactly("_\$>_") => :MATH_I_OPEN,   # internal use when resolving a latex command
               isexactly("_\$<_") => :MATH_I_CLOSE,  # within mathenv (e.g. \R <> \mathbb R)
              ],
-    '`'  => [ isexactly("`", ['`'], false) => :CODE_SINGLE, # `⎵*
-              isexactly("```", SPACER)     => :CODE,        # ```⎵*
-              incrlook(is_language)        => :CODE_L,      # ```lang*
+    '`'  => [ isexactly("`", ('`',), false) => :CODE_SINGLE, # `⎵
+              isexactly("``",('`',), false) => :CODE_DOUBLE, # ``⎵*
+              isexactly("```", SPACER)      => :CODE_TRIPLE, # ```⎵*
+              incrlook(is_language)         => :CODE_LANG,   # ```lang*
              ],
     ) # end dict
 #= NOTE
@@ -115,24 +116,25 @@ The only `OCBlock` not in this dictionary is the brace block since it should not
 content which is needed to find latex definitions (see parser/markdown/find_blocks/find_md_lxdefs).
 """
 const MD_OCB = [
-    # name                 opening token   closing token(s)     nestable
+    # name                    opening token   closing token(s)     nestable
+    # ---------------------------------------------------------------------
+    OCProto(:COMMENT,         :COMMENT_OPEN, (:COMMENT_CLOSE,),    false),
+    OCProto(:CODE_BLOCK_LANG, :CODE_LANG,    (:CODE_TRIPLE,),      false),
+    OCProto(:CODE_BLOCK,      :CODE_TRIPLE,  (:CODE_TRIPLE,),      false),
+    OCProto(:CODE_INLINE,     :CODE_DOUBLE,  (:CODE_DOUBLE,),      false),
+    OCProto(:CODE_INLINE,     :CODE_SINGLE,  (:CODE_SINGLE,),      false),
+    OCProto(:ESCAPE,          :ESCAPE,       (:ESCAPE,),           false),
     # ------------------------------------------------------------------
-    OCProto(:COMMENT,      :COMMENT_OPEN, (:COMMENT_CLOSE,),    false),
-    OCProto(:CODE_BLOCK_L, :CODE_L,       (:CODE,),             false),
-    OCProto(:CODE_BLOCK,   :CODE,         (:CODE,),             false),
-    OCProto(:CODE_INLINE,  :CODE_SINGLE,  (:CODE_SINGLE,),      false),
-    OCProto(:ESCAPE,       :ESCAPE,       (:ESCAPE,),           false),
+    OCProto(:H1,              :H1_OPEN,      (:LINE_RETURN, :EOS), false), # see [^3]
+    OCProto(:H2,              :H2_OPEN,      (:LINE_RETURN, :EOS), false),
+    OCProto(:H3,              :H3_OPEN,      (:LINE_RETURN, :EOS), false),
+    OCProto(:H4,              :H4_OPEN,      (:LINE_RETURN, :EOS), false),
+    OCProto(:H5,              :H5_OPEN,      (:LINE_RETURN, :EOS), false),
+    OCProto(:H6,              :H6_OPEN,      (:LINE_RETURN, :EOS), false),
     # ------------------------------------------------------------------
-    OCProto(:H1,           :H1_OPEN,      (:LINE_RETURN, :EOS), false), # see [^3]
-    OCProto(:H2,           :H2_OPEN,      (:LINE_RETURN, :EOS), false),
-    OCProto(:H3,           :H3_OPEN,      (:LINE_RETURN, :EOS), false),
-    OCProto(:H4,           :H4_OPEN,      (:LINE_RETURN, :EOS), false),
-    OCProto(:H5,           :H5_OPEN,      (:LINE_RETURN, :EOS), false),
-    OCProto(:H6,           :H6_OPEN,      (:LINE_RETURN, :EOS), false),
-    # ------------------------------------------------------------------
-    OCProto(:MD_DEF,       :MD_DEF_OPEN,  (:LINE_RETURN, :EOS), false), # see [^4]
-    OCProto(:LXB,          :LXB_OPEN,     (:LXB_CLOSE,),        true ),
-    OCProto(:DIV,          :DIV_OPEN,     (:DIV_CLOSE,),        true ),
+    OCProto(:MD_DEF,          :MD_DEF_OPEN,  (:LINE_RETURN, :EOS), false), # see [^4]
+    OCProto(:LXB,             :LXB_OPEN,     (:LXB_CLOSE,),        true ),
+    OCProto(:DIV,             :DIV_OPEN,     (:DIV_CLOSE,),        true ),
     ]
 #= NOTE:
 * [3] a header can be closed by either a line return or an end of string (for instance in the case

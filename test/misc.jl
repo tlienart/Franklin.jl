@@ -36,7 +36,7 @@ end
     @test λ("<!--") == true
     @test λ("<--") == false
 
-    steps, b, λ = J.isexactly("\$", ['\$'])
+    steps, b, λ = J.isexactly("\$", ('\$',))
     @test steps == 1
     @test b == true
     @test λ("\$\$") == true
@@ -44,7 +44,7 @@ end
     @test λ("a\$") == false
 
     rs = "\$"
-    steps, b, λ = J.isexactly(rs, ['\$'], false)
+    steps, b, λ = J.isexactly(rs, ('\$',), false)
     @test steps == nextind(rs, prevind(rs, lastindex(rs)))
     @test b == true
     @test λ("\$\$") == false

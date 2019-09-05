@@ -75,3 +75,62 @@ end
     st = raw"""AT&T""" * J.EOS
     @test isapproxstr(st |> seval, "<p>AT&amp;T</p>")
 end
+
+@testset "DoubleTicks" begin # see issue #204
+    st = raw"""A `single` B""" * J.EOS
+    steps = explore_md_steps(st)
+    tokens = steps[:tokenization].tokens
+    @test tokens[1].name == :CODE_SINGLE
+    @test tokens[2].name == :CODE_SINGLE
+
+    st = raw"""A ``double`` B""" * J.EOS
+    steps = explore_md_steps(st)
+    tokens = steps[:tokenization].tokens
+    @test tokens[1].name == :CODE_DOUBLE
+    @test tokens[2].name == :CODE_DOUBLE
+
+    st = raw"""A `single` and ``double`` B""" * J.EOS
+    steps = explore_md_steps(st)
+    tokens = steps[:tokenization].tokens
+    @test tokens[1].name == :CODE_SINGLE
+    @test tokens[2].name == :CODE_SINGLE
+    @test tokens[3].name == :CODE_DOUBLE
+    @test tokens[4].name == :CODE_DOUBLE
+
+    st = raw"""A `single` and ``double ` double`` B""" * J.EOS
+    steps = explore_md_steps(st)
+    blocks, tokens = steps[:ocblocks]
+    @test blocks[1].name == :CODE_INLINE
+    @test J.content(blocks[1]) == "double ` double"
+    @test blocks[2].name == :CODE_INLINE
+    @test J.content(blocks[2]) == "single"
+
+    st = raw"""A `single` and ``double ` double`` and ``` triple ``` B""" * J.EOS
+    steps = explore_md_steps(st)
+    tokens = steps[:tokenization].tokens
+    @test tokens[1].name == :CODE_SINGLE
+    @test tokens[2].name == :CODE_SINGLE
+    @test tokens[3].name == :CODE_DOUBLE
+    @test tokens[4].name == :CODE_SINGLE
+    @test tokens[5].name == :CODE_DOUBLE
+    @test tokens[6].name == :CODE_TRIPLE
+    @test tokens[7].name == :CODE_TRIPLE
+    blocks, tokens = steps[:ocblocks]
+    @test blocks[1].name == :CODE_BLOCK
+    @test J.content(blocks[1]) == " triple "
+    @test blocks[2].name == :CODE_INLINE
+    @test blocks[3].name == :CODE_INLINE
+
+    st = raw"""A `single` and ``double ` double`` and ``` triple `` triple```
+               and ```julia 1+1``` and `single again` done""" * J.EOS
+    steps = explore_md_steps(st)
+    blocks, _ = steps[:ocblocks]
+    @test blocks[1].name == :CODE_BLOCK_LANG
+    @test J.content(blocks[1]) == " 1+1"
+    @test blocks[2].name == :CODE_BLOCK
+    @test J.content(blocks[2]) == " triple `` triple"
+    @test blocks[3].name == :CODE_INLINE
+    @test J.content(blocks[3]) == "double ` double"
+    @test blocks[4].name == :CODE_INLINE
+    @test J.content(blocks[4]) == "single"
+end
