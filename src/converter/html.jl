@@ -36,6 +36,12 @@ function convert_html(hs::AbstractString, allvars::PageVars; isoptim::Bool=false
     (head < strlen) && write(htmls, subs(hs, head, strlen))
 
     fhs = String(take!(htmls))
+
+    # See issue #204, basically not all markdown links are processed  as
+    # per common mark with the JuliaMarkdown, so this is a patch that kind
+    # of does
+    fhs = find_and_fix_md_links(fhs)
+
     # if it ends with </p>\n but doesn't start with <p>, chop it off
     # this may happen if the first element parsed is an ocblock (not text)
     δ = ifelse(endswith(fhs, "</p>\n") && !startswith(fhs, "<p>"), 5, 0)

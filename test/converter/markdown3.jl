@@ -163,3 +163,27 @@ end
                     </ol>
                     """)
 end
+
+
+@testset "links" begin
+   st = raw"""
+        A [link] and
+        B [link 2] and
+        C [Python][] and
+        D [a link][1] and
+        blah
+        [link]: https://julialang.org/
+        [link 2]: https://www.mozilla.org/
+        [Python]: https://www.python.org/
+        [1]: http://slashdot.org/
+        end
+        """ * J.EOS
+    @test isapproxstr(st |> seval, """
+                        <p>
+                            A <a href="https://julialang.org/">link</a> and
+                            B <a href="https://www.mozilla.org/">link 2</a> and
+                            C <a href="https://www.python.org/" title="Python">Python</a> and
+                            D <a href="http://slashdot.org/">a link</a>
+                            end
+                        </p>""")
+end

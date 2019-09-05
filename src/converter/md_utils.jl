@@ -9,7 +9,7 @@ processor, this is relevant for things that are parsed within latex commands etc
 function md2html(ss::AbstractString; stripp::Bool=false, code::Bool=false)::AbstractString
     isempty(ss) && return ss
 
-    # Use the base Markdown -> Html converter and post process headers
+    # Use the base Markdown -> Html converter
     partial = ss |> fix_inserts |> Markdown.parse |> Markdown.html
 
     # In some cases, base converter adds <p>...</p>\n which we might not want

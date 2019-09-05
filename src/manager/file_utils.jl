@@ -41,8 +41,8 @@ function write_page(root::String, file::String, head::String, pg_foot::String, f
 
     # adding document variables to the dictionary
     # note that some won't change and so it's not necessary to do this every time
-    # but it takes negligible time to do this so ¯\_(ツ)_/¯ (and it's less annoying than
-    # to keep tabs on which file has already been treated etc).
+    # but it takes negligible time to do this so ¯\_(ツ)_/¯ (and it's less annoying
+    # than keeping tabs on which file has already been treated etc).
     s = stat(fpath)
     set_var!(jd_vars, "jd_ctime", jd_date(unix2datetime(s.ctime)))
     set_var!(jd_vars, "jd_mtime", jd_date(unix2datetime(s.mtime)))
