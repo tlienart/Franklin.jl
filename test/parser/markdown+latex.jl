@@ -1,7 +1,8 @@
 @testset "Find Tokens" begin
     a = raw"""some markdown then `code` and @@dname block @@""" * J.EOS
 
-    tokens = J.find_tokens(a, J.MD_TOKENS, J.MD_1C_TOKENS)
+    steps = explore_md_steps(a)
+    tokens, = steps[:tokenization]
 
     @test tokens[1].name == :CODE_SINGLE
     @test tokens[2].name == :CODE_SINGLE
@@ -22,8 +23,8 @@ end
         and done {target} done.
         """ * J.EOS
 
-    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
-    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
+    steps = explore_md_steps(st)
+    blocks, tokens = steps[:ocblocks]
     braces = filter(β -> β.name == :LXB, blocks)
 
     # escape block
@@ -64,9 +65,7 @@ end
         ```
         """ * J.EOS
 
-    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
-    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
-    lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
+    lxdefs, tokens, braces, blocks = explore_md_steps(st)[:latex]
 
     @test lxdefs[1].name == "\\E"
     @test lxdefs[1].narg == 1
@@ -95,9 +94,7 @@ end
         \newcommand{\comb}[ 2]{hello #1 #2}
         """ * J.EOS
 
-    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
-    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
-    lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
+    lxdefs, tokens, braces, blocks, lxcoms = explore_md_steps(st)[:latex]
 
     @test lxdefs[1].name == "\\com"
     @test lxdefs[1].narg == 0
@@ -136,10 +133,7 @@ end
         @@adiv inner part @@ final.
         """ * J.EOS
 
-    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
-    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
-    lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
-    lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
+    lxdefs, tokens, braces, blocks, lxcoms = explore_md_steps(st)[:latex]
 
     @test lxcoms[1].ss == "\\com"
     @test lxcoms[2].ss == "\\comb{blah}"
@@ -160,6 +154,7 @@ end
         \newcommand{\comb}[1]{HH#1HH}
         etc \comb then.
         """ * J.EOS
+
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
     lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
@@ -178,10 +173,7 @@ end
         \newcommand{\comc}[ 2]{part1:#1 and part2:#2} then \comc{AA}{BB}.
         """ * J.EOS
 
-    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
-    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
-    lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
-    lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
+    lxdefs, tokens, braces, blocks, lxcoms = explore_md_steps(st)[:latex]
 
     @test lxdefs[1].name == "\\com" && lxdefs[1].narg == 0 &&  lxdefs[1].def == "blah"
     @test lxdefs[2].name == "\\comb" && lxdefs[2].narg == 1 && lxdefs[2].def == "\\mathrm{#1}"
@@ -202,11 +194,7 @@ end
         end \com{B}.
         """ * J.EOS
 
-    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
-    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
-    filter!(β -> J.validate_header_block(β), blocks)
-    lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
-    lxcoms, _ = J.find_md_lxcoms(tokens, lxdefs, braces)
+    lxdefs, tokens, braces, blocks, lxcoms = explore_md_steps(st)[:latex]
 
     @test blocks[1].name == :COMMENT
     @test J.content(blocks[1]) == " comment "
@@ -243,9 +231,9 @@ end
         ###### t6
         6
         """ * J.EOS
-    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
-    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
-    filter!(β -> J.validate_header_block(β), blocks)
+
+    tokens, blocks = explore_md_steps(st)[:filter]
+
     @test blocks[1].name == :H1
     @test blocks[2].name == :H2
     @test blocks[3].name == :H3

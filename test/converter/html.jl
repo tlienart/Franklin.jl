@@ -16,13 +16,9 @@
         final text
         """
 
-    tokens = J.find_tokens(hs, J.HTML_TOKENS, J.HTML_1C_TOKENS)
-    hblocks, tokens = J.find_all_ocblocks(tokens, J.HTML_OCB)
-    qblocks = J.qualify_html_hblocks(hblocks)
-    cblocks, qblocks = J.find_html_cblocks(qblocks)
-    cdblocks, qblocks = J.find_html_cdblocks(qblocks)
-    hblocks = J.merge_blocks(qblocks, cblocks, cdblocks)
+    hblocks, = explore_h_steps(hs)[:hblocks]
     convhbs = [J.convert_html_block(hb, allvars) for hb ∈ hblocks]
+
     @test convhbs[1] == "INPUT1"
     @test convhbs[2] == "\nother stuff\n"
     @test J.convert_html(hs, allvars) == "Some text then INPUT1 and\n\nother stuff\n\nfinal text\n"
@@ -30,26 +26,17 @@
     hs = raw"""
         abc {{isdef no}}yada{{end}} def
         """
-    tokens = J.find_tokens(hs, J.HTML_TOKENS, J.HTML_1C_TOKENS)
-    hblocks, tokens = J.find_all_ocblocks(tokens, J.HTML_OCB)
-    qblocks = J.qualify_html_hblocks(hblocks)
-    cblocks, qblocks = J.find_html_cblocks(qblocks)
-    cdblocks, qblocks = J.find_html_cdblocks(qblocks)
-    hblocks = J.merge_blocks(qblocks, cblocks, cdblocks)
+    hblocks, = explore_h_steps(hs)[:hblocks]
     @test J.convert_html_block(hblocks[1], allvars) == ""
 
     hs = raw"""abc {{ fill nope }} ... """
-    tokens = J.find_tokens(hs, J.HTML_TOKENS, J.HTML_1C_TOKENS)
-    hblocks, tokens = J.find_all_ocblocks(tokens, J.HTML_OCB)
-    qblocks = J.qualify_html_hblocks(hblocks)
+    qblocks, = explore_h_steps(hs)[:qblocks]
     @test (@test_logs (:warn, "I found a '{{fill nope}}' but I do not know the variable 'nope'. Ignoring.") J.convert_html_block(qblocks[1], allvars)) == ""
 
     hs = raw"""
         unknown function {{ unknown fun }} and see.
         """
-    tokens = J.find_tokens(hs, J.HTML_TOKENS, J.HTML_1C_TOKENS)
-    hblocks, tokens = J.find_all_ocblocks(tokens, J.HTML_OCB)
-    qblocks = J.qualify_html_hblocks(hblocks)
+    qblocks, = explore_h_steps(hs)[:qblocks]
     @test qblocks[1] isa J.HFun
     @test (@test_logs (:warn, "I found a function block '{{unknown ...}}' but don't recognise the function name. Ignoring.") J.convert_html_block(qblocks[1], allvars)) == ""
 end
@@ -66,9 +53,7 @@ end
     @test J.convert_html(hs, allvars) == "Trying to insert: some random text to insert and see.\n"
 
     hs = raw"""Trying to insert: {{ insert nope.rnd }} and see."""
-    tokens = J.find_tokens(hs, J.HTML_TOKENS, J.HTML_1C_TOKENS)
-    hblocks, tokens = J.find_all_ocblocks(tokens, J.HTML_OCB)
-    qblocks = J.qualify_html_hblocks(hblocks)
+    qblocks, = explore_h_steps(hs)[:qblocks]
     @test (@test_logs (:warn, "I found an {{insert ...}} block and tried to insert '$(joinpath(J.PATHS[:src_html], "nope.rnd"))' but I couldn't find the file. Ignoring.") J.convert_html_block(qblocks[1], allvars)) == ""
 end
 

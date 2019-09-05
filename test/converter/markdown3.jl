@@ -7,7 +7,9 @@
         ```
         done
         """ * J.EOS
-    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
+
+    steps = explore_md_steps(st)
+    tokens, = steps[:tokenization]
 
     # the first two backspaces are detected
     @test tokens[1].ss == "\\" && tokens[1].name == :CHAR_BACKSPACE
@@ -15,8 +17,7 @@
     # the third one also
     @test tokens[5].ss == "\\" && tokens[5].name == :CHAR_BACKSPACE
 
-    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
-    filter!(τ -> τ.name != :LINE_RETURN, tokens)
+    sp_chars, = steps[:spchars]
 
     # there's only two tokens left which are the backspaces NOT in the code env
     sp_chars = J.find_special_chars(tokens)
@@ -26,9 +27,7 @@
         @test sp_chars[i].r == "&#92;"
     end
 
-    blocks2insert = J.merge_blocks(blocks, sp_chars)
-    inter_md, mblocks = J.form_inter_md(st, blocks2insert, J.LxDef[])
-    inter_html = J.md2html(inter_md)
+    inter_html, = steps[:inter_html]
 
     @test isapproxstr(inter_html, "<p>Hello  ##JDINSERT##  blah  ##JDINSERT##  end and  ##JDINSERT##  end and  ##JDINSERT##  done</p>")
 

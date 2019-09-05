@@ -7,13 +7,13 @@
         show other stuff
         {{ end }}"""
 
-    tokens = JuDoc.find_tokens(st, JuDoc.HTML_TOKENS, JuDoc.HTML_1C_TOKENS)
-    hblocks, tokens = JuDoc.find_all_ocblocks(tokens, J.HTML_OCB)
-    @test hblocks[1].ss == "{{ fill v1 }}"
-    @test hblocks[2].ss == "{{ if b1 }}"
-    @test hblocks[3].ss == "{{ fill v2 }}"
-    @test hblocks[4].ss == "{{ else }}"
-    @test hblocks[5].ss == "{{ end }}"
+    blocks, tokens = explore_h_steps(st)[:ocblocks]
+
+    @test blocks[1].ss == "{{ fill v1 }}"
+    @test blocks[2].ss == "{{ if b1 }}"
+    @test blocks[3].ss == "{{ fill v2 }}"
+    @test blocks[4].ss == "{{ else }}"
+    @test blocks[5].ss == "{{ end }}"
 end
 
 
@@ -27,9 +27,7 @@ end
         {{ end }}
         """
 
-    tokens = JuDoc.find_tokens(st, JuDoc.HTML_TOKENS, JuDoc.HTML_1C_TOKENS)
-    hblocks, tokens = JuDoc.find_all_ocblocks(tokens, J.HTML_OCB)
-    qblocks = JuDoc.qualify_html_hblocks(hblocks)
+    qblocks, = explore_h_steps(st)[:qblocks]
 
     @test qblocks[1].fname == "fill"
     @test qblocks[1].params == ["v1"]
@@ -54,10 +52,7 @@ end
         final text
         """
 
-    tokens = JuDoc.find_tokens(st, JuDoc.HTML_TOKENS, JuDoc.HTML_1C_TOKENS)
-    hblocks, tokens = JuDoc.find_all_ocblocks(tokens, J.HTML_OCB)
-    qblocks = JuDoc.qualify_html_hblocks(hblocks)
-    cblocks, qblocks = JuDoc.find_html_cblocks(qblocks)
+    cblocks,cdblocks,cpblocks,qblocks = explore_h_steps(st)[:cblocks]
 
     @test cblocks[1].init_cond == "b1"
     @test cblocks[1].sec_conds == ["b2"]
@@ -80,12 +75,7 @@ end
         final text
         """
 
-    tokens = JuDoc.find_tokens(st, JuDoc.HTML_TOKENS, JuDoc.HTML_1C_TOKENS)
-    hblocks, tokens = JuDoc.find_all_ocblocks(tokens, J.HTML_OCB)
-    qblocks = JuDoc.qualify_html_hblocks(hblocks)
-    cblocks, qblocks = JuDoc.find_html_cblocks(qblocks)
-    cdblocks, qblocks = JuDoc.find_html_cdblocks(qblocks)
-    hblocks = JuDoc.merge_blocks(qblocks, cblocks, cdblocks)
+    hblocks, = explore_h_steps(st)[:hblocks]
 
     @test hblocks[1].ss == "{{ fill v1 }}"
     @test hblocks[2].ss == "{{ if b1 }}\nshow stuff here {{ fill v2 }}\n{{ elseif b2 }}\nother stuff\n{{ else }}\nshow other stuff\n{{ end }}"
