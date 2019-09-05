@@ -153,6 +153,7 @@ end
             1. you can use hyper-references with `\eqref`, `\cite`, ...
             1. you can show nice maths (via KaTeX)
             """ * J.EOS
+
     @test isapproxstr(st |> seval, raw"""
                     <p>Essentially three things are imitated from LaTeX</p>
                     <ol>
