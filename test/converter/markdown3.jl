@@ -134,3 +134,13 @@ end
     @test blocks[4].name == :CODE_INLINE
     @test J.content(blocks[4]) == "single"
 end
+
+@testset "\\ and \`" begin # see issue 203
+    st = raw"""The `"Hello\n"` after the `readall` command is a returned value, whereas the `Hello` after the `run` command is printed output.""" * J.EOS
+    st |> seval
+    @test isapproxstr(st |> seval, raw"""
+                        <p>The <code>&quot;Hello\n&quot;</code> after
+                        the <code>readall</code> command is a returned value,
+                        whereas the <code>Hello</code> after the <code>run</code>
+                        command is printed output.</p>""")
+end
