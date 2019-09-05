@@ -67,3 +67,11 @@ end
     st = raw"""Blah \` etc""" * J.EOS
     @test isapproxstr(st |> seval, "<p>Blah &#96; etc</p>")
 end
+
+@testset "HTMLEnts" begin # see issue #206
+    st = raw"""Blah &pi; etc""" * J.EOS
+    @test isapproxstr(st |> seval, "<p>Blah &pi; etc</p>")
+    # but ill-formed ones (either deliberately or not) will be parsed
+    st = raw"""AT&T""" * J.EOS
+    @test isapproxstr(st |> seval, "<p>AT&amp;T</p>")
+end
