@@ -3,7 +3,8 @@ $(SIGNATURES)
 
 Convenience function to introduce a hyper reference.
 """
-html_ahref(link::AbstractString, name::Union{Int,AbstractString}) = "<a href=\"$link\">$name</a>"
+html_ahref(link::AbstractString, name::Union{Int,AbstractString}; title::AbstractString="") =
+    "<a href=\"$link\"$(isempty(title) ? "" : "title=\"$(Markdown.htmlesc(title))\"")>$name</a>"
 
 """
 $(SIGNATURES)

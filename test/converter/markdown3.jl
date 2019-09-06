@@ -163,3 +163,67 @@ end
                     </ol>
                     """)
 end
+
+
+@testset "fixlinks" begin
+   st = raw"""
+        A [link] and
+        B [link 2] and
+        C [Python][] and
+        D [a link][1] and
+        blah
+        [link]: https://julialang.org/
+        [link 2]: https://www.mozilla.org/
+        [Python]: https://www.python.org/
+        [1]: http://slashdot.org/
+        end
+        """ * J.EOS
+    @test isapproxstr(st |> seval, """
+                        <p>
+                            A <a href=\"https://julialang.org/\">link</a> and
+                            B <a href=\"https://www.mozilla.org/\">link 2</a> and
+                            C <a href=\"https://www.python.org/\"title=\"Python\">Python</a> and
+                            D <a href=\"http://slashdot.org/\">a link</a> and
+                            blah
+                            end
+                         </p>""")
+end
+
+
+@testset "fixlinks2" begin
+    st = raw"""
+        A [link] and
+        B ![link][id] and
+        blah
+        [link]: https://julialang.org/
+        [id]: ./path/to/img.png
+        """ * J.EOS
+
+    @test isapproxstr(st |> seval, """
+                      <p>
+                          A <a href="https://julialang.org/">link</a> and
+                          B <img src="./path/to/img.png" alt="link"> and
+                          blah
+                      </p>""")
+end
+
+
+@testset "fixlinks3" begin
+    st = raw"""
+        A [link] and
+        B [unknown] and
+        C ![link][id] and
+        D
+        [link]: https://julialang.org/
+        [id]: ./path/to/img.png
+        [not]: https://www.mozilla.org/
+        """ * J.EOS
+
+    @test isapproxstr(st |> seval, """
+                      <p>
+                        A <a href="https://julialang.org/">link</a> and
+                        B &#91;unknown&#93; and
+                        C <img src="./path/to/img.png" alt="link"> and
+                        D
+                      </p>""")
+end
