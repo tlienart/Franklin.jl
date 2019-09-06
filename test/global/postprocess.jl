@@ -54,9 +54,9 @@ if J.JD_CAN_PRERENDER && J.JD_CAN_HIGHLIGHT
     """
   jskx = J.js_prerender_katex(hs)
   # conversion of `\(M\)` (inline)
-  @test occursin("""<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>M</mi></mrow>""", jskx)
+  @test occursin("""<span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi></mrow>""", jskx)
   # conversion of the equation (display)
-  @test occursin("""<span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>M</mi>""", jskx)
+  @test occursin("""<span class=\"katex-display\"><span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi>""", jskx)
   jshl = J.js_prerender_highlight(hs)
   # conversion of the code
   @test occursin("""<pre><code class="julia hljs"><span class="hljs-keyword">using</span>""", jshl)

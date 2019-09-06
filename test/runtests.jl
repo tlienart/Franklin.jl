@@ -50,7 +50,9 @@ begin
     isdir(p) && rm(p; recursive=true, force=true)
     # make dir, go in it, do the tests, then get completely out (otherwise windows
     # can't delete the folder)
-    mkdir(p); cd(p); include("global/postprocess.jl");  cd(joinpath(D, ".."))
+    mkdir(p); cd(p);
+    include("global/postprocess.jl");
+    cd(joinpath(D, ".."))
     # clean up
     rm(p; recursive=true, force=true)
 end
