@@ -5,7 +5,7 @@ function inter(st::String)
     return steps[:inter_md].inter_md, steps[:inter_html].inter_html
 end
 
-@testset "Code+italic (#163)" begin
+@testset "issue163" begin
     st = raw"""A _B `C` D_ E""" * J.EOS
     imd, ih = inter(st)
     @test imd == "A _B  ##JDINSERT##  D_ E"

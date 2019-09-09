@@ -33,11 +33,14 @@ function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
     #> 1. Tokenize
     tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
 
+    #> 1'. Find indented blocks
+    tokens = find_indented_blocks(tokens, mds)
+
     #> 2. Open-Close blocks (OCBlocks)
     #>> a. find them
     blocks, tokens = find_all_ocblocks(tokens, MD_OCB_ALL)
     #>> b. now that blocks have been found, line-returns can be dropped
-    filter!(τ -> τ.name != :LINE_RETURN, tokens)
+    filter!(τ -> τ.name ∉ L_RETURNS, tokens)
     #>> c. filter out "fake headers" (opening ### that are not at the start of a line)
     filter!(β -> validate_header_block(β), blocks)
 

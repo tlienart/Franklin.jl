@@ -52,6 +52,7 @@ is processed.
     LOCAL_PAGE_VARS["jd_ctime"] = Pair(Date(1), (Date,))   # time of creation
     LOCAL_PAGE_VARS["jd_mtime"] = Pair(Date(1), (Date,))   # time of last modification
     LOCAL_PAGE_VARS["jd_rpath"] = Pair("",      (String,)) # local path to file src/[...]/blah.md
+    LOCAL_PAGE_VARS["lang"]     = Pair("julia", (String,)) # default lang for indented code
     return nothing
 end
 
@@ -62,7 +63,7 @@ PAGE_HEADERS
 Keep track of seen headers. The key amounts to the ordering (~ordered dict), the value contains
 the title, the refstring version of the title, the occurence number and the level (1, ..., 6).
 """
-const PAGE_HEADERS = Dict{Int, Tuple{AbstractString,AbstractString,Int,Int}}()
+const PAGE_HEADERS = Dict{Int,Tuple{AbstractString,AbstractString,Int,Int}}()
 
 
 """

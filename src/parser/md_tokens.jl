@@ -106,6 +106,14 @@ const MD_DEF_PAT = r"@def\s+(\S+)\s*?=\s*?(\S.*)"
 
 
 """
+L_RETURNS
+
+Convenience tuple containing the name for standard line returns and line returns followed by an
+indentation (either a quadruple space or a tab).
+"""
+const L_RETURNS = (:LINE_RETURN, :LR_INDENT)
+
+"""
 MD_OCB
 
 Dictionary of Open-Close Blocks whose content should be deactivated (any token within their span
@@ -121,18 +129,19 @@ const MD_OCB = [
     OCProto(:COMMENT,         :COMMENT_OPEN, (:COMMENT_CLOSE,),    false),
     OCProto(:CODE_BLOCK_LANG, :CODE_LANG,    (:CODE_TRIPLE,),      false),
     OCProto(:CODE_BLOCK,      :CODE_TRIPLE,  (:CODE_TRIPLE,),      false),
+    OCProto(:CODE_BLOCK_IND,  :LR_INDENT,    (:LINE_RETURN,),      false),
     OCProto(:CODE_INLINE,     :CODE_DOUBLE,  (:CODE_DOUBLE,),      false),
     OCProto(:CODE_INLINE,     :CODE_SINGLE,  (:CODE_SINGLE,),      false),
     OCProto(:ESCAPE,          :ESCAPE,       (:ESCAPE,),           false),
     # ------------------------------------------------------------------
-    OCProto(:H1,              :H1_OPEN,      (:LINE_RETURN, :EOS), false), # see [^3]
-    OCProto(:H2,              :H2_OPEN,      (:LINE_RETURN, :EOS), false),
-    OCProto(:H3,              :H3_OPEN,      (:LINE_RETURN, :EOS), false),
-    OCProto(:H4,              :H4_OPEN,      (:LINE_RETURN, :EOS), false),
-    OCProto(:H5,              :H5_OPEN,      (:LINE_RETURN, :EOS), false),
-    OCProto(:H6,              :H6_OPEN,      (:LINE_RETURN, :EOS), false),
+    OCProto(:H1,              :H1_OPEN,      (L_RETURNS..., :EOS), false), # see [^3]
+    OCProto(:H2,              :H2_OPEN,      (L_RETURNS..., :EOS), false),
+    OCProto(:H3,              :H3_OPEN,      (L_RETURNS..., :EOS), false),
+    OCProto(:H4,              :H4_OPEN,      (L_RETURNS..., :EOS), false),
+    OCProto(:H5,              :H5_OPEN,      (L_RETURNS..., :EOS), false),
+    OCProto(:H6,              :H6_OPEN,      (L_RETURNS..., :EOS), false),
     # ------------------------------------------------------------------
-    OCProto(:MD_DEF,          :MD_DEF_OPEN,  (:LINE_RETURN, :EOS), false), # see [^4]
+    OCProto(:MD_DEF,          :MD_DEF_OPEN,  (L_RETURNS..., :EOS), false), # see [^4]
     OCProto(:LXB,             :LXB_OPEN,     (:LXB_CLOSE,),        true ),
     OCProto(:DIV,             :DIV_OPEN,     (:DIV_CLOSE,),        true ),
     ]

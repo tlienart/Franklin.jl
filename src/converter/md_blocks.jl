@@ -13,6 +13,7 @@ function convert_block(β::AbstractBlock, lxcontext::LxContext)::AbstractString
     βn ∈  MD_HEADER        && return convert_header(β)
     βn == :CODE_INLINE     && return md2html(β.ss; stripp=true, code=true)
     βn == :CODE_BLOCK_LANG && return convert_code_block(β.ss)
+    βn == :CODE_BLOCK_IND  && return convert_indented_code_block(β.ss)
     βn == :CODE_BLOCK      && return md2html(β.ss; code=true)
     βn == :ESCAPE          && return chop(β.ss, head=3, tail=3)
 
@@ -126,11 +127,11 @@ function convert_code_block(ss::SubString)::String
     code  = m.captures[3]
 
     if isnothing(rpath)
-        return "<pre><code class=\"language-$lang\">$code</code></pre>"
+        return html_code(code, lang)
     end
     if lang!="julia"
-        @warn "Eval of non-julia code blocks is not supported at the moment"
-        return "<pre><code class=\"language-$lang\">$code</code></pre>"
+        @warn "Eval of non-julia code blocks is not yet supported."
+        return html_code(code, lang)
     end
     # path currently has an indicative `:` we don't care about
     rpath = rpath[2:end]
@@ -172,4 +173,17 @@ function convert_code_block(ss::SubString)::String
 
     # step 3, insertion of code stripping of "hide" lines.
     return resolve_lx_input_hlcode(rpath, "julia")
+end
+
+
+"""
+$(SIGNATURES)
+
+Helper function for the indented code block case of `convert_block`.
+"""
+function convert_indented_code_block(ss::SubString)::String
+    # 1. decrease indentation of all lines (either frontal \n\t or \n⎵⎵⎵⎵)
+    code = replace(ss, r"\n(?:\t| {4})" => "\n")
+    # 2. return; lang is a LOCAL_PAGE_VARS that is julia by default and can be set
+    return html_code(code, "{{fill lang}}")
 end

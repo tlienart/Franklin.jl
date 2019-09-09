@@ -27,8 +27,8 @@ end
 function seval(st)
     J.def_GLOBAL_PAGE_VARS!()
     J.def_GLOBAL_LXDEFS!()
-    m, _ = J.convert_md(st, collect(values(J.GLOBAL_LXDEFS)))
-    h = J.convert_html(m, J.PageVars())
+    m, v = J.convert_md(st, collect(values(J.GLOBAL_LXDEFS)))
+    h = J.convert_html(m, v)
     return h
 end
 

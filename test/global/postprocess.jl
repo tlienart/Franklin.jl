@@ -1,4 +1,4 @@
-@testset "Generation and optimisation" begin
+@testset "Gen&Opt" begin
     isdir("basic") && rm("basic", recursive=true, force=true)
     newsite("basic")
 
