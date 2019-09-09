@@ -1,4 +1,4 @@
-@testset "Eval code" begin
+@testset "Evalcode" begin
     # see `converter/md_blocks:convert_code_block`
     # see `converter/lx/resolve_lx_input_*`
     # --------------------------------------------
@@ -27,7 +27,7 @@
     @test occursin("then: <pre><code>25</code></pre> done.", h)
 end
 
-@testset "Eval code (errs)" begin
+@testset "Eval (errs)" begin
     # see `converter/md_blocks:convert_code_block`
     # --------------------------------------------
     h = raw"""
@@ -42,7 +42,7 @@ end
     @test occursin("code: <pre><code class=\"language-python\">a = 5\nprint(a**2)\n</code></pre> done.", h)
 end
 
-@testset "Eval (rel-input)" begin
+@testset "Eval (rinput)" begin
     h = raw"""
         Simple code:
         ```julia:/scripts/test2
@@ -92,7 +92,7 @@ end
     @test occursin("then: <pre><code>25</code></pre> done.", h)
 end
 
-@testset "Eval code (module)" begin
+@testset "Eval (module)" begin
     h = raw"""
         Simple code:
         ```julia:scripts/test1
@@ -108,7 +108,7 @@ end
     @test occursin("then: <pre><code>54</code></pre> done.", h)
 end
 
-@testset "Eval code (img)" begin
+@testset "Eval (img)" begin
     h = raw"""
         Simple code:
         ```julia:scripts/test1
@@ -121,7 +121,7 @@ end
     @test occursin("then: <img src=\"/assets/scripts/output/test1.png\" alt=\"\"> done.", h)
 end
 
-@testset "Eval code (exception)" begin
+@testset "Eval (throw)" begin
     h = raw"""
         Simple code:
         ```julia:scripts/test1
@@ -135,7 +135,7 @@ end
     @test occursin("then: <pre><code>There was an error running the code: DomainError", h)
 end
 
-@testset "Eval code (no-julia)" begin
+@testset "Eval (nojl)" begin
     h = raw"""
         Simple code:
         ```python:scripts/test1
@@ -144,7 +144,7 @@ end
         done.
         """ * J.EOS
 
-    @test (@test_logs (:warn, "Eval of non-julia code blocks is not supported at the moment") h |> seval) == "<p>Simple code: <pre><code class=\"language-python\">sqrt(-1)\n</code></pre> done.</p>\n"
+    @test (@test_logs (:warn, "Eval of non-julia code blocks is not yet supported.") h |> seval) == "<p>Simple code: <pre><code class=\"language-python\">sqrt(-1)\n</code></pre> done.</p>\n"
 end
 
 # temporary fix for 186: make error appear and also use `abspath` in internal include

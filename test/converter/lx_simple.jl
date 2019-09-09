@@ -50,7 +50,10 @@ end
             """)
 end
 
-@testset "table: source with header" begin
+@testset "table" begin
+    #
+    # has header in source
+    #
     testcsv = "h1,h2,h3\nstring1, 1.567, 0\n,,\n l i n e ,.158,99999999"
     write(joinpath(J.PATHS[:assets], "testcsv.csv"), testcsv)
     # no header specified
@@ -87,9 +90,11 @@ end
     shouldbe = """<p>A table: <p><span style=\"color:red;\">// header size (2) and number of columns (3) do not match //</span></p>
             Done.</p>"""
     @test isapproxstr(h, shouldbe)
-end
 
-@testset "table: source without header" begin
+    #
+    # does not have header in source
+    #
+
     testcsv = "string1, 1.567, 0\n,,\n l i n e ,.158,99999999"
     write(joinpath(J.PATHS[:assets], "testcsv.csv"), testcsv)
     # no header specified

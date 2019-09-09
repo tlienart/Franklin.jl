@@ -15,7 +15,7 @@ write(temp_css, "some css")
 
 JuDoc.process_config()
 
-@testset "Prep outdir" begin # ✅ aug 15, 2018
+@testset "Prep outdir" begin
     JuDoc.prepare_output_dir()
     @test isdir(JuDoc.PATHS[:pub])
     @test isdir(JuDoc.PATHS[:css])
@@ -29,7 +29,7 @@ JuDoc.process_config()
     @test !isfile(temp_out)
 end
 
-@testset "Scan dir" begin # ✅ aug 16, 2018
+@testset "Scan dir" begin
     println("🐝 Testing file tracking...:")
     # it also tests add_if_new_file and last
     md_files = Dict{Pair{String, String}, Float64}()
@@ -44,7 +44,7 @@ end
     @test other_files[JuDoc.PATHS[:src_pages]=>"temp.rnd"] == mtime(temp_rnd)
 end
 
-@testset "Config+write" begin # ✅ 4 Sept, 2018
+@testset "Config+write" begin
     JuDoc.process_config()
     @test JuDoc.GLOBAL_PAGE_VARS["author"].first == "Stefan Zweig"
     rm(temp_config)

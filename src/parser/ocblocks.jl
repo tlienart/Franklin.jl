@@ -111,3 +111,47 @@ function merge_blocks(lvb::Vector{<:AbstractBlock}...)
     sort!(blocks, by=(β->from(β)))
     return blocks
 end
+
+
+"""
+$(SIGNATURES)
+
+Find indented lines.
+"""
+function find_indented_blocks(tokens::Vector{Token}, st::String)::Vector{Token}
+    # index of the line return tokens
+    lr_idx = [j for j in eachindex(tokens) if tokens[j].name == :LINE_RETURN]
+    # go over all line return tokens; if they are followed by either four spaces
+    # or by a tab, then check if the line is empty or looks like a list, otherwise
+    # change the token for a LR_INDENT token which will be captured as part of code
+    # blocks.
+    for i in 1:length(lr_idx)-1
+        # capture start and finish of the line (from line return to line return)
+        start  = from(tokens[lr_idx[i]])  # first :LINE_RETURN
+        finish = from(tokens[lr_idx[i+1]]) # next :LINE_RETURN
+        line   = subs(st, start, finish)
+        indent = ""
+        if startswith(line, "\n    ")
+            indent = "    "
+        elseif startswith(line, "\n\t")
+            indent = "\t"
+        else
+            continue
+        end
+        # is there something on that line? if so, does it start with a list indicator
+        # like `*`, `-`, `+` or [0-9](.|\)) ? in which case this takes precedence (commonmark)
+        # TODO: document clearly that with fenced code blocks there are far fewer cases for issues
+        code_line = subs(st, nextind(st, start+length(indent)), prevind(st, finish))
+        scl       = strip(code_line)
+        isempty(scl) && continue
+        # list takes precedence (this may cause clash but then just use fenced code blocks...)
+        looks_like_a_list = scl[1] ∈ ('*', '-', '+') ||
+                            (length(scl) ≥ 2 &&
+                                scl[1] ∈ ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9') &&
+                                scl[2] ∈ ('.', ')'))
+        looks_like_a_list && continue
+        # if here, it looks like a code line (and will be considered as such)
+        tokens[lr_idx[i]] = Token(:LR_INDENT, subs(st, start, start+length(indent)))
+    end
+    return tokens
+end
