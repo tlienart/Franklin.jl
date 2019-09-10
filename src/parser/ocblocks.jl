@@ -5,7 +5,8 @@ Find active blocks between an opening token (`otoken`) and a closing token `ctok
 nested (e.g. braces). Return the list of such blocks. If `deactivate` is `true`, all the tokens
 within the block will be marked as inactive (for further, separate processing).
 """
-function find_ocblocks(tokens::Vector{Token}, ocproto::OCProto; inmath=false)
+function find_ocblocks(tokens::Vector{Token}, ocproto::OCProto;
+                       inmath=false)::Tuple{Vector{OCBlock}, Vector{Token}}
 
     ntokens       = length(tokens)
     active_tokens = ones(Bool, length(tokens))
@@ -127,8 +128,8 @@ function find_indented_blocks(tokens::Vector{Token}, st::String)::Vector{Token}
     # blocks.
     for i in 1:length(lr_idx)-1
         # capture start and finish of the line (from line return to line return)
-        start  = from(tokens[lr_idx[i]])  # first :LINE_RETURN
-        finish = from(tokens[lr_idx[i+1]]) # next :LINE_RETURN
+        start  = from(tokens[lr_idx[i]])   # first :LINE_RETURN
+        finish = from(tokens[lr_idx[i+1]]) # next  :LINE_RETURN
         line   = subs(st, start, finish)
         indent = ""
         if startswith(line, "\n    ")
@@ -154,4 +155,56 @@ function find_indented_blocks(tokens::Vector{Token}, st::String)::Vector{Token}
         tokens[lr_idx[i]] = Token(:LR_INDENT, subs(st, start, start+length(indent)))
     end
     return tokens
+end
+
+
+"""
+$SIGNATURES
+
+When two indented code blocks follow each other and there's nothing in between (empty line(s)),
+merge them into a super block.
+"""
+function merge_indented_code_blocks!(blocks::Vector{OCBlock}, mds::String)::Nothing
+    # indices of CODE_BLOCK_IND
+    idx = [i for i in eachindex(blocks) if blocks[i].name == :CODE_BLOCK_IND]
+    isempty(idx) && return
+    # check if they're separated by something or nothing
+    inter_space = [(subs(mds, to(blocks[idx[i]]), from(blocks[idx[i+1]])) |> strip |> length) > 0
+                    for i in 1:length(idx)-1]
+
+    curseq     = Int[] # to keep track of current list of blocks to merge
+    del_blocks = Int[] # to keep track of blocks that will be removed afterwards
+
+    # if there's no inter_space, add to the list, if there is, close and merge
+    for i in eachindex(inter_space)
+        if inter_space[i] && !isempty(curseq)
+            # close and merge all in curseq and empty curseq
+            form_super_block!(blocks, idx, curseq, del_blocks)
+        elseif !inter_space[i]
+            push!(curseq, i)
+        end
+    end
+    !isempty(curseq) && form_super_block!(blocks, idx, curseq, del_blocks)
+    # remove the blocks that have been merged
+    deleteat!(blocks, del_blocks)
+    return
+end
+
+
+"""
+$SIGNATURES
+
+Helper function to [`merge_indented_code_blocks`](@ref).
+"""
+function form_super_block!(blocks::Vector{OCBlock}, idx::Vector{Int},
+                           curseq::Vector{Int}, del_blocks::Vector{Int})::Nothing
+    push!(curseq, curseq[end]+1)
+    first_block = blocks[idx[curseq[1]]]
+    last_block  = blocks[idx[curseq[end]]]
+    # replace the first block with the super block
+    blocks[idx[curseq[1]]] = OCBlock(:CODE_BLOCK_IND, (otok(first_block) => ctok(last_block)))
+    # append all blocks but the first to the delete list
+    append!(del_blocks, curseq[2:end])
+    empty!(curseq)
+    return
 end
