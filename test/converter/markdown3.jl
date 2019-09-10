@@ -325,3 +325,11 @@ end
                             C</p>
                             """)
 end
+
+
+@testset "More ``" begin
+    st = raw"""
+         A ``blah``.
+         """ * J.EOS
+    isapproxstr(st |> seval, """<p>A <code>blah</code>.</p>""")
+end

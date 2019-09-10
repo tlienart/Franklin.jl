@@ -11,7 +11,7 @@ function convert_block(β::AbstractBlock, lxcontext::LxContext)::AbstractString
     # Return relevant interpolated string based on case
     βn = β.name
     βn ∈  MD_HEADER        && return convert_header(β)
-    βn == :CODE_INLINE     && return md2html(β.ss; stripp=true)
+    βn == :CODE_INLINE     && return html_code_inline(content(β) |> Markdown.htmlesc)
     βn == :CODE_BLOCK_LANG && return convert_code_block(β.ss)
     βn == :CODE_BLOCK_IND  && return convert_indented_code_block(β.ss)
     βn == :CODE_BLOCK      && return md2html(β.ss)
