@@ -25,6 +25,7 @@ println("🍺")
 println("CONVERTER/MD")
 include("converter/markdown.jl")
 include("converter/markdown2.jl")
+include("converter/markdown3.jl")
 include("converter/hyperref.jl")
 println("🍺")
 

@@ -32,13 +32,20 @@ html_img(src::AbstractString, alt::AbstractString="") =
 """
 $(SIGNATURES)
 
-Convenience function to introduce an image.
+Convenience function to introduce a code block.
 """
 function html_code(c::AbstractString, lang::AbstractString="")
     isempty(c) && return ""
     isempty(lang) && return "<pre><code>$c</code></pre>"
     return "<pre><code class=\"language-$lang\">$c</code></pre>"
 end
+
+"""
+$(SIGNATURES)
+
+Convenience function to introduce inline code.
+"""
+html_code_inline(c::AbstractString) = "<code>$c</code>"
 
 """
 $(SIGNATURES)

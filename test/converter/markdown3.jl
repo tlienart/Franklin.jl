@@ -55,7 +55,7 @@ end
     tokens, = steps[:tokenization]
     @test tokens[7].name == :CHAR_LINEBREAK
     h = st |> seval
-    @test isapproxstr(st |> seval, """
+    @test isapproxstr(st |> seval, raw"""
                         <p>Hello &#92; blah &#92; end
                         and <code>B \ c</code> end <br/> and
                         <pre><code>A \ b</code></pre>
@@ -285,4 +285,51 @@ end
                         </ul>
                         <p>end</p>
                         """)
+
+    st = raw"""
+        A
+
+            function foo()
+
+                return 2
+
+            end
+
+            function bar()
+                return 3
+            end
+
+        B
+
+            function baz()
+                return 5
+
+            end
+
+        C
+        """ * J.EOS
+    isapproxstr(st |> seval, raw"""
+                            <p>A <pre><code class="language-julia">function foo()
+
+                                return 2
+
+                            end
+
+                            function bar()
+                                return 3
+                            end</code></pre>
+                            B <pre><code class="language-julia">function baz()
+                                return 5
+
+                            end</code></pre>
+                            C</p>
+                            """)
+end
+
+
+@testset "More ``" begin
+    st = raw"""
+         A ``blah``.
+         """ * J.EOS
+    isapproxstr(st |> seval, """<p>A <code>blah</code>.</p>""")
 end

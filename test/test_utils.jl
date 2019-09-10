@@ -41,6 +41,7 @@ function explore_md_steps(mds)
 
     # tokenize
     tokens = J.find_tokens(mds, J.MD_TOKENS, J.MD_1C_TOKENS)
+    tokens = J.find_indented_blocks(tokens, mds)
     steps[:tokenization] = (tokens=tokens,)
 
     # ocblocks

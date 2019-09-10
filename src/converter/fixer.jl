@@ -14,7 +14,7 @@ function find_and_fix_md_links(hs::String)::String
     # the regexes very readable...
 
     # here we're looking for [id]: link; 1=id 2=link
-    m_link_defs = collect(eachmatch(r"&#91;((?:(?!&#93;).)*?)&#93;:\s((?:(?!\<\/p\>)\S)+)", hs))
+    m_link_defs = collect(eachmatch(r"&#91;((?:(?!&#93;).)*?)&#93;:\s+((?:(?!\<\/p\>)\S)+)", hs))
 
     def_names = [def.captures[1] for def in m_link_defs]
     def_links = [def.captures[2] for def in m_link_defs]
