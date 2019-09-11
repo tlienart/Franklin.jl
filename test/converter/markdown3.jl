@@ -37,7 +37,7 @@
     @test isapproxstr(st |> seval, raw"""
                 <p>Hello &#92; blah &#92; end
                 and <code>B \ c</code> end and
-                <pre><code>A \ b</code></pre>
+                <pre><code class="language-julia">A \ b</code></pre>
                 done</p>
                 """)
 end
@@ -58,7 +58,7 @@ end
     @test isapproxstr(st |> seval, raw"""
                         <p>Hello &#92; blah &#92; end
                         and <code>B \ c</code> end <br/> and
-                        <pre><code>A \ b</code></pre>
+                        <pre><code class="language-julia">A \ b</code></pre>
                         done</p>
                         """)
 end
@@ -244,12 +244,12 @@ end
                         <p>
                         A
                         <pre><code class="language-julia">
-                        a = 1+1
-                        if a > 1
+                        a &#61; 1&#43;1
+                        if a &gt; 1
                             @show a
                         end
-                        b = 2
-                        @show a+b
+                        b &#61; 2
+                        @show a&#43;b
                         </code></pre>
                         end
                         </p>
@@ -272,7 +272,7 @@ end
                         </code></pre>
                         and
                         <pre><code class="language-julia">
-                        a = 1+1
+                        a &#61; 1&#43;1
                         </code></pre>
                         then</p>
                         <ul>

@@ -40,7 +40,9 @@ function convert_html(hs::AbstractString, allvars::PageVars; isoptim::Bool=false
     # See issue #204, basically not all markdown links are processed  as
     # per common mark with the JuliaMarkdown, so this is a patch that kind
     # of does
-    fhs = find_and_fix_md_links(fhs)
+    if haskey(allvars, "reflinks") && allvars["reflinks"].first
+        fhs = find_and_fix_md_links(fhs)
+    end
 
     # if it ends with </p>\n but doesn't start with <p>, chop it off
     # this may happen if the first element parsed is an ocblock (not text)

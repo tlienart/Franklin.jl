@@ -1,7 +1,7 @@
 name = "JuDoc"
 uuid = "4ca9428c-4c75-11e9-2efb-bf5cb6c1e8f8"
 authors = ["Thibaut Lienart <tlienart@me.com>"]
-version = "0.2.0"
+version = "0.3.0"
 
 [deps]
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
