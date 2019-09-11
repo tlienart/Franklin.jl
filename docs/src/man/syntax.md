@@ -9,6 +9,7 @@ Most of what is presented here is also shown in that example.
 **Contents**:
 
 * [Basic syntax](#Basics-1)
+  * [General](#General-1)
   * [Maths](#Maths-1)
   * [Div blocks](#Div-blocks-1)
   * [Table of contents](#Table-of-contents-1)
@@ -47,7 +48,40 @@ The basic syntax corresponds to standard markdown and the [markdown cheatsheet](
 * how to [insert code](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#code-and-syntax-highlighting),
 * how to [insert tables](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#tables).
 
-One key difference with Git Flavored Markdown (GFM) is that inline HTML _should not be used_ (see the section on injecting HTML below).
+One key difference with Git Flavored Markdown (GFM) is that inline HTML _should not be used_ unless fenced with `~~~` (see the [section on injecting HTML](#Using-raw-HTML-1) below).
+
+### General
+
+While you should expect JuDoc to support core [Common Mark](https://commonmark.org/) syntax, there are a few particularities you should be aware of since the markdown parser implemented in JuDoc is the Julia Markdown parser (`Markdown.parse`) from stdlib coupled with a bunch of additions.
+
+!!! note
+
+    If there is something not mentioned here that you expected to work according to Common Mark but it doesn't, please open an issue in the JuDoc repository.
+
+#### Symbols
+
+Outside code environments, there are a few quirks in dealing with symbols:
+
+* (**dollar sign**) to introduce a dollar sign, you _must_ escape it with a backslash: `\$` as it is otherwise used to open and close inline math blocks,
+* (**HTML entity**) you can use HTML entities without issues like `&rarr;` for "→" or in fact `&#36;` for "\$",
+* (**backslash**) to introduce a backslash, you can just use `\`, a _double backslash_ `\\` can be used to signify a _line break_ in text.
+
+
+#### Other notes
+
+* (**header**) should _only_ be defined via a number of `#` at the start of a line (this is to help table-of-contents generation),
+* (**line break**) use a double backslash `\\` in text to force a line break (`</br>`), a bit like in LaTeX,
+* (**list items**) _must_ be on the same line (_this is due to [a limitation](https://github.com/JuliaLang/julia/issues/30198) of the Julia Markdown parser_),
+* (**indented blocks**) you _can_ use indented blocks to delimit code blocks but we _strongly recommend_ you use fenced code blocks (with triple backticks) instead as the language can be made explicit and fenced code blocks can be executed (see the section on [code insertion](#Code-insertions-1)),
+* (**link reference**) when using "indirect links" i.e. in the text you use something like `[link name][link A]` and then somewhere else you define `[link A]: some/url/`, we recommend you use unambiguous link identifiers (here `[link A]`). For instance we would recommend you not to use numbers like `[link name][1]`, indeed if on the page you have some code where `[1]` appears, there is an ambiguity which could cause problems for the parser. (_this is due to a hack to bypass [a limitation](https://github.com/JuliaLang/julia/issues/19844) of the Julia Markdown parser_)
+* (**link title**) are currently _not supported_ e.g. something like `[link A](some/url/ "link title")`.
+
+
+#### Quirks
+
+* to introduce a horizontal line, use `----` or `*****` but `- - -` or `* * *` won't work (_this is a limitation of the Julia Markdown parser_)
+* if, for some reason, you want to have something like `[...]: ...` somewhere on your page that does _not_ define a link, then you need to toggle ref-links off (`@def reflinks = false`) and only use inline links `[link name](some/url/)`
+
 
 ### Maths
 
@@ -383,11 +417,40 @@ can be linked to with `#some-subtitle`.
 
 ## Code insertions
 
+As per Common Mark specifications, you have multiple ways of inserting code:
+
+* **inline code**: you can use single backticks (\`) or double backticks (\`\`) (if the code contains single ticks) like so:
+
+`````judoc
+This is some `inline code` or ``inline ` code with a tick``.
+`````
+
+* **code blocks**: it is recommended to use triple backticks (\`\`\`) optionally followed by a language name for highlighting like so:
+
+`````judoc
+This is some julia code:
+```julia
+a = 2
+@show a
+```
+`````
+
+* **code blocks 2**: you can also use indented code blocks (lines starting with four spaces or a tab) (but _fenced code blocks should be preferred_)
+
+`````judoc
+This is some code:
+
+    a = 2
+    @show a
+`````
+
+**Note**: when either using indented code blocks or using fenced code blocks with no language name, then the code language for highlighting can be specified with the local page variable `lang` i.e. `@def lang = "julia"` (which is the default) or `@def lang = ""` if you don't want the code to be highlighted.
+
 Sometimes, when presenting code in a post, you would like to make sure the code works and it can be annoying to have to copy-paste it around then copy its output, especially if you decide to make modifications on the way in which case you have to repeat the process.
 
 In JuDoc there are two ways to do this.
 
-1. For Julia, a live-evaluation of code blocks is supported not unlike the [Weave.jl](https://github.com/mpastell/Weave.jl) package,
+1. For Julia code, a **live-evaluation** of code blocks is supported not unlike the [Weave.jl](https://github.com/mpastell/Weave.jl) package,
 1. For all languages, you can run the script separately and insert the code and/or the output of the code in the page.
 
 ### On-the-fly evaluation
@@ -399,8 +462,8 @@ In JuDoc there are two ways to do this.
 
 !!! note
 
-    **Sandboxing**: on-the-fly evaluation of code blocks is still a bit experimental. Among other things, the code is _not sandboxed_ which means that if you have two code blocks one after the other, the second one has access to what's defined in the first. This is natural within the same page, but it also works _across_ pages. However it would be really bad practice to rely on this as the order in which pages are compiled is not always the same.
-    In short: take a page as one Julia notebook and pay attention to all your variables and functions to be defined on that page.
+    **Sandboxing**: on-the-fly evaluation of code blocks is still a bit experimental. Among other things, the code is _not sandboxed_ which means that if you have two code blocks one after the other, the second one has access to what's defined in the first. This is natural within the same page, but it also works _across_ pages. However, it would be really bad practice to rely on this as the order in which pages are compiled is not always the same.
+    In short: take a page as a Julia notebook and make sure all your variables and functions you use are defined on that page.
 
 Code blocks that should not be evaluated should be added as per standard markdown, so for instance:
 
@@ -410,7 +473,7 @@ a = 10
 ```
 `````
 
-Code blocks that should be evaluated should be added with `julia:path/to/script` where `path/to/script` indicates _where_ the script corresponding to the code block will be saved (**note**: the given path _must_ be in UNIX format)
+Code blocks that should be evaluated should be added with `julia:path/to/script` where `path/to/script` indicates _where_ the script corresponding to the code block will be saved (**note**: the given path _must_ be in UNIX format even if you're using Windows)
 
 `````judoc
 ```julia:./code/ex1
@@ -441,9 +504,9 @@ then with the syntax above, the script will be saved in
 
 There are three ways you can specify where the script corresponding to a code-block should be saved.
 
-1. relative to the page: `./[p]/script` is as above, it will write the code block to `/assets/[subpath]/p/script.jl` where `subpath` corresponds to the sub-path of the page where the code block is inserted (path below `/src/`)
-1. relative to the assets dir: `p/script` will write the code block to `/assets/p/script.jl`
-1. full path: `/p/script` will write the code block to `/p/script.jl`
+1. _relative to the page_: `./[p]/script` is as above, it will write the code block to `/assets/[subpath]/p/script.jl` where `subpath` corresponds to the sub-path of the page where the code block is inserted (path below `/src/`)
+1. _relative to the assets dir_: `p/script` will write the code block to `/assets/p/script.jl`
+1. _full path_: `/p/script` will write the code block to `/p/script.jl`
 
 **Note**: when code blocks are evaluated, their output (`STDOUT`) is captured and saved at `[path]/output/script.out` where `[path]` is what precedes `script.jl` in the cases above.
 
@@ -468,7 +531,7 @@ In order to show the raw output, just write
 which in the present example will introduce exactly the following HTML
 
 ```html
-<pre><code>dot(a, a) = 14</code></pre>
+<pre><code class="language-julia">dot(a, a) = 14</code></pre>
 ```
 
 and will look like
@@ -776,14 +839,16 @@ See also [Templating](@ref) for how page variables can be used in the HTML.
 
 A few variables are already present and used in the basic templates (you can still modify their value though it has to match the type):
 
-| Name | Accepted types | Default value | Function |
-| :--- | :------------- | :------------ | :------- |
-| `title` | `Nothing`, `String` | `nothing` | title of the page (tab name)
+| Name      | Accepted types | Default value | Function |
+| :-------- | :------------- | :------------ | :------- |
+| `title`   | `Nothing`, `String` | `nothing` | title of the page (tab name)
 | `hasmath` | `Bool` | `true` | if `true` the KaTeX stylesheet and script will be added to the page
 | `hascode` | `Bool` | `false` | if `false` the highlight stylesheet and script will be added to the page
 | `date`    | `String`, `Date`, `Nothing` | `Date(1)` | a date variable
+| `lang`    | `String` | `"julia"` | the default language to use for code blocks
+| `reflinks`| `Bool` | `true` | whether there may be referred links like like `[link][id]` and `[id]: some/url`, turn this to false if your code has patterns like `[...]: ...` which are **not** link definitions (see also [quirks](#Quirks-1))
 
-Then there are some variables that are automatically assigned and that you should therefore not assign  yourself (but you can use them):
+Then there are some variables that are automatically assigned and that you should therefore **not** assign  yourself (but you can use them):
 
 | Name | Type | Value | Function |
 | :--- | :------------- | :------------ | :------- |
@@ -807,7 +872,8 @@ For instance you could set `hasmath` globally to `false` and `hascode` globally 
 
 There are also a few pre-defined global variables:
 
-| Name | Accepted types | Default value | Function |
-| :--- | :------------- | :------------ | :------- |
-| `author` | `String`, `Nothing` | `THE AUTHOR` | author (e.g. may appear in footer)
+| Name          | Accepted types | Default value | Function |
+| :------------ | :------------- | :------------ | :------- |
+| `author`      | `String`, `Nothing` | `THE AUTHOR` | author (e.g. may appear in footer)
 | `date_format` | `String` | `U dd, yyyy` | a valid date format specifier
+| `prepath`     | `String` | "" | if the website is meant to be a _project_ website on GitHub for instance corresponding to a repo `github.com/username/repo` as opposed to `github.com/username.github.io`, then all url paths should be prepended with `repo/` which you can do by specifying `@def prepath = "repo"` (see also [hosting the website as a project website](/man/workflow/#Hosting-the-website-as-a-project-website-1))|

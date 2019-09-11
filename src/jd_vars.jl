@@ -53,6 +53,7 @@ is processed.
     LOCAL_PAGE_VARS["jd_mtime"] = Pair(Date(1), (Date,))   # time of last modification
     LOCAL_PAGE_VARS["jd_rpath"] = Pair("",      (String,)) # local path to file src/[...]/blah.md
     LOCAL_PAGE_VARS["lang"]     = Pair("julia", (String,)) # default lang for indented code
+    LOCAL_PAGE_VARS["reflinks"] = Pair(true,    (Bool,))   # whether there are reflinks or not
     return nothing
 end
 

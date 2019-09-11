@@ -66,7 +66,6 @@ temp_config = joinpath(JuDoc.PATHS[:src], "config.md")
 write(temp_config, "@def author = \"Stefan Zweig\"\n")
 rm(temp_index2)
 
-
 @testset "Part convert" begin # ✅ 16 aug 2018
     write(joinpath(JuDoc.PATHS[:src_html], "head.html"), raw"""
         <!doctype html>
