@@ -9,6 +9,7 @@ Most of what is presented here is also shown in that example.
 **Contents**:
 
 * [Basic syntax](#Basics-1)
+  * [General](#General-1)
   * [Maths](#Maths-1)
   * [Div blocks](#Div-blocks-1)
   * [Table of contents](#Table-of-contents-1)
@@ -47,7 +48,25 @@ The basic syntax corresponds to standard markdown and the [markdown cheatsheet](
 * how to [insert code](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#code-and-syntax-highlighting),
 * how to [insert tables](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#tables).
 
-One key difference with Git Flavored Markdown (GFM) is that inline HTML _should not be used_ (see the section on injecting HTML below).
+One key difference with Git Flavored Markdown (GFM) is that inline HTML _should not be used_ unless fenced with `~~~` (see the [section on injecting HTML](#Using-raw-HTML-1) below).
+
+### General
+
+While you should expect JuDoc to support core [Common Mark](https://commonmark.org/) syntax, there are a few particularities you should be aware of since the markdown parser implemented in JuDoc is the Julia Markdown parser (`Markdown.parse`) from stdlib coupled with a bunch of additions.
+
+!!! note
+
+    If there is something not mentioned here that you expected to work according to Common Mark but it doesn't, please open an issue in the JuDoc repository.
+
+#### Symbols
+
+Outside code environments, there are a few quirks in dealing with symbols:
+
+* to introduce a dollar sign, you _must_ escape it with a backslash: `\$` as it is otherwise used to open and close inline math blocks,
+* you can use HTML entities without issues like `&rarr;` for "→" or in fact `&#36;` for "\$",
+* to introduce a backslash, you can just use `\`, a _double backslash_ `\\` can be used to signify a _line break_ in text,
+
+
 
 ### Maths
 

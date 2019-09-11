@@ -8,7 +8,7 @@ Does a full pass followed by a pre-rendering and minification step.
 * `prerender=true`: whether to pre-render katex and highlight.js (requires `node.js`)
 * `minify=true`:    whether to minify output (requires `python3` and `css_html_js_minify`)
 * `sig=false`:      whether to return an integer indicating success (see [`publish`](@ref))
-* `prepath=`
+* `prepath=""`:     set this to something like "project-name" if it's a project page
 
 Note: if the prerendering is set to `true`, the minification will take longer as the HTML files
 will be larger (especially if you have lots of maths on pages).
@@ -75,6 +75,7 @@ In other scenarios you should probably do this manually.
 * `prerender=true`: prerender javascript before pushing see [`optimize`](@ref)
 * `minify=true`:    minify output before pushing see [`optimize`](@ref)
 * `nopass=false`:   set this to true if you have already run `optimize` manually.
+* `prepath=""`:     set this to something like "project-name" if it's a project page
 * `message="jd-update"`: add commit message.
 """
 function publish(; prerender::Bool=true, minify::Bool=true, nopass::Bool=false,
