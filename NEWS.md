@@ -1,5 +1,36 @@
 # NEWS
 
+## v0.3
+
+Thanks a lot to [@cserteGT3](https://github.com/cserteGT3) for his input and [@cormullion](https://github.com/cormullion) for great feedback on the markdown parser through extensive testing.
+
+**Features** 
+
+* indented code blocks are now supported (issue #207, PR #217)
+* reference links and images like `[link][id]` with later `[id]: url` are now supported (issue #201, PR #214)
+* headers are now links which facilitates internal hyper-references
+* automatic table of contents via `\toc` or `\tableofcontents` (PR #188)
+* added `\\` as a way to force the introduction of a line break, this can be useful in the context of inclusions etc (see https://github.com/cserteGT3/JuDocPlottest/issues/1 for context)
+* html entities are now supported (issue #206, PR #209)
+* double backticks are now supported for inline code (see issue #204 and PR #210)
+* added `\textinput` command to display code output as formatted text (PR  #194)
+* added `\tableinput` command to insert and format a table corresponding to a csv file (PR #197, creds to @cserteGT3)
+
+**Bug fixes & improvements**
+
+* showing error message when an eval'd block fails (PR #187)
+* issues with backslashes in code environment etc (issue #205, PR #209)
+* improved status messages for `cleanpull` (PR #190) and adding the possibility to specify a commit message for `publish` (PR #191, creds to @cserteGT3)
+
+**Templates** (JuDocTemplates is now `0.2.5`)
+
+* update of KaTeX and Highlight.js respectively to `0.11` and `9.15.10`
+* fixing the default rights of files to `644`
+
+**Other**
+
+* general cleanup of the code (trying to make naming more consistent and less clunky, general cleaning up etc)
+
 ## v0.2
 
 Thanks a lot to [@Invarianz](https://github.com/Invarianz), [@cserteGT3](https://github.com/cserteGT3) and [@mbaz](https://github.com/mbaz) for help and feedback leading to this version.
