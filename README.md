@@ -14,6 +14,18 @@ A couple of websites using JuDoc:
 * [my website](https://tlienart.github.io).
 * see also how [some julia blog posts](https://tlienart.github.io/julia-blog-migration/) render with JuDoc (note: _focus on the rendering, not the layout/CSS_) see also [the source repo](https://github.com/tlienart/julia-blog-migration).
 
+### Key features
+
+* Use standard markdown with the possibility to use LaTeX-style commands,
+* Simple way to introduce div blocks allowing easy styling on a page (e.g. "Theorem" boxes etc.),
+* Can execute and show the output of Julia code blocks,
+* Simple optimization step to accelerate webpage loading speed:
+  - compression of HTML and CSS of the generated pages,
+  - optional pre-rendering of KaTeX and highlighted code blocks to remove javascript dependency,
+* Easy HTML templating to define or adapt a given layout.
+
+See [the docs](https://tlienart.github.io/JuDoc.jl/stable) for more information and examples.
+
 ### Quick demo
 
 With Julia ≥ 1.0:

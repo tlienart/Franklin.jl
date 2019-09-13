@@ -157,7 +157,7 @@ This is a partial list of JuDoc's features that you may find interesting/useful;
 * ([docs](man/syntax/#Maths-1)) maths rendered via [KaTeX](https://katex.org/), code via [highlight.js](https://highlightjs.org) both can be pre-rendered (see further below)
 * ([docs](man/syntax/#Hyper-references-1)) hyper-references for equations and citations
 * ([docs](man/templating/)) simple html templating
-* fast rendering (~5ms per page on warm session)
+* fast page generation (~5ms per page on warm session)
 * live preview (via [LiveServer.jl](https://github.com/asprionj/LiveServer.jl))
 * ([docs](man/workflow/#Optimisation-step-1)) optimisation step to speed up wepage rendering:
   * pre-rendered KaTeX (requires `node`)
@@ -165,7 +165,7 @@ This is a partial list of JuDoc's features that you may find interesting/useful;
   * minified output (via [`css-html-js-minify`](https://github.com/juancarlospaco/css-html-js-minify), requires `python3`)
 * ([docs](man/workflow/#(git)-synchronisation-1)) all-in-one "publish" step to compile, optimise and push your website
 
-There are a few features to deal with code:
+There are also a few features to deal with code:
 
 * ([docs](man/syntax/#Insertions-1)) insertion of code blocks with or without live-evaluation (a bit like [Weave.jl](https://github.com/mpastell/Weave.jl)),
 * ([docs](man/workflow/#Using-Literate.jl-1)) working with [Literate.jl](https://github.com/fredrikekre/Literate.jl)
