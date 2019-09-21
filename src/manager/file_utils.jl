@@ -90,9 +90,9 @@ function process_file(case::Symbol, fpair::Pair{String,String}, args...; kwargs.
         DEBUG_MODE[] && throw(err)
         rp = fpair.first
         rp = rp[end-min(20, length(rp))+1 : end]
-        println("\n... error processing '$(fpair.second)' in ...$rp.")
+        println("\n... encountered an issue processing '$(fpair.second)' in ...$rp.")
         println("Verify, then start judoc again...\n")
-        @show err
+        SUPPRESS_ERR[] || @show err
         return -1
     end
     return 0

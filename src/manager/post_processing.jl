@@ -14,7 +14,9 @@ Note: if the prerendering is set to `true`, the minification will take longer as
 will be larger (especially if you have lots of maths on pages).
 """
 function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
-                    prepath::String="")::Union{Nothing,Bool}
+                    prepath::String="", no_fail_prerender::Bool=true,
+                    suppress_errors::Bool=true)::Union{Nothing,Bool}
+    suppress_errors && (SUPPRESS_ERR[] = true)
     #
     # Prerendering
     #
@@ -35,13 +37,13 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
     print(fmsg)
     withpre = fmsg * ifelse(prerender, rpad(" (with pre-rendering)", 24), rpad(" (no pre-rendering)", 24))
     print(withpre)
-    succ = (serve(single=true, prerender=prerender, nomess=true, isoptim=true) === nothing)
+    succ = (serve(single=true, prerender=prerender, nomess=true, isoptim=true, no_fail_prerender=no_fail_prerender) === nothing)
     print_final(withpre, start)
 
     #
     # Minification
     #
-    if minify && succ
+    if minify && (succ || no_fail_prerender)
         if JD_CAN_MINIFY
             start = time()
             mmsg = rpad("→ Minifying *.[html|css] files...", 35)
@@ -58,6 +60,7 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
                   "The output will not be minified."
         end
     end
+    SUPPRESS_ERR[] = false
     return ifelse(sig, succ, nothing)
 end
 
