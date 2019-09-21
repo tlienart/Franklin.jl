@@ -164,7 +164,7 @@ path of the directory containing the file, and the name of the file without exte
 See also [`resolve_lx_input`](@ref).
 Note: rpath here is always a UNIX path while the output correspond to SYSTEM paths.
 """
-function check_input_rpath(rpath::AbstractString, lang::AbstractString="")::NTuple{3,String}
+function check_input_rpath(rpath::AS, lang::AS="")::NTuple{3,String}
     # find the full system path to the asset
     fpath = resolve_assets_rpath(rpath; canonical=true)
 
@@ -205,7 +205,7 @@ $(SIGNATURES)
 
 Internal function to read the content of a script file. See also [`resolve_lx_input`](@ref).
 """
-function resolve_lx_input_hlcode(rpath::AbstractString, lang::AbstractString)::String
+function resolve_lx_input_hlcode(rpath::AS, lang::AS)::String
     fpath, _, _ = check_input_rpath(rpath)
     # Read the file while ignoring lines that are flagged with something like `# HIDE`
     _, comsym = CODE_LANG[lang]
@@ -242,7 +242,7 @@ $(SIGNATURES)
 Internal function to read the content of a script file and highlight it using `highlight.js`. See
 also [`resolve_lx_input`](@ref).
 """
-function resolve_lx_input_othercode(rpath::AbstractString, lang::AbstractString)::String
+function resolve_lx_input_othercode(rpath::AS, lang::AS)::String
     fpath, _, _ = check_input_rpath(rpath)
     return html_code(read(fpath, String), lang)
 end
@@ -254,7 +254,7 @@ $(SIGNATURES)
 Internal function to read the raw output of the execution of a file and display it in a pre block.
 See also [`resolve_lx_input`](@ref).
 """
-function resolve_lx_input_plainoutput(rpath::AbstractString, reproc::Bool=false)::String
+function resolve_lx_input_plainoutput(rpath::AS, reproc::Bool=false)::String
     # will throw an error if rpath doesn't exist
     _, dir, fname = check_input_rpath(rpath)
     out_file = joinpath(dir, "output", fname * ".out")
@@ -273,7 +273,7 @@ Internal function to read a file at a specified path and just plug it in. (Corre
 simple `\\input` command does in LaTeX).
 See also [`resolve_lx_textinput`](@ref).
 """
-function resolve_lx_input_textfile(rpath::AbstractString)::String
+function resolve_lx_input_textfile(rpath::AS)::String
     # find the full system path to the asset
     fpath = resolve_assets_rpath(rpath; canonical=true)
     isempty(splitext(fpath)[2]) && (fpath *= ".md")
@@ -288,7 +288,7 @@ $(SIGNATURES)
 Internal function to read a plot outputted by script `rpath`, possibly named with `id`. See also
 [`resolve_lx_input`](@ref). The commands `\\fig` and `\\figalt` should be preferred.
 """
-function resolve_lx_input_plotoutput(rpath::AbstractString, id::AbstractString="")::String
+function resolve_lx_input_plotoutput(rpath::AS, id::AS="")::String
     # will throw an error if rpath doesn't exist
     _, dir, fname = check_input_rpath(rpath)
     plt_name = fname * id

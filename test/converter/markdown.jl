@@ -96,13 +96,17 @@ end
 
 
 @testset "headers" begin
+    J.CUR_PATH[] = "index.md"
     h = """
         # Title
         and then
         ## Subtitle cool!
         done
         """ |> seval
-    @test occursin("<h1><a id=\"title\" href=\"#title\">Title</a></h1>", h)
-    @test occursin("<h2><a id=\"subtitle_cool\" href=\"#subtitle_cool\">Subtitle cool&#33;</a></h2>", h)
-    @test occursin("done", h)
+    @test isapproxstr(h, """
+                        <h1 id="title"><a href="/index.html#title">Title</a></h1>
+                        and then
+                        <h2 id="subtitle_cool"><a href="/index.html#subtitle_cool">Subtitle cool&#33;</a></h2>
+                        done
+                        """)
 end

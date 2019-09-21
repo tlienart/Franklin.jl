@@ -29,6 +29,7 @@ end
 
 
 @testset "TOC"  begin
+    J.CUR_PATH[] = "pages/ff/aa.md"
     h = raw"""
         \toc
         ## Hello `jd`
@@ -37,20 +38,19 @@ end
         done.
         """ * J.EOS |> seval
     @test isapproxstr(h, raw"""
-        <div class=\"jd-toc\">
-        <ol>
+        <div class="jd-toc">
           <ol>
-            <li><a href=\"#hello_jd\">Hello <code>jd</code></li>
             <ol>
-              <li><a href=\"#goodbye\">Goodbye&#33;</li>
+              <li><a href="/pub/ff/aa.html#hello_jd">Hello <code>jd</code></a></li>
+              <ol>
+                <li><a href="/pub/ff/aa.html#goodbye">Goodbye&#33;</a></li>
+              </ol>
+              <li><a href="/pub/ff/aa.html#done">Done</a></li>
             </ol>
-            <li><a href=\"#done\">Done</li>
           </ol>
-        </ol>
         </div>
-        <h2><a id=\"hello_jd\" href=\"#hello_jd\">Hello <code>jd</code></a></h2>
-        <h3><a id=\"goodbye\" href=\"#goodbye\">Goodbye&#33;</a></h3>
-        <h2><a id=\"done\" href=\"#done\">Done</a></h2>
-        done.
+        <h2 id="hello_jd"><a href="/pub/ff/aa.html#hello_jd">Hello <code>jd</code></a></h2>
+        <h3 id="goodbye"><a href="/pub/ff/aa.html#goodbye">Goodbye&#33;</a></h3>
+        <h2 id="done"><a href="/pub/ff/aa.html#done">Done</a></h2>done.
         """)
 end
