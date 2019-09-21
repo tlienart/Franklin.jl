@@ -115,8 +115,9 @@ function jd_fullpass(watched_files::NamedTuple; clear::Bool=false, verb::Bool=fa
     # reinsert prepath if specified
     isnothing(prepath) || (GLOBAL_PAGE_VARS["prepath"] = prepath)
 
-    # process configuration file
+    # process configuration file (see also `process_md_defs`)
     process_config()
+
 
     # looking for an index file to process
     indexmd   = PATHS[:src] => "index.md"

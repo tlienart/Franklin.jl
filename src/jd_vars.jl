@@ -54,6 +54,13 @@ is processed.
     LOCAL_PAGE_VARS["jd_rpath"] = Pair("",      (String,)) # local path to file src/[...]/blah.md
     LOCAL_PAGE_VARS["lang"]     = Pair("julia", (String,)) # default lang for indented code
     LOCAL_PAGE_VARS["reflinks"] = Pair(true,    (Bool,))   # whether there are reflinks or not
+
+    # If there are GLOBAL vars that are defined, they take precedence
+    local_keys   = keys(LOCAL_PAGE_VARS)
+    for k in keys(GLOBAL_PAGE_VARS)
+        k in local_keys || continue
+        LOCAL_PAGE_VARS[k] = GLOBAL_PAGE_VARS[k]
+    end
     return nothing
 end
 
