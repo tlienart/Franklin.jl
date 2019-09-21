@@ -58,3 +58,23 @@ end
             <p>The end.</p>
             """)
 end
+
+
+@testset "Table" begin
+    st = """
+        A
+
+        ### Title
+
+        No. | Graph | Vertices | Edges
+        :---: | :---------: | :------------: | :-----------------:
+        1 | Twitter Social Circles | 81,306 | 1,342,310
+        2 | Astro-Physics Collaboration | 17,903 | 197,031
+        3 | Facebook Social Circles | 4,039 | 88,234
+
+        C
+        """ * J.EOS
+    st |> seval
+
+    st |> Markdown.parse
+end
