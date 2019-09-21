@@ -10,7 +10,7 @@ $(SIGNATURES)
 
 Convenience function for a list item
 """
-html_li(in::AS) = "<li>$(in)</li>\n"
+html_li(in::AS) = "<li>$(in)</li>"
 
 """
 $(SIGNATURES)
