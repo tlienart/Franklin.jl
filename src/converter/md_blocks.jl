@@ -11,10 +11,10 @@ function convert_block(β::AbstractBlock, lxcontext::LxContext)::AS
     # Return relevant interpolated string based on case
     βn = β.name
     βn ∈  MD_HEADER        && return convert_header(β)
-    βn == :CODE_INLINE     && return html_code_inline(content(β) |> Markdown.htmlesc)
+    βn == :CODE_INLINE     && return html_code_inline(content(β) |> htmlesc)
     βn == :CODE_BLOCK_LANG && return convert_code_block(β.ss)
     βn == :CODE_BLOCK_IND  && return convert_indented_code_block(β.ss)
-    βn == :CODE_BLOCK      && return html_code(content(β) |> Markdown.htmlesc, "{{fill lang}}")
+    βn == :CODE_BLOCK      && return html_code(strip(content(β) |> htmlesc), "{{fill lang}}")
     βn == :ESCAPE          && return chop(β.ss, head=3, tail=3)
 
     # Math block --> needs to call further processing to resolve possible latex
@@ -185,5 +185,5 @@ function convert_indented_code_block(ss::SubString)::String
     # 1. decrease indentation of all lines (either frontal \n\t or \n⎵⎵⎵⎵)
     code = replace(ss, r"\n(?:\t| {4})" => "\n")
     # 2. return; lang is a LOCAL_PAGE_VARS that is julia by default and can be set
-    return html_code(strip(code) |> Markdown.htmlesc, "{{fill lang}}")
+    return html_code(strip(code) |> htmlesc, "{{fill lang}}")
 end
