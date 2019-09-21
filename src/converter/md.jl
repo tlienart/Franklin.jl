@@ -205,7 +205,14 @@ function form_inter_md(mds::AS, blocks::Vector{<:AbstractBlock},
             if isa(β, OCBlock) && β.name ∈ MD_OCB_IGNORE
                 head = nextind(mds, to(β))
             else
-                write(intermd, INSERT)
+                if isa(β, OCBlock) && β.name ∈ MD_HEADER
+                    # this is a trick to allow whatever follows the title to be
+                    # properly parsed by Markdown.parse; it could otherwise cause
+                    # issues for instance if a table starts immediately after the title
+                    write(intermd, INSERT * "\n ")
+                else
+                    write(intermd, INSERT)
+                end
                 push!(mblocks, β)
                 head = nextind(mds, to(blocks[b_idx]))
             end
