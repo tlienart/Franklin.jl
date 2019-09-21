@@ -22,6 +22,6 @@ $SIGNATURES
 
 Verify that a given string corresponds to a well formed html entity.
 """
-function verify_html_entity(ss::AbstractString)
+function verify_html_entity(ss::AS)
     match(r"&(?:[a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});", ss) !== nothing
 end

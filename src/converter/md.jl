@@ -168,7 +168,7 @@ that a piece will need to be plugged in there later.
 * `blocks`: vector of blocks
 * `lxdefs`: existing latex definitions prior to the math block
 """
-function form_inter_md(mds::AbstractString, blocks::Vector{<:AbstractBlock},
+function form_inter_md(mds::AS, blocks::Vector{<:AbstractBlock},
                       lxdefs::Vector{LxDef})::Tuple{String, Vector{AbstractBlock}}
     # final character is the EOS character
     strlen  = prevind(mds, lastindex(mds))
@@ -241,7 +241,7 @@ block.
 * `blocks`:    vector of blocks
 * `lxcontext`: latex context
 """
-function convert_inter_html(ihtml::AbstractString,
+function convert_inter_html(ihtml::AS,
                             blocks::Vector{<:AbstractBlock},
                             lxcontext::LxContext)::String
     # Find the INSERT indicators

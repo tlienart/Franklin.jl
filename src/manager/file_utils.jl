@@ -107,8 +107,8 @@ etc, located in a place described by `fpair`, processes it by converting it and 
 header and footer and writes it to the appropriate place. It can throw an error which will be
 caught in `process_file(args...)`.
 """
-function process_file_err(case::Symbol, fpair::Pair{String, String}, head::AbstractString="",
-                          pg_foot::AbstractString="", foot::AbstractString="", t::Float64=0.;
+function process_file_err(case::Symbol, fpair::Pair{String, String}, head::AS="",
+                          pg_foot::AS="", foot::AS="", t::Float64=0.;
                           clear::Bool=false, prerender::Bool=false, isoptim::Bool=false)::Nothing
     if case == :md
         write_page(fpair..., head, pg_foot, foot; prerender=prerender, isoptim=isoptim)
@@ -141,7 +141,7 @@ $(SIGNATURES)
 
 Convenience function to replace the extension of a filename with another.
 """
-change_ext(fname::AbstractString, ext=".html")::String = splitext(fname)[1] * ext
+change_ext(fname::AS, ext=".html")::String = splitext(fname)[1] * ext
 
 
 """

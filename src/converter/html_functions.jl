@@ -5,7 +5,7 @@ Helper function to process an individual block when it's a `HFun` such as `{{ fi
 Dev Note: `fpath` is (currently) unused but is passed to all `convert_html_block` functions.
 See [`convert_html`](@ref).
 """
-function convert_html_block(β::HFun, allvars::PageVars, ::AbstractString="")::String
+function convert_html_block(β::HFun, allvars::PageVars, ::AS="")::String
     # normalise function name and apply the function
     fn = lowercase(β.fname)
     haskey(HTML_FUNCTIONS, fn) && return HTML_FUNCTIONS[fn](β.params, allvars)
@@ -94,6 +94,12 @@ end
 $(SIGNATURES)
 
 H-Function of the form `{{toc}}` (table of contents).
+The split is as follows:
+
+* h[1] is the header text
+* h[2] is the key to the header
+* h[3] indicates how many time title occurs (usually once but if more then helps avoid clashes)
+* h[4] indicates the level of the title
 """
 function hfun_toc()::String
     inner  = ""
@@ -116,7 +122,7 @@ function hfun_toc()::String
                 inner *= "<ol>"
             end
         end
-        inner *= "<li><a href=\"#$(h[2])\">$(h[1])</li>"
+        inner *= html_li(html_ahref_key(h[2], h[1]))
     end
     # close at whatever level we are
     for i = curlvl:-1:2

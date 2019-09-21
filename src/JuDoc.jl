@@ -3,6 +3,7 @@ module JuDoc
 using JuDocTemplates
 
 using Markdown
+using Markdown: htmlesc
 using Dates # see jd_vars
 using DelimitedFiles: readdlm
 
@@ -54,6 +55,9 @@ const PageVars = Dict{String,Pair{K,NTuple{N, DataType}} where {K, N}}
 
 """Relative path to the current file being processed by JuDoc."""
 const CUR_PATH = Ref("")
+
+"""Shorter name for a type that we use everywhere"""
+const AS = AbstractString
 
 # -----------------------------------------------------------------------------
 

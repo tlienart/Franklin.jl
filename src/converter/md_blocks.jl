@@ -4,7 +4,7 @@ $(SIGNATURES)
 Helper function for `convert_inter_html` that processes an extracted block given a latex context
 `lxc` and returns the processed html that needs to be plugged in the final html.
 """
-function convert_block(β::AbstractBlock, lxcontext::LxContext)::AbstractString
+function convert_block(β::AbstractBlock, lxcontext::LxContext)::AS
     # case for special characters / html entities
     β isa HTML_SPCH     && return ifelse(isempty(β.r), β.ss, β.r)
 
@@ -111,7 +111,7 @@ function convert_header(β::OCBlock)::String
     # save in list of headers
     PAGE_HEADERS[length(PAGE_HEADERS)+1] = (title, rstitle, occur+1, level)
     # return the title
-    return "<$hk><a id=\"$rstitle\" href=\"#$rstitle\">$title</a></$hk>"
+    return html_hk(hk, html_ahref_key(rstitle, title); id=rstitle)
 end
 
 

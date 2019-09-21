@@ -105,9 +105,10 @@ end
 
 @testset "html misc" begin
     λ = "blah/blah.ext"
+    J.CUR_PATH[] = "pages/cpB/blah.md"
     @test J.html_ahref(λ, 1) == "<a href=\"$λ\">1</a>"
     @test J.html_ahref(λ, "bb") == "<a href=\"$λ\">bb</a>"
-    @test J.html_ahref_key("cc", "dd") == "<a href=\"#cc\">dd</a>"
+    @test J.html_ahref_key("cc", "dd") == "<a href=\"/pub/cpB/blah.html#cc\">dd</a>"
     @test J.html_div("dn","ct") == "<div class=\"dn\">ct</div>"
     @test J.html_img("src", "alt") == "<img src=\"src\" alt=\"alt\">"
     @test J.html_code("code") == "<pre><code>code</code></pre>"

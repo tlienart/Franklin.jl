@@ -157,7 +157,7 @@ julia> s
 5
 ```
 """
-function isexactly(refstring::AbstractString, follow::NTuple{K,Char} where K = (),
+function isexactly(refstring::AS, follow::NTuple{K,Char} where K = (),
                    isfollowed=true)::Tuple{Int,Bool,Function}
     # number of steps from the start character
     steps = prevind(refstring, lastindex(refstring))
@@ -241,7 +241,7 @@ that match specific tokens. The list of tokens found is returned.
 * `tokens_dict`:  dictionary of possible tokens (multiple characters long)
 * `stokens_dict`: dictionaro of possible tokens (single character)
 """
-function find_tokens(str::AbstractString,
+function find_tokens(str::AS,
                      tokens_dict::Dict{Char,Vector{TokenFinder}},
                      stokens_dict::Dict{Char,Symbol})::Vector{Token}
     # storage to keep track of the tokens found

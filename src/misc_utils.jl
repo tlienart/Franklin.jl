@@ -35,10 +35,10 @@ julia> JuDoc.subs("hello", 2:4)
 "ell"
 ```
 """
-subs(s::AbstractString, from::Int, to::Int)::SubString    = SubString(s, from, to)
-subs(s::AbstractString, from::Int)::SubString             = subs(s, from, from)
-subs(s::AbstractString, range::UnitRange{Int})::SubString = SubString(s, range)
-subs(s::AbstractString) = SubString(s)
+subs(s::AS, from::Int, to::Int)::SubString    = SubString(s, from, to)
+subs(s::AS, from::Int)::SubString             = subs(s, from, from)
+subs(s::AS, range::UnitRange{Int})::SubString = SubString(s, range)
+subs(s::AS) = SubString(s)
 
 """
 $(SIGNATURES)
@@ -101,7 +101,7 @@ $(SIGNATURES)
 
 Nicer printing of processes.
 ```
-function print_final(startmsg::AbstractString, starttime::Float64)::Nothing
+function print_final(startmsg::AS, starttime::Float64)::Nothing
     tit = time_it_took(starttime)
     println("\r$startmsg$tit")
 end
@@ -127,7 +127,7 @@ NOTE: this happens when resolving latex commands in a math environment. So for i
 an embedded math environment. These environments are marked as such so that we don't add additional
 KaTeX markers around them.
 """
-mathenv(s::AbstractString)::String = "_\$>_$(s)_\$<_"
+mathenv(s::AS)::String = "_\$>_$(s)_\$<_"
 
 
 """
@@ -137,7 +137,7 @@ Takes a string `s` and replace spaces by underscores so that that we can use it
 for hyper-references. So for instance `"aa  bb"` will become `aa_bb`.
 It also defensively removes any non-word character so for instance `"aa bb !"` will be `"aa_bb"`
 """
-function refstring(s::AbstractString)::String
+function refstring(s::AS)::String
     # remove html tags
     st = replace(s, r"<[a-z\/]+>"=>"")
     # remove non-word characters
@@ -170,7 +170,7 @@ $(SIGNATURES)
 Internal function to take a unix path, split it along `/` and re-join it (which will lead to the
 same path on unix but not on windows). Only used in [`resolve_assets_rpath`](@ref).
 """
-joinrp(rpath::AbstractString) = joinpath(split(rpath, '/')...)
+joinrp(rpath::AS) = joinpath(split(rpath, '/')...)
 
 
 """
@@ -186,7 +186,7 @@ these paths can be given to html anchors (refs, img, ...).
 In the `canonical=true` mode, the path is a valid path on the local system. These paths can be
 given to Julia to read or write things.
 """
-function resolve_assets_rpath(rpath::AbstractString; canonical::Bool=false)::String
+function resolve_assets_rpath(rpath::AS; canonical::Bool=false)::String
     @assert length(rpath) > 1 "relative path '$rpath' doesn't seem right"
     if startswith(rpath, "/")
         # this is a full path starting from the website root folder so for instance

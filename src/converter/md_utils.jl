@@ -6,7 +6,7 @@ that don't need to be further considered and don't contain anything else than ma
 The boolean `stripp` indicates whether to remove the inserted `<p>` and `</p>` by the base markdown
 processor, this is relevant for things that are parsed within latex commands etc.
 """
-function md2html(ss::AbstractString; stripp::Bool=false)::AbstractString
+function md2html(ss::AS; stripp::Bool=false)::AS
     # if there's nothing, return that...
     isempty(ss) && return ss
     # Use Julia's Markdown parser followed by Julia's MD->HTML conversion
@@ -77,6 +77,6 @@ a problem when combined with italic or bold markdown mode since `_blah_` works b
 This function looks for any occurrence of `[\\*_] ##JDINSERT##` or the opposite and removes the
 extraneous whitespace.
 """
-fix_inserts(s::AbstractString)::String =
+fix_inserts(s::AS)::String =
     replace(replace(s, r"([\*_]) ##JDINSERT##" => s"\1##JDINSERT##"),
                        r"##JDINSERT## ([\*_])" => s"##JDINSERT##\1")

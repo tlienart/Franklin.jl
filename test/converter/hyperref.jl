@@ -1,4 +1,5 @@
 @testset "Hyperref" begin
+    J.CUR_PATH[] = "index.md"
     st = raw"""
        Some string
        $$ x = x \label{eq 1}$$
@@ -35,10 +36,10 @@
     @test occursin("<li><p><a id=\"$h2\"></a> <strong>Amari</strong> and <strong>Douglas</strong>: <em>Why Natural Gradient</em>, 1998.</p>\n</li>", h)
     @test occursin("<li><p><a id=\"$h3\"></a> <strong>Bardenet</strong>, <strong>Doucet</strong> and <strong>Holmes</strong>: <em>On Markov Chain Monte Carlo Methods for Tall Data</em>, 2017.</p>\n</li>", h)
 
-    @test occursin("<span class=\"eqref\">(<a href=\"#$h1\">1</a>)</span>", h)
-    @test occursin("<span class=\"bibref\"><a href=\"#$h2\">Amari and Douglas., 1998</a></span>", h)
-    @test occursin("<span class=\"bibref\">(<a href=\"#$h3\">Bardenet et al., 2017</a>)</span>", h)
-    @test occursin("<span class=\"bibref\"><a href=\"#$h2\">Amari and Douglas., 1998</a>, <a href=\"#$h3\">Bardenet et al., 2017</a></span>", h)
+    @test occursin("<span class=\"eqref\">(<a href=\"/index.html#$h1\">1</a>)</span>", h)
+    @test occursin("<span class=\"bibref\"><a href=\"/index.html#$h2\">Amari and Douglas., 1998</a></span>", h)
+    @test occursin("<span class=\"bibref\">(<a href=\"/index.html#$h3\">Bardenet et al., 2017</a>)</span>", h)
+    @test occursin("<span class=\"bibref\"><a href=\"/index.html#$h2\">Amari and Douglas., 1998</a>, <a href=\"/index.html#$h3\">Bardenet et al., 2017</a></span>", h)
 end
 
 

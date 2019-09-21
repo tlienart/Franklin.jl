@@ -174,7 +174,7 @@ HTML token corresponding to `{{ispage path/page}}`.
 """
 struct HIsPage <: AbstractBlock
     ss::SubString
-    pages::Vector{<:AbstractString} # one or several pages
+    pages::Vector{<:AS} # one or several pages
 end
 
 
@@ -185,7 +185,7 @@ HTML token corresponding to `{{isnotpage path/page}}`.
 """
 struct HIsNotPage <: AbstractBlock
     ss::SubString
-    pages::Vector{<:AbstractString}
+    pages::Vector{<:AS}
 end
 
 
@@ -197,7 +197,7 @@ HTML conditional page block corresponding to `{{is[not]page path/page}} ... {{en
 struct HCondPage <: AbstractBlock
     ss::SubString                    # full block
     checkispage::Bool                # true for ispage false for isnotpage
-    pages::Vector{<:AbstractString}  # page names
+    pages::Vector{<:AS}  # page names
     action::SubString                # what to do when condition is met
 end
 HCondPage(β::HIsPage, ss, action) = HCondPage(ss, true, β.pages, action)

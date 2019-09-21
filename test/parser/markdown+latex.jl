@@ -241,6 +241,8 @@ end
     @test blocks[5].name == :H5
     @test blocks[6].name == :H6
 
+    J.CUR_PATH[] = "index.md"
+
     h = raw"""
         # t1
         1
@@ -254,15 +256,15 @@ end
         5
         """ * J.EOS |> seval
     @test isapproxstr(h, """
-        <h1><a id=\"t1\" href=\"#t1\">t1</a></h1>
+        <h1 id="t1"><a href="/index.html#t1">t1</a></h1>
         1
-        <h2><a id=\"t2\" href=\"#t2\">t2</a></h2>
+        <h2 id="t2"><a href="/index.html#t2">t2</a></h2>
         2
-        <h2><a id=\"t3_blah_etc\" href=\"#t3_blah_etc\">t3 <code>blah</code> etc</a></h2>
+        <h2 id="t3_blah_etc"><a href="/index.html#t3_blah_etc">t3 <code>blah</code> etc</a></h2>
         3
-        <h3><a id=\"t4\" href=\"#t4\">t4</a></h3>
+        <h3 id="t4"><a href="/index.html#t4">t4 </a></h3>
         4
-        <h3><a id=\"t2_2\" href=\"#t2_2\">t2</a></h3>
+        <h3 id="t2_2"><a href="/index.html#t2_2">t2</a></h3>
         5
         """)
 end

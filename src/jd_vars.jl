@@ -64,7 +64,7 @@ PAGE_HEADERS
 Keep track of seen headers. The key amounts to the ordering (~ordered dict), the value contains
 the title, the refstring version of the title, the occurence number and the level (1, ..., 6).
 """
-const PAGE_HEADERS = Dict{Int,Tuple{AbstractString,AbstractString,Int,Int}}()
+const PAGE_HEADERS = Dict{Int,Tuple{AS,AS,Int,Int}}()
 
 
 """
@@ -138,7 +138,7 @@ $(SIGNATURES)
 Convenience function taking a `DateTime` object and returning the corresponding formatted string
 with the format contained in `GLOBAL_PAGE_VARS["date_format"]`.
 """
-jd_date(d::DateTime)::AbstractString = Dates.format(d, GLOBAL_PAGE_VARS["date_format"].first)
+jd_date(d::DateTime)::AS = Dates.format(d, GLOBAL_PAGE_VARS["date_format"].first)
 
 
 """
