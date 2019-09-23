@@ -17,7 +17,10 @@ function find_and_fix_md_links(hs::String)::String
     m_link_defs = collect(eachmatch(r"&#91;((?:(?!&#93;).)*?)&#93;:\s+((?:(?!\<\/p\>)\S)+)", hs))
 
     def_names = [def.captures[1] for def in m_link_defs]
-    def_links = [def.captures[2] for def in m_link_defs]
+
+    # here's a trick, we do NOT use the link caught here; rather we check the dictionary
+    # PAGE_LINK_DEFS as otherwise the link may have been altered by JuDoc (e.g. if has underscores)
+    def_links = [PAGE_LINK_DEFS[def.captures[1]] for def in m_link_defs]
 
     # here we're looking for [id] or [stuff][id] or ![stuff][id] but not [id]:
     m_link_refs = collect(eachmatch(r"(&#33;)?&#91;(.*?)&#93;(?!:)(?:&#91;(.*?)&#93;)?", hs))

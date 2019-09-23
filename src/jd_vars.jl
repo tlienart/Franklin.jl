@@ -77,6 +77,8 @@ const PAGE_HEADERS = Dict{Int,Tuple{AS,AS,Int,Int}}()
 
 """
 $(SIGNATURES)
+
+Empties `PAGE_HEADERS`.
 """
 @inline function def_PAGE_HEADERS!()::Nothing
     empty!(PAGE_HEADERS)
@@ -93,21 +95,30 @@ const PAGE_FNREFS = String[]
 
 """
 $(SIGNATURES)
+
+Empties `PAGE_FNREFS`.
 """
 @inline function def_PAGE_FNREFS!()::Nothing
     empty!(PAGE_FNREFS)
     return nothing
 end
 
+"""
+PAGE_LINK_DEFS
+
+Keep track of link def candidates
+"""
+const PAGE_LINK_DEFS = LittleDict{String,String}()
 
 """
 $(SIGNATURES)
+
+Empties `PAGE_LINK_DEFS`.
 """
-@inline function def_PAGE_HEADERS!()::Nothing
-    empty!(PAGE_HEADERS)
+@inline function def_PAGE_LINK_DEFS!()::Nothing
+    empty!(PAGE_LINK_DEFS)
     return nothing
 end
-
 
 """
 GLOBAL_LXDEFS

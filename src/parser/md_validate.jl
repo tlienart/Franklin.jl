@@ -58,3 +58,37 @@ function validate_header_block(β::OCBlock)::Bool
     prevc == '\n' && return true
     return false
 end
+
+
+"""
+$(SIGNATURES)
+
+Keep track of link defs.
+"""
+function validate_and_store_link_defs!(blocks::Vector{OCBlock})::Nothing
+    isempty(blocks) && return
+    rm = Int[]
+    parent = str(blocks[1])
+    for (i, β) in enumerate(blocks)
+        if β.name == :LINK_DEF
+            # incremental backward look until we find a `[` or a `\n` if `\n` first, discard
+            ini  = prevind(parent, from(β))
+            k    = ini
+            char = '\n'
+            while k ≥ 1
+                char = parent[k]
+                char ∈ ('[','\n') && break
+                k = prevind(parent, k)
+            end
+            if char == '['
+                # we have a [id]: lk add it to PAGE_LINK_DEFS
+                id = string(subs(parent, nextind(parent, k), ini))
+                lk = β |> content |> strip |> string
+                PAGE_LINK_DEFS[id] = lk
+            end
+            push!(rm, i)
+        end
+    end
+    deleteat!(blocks, rm)
+    return nothing
+end

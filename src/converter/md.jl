@@ -24,6 +24,7 @@ function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
         def_PAGE_EQREFS!()      # page-specific equation dict (hrefs)
         def_PAGE_BIBREFS!()     # page-specific reference dict (hrefs)
         def_PAGE_FNREFS!()      # page-specific footnote dict
+        def_PAGE_LINK_DEFS!()   # page-specific link definition candidates [..]: (...)
     end
 
     #
@@ -47,6 +48,8 @@ function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
     filter!(τ -> τ.name ∉ L_RETURNS, tokens)
     #>> d. filter out "fake headers" (opening ### that are not at the start of a line)
     filter!(β -> validate_header_block(β), blocks)
+    #>> e. keep track of literal content of possible link definitions to use
+    validate_and_store_link_defs!(blocks)
 
     #> 3. LaTeX commands
     #>> a. find "newcommands", update active blocks/braces

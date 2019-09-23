@@ -229,6 +229,9 @@ end
 end
 
 
+
+
+
 @testset "IndCode" begin # issue 207
     st = raw"""
         A
@@ -241,19 +244,16 @@ end
         end
         """ * J.EOS
     @test isapproxstr(st |> seval, raw"""
-                        <p>
-                        A
-                        <pre><code class="language-julia">
-                        a &#61; 1&#43;1
-                        if a &gt; 1
-                            @show a
-                        end
-                        b &#61; 2
-                        @show a&#43;b
-                        </code></pre>
-                        end
-                        </p>
-                        """)
+        <p>
+            A
+            <pre><code class="language-julia">a = 1+1
+            if a > 1
+                @show a
+            end
+            b = 2
+            @show a+b</code></pre>
+            end
+        </p>""")
 
     st = raw"""
         A `single` and ```python blah``` and
@@ -267,14 +267,10 @@ end
     @test isapproxstr(st |> seval, raw"""
                         <p>
                         A <code>single</code> and
-                        <pre><code class="language-python">
-                        blah
-                        </code></pre>
-                        and
-                        <pre><code class="language-julia">
-                        a &#61; 1&#43;1
-                        </code></pre>
-                        then</p>
+                        <pre><code class="language-python">blah</code></pre>
+                        and<pre><code class="language-julia">a = 1+1</code></pre>
+                        then
+                        </p>
                         <ul>
                           <li><p>blah</p>
                             <ul>

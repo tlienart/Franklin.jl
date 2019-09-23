@@ -38,6 +38,8 @@ const MD_TOKENS = Dict{Char, Vector{TokenFinder}}(
              ],
     '['  => [ incrlook(is_footnote) => :FOOTNOTE_REF,    # [^...](:)? defs will be separated after
              ],
+    ']'  => [ isexactly("]: ") => :LINK_DEF,
+             ],
     '\\' => [ isexactly("\\{")        => :INACTIVE,         # See note [^1]
               isexactly("\\}")        => :INACTIVE,         # See note [^1]
               isexactly("\\\$")       => :INACTIVE,         # See note [^1]
@@ -138,6 +140,7 @@ const MD_OCB = [
     OCProto(:CODE_INLINE,     :CODE_SINGLE,  (:CODE_SINGLE,),   false),
     OCProto(:ESCAPE,          :ESCAPE,       (:ESCAPE,),        false),
     OCProto(:FOOTNOTE_DEF,    :FOOTNOTE_DEF, (:LINE_RETURN,),   false),
+    OCProto(:LINK_DEF,        :LINK_DEF,     (:LINE_RETURN,),   false),
     # ------------------------------------------------------------------
     OCProto(:H1,              :H1_OPEN,      (L_RETURNS..., :EOS), false), # see [^3]
     OCProto(:H2,              :H2_OPEN,      (L_RETURNS..., :EOS), false),

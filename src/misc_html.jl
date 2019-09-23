@@ -33,7 +33,7 @@ Convenience function to introduce a hyper reference.
 """
 function html_ahref(link::AS, name::Union{Int,AS};
                     title::AS="", class::AS="")
-    a  = "<a href=\"$link\""
+    a  = "<a href=\"$(htmlesc(link))\""
     a *= attr(:title, title)
     a *= attr(:class, class)
     a *= ">$name</a>"
