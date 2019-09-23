@@ -210,7 +210,7 @@ function convert_footnote_ref(β::Token)::String
         push!(PAGE_FNREFS, id)
         pos = length(PAGE_FNREFS)
     end
-    return html_sup("fnref:$id", html_ahref("#fndef:$id", "[$pos]"; class="fnref"))
+    return html_sup("fnref:$id", html_ahref(url_curpage() * "#fndef:$id", "[$pos]"; class="fnref"))
 end
 
 """
@@ -238,7 +238,7 @@ function convert_footnote_def(β::OCBlock, lxcontext::LxContext)::String
     """
     <table class="fndef" id="fndef:$id">
         <tr>
-            <td class=\"fndef-backref\">$(html_ahref("#fnref:$id", "[$pos]"))</td>
+            <td class=\"fndef-backref\">$(html_ahref(url_curpage() * "#fnref:$id", "[$pos]"))</td>
             <td class=\"fndef-content\">$(ct)</td>
         </tr>
     </table>
