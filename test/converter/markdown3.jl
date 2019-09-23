@@ -180,15 +180,11 @@ end
         """ * J.EOS
     @test isapproxstr(st |> seval, """
                         <p>
-                            A <a href=\"https://julialang.org/\">link</a> and
-                            B <a href=\"https://www.mozilla.org/\">link 2</a> and
-                            C <a href=\"https://www.python.org/\"title=\"Python\">Python</a> and
-                            D <a href=\"http://slashdot.org/\">a link</a> and
-                            blah
-                            end
-                         </p>""")
+                        A <a href="https://julialang.org/">link</a> and
+                        B <a href="https://www.mozilla.org/">link 2</a> and
+                        C <a href="https://www.python.org/" title="Python">Python</a> and
+                        D <a href="http://slashdot.org/">1</a> and blah end</p>""")
 end
-
 
 @testset "fixlinks2" begin
     st = raw"""
@@ -202,11 +198,10 @@ end
     @test isapproxstr(st |> seval, """
                       <p>
                           A <a href="https://julialang.org/">link</a> and
-                          B <img src="./path/to/img.png" alt="link"> and
+                          B <img src="./path/to/img.png" alt="id"> and
                           blah
                       </p>""")
 end
-
 
 @testset "fixlinks3" begin
     st = raw"""
@@ -223,7 +218,7 @@ end
                       <p>
                         A <a href="https://julialang.org/">link</a> and
                         B &#91;unknown&#93; and
-                        C <img src="./path/to/img.png" alt="link"> and
+                        C <img src="./path/to/img.png" alt="id"> and
                         D
                       </p>""")
 end

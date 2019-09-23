@@ -81,12 +81,19 @@ function validate_and_store_link_defs!(blocks::Vector{OCBlock})::Nothing
                 k = prevind(parent, k)
             end
             if char == '['
+                # redefine the full block
+                ftk = Token(:FOO,subs(""))
                 # we have a [id]: lk add it to PAGE_LINK_DEFS
-                id = string(subs(parent, nextind(parent, k), ini))
+                id = subs(parent, nextind(parent, k), ini) |> htmlesc
                 lk = β |> content |> strip |> string
                 PAGE_LINK_DEFS[id] = lk
+                # replace the block by a full one so that it can be fully
+                # discarded in the process of md blocks
+                blocks[i] = OCBlock(:LINK_DEF, ftk=>ftk, subs(parent, k, to(β)))
+            else
+                # discard
+                push!(rm, i)
             end
-            push!(rm, i)
         end
     end
     deleteat!(blocks, rm)

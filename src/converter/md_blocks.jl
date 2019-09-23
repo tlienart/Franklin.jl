@@ -17,6 +17,7 @@ function convert_block(β::AbstractBlock, lxcontext::LxContext)::AS
     βn == :ESCAPE          && return chop(β.ss, head=3, tail=3)
     βn == :FOOTNOTE_REF    && return convert_footnote_ref(β)
     βn == :FOOTNOTE_DEF    && return convert_footnote_def(β, lxcontext)
+    βn == :LINK_DEF        && return ""
 
     # Math block --> needs to call further processing to resolve possible latex
     βn ∈ MATH_BLOCKS_NAMES && return convert_math_block(β, lxcontext.lxdefs)
