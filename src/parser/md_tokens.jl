@@ -36,6 +36,10 @@ const MD_TOKENS = Dict{Char, Vector{TokenFinder}}(
              ],
     '~'  => [ isexactly("~~~")  => :ESCAPE,           # ~~~  ... ~~~
              ],
+    '['  => [ incrlook(is_footnote) => :FOOTNOTE_REF,    # [^...](:)? defs will be separated after
+             ],
+    ']'  => [ isexactly("]: ") => :LINK_DEF,
+             ],
     '\\' => [ isexactly("\\{")        => :INACTIVE,         # See note [^1]
               isexactly("\\}")        => :INACTIVE,         # See note [^1]
               isexactly("\\\$")       => :INACTIVE,         # See note [^1]
@@ -43,6 +47,8 @@ const MD_TOKENS = Dict{Char, Vector{TokenFinder}}(
               isexactly("\\]")        => :MATH_C_CLOSE,     #    ... \]
               isexactly("\\begin{align}")    => :MATH_ALIGN_OPEN,
               isexactly("\\end{align}")      => :MATH_ALIGN_CLOSE,
+              isexactly("\\begin{equation}") => :MATH_D_OPEN,
+              isexactly("\\end{equation}")   => :MATH_D_CLOSE,
               isexactly("\\begin{eqnarray}") => :MATH_EQA_OPEN,
               isexactly("\\end{eqnarray}")   => :MATH_EQA_CLOSE,
               isexactly("\\newcommand")      => :LX_NEWCOMMAND,
@@ -126,13 +132,15 @@ content which is needed to find latex definitions (see parser/markdown/find_bloc
 const MD_OCB = [
     # name                    opening token   closing token(s)     nestable
     # ---------------------------------------------------------------------
-    OCProto(:COMMENT,         :COMMENT_OPEN, (:COMMENT_CLOSE,),    false),
-    OCProto(:CODE_BLOCK_LANG, :CODE_LANG,    (:CODE_TRIPLE,),      false),
-    OCProto(:CODE_BLOCK,      :CODE_TRIPLE,  (:CODE_TRIPLE,),      false),
-    OCProto(:CODE_BLOCK_IND,  :LR_INDENT,    (:LINE_RETURN,),      false),
-    OCProto(:CODE_INLINE,     :CODE_DOUBLE,  (:CODE_DOUBLE,),      false),
-    OCProto(:CODE_INLINE,     :CODE_SINGLE,  (:CODE_SINGLE,),      false),
-    OCProto(:ESCAPE,          :ESCAPE,       (:ESCAPE,),           false),
+    OCProto(:COMMENT,         :COMMENT_OPEN, (:COMMENT_CLOSE,), false),
+    OCProto(:CODE_BLOCK_LANG, :CODE_LANG,    (:CODE_TRIPLE,),   false),
+    OCProto(:CODE_BLOCK,      :CODE_TRIPLE,  (:CODE_TRIPLE,),   false),
+    OCProto(:CODE_BLOCK_IND,  :LR_INDENT,    (:LINE_RETURN,),   false),
+    OCProto(:CODE_INLINE,     :CODE_DOUBLE,  (:CODE_DOUBLE,),   false),
+    OCProto(:CODE_INLINE,     :CODE_SINGLE,  (:CODE_SINGLE,),   false),
+    OCProto(:ESCAPE,          :ESCAPE,       (:ESCAPE,),        false),
+    OCProto(:FOOTNOTE_DEF,    :FOOTNOTE_DEF, (:LINE_RETURN,),   false),
+    OCProto(:LINK_DEF,        :LINK_DEF,     (:LINE_RETURN,),   false),
     # ------------------------------------------------------------------
     OCProto(:H1,              :H1_OPEN,      (L_RETURNS..., :EOS), false), # see [^3]
     OCProto(:H2,              :H2_OPEN,      (L_RETURNS..., :EOS), false),
@@ -161,7 +169,6 @@ All header symbols.
 const MD_HEADER = (:H1, :H2, :H3, :H4, :H5, :H6)
 
 
-
 """
 MD_OCB_ESC
 
@@ -182,6 +189,7 @@ const MD_OCB_MATH = [
     OCProto(:MATH_A,     :MATH_A,          (:MATH_A,),           false),
     OCProto(:MATH_B,     :MATH_B,          (:MATH_B,),           false),
     OCProto(:MATH_C,     :MATH_C_OPEN,     (:MATH_C_CLOSE,),     false),
+    OCProto(:MATH_C,     :MATH_D_OPEN,     (:MATH_D_CLOSE,),     false),
     OCProto(:MATH_I,     :MATH_I_OPEN,     (:MATH_I_CLOSE,),     false),
     OCProto(:MATH_ALIGN, :MATH_ALIGN_OPEN, (:MATH_ALIGN_CLOSE,), false),
     OCProto(:MATH_EQA,   :MATH_EQA_OPEN,   (:MATH_EQA_CLOSE,),   false),

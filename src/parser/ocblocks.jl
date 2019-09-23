@@ -208,3 +208,23 @@ function form_super_block!(blocks::Vector{OCBlock}, idx::Vector{Int},
     empty!(curseq)
     return
 end
+
+
+"""
+$SIGNATURES
+
+Take a list of token and return those corresponding to special characters or html entities wrapped
+in `HTML_SPCH` types (will be left alone by the markdown conversion and be inserted as is in the
+HTML).
+"""
+function find_special_chars(tokens::Vector{Token})
+    spch = Vector{HTML_SPCH}()
+    isempty(tokens) && return spch
+    for τ in tokens
+        τ.name == :CHAR_BACKSPACE   && push!(spch, HTML_SPCH(τ.ss, "&#92;"))
+        τ.name == :CHAR_BACKTICK    && push!(spch, HTML_SPCH(τ.ss, "&#96;"))
+        τ.name == :CHAR_LINEBREAK   && push!(spch, HTML_SPCH(τ.ss, "<br/>"))
+        τ.name == :CHAR_HTML_ENTITY && validate_html_entity(τ.ss) && push!(spch, HTML_SPCH(τ.ss))
+    end
+    return spch
+end

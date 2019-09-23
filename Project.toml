@@ -1,7 +1,7 @@
 name = "JuDoc"
 uuid = "4ca9428c-4c75-11e9-2efb-bf5cb6c1e8f8"
 authors = ["Thibaut Lienart <tlienart@me.com>"]
-version = "0.3.1"
+version = "0.3.2"
 
 [deps]
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
@@ -10,6 +10,7 @@ DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 JuDocTemplates = "6793090a-55ae-11e9-0511-73b91164f4ea"
 LiveServer = "16fef848-5104-11e9-1b77-fb7a48bbb589"
 Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
+OrderedCollections = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
 Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 
 [compat]

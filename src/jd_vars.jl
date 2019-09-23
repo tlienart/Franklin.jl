@@ -49,11 +49,13 @@ is processed.
     LOCAL_PAGE_VARS["hasmath"]  = Pair(true,    (Bool,))
     LOCAL_PAGE_VARS["hascode"]  = Pair(false,   (Bool,))
     LOCAL_PAGE_VARS["date"]     = Pair(Date(1), (String, Date, Nothing))
-    LOCAL_PAGE_VARS["jd_ctime"] = Pair(Date(1), (Date,))   # time of creation
-    LOCAL_PAGE_VARS["jd_mtime"] = Pair(Date(1), (Date,))   # time of last modification
-    LOCAL_PAGE_VARS["jd_rpath"] = Pair("",      (String,)) # local path to file src/[...]/blah.md
     LOCAL_PAGE_VARS["lang"]     = Pair("julia", (String,)) # default lang for indented code
     LOCAL_PAGE_VARS["reflinks"] = Pair(true,    (Bool,))   # whether there are reflinks or not
+
+    # page vars used by judoc, should not be accessed or defined
+    LOCAL_PAGE_VARS["jd_ctime"]  = Pair(Date(1), (Date,))   # time of creation
+    LOCAL_PAGE_VARS["jd_mtime"]  = Pair(Date(1), (Date,))   # time of last modification
+    LOCAL_PAGE_VARS["jd_rpath"]  = Pair("",      (String,)) # local path to file src/[...]/blah.md
 
     # If there are GLOBAL vars that are defined, they take precedence
     local_keys   = keys(LOCAL_PAGE_VARS)
@@ -73,15 +75,50 @@ the title, the refstring version of the title, the occurence number and the leve
 """
 const PAGE_HEADERS = Dict{Int,Tuple{AS,AS,Int,Int}}()
 
-
 """
 $(SIGNATURES)
+
+Empties `PAGE_HEADERS`.
 """
 @inline function def_PAGE_HEADERS!()::Nothing
     empty!(PAGE_HEADERS)
     return nothing
 end
 
+
+"""
+PAGE_FNREFS
+
+Keep track of name of seen footnotes; the order is kept as it's a list.
+"""
+const PAGE_FNREFS = String[]
+
+"""
+$(SIGNATURES)
+
+Empties `PAGE_FNREFS`.
+"""
+@inline function def_PAGE_FNREFS!()::Nothing
+    empty!(PAGE_FNREFS)
+    return nothing
+end
+
+"""
+PAGE_LINK_DEFS
+
+Keep track of link def candidates
+"""
+const PAGE_LINK_DEFS = LittleDict{String,String}()
+
+"""
+$(SIGNATURES)
+
+Empties `PAGE_LINK_DEFS`.
+"""
+@inline function def_PAGE_LINK_DEFS!()::Nothing
+    empty!(PAGE_LINK_DEFS)
+    return nothing
+end
 
 """
 GLOBAL_LXDEFS

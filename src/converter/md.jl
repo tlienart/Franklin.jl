@@ -23,6 +23,8 @@ function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
         def_PAGE_HEADERS!()     # all the headers
         def_PAGE_EQREFS!()      # page-specific equation dict (hrefs)
         def_PAGE_BIBREFS!()     # page-specific reference dict (hrefs)
+        def_PAGE_FNREFS!()      # page-specific footnote dict
+        def_PAGE_LINK_DEFS!()   # page-specific link definition candidates [..]: (...)
     end
 
     #
@@ -31,9 +33,10 @@ function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
     #
 
     #> 1. Tokenize
-    tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
+    tokens  = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
+    fn_refs = validate_footnotes!(tokens)
 
-    #> 1'. Find indented blocks
+    #> 1b. Find indented blocks
     tokens = find_indented_blocks(tokens, mds)
 
     #> 2. Open-Close blocks (OCBlocks)
@@ -45,6 +48,8 @@ function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
     filter!(τ -> τ.name ∉ L_RETURNS, tokens)
     #>> d. filter out "fake headers" (opening ### that are not at the start of a line)
     filter!(β -> validate_header_block(β), blocks)
+    #>> e. keep track of literal content of possible link definitions to use
+    validate_and_store_link_defs!(blocks)
 
     #> 3. LaTeX commands
     #>> a. find "newcommands", update active blocks/braces
@@ -70,7 +75,7 @@ function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
     #
 
     #> 1. Merge all the blocks that will need further processing before insertion
-    blocks2insert = merge_blocks(lxcoms, deactivate_divs(blocks), sp_chars)
+    blocks2insert = merge_blocks(lxcoms, deactivate_divs(blocks), fn_refs, sp_chars)
 
     #> 2. Form intermediate markdown + html
     inter_md, mblocks = form_inter_md(mds, blocks2insert, lxdefs)
