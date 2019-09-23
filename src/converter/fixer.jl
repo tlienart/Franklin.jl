@@ -3,9 +3,9 @@ $(SIGNATURES)
 
 Direct inline-style links are properly processed by Julia's Markdown processor but not:
 
-* `[link title](https://www.google.com "Google's Homepage")`
 * `[link title][some reference]` and later `[some reference]: http://www.reddit.com`
 * `[link title]` and later `[link title]: https://www.mozilla.org`
+* (we don't either) `[link title](https://www.google.com "Google's Homepage")`
 """
 function find_and_fix_md_links(hs::String)::String
     # 1. find all occurences of -- [...]: link

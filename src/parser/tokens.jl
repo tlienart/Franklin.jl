@@ -178,6 +178,12 @@ Check whether `c` is a letter or is in a vector of character `ac`.
 """
 α(c::Char, ac::NTuple{K,Char}=()) where {K} = isletter(c) || (c ∈ ac)
 
+"""
+$(SIGNATURES)
+
+Check whether `c` is alpha numeric or in vector of character `ac`
+"""
+αη(c::Char, ac::NTuple{K,Char}=()) where {K} = α(c, tuple(ac..., ("$i"[1] for i in 0:9)...))
 
 """
 $(SIGNATURES)
@@ -217,8 +223,18 @@ In combination with `incrlook`, checks to see if we have something that looks li
 Note that there can be fake matches, so this will need to be validated later on; if validated
 it will be treated as HTML; otherwise it will be shown as markdown. Triggerin char is a `&`.
 """
-is_html_entity(i::Int, c::Char) = α(c, ('#',';','0','1','2','3','4','5','6','7','8','9','0'))
+is_html_entity(i::Int, c::Char) = αη(c, ('#',';'))
 
+"""
+$(SIGNATURES)
+
+Check if it looks like `\\[\\^[a-zA-Z0-9]+\\]:`.
+"""
+function is_footnote(i::Int, c::Char)
+    i == 1 && return c == '^'
+    i == 2 && return αη(c)
+    i > 2  && return αη(c, (']', ':'))
+end
 
 """
 TokenFinder

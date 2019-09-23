@@ -36,6 +36,10 @@ end
 function explore_md_steps(mds)
     J.def_GLOBAL_PAGE_VARS!()
     J.def_GLOBAL_LXDEFS!()
+    J.def_LOCAL_PAGE_VARS!()
+    J.def_PAGE_EQREFS!()
+    J.def_PAGE_BIBREFS!()
+    J.def_PAGE_FNREFS!()
 
     steps = OrderedDict{Symbol,NamedTuple}()
 
@@ -43,6 +47,9 @@ function explore_md_steps(mds)
     tokens = J.find_tokens(mds, J.MD_TOKENS, J.MD_1C_TOKENS)
     tokens = J.find_indented_blocks(tokens, mds)
     steps[:tokenization] = (tokens=tokens,)
+
+    fn_refs = J.validate_footnotes!(tokens)
+    steps[:fn_validation] = (tokens=tokens, fn_refs=fn_refs)
 
     # ocblocks
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)

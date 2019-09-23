@@ -6,6 +6,7 @@ using Markdown
 using Markdown: htmlesc
 using Dates # see jd_vars
 using DelimitedFiles: readdlm
+using OrderedCollections
 
 import LiveServer
 
@@ -74,7 +75,7 @@ include("parser/lx_tokens.jl")
 include("parser/lx_blocks.jl")
 # > markdown
 include("parser/md_tokens.jl")
-include("parser/md_chars.jl")
+include("parser/md_validate.jl")
 # > html
 include("parser/html_tokens.jl")
 include("parser/html_blocks.jl")

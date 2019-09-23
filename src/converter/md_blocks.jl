@@ -7,7 +7,6 @@ Helper function for `convert_inter_html` that processes an extracted block given
 function convert_block(β::AbstractBlock, lxcontext::LxContext)::AS
     # case for special characters / html entities
     β isa HTML_SPCH     && return ifelse(isempty(β.r), β.ss, β.r)
-
     # Return relevant interpolated string based on case
     βn = β.name
     βn ∈  MD_HEADER        && return convert_header(β)
@@ -16,6 +15,8 @@ function convert_block(β::AbstractBlock, lxcontext::LxContext)::AS
     βn == :CODE_BLOCK_IND  && return convert_indented_code_block(β.ss)
     βn == :CODE_BLOCK      && return html_code(strip(content(β) |> htmlesc), "{{fill lang}}")
     βn == :ESCAPE          && return chop(β.ss, head=3, tail=3)
+    βn == :FOOTNOTE_REF    && return convert_footnote_ref(β)
+    βn == :FOOTNOTE_DEF    && return convert_footnote_def(β)
 
     # Math block --> needs to call further processing to resolve possible latex
     βn ∈ MATH_BLOCKS_NAMES && return convert_math_block(β, lxcontext.lxdefs)
@@ -186,4 +187,56 @@ function convert_indented_code_block(ss::SubString)::String
     code = replace(ss, r"\n(?:\t| {4})" => "\n")
     # 2. return; lang is a LOCAL_PAGE_VARS that is julia by default and can be set
     return html_code(strip(code) |> htmlesc, "{{fill lang}}")
+end
+
+"""
+$(SIGNATURES)
+
+Helper function to convert a `[^1]` into a html sup object with appropriate ref and backref.
+"""
+function convert_footnote_ref(β::Token)::String
+    # β.ss is [^id]; extract id
+    id = string(match(r"\[\^(.*?)\]", β.ss).captures[1])
+    # add it to the list of refs unless it's been seen before
+    pos = 0
+    for (i, pri) in enumerate(PAGE_FNREFS)
+        if pri == id
+            pos = i
+            break
+        end
+    end
+    if pos == 0
+        push!(PAGE_FNREFS, id)
+        pos = length(PAGE_FNREFS)
+    end
+    return html_sup("fnref:$id", html_ahref("#fndef:$id", "[$pos]"; class="footnote-ref"))
+end
+
+"""
+$(SIGNATURES)
+
+Helper function to convert a `[^1]: ...` into a html table for the def.
+"""
+function convert_footnote_def(β::OCBlock)::String
+    # otok(β) is [^id]:
+    id = match(r"\[\^(.*?)\]:", otok(β).ss).captures[1]
+    pos = 0
+    for (i, pri) in enumerate(PAGE_FNREFS)
+        if pri == id
+            pos = i
+            break
+        end
+    end
+    if pos == 0
+        # this was never referenced before, so probably best not to show it
+        return ""
+    end
+    """
+    <table class="footnote-def" id="fndef:$id">
+        <tr>
+            <td>$(html_ahref("#fnref:$id", "[$pos]"; class="footnote-backref"))
+            <td><span class=\"footnote-def-body\">$(content(β))</span></td>
+        </tr>
+    </table>
+    """
 end

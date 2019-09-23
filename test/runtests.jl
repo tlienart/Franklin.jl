@@ -16,6 +16,7 @@ println("🍺")
 # PARSER folder
 println("PARSER/MD+LX")
 include("parser/markdown+latex.jl")
+include("parser/footnotes.jl")
 println("🍺")
 println("PARSER/HTML")
 include("parser/html.jl")

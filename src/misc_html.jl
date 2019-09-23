@@ -13,6 +13,13 @@ Convenience function for a list item
 html_li(in::AS) = "<li>$(in)</li>"
 
 """
+$SIGNATURES
+
+Convenience function for a sup item
+"""
+html_sup(id::String, in::AS) =  "<sup id=\"$id\">$in</sup>"
+
+"""
 $(SIGNATURES)
 
 Convenience function for a header
@@ -25,9 +32,10 @@ $(SIGNATURES)
 Convenience function to introduce a hyper reference.
 """
 function html_ahref(link::AS, name::Union{Int,AS};
-                    title::AS="")
+                    title::AS="", class::AS="")
     a  = "<a href=\"$link\""
     a *= attr(:title, title)
+    a *= attr(:class, class)
     a *= ">$name</a>"
     a
 end

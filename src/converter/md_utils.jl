@@ -51,27 +51,6 @@ end
 """
 $(SIGNATURES)
 
-Given a candidate header block, check that the opening `#` is at the start of a line, otherwise
-ignore the block.
-"""
-function validate_header_block(β::OCBlock)::Bool
-    # skip non-header blocks
-    β.name ∈ MD_HEADER || return true
-    # if it's a header block, have a look at the opening token
-    τ = otok(β)
-    # check if it overlaps with the first character
-    from(τ) == 1 && return true
-    # otherwise check if the previous character is a linereturn
-    s = str(β.ss) # does not allocate
-    prevc = s[prevind(str(β.ss), from(τ))]
-    prevc == '\n' && return true
-    return false
-end
-
-
-"""
-$(SIGNATURES)
-
 The insertion token have whitespaces around them: ` ##JDINSERT## `, this mostly helps but causes
 a problem when combined with italic or bold markdown mode since `_blah_` works but not `_ blah _`.
 This function looks for any occurrence of `[\\*_] ##JDINSERT##` or the opposite and removes the
