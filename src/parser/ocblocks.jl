@@ -222,6 +222,9 @@ function find_special_chars(tokens::Vector{Token})
     spch = Vector{HTML_SPCH}()
     isempty(tokens) && return spch
     for τ in tokens
+        τ.name == :CHAR_ASTERISK    && push!(spch, HTML_SPCH(τ.ss, "&#42;"))
+        τ.name == :CHAR_UNDERSCORE  && push!(spch, HTML_SPCH(τ.ss, "&#95;"))
+        τ.name == :CHAR_ATSIGN      && push!(spch, HTML_SPCH(τ.ss, "&#64;"))
         τ.name == :CHAR_BACKSPACE   && push!(spch, HTML_SPCH(τ.ss, "&#92;"))
         τ.name == :CHAR_BACKTICK    && push!(spch, HTML_SPCH(τ.ss, "&#96;"))
         τ.name == :CHAR_LINEBREAK   && push!(spch, HTML_SPCH(τ.ss, "<br/>"))
