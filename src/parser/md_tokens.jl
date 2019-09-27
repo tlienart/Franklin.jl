@@ -85,7 +85,9 @@ const MD_TOKENS = Dict{Char, Vector{TokenFinder}}(
     '`'  => [ isexactly("`", ('`',), false) => :CODE_SINGLE, # `⎵
               isexactly("``",('`',), false) => :CODE_DOUBLE, # ``⎵*
               isexactly("```", SPACER)      => :CODE_TRIPLE, # ```⎵*
-              incrlook(is_language)         => :CODE_LANG,   # ```lang*
+              isexactly("`````", SPACER)    => :CODE_PENTA,  # `````⎵*
+              is_language()                 => :CODE_LANG,   # ```lang*
+              is_language2()                => :CODE_LANG2,  # `````lang*
              ],
     ) # end dict
 #= NOTE
@@ -140,7 +142,9 @@ const MD_OCB = [
     # ---------------------------------------------------------------------
     OCProto(:COMMENT,         :COMMENT_OPEN, (:COMMENT_CLOSE,), false),
     OCProto(:CODE_BLOCK_LANG, :CODE_LANG,    (:CODE_TRIPLE,),   false),
+    OCProto(:CODE_BLOCK_LANG, :CODE_LANG2,   (:CODE_PENTA,),    false),
     OCProto(:CODE_BLOCK,      :CODE_TRIPLE,  (:CODE_TRIPLE,),   false),
+    OCProto(:CODE_BLOCK,      :CODE_PENTA,   (:CODE_PENTA,),    false),
     OCProto(:CODE_BLOCK_IND,  :LR_INDENT,    (:LINE_RETURN,),   false),
     OCProto(:CODE_INLINE,     :CODE_DOUBLE,  (:CODE_DOUBLE,),   false),
     OCProto(:CODE_INLINE,     :CODE_SINGLE,  (:CODE_SINGLE,),   false),

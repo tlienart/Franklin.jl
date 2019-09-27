@@ -158,16 +158,16 @@ julia> s
 ```
 """
 function isexactly(refstring::AS, follow::NTuple{K,Char} where K = (),
-                   isfollowed=true)::Tuple{Int,Bool,Function}
+                   isfollowed=true)::Tuple{Int,Bool,Function,Nothing}
     # number of steps from the start character
     steps = prevind(refstring, lastindex(refstring))
     # no offset (don't check next character)
-    isempty(follow) && return (steps, false, s -> (s == refstring))
+    isempty(follow) && return (steps, false, s -> (s == refstring), nothing)
     # include next char for verification (--> offset of 1)
     steps = nextind(refstring, steps)
-    # verification function
+    # verification function; we want either (false false or true true))
     λ(s) = (chop(s) == refstring) && !xor(isfollowed, s[end] ∈ follow)
-    return (steps, true, λ)
+    return (steps, true, λ, nothing)
 end
 
 
@@ -193,7 +193,7 @@ a case where from a start character we lazily accept the next sequence of charac
 soon as a character fails to verify `λ(c)`.
 See also [`isexactly`](@ref).
 """
-incrlook(λ::Function) = (0, false, λ)
+incrlook(λ::Function, validator=nothing) = (0, false, λ, validator)
 
 """
 $(SIGNATURES)
@@ -210,11 +210,32 @@ In combination with `incrlook`, checks to see if we have something that looks li
 backtick followed by a valid combination of letter defining a language. Triggering char is a
 first backtick.
 """
-function is_language(i::Int, c::Char)
-    i < 3  && return c=='`'  # ` followed by `` forms the opening ```
-    i == 3 && return α(c)    # must be a letter
-    return α(c, ('-',))      # can be a letter or a hyphen, for instance ```objective-c
+is_language() = incrlook(_is_language, _validate_language)
+
+function _is_language(i::Int, c::Char)
+    i < 3  && return c == '`'  # ` followed by `` forms the opening ```
+    i == 3 && return α(c)      # must be a letter
+    return α(c, ('-',))        # can be a letter or a hyphen, for instance ```objective-c
 end
+
+_validate_language(stack::AS) = match(r"^```[a-zA-Z]", stack) !== nothing
+
+
+"""
+$(SIGNATURES)
+
+See [`is_language`](@ref) but with 5 ticks.
+"""
+is_language2() = incrlook(_is_language2, _validate_language2)
+
+function _is_language2(i::Int, c::Char)
+    i < 5  && return c == '`'
+    i == 5 && return α(c)
+    return α(c, ('-',))
+end
+
+_validate_language2(stack::AS) = match(r"^`````[a-zA-Z]", stack) !== nothing
+
 
 """
 $(SIGNATURES)
@@ -242,7 +263,7 @@ TokenFinder
 Convenience type to define tokens. The Tuple comes from the output of functions such as
 [`isexactly`](@ref).
 """
-const TokenFinder = Pair{Tuple{Int,Bool,Function},Symbol}
+const TokenFinder = Pair{Tuple{Int,Bool,Function,Union{Nothing,Function}},Symbol}
 
 
 """
@@ -277,7 +298,7 @@ function find_tokens(str::AS,
 
         # 2. is it one of the multi-char token?
         elseif haskey(tokens_dict, head)
-            for ((steps, offset, λ), case) ∈ tokens_dict[head]
+            for ((steps, offset, λ, ν), case) ∈ tokens_dict[head]
                 #=
                 ↪ steps = length of the lookahead, 0 if incremental
                 ↪ offset = if we need to check one character 'too much'
@@ -316,6 +337,10 @@ function find_tokens(str::AS,
                     end
                     endchar_idx = prevind(str, nextchar_idx)
                     if endchar_idx > head_idx
+                        # if the validator is unhappy, don't move the head and
+                        # consider other rules
+                        ν === nothing || ν(stack) || continue
+                        # otherwise move ahead after the match
                         push!(tokens, Token(case, stack))
                         head_idx = endchar_idx
                     end
