@@ -62,10 +62,16 @@ end
     lxcontext = J.LxContext(lxcoms, lxdefs, braces)
 
     @test J.convert_block(blocks2insert[1], lxcontext) == "<div class=\"d\">.</div>"
-    @test J.convert_block(blocks2insert[2], lxcontext) == "\\[\\begin{array}{c} \\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\\]"
+    @test isapproxstr(J.convert_block(blocks2insert[2], lxcontext), "\\[\\begin{array}{c} \\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\\]")
 
     hstring = J.convert_inter_html(inter_html, blocks2insert, lxcontext)
-    @test hstring == "<p>ab<div class=\"d\">.</div> \\[\\begin{array}{c} \\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\\]</p>\n"
+    @test isapproxstr(hstring, raw"""
+                        <p>
+                          ab<div class="d">.</div>
+                          \[\begin{array}{c}
+                            \sin^2(x)+\cos^2(x) &=& 1
+                          \end{array}\]
+                        </p>""")
 end
 
 
@@ -85,13 +91,21 @@ end
     inter_md, mblocks = steps[:inter_md]
     inter_html, = steps[:inter_html]
 
-    @test inter_md == "text A1 text A2  ##JDINSERT##  and\n ##JDINSERT## \n text C1  ##JDINSERT##  text C2\n then  ##JDINSERT## .\n"
+    @test isapproxstr(inter_md, """
+                                text A1 text A2  ##JDINSERT##  and
+                                ##JDINSERT##
+                                text C1  ##JDINSERT##  text C2
+                                then  ##JDINSERT## .""")
 
-    @test inter_html == "<p>text A1 text A2  ##JDINSERT##  and  ##JDINSERT##   text C1  ##JDINSERT##  text C2  then  ##JDINSERT## .</p>\n"
+    @test isapproxstr(inter_html, """<p>text A1 text A2  ##JDINSERT##  and  ##JDINSERT##   text C1  ##JDINSERT##  text C2  then  ##JDINSERT## .</p>""")
 
     lxcontext = J.LxContext(lxcoms, lxdefs, braces)
     hstring = J.convert_inter_html(inter_html, blocks2insert, lxcontext)
-    @test hstring == "<p>text A1 text A2 blah and \nescape B1\n  text C1 \\(\\mathrm{ b}\\) text C2  then part1: AA and part2: BB.</p>\n"
+    @test isapproxstr(hstring, """
+                                <p>text A1 text A2 blah and
+                                escape B1
+                                text C1 \\(\\mathrm{ b}\\) text C2
+                                then part1: AA and part2: BB.</p>""")
 end
 
 

@@ -80,15 +80,16 @@ function find_all_ocblocks(tokens::Vector{Token}, ocplist::Vector{OCProto}; inma
         append!(ocbs_all, ocbs)
     end
     # it may happen that a block is contained in a larger escape block.
-    # For instance this can happen if there is a code block in an escape block (see e.g. #151).
-    # To fix this, we browse the escape blocks in backwards order and check if there is any other
-    # block within it.
+    # For instance this can happen if there is a code block in an escape block
+    # (see e.g. #151) or if there's indentation in a math block.
+    # To fix this, we browse the escape blocks in backwards order and check if
+    # there is any other block within it.
     i = length(ocbs_all)
     active = ones(Bool, i)
     all_heads = from.(ocbs_all)
     while i > 1
         cur_ocb = ocbs_all[i]
-        if active[i] && cur_ocb.name ∈ MD_OCB_ESC
+        if active[i] && cur_ocb.name ∈ MD_OCB_NO_INNER
             # find all blocks within the span of this block, deactivate all of them
             cur_head = all_heads[i]
             cur_tail = to(cur_ocb)
@@ -221,6 +222,9 @@ function find_special_chars(tokens::Vector{Token})
     spch = Vector{HTML_SPCH}()
     isempty(tokens) && return spch
     for τ in tokens
+        τ.name == :CHAR_ASTERISK    && push!(spch, HTML_SPCH(τ.ss, "&#42;"))
+        τ.name == :CHAR_UNDERSCORE  && push!(spch, HTML_SPCH(τ.ss, "&#95;"))
+        τ.name == :CHAR_ATSIGN      && push!(spch, HTML_SPCH(τ.ss, "&#64;"))
         τ.name == :CHAR_BACKSPACE   && push!(spch, HTML_SPCH(τ.ss, "&#92;"))
         τ.name == :CHAR_BACKTICK    && push!(spch, HTML_SPCH(τ.ss, "&#96;"))
         τ.name == :CHAR_LINEBREAK   && push!(spch, HTML_SPCH(τ.ss, "<br/>"))

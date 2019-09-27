@@ -40,7 +40,15 @@ const MD_TOKENS = Dict{Char, Vector{TokenFinder}}(
              ],
     ']'  => [ isexactly("]: ") => :LINK_DEF,
              ],
-    '\\' => [ isexactly("\\{")        => :INACTIVE,         # See note [^1]
+    '\\' => [ # -- special characters, see `find_special_chars` in ocblocks
+              isexactly("\\\\")       => :CHAR_LINEBREAK, # --> <br/>
+              isexactly("\\", (' ',)) => :CHAR_BACKSPACE, # --> &#92;
+              isexactly("\\*")        => :CHAR_ASTERISK,  # --> &#42;
+              isexactly("\\_")        => :CHAR_UNDERSCORE,# --> &#95;
+              isexactly("\\`")        => :CHAR_BACKTICK,  # --> &#96;
+              isexactly("\\@")        => :CHAR_ATSIGN,    # --> &#64;
+              # -- maths
+              isexactly("\\{")        => :INACTIVE,         # See note [^1]
               isexactly("\\}")        => :INACTIVE,         # See note [^1]
               isexactly("\\\$")       => :INACTIVE,         # See note [^1]
               isexactly("\\[")        => :MATH_C_OPEN,      # \[ ...
@@ -51,10 +59,8 @@ const MD_TOKENS = Dict{Char, Vector{TokenFinder}}(
               isexactly("\\end{equation}")   => :MATH_D_CLOSE,
               isexactly("\\begin{eqnarray}") => :MATH_EQA_OPEN,
               isexactly("\\end{eqnarray}")   => :MATH_EQA_CLOSE,
+              # -- latex
               isexactly("\\newcommand")      => :LX_NEWCOMMAND,
-              isexactly("\\\\")              => :CHAR_LINEBREAK, # will be replaced by <br/>
-              isexactly("\\", (' ',))        => :CHAR_BACKSPACE, # will be replaced by &#92;
-              isexactly("\\`")               => :CHAR_BACKTICK,  # will be replaced by &#96;
               incrlook((_, c) -> α(c))       => :LX_COMMAND,     # \command⎵*
              ],
     '@'  => [ isexactly("@def", (' ',)) => :MD_DEF_OPEN,  # @def var = ...
@@ -79,7 +85,9 @@ const MD_TOKENS = Dict{Char, Vector{TokenFinder}}(
     '`'  => [ isexactly("`", ('`',), false) => :CODE_SINGLE, # `⎵
               isexactly("``",('`',), false) => :CODE_DOUBLE, # ``⎵*
               isexactly("```", SPACER)      => :CODE_TRIPLE, # ```⎵*
-              incrlook(is_language)         => :CODE_LANG,   # ```lang*
+              isexactly("`````", SPACER)    => :CODE_PENTA,  # `````⎵*
+              is_language()                 => :CODE_LANG,   # ```lang*
+              is_language2()                => :CODE_LANG2,  # `````lang*
              ],
     ) # end dict
 #= NOTE
@@ -134,7 +142,9 @@ const MD_OCB = [
     # ---------------------------------------------------------------------
     OCProto(:COMMENT,         :COMMENT_OPEN, (:COMMENT_CLOSE,), false),
     OCProto(:CODE_BLOCK_LANG, :CODE_LANG,    (:CODE_TRIPLE,),   false),
+    OCProto(:CODE_BLOCK_LANG, :CODE_LANG2,   (:CODE_PENTA,),    false),
     OCProto(:CODE_BLOCK,      :CODE_TRIPLE,  (:CODE_TRIPLE,),   false),
+    OCProto(:CODE_BLOCK,      :CODE_PENTA,   (:CODE_PENTA,),    false),
     OCProto(:CODE_BLOCK_IND,  :LR_INDENT,    (:LINE_RETURN,),   false),
     OCProto(:CODE_INLINE,     :CODE_DOUBLE,  (:CODE_DOUBLE,),   false),
     OCProto(:CODE_INLINE,     :CODE_SINGLE,  (:CODE_SINGLE,),   false),
@@ -217,3 +227,12 @@ MATH_BLOCKS_NAMES
 List of names of maths environments.
 """
 const MATH_BLOCKS_NAMES = [e.name for e ∈ MD_OCB_MATH]
+
+
+"""
+MD_OCB_NO_INNER
+
+List of names of blocks which will deactivate any block contained within them.
+See [`find_all_ocblocks`](@ref).
+"""
+const MD_OCB_NO_INNER = vcat(MD_OCB_ESC, MATH_BLOCKS_NAMES, :LXB)

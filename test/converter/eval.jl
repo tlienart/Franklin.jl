@@ -23,8 +23,13 @@
     @test isfile(opath)
     @test read(opath, String) == "25"
 
-    @test occursin("code: <pre><code class=\"language-julia\">a = 5\nprint(a^2)</code></pre>", h)
-    @test occursin("then: <pre><code>25</code></pre> done.", h)
+    @test isapproxstr(h, raw"""
+            <p>Simple code:
+            <pre><code class="language-julia">a = 5
+            print(a^2)</code></pre>
+            then:
+            <pre><code>25</code></pre>
+            done.</p>""")
 end
 
 @testset "Eval (errs)" begin
@@ -39,7 +44,11 @@ end
         done.
         """ * J.EOS |> seval
 
-    @test occursin("code: <pre><code class=\"language-python\">a = 5\nprint(a**2)\n</code></pre> done.", h)
+    @test isapproxstr(h, raw"""
+            <p>Simple code:
+            <pre><code class="language-python">a = 5
+            print(a**2)</code></pre>
+            done.</p>""")
 end
 
 @testset "Eval (rinput)" begin
@@ -62,8 +71,13 @@ end
     @test isfile(opath)
     @test read(opath, String) == "25"
 
-    @test occursin("code: <pre><code class=\"language-julia\">a = 5\nprint(a^2)</code></pre>", h)
-    @test occursin("then: <pre><code>25</code></pre> done.", h)
+    @test isapproxstr(h, """
+            <p>Simple code:
+            <pre><code class="language-julia">a = 5
+            print(a^2)</code></pre>
+            then:
+            <pre><code>25</code></pre>
+            done.</p>""")
 
     # ------------
 
@@ -88,8 +102,12 @@ end
     @test isfile(opath)
     @test read(opath, String) == "25"
 
-    @test occursin("code: <pre><code class=\"language-julia\">a = 5\nprint(a^2)</code></pre>", h)
-    @test occursin("then: <pre><code>25</code></pre> done.", h)
+    @test isapproxstr(h, """
+            <p>Simple code:
+            <pre><code class="language-julia">a = 5
+            print(a^2)</code></pre>
+            then:
+            <pre><code>25</code></pre>  done.</p>""")
 end
 
 @testset "Eval (module)" begin

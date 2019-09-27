@@ -34,6 +34,8 @@ end
         \newcommand{\com}[1]{◲!#1◲}
         \com{A}
         """ * J.EOS
+    steps = st |> explore_md_steps
+    @test steps[:inter_md].inter_md == "\n ##JDINSERT## \n\n ##JDINSERT## \n"
     @test st |> conv == "⭒A⭒\n◲A◲"
 end
 
@@ -197,4 +199,4 @@ end
     J.def_GLOBAL_LXDEFS!()
     r = st |> conv
     @test occursin("here <a id=\"anchor\"></a> done.", r)
-end 
+end

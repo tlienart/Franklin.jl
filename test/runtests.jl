@@ -16,6 +16,7 @@ println("🍺")
 # PARSER folder
 println("PARSER/MD+LX")
 include("parser/markdown+latex.jl")
+include("parser/markdown-extra.jl")
 include("parser/footnotes.jl")
 println("🍺")
 println("PARSER/HTML")
@@ -29,7 +30,6 @@ include("converter/markdown2.jl")
 include("converter/markdown3.jl")
 include("converter/hyperref.jl")
 println("🍺")
-
 println("CONVERTER/HTML")
 include("converter/html.jl")
 println("🍺")
@@ -43,6 +43,7 @@ println("🍺")
 println("INTEGRATION")
 include("global/cases1.jl")
 include("global/cases2.jl")
+include("global/ordering.jl")
 
 begin
     # create temp dir to do complete integration testing (has to be here in order
