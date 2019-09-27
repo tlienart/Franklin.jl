@@ -78,6 +78,10 @@ function explore_md_steps(mds)
     inter_html = J.md2html(inter_md; stripp=false)
     steps[:inter_html] = (inter_html=inter_html,)
 
+    lxcontext = J.LxContext(lxcoms, lxdefs, braces)
+    hstring   = J.convert_inter_html(inter_html, mblocks, lxcontext)
+    steps[:hstring] = (hstring=hstring,)
+
     return steps
 end
 

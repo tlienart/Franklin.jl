@@ -80,15 +80,16 @@ function find_all_ocblocks(tokens::Vector{Token}, ocplist::Vector{OCProto}; inma
         append!(ocbs_all, ocbs)
     end
     # it may happen that a block is contained in a larger escape block.
-    # For instance this can happen if there is a code block in an escape block (see e.g. #151).
-    # To fix this, we browse the escape blocks in backwards order and check if there is any other
-    # block within it.
+    # For instance this can happen if there is a code block in an escape block
+    # (see e.g. #151) or if there's indentation in a math block.
+    # To fix this, we browse the escape blocks in backwards order and check if
+    # there is any other block within it.
     i = length(ocbs_all)
     active = ones(Bool, i)
     all_heads = from.(ocbs_all)
     while i > 1
         cur_ocb = ocbs_all[i]
-        if active[i] && cur_ocb.name ∈ MD_OCB_ESC
+        if active[i] && cur_ocb.name ∈ MD_OCB_NO_INNER
             # find all blocks within the span of this block, deactivate all of them
             cur_head = all_heads[i]
             cur_tail = to(cur_ocb)

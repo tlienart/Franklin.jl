@@ -187,7 +187,9 @@ function convert_indented_code_block(ss::SubString)::String
     # 1. decrease indentation of all lines (either frontal \n\t or \n⎵⎵⎵⎵)
     code = replace(ss, r"\n(?:\t| {4})" => "\n")
     # 2. return; lang is a LOCAL_PAGE_VARS that is julia by default and can be set
-    return html_code(strip(code), "{{fill lang}}")
+    sc = strip(code)
+    isempty(sc) && return ""
+    return html_code(sc, "{{fill lang}}")
 end
 
 """

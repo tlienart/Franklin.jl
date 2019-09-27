@@ -35,7 +35,6 @@ function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
     #> 1. Tokenize
     tokens  = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
     fn_refs = validate_footnotes!(tokens)
-
     #> 1b. Find indented blocks
     tokens = find_indented_blocks(tokens, mds)
 
@@ -294,7 +293,10 @@ function convert_inter_html(ihtml::AS,
         prev = (m.offset - δ1 > 0) ? prevind(ihtml, m.offset - δ1) : 0
         (head ≤ prev) && write(htmls, subs(ihtml, head:prev))
         # move head appropriately
-        head = iend + δ2 + 1
+        head = iend + δ2
+        if head ≤ strlen
+            head += ifelse(ihtml[head] in (' ', '>'), 1, 0)
+        end
         # store the resolved block
         write(htmls, convert_block(blocks[i], lxcontext))
     end
