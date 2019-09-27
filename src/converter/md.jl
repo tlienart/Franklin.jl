@@ -289,8 +289,12 @@ function convert_inter_html(ihtml::AS,
         !(hasli2) && (c2b ≤ strlen - 4) && ihtml[c2a:c2b] == "</p>" && (δ2 = 4)
 
         # write whatever is at the front, skip the extra space if still present
-        δ1 = ifelse(iszero(δ1) && !hasli1, 1, δ1)
-        prev = (m.offset - δ1 > 0) ? prevind(ihtml, m.offset - δ1) : 0
+        prev = prevind(ihtml, m.offset - δ1)
+        if prev > 0
+            prev -= ifelse(ihtml[prev] == ' ', 1, 0)
+        else
+            prev = 0
+        end
         (head ≤ prev) && write(htmls, subs(ihtml, head:prev))
         # move head appropriately
         head = iend + δ2
