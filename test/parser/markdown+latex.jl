@@ -254,6 +254,8 @@ end
         4
         ### t2
         5
+        ### t2
+        6
         """ * J.EOS |> seval
     @test isapproxstr(h, """
         <h1 id="t1"><a href="/index.html#t1">t1</a></h1>
@@ -266,6 +268,8 @@ end
         4
         <h3 id="t2_2"><a href="/index.html#t2_2">t2</a></h3>
         5
+        <h3 id="t2_3"><a href="/index.html#t2_3">t2</a></h3>
+        6
         """)
 end
 
