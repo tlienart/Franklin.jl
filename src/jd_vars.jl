@@ -51,6 +51,7 @@ is processed.
     LOCAL_PAGE_VARS["date"]     = Pair(Date(1), (String, Date, Nothing))
     LOCAL_PAGE_VARS["lang"]     = Pair("julia", (String,)) # default lang for indented code
     LOCAL_PAGE_VARS["reflinks"] = Pair(true,    (Bool,))   # whether there are reflinks or not
+    LOCAL_PAGE_VARS["rss"]      = Pair(nothing, (String, Nothing))
 
     # page vars used by judoc, should not be accessed or defined
     LOCAL_PAGE_VARS["jd_ctime"]  = Pair(Date(1), (Date,))   # time of creation
