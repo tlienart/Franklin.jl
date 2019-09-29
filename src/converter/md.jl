@@ -297,7 +297,7 @@ function convert_inter_html(ihtml::AS,
         # move head appropriately
         head = iend + δ2
         if head ≤ strlen
-            head += ifelse(ihtml[head] in (' ', '>'), 1, 0)
+            head = ifelse(ihtml[head] in (' ', '>'), nextind(ihtml, head), head)
         end
         # store the resolved block
         write(htmls, convert_block(blocks[i], lxcontext))
