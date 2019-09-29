@@ -97,7 +97,7 @@ function js2html(hs::String, jsbuffer::IOBuffer, matches::Vector{RegexMatch},
     head, c = 1, 1
     for i ∈ 1:2:length(matches)-1
         mo, mc = matches[i:i+1]
-        write(htmls, subs(hs, head, mo.offset - 1))
+        write(htmls, subs(hs, head, prevind(hs, mo.offset)))
         pp = strip(parts[c])
         if startswith(pp, "<pre><code class=\"julia-repl")
             pp = replace(pp, r"shell&gt;"=>"<span class=hljs-metas>shell&gt;</span>")

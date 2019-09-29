@@ -34,32 +34,46 @@
     @test occursin("=\"/prependme/libs/katex/katex.min.css", index)
 end
 
-if J.JD_CAN_PRERENDER && J.JD_CAN_HIGHLIGHT
-@testset "Prerender" begin
-  hs = raw"""
-    <!doctype html>
-    <html lang=en>
-    <meta charset=UTF-8>
-    <div class=jd-content>
-      <h1>Title</h1>
-      <p>Blah</p>
-      <p>Consider an invertible matrix \(M\) made of blocks \(A\), \(B\), \(C\) and \(D\) with</p>
-      \[ M \quad\!\! =\quad\!\! \begin{pmatrix} A & B \\ C & D \end{pmatrix} \]
-      <pre><code class=language-julia >using Test
-      # Woodbury formula
-      b = 2
-      println("hello $b")
-      </code></pre>
-    </div>
-    """
-  jskx = J.js_prerender_katex(hs)
-  # conversion of `\(M\)` (inline)
-  @test occursin("""<span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi></mrow>""", jskx)
-  # conversion of the equation (display)
-  @test occursin("""<span class=\"katex-display\"><span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi>""", jskx)
-  jshl = J.js_prerender_highlight(hs)
-  # conversion of the code
-  @test occursin("""<pre><code class="julia hljs"><span class="hljs-keyword">using</span>""", jshl)
-  @test occursin(raw"""<span class="hljs-string">"hello <span class="hljs-variable">$b</span>"</span>""", jshl)
-end
-end # if can prerender
+if J.JD_CAN_PRERENDER; @testset "prerender" begin
+    @testset "katex" begin
+        hs = raw"""
+        <!doctype html>
+        <html lang=en>
+        <meta charset=UTF-8>
+        <div class=jd-content>
+        <p>range is \(10\sqrt{3}\)–\(20\sqrt{2}\) <!-- non-ascii en dash --></p>
+        <p>Consider an invertible matrix \(M\) made of blocks \(A\), \(B\), \(C\) and \(D\) with</p>
+        \[ M \quad\!\! =\quad\!\! \begin{pmatrix} A & B \\ C & D \end{pmatrix} \]
+        </div>
+        """
+
+        jskx = J.js_prerender_katex(hs)
+        # conversion of the non-ascii endash (inline)
+        @test occursin("""–<span class=\"katex\">""", jskx)
+        # conversion of `\(M\)` (inline)
+        @test occursin("""<span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi></mrow>""", jskx)
+        # conversion of the equation (display)
+        @test occursin("""<span class=\"katex-display\"><span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi>""", jskx)
+    end
+
+    if J.JD_CAN_HIGHLIGHT; @testset "highlight" begin
+        hs = raw"""
+        <!doctype html>
+        <html lang=en>
+        <meta charset=UTF-8>
+        <div class=jd-content>
+        <h1>Title</h1>
+        <p>Blah</p>
+        <pre><code class=language-julia >using Test
+        # Woodbury formula
+        b = 2
+        println("hello $b")
+        </code></pre>
+        </div>
+        """
+        jshl = J.js_prerender_highlight(hs)
+        # conversion of the code
+        @test occursin("""<pre><code class="julia hljs"><span class="hljs-keyword">using</span>""", jshl)
+        @test occursin(raw"""<span class="hljs-string">"hello <span class="hljs-variable">$b</span>"</span>""", jshl)
+    end; end # if can highlight
+end; end # if can prerender
