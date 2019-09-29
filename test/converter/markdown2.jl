@@ -33,6 +33,7 @@ end
     h = raw"""
         \toc
         ## Hello `jd`
+        #### weirdly nested
         ### Goodbye!
         ## Done
         done.
@@ -40,16 +41,18 @@ end
     @test isapproxstr(h, raw"""
         <div class="jd-toc">
           <ol>
-            <ol>
-              <li><a href="/pub/ff/aa.html#hello_jd">Hello <code>jd</code></a></li>
+            <li>
+              <a href="/pub/ff/aa.html#hello_jd">Hello <code>jd</code></a>
               <ol>
+                <li><ol><li><a href="/pub/ff/aa.html#weirdly_nested">weirdly nested</a></li></ol></li>
                 <li><a href="/pub/ff/aa.html#goodbye">Goodbye&#33;</a></li>
               </ol>
-              <li><a href="/pub/ff/aa.html#done">Done</a></li>
-            </ol>
+            </li>
+            <li><a href="/pub/ff/aa.html#done">Done</a></li>
           </ol>
         </div>
         <h2 id="hello_jd"><a href="/pub/ff/aa.html#hello_jd">Hello <code>jd</code></a></h2>
+        <h4 id="weirdly_nested"><a href="/pub/ff/aa.html#weirdly_nested">weirdly nested</a></h4>
         <h3 id="goodbye"><a href="/pub/ff/aa.html#goodbye">Goodbye&#33;</a></h3>
         <h2 id="done"><a href="/pub/ff/aa.html#done">Done</a></h2>done.
         """)

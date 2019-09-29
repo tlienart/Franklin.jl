@@ -6,13 +6,6 @@ Convenience function to add an id attribute to a html element
 attr(name::Symbol, val::AS) = ifelse(isempty(val), "", " $name=\"$val\"")
 
 """
-$(SIGNATURES)
-
-Convenience function for a list item
-"""
-html_li(in::AS) = "<li>$(in)</li>"
-
-"""
 $SIGNATURES
 
 Convenience function for a sup item

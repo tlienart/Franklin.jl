@@ -102,33 +102,38 @@ The split is as follows:
 * h[4] indicates the level of the title
 """
 function hfun_toc()::String
-    inner  = ""
-    curlvl = 1
+    inner   = ""
+    baselvl = minimum(h[4] for h in values(PAGE_HEADERS)) - 1
+    curlvl  = baselvl
     for i ∈ 1:length(PAGE_HEADERS)
         h = PAGE_HEADERS[i]
         lvl = h[4]
-        if lvl < curlvl
-            # how many levels?
-            δ = curlvl - lvl
-            curlvl = lvl
-            for i = 1:δ
-                inner *= "</ol>"
+        if lvl ≤ curlvl
+            # Close previous list item
+            inner *= "</li>"
+
+            # Close additional sublists for each level eliminated
+            for i = curlvl-1:-1:lvl
+                inner *= "</ol></li>"
             end
+
+            # Reopen for this list item
+            inner *= "<li>"
         elseif lvl > curlvl
-            # how many levels?
-            δ = lvl - curlvl
-            curlvl = lvl
-            for i = 1:δ
-                inner *= "<ol>"
+            # Open additional sublists for each level added
+            for i = curlvl+1:lvl
+                inner *= "<ol><li>"
             end
         end
-        inner *= html_li(html_ahref_key(h[2], h[1]))
+        inner *= html_ahref_key(h[2], h[1])
+        curlvl = lvl
+        # At this point, number of sublists (<ol><li>) open equals curlvl
     end
-    # close at whatever level we are
-    for i = curlvl:-1:2
-        inner *= "</ol>"
+    # Close remaining lists, as if going down to the base level
+    for i = curlvl-1:-1:baselvl
+        inner *= "</li></ol>"
     end
-    toc = "<div class=\"jd-toc\"><ol>" * inner * "</ol></div>"
+    toc = "<div class=\"jd-toc\">" * inner * "</div>"
 end
 
 
