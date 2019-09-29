@@ -49,6 +49,26 @@ end
 end
 
 
+@testset "Unicode lx" begin
+    st = raw"""
+    Call me “$x$”, not $🍕$.
+    """ * J.EOS
+
+    steps = explore_md_steps(st)
+    blocks, _ = steps[:ocblocks]
+
+    # first math block
+    β = blocks[1]
+    @test β.name == :MATH_A
+    @test β.ss == "\$x\$"
+
+    # second math block
+    β = blocks[2]
+    @test β.name == :MATH_A
+    @test β.ss == "\$🍕\$"
+end
+
+
 @testset "Lx defs+coms" begin
     st = raw"""
         \newcommand{\E}[1]{\mathbb E\left[#1\right]}blah de blah
@@ -254,6 +274,8 @@ end
         4
         ### t2
         5
+        ### t2
+        6
         """ * J.EOS |> seval
     @test isapproxstr(h, """
         <h1 id="t1"><a href="/index.html#t1">t1</a></h1>
@@ -266,6 +288,8 @@ end
         4
         <h3 id="t2_2"><a href="/index.html#t2_2">t2</a></h3>
         5
+        <h3 id="t2_3"><a href="/index.html#t2_3">t2</a></h3>
+        6
         """)
 end
 
