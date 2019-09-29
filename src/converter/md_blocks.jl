@@ -107,7 +107,7 @@ function convert_header(β::OCBlock)::String
     # check if the header has appeared before
     rstitle  = refstring(title)
     level    = parse(Int, hk[2])
-    occur    = (hv[3] for hv ∈ values(PAGE_HEADERS) if hv[2] == rstitle)
+    occur    = (hv[3] for hv ∈ values(PAGE_HEADERS) if refstring(hv[1]) == rstitle)
     occur    = isempty(occur) ? 0 : maximum(occur)
     rstitle  = ifelse(occur==0, rstitle, "$(rstitle)_$(occur+1)")
     # save in list of headers
