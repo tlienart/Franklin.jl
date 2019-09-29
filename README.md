@@ -29,7 +29,7 @@ See [the docs](https://tlienart.github.io/JuDoc.jl/stable) for more information 
 
 ### Quick demo
 
-With Julia ≥ 1.0:
+With Julia ≥ 1.1:
 
 ```julia
 pkg> add JuDoc

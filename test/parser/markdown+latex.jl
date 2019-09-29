@@ -49,6 +49,26 @@ end
 end
 
 
+@testset "Unicode lx" begin
+    st = raw"""
+    Call me “$x$”, not $🍕$.
+    """ * J.EOS
+
+    steps = explore_md_steps(st)
+    blocks, _ = steps[:ocblocks]
+
+    # first math block
+    β = blocks[1]
+    @test β.name == :MATH_A
+    @test β.ss == "\$x\$"
+
+    # second math block
+    β = blocks[2]
+    @test β.name == :MATH_A
+    @test β.ss == "\$🍕\$"
+end
+
+
 @testset "Lx defs+coms" begin
     st = raw"""
         \newcommand{\E}[1]{\mathbb E\left[#1\right]}blah de blah

@@ -290,16 +290,14 @@ function convert_inter_html(ihtml::AS,
 
         # write whatever is at the front, skip the extra space if still present
         prev = prevind(ihtml, m.offset - δ1)
-        if prev > 0
-            prev -= ifelse(ihtml[prev] == ' ', 1, 0)
-        else
-            prev = 0
+        if prev > 0 && ihtml[prev] == ' '
+            prev = prevind(ihtml, prev)
         end
         (head ≤ prev) && write(htmls, subs(ihtml, head:prev))
         # move head appropriately
         head = iend + δ2
         if head ≤ strlen
-            head += ifelse(ihtml[head] in (' ', '>'), 1, 0)
+            head = ifelse(ihtml[head] in (' ', '>'), nextind(ihtml, head), head)
         end
         # store the resolved block
         write(htmls, convert_block(blocks[i], lxcontext))

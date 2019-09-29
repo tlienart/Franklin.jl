@@ -26,7 +26,7 @@ On this page:
 
 ## Installation
 
-With Julia ≥ 1.0,
+With Julia ≥ 1.1,
 
 ```julia-repl
 pkg> add JuDoc
