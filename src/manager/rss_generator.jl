@@ -21,10 +21,10 @@ struct RSSItem
     pubDate::String
 end
 
-const RSS_DICT = Dict{String,RSSItem}
+const RSS_DICT = Dict{String,RSSItem}()
 
 """Convenience function for fallback fields"""
-jor(jdv::PageVars, a::String, b::String) = ifelse(isempty(jdv[a]), jdv[b], jdv[a])
+jor(v::PageVars, a::String, b::String) = ifelse(isempty(first(v[a])), first(v[b]), first(v[a]))
 
 
 """
@@ -35,23 +35,24 @@ Create an `RSSItem` out of the provided fields defined in the page vars.
 function add_rss_item(jdv::PageVars)::RSSItem
     link   = url_curpage()
     title  = jor(jdv, "rss_title", "title")
-    descr  = jor(jdv, "rss", "rss_descr") |> jd2html
+    descr  = jor(jdv, "rss", "rss_description") |> jd2html
     author = jor(jdv, "rss_author", "author")
 
-    category  = jdv["rss_category"]
-    comments  = jdv["rss_comments"]
-    enclosure = jdv["rss_enclosure"]
+    category  = jdv["rss_category"]  |> first
+    comments  = jdv["rss_comments"]  |> first
+    enclosure = jdv["rss_enclosure"] |> first
 
-    pubDate = jdv["rss_pubdate"]
+    pubDate = jdv["rss_pubdate"] |> first
     if pubDate == Date(1)
-        pubDate = jdv["date"]
+        pubDate = jdv["date"] |> first
         if pubDate == Date(1) || !isa(pubDate, Date)
-            pubDate = jdv["jd_mtime"]
+            pubDate = jdv["jd_mtime"] |> first
         end
     end
 
     # warning for title which should really be defined
-    isempty(title) && @warn "Found an RSS description but no title for page $url."
+    isnothing(title) && (title = "")
+    isempty(title) && @warn "Found an RSS description but no title for page $link."
 
     RSS_DICT[url] = RSSItem(title, link, descr,
         author, category, comments, enclosure, pubDate)

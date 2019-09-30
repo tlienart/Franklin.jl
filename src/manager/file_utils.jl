@@ -42,9 +42,9 @@ function write_page(root::String, file::String, head::String,
 
     # Check for RSS elements
     if FULL_PASS[] &&
-        !all(isempty, (jd_vars["rss"], jd_vars["rss_description"]))
+        !all(e -> e |> first |> isempty, (jd_vars["rss"], jd_vars["rss_description"]))
         # add item to RSSDICT
-        add_item_rss(jd_vars)
+        add_rss_item(jd_vars)
     end
 
     # adding document variables to the dictionary

@@ -56,3 +56,18 @@ function convert_html(hs::AS, allvars::PageVars; isoptim::Bool=false)::String
 
     return String(chop(fhs, tail=δ))
 end
+
+
+"""
+$SIGNATURES
+
+Return the HTML corresponding to a JuDoc-Markdown string.
+"""
+function jd2html(st::AbstractString)::String
+    def_GLOBAL_PAGE_VARS!()
+    def_GLOBAL_LXDEFS!()
+    CUR_PATH[] = "index.md"
+    m, v = convert_md(st * EOS, collect(values(GLOBAL_LXDEFS)))
+    h = convert_html(m, v)
+    return h
+end
