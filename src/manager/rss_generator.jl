@@ -1,3 +1,7 @@
+# TODO: could also expose the channel options if someone wanted
+# to define those; can probably leave for later until feedback has
+# been received.
+
 # Specifications: RSS 2.0 -- https://cyber.harvard.edu/rss/rss.html#sampleFiles
 # steps:
 # 0. check if the relevant variables are defined otherwise don't generate the RSS
@@ -18,10 +22,11 @@ struct RSSItem
     comments::String
     enclosure::String
     # guid -- hash of link
-    pubDate::String
+    pubDate::Date
 end
 
 const RSS_DICT = Dict{String,RSSItem}()
+
 
 """Convenience function for fallback fields"""
 jor(v::PageVars, a::String, b::String) = ifelse(isempty(first(v[a])), first(v[b]), first(v[a]))
@@ -35,8 +40,10 @@ Create an `RSSItem` out of the provided fields defined in the page vars.
 function add_rss_item(jdv::PageVars)::RSSItem
     link   = url_curpage()
     title  = jor(jdv, "rss_title", "title")
-    descr  = jor(jdv, "rss", "rss_description") |> jd2html
+    descr  = jor(jdv, "rss", "rss_description")
     author = jor(jdv, "rss_author", "author")
+
+    descr = jd2html(descr; internal=true)
 
     category  = jdv["rss_category"]  |> first
     comments  = jdv["rss_comments"]  |> first
@@ -45,7 +52,7 @@ function add_rss_item(jdv::PageVars)::RSSItem
     pubDate = jdv["rss_pubdate"] |> first
     if pubDate == Date(1)
         pubDate = jdv["date"] |> first
-        if pubDate == Date(1) || !isa(pubDate, Date)
+        if !isa(pubDate, Date) || pubDate == Date(1)
             pubDate = jdv["jd_mtime"] |> first
         end
     end
@@ -54,7 +61,7 @@ function add_rss_item(jdv::PageVars)::RSSItem
     isnothing(title) && (title = "")
     isempty(title) && @warn "Found an RSS description but no title for page $link."
 
-    RSS_DICT[url] = RSSItem(title, link, descr,
+    RSS_DICT[link] = RSSItem(title, link, descr,
         author, category, comments, enclosure, pubDate)
 end
 
@@ -70,9 +77,9 @@ function rss_generator()::Nothing
     isempty(RSS_DICT) && return nothing
 
     # are the basic defs there? otherwise warn and break
-    rss_title = GLOBAL_PAGE_VARS["website_title"]
-    rss_descr = GLOBAL_PAGE_VARS["website_descr"]
-    rss_link  = GLOBAL_PAGE_VARS["website_url"]
+    rss_title = GLOBAL_PAGE_VARS["website_title"] |> first
+    rss_descr = GLOBAL_PAGE_VARS["website_descr"] |> first
+    rss_link  = GLOBAL_PAGE_VARS["website_url"]   |> first
 
     if any(isempty, (rss_title, rss_descr, rss_link))
         @warn """I found RSS items but the RSS feed is not properly described:
@@ -98,19 +105,37 @@ function rss_generator()::Nothing
         """)
     # loop over items
     for (k, v) in RSS_DICT
+        full_link = rss_link
+        # ends with / and next doesn't -> ok
+        # not ends with / and next doesn't -> add
+        # ends with / and next starts -> chop
+        # not ends with / and next does -> ok
+        if endswith(full_link, "/")
+            if startswith(v.link, "/")
+                full_link *= v.link[2:end]
+            else
+                full_link *= v.link
+            end
+        else
+            if startswith(v.link, "/")
+                full_link *= v.link
+            else
+                full_link *= "/" * v.link
+            end
+        end
         write(rss_buff,
           """
-          <item>
-            <title>$(v.title)</title>
-            <link>$(v.link)</link>
-            <description>$(v.description)</description>
-            <author>$(v.author)</author>
-            <category>$(v.category)</category>
-            <comments>$(v.comments)</comments>
-            <encloosure>$(v.enclosure)</enclosure>
-            <guid>$(hash(v.link))</guid>
-            <pubDate>$(Dates.format(d, "e, d u Y")) 00:00:00 UTC</pubDate>
-          </item>
+            <item>
+              <title>$(v.title)</title>
+              <link>$(full_link)</link>
+              <description>$(v.description)</description>
+              <author>$(v.author)</author>
+              <category>$(v.category)</category>
+              <comments>$(v.comments)</comments>
+              <encloosure>$(v.enclosure)</enclosure>
+              <guid>$(hash(v.link))</guid>
+              <pubDate>$(Dates.format(v.pubDate, "e, d u Y")) 00:00:00 UTC</pubDate>
+            </item>
           """)
     end
     # finalize

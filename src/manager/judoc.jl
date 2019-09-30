@@ -117,6 +117,7 @@ function jd_fullpass(watched_files::NamedTuple; clear::Bool=false,
     prepath = get(GLOBAL_PAGE_VARS, "prepath", nothing)
     def_GLOBAL_PAGE_VARS!()
     def_GLOBAL_LXDEFS!()
+    empty!(RSS_DICT)
     # reinsert prepath if specified
     isnothing(prepath) || (GLOBAL_PAGE_VARS["prepath"] = prepath)
 
@@ -162,7 +163,7 @@ function jd_fullpass(watched_files::NamedTuple; clear::Bool=false,
         end
     end
     # generate RSS if appropriate
-    rss_generator()
+    GLOBAL_PAGE_VARS["generate_rss"].first && rss_generator()
     # return -1 if any page
     return ifelse(s<0, -1, 0)
 end

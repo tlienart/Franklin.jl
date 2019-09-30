@@ -23,9 +23,11 @@ when JuDoc is started.
     GLOBAL_PAGE_VARS["date_format"] = Pair("U dd, yyyy",   (String,))
     GLOBAL_PAGE_VARS["prepath"]     = Pair("",             (String,))
     # these must be defined for the RSS file to be generated
-    GLOBAL_PAGE_VARS["website_title"] = Pair("",             (String,))
-    GLOBAL_PAGE_VARS["website_descr"] = Pair("",             (String,))
-    GLOBAL_PAGE_VARS["website_url"]   = Pair("",             (String,))
+    GLOBAL_PAGE_VARS["website_title"] = Pair("",    (String,))
+    GLOBAL_PAGE_VARS["website_descr"] = Pair("",    (String,))
+    GLOBAL_PAGE_VARS["website_url"]   = Pair("",    (String,))
+    # if set to false, nothing rss will be considered
+    GLOBAL_PAGE_VARS["generate_rss"]  = Pair(true,  (Bool,))
     return nothing
 end
 

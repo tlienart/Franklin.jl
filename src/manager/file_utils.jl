@@ -41,7 +41,7 @@ function write_page(root::String, file::String, head::String,
     (content, jd_vars) = convert_md(read(fpath, String) * EOS, collect(values(GLOBAL_LXDEFS)))
 
     # Check for RSS elements
-    if FULL_PASS[] &&
+    if GLOBAL_PAGE_VARS["generate_rss"].first && FULL_PASS[] &&
         !all(e -> e |> first |> isempty, (jd_vars["rss"], jd_vars["rss_description"]))
         # add item to RSSDICT
         add_rss_item(jd_vars)

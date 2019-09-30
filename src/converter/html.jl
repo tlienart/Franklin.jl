@@ -63,10 +63,8 @@ $SIGNATURES
 
 Return the HTML corresponding to a JuDoc-Markdown string.
 """
-function jd2html(st::AbstractString)::String
-    def_GLOBAL_PAGE_VARS!()
-    def_GLOBAL_LXDEFS!()
-    CUR_PATH[] = "index.md"
+function jd2html(st::AbstractString; internal::Bool=false)::String
+    internal || (CUR_PATH[] = "index.md")
     m, v = convert_md(st * EOS, collect(values(GLOBAL_LXDEFS)))
     h = convert_html(m, v)
     return h
