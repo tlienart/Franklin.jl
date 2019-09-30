@@ -23,7 +23,8 @@ $(SIGNATURES)
 Take a path to an input markdown file (via `root` and `file`), then construct the appropriate HTML
 page (inserting `head`, `pg_foot` and `foot`) and finally write it at the appropriate place.
 """
-function write_page(root::String, file::String, head::String, pg_foot::String, foot::String;
+function write_page(root::String, file::String, head::String,
+                    pg_foot::String, foot::String;
                     prerender::Bool=false, isoptim::Bool=false)::Nothing
     # 0. create a dictionary with all the variables available to the page
     # 1. read the markdown into string, convert it and extract definitions
@@ -38,6 +39,13 @@ function write_page(root::String, file::String, head::String, pg_foot::String, f
     CUR_PATH[] = fpath[lastindex(PATHS[:src])+length(PATH_SEP)+1:end]
 
     (content, jd_vars) = convert_md(read(fpath, String) * EOS, collect(values(GLOBAL_LXDEFS)))
+
+    # Check for RSS elements
+    if FULL_PASS[] &&
+        !all(isempty, (jd_vars["rss"], jd_vars["rss_description"]))
+        # add item to RSSDICT
+        add_item_rss(jd_vars)
+    end
 
     # adding document variables to the dictionary
     # note that some won't change and so it's not necessary to do this every time
@@ -119,8 +127,8 @@ function process_file_err(case::Symbol, fpair::Pair{String, String}, head::AS=""
         write(joinpath(out_path(fpair.first), fpair.second), proc_html)
     elseif case == :other
         opath = joinpath(out_path(fpair.first), fpair.second)
-        # only copy it again if necessary (particularly relevant when the asset files
-        # take quite a bit of space.
+        # only copy it again if necessary (particularly relevant when the asset
+        # files take quite a bit of space.
         if clear || !isfile(opath) || mtime(opath) < t
             cp(joinpath(fpair...), opath, force=true)
         end

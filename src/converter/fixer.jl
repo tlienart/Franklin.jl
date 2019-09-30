@@ -21,7 +21,7 @@ function find_and_fix_md_links(hs::String)::String
         # no second bracket or empty second bracket ?
         # >> true then the id is in the first bracket
         # >> false then the id is in the second bracket
-        ifelse(ref.captures[3] === nothing || isempty(ref.captures[3]),
+        ifelse(isnothing(ref.captures[3]) || isempty(ref.captures[3]),
                     ref.captures[2], # first bracket
                     ref.captures[3]) # second bracket
                     for ref in m_link_refs]
@@ -41,11 +41,11 @@ function find_and_fix_md_links(hs::String)::String
             # no def found --> just leave it as it was
             write(h, m.match)
         else
-            if m.captures[3] !== nothing && isempty(m.captures[3])
+            if !isnothing(m.captures[3]) && isempty(m.captures[3])
                 # [link text][] indicating that the link text is the title
                 write(h, html_ahref(def, refn; title=refn))
             else
-                if m.captures[1] !== nothing
+                if !isnothing(m.captures[1])
                     # ![alt][id]
                     write(h, html_img(def, refn))
                 else

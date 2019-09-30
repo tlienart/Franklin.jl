@@ -25,6 +25,9 @@ const BIG_INT = typemax(Int)
 """Flag for debug mode."""
 const DEBUG_MODE = Ref(false)
 
+"""Flag for the initial pass over pages"""
+const FULL_PASS = Ref(true)
+
 """Flag for error suppression mode (set and unset in optimize only)."""
 const SUPPRESS_ERR = Ref(false)
 
@@ -102,6 +105,7 @@ include("jd_paths.jl")
 include("jd_vars.jl")
 
 # FILE AND DIR MANAGEMENT
+include("manager/rss_generator.jl")
 include("manager/dir_utils.jl")
 include("manager/file_utils.jl")
 include("manager/judoc.jl")
