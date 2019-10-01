@@ -136,7 +136,11 @@ function refstring(s::AS)::String
     st = replace(st, r"[^a-zA-Z0-9_\-\s]" => "")
     # replace spaces by dashes
     st = replace(lowercase(strip(st)), r"\s+" => "_")
-    # in unlikely event we don't have anything here, return the hash of orig string
+    # to avoid clashes with numbering of repeated headers, replace
+    # double underscores by a single one (see convert_header function)
+    st = replace(st, r"__" => "_")
+    # in the unlikely event we don't have anything here, return the hash
+    # of the original string
     isempty(st) && return string(hash(s))
     return st
 end
