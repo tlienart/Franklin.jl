@@ -1,13 +1,13 @@
 @testset "RSSItem" begin
     rss = J.RSSItem(
-        "title", "link", "description", "author", "category",
-        "comments", "enclosure", Date(2012,12,12))
+        "title", "www.link.com", "description", "author@author.com", "category",
+        "www.comments.com", "enclosure", Date(2012,12,12))
     @test rss.title == "title"
-    @test rss.link == "link"
+    @test rss.link == "www.link.com"
     @test rss.description == "description"
-    @test rss.author == "author"
+    @test rss.author == "author@author.com"
     @test rss.category == "category"
-    @test rss.comments == "comments"
+    @test rss.comments == "www.comments.com"
     @test rss.enclosure == "enclosure"
     @test rss.pubDate == Date(2012,12,12)
 end
@@ -21,12 +21,12 @@ end
     jdv = merge(J.GLOBAL_PAGE_VARS, copy(J.LOCAL_PAGE_VARS))
     J.set_var!(jdv, "rss_title", "title")
     J.set_var!(jdv, "rss", "A **description** done.")
-    J.set_var!(jdv, "author", "Chuck")
+    J.set_var!(jdv, "rss_author", "chuck@norris.com")
 
     item = J.add_rss_item(jdv)
     @test item.title == "title"
-    @test item.description == "<p>A <strong>description</strong> done.</p>\n"
-    @test item.author == "Chuck"
+    @test item.description == "A <strong>description</strong> done.\n"
+    @test item.author == "chuck@norris.com"
     # unchanged bc all three fallbacks lead to Data(1)
     @test item.pubDate == Date(1)
 
@@ -41,5 +41,5 @@ end
     feed = joinpath(J.PATHS[:folder], "feed.xml")
     @test isfile(feed)
     fc = prod(readlines(feed, keep=true))
-    @test occursin("<item>\n    <title></title>\n    <link>https://github.com/tlienart/JuDoc.jl/hey/ho.html</link>\n    <description><p>A <strong>description</strong> done.</p>\n</description>", fc)
+    @test occursin("<description><![CDATA[A <strong>description</strong> done.\n]]></description>", fc)
 end
