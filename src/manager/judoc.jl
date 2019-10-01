@@ -28,7 +28,6 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
                             "Please change directory to a valid JuDoc folder."))
     end
 
-
     # construct the set of files to watch
     watched_files = jd_setup(clear=clear)
 
@@ -37,8 +36,10 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
     # do a first full pass
     nomess || println("→ Initial full pass... ")
     start = time()
+    FULL_PASS[] = true
     sig = jd_fullpass(watched_files; clear=clear, verb=verb, prerender=prerender,
                       isoptim=isoptim, no_fail_prerender=no_fail_prerender)
+    FULL_PASS[] = false
     sig < 0 && return sig
     fmsg = rpad("✔ full pass...", 40)
     verb && (println(""); print(fmsg); print_final(fmsg, start); println(""))
@@ -104,9 +105,8 @@ A single full pass of judoc looking at all watched files and processing them as 
 
 See also [`jd_loop`](@ref), [`serve`](@ref) and [`publish`](@ref).
 """
-function jd_fullpass(watched_files::NamedTuple; clear::Bool=false, verb::Bool=false,
-                     prerender::Bool=false, isoptim::Bool=false, no_fail_prerender::Bool=true
-                     )::Int
+function jd_fullpass(watched_files::NamedTuple; clear::Bool=false,
+                     verb::Bool=false, prerender::Bool=false, isoptim::Bool=false, no_fail_prerender::Bool=true)::Int
      # initiate page segments
      head    = read(joinpath(PATHS[:src_html], "head.html"), String)
      pg_foot = read(joinpath(PATHS[:src_html], "page_foot.html"), String)
@@ -117,12 +117,12 @@ function jd_fullpass(watched_files::NamedTuple; clear::Bool=false, verb::Bool=fa
     prepath = get(GLOBAL_PAGE_VARS, "prepath", nothing)
     def_GLOBAL_PAGE_VARS!()
     def_GLOBAL_LXDEFS!()
+    empty!(RSS_DICT)
     # reinsert prepath if specified
     isnothing(prepath) || (GLOBAL_PAGE_VARS["prepath"] = prepath)
 
     # process configuration file (see also `process_md_defs`)
     process_config()
-
 
     # looking for an index file to process
     indexmd   = PATHS[:src] => "index.md"
@@ -133,18 +133,18 @@ function jd_fullpass(watched_files::NamedTuple; clear::Bool=false, verb::Bool=fa
     begin
         if isfile(joinpath(indexmd...))
             a = process_file(:md, indexmd, head, pg_foot, foot; clear=clear,
-                              prerender=prerender, isoptim=isoptim)
+                             prerender=prerender, isoptim=isoptim)
             if a < 0 && prerender && no_fail_prerender
                 process_file(:md, indexmd, head, pg_foot, foot; clear=clear,
-                              prerender=false, isoptim=isoptim)
+                             prerender=false, isoptim=isoptim)
             end
             s += a
         elseif isfile(joinpath(indexhtml...))
             a = process_file(:html, indexhtml, head, pg_foot, foot; clear=clear,
-                              prerender=prerender, isoptim=isoptim)
+                             prerender=prerender, isoptim=isoptim)
             if a < 0 && prerender && no_fail_prerender
                 process_file(:html, indexhtml, head, pg_foot, foot; clear=clear,
-                              prerender=false, isoptim=isoptim)
+                             prerender=false, isoptim=isoptim)
             end
             s += a
         else
@@ -154,14 +154,16 @@ function jd_fullpass(watched_files::NamedTuple; clear::Bool=false, verb::Bool=fa
         for (case, dict) ∈ pairs(watched_files), (fpair, t) ∈ dict
             occursin("index.", fpair.second) && continue
             a = process_file(case, fpair, head, pg_foot, foot, t; clear=clear,
-                              prerender=prerender, isoptim=isoptim)
+                             prerender=prerender, isoptim=isoptim)
             if a < 0 && prerender && no_fail_prerender
                 process_file(case, fpair, head, pg_foot, foot, t; clear=clear,
-                                  prerender=false, isoptim=isoptim)
+                             prerender=false, isoptim=isoptim)
             end
             s += a
         end
     end
+    # generate RSS if appropriate
+    GLOBAL_PAGE_VARS["generate_rss"].first && rss_generator()
     # return -1 if any page
     return ifelse(s<0, -1, 0)
 end
@@ -206,10 +208,11 @@ function jd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, watched_files::Na
             dict[fpair] = cur_t
             # if it's an infra_file
             if haskey(watched_files[:infra], fpair)
-                #TODO: couldn't test this branch
                 verb && println("→ full pass...")
                 start = time()
+                FULL_PASS[] = true
                 jd_fullpass(watched_files; clear=false, verb=false, prerender=false)
+                FULL_PASS[] = false
                 verb && (print_final(rpad("✔ full pass...", 15), start); println(""))
             else
                 fmsg = fmsg * rpad("→ updating... ", 15)

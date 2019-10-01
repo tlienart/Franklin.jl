@@ -11,8 +11,8 @@ function validate_footnotes!(tokens::Vector{Token})
         if τ.name == :FOOTNOTE_REF
             # footnote ref [^1]:
             m = match(r"^\[\^[a-zA-Z0-9]+\](:)?$", τ.ss)
-            if m !== nothing
-                if m.captures[1] !== nothing
+            if !isnothing(m)
+                if !isnothing(m.captures[1])
                     # it's a def
                     tokens[i] = Token(:FOOTNOTE_DEF, τ.ss)
                 else
@@ -36,7 +36,7 @@ $SIGNATURES
 Verify that a given string corresponds to a well formed html entity.
 """
 function validate_html_entity(ss::AS)
-    match(r"&(?:[a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});", ss) !== nothing
+    !isnothing(match(r"&(?:[a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});", ss))
 end
 
 """

@@ -22,6 +22,12 @@ when JuDoc is started.
     GLOBAL_PAGE_VARS["author"]      = Pair("THE AUTHOR",   (String, Nothing))
     GLOBAL_PAGE_VARS["date_format"] = Pair("U dd, yyyy",   (String,))
     GLOBAL_PAGE_VARS["prepath"]     = Pair("",             (String,))
+    # these must be defined for the RSS file to be generated
+    GLOBAL_PAGE_VARS["website_title"] = Pair("",    (String,))
+    GLOBAL_PAGE_VARS["website_descr"] = Pair("",    (String,))
+    GLOBAL_PAGE_VARS["website_url"]   = Pair("",    (String,))
+    # if set to false, nothing rss will be considered
+    GLOBAL_PAGE_VARS["generate_rss"]  = Pair(true,  (Bool,))
     return nothing
 end
 
@@ -51,6 +57,29 @@ is processed.
     LOCAL_PAGE_VARS["date"]     = Pair(Date(1), (String, Date, Nothing))
     LOCAL_PAGE_VARS["lang"]     = Pair("julia", (String,)) # default lang for indented code
     LOCAL_PAGE_VARS["reflinks"] = Pair(true,    (Bool,))   # whether there are reflinks or not
+
+    # RSS 2.0 item specs:
+    # only title, link and description must be defined
+    #
+    #     title       -- rss_title // fallback to title
+    # (*) link        -- [automatically generated]
+    #     description -- rss // rss_description NOTE: if undefined, no item generated
+    #     author      -- rss_author // fallback to author
+    #     category    -- rss_category
+    #     comments    -- rss_comments
+    #     enclosure   -- rss_enclosure
+    # (*) guid        -- [automatically generated from link]
+    #     pubDate     -- rss_pubdate // fallback date // fallback jd_ctime
+    # (*) source      -- [unsupported assumes for now there's only one channel]
+    #
+    LOCAL_PAGE_VARS["rss"]             = Pair("", (String,))
+    LOCAL_PAGE_VARS["rss_description"] = Pair("", (String,))
+    LOCAL_PAGE_VARS["rss_title"]       = Pair("",      (String,))
+    LOCAL_PAGE_VARS["rss_author"]      = Pair("",      (String,))
+    LOCAL_PAGE_VARS["rss_category"]    = Pair("",      (String,))
+    LOCAL_PAGE_VARS["rss_comments"]    = Pair("",      (String,))
+    LOCAL_PAGE_VARS["rss_enclosure"]   = Pair("",      (String,))
+    LOCAL_PAGE_VARS["rss_pubdate"]     = Pair(Date(1), (Date,))
 
     # page vars used by judoc, should not be accessed or defined
     LOCAL_PAGE_VARS["jd_ctime"]  = Pair(Date(1), (Date,))   # time of creation
@@ -170,7 +199,6 @@ the site. See [`resolve_lxcom`](@ref).
                             subs("~~~<span style=\"!#1\">!#2</span>~~~"))
     return nothing
 end
-
 
 #= ==========================================
 Convenience functions related to the jd_vars

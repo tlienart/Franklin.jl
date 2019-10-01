@@ -1,4 +1,4 @@
-using JuDoc, Test, Markdown
+using JuDoc, Test, Markdown, Dates
 const J = JuDoc
 const D = joinpath(dirname(dirname(pathof(JuDoc))), "test", "_dummies")
 
@@ -11,6 +11,7 @@ include("misc.jl")
 
 # MANAGER folder
 include("manager/utils.jl")
+include("manager/rss.jl")
 println("🍺")
 
 # PARSER folder
@@ -55,9 +56,11 @@ begin
     # can't delete the folder)
     mkdir(p); cd(p);
     include("global/postprocess.jl");
+    include("global/rss.jl")
     cd(joinpath(D, ".."))
     # clean up
     rm(p; recursive=true, force=true)
 end
 cd(dirname(dirname(pathof(JuDoc))))
+
 println("😅 😅 😅 😅")

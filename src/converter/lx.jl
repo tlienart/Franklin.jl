@@ -186,7 +186,7 @@ function check_input_rpath(rpath::AS, lang::AS="")::NTuple{3,String}
         files = readdir(dir)
         fn = splitext(fname)[1]
         k = findfirst(e -> splitext(e)[1] == fn, files)
-        if k === nothing
+        if isnothing(k)
             throw(ArgumentError("Couldn't find a relevant file when trying to " *
                                 "resolve an \\input command. (given: $rpath)"))
         end

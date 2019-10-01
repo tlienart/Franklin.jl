@@ -110,15 +110,6 @@ end
 """
 $(SIGNATURES)
 
-Convenience function to check if a variable is `nothing`. It is defined here to guarantee
-compatibility with Julia 1.0 (the function exists for Julia ≥ 1.1).
-"""
-isnothing(x)::Bool = (x === nothing)
-
-
-"""
-$(SIGNATURES)
-
 Convenience function to denote a string as being in a math context in a recursive parsing
 situation. These blocks will be processed as math blocks but without adding KaTeX elements to it
 given that they are part of a larger context that already has KaTeX elements.

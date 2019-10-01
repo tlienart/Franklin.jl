@@ -127,6 +127,7 @@ indentation (either a quadruple space or a tab).
 """
 const L_RETURNS = (:LINE_RETURN, :LR_INDENT)
 
+
 """
 MD_OCB
 
@@ -171,6 +172,7 @@ def are allowed.
 * ordering matters!
 =#
 
+
 """
 MD_HEADER
 
@@ -204,6 +206,7 @@ const MD_OCB_MATH = [
     OCProto(:MATH_ALIGN, :MATH_ALIGN_OPEN, (:MATH_ALIGN_CLOSE,), false),
     OCProto(:MATH_EQA,   :MATH_EQA_OPEN,   (:MATH_EQA_CLOSE,),   false),
     ]
+
 
 """
 MD_OCB_ALL

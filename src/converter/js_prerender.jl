@@ -64,7 +64,7 @@ function js_prerender_highlight(hs::String)::String
         cs = escape_string(subs(hs, matchrange(co).stop+1, matchrange(cc).start-1))
 
         lang = co.captures[2]
-        if lang === nothing
+        if isnothing(lang)
             write(jsbuffer, """console.log("<pre><code class=hljs>$cs</code></pre>");\n""")
         else
             # add to content of jsbuffer

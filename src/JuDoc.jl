@@ -25,6 +25,9 @@ const BIG_INT = typemax(Int)
 """Flag for debug mode."""
 const DEBUG_MODE = Ref(false)
 
+"""Flag for the initial pass over pages"""
+const FULL_PASS = Ref(true)
+
 """Flag for error suppression mode (set and unset in optimize only)."""
 const SUPPRESS_ERR = Ref(false)
 
@@ -102,6 +105,7 @@ include("jd_paths.jl")
 include("jd_vars.jl")
 
 # FILE AND DIR MANAGEMENT
+include("manager/rss_generator.jl")
 include("manager/dir_utils.jl")
 include("manager/file_utils.jl")
 include("manager/judoc.jl")
@@ -113,19 +117,5 @@ include("misc_html.jl")
 
 # ERROR TYPES
 include("error_types.jl")
-
-"""
-$SIGNATURES
-
-Return the HTML corresponding to a JuDoc-Markdown string.
-"""
-function jd2html(st::AbstractString)::String
-    def_GLOBAL_PAGE_VARS!()
-    def_GLOBAL_LXDEFS!()
-    CUR_PATH[] = "index.md"
-    m, v = convert_md(st * EOS, collect(values(GLOBAL_LXDEFS)))
-    h = convert_html(m, v)
-    return h
-end
 
 end # module
