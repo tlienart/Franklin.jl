@@ -14,15 +14,17 @@
 # 3. save the file
 
 struct RSSItem
+    # -- required fields
     title::String
     link::String
-    description::String
-    author::String
+    description::String  # note: should not contain <p>
+    # -- optional fields
+    author::String       # note: should be a valid email
     category::String
-    comments::String
+    comments::String     # note: should be a valid URL
     enclosure::String
-    # guid -- hash of link
-    pubDate::Date
+    # guid == link
+    pubDate::Date        # note: should respect RFC822 (https://www.w3.org/Protocols/rfc822/)
 end
 
 const RSS_DICT = Dict{String,RSSItem}()
@@ -31,6 +33,17 @@ const RSS_DICT = Dict{String,RSSItem}()
 """Convenience function for fallback fields"""
 jor(v::PageVars, a::String, b::String) = ifelse(isempty(first(v[a])), first(v[b]), first(v[a]))
 
+"""Convenience function to remove <p> and </p> in RSS description (not supposed to happen)"""
+remove_html_ps(s::String)::String = replace(s, r"</?p>" => "")
+
+"""
+$SIGNATURES
+
+RSS should not contain relative links so this finds relative links and prepends them with the
+canonical link.
+"""
+fix_relative_links(s::String, link::String) =
+    replace(s, r"(href|src)\s*?=\s*?\"\/" => SubstitutionString("\\1=\"$link"))
 
 """
 $SIGNATURES
@@ -41,10 +54,10 @@ function add_rss_item(jdv::PageVars)::RSSItem
     link   = url_curpage()
     title  = jor(jdv, "rss_title", "title")
     descr  = jor(jdv, "rss", "rss_description")
-    author = jor(jdv, "rss_author", "author")
 
-    descr = jd2html(descr; internal=true)
+    descr = jd2html(descr; internal=true) |> remove_html_ps
 
+    author    = jdv["rss_author"]    |> first
     category  = jdv["rss_category"]  |> first
     comments  = jdv["rss_comments"]  |> first
     enclosure = jdv["rss_enclosure"] |> first
@@ -61,8 +74,8 @@ function add_rss_item(jdv::PageVars)::RSSItem
     isnothing(title) && (title = "")
     isempty(title) && @warn "Found an RSS description but no title for page $link."
 
-    RSS_DICT[link] = RSSItem(title, link, descr,
-        author, category, comments, enclosure, pubDate)
+    RSS_DICT[link] = RSSItem(title, link, descr, author,
+        category, comments, enclosure, pubDate)
 end
 
 
@@ -88,6 +101,10 @@ function rss_generator()::Nothing
               The feed will not be (re)generated."""
         return nothing
     end
+
+    endswith(rss_link, "/") || (rss_link *= "/")
+    rss_descr = jd2html(rss_descr; internal=true) |> remove_html_ps
+
     # is there an RSS file already? if so remove it
     rss_path = joinpath(PATHS[:folder], "feed.xml")
     isfile(rss_path) && rm(rss_path)
@@ -96,45 +113,39 @@ function rss_generator()::Nothing
     rss_buff = IOBuffer()
     write(rss_buff,
         """
-        <?xml version="1.0" encoding="utf-8"?>
         <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
         <channel>
           <title>$rss_title</title>
-          <description>$rss_descr</description>
+          <description><![CDATA[$(fix_relative_links(rss_descr, rss_link))]]></description>
           <link>$rss_link</link>
+          <atom:link href="$(rss_link)feed.xml" rel="self" type="application/rss+xml" />
         """)
     # loop over items
     for (k, v) in RSS_DICT
         full_link = rss_link
-        # ends with / and next doesn't -> ok
-        # not ends with / and next doesn't -> add
-        # ends with / and next starts -> chop
-        # not ends with / and next does -> ok
-        if endswith(full_link, "/")
-            if startswith(v.link, "/")
-                full_link *= v.link[2:end]
-            else
-                full_link *= v.link
-            end
+        if startswith(v.link, "/")
+            full_link *= v.link
         else
-            if startswith(v.link, "/")
-                full_link *= v.link
-            else
-                full_link *= "/" * v.link
-            end
+            full_link *= "/" * v.link
         end
         write(rss_buff,
           """
             <item>
               <title>$(v.title)</title>
               <link>$(full_link)</link>
-              <description>$(v.description)</description>
-              <author>$(v.author)</author>
-              <category>$(v.category)</category>
-              <comments>$(v.comments)</comments>
-              <encloosure>$(v.enclosure)</enclosure>
-              <guid>$(hash(v.link))</guid>
-              <pubDate>$(Dates.format(v.pubDate, "e, d u Y")) 00:00:00 UTC</pubDate>
+              <description><![CDATA[$(fix_relative_links(v.description, rss_link))]]></description>
+          """)
+        for elem in (:author, :category, :comments, :enclosure)
+            e = getproperty(v, elem)
+            isempty(e) || write(rss_buff,
+              """
+                  <$elem>$e</$elem>
+              """)
+        end
+        write(rss_buff,
+          """
+              <guid>$(full_link)</guid>
+              <pubDate>$(Dates.format(v.pubDate, "e, d u Y")) 00:00:00 UT</pubDate>
             </item>
           """)
     end
