@@ -286,13 +286,29 @@ end
         3
         <h3 id="t4"><a href="/index.html#t4">t4 </a></h3>
         4
-        <h3 id="t2_2"><a href="/index.html#t2_2">t2</a></h3>
+        <h3 id="t2__2"><a href="/index.html#t2__2">t2</a></h3>
         5
-        <h3 id="t2_3"><a href="/index.html#t2_3">t2</a></h3>
+        <h3 id="t2__3"><a href="/index.html#t2__3">t2</a></h3>
         6
         """)
+    # pathological issue 241
+    h = raw"""
+        ## example
+        A
+        ## example
+        B
+        ## example 2
+        C
+        """ * J.EOS |> seval
+    @test  isapproxstr(h, """
+        <h2 id="example"><a href="/index.html#example">example</a></h2>
+        A
+        <h2 id="example__2"><a href="/index.html#example__2">example</a></h2>
+        B
+        <h2 id="example_2"><a href="/index.html#example_2">example 2</a></h2>
+        C
+        """)
 end
-
 
 @testset "Line skip" begin
     h = raw"""

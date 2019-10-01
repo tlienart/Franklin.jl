@@ -99,10 +99,10 @@ end
 """
 PAGE_HEADERS
 
-Keep track of seen headers. The key amounts to the ordering (~ordered dict), the value contains
-the title, the refstring version of the title, the occurence number and the level (1, ..., 6).
+Keep track of seen headers. The key is the refstring, the value contains the title,
+the occurence number for the first appearance of that title and the level (1, ..., 6).
 """
-const PAGE_HEADERS = Dict{Int,Tuple{AS,AS,Int,Int}}()
+const PAGE_HEADERS = OrderedDict{AS, Tuple{AS,Int,Int}}()
 
 """
 $(SIGNATURES)
