@@ -124,9 +124,9 @@ function rss_generator()::Nothing
     for (k, v) in RSS_DICT
         full_link = rss_link
         if startswith(v.link, "/")
-            full_link *= v.link
+            full_link *= v.link[2:end]
         else
-            full_link *= "/" * v.link
+            full_link *= v.link
         end
         write(rss_buff,
           """
