@@ -41,5 +41,5 @@ end
     feed = joinpath(J.PATHS[:folder], "feed.xml")
     @test isfile(feed)
     fc = prod(readlines(feed, keep=true))
-    @test occursin("<description><![CDATA[A <strong>description</strong> done.\n]]></description>", fc)
+    @test occursin("<description><![CDATA[A <strong>description</strong> done.", fc)
 end
