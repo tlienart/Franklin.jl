@@ -4,7 +4,7 @@ HTML_1C_TOKENS
 Dictionary of single-char tokens for HTML. Note that these characters are
 exclusive, they cannot appear again in a larger token.
 """
-const HTML_1C_TOKENS = Dict{Char, Symbol}()
+const HTML_1C_TOKENS = LittleDict{Char, Symbol}()
 
 
 """
@@ -13,7 +13,7 @@ HTML_TOKENS
 Dictionary of tokens for HTML. Note that for each, there may be several possibilities to consider
 in which case the order is important: the first case that works will be taken.
 """
-const HTML_TOKENS = Dict{Char, Vector{TokenFinder}}(
+const HTML_TOKENS = LittleDict{Char, Vector{TokenFinder}}(
     '<' => [ isexactly("<!--") => :COMMENT_OPEN  ],  # <!-- ...
     '-' => [ isexactly("-->")  => :COMMENT_CLOSE ],  #      ... -->
     '{' => [ isexactly("{{")   => :H_BLOCK_OPEN  ],  # {{

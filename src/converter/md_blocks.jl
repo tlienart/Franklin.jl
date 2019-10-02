@@ -46,7 +46,7 @@ replacement.
 For instance, `\$ ... \$` will become `\\( ... \\)` chopping off 1 character at the front and the
 back (`\$` sign).
 """
-const MATH_BLOCKS_PARENS = Dict{Symbol, Tuple{Int,Int,String,String}}(
+const MATH_BLOCKS_PARENS = LittleDict{Symbol, Tuple{Int,Int,String,String}}(
     :MATH_A     => ( 1,  1, "\\(", "\\)"),
     :MATH_B     => ( 2,  2, "\\[", "\\]"),
     :MATH_C     => ( 2,  2, "\\[", "\\]"),
