@@ -7,6 +7,7 @@ using Markdown: htmlesc
 using Dates # see jd_vars
 using DelimitedFiles: readdlm
 using OrderedCollections
+using Pkg
 
 import LiveServer
 
@@ -27,6 +28,9 @@ const DEBUG_MODE = Ref(false)
 
 """Flag for the initial pass over pages"""
 const FULL_PASS = Ref(true)
+
+"""Flag for re-evaluation of all code blocks"""
+const FORCE_REEVAL = Ref(false)
 
 """Flag for error suppression mode (set and unset in optimize only)."""
 const SUPPRESS_ERR = Ref(false)

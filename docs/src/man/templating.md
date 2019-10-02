@@ -142,7 +142,7 @@ The `{{ispage path/to/page}}` or `{{isnotpage path/to/page}}` are blocks that do
 For instance in the `pure-sm` template, in the `head.html` you will see elements for the side menu with
 
 ```html
-<li class="pure-menu-item {{ispage /index.html}}pure-menu-selected{{end}}">
+<li class="pure-menu-item {{ispage index.html}}pure-menu-selected{{end}}">
     <a href="/" class="pure-menu-link">Home</a>
 </li>
 ```
