@@ -96,27 +96,25 @@ $(SIGNATURES)
 H-Function of the form `{{toc}}` (table of contents).
 The split is as follows:
 
-* h[1] is the header text
-* h[2] is the key to the header
-* h[3] indicates how many time title occurs (usually once but if more then helps avoid clashes)
-* h[4] indicates the level of the title
+* key is the refstring
+* f[1] is the title (header text)
+* f[2] is irrelevant (occurence, used for numbering)
+* f[3] is the level
 """
 function hfun_toc()::String
+    isempty(PAGE_HEADERS) && return ""
     inner   = ""
-    baselvl = minimum(h[4] for h in values(PAGE_HEADERS)) - 1
+    baselvl = minimum(h[3] for h in values(PAGE_HEADERS)) - 1
     curlvl  = baselvl
-    for i ∈ 1:length(PAGE_HEADERS)
-        h = PAGE_HEADERS[i]
-        lvl = h[4]
+    for (rs, h) ∈ PAGE_HEADERS
+        lvl = h[3]
         if lvl ≤ curlvl
             # Close previous list item
             inner *= "</li>"
-
             # Close additional sublists for each level eliminated
             for i = curlvl-1:-1:lvl
                 inner *= "</ol></li>"
             end
-
             # Reopen for this list item
             inner *= "<li>"
         elseif lvl > curlvl
@@ -125,7 +123,7 @@ function hfun_toc()::String
                 inner *= "<ol><li>"
             end
         end
-        inner *= html_ahref_key(h[2], h[1])
+        inner *= html_ahref_key(rs, h[1])
         curlvl = lvl
         # At this point, number of sublists (<ol><li>) open equals curlvl
     end

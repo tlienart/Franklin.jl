@@ -150,8 +150,8 @@ const MD_OCB = [
     OCProto(:CODE_INLINE,     :CODE_DOUBLE,  (:CODE_DOUBLE,),   false),
     OCProto(:CODE_INLINE,     :CODE_SINGLE,  (:CODE_SINGLE,),   false),
     OCProto(:ESCAPE,          :ESCAPE,       (:ESCAPE,),        false),
-    OCProto(:FOOTNOTE_DEF,    :FOOTNOTE_DEF, (:LINE_RETURN,),   false),
-    OCProto(:LINK_DEF,        :LINK_DEF,     (:LINE_RETURN,),   false),
+    OCProto(:FOOTNOTE_DEF,    :FOOTNOTE_DEF, (L_RETURNS..., :EOS), false),
+    OCProto(:LINK_DEF,        :LINK_DEF,     (L_RETURNS..., :EOS), false),
     # ------------------------------------------------------------------
     OCProto(:H1,              :H1_OPEN,      (L_RETURNS..., :EOS), false), # see [^3]
     OCProto(:H2,              :H2_OPEN,      (L_RETURNS..., :EOS), false),

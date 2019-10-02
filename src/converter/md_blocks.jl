@@ -102,16 +102,25 @@ $(SIGNATURES)
 Helper function for the case of a header block (H1, ..., H6).
 """
 function convert_header(β::OCBlock)::String
-    hk       = lowercase(string(β.name))
+    hk       = lowercase(string(β.name)) # h1, h2, ...
     title, _ = convert_md(content(β) * EOS; isrecursive=true, has_mddefs=false)
-    # check if the header has appeared before
     rstitle  = refstring(title)
-    level    = parse(Int, hk[2])
-    occur    = (hv[3] for hv ∈ values(PAGE_HEADERS) if refstring(hv[1]) == rstitle)
-    occur    = isempty(occur) ? 0 : maximum(occur)
-    rstitle  = ifelse(occur==0, rstitle, "$(rstitle)_$(occur+1)")
-    # save in list of headers
-    PAGE_HEADERS[length(PAGE_HEADERS)+1] = (title, rstitle, occur+1, level)
+    # check if the header has appeared before and if so suggest
+    # an altered refstring; if that altered refstring also exist
+    # (pathological case, see #241), then extend it with a letter
+    # if that also exists (which would be really crazy) add a random
+    # string
+    keys_headers = keys(PAGE_HEADERS)
+    if rstitle in keys_headers
+        title, n, lvl = PAGE_HEADERS[rstitle]
+        # then update the number of occurence
+        PAGE_HEADERS[rstitle] = (title, n+1, lvl)
+        # update the refstring, note the double _ (see refstring)
+        rstitle *= "__$(n+1)"
+        PAGE_HEADERS[rstitle] = (title, 0, parse(Int, hk[2]))
+    else
+        PAGE_HEADERS[rstitle] = (title, 1, parse(Int, hk[2]))
+    end
     # return the title
     return html_hk(hk, html_ahref_key(rstitle, title); id=rstitle)
 end
