@@ -46,7 +46,7 @@ replacement.
 For instance, `\$ ... \$` will become `\\( ... \\)` chopping off 1 character at the front and the
 back (`\$` sign).
 """
-const MATH_BLOCKS_PARENS = Dict{Symbol, Tuple{Int,Int,String,String}}(
+const MATH_BLOCKS_PARENS = LittleDict{Symbol, Tuple{Int,Int,String,String}}(
     :MATH_A     => ( 1,  1, "\\(", "\\)"),
     :MATH_B     => ( 2,  2, "\\[", "\\]"),
     :MATH_C     => ( 2,  2, "\\[", "\\]"),
@@ -123,9 +123,9 @@ $(SIGNATURES)
 Helper function for the code block case of `convert_block`.
 """
 function convert_code_block(ss::SubString)::String
-    fencer = ifelse(startswith(ss, "`````"), "`````", "```")
-    reg    = Regex("$fencer([a-z-]*)(\\:[a-zA-Z\\\\\\/-_\\.]+)?\\s*\\n?((?:.|\\n)*)$fencer")
-    m      = match(reg, ss)
+    fence = ifelse(startswith(ss, "`````"), "`````", "```")
+    reg   = Regex("$fence([a-z-]*)(\\:[a-zA-Z\\\\\\/-_\\.]+)?\\s*\\n?((?:.|\\n)*)$fence")
+    m     = match(reg, ss)
     lang  = m.captures[1]
     rpath = m.captures[2]
     code  = m.captures[3]
