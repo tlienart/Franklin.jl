@@ -27,7 +27,7 @@ struct RSSItem
     pubDate::Date        # note: should respect RFC822 (https://www.w3.org/Protocols/rfc822/)
 end
 
-const RSS_DICT = LittleDict{String,RSSItem}()
+const RSS_DICT = Dict{String,RSSItem}()
 
 
 """Convenience function for fallback fields"""

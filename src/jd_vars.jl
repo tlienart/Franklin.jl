@@ -57,7 +57,6 @@ is processed.
     LOCAL_PAGE_VARS["date"]     = Pair(Date(1), (String, Date, Nothing))
     LOCAL_PAGE_VARS["lang"]     = Pair("julia", (String,)) # default lang for indented code
     LOCAL_PAGE_VARS["reflinks"] = Pair(true,    (Bool,))   # whether there are reflinks or not
-    LOCAL_PAGE_VARS["activate"] = Pair(false,   (Bool,))   # whether to activate an environment
 
     # RSS 2.0 item specs:
     # only title, link and description must be defined
@@ -103,7 +102,7 @@ PAGE_HEADERS
 Keep track of seen headers. The key amounts to the ordering (~ordered dict), the value contains
 the title, the refstring version of the title, the occurence number and the level (1, ..., 6).
 """
-const PAGE_HEADERS = LittleDict{Int,Tuple{AS,AS,Int,Int}}()
+const PAGE_HEADERS = Dict{Int,Tuple{AS,AS,Int,Int}}()
 
 """
 $(SIGNATURES)
@@ -156,7 +155,7 @@ GLOBAL_LXDEFS
 List of latex definitions accessible to all pages. This is filled when the config file is read
 (via manager/file_utils/process_config).
 """
-const GLOBAL_LXDEFS = LittleDict{String, LxDef}()
+const GLOBAL_LXDEFS = Dict{String, LxDef}()
 
 
 """
@@ -247,9 +246,9 @@ The entries in `assignments` are of the form `KEY => STR` where `KEY` is a strin
 # Example:
 
 ```julia-repl
-julia> d = LittleDict("a"=>(0.5=>(Real,)), "b"=>("hello"=>(String,)));
+julia> d = Dict("a"=>(0.5=>(Real,)), "b"=>("hello"=>(String,)));
 julia> JuDoc.set_vars!(d, ["a"=>"5.0", "b"=>"\"goodbye\""])
-LittleDict{String,Pair{K,Tuple{DataType}} where K} with 2 entries:
+Dict{String,Pair{K,Tuple{DataType}} where K} with 2 entries:
   "b" => "goodbye"=>(String,)
   "a" => 5.0=>(Real,)
 ```

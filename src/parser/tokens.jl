@@ -279,8 +279,8 @@ that match specific tokens. The list of tokens found is returned.
 * `stokens_dict`: dictionaro of possible tokens (single character)
 """
 function find_tokens(str::AS,
-                     tokens_dict::AbstractDict{Char,Vector{TokenFinder}},
-                     stokens_dict::AbstractDict{Char,Symbol})::Vector{Token}
+                     tokens_dict::Dict{Char,Vector{TokenFinder}},
+                     stokens_dict::Dict{Char,Symbol})::Vector{Token}
     # storage to keep track of the tokens found
     tokens = Vector{Token}()
 

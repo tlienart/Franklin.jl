@@ -4,7 +4,7 @@ MD_1C_TOKENS
 Dictionary of single-char tokens for Markdown. Note that these characters are exclusive, they
 cannot appear again in a larger token.
 """
-const MD_1C_TOKENS = LittleDict{Char, Symbol}(
+const MD_1C_TOKENS = Dict{Char, Symbol}(
     '{'  => :LXB_OPEN,
     '}'  => :LXB_CLOSE,
     '\n' => :LINE_RETURN,
@@ -17,7 +17,7 @@ MD_TOKENS_LX
 
 Subset of `MD_1C_TOKENS` with only the latex tokens (for parsing what's in a math environment).
 """
-const MD_1C_TOKENS_LX = LittleDict{Char, Symbol}(
+const MD_1C_TOKENS_LX = Dict{Char, Symbol}(
     '{'  => :LXB_OPEN,
     '}'  => :LXB_CLOSE
     )
@@ -29,7 +29,7 @@ MD_TOKENS
 Dictionary of tokens for Markdown. Note that for each, there may be several possibilities to
 consider in which case the order is important: the first case that works will be taken.
 """
-const MD_TOKENS = LittleDict{Char, Vector{TokenFinder}}(
+const MD_TOKENS = Dict{Char, Vector{TokenFinder}}(
     '<'  => [ isexactly("<!--") => :COMMENT_OPEN,     # <!-- ...
              ],
     '-'  => [ isexactly("-->")  => :COMMENT_CLOSE,    #      ... -->
@@ -131,7 +131,7 @@ const L_RETURNS = (:LINE_RETURN, :LR_INDENT)
 """
 MD_OCB
 
-List of Open-Close Blocks whose content should be deactivated (any token within their span
+Dictionary of Open-Close Blocks whose content should be deactivated (any token within their span
 should be marked as inactive) until further processing.
 The keys are identifier for the type of block, the value is a pair with the opening and closing
 tokens followed by a boolean indicating whether the content of the block should be reprocessed.

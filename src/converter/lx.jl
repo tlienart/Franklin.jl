@@ -57,7 +57,7 @@ PAGE_EQREFS
 Dictionary to keep track of equations that are labelled on a page to allow references within the
 page.
 """
-const PAGE_EQREFS = LittleDict{String, Int}()
+const PAGE_EQREFS = Dict{String, Int}()
 
 
 """
@@ -86,7 +86,7 @@ PAGE_BIBREFS
 
 Dictionary to keep track of bibliographical references on a page to allow citation within the page.
 """
-const PAGE_BIBREFS = LittleDict{String, String}()
+const PAGE_BIBREFS = Dict{String, String}()
 
 """
 $(SIGNATURES)
@@ -145,7 +145,7 @@ LXCOM_HREF
 Dictionary for latex commands related to hyperreference for which a specific replacement that
 depends on context is constructed.
 """
-const LXCOM_HREF = LittleDict{String, Function}(
+const LXCOM_HREF = Dict{String, Function}(
     "\\eqref"    => (λ -> form_href(λ, "EQR";  class="eqref")),
     "\\cite"     => (λ -> form_href(λ, "BIBR"; parens=""=>"", class="bibref")),
     "\\citet"    => (λ -> form_href(λ, "BIBR"; parens=""=>"", class="bibref")),

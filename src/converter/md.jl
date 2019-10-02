@@ -69,11 +69,6 @@ function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
     # as they are in the HTML later
     sp_chars = find_special_chars(tokens)
 
-    #> 6. if LOCAL_PAGE_VARS["activate"], activate an environment for the page
-    # if !recursive && LOCAL_PAGE_VARS["activate"]
-    #     Pkg.activate(joinpath())
-    # end
-
     #
     # Forming of the html string
     #
