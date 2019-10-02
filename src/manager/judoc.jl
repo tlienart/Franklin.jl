@@ -13,19 +13,25 @@ Keyword arguments:
 * `nomess=false`:    suppresses all messages (internal use).
 * `isoptim=false`:   whether we're in an optimisation phase or not (if so, links are fixed in case
                      of a project website, see [`write_page`](@ref).
+* `no_fail_prerender=true`: whether, in a prerendering phase, ignore errors and try to produce an output
+* `reeval=false`:    whether to force re-evaluation of all code blocks
 """
 function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Bool=false,
                  prerender::Bool=false, nomess::Bool=false, isoptim::Bool=false,
-                 no_fail_prerender::Bool=true
-                 )::Union{Nothing,Int}
+                 no_fail_prerender::Bool=true, reeval::Bool=false)::Union{Nothing,Int}
     # set the global path
-    FOLDER_PATH[] = pwd()
+    FOLDER_PATH[]  = pwd()
 
     # brief check to see if we're in a folder that looks promising, otherwise stop
     # and tell the user to check (#155)
     if !isdir(joinpath(FOLDER_PATH[], "src"))
         throw(ArgumentError("The current directory doesn't have a src/ folder. " *
                             "Please change directory to a valid JuDoc folder."))
+    end
+
+    # check if a Project.toml file is available, if so activate the folder
+    if isfile(joinpath(FOLDER_PATH[], "Project.toml"))
+        Pkg.activate(".")
     end
 
     # construct the set of files to watch
@@ -36,10 +42,12 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
     # do a first full pass
     nomess || println("→ Initial full pass... ")
     start = time()
-    FULL_PASS[] = true
+    FULL_PASS[]    = true
+    FORCE_REEVAL[] = reeval
     sig = jd_fullpass(watched_files; clear=clear, verb=verb, prerender=prerender,
                       isoptim=isoptim, no_fail_prerender=no_fail_prerender)
-    FULL_PASS[] = false
+    FULL_PASS[]    = false
+    FORCE_REEVAL[] = false
     sig < 0 && return sig
     fmsg = rpad("✔ full pass...", 40)
     verb && (println(""); print(fmsg); print_final(fmsg, start); println(""))
@@ -52,6 +60,9 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
         LiveServer.setverbose(verb)
         LiveServer.serve(port=port, coreloopfun=coreloopfun)
     end
+
+    # return to main env in case activated local env
+    Pkg.activate()
     return nothing
 end
 

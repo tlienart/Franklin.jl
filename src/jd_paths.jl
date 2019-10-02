@@ -29,7 +29,7 @@ Dictionary for the paths of the input folders and the output folders. The simple
 requires the main input folder to be defined i.e. `PATHS[:src]` and infers the others via the
 `set_paths!()` function.
 """
-const PATHS = Dict{Symbol,String}()
+const PATHS = LittleDict{Symbol,String}()
 
 
 """
@@ -38,7 +38,7 @@ $(SIGNATURES)
 This assigns all the paths where files will be read and written with root the `FOLDER_PATH`
 which is assigned at runtime.
 """
-function set_paths!()::Dict{Symbol,String}
+function set_paths!()::LittleDict{Symbol,String}
     @assert isassigned(FOLDER_PATH) "FOLDER_PATH undefined"
     @assert isdir(FOLDER_PATH[]) "FOLDER_PATH is not a valid path"
 

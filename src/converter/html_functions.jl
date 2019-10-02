@@ -142,7 +142,7 @@ Dictionary for special html functions. They can take two variables, the first on
 arguments passed to the function, the second one `ν` refers to the page variables (i.e. the
 context) available to the function.
 """
-const HTML_FUNCTIONS = Dict{String, Function}(
+const HTML_FUNCTIONS = LittleDict{String, Function}(
     "fill"   => ((π, ν) -> hfun_fill(π, ν)),
     "insert" => ((π, _) -> hfun_insert(π)),
     "href"   => ((π, _) -> hfun_href(π)),

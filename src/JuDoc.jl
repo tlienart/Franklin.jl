@@ -7,6 +7,7 @@ using Markdown: htmlesc
 using Dates # see jd_vars
 using DelimitedFiles: readdlm
 using OrderedCollections
+using Pkg
 
 import LiveServer
 
@@ -28,11 +29,14 @@ const DEBUG_MODE = Ref(false)
 """Flag for the initial pass over pages"""
 const FULL_PASS = Ref(true)
 
+"""Flag for re-evaluation of all code blocks"""
+const FORCE_REEVAL = Ref(false)
+
 """Flag for error suppression mode (set and unset in optimize only)."""
 const SUPPRESS_ERR = Ref(false)
 
 """Dict to keep track of languages and how comments are indicated and their extensions."""
-const CODE_LANG = Dict{String,NTuple{2,String}}(
+const CODE_LANG = LittleDict{String,NTuple{2,String}}(
     "c"          => (".c",    "//"),
     "cpp"        => (".cpp",  "//"),
     "fortran"    => (".f90",  "!"),
@@ -58,7 +62,7 @@ else
 end
 
 """Type of the containers for page variables (local and global)."""
-const PageVars = Dict{String,Pair{K,NTuple{N, DataType}} where {K, N}}
+const PageVars = LittleDict{String,Pair{K,NTuple{N, DataType}} where {K, N}}
 
 """Relative path to the current file being processed by JuDoc."""
 const CUR_PATH = Ref("")

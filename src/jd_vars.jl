@@ -102,7 +102,7 @@ PAGE_HEADERS
 Keep track of seen headers. The key is the refstring, the value contains the title,
 the occurence number for the first appearance of that title and the level (1, ..., 6).
 """
-const PAGE_HEADERS = OrderedDict{AS, Tuple{AS,Int,Int}}()
+const PAGE_HEADERS = LittleDict{AS,Tuple{AS,Int,Int}}()
 
 """
 $(SIGNATURES)
@@ -155,7 +155,7 @@ GLOBAL_LXDEFS
 List of latex definitions accessible to all pages. This is filled when the config file is read
 (via manager/file_utils/process_config).
 """
-const GLOBAL_LXDEFS = Dict{String, LxDef}()
+const GLOBAL_LXDEFS = LittleDict{String, LxDef}()
 
 
 """
@@ -242,16 +242,6 @@ Given a set of definitions `assignments`, update the variables dictionary `jd_va
 `assignments` that do not match keys in `jd_vars` are ignored (a warning message is displayed).
 The entries in `assignments` are of the form `KEY => STR` where `KEY` is a string key (e.g.:
 "hasmath") and `STR` is an assignment to evaluate (e.g.: "=false").
-
-# Example:
-
-```julia-repl
-julia> d = Dict("a"=>(0.5=>(Real,)), "b"=>("hello"=>(String,)));
-julia> JuDoc.set_vars!(d, ["a"=>"5.0", "b"=>"\"goodbye\""])
-Dict{String,Pair{K,Tuple{DataType}} where K} with 2 entries:
-  "b" => "goodbye"=>(String,)
-  "a" => 5.0=>(Real,)
-```
 """
 function set_vars!(jd_vars::PageVars, assignments::Vector{Pair{String,String}})::PageVars
     # if there's no assignment, cut it short
