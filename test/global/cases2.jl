@@ -61,6 +61,7 @@ end
 
 
 @testset "Table" begin
+    J.CUR_PATH[] = "pages/pg1.html"
     st = """
         A
 

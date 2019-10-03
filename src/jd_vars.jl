@@ -42,6 +42,13 @@ DEVNOTE: marked as constant for perf reasons but can be modified since Dict.
 """
 const LOCAL_PAGE_VARS = PageVars()
 
+"""
+Code
+
+Type alias for a short dictionary where the keys are code block names and values are code block
+bodies.
+"""
+const Code = LittleDict{String,String}
 
 """
 $(SIGNATURES)
@@ -85,9 +92,11 @@ is processed.
     LOCAL_PAGE_VARS["jd_ctime"]  = Pair(Date(1), (Date,))   # time of creation
     LOCAL_PAGE_VARS["jd_mtime"]  = Pair(Date(1), (Date,))   # time of last modification
     LOCAL_PAGE_VARS["jd_rpath"]  = Pair("",      (String,)) # local path to file src/[...]/blah.md
+    LOCAL_PAGE_VARS["jd_code"]   = Pair(Code(),  (Vector{Code},)) # all eval'd code blocks
+    LOCAL_PAGE_VARS["jd_code_n"] = Pair(0,       (Int,))          # nbring of eval'd code blocks
 
     # If there are GLOBAL vars that are defined, they take precedence
-    local_keys   = keys(LOCAL_PAGE_VARS)
+    local_keys = keys(LOCAL_PAGE_VARS)
     for k in keys(GLOBAL_PAGE_VARS)
         k in local_keys || continue
         LOCAL_PAGE_VARS[k] = GLOBAL_PAGE_VARS[k]
