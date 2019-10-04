@@ -43,27 +43,26 @@ DEVNOTE: marked as constant for perf reasons but can be modified since Dict.
 const LOCAL_PAGE_VARS = PageVars()
 
 """
-Code
-
-Type alias for a short dictionary where the keys are code block names and values are code block
-bodies.
-"""
-const Code = LittleDict{String,String}
-
-"""
 $(SIGNATURES)
 
 Convenience function to allocate default values of page variables. This is called every time a page
 is processed.
 """
 @inline function def_LOCAL_PAGE_VARS!()::Nothing
+    # NOTE `jd_code` is the only page var we KEEP (stays alive)
+    code_dict = get(LOCAL_PAGE_VARS, "jd_code") do
+        Pair(LittleDict{String,String}(),  (Any,)) # the "Any" is lazy but easy
+    end
     empty!(LOCAL_PAGE_VARS)
-    LOCAL_PAGE_VARS["title"]    = Pair(nothing, (String, Nothing))
-    LOCAL_PAGE_VARS["hasmath"]  = Pair(true,    (Bool,))
-    LOCAL_PAGE_VARS["hascode"]  = Pair(false,   (Bool,))
-    LOCAL_PAGE_VARS["date"]     = Pair(Date(1), (String, Date, Nothing))
-    LOCAL_PAGE_VARS["lang"]     = Pair("julia", (String,)) # default lang for indented code
-    LOCAL_PAGE_VARS["reflinks"] = Pair(true,    (Bool,))   # whether there are reflinks or not
+
+    # Local page vars defaults
+    LOCAL_PAGE_VARS["title"]      = Pair(nothing, (String, Nothing))
+    LOCAL_PAGE_VARS["hasmath"]    = Pair(true,    (Bool,))
+    LOCAL_PAGE_VARS["hascode"]    = Pair(false,   (Bool,))
+    LOCAL_PAGE_VARS["date"]       = Pair(Date(1), (String, Date, Nothing))
+    LOCAL_PAGE_VARS["lang"]       = Pair("julia", (String,)) # default lang for indented code
+    LOCAL_PAGE_VARS["reflinks"]   = Pair(true,    (Bool,))   # whether there are reflinks or not
+    LOCAL_PAGE_VARS["freezecode"] = Pair(false,   (Bool,))   # no-reevaluation of the code
 
     # RSS 2.0 item specs:
     # only title, link and description must be defined
@@ -92,8 +91,10 @@ is processed.
     LOCAL_PAGE_VARS["jd_ctime"]  = Pair(Date(1), (Date,))   # time of creation
     LOCAL_PAGE_VARS["jd_mtime"]  = Pair(Date(1), (Date,))   # time of last modification
     LOCAL_PAGE_VARS["jd_rpath"]  = Pair("",      (String,)) # local path to file src/[...]/blah.md
-    LOCAL_PAGE_VARS["jd_code"]   = Pair(Code(),  (Vector{Code},)) # all eval'd code blocks
-    LOCAL_PAGE_VARS["jd_code_n"] = Pair(0,       (Int,))          # nbring of eval'd code blocks
+
+    # Internal vars for code blocks
+    LOCAL_PAGE_VARS["jd_code_n"] = Pair(0, (Int,)) # numbering of eval'd code blocks
+    LOCAL_PAGE_VARS["jd_code"]   = code_dict
 
     # If there are GLOBAL vars that are defined, they take precedence
     local_keys = keys(LOCAL_PAGE_VARS)

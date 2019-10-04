@@ -67,6 +67,9 @@ const PageVars = LittleDict{String,Pair{K,NTuple{N, DataType}} where {K, N}}
 """Relative path to the current file being processed by JuDoc."""
 const CUR_PATH = Ref("")
 
+"""Relative path to the last with eval'd code blocks (to know what's in scope)."""
+const CUR_PATH_WITH_EVAL = Ref("")
+
 """Shorter name for a type that we use everywhere"""
 const AS = AbstractString
 

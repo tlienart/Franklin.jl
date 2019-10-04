@@ -143,21 +143,55 @@ end
 """
 $SIGNATURES
 
-Helper function to eval a code block and write it where appropriate
+Helper function to eval a code block, write it where appropriate, and finally return
+a resolved block that can be displayed in the html.
 """
-function eval_code_block(code::AS, path::String, out_path::String)::Nothing
+function eval_and_resolve_code(code::AS, rpath::AS; eval::Bool=true)::String
+    # Here we have a julia code block that was provided with a script path
+    # It will consequently be
+    #  1. written to script file unless it's already there
+    #  2. eval with redirect (unless file+output already there)
+    #  3. inserted after cleaning out lines (see resolve_lx_input)
+
+    # form the path
+    path = resolve_assets_rpath(rpath; canonical=true, code=true)
+
+    # lazy names are allowed without extensions, add one if that's the case
+    endswith(path, ".jl") || (path *= ".jl")
+
+    # output directory etc
+    out_path, fname = splitdir(path)
+    out_path = mkpath(joinpath(out_path, "output"))
+    out_name = splitext(fname)[1] * ".out"
+    out_path = joinpath(out_path, out_name)
+
+    # if we're in the no-eval case, check that the relevant files are
+    # there otherwise do re-eval with re-write
+    if !eval && isfile(path) && isfile(out_path)
+        # just return the resolved code block
+        return resolve_lx_input_hlcode(rpath, "julia")
+    end
+
     write(path, MESSAGE_FILE_GEN * code)
+    print("→ busy evaluating code [...]       \r")
     # - execute the code while redirecting stdout to file
-    open(out_path, "w") do outf
-        redirect_stdout(outf)  do
-            try
-                Main.include(path)
-            catch e
-                print("There was an error running the code:\n$(e.error)")
+    open(out_path, "w") do outf        # for stdout
+        open(tempname(), "w") do outf2 # for stderr
+            redirect_stderr(outf2) do
+                redirect_stdout(outf) do
+                    try
+                        Main.include(path)
+                    catch e
+                        print("There was an error running the code:\n$(e.error)")
+                    end
+                end
             end
         end
     end
-    return nothing
+    print("→ busy evaluating code [✓]         \r")
+
+    # resolve the code block (highlighting) and return it
+    return resolve_lx_input_hlcode(rpath, "julia")
 end
 
 """
@@ -169,76 +203,65 @@ function convert_code_block(ss::SubString)::String
     fencer = ifelse(startswith(ss, "`````"), "`````", "```")
     reg    = Regex("$fencer([a-z-]*)(\\:[a-zA-Z\\\\\\/-_\\.]+)?\\s*\\n?((?:.|\\n)*)$fencer")
     m      = match(reg, ss)
-    lang  = m.captures[1]
-    rpath = m.captures[2]
-    code  = m.captures[3]
+    lang   = m.captures[1]
+    rpath  = m.captures[2]
+    code   = m.captures[3]
 
     # if no rpath is given, the code is not eval'd
-    if isnothing(rpath)
+    # same if the user specifies `@def freezecode = true`
+    if isnothing(rpath) || LOCAL_PAGE_VARS["freezecode"].first
         return html_code(code, lang)
     end
     if lang!="julia"
         @warn "Eval of non-julia code blocks is not yet supported."
         return html_code(code, lang)
     end
+
     # path currently has an indicative `:` we don't care about
     rpath = rpath[2:end]
 
-    # Here we have a julia code block that was provided with a script path
-    # It will consequently be
-    #   1. written to script file unless it's already there
-    #   2. evaled (unless a file was there and output file is present), redirect out
-    #   3. inserted after scrapping out lines (see resolve_lx_input)
-    path = resolve_assets_rpath(rpath; canonical=true, code=true)
+    # In the case of forced re-eval, we don't care about the
+    # code dictionary (scope) just force-reeval everything
+    FORCE_REEVAL[] && return eval_and_resolve_code(code, rpath)
 
-    endswith(path, ".jl") || (path *= ".jl")
-
-    out_path, fname = splitdir(path)
-    out_path = mkpath(joinpath(out_path, "output"))
-    out_name = splitext(fname)[1] * ".out"
-    out_path = joinpath(out_path, out_name)
-
+    # handle to dictionary of eval'ed code blocks (scope)
     code_dict = LOCAL_PAGE_VARS["jd_code"].first
-
-    # shortcut if forced
-    if FORCE_REEVAL[]
-        # append code block
+    # check if the page we're looking at is in scope
+    not_in_scope = (CUR_PATH[] != CUR_PATH_WITH_EVAL[])
+    if not_in_scope
+        # we're necessarily at the first code block of the page.
+        # Empty the code dictionary which corresponds to the previous scope.
+        empty!(code_dict)
+        # then add the code to a fresh dictionary and eval it
         code_dict[rpath] = code
-        # and eval
-        eval_block(code, path, out_path)
+        return eval_and_resolve_code(code, rpath)
     end
 
-    # otherwise we're in the "constant eval" mode
-    # > keep track of which eval'd code block it is (absolute numbering)
-    c = increment_code_n()
+    # we're in scope, compare the code block with the code
+    # dictionary and act appropriately
+    c     = increment_code_n() # which code block is it
     keys_ = keys(code_dict)
 
-    update_dict = true
-    eval_code   = true
-
-    # compare to the current list of code blocks
-    # a. (c ≤ current length) --> check that everything matches
+    # there is only one case where we might not add and eval
+    # --> if c ≤ length(code_dict)  -- code block may be among seen ones
+    # --> rpath in keys             -- there is an entry in the code dict
+    # --> code == code_dict[rpath]  -- the content matches exactly
     if (c ≤ length(code_dict)) && rpath in keys_ && code == code_dict[rpath]
-        # don't need to update the dictionary
-        update_dict = false
-        # are the files there? in the unlikely case they got
-        # removed or something, re-eval
-        eval_code = !(isfile(path) && isfile(out_path))
-    end
-    # b. (c > length) --> add and eval
-
-    if update_dict
-        code_dict[rpath] = code
-        if (c ≤ length(code_dict))
-            # purge whatever is after (will be re-eval)
-            foreach(k -> delete!(code_dict, k), collect(keys_)[c:end])
-        end
+        # dictionary has the correct entry, just resolve with no eval
+        return eval_and_resolve_code(code, rpath; eval=false)
     end
 
-    eval_code && eval_code_block(code, path, out_path)
+    # in all other case, update dictionary and eval.
+    # if c ≤ length(keys_) then purge dictionary which would
+    # contain potentially stale entries as after a block that's
+    # just been added/updated
+    code_dict[rpath] = code
+    if (c ≤ length(code_dict))
+        # purge whatever is after (will be re-evaled)
+        foreach(k -> delete!(code_dict, k), collect(keys_)[c:end])
+    end
 
-    # step 3, insertion of code stripping of "hide" lines.
-    return resolve_lx_input_hlcode(rpath, "julia")
+    return eval_and_resolve_code(code, rpath)
 end
 
 

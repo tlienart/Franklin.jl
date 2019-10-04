@@ -18,7 +18,8 @@ Keyword arguments:
 """
 function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Bool=false,
                  prerender::Bool=false, nomess::Bool=false, isoptim::Bool=false,
-                 no_fail_prerender::Bool=true, eval_all::Bool=false)::Union{Nothing,Int}
+                 no_fail_prerender::Bool=true, eval_all::Bool=false,
+                 cleanup::Bool=true)::Union{Nothing,Int}
     # set the global path
     FOLDER_PATH[]  = pwd()
 
@@ -42,7 +43,7 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
     nomess && (verb = false)
 
     # do a first full pass
-    nomess || println("→ Initial full pass... ")
+    nomess || println("→ Initial full pass...")
     start = time()
     FULL_PASS[]    = true
     FORCE_REEVAL[] = eval_all
@@ -56,7 +57,7 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
 
     # start the continuous loop
     if !single
-        nomess || println("→ Starting the server...")
+        nomess || println("→ Starting the server...          ")
         coreloopfun = (cntr, fw) -> jd_loop(cntr, fw, watched_files; clear=clear, verb=verb)
         # start the liveserver in the current directory
         LiveServer.setverbose(verb)
@@ -179,7 +180,6 @@ function jd_fullpass(watched_files::NamedTuple; clear::Bool=false,
     return ifelse(s<0, -1, 0)
 end
 
-
 """
 $(SIGNATURES)
 
@@ -234,7 +234,10 @@ function jd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, watched_files::Na
                 head    = read(joinpath(PATHS[:src_html], "head.html"), String)
                 pg_foot = read(joinpath(PATHS[:src_html], "page_foot.html"), String)
                 foot    = read(joinpath(PATHS[:src_html], "foot.html"), String)
-                process_file(case, fpair, head, pg_foot, foot, cur_t; clear=false, prerender=false)
+                # if it's the first time we modify this file then all blocks need
+                # to be evaluated so that everything is in scope
+                process_file(case, fpair, head, pg_foot, foot, cur_t;
+                             clear=false, prerender=false)
                 verb && print_final(fmsg, start)
             end
         end
