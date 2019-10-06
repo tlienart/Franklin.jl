@@ -45,11 +45,9 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
     # do a first full pass
     nomess || println("→ Initial full pass...")
     start = time()
-    FULL_PASS[]    = true
     FORCE_REEVAL[] = eval_all
     sig = jd_fullpass(watched_files; clear=clear, verb=verb, prerender=prerender,
                       isoptim=isoptim, no_fail_prerender=no_fail_prerender)
-    FULL_PASS[]    = false
     FORCE_REEVAL[] = false
     sig < 0 && return sig
     fmsg = rpad("✔ full pass...", 40)
@@ -57,7 +55,7 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
 
     # start the continuous loop
     if !single
-        nomess || println("→ Starting the server...          ")
+        nomess || println("→ Starting the server...")
         coreloopfun = (cntr, fw) -> jd_loop(cntr, fw, watched_files; clear=clear, verb=verb)
         # start the liveserver in the current directory
         LiveServer.setverbose(verb)
@@ -119,10 +117,11 @@ See also [`jd_loop`](@ref), [`serve`](@ref) and [`publish`](@ref).
 """
 function jd_fullpass(watched_files::NamedTuple; clear::Bool=false,
                      verb::Bool=false, prerender::Bool=false, isoptim::Bool=false, no_fail_prerender::Bool=true)::Int
-     # initiate page segments
-     head    = read(joinpath(PATHS[:src_html], "head.html"), String)
-     pg_foot = read(joinpath(PATHS[:src_html], "page_foot.html"), String)
-     foot    = read(joinpath(PATHS[:src_html], "foot.html"), String)
+    FULL_PASS[] = true
+    # initiate page segments
+    head    = read(joinpath(PATHS[:src_html], "head.html"), String)
+    pg_foot = read(joinpath(PATHS[:src_html], "page_foot.html"), String)
+    foot    = read(joinpath(PATHS[:src_html], "foot.html"), String)
 
     # reset global page variables and latex definitions
     # NOTE: need to keep track of pre-path if specified, see optimize
@@ -176,6 +175,7 @@ function jd_fullpass(watched_files::NamedTuple; clear::Bool=false,
     end
     # generate RSS if appropriate
     GLOBAL_PAGE_VARS["generate_rss"].first && rss_generator()
+    FULL_PASS[] = false
     # return -1 if any page
     return ifelse(s<0, -1, 0)
 end
@@ -221,9 +221,7 @@ function jd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, watched_files::Na
             if haskey(watched_files[:infra], fpair)
                 verb && println("→ full pass...")
                 start = time()
-                FULL_PASS[] = true
                 jd_fullpass(watched_files; clear=false, verb=false, prerender=false)
-                FULL_PASS[] = false
                 verb && (print_final(rpad("✔ full pass...", 15), start); println(""))
             else
                 fmsg = fmsg * rpad("→ updating... ", 15)

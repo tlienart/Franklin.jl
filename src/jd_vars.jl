@@ -31,6 +31,37 @@ when JuDoc is started.
     return nothing
 end
 
+"""
+CODE_SCOPE
+
+Page-related struct to keep track of the code blocks that have been evaluated.
+"""
+mutable struct CodeScope
+    rpaths::Vector{SubString}
+    codes::Vector{SubString}
+end
+CodeScope() = CodeScope(String[], String[])
+
+"""Convenience function to add a code block to the code scope."""
+function push!(cs::CodeScope, rpath::SubString, code::SubString)::Nothing
+    push!(cs.rpaths, rpath)
+    push!(cs.codes, code)
+    return nothing
+end
+
+"""Convenience function to (re)start a code scope."""
+function reset!(cs::CodeScope, rpath::SubString, code::SubString)::Nothing
+    cs.rpaths = [rpath]
+    cs.codes  = [code]
+    return nothing
+end
+
+"""Convenience function to clear arrays beyond an index"""
+function purgeafter!(cs::CodeScope, head::Int)::Nothing
+    cs.rpaths = cs.rpaths[1:head]
+    cs.codes  = cs.codes[1:head]
+    return nothing
+end
 
 """
 LOCAL_PAGE_VARS
@@ -42,6 +73,7 @@ DEVNOTE: marked as constant for perf reasons but can be modified since Dict.
 """
 const LOCAL_PAGE_VARS = PageVars()
 
+
 """
 $(SIGNATURES)
 
@@ -50,8 +82,8 @@ is processed.
 """
 @inline function def_LOCAL_PAGE_VARS!()::Nothing
     # NOTE `jd_code` is the only page var we KEEP (stays alive)
-    code_dict = get(LOCAL_PAGE_VARS, "jd_code") do
-        Pair(LittleDict{String,String}(),  (Any,)) # the "Any" is lazy but easy
+    code_scope = get(LOCAL_PAGE_VARS, "jd_code_scope") do
+        Pair(CodeScope(),  (CodeScope,)) # the "Any" is lazy but easy
     end
     empty!(LOCAL_PAGE_VARS)
 
@@ -93,8 +125,8 @@ is processed.
     LOCAL_PAGE_VARS["jd_rpath"]  = Pair("",      (String,)) # local path to file src/[...]/blah.md
 
     # Internal vars for code blocks
-    LOCAL_PAGE_VARS["jd_code_n"] = Pair(0, (Int,)) # numbering of eval'd code blocks
-    LOCAL_PAGE_VARS["jd_code"]   = code_dict
+    LOCAL_PAGE_VARS["jd_code_scope"] = code_scope
+    LOCAL_PAGE_VARS["jd_code_head"]  = Pair(Ref(1), (Ref{Int},))
 
     # If there are GLOBAL vars that are defined, they take precedence
     local_keys = keys(LOCAL_PAGE_VARS)

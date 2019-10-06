@@ -140,6 +140,7 @@ function process_file_err(case::Symbol, fpair::Pair{String, String}, head::AS=""
                 force=true)
         end
     end
+#XXX    FULL_PASS[] || print(rpad("\r→ page updated [✓]", 79)*"\r")
     return nothing
 end
 

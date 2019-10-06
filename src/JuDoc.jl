@@ -8,10 +8,11 @@ using Dates # see jd_vars
 using DelimitedFiles: readdlm
 using OrderedCollections
 using Pkg
-
-import LiveServer
-
 using DocStringExtensions: SIGNATURES, TYPEDEF
+
+import Logging
+import LiveServer
+import Base.push!
 
 export serve, publish, cleanpull, newsite, optimize, jd2html
 
