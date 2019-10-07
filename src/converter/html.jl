@@ -68,7 +68,7 @@ function jd2html(st::AbstractString; internal::Bool=false, dir::String="")::Stri
         set_paths!()
         CUR_PATH[] = "index.md"
     end
-    m, v = convert_md(st * EOS, collect(values(GLOBAL_LXDEFS)); isrecursive=internal)
+    m, v = convert_md(st * EOS, collect(values(GLOBAL_LXDEFS)); isinternal=internal)
     h = convert_html(m, v)
     return h
 end

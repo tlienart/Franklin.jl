@@ -12,13 +12,15 @@ well as a dictionary of page variables.
 **Keyword arguments**
 
 * `isrecursive=false`: a bool indicating whether the call is the parent call or a child call
+* `isinternal=false`:  a bool indicating whether the call stems from `jd2html` in internal mode
 * `isconfig=false`:    a bool indicating whether the file to convert is the configuration file
 * `has_mddefs=true`:   a bool indicating whether to look for definitions of page variables
 """
 function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
-                    isrecursive::Bool=false, isconfig::Bool=false, has_mddefs::Bool=true
+                    isrecursive::Bool=false, isinternal::Bool=false,
+                    isconfig::Bool=false, has_mddefs::Bool=true
                     )::Tuple{String,Union{Nothing,PageVars}}
-    if !isrecursive
+    if !(isrecursive || isinternal)
         def_LOCAL_PAGE_VARS!()  # page-specific variables
         def_PAGE_HEADERS!()     # all the headers
         def_PAGE_EQREFS!()      # page-specific equation dict (hrefs)
