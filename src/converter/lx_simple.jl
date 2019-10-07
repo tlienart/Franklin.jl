@@ -3,23 +3,23 @@
 """
 $SIGNATURES
 
-Internal function to resolve a `\\output{rpath}` (finds the output and shows it).
+Internal function to resolve a `\\output{rpath}` (finds the output of a code block and shows it).
 The `reprocess` argument indicates whether the output should be processed as judoc markdown or
 inserted as is.
 """
-function resolve_lx_output(lxc::LxCom, reprocess::Bool=false)::String
+function resolve_lx_output(lxc::LxCom; reprocess::Bool=false)::String
     rpath = strip(content(lxc.braces[1])) # [assets]/subpath/script{.jl}
-    return resolve_lx_input_plainoutput(rpath, reprocess)
+    return resolve_lx_input_plainoutput(rpath, reprocess; code=true)
 end
 
 
 """
 $SIGNATURES
 
-Internal function to resolve a `\\textoutput{rpath}` (finds the output and shows it as markdown).
-Note: the output is re-processed (if there's any markdown in the output, it will be parsed).
+Internal function to resolve a `\\textoutput{rpath}` (finds the output of a code block and shows
+after treating it as markdown to be parsed).
 """
-resolve_lx_textoutput(lxc::LxCom) = resolve_lx_output(lxc, true)
+resolve_lx_textoutput(lxc::LxCom) = resolve_lx_output(lxc; reprocess=true)
 
 
 """
@@ -27,7 +27,7 @@ $SIGNATURES
 
 Internal function to resolve a `\\textinput{rpath}` (reads the file and show it after processing).
 """
-function resolve_lx_textinput(lxc::LxCom, reprocess::Bool=false)::String
+function resolve_lx_textinput(lxc::LxCom)::String
     rpath = strip(content(lxc.braces[1]))
     return resolve_lx_input_textfile(rpath)
 end

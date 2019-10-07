@@ -164,10 +164,9 @@ path of the directory containing the file, and the name of the file without exte
 See also [`resolve_lx_input`](@ref).
 Note: rpath here is always a UNIX path while the output correspond to SYSTEM paths.
 """
-function check_input_rpath(rpath::AS, lang::AS="")::NTuple{3,String}
+function check_input_rpath(rpath::AS, lang::AS=""; code::Bool=false)::NTuple{3,String}
     # find the full system path to the asset
-    fpath = resolve_assets_rpath(rpath; canonical=true)
-
+    fpath = resolve_assets_rpath(rpath; canonical=true, code=code)
     # check if an extension is given, if not, consider it's `.xx` with language `nothing`
     if isempty(splitext(fpath)[2])
         ext, _ = get(CODE_LANG, lang) do
@@ -206,7 +205,7 @@ $(SIGNATURES)
 Internal function to read the content of a script file. See also [`resolve_lx_input`](@ref).
 """
 function resolve_lx_input_hlcode(rpath::AS, lang::AS)::String
-    fpath, _, _ = check_input_rpath(rpath)
+    fpath, _, _ = check_input_rpath(rpath; code=true)
     # Read the file while ignoring lines that are flagged with something like `# HIDE`
     _, comsym = CODE_LANG[lang]
     hide = Regex(raw"(?:^|[^\S\r\n]*?)#(\s)*?(?i)hide(all)?")
@@ -243,7 +242,7 @@ Internal function to read the content of a script file and highlight it using `h
 also [`resolve_lx_input`](@ref).
 """
 function resolve_lx_input_othercode(rpath::AS, lang::AS)::String
-    fpath, _, _ = check_input_rpath(rpath)
+    fpath, _, _ = check_input_rpath(rpath, code=true)
     return html_code(read(fpath, String), lang)
 end
 
@@ -254,9 +253,9 @@ $(SIGNATURES)
 Internal function to read the raw output of the execution of a file and display it in a pre block.
 See also [`resolve_lx_input`](@ref).
 """
-function resolve_lx_input_plainoutput(rpath::AS, reproc::Bool=false)::String
+function resolve_lx_input_plainoutput(rpath::AS, reproc::Bool=false; code::Bool=false)::String
     # will throw an error if rpath doesn't exist
-    _, dir, fname = check_input_rpath(rpath)
+    _, dir, fname = check_input_rpath(rpath; code=code)
     out_file = joinpath(dir, "output", fname * ".out")
     # check if the output file exists
     isfile(out_file) || throw(ErrorException("I found an \\input but no relevant output file."))
@@ -290,7 +289,8 @@ Internal function to read a plot outputted by script `rpath`, possibly named wit
 """
 function resolve_lx_input_plotoutput(rpath::AS, id::AS="")::String
     # will throw an error if rpath doesn't exist
-    _, dir, fname = check_input_rpath(rpath)
+
+    _, dir, fname = check_input_rpath(rpath, code=true)
     plt_name = fname * id
     # find a plt in output that has the same root name
     out_path = joinpath(dir, "output")
@@ -300,7 +300,11 @@ function resolve_lx_input_plotoutput(rpath::AS, id::AS="")::String
         for (f, e) ∈ splitext.(files)
             lc_e = lowercase(e)
             if f == plt_name && lc_e ∈ (".gif", ".jpg", ".jpeg", ".png", ".svg")
-                out_file = unixify(joinpath("/assets", dirname(rpath), "output", plt_name * lc_e))
+                reldir = dir
+                if startswith(reldir, PATHS[:folder]) # will usually be the case
+                    reldir = reldir[length(PATHS[:folder])+1:end]
+                end
+                out_file = unixify(joinpath(reldir, "output", plt_name * lc_e))
                 break
             end
         end
@@ -350,9 +354,7 @@ function resolve_lx_input(lxc::LxCom)::String
         # output:plain
         elseif p1 == "output"
             if p2 == "plain"
-                return resolve_lx_input_plainoutput(rpath)
-            # elseif p2 == "table"
-            #     return resolve_lx_input_tableoutput(rpath)
+                return resolve_lx_input_plainoutput(rpath, code=true)
             else
                 throw(ArgumentError("I found an \\input but couldn't interpret \"$qualifier\"."))
             end
@@ -364,7 +366,7 @@ function resolve_lx_input(lxc::LxCom)::String
         end
     else
         if qualifier == "output"
-            return resolve_lx_input_plainoutput(rpath)
+            return resolve_lx_input_plainoutput(rpath; code=true)
         elseif qualifier == "plot"
             return resolve_lx_input_plotoutput(rpath)
         elseif qualifier ∈ ("julia", "fortran", "julia-repl", "matlab", "r", "toml")

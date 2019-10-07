@@ -181,7 +181,7 @@ these paths can be given to html anchors (refs, img, ...).
 In the `canonical=true` mode, the path is a valid path on the local system. These paths can be
 given to Julia to read or write things.
 """
-function resolve_assets_rpath(rpath::AS; canonical::Bool=false)::String
+function resolve_assets_rpath(rpath::AS; canonical::Bool=false, code::Bool=false)::String
     @assert length(rpath) > 1 "relative path '$rpath' doesn't seem right"
     if startswith(rpath, "/")
         # this is a full path starting from the website root folder so for instance
@@ -191,10 +191,15 @@ function resolve_assets_rpath(rpath::AS; canonical::Bool=false)::String
     elseif startswith(rpath, "./")
         # this is a path relative to the assets folder with the same path as the calling file so
         # for instance if calling from `src/pages/pg1.md` with `./im1.png` it would refer to
-        # /assets/pages/im1.png
+        # /assets/pages/pg1/im1.png
         @assert length(rpath) > 2 "relative path '$rpath' doesn't seem right"
-        canonical || return "/assets/" * unixify(dirname(CUR_PATH[])) * rpath[3:end]
-        return normpath(joinpath(PATHS[:assets], dirname(CUR_PATH[]), joinrp(rpath[3:end])))
+        canonical || return "/assets/" * unixify(splitext(CUR_PATH[])[1]) * rpath[3:end]
+        return normpath(joinpath(PATHS[:assets], splitext(CUR_PATH[])[1], joinrp(rpath[3:end])))
+    end
+    if code
+        # in the code mode we allow a short, this: `julia:ex` is considered
+        # short for `julia:./code/ex`
+        return resolve_assets_rpath("./code/" * rpath; canonical=canonical)
     end
     # this is a full path relative to the assets folder for instance `blah/img1.png` would
     # correspond to `/assets/blah/img1.png`

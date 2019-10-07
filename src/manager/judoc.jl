@@ -14,11 +14,12 @@ Keyword arguments:
 * `isoptim=false`:   whether we're in an optimisation phase or not (if so, links are fixed in case
                      of a project website, see [`write_page`](@ref).
 * `no_fail_prerender=true`: whether, in a prerendering phase, ignore errors and try to produce an output
-* `reeval=false`:    whether to force re-evaluation of all code blocks
+* `eval_all=false`:    whether to force re-evaluation of all code blocks
 """
 function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Bool=false,
                  prerender::Bool=false, nomess::Bool=false, isoptim::Bool=false,
-                 no_fail_prerender::Bool=true, reeval::Bool=false)::Union{Nothing,Int}
+                 no_fail_prerender::Bool=true, eval_all::Bool=false,
+                 cleanup::Bool=true)::Union{Nothing,Int}
     # set the global path
     FOLDER_PATH[]  = pwd()
 
@@ -30,8 +31,10 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
     end
 
     # check if a Project.toml file is available, if so activate the folder
+    flag_env = false
     if isfile(joinpath(FOLDER_PATH[], "Project.toml"))
         Pkg.activate(".")
+        flag_env = true
     end
 
     # construct the set of files to watch
@@ -40,13 +43,11 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
     nomess && (verb = false)
 
     # do a first full pass
-    nomess || println("→ Initial full pass... ")
+    nomess || println("→ Initial full pass...")
     start = time()
-    FULL_PASS[]    = true
-    FORCE_REEVAL[] = reeval
+    FORCE_REEVAL[] = eval_all
     sig = jd_fullpass(watched_files; clear=clear, verb=verb, prerender=prerender,
                       isoptim=isoptim, no_fail_prerender=no_fail_prerender)
-    FULL_PASS[]    = false
     FORCE_REEVAL[] = false
     sig < 0 && return sig
     fmsg = rpad("✔ full pass...", 40)
@@ -60,9 +61,12 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
         LiveServer.setverbose(verb)
         LiveServer.serve(port=port, coreloopfun=coreloopfun)
     end
+    flag_env && println("→ Use Pkg.activate() to go back to your main environment.")
 
-    # return to main env in case activated local env
-    Pkg.activate()
+    empty!(GLOBAL_LXDEFS)
+    empty!(GLOBAL_PAGE_VARS)
+    empty!(LOCAL_PAGE_VARS)
+
     return nothing
 end
 
@@ -118,10 +122,11 @@ See also [`jd_loop`](@ref), [`serve`](@ref) and [`publish`](@ref).
 """
 function jd_fullpass(watched_files::NamedTuple; clear::Bool=false,
                      verb::Bool=false, prerender::Bool=false, isoptim::Bool=false, no_fail_prerender::Bool=true)::Int
-     # initiate page segments
-     head    = read(joinpath(PATHS[:src_html], "head.html"), String)
-     pg_foot = read(joinpath(PATHS[:src_html], "page_foot.html"), String)
-     foot    = read(joinpath(PATHS[:src_html], "foot.html"), String)
+    FULL_PASS[] = true
+    # initiate page segments
+    head    = read(joinpath(PATHS[:src_html], "head.html"), String)
+    pg_foot = read(joinpath(PATHS[:src_html], "page_foot.html"), String)
+    foot    = read(joinpath(PATHS[:src_html], "foot.html"), String)
 
     # reset global page variables and latex definitions
     # NOTE: need to keep track of pre-path if specified, see optimize
@@ -175,10 +180,10 @@ function jd_fullpass(watched_files::NamedTuple; clear::Bool=false,
     end
     # generate RSS if appropriate
     GLOBAL_PAGE_VARS["generate_rss"].first && rss_generator()
+    FULL_PASS[] = false
     # return -1 if any page
     return ifelse(s<0, -1, 0)
 end
-
 
 """
 $(SIGNATURES)
@@ -221,9 +226,7 @@ function jd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, watched_files::Na
             if haskey(watched_files[:infra], fpair)
                 verb && println("→ full pass...")
                 start = time()
-                FULL_PASS[] = true
                 jd_fullpass(watched_files; clear=false, verb=false, prerender=false)
-                FULL_PASS[] = false
                 verb && (print_final(rpad("✔ full pass...", 15), start); println(""))
             else
                 fmsg = fmsg * rpad("→ updating... ", 15)
@@ -234,7 +237,10 @@ function jd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, watched_files::Na
                 head    = read(joinpath(PATHS[:src_html], "head.html"), String)
                 pg_foot = read(joinpath(PATHS[:src_html], "page_foot.html"), String)
                 foot    = read(joinpath(PATHS[:src_html], "foot.html"), String)
-                process_file(case, fpair, head, pg_foot, foot, cur_t; clear=false, prerender=false)
+                # if it's the first time we modify this file then all blocks need
+                # to be evaluated so that everything is in scope
+                process_file(case, fpair, head, pg_foot, foot, cur_t;
+                             clear=false, prerender=false)
                 verb && print_final(fmsg, start)
             end
         end

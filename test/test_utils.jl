@@ -32,6 +32,13 @@ function seval(st)
     return h
 end
 
+function set_globals()
+    J.def_GLOBAL_PAGE_VARS!()
+    J.def_GLOBAL_LXDEFS!()
+    empty!(J.LOCAL_PAGE_VARS)
+    J.def_LOCAL_PAGE_VARS!()
+    J.CUR_PATH_WITH_EVAL[] = ""
+end
 
 function explore_md_steps(mds)
     J.def_GLOBAL_PAGE_VARS!()

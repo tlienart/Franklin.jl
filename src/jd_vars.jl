@@ -31,6 +31,37 @@ when JuDoc is started.
     return nothing
 end
 
+"""
+CODE_SCOPE
+
+Page-related struct to keep track of the code blocks that have been evaluated.
+"""
+mutable struct CodeScope
+    rpaths::Vector{SubString}
+    codes::Vector{SubString}
+end
+CodeScope() = CodeScope(String[], String[])
+
+"""Convenience function to add a code block to the code scope."""
+function push!(cs::CodeScope, rpath::SubString, code::SubString)::Nothing
+    push!(cs.rpaths, rpath)
+    push!(cs.codes, code)
+    return nothing
+end
+
+"""Convenience function to (re)start a code scope."""
+function reset!(cs::CodeScope, rpath::SubString, code::SubString)::Nothing
+    cs.rpaths = [rpath]
+    cs.codes  = [code]
+    return nothing
+end
+
+"""Convenience function to clear arrays beyond an index"""
+function purgeafter!(cs::CodeScope, head::Int)::Nothing
+    cs.rpaths = cs.rpaths[1:head]
+    cs.codes  = cs.codes[1:head]
+    return nothing
+end
 
 """
 LOCAL_PAGE_VARS
@@ -50,13 +81,20 @@ Convenience function to allocate default values of page variables. This is calle
 is processed.
 """
 @inline function def_LOCAL_PAGE_VARS!()::Nothing
+    # NOTE `jd_code` is the only page var we KEEP (stays alive)
+    code_scope = get(LOCAL_PAGE_VARS, "jd_code_scope") do
+        Pair(CodeScope(),  (CodeScope,)) # the "Any" is lazy but easy
+    end
     empty!(LOCAL_PAGE_VARS)
-    LOCAL_PAGE_VARS["title"]    = Pair(nothing, (String, Nothing))
-    LOCAL_PAGE_VARS["hasmath"]  = Pair(true,    (Bool,))
-    LOCAL_PAGE_VARS["hascode"]  = Pair(false,   (Bool,))
-    LOCAL_PAGE_VARS["date"]     = Pair(Date(1), (String, Date, Nothing))
-    LOCAL_PAGE_VARS["lang"]     = Pair("julia", (String,)) # default lang for indented code
-    LOCAL_PAGE_VARS["reflinks"] = Pair(true,    (Bool,))   # whether there are reflinks or not
+
+    # Local page vars defaults
+    LOCAL_PAGE_VARS["title"]      = Pair(nothing, (String, Nothing))
+    LOCAL_PAGE_VARS["hasmath"]    = Pair(true,    (Bool,))
+    LOCAL_PAGE_VARS["hascode"]    = Pair(false,   (Bool,))
+    LOCAL_PAGE_VARS["date"]       = Pair(Date(1), (String, Date, Nothing))
+    LOCAL_PAGE_VARS["lang"]       = Pair("julia", (String,)) # default lang for indented code
+    LOCAL_PAGE_VARS["reflinks"]   = Pair(true,    (Bool,))   # whether there are reflinks or not
+    LOCAL_PAGE_VARS["freezecode"] = Pair(false,   (Bool,))   # no-reevaluation of the code
 
     # RSS 2.0 item specs:
     # only title, link and description must be defined
@@ -86,8 +124,13 @@ is processed.
     LOCAL_PAGE_VARS["jd_mtime"]  = Pair(Date(1), (Date,))   # time of last modification
     LOCAL_PAGE_VARS["jd_rpath"]  = Pair("",      (String,)) # local path to file src/[...]/blah.md
 
+    # Internal vars for code blocks
+    LOCAL_PAGE_VARS["jd_code_scope"] = code_scope
+    LOCAL_PAGE_VARS["jd_code_head"]  = Pair(Ref(0), (Ref{Int},))
+    LOCAL_PAGE_VARS["reeval"]        = Pair(false,  (Bool,)) # whether to always re-evals all on pg
+
     # If there are GLOBAL vars that are defined, they take precedence
-    local_keys   = keys(LOCAL_PAGE_VARS)
+    local_keys = keys(LOCAL_PAGE_VARS)
     for k in keys(GLOBAL_PAGE_VARS)
         k in local_keys || continue
         LOCAL_PAGE_VARS[k] = GLOBAL_PAGE_VARS[k]
