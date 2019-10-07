@@ -63,3 +63,16 @@ function find_and_fix_md_links(hs::String)::String
 
     return String(take!(h))
 end
+
+
+"""
+$(SIGNATURES)
+
+for a project website, for instance `username.github.io/project/` all paths should eventually
+be pre-prended with `/project/`. This would happen just before you publish the website.
+"""
+function fix_links(pg::String)::String
+    pp = strip(GLOBAL_PAGE_VARS["prepath"].first, '/')
+    ss = SubstitutionString("\\1=\"/$(pp)/")
+    return replace(pg, r"(src|href)\s*?=\s*?\"\/" => ss)
+end

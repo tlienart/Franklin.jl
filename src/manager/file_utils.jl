@@ -26,12 +26,10 @@ page (inserting `head`, `pg_foot` and `foot`) and finally write it at the approp
 function write_page(root::String, file::String, head::String,
                     pg_foot::String, foot::String;
                     prerender::Bool=false, isoptim::Bool=false)::Nothing
-    # 0. create a dictionary with all the variables available to the page
     # 1. read the markdown into string, convert it and extract definitions
     # 2. eval the definitions and update the variable dictionary, also retrieve
     # document variables (time of creation, time of last modif) and add those
     # to the dictionary.
-    jd_vars = merge(GLOBAL_PAGE_VARS, copy(LOCAL_PAGE_VARS))
     fpath   = joinpath(root, file)
      # The curpath is the relative path starting after /src/ so for instance:
      # f1/blah/page1.md or index.md etc... this is useful in the code evaluation and management
@@ -160,16 +158,3 @@ Convenience function to assemble the html out of its parts.
 """
 build_page(head::String, content::String, pg_foot::String, foot::String)::String =
     "$head\n<div class=\"jd-content\">\n$content\n$pg_foot\n</div>\n$foot"
-
-
-"""
-$(SIGNATURES)
-
-for a project website, for instance `username.github.io/project/` all paths should eventually
-be pre-prended with `/project/`. This would happen just before you publish the website.
-"""
-function fix_links(pg::String)::String
-    pp = strip(GLOBAL_PAGE_VARS["prepath"].first, '/')
-    ss = SubstitutionString("\\1=\"/$(pp)/")
-    return replace(pg, r"(src|href)\s*?=\s*?\"\/" => ss)
-end
