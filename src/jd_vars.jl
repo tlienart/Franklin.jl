@@ -126,7 +126,8 @@ is processed.
 
     # Internal vars for code blocks
     LOCAL_PAGE_VARS["jd_code_scope"] = code_scope
-    LOCAL_PAGE_VARS["jd_code_head"]  = Pair(Ref(1), (Ref{Int},))
+    LOCAL_PAGE_VARS["jd_code_head"]  = Pair(Ref(0), (Ref{Int},))
+    LOCAL_PAGE_VARS["reeval"]        = Pair(false,  (Bool,)) # whether to always re-evals all on pg
 
     # If there are GLOBAL vars that are defined, they take precedence
     local_keys = keys(LOCAL_PAGE_VARS)

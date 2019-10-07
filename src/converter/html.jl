@@ -63,8 +63,12 @@ $SIGNATURES
 
 Return the HTML corresponding to a JuDoc-Markdown string.
 """
-function jd2html(st::AbstractString; internal::Bool=false)::String
-    internal || (CUR_PATH[] = "index.md")
+function jd2html(st::AbstractString; internal::Bool=false, dir::String="")::String
+    if !internal
+        FOLDER_PATH[] = isempty(dir) ? mktempdir() : dir
+        set_paths!()
+        CUR_PATH[] = "index.md"
+    end
     m, v = convert_md(st * EOS, collect(values(GLOBAL_LXDEFS)))
     h = convert_html(m, v)
     return h

@@ -164,7 +164,7 @@ function eval_and_resolve_code(code::AS, rpath::AS; eval::Bool=true)::String
     end
 
     write(path, MESSAGE_FILE_GEN * code)
-#XXX   print(rpad("\r→ evaluating code [...] ($(CUR_PATH[]), $rpath)", 79)*"\r")
+    print(rpad("\r→ evaluating code [...] ($(CUR_PATH[]), $rpath)", 79)*"\r")
     # - execute the code while redirecting stdout to file
     Logging.disable_logging(Logging.LogLevel(3_000))
     open(out_path, "w") do outf        # for stdout
@@ -177,7 +177,7 @@ function eval_and_resolve_code(code::AS, rpath::AS; eval::Bool=true)::String
         end
     end
     Logging.disable_logging(Logging.Debug)
-#XXX    print(rpad("\r→ evaluating code [✓]", 79)*"\r")
+    print(rpad("\r→ evaluating code [✓]", 79)*"\r")
 
     # resolve the code block (highlighting) and return it
     return resolve_lx_input_hlcode(rpath, "julia")
@@ -205,33 +205,33 @@ function convert_code_block(ss::SubString)::String
         return html_code(code, lang)
     end
 
-    # Now we have Julia code with a path; check briefly if there
-    # are explicit flags indicating we should not eval; if that's
-    # the case then there will be a check to see if the relevant
-    # files exist, if they don't exist the code *will* be eval'ed
-    # (see `eval_and_resolve_code`)
-    shortcut = (FULL_PASS[] && !FORCE_REEVAL[]) ||
-                LOCAL_PAGE_VARS["freezecode"].first
-    shortcut && eval_and_resolve_code(code, rpath, eval=false)
-
-    # Here we're either in
-    # A. full pass but with forced-reeval
-    # B. local pass with non-frozen code
-
     # path currently has an indicative `:` we don't care about
     rpath = rpath[2:end]
 
     # In the case of forced re-eval, we don't care about the
     # code scope just force-reeval everything sequentially
-    FORCE_REEVAL[] && return eval_and_resolve_code(code, rpath)
+    if FORCE_REEVAL[] || LOCAL_PAGE_VARS["reeval"].first
+        return eval_and_resolve_code(code, rpath)
+    end
 
-    # check if the page we're looking at is in scope
-    not_in_scope = (CUR_PATH[] != CUR_PATH_WITH_EVAL[])
+    # Now we have Julia code with a path; check briefly if there
+    # are explicit flags indicating we should not eval; if that's
+    # the case then there will be a check to see if the relevant
+    # files exist, if they don't exist the code *will* be eval'ed
+    # (see `eval_and_resolve_code`)
+    if FULL_PASS[] || LOCAL_PAGE_VARS["freezecode"].first
+        return eval_and_resolve_code(code, rpath, eval=false)
+    end
+
+    # Here we're either in
+    # A. full pass but with forced-reeval
+    # B. local pass with non-frozen code
 
     # handle for dictionary of eval'ed code blocks (scope)
     code_scope = LOCAL_PAGE_VARS["jd_code_scope"].first
 
-    if not_in_scope
+    # check if the page we're looking at is in scope
+    if CUR_PATH[] != CUR_PATH_WITH_EVAL[]
         # we're necessarily at the first code block of the page.
         # need to re-instantiate a code scope; note that if we
         # are here then necessarily a def_LOCAL_PAGE_VARS was
@@ -251,9 +251,7 @@ function convert_code_block(ss::SubString)::String
     # --> if c ≤ length(code_dict)  -- code block may be among seen ones
     # --> code == code_dict[rpath]  -- the content matches exactly
     if (head ≤ ncodes)
-        if (code == code_scope.codes[head])
-            # update the rpath in case the name changed
-            code_scope.rpaths[head] = rpath
+        if (code_scope.rpaths[head] == rpath && code == code_scope.codes[head])
             # resolve with no eval (the function will check if the files are
             # present and if they're not, there will be an evaluation)
             return eval_and_resolve_code(code, rpath; eval=false)

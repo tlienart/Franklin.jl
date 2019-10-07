@@ -7,7 +7,7 @@
 end
 
 @testset "Bold code" begin # issue 222
-    h = raw"""A **`master`** B.""" |> jd2html
+    h = raw"""A **`master`** B.""" * J.EOS |> seval
     @test h == "<p>A <strong><code>master</code></strong> B.</p>\n"
 end
 
@@ -48,7 +48,7 @@ end
         B
         `````
         C
-        """ |> jd2html
+        """ |> jd2html_td
 
     @test isapproxstr(h, raw"""
             <p>A
@@ -64,7 +64,8 @@ end
         ```
         `````
         C
-        """ |> jd2html
+        """ |> jd2html_td
+
     @test isapproxstr(h, raw"""
             <p>A
             <pre><code class="language-markdown">```julia

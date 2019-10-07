@@ -348,9 +348,7 @@ function process_md_defs(blocks::Vector{OCBlock}, isconfig::Bool,
         end
         return nothing
     end
-    # create variable dictionary for the page
-    # NOTE: assignments here may be empty, that's fine (will be processed further down)
-    jd_vars = merge(GLOBAL_PAGE_VARS, copy(LOCAL_PAGE_VARS))
-    set_vars!(jd_vars, assignments)
+    isempty(assignments) || set_vars!(LOCAL_PAGE_VARS, assignments)
+    jd_vars = merge(GLOBAL_PAGE_VARS, LOCAL_PAGE_VARS)
     return jd_vars
 end

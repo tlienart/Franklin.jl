@@ -167,7 +167,6 @@ Note: rpath here is always a UNIX path while the output correspond to SYSTEM pat
 function check_input_rpath(rpath::AS, lang::AS=""; code::Bool=false)::NTuple{3,String}
     # find the full system path to the asset
     fpath = resolve_assets_rpath(rpath; canonical=true, code=code)
-
     # check if an extension is given, if not, consider it's `.xx` with language `nothing`
     if isempty(splitext(fpath)[2])
         ext, _ = get(CODE_LANG, lang) do

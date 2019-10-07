@@ -62,6 +62,11 @@ function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Boo
         LiveServer.serve(port=port, coreloopfun=coreloopfun)
     end
     flag_env && println("→ Use Pkg.activate() to go back to your main environment.")
+
+    empty!(GLOBAL_LXDEFS)
+    empty!(GLOBAL_PAGE_VARS)
+    empty!(LOCAL_PAGE_VARS)
+
     return nothing
 end
 
