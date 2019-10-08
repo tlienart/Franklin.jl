@@ -10,7 +10,6 @@ DEVNOTE: marked as constant for perf reasons but can be modified since Dict.
 """
 const GLOBAL_PAGE_VARS = PageVars()
 
-
 """
 $(SIGNATURES)
 
@@ -50,16 +49,16 @@ function push!(cs::CodeScope, rpath::SubString, code::SubString)::Nothing
 end
 
 """Convenience function to (re)start a code scope."""
-function reset!(cs::CodeScope, rpath::SubString, code::SubString)::Nothing
-    cs.rpaths = [rpath]
-    cs.codes  = [code]
+function reset!(cs::CodeScope)::Nothing
+    cs.rpaths = []
+    cs.codes  = []
     return nothing
 end
 
-"""Convenience function to clear arrays beyond an index"""
-function purgeafter!(cs::CodeScope, head::Int)::Nothing
-    cs.rpaths = cs.rpaths[1:head]
-    cs.codes  = cs.codes[1:head]
+"""Convenience function to purge code scope from head"""
+function purgefrom!(cs::CodeScope, head::Int)
+    cs.rpaths = cs.rpaths[1:head-1]
+    cs.codes  = cs.codes[1:head-1]
     return nothing
 end
 
@@ -102,7 +101,9 @@ is processed.
     LOCAL_PAGE_VARS["showall"]       = Pair(false,  (Bool,)) # like a notebook on each cell
     # the jd_* should not be assigned externally
     LOCAL_PAGE_VARS["jd_code_scope"] = code_scope
-    LOCAL_PAGE_VARS["jd_code_head"]  = Pair(Ref(0), (Ref{Int},))
+    LOCAL_PAGE_VARS["jd_code_head"]  = Pair(Ref(0),     (Ref{Int},))
+    LOCAL_PAGE_VARS["jd_code_eval"]  = Pair(Ref(false), (Ref{Bool},)) # toggle reeval
+    LOCAL_PAGE_VARS["jd_code"]       = Pair("",         (String,))    # just the script
 
     # RSS 2.0 item specs:
     # only title, link and description must be defined
@@ -131,7 +132,6 @@ is processed.
     LOCAL_PAGE_VARS["jd_ctime"]  = Pair(Date(1), (Date,))   # time of creation
     LOCAL_PAGE_VARS["jd_mtime"]  = Pair(Date(1), (Date,))   # time of last modification
     LOCAL_PAGE_VARS["jd_rpath"]  = Pair("",      (String,)) # local path to file src/[...]/blah.md
-
 
     # If there are GLOBAL vars that are defined, they take precedence
     local_keys = keys(LOCAL_PAGE_VARS)
