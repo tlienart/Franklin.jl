@@ -56,13 +56,6 @@ function reset!(cs::CodeScope, rpath::SubString, code::SubString)::Nothing
     return nothing
 end
 
-"""Convenience function to clear arrays beyond an index"""
-function purgeafter!(cs::CodeScope, head::Int)::Nothing
-    cs.rpaths = cs.rpaths[1:head]
-    cs.codes  = cs.codes[1:head]
-    return nothing
-end
-
 """
 LOCAL_PAGE_VARS
 
@@ -126,8 +119,9 @@ is processed.
 
     # Internal vars for code blocks
     LOCAL_PAGE_VARS["jd_code_scope"] = code_scope
-    LOCAL_PAGE_VARS["jd_code_head"]  = Pair(Ref(0), (Ref{Int},))
-    LOCAL_PAGE_VARS["reeval"]        = Pair(false,  (Bool,)) # whether to always re-evals all on pg
+    LOCAL_PAGE_VARS["jd_code_head"]  = Pair(Ref(0),     (Ref{Int},))
+    LOCAL_PAGE_VARS["jd_code_eval"]  = Pair(Ref(false), (Ref{Bool},)) # toggle reeval
+    LOCAL_PAGE_VARS["reeval"]        = Pair(false,      (Bool,))      # always reeval on pg
 
     # If there are GLOBAL vars that are defined, they take precedence
     local_keys = keys(LOCAL_PAGE_VARS)
