@@ -143,6 +143,13 @@ end
             <pre><code>8</code></pre>
             """)
 
+    @test J.LOCAL_PAGE_VARS["jd_code"].first == """
+        a = 5
+        println(a)
+
+        a += 3
+        println(a)"""
+
     h = raw"""
         @def hascode = true
         @def reeval  = true
@@ -174,4 +181,13 @@ end
             println(a)</code></pre>
             <pre><code>9</code></pre>
             """)
+    @test J.LOCAL_PAGE_VARS["jd_code"].first == """
+        a = 5
+        println(a)
+
+        a += 1
+        println(a)
+
+        a += 3
+        println(a)"""
 end

@@ -86,6 +86,13 @@ function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
     lxcontext = LxContext(lxcoms, lxdefs, braces)
     hstring   = convert_inter_html(inter_html, mblocks, lxcontext)
 
+    #> if there's code, assemble it so that can be shown or loaded in one shot
+    codes = LOCAL_PAGE_VARS["jd_code_scope"].first.codes
+    if !isempty(codes)
+        set_var!(LOCAL_PAGE_VARS, "jd_code",
+            strip(prod(c*"\n" for c in codes)))
+    end
+
     # Return the string + judoc variables
     return hstring, jd_vars
 end

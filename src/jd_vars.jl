@@ -10,7 +10,6 @@ DEVNOTE: marked as constant for perf reasons but can be modified since Dict.
 """
 const GLOBAL_PAGE_VARS = PageVars()
 
-
 """
 $(SIGNATURES)
 
@@ -50,16 +49,16 @@ function push!(cs::CodeScope, rpath::SubString, code::SubString)::Nothing
 end
 
 """Convenience function to (re)start a code scope."""
-function reset!(cs::CodeScope, rpath::SubString, code::SubString)::Nothing
-    cs.rpaths = [rpath]
-    cs.codes  = [code]
+function reset!(cs::CodeScope)::Nothing
+    cs.rpaths = []
+    cs.codes  = []
     return nothing
 end
 
-"""Convenience function to clear arrays beyond an index"""
-function purgeafter!(cs::CodeScope, head::Int)::Nothing
-    cs.rpaths = cs.rpaths[1:head]
-    cs.codes  = cs.codes[1:head]
+"""Convenience function to purge code scope from head"""
+function purgefrom!(cs::CodeScope, head::Int)
+    cs.rpaths = cs.rpaths[1:head-1]
+    cs.codes  = cs.codes[1:head-1]
     return nothing
 end
 
@@ -126,8 +125,10 @@ is processed.
 
     # Internal vars for code blocks
     LOCAL_PAGE_VARS["jd_code_scope"] = code_scope
-    LOCAL_PAGE_VARS["jd_code_head"]  = Pair(Ref(0), (Ref{Int},))
-    LOCAL_PAGE_VARS["reeval"]        = Pair(false,  (Bool,)) # whether to always re-evals all on pg
+    LOCAL_PAGE_VARS["jd_code_head"]  = Pair(Ref(0),     (Ref{Int},))
+    LOCAL_PAGE_VARS["jd_code_eval"]  = Pair(Ref(false), (Ref{Bool},)) # toggle reeval
+    LOCAL_PAGE_VARS["reeval"]        = Pair(false,      (Bool,))      # always reeval on pg
+    LOCAL_PAGE_VARS["jd_code"]       = Pair("",         (String,))    # just the script
 
     # If there are GLOBAL vars that are defined, they take precedence
     local_keys = keys(LOCAL_PAGE_VARS)
