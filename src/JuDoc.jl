@@ -9,6 +9,7 @@ using DelimitedFiles: readdlm
 using OrderedCollections
 using Pkg
 using DocStringExtensions: SIGNATURES, TYPEDEF
+using Literate: markdown
 
 import Logging
 import LiveServer
@@ -125,5 +126,8 @@ include("misc_html.jl")
 
 # ERROR TYPES
 include("error_types.jl")
+
+# INTEGRATION
+include("integration/literate.jl")
 
 end # module

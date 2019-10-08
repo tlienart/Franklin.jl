@@ -228,10 +228,19 @@ function resolve_lx_input_hlcode(rpath::AS, lang::AS)::String
 
         end
     end
-    hideall && take!(io_in) # discard the content
+    hideall && take!(io_in)     # discard the content
     code = String(take!(io_in))
+    isempty(code) && return ""
     endswith(code, "\n") && (code = chop(code, tail=1))
-    return html_code(code, lang)
+    html = html_code(code, lang)
+    if LOCAL_PAGE_VARS["showall"].first
+        fd, fn = splitdir(fpath)
+        res = read(joinpath(fd, "output", splitext(fn)[1] * ".res"), String)
+        if !isempty(res)
+            html *= html_div("code_output", html_code(res))
+        end
+    end
+    return html
 end
 
 
@@ -259,9 +268,11 @@ function resolve_lx_input_plainoutput(rpath::AS, reproc::Bool=false; code::Bool=
     out_file = joinpath(dir, "output", fname * ".out")
     # check if the output file exists
     isfile(out_file) || throw(ErrorException("I found an \\input but no relevant output file."))
-    # return the content in a pre block
-    reproc || return html_code(read(out_file, String))
-    return read(out_file, String) * EOS
+    # return the content in a pre block (if non empty)
+    content = read(out_file, String)
+    isempty(content) && return ""
+    reproc || return html_code(content)
+    return content * EOS
 end
 
 
@@ -277,7 +288,9 @@ function resolve_lx_input_textfile(rpath::AS)::String
     fpath = resolve_assets_rpath(rpath; canonical=true)
     isempty(splitext(fpath)[2]) && (fpath *= ".md")
     isfile(fpath) || throw(ErrorException("I found a \\textinput but no relevant file."))
-    return read(fpath, String) * EOS
+    content = read(fpath, String)
+    isempty(content) && return ""
+    return content * EOS
 end
 
 
