@@ -140,12 +140,16 @@ $SIGNATURES
 Helper function to eval a code block, write it where appropriate, and finally return
 a resolved block that can be displayed in the html.
 """
-function eval_and_resolve_code(code::AS, rpath::AS; eval::Bool=true)::String
+function eval_and_resolve_code(code::AS, rpath::AS;
+                               eval::Bool=true, nopush::Bool=false)::String
     # Here we have a julia code block that was provided with a script path
     # It will consequently be
     #  1. written to script file unless it's already there
     #  2. eval with redirect (unless file+output already there)
     #  3. inserted after cleaning out lines (see resolve_lx_input)
+
+    # start by adding it to code scope
+    nopush || push!(LOCAL_PAGE_VARS["jd_code_scope"].first, rpath, code)
 
     # form the path
     path = resolve_assets_rpath(rpath; canonical=true, code=true)
@@ -167,7 +171,7 @@ function eval_and_resolve_code(code::AS, rpath::AS; eval::Bool=true)::String
     end
 
     write(path, MESSAGE_FILE_GEN * code)
-    print(rpad("\r→ evaluating code [...] ($(CUR_PATH[]), $rpath)", 79)*"\r")
+    # print(rpad("\r→ evaluating code [...] ($(CUR_PATH[]), $rpath)", 79))
     # - execute the code while redirecting stdout to file
     Logging.disable_logging(Logging.LogLevel(3_000))
     open(out_path, "w") do outf        # for stdout
@@ -180,7 +184,7 @@ function eval_and_resolve_code(code::AS, rpath::AS; eval::Bool=true)::String
         end
     end
     Logging.disable_logging(Logging.Debug)
-    print(rpad("\r→ evaluating code [✓]", 79)*"\r")
+    # print(rpad("\r→ evaluating code [✓]", 79)*"\r")
 
     # resolve the code block (highlighting) and return it
     return resolve_lx_input_hlcode(rpath, "julia")
@@ -216,10 +220,12 @@ function convert_code_block(ss::SubString)::String
     eval   = LOCAL_PAGE_VARS["jd_code_eval"].first[] # eval toggle from given point
     freeze = LOCAL_PAGE_VARS["freezecode"].first
     scope  = LOCAL_PAGE_VARS["jd_code_scope"].first
+    head   = increment_code_head()
 
     # In the case of forced re-eval, we don't care about the
     # code scope just force-reeval everything sequentially
     if FORCE_REEVAL[] || reeval || eval
+        length(scope.codes) ≥ head && purgefrom!(scope, head)
         return eval_and_resolve_code(code, rpath)
     end
 
@@ -229,6 +235,7 @@ function convert_code_block(ss::SubString)::String
     # files exist, if they don't exist the code *will* be eval'ed
     # (see `eval_and_resolve_code`)
     if FULL_PASS[] || freeze
+        length(scope.codes) ≥ head && purgefrom!(scope, head)
         return eval_and_resolve_code(code, rpath, eval=false)
     end
 
@@ -242,7 +249,7 @@ function convert_code_block(ss::SubString)::String
         # need to re-instantiate a code scope; note that if we
         # are here then necessarily a def_LOCAL_PAGE_VARS was
         # called, so LOCAL_PAGE_VARS["jd_code_head"] points to 1
-        reset!(scope, rpath, code)
+        reset!(scope)
         # keep track that the page is now in scope
         CUR_PATH_WITH_EVAL[] = CUR_PATH[]
         # flag rest of page as to be eval-ed (might be stale)
@@ -253,7 +260,6 @@ function convert_code_block(ss::SubString)::String
 
     # we're in scope, compare the code block with the
     # current code scope and act appropriately
-    head   = increment_code_head()
     ncodes = length(scope.codes)
 
     # there is only one case where we might not add and eval
@@ -263,13 +269,14 @@ function convert_code_block(ss::SubString)::String
         if (scope.rpaths[head] == rpath && code == scope.codes[head])
             # resolve with no eval (the function will check if the files are
             # present and if they're not, there will be an evaluation)
-            return eval_and_resolve_code(code, rpath; eval=false)
+            return eval_and_resolve_code(code, rpath; eval=false, nopush=true)
         else
+            # purge subsequent code blocks as stale
+            purgefrom!(scope, head)
             # flag rest of page as to be eval-ed (stale)
             toggle_jd_code_eval()
         end
     end
-    push!(scope, rpath, code)
     return eval_and_resolve_code(code, rpath)
 end
 
