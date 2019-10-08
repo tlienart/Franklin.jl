@@ -171,7 +171,7 @@ function eval_and_resolve_code(code::AS, rpath::AS;
     end
 
     write(path, MESSAGE_FILE_GEN * code)
-    # print(rpad("\r→ evaluating code [...] ($(CUR_PATH[]), $rpath)", 79))
+    print(rpad("\r→ evaluating code [...] ($(CUR_PATH[]), $rpath)", 79))
     # - execute the code while redirecting stdout to file
     Logging.disable_logging(Logging.LogLevel(3_000))
     open(out_path, "w") do outf        # for stdout
@@ -184,7 +184,7 @@ function eval_and_resolve_code(code::AS, rpath::AS;
         end
     end
     Logging.disable_logging(Logging.Debug)
-    # print(rpad("\r→ evaluating code [✓]", 79)*"\r")
+    print(rpad("\r→ evaluating code [✓]", 79)*"\r")
 
     # resolve the code block (highlighting) and return it
     return resolve_lx_input_hlcode(rpath, "julia")
