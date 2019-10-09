@@ -24,7 +24,7 @@ function js_prerender_katex(hs::String)::String
         # check if it's a display style
         display = (mo.match == "\\[")
         # this is the content without the \( \) or \[ \]
-        ms = subs(hs, mo.offset + 2, mc.offset - 1)
+        ms = subs(hs, nextind(hs, mo.offset + 1), prevind(hs, mc.offset))
         # add to content of jsbuffer
         write(jsbuffer, """
             var html = katex.renderToString("$(escape_string(ms))", {displayMode: $display})
@@ -61,7 +61,8 @@ function js_prerender_highlight(hs::String)::String
         # tokens are paired, no nesting
         co, cc = matches[i:i+1]
         # core code
-        cs = escape_string(subs(hs, matchrange(co).stop+1, matchrange(cc).start-1))
+        cs = subs(hs, nextind(hs, matchrange(co).stop), prevind(hs, matchrange(cc).start))
+        cs = escape_string(cs)
 
         lang = co.captures[2]
         if isnothing(lang)
