@@ -212,6 +212,7 @@ end
 @testset "show" begin
     h = raw"""
         @def hascode = true
+        @def reeval = true
         ```julia:ex
         a = 5
         a *= 2
@@ -222,5 +223,24 @@ end
         <pre><code class="language-julia">a = 5
         a *= 2</code></pre>
         <div class="code_output"><pre><code>10</code></pre></div>
+        """)
+
+    # Show with stdout
+    h = raw"""
+        @def hascode = true
+        @def reeval = true
+        ```julia:ex
+        a = 5
+        println("hello")
+        a *= 2
+        ```
+        \show{ex}
+        """ |> jd2html_td
+    @test isapproxstr(h, """
+        <pre><code class="language-julia">a = 5
+        println("hello")
+        a *= 2</code></pre>
+        <div class="code_output"><pre><code>hello
+        10</code></pre></div>
         """)
 end
