@@ -64,7 +64,7 @@ Convenience function to introduce a code block.
 """
 function html_code(c::AS, lang::AS="")
     isempty(c) && return ""
-    isempty(lang) && return "<pre><code>$c</code></pre>"
+    isempty(lang) && return "<pre><code class=\"plaintext\">$c</code></pre>"
     return "<pre><code class=\"language-$lang\">$c</code></pre>"
 end
 
