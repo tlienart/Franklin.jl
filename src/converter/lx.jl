@@ -260,9 +260,13 @@ Internal function to read a result file and show it.
 function show_res(rpath::AS)::String
     fpath, = check_input_rpath(rpath; code=true)
     fd, fn = splitdir(fpath)
+    stdo   = read(joinpath(fd, "output", splitext(fn)[1] * ".out"), String)
     res    = read(joinpath(fd, "output", splitext(fn)[1] * ".res"), String)
-    isempty(res) && return ""
-    return html_div("code_output", html_code(res))
+    isempty(stdo) && isempty(res) && return ""
+    if !isempty(stdo)
+        endswith(stdo, "\n") || (stdo *= "\n")
+    end
+    return html_div("code_output", html_code(stdo * res))
 end
 
 """
