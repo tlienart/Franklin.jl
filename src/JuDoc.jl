@@ -14,6 +14,7 @@ using Literate: markdown
 import Logging
 import LiveServer
 import Base.push!
+import NodeJS
 
 export serve, publish, cleanpull, newsite, optimize, jd2html
 
