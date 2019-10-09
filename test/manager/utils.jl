@@ -36,8 +36,9 @@ end
     html_files = empty(md_files)
     other_files = empty(md_files)
     infra_files = empty(md_files)
-    watched_files = [md_files, html_files, other_files, infra_files]
-    JuDoc.scan_input_dir!(md_files, html_files, other_files, infra_files, true)
+    literate_files = empty(md_files)
+    watched_files = [md_files, html_files, other_files, infra_files, literate_files]
+    JuDoc.scan_input_dir!(md_files, html_files, other_files, infra_files, literate_files, true)
     @test haskey(md_files, JuDoc.PATHS[:src_pages]=>"blah.md")
     @test md_files[JuDoc.PATHS[:src_pages]=>"blah.md"] == mtime(temp_blah) == stat(temp_blah).mtime
     @test html_files[JuDoc.PATHS[:src_pages]=>"temp.html"] == mtime(temp_html)

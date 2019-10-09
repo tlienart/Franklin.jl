@@ -1,3 +1,16 @@
+"""
+$SIGNATURES
+
+Specify the folder for the Literate scripts, by default this is `scripts/`.
+"""
+function literate_folder(rp::String="")
+    isempty(rp) && return PATHS[:literate]
+    path = joinpath(PATHS[:assets], rp)
+    !isdir(path) && error("Specified Literate path not found ($rp -- $path)")
+    PATHS[:assets] = path
+    return path
+end
+
 #
 # Convenience functions to work with strings and substrings
 #

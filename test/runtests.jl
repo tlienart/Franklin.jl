@@ -70,4 +70,5 @@ println("INTEGRATION")
 include("integration/literate.jl")
 
 flush_td()
+cd(joinpath(dirname(dirname(pathof(JuDoc)))))
 println("😅 😅 😅 😅")

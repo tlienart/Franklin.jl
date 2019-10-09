@@ -55,6 +55,7 @@ function set_paths!()::LittleDict{Symbol,String}
     PATHS[:css]       = joinpath(PATHS[:folder],  "css")
     PATHS[:libs]      = joinpath(PATHS[:folder],  "libs")
     PATHS[:assets]    = joinpath(PATHS[:folder],  "assets")
+    PATHS[:literate]  = joinpath(PATHS[:folder],  "scripts")
 
     return PATHS
 end

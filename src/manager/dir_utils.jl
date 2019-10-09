@@ -51,7 +51,7 @@ propagates verbosity.
 """
 function scan_input_dir!(md_files::TrackedFiles, html_files::TrackedFiles,
                          other_files::TrackedFiles, infra_files::TrackedFiles,
-                         verb::Bool=false)::Nothing
+                         literate_files::TrackedFiles, verb::Bool=false)::Nothing
     # top level files (src/*)
     for file ∈ readdir(PATHS[:src])
         isfile(joinpath(PATHS[:src], file)) || continue
@@ -94,14 +94,16 @@ function scan_input_dir!(md_files::TrackedFiles, html_files::TrackedFiles,
             add_if_new_file!(infra_files, root=>file, verb)
         end
     end
-    # literate script files if any
-    for d ∈ (:src_css, :src_html), (root, _, files) ∈ walkdir(PATHS[d])
-        for file ∈ files
-            isfile(joinpath(root, file)) || continue
-            fname, fext = splitext(file)
-            # skipping files that are not of the type INFRA_FILES
-            fext ∉ INFRA_FILES && continue
-            add_if_new_file!(infra_files, root=>file, verb)
+    # literate script files if any, note that the folder may not exist
+    if isdir(PATHS[:literate])
+        for (root, _, files) ∈ walkdir(PATHS[:literate])
+            for file ∈ files
+                isfile(joinpath(root, file)) || continue
+                fname, fext = splitext(file)
+                # skipping files that are not script file
+                fext != ".jl" && continue
+                add_if_new_file!(literate_files, root=>file, verb)
+            end
         end
     end
     return nothing

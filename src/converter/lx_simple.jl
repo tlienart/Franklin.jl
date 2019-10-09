@@ -54,16 +54,15 @@ Internal function to resolve a `\\literate{rpath}` see [`literate_to_judoc`](@re
 function resolve_lx_literate(lxc::LxCom)::String
     rpath = strip(content(lxc.braces[1]))
     opath, haschanged = literate_to_judoc(rpath)
-    # if has changed, mark the page for re-evaluation
-    if haschanged
-        set_var!(LOCAL_PAGE_VARS, "reeval", true)
-    else
+    if !haschanged
         # page has not changed, check if literate is the only source of code
         # and in that case skip eval of all code blocks via freezecode
         if LOCAL_PAGE_VARS["literate_only"].first
             set_var!(LOCAL_PAGE_VARS, "freezecode", true)
         end
     end
+    # if haschanged=true then this will be handled cell by cell
+    # comparing with cell files following `eval_and_resolve_code`
     return read(opath, String) * EOS
 end
 
