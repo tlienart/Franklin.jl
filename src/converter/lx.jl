@@ -205,7 +205,7 @@ $(SIGNATURES)
 Internal function to read the content of a script file. See also [`resolve_lx_input`](@ref).
 """
 function resolve_lx_input_hlcode(rpath::AS, lang::AS)::String
-    fpath, _, _ = check_input_rpath(rpath; code=true)
+    fpath, = check_input_rpath(rpath; code=true)
     # Read the file while ignoring lines that are flagged with something like `# HIDE`
     _, comsym = CODE_LANG[lang]
     hide = Regex(raw"(?:^|[^\S\r\n]*?)#(\s)*?(?i)hide(all)?")
@@ -234,11 +234,7 @@ function resolve_lx_input_hlcode(rpath::AS, lang::AS)::String
     endswith(code, "\n") && (code = chop(code, tail=1))
     html = html_code(code, lang)
     if LOCAL_PAGE_VARS["showall"].first
-        fd, fn = splitdir(fpath)
-        res = read(joinpath(fd, "output", splitext(fn)[1] * ".res"), String)
-        if !isempty(res)
-            html *= html_div("code_output", html_code(res))
-        end
+        html *= show_res(rpath)
     end
     return html
 end
@@ -251,10 +247,23 @@ Internal function to read the content of a script file and highlight it using `h
 also [`resolve_lx_input`](@ref).
 """
 function resolve_lx_input_othercode(rpath::AS, lang::AS)::String
-    fpath, _, _ = check_input_rpath(rpath, code=true)
+    fpath, = check_input_rpath(rpath, code=true)
     return html_code(read(fpath, String), lang)
 end
 
+
+"""
+$SIGNATURES
+
+Internal function to read a result file and show it.
+"""
+function show_res(rpath::AS)::String
+    fpath, = check_input_rpath(rpath; code=true)
+    fd, fn = splitdir(fpath)
+    res    = read(joinpath(fd, "output", splitext(fn)[1] * ".res"), String)
+    isempty(res) && return ""
+    return html_div("code_output", html_code(res))
+end
 
 """
 $(SIGNATURES)

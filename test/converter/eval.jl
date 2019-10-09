@@ -207,3 +207,20 @@ end
             </code></pre></p>
             """)
 end
+
+
+@testset "show" begin
+    h = raw"""
+        @def hascode = true
+        ```julia:ex
+        a = 5
+        a *= 2
+        ```
+        \show{ex}
+        """ |> jd2html_td
+    @test isapproxstr(h, """
+        <pre><code class="language-julia">a = 5
+        a *= 2</code></pre>
+        <div class="code_output"><pre><code>10</code></pre></div>
+        """)
+end

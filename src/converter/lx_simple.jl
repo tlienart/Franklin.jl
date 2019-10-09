@@ -16,6 +16,19 @@ end
 """
 $SIGNATURES
 
+Internal function to resolve a `\\show{rpath}` (finds the result of a code block and shows it).
+No reprocess for this.
+"""
+function resolve_lx_show(lxc::LxCom; reprocess::Bool=false)::String
+    rpath = strip(content(lxc.braces[1]))
+    show_res(rpath)
+end
+
+
+
+"""
+$SIGNATURES
+
 Internal function to resolve a `\\textoutput{rpath}` (finds the output of a code block and shows
 after treating it as markdown to be parsed).
 """
@@ -179,6 +192,7 @@ const LXCOM_SIMPLE = LittleDict{String, Function}(
     "\\figalt" => resolve_lx_figalt,  # include a figure (may or may not have been generated)
     "\\file"   => resolve_lx_file,    # include a file
     "\\tableinput" => resolve_lx_tableinput,    # include table from a csv file
+    "\\show"   => resolve_lx_show,    # show result of a code block
     )
 
 
