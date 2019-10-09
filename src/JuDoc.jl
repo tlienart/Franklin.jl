@@ -13,6 +13,7 @@ using DocStringExtensions: SIGNATURES, TYPEDEF
 import Logging
 import LiveServer
 import Base.push!
+import NodeJS
 import Literate
 
 export serve, publish, cleanpull, newsite, optimize, jd2html
