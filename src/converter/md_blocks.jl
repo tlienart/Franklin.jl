@@ -161,11 +161,13 @@ function eval_and_resolve_code(code::AS, rpath::AS;
     out_path, fname = splitdir(path)
     out_path = mkpath(joinpath(out_path, "output"))
     out_name = splitext(fname)[1] * ".out"
+    res_name = splitext(fname)[1] * ".res"
+    res_path = joinpath(out_path, res_name)
     out_path = joinpath(out_path, out_name)
 
     # if we're in the no-eval case, check that the relevant files are
     # there otherwise do re-eval with re-write
-    if !eval && isfile(path) && isfile(out_path)
+    if !eval && isfile(path) && isfile(out_path) && isfile(res_path)
         # just return the resolved code block
         return resolve_lx_input_hlcode(rpath, "julia")
     end
@@ -174,13 +176,19 @@ function eval_and_resolve_code(code::AS, rpath::AS;
     print(rpad("\r→ evaluating code [...] ($(CUR_PATH[]), $rpath)", 79))
     # - execute the code while redirecting stdout to file
     Logging.disable_logging(Logging.LogLevel(3_000))
+    res = nothing
     open(out_path, "w") do outf        # for stdout
         redirect_stdout(outf) do
-            try
+            res = try
                 Main.include(path)
             catch e
                 print("There was an error running the code:\n$(e.error)")
             end
+        end
+    end
+    open(res_path, "w") do outf
+        redirect_stdout(outf) do
+            show(res)
         end
     end
     Logging.disable_logging(Logging.Debug)

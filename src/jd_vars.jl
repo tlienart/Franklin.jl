@@ -93,7 +93,17 @@ is processed.
     LOCAL_PAGE_VARS["date"]       = Pair(Date(1), (String, Date, Nothing))
     LOCAL_PAGE_VARS["lang"]       = Pair("julia", (String,)) # default lang for indented code
     LOCAL_PAGE_VARS["reflinks"]   = Pair(true,    (Bool,))   # whether there are reflinks or not
-    LOCAL_PAGE_VARS["freezecode"] = Pair(false,   (Bool,))   # no-reevaluation of the code
+
+    # CODE EVALUATION
+    #
+    LOCAL_PAGE_VARS["reeval"]        = Pair(false,  (Bool,)) # whether to always re-evals all on pg
+    LOCAL_PAGE_VARS["freezecode"]    = Pair(false,  (Bool,)) # no-reevaluation of the code
+    LOCAL_PAGE_VARS["showall"]       = Pair(false,  (Bool,)) # like a notebook on each cell
+    # the jd_* should not be assigned externally
+    LOCAL_PAGE_VARS["jd_code_scope"] = code_scope
+    LOCAL_PAGE_VARS["jd_code_head"]  = Pair(Ref(0),     (Ref{Int},))
+    LOCAL_PAGE_VARS["jd_code_eval"]  = Pair(Ref(false), (Ref{Bool},)) # toggle reeval
+    LOCAL_PAGE_VARS["jd_code"]       = Pair("",         (String,))    # just the script
 
     # RSS 2.0 item specs:
     # only title, link and description must be defined
@@ -122,13 +132,6 @@ is processed.
     LOCAL_PAGE_VARS["jd_ctime"]  = Pair(Date(1), (Date,))   # time of creation
     LOCAL_PAGE_VARS["jd_mtime"]  = Pair(Date(1), (Date,))   # time of last modification
     LOCAL_PAGE_VARS["jd_rpath"]  = Pair("",      (String,)) # local path to file src/[...]/blah.md
-
-    # Internal vars for code blocks
-    LOCAL_PAGE_VARS["jd_code_scope"] = code_scope
-    LOCAL_PAGE_VARS["jd_code_head"]  = Pair(Ref(0),     (Ref{Int},))
-    LOCAL_PAGE_VARS["jd_code_eval"]  = Pair(Ref(false), (Ref{Bool},)) # toggle reeval
-    LOCAL_PAGE_VARS["reeval"]        = Pair(false,      (Bool,))      # always reeval on pg
-    LOCAL_PAGE_VARS["jd_code"]       = Pair("",         (String,))    # just the script
 
     # If there are GLOBAL vars that are defined, they take precedence
     local_keys = keys(LOCAL_PAGE_VARS)
@@ -230,12 +233,14 @@ the site. See [`resolve_lxcom`](@ref).
     # inclusion
     GLOBAL_LXDEFS["\\input"]      = LxDef("\\input",      2, EMPTY_SS)
     GLOBAL_LXDEFS["\\output"]     = LxDef("\\output",     1, EMPTY_SS)
+    GLOBAL_LXDEFS["\\codeoutput"] = LxDef("\\codeoutput", 1, subs("@@code_output \\output{#1}@@"))
     GLOBAL_LXDEFS["\\textoutput"] = LxDef("\\textoutput", 1, EMPTY_SS)
-    GLOBAL_LXDEFS["\\textinput"]  = LxDef("\\textinput", 1, EMPTY_SS)
+    GLOBAL_LXDEFS["\\textinput"]  = LxDef("\\textinput",  1, EMPTY_SS)
     GLOBAL_LXDEFS["\\figalt"]     = LxDef("\\figalt",     2, EMPTY_SS)
     GLOBAL_LXDEFS["\\fig"]        = LxDef("\\fig",        1, subs("\\figalt{}{#1}"))
     GLOBAL_LXDEFS["\\file"]       = LxDef("\\file",       2, subs("[#1]()"))
     GLOBAL_LXDEFS["\\tableinput"] = LxDef("\\tableinput", 2, EMPTY_SS)
+    GLOBAL_LXDEFS["\\literate"]   = LxDef("\\literate",   1, EMPTY_SS)
     # text formatting
     GLOBAL_LXDEFS["\\underline"] = LxDef("\\underline", 1,
                             subs("~~~<span style=\"text-decoration:underline;\">!#1</span>~~~"))
