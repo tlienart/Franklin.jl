@@ -1,4 +1,4 @@
-using JuDoc, Test, Markdown, Dates, Random
+using JuDoc, Test, Markdown, Dates, Random, Literate
 const J = JuDoc
 const D = joinpath(dirname(dirname(pathof(JuDoc))), "test", "_dummies")
 
@@ -41,7 +41,7 @@ include("converter/lx_input.jl")
 include("converter/lx_simple.jl")
 println("🍺")
 
-println("INTEGRATION")
+println("GLOBAL")
 include("global/cases1.jl")
 include("global/cases2.jl")
 include("global/ordering.jl")
@@ -64,6 +64,9 @@ begin
     rm(p; recursive=true, force=true)
 end
 cd(dirname(dirname(pathof(JuDoc))))
+
+println("INTEGRATION")
+include("integration/literate.jl")
 
 flush_td()
 println("😅 😅 😅 😅")
