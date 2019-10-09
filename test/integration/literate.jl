@@ -78,6 +78,7 @@ end
     h = raw"""
         @def hascode = true
         @def showall = true
+        @def reeval = true
 
         \literate{/scripts/tutorial.jl}
         """ |> jd2html_td

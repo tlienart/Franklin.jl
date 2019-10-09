@@ -61,7 +61,7 @@ function literate_to_judoc(rpath::AS)::Tuple{String,Bool}
     # bring back logging
     Logging.disable_logging(Logging.LogLevel(Logging.Debug))
     # see if things have changed
-    haschanged = (read(spath, String) == prev)
+    haschanged = (read(spath, String) != prev)
     # return path to md file
     return joinpath(outpath, fname * ".md"), haschanged
 end

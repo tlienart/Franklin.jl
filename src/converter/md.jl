@@ -93,6 +93,11 @@ function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
             strip(prod(c*"\n" for c in codes)))
     end
 
+    # if no title is specified, grab the first header if there is one
+    if isnothing(LOCAL_PAGE_VARS["title"]) && !isempty(PAGE_HEADERS)
+        set_var!(LOCAL_PAGE_VARS, "title", first(values(PAGE_HEADERS))[1])
+    end
+
     # Return the string + judoc variables
     return hstring, jd_vars
 end

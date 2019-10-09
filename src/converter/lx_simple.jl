@@ -55,7 +55,15 @@ function resolve_lx_literate(lxc::LxCom)::String
     rpath = strip(content(lxc.braces[1]))
     opath, haschanged = literate_to_judoc(rpath)
     # if has changed, mark the page for re-evaluation
-    set_var!(LOCAL_PAGE_VARS, "reeval", true)
+    if haschanged
+        set_var!(LOCAL_PAGE_VARS, "reeval", true)
+    else
+        # page has not changed, check if literate is the only source of code
+        # and in that case skip eval of all code blocks via freezecode
+        if LOCAL_PAGE_VARS["literate_only"].first
+            set_var!(LOCAL_PAGE_VARS, "freezecode", true)
+        end
+    end
     return read(opath, String) * EOS
 end
 

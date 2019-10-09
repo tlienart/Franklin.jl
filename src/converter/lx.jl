@@ -255,6 +255,27 @@ end
 """
 $SIGNATURES
 
+Internal function to check if a code should suppress the final show.
+"""
+function check_suppress_show(code::AS)
+    scode = strip(code)
+    scode[end] == ';' && return true
+    # last line ?
+    lastline = scode
+    i = findlast(e -> e in (';','\n'), scode)
+    if !isnothing(i)
+        lastline = strip(scode[nextind(scode, i):end])
+    end
+    startswith(lastline, "@show ")   && return true
+    startswith(lastline, "println(") && return true
+    startswith(lastline, "print(")   && return true
+    return false
+end
+
+
+"""
+$SIGNATURES
+
 Internal function to read a result file and show it.
 """
 function show_res(rpath::AS)::String
@@ -262,6 +283,10 @@ function show_res(rpath::AS)::String
     fd, fn = splitdir(fpath)
     stdo   = read(joinpath(fd, "output", splitext(fn)[1] * ".out"), String)
     res    = read(joinpath(fd, "output", splitext(fn)[1] * ".res"), String)
+    # check if there's a final `;` or if the last line is a print, println or show
+    # in those cases, ignore the result file
+    code = strip(read(splitext(fpath)[1] * ".jl", String))
+    check_suppress_show(code) && (res = "")
     isempty(stdo) && isempty(res) && return ""
     if !isempty(stdo)
         endswith(stdo, "\n") || (stdo *= "\n")
