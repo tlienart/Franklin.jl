@@ -1,5 +1,6 @@
-
+#
 # Convenience functions to work with strings and substrings
+#
 
 """
 $(SIGNATURES)

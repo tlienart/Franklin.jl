@@ -17,6 +17,7 @@ cd(td); J.set_paths!(); mkpath(scripts)
         ```
         """
     @test J.literate_post_process(s) == """
+        <!--This file was generated, do not modify it.-->
         A
 
         ```julia:ex1
@@ -49,10 +50,11 @@ end
         """
     path = joinpath(scripts, "tutorial.jl")
     write(path, s)
-    opath = J.literate_to_judoc(path)
+    opath, = J.literate_to_judoc("/scripts/tutorial")
     @test endswith(opath, joinpath(J.PATHS[:assets], "literate", "tutorial.md"))
     out = read(opath, String)
     @test out == """
+        <!--This file was generated, do not modify it.-->
         # Rational numbers
 
         In julia rational numbers can be constructed with the `//` operator.

@@ -12,6 +12,7 @@ function literate_post_process(s::String)::String
     isempty(s) && return s
     em   = eachmatch(LITERATE_JULIA_FENCE_R, s)
     buf  = IOBuffer()
+    write(buf, "<!--This file was generated, do not modify it.-->\n")
     head = 1
     c    = 1
     for m in em
@@ -31,15 +32,36 @@ $SIGNATURES
 
 Take a Literate.jl script and transform it into a JuDoc-markdown file.
 """
-function literate_to_judoc(fpath::String)::String
-    outpath = joinpath(PATHS[:assets], "literate")
+function literate_to_judoc(rpath::AS)::Tuple{String,Bool}
+    startswith(rpath, "/") || error("Literate expects a paths starting with '/'")
+    # rpath is of the form "/scripts/[path/]tutorial[.jl]"
+    # split it so that when recombining it will lead to valid path inc windows
+    srpath = split(rpath, '/')[2:end] # discard empty first since starts with "/"
+    fpath  = joinpath(PATHS[:folder], srpath...)
+    endswith(fpath, ".jl") || (fpath *= ".jl")
+    if !isfile(fpath)
+        @warn "File not found when trying to convert a literate file ($fpath)."
+        return ""
+    end
+    outpath = joinpath(PATHS[:assets], "literate", srpath[2:end-1]...)
     isdir(outpath) || mkdir(outpath)
-    # don't show infos
+    # retrieve the file name
+    fname = splitext(splitdir(fpath)[2])[1]
+    spath = joinpath(outpath, fname * "_script.jl")
+    prev  = ""
+    if isfile(spath)
+        prev = read(spath, String)
+    end
+    # don't show Literate's infos
     Logging.disable_logging(Logging.LogLevel(Logging.Info))
-    markdown(fpath, outpath, documenter=false,
-             postprocess=literate_post_process, credit=false)
+    Literate.markdown(fpath, outpath; documenter=false,
+                      postprocess=literate_post_process, credit=false)
+    Literate.script(fpath, outpath; documenter=false,
+                      name=fname * "_script", credit=false)
     # bring back logging
     Logging.disable_logging(Logging.LogLevel(Logging.Debug))
-    fname = splitdir(fpath)[2]
-    return joinpath(outpath, splitext(fname)[1] * ".md")
+    # see if things have changed
+    haschanged = (read(spath, String) == prev)
+    # return path to md file
+    return joinpath(outpath, fname * ".md"), haschanged
 end
