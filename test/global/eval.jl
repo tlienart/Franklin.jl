@@ -24,7 +24,7 @@
     h = foo |> jd2html_td
 
     @test isapproxstr(h, """
-                <pre><code class="language-julia">println(randn())</code></pre> <pre><code>$a</code></pre>
+                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$a</code></pre>
                 """)
 
     # TEXT MODIFICATION + IN SCOPE --> NO REEVAL
@@ -34,7 +34,7 @@
     h = foo |> jd2html_td
 
     @test isapproxstr(h, """
-                <pre><code class="language-julia">println(randn())</code></pre> <pre><code>$a</code></pre> etc
+                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$a</code></pre> etc
                 """)
 
     # CODE ADDITION + IN SCOPE --> NO REEVAL OF FIRST BLOCK
@@ -53,9 +53,9 @@
     h = foo |> jd2html_td
 
     @test isapproxstr(h, """
-                <pre><code class="language-julia">println(randn())</code></pre> <pre><code>$a</code></pre> etc
-                <pre><code class="language-julia">println(randn())</code></pre> <pre><code>$b</code></pre>
-                <pre><code class="language-julia">println(randn())</code></pre> <pre><code>$c</code></pre>
+                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$a</code></pre> etc
+                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$b</code></pre>
+                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$c</code></pre>
                 """)
 
     # CODE MODIFICATION + IN SCOPE --> REEVAL OF BLOCK AND AFTER
@@ -80,10 +80,10 @@
     h = foo |> jd2html_td
 
     @test isapproxstr(h, """
-                <pre><code class="language-julia">println(randn())</code></pre> <pre><code>$a</code></pre>
+                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$a</code></pre>
                 <pre><code class="language-julia"># modif
-                println(randn())</code></pre> <pre><code>$d</code></pre>
-                <pre><code class="language-julia">println(randn())</code></pre> <pre><code>$e</code></pre>
+                println(randn())</code></pre> <pre><code class=\"plaintext\">$d</code></pre>
+                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$e</code></pre>
                 """)
 
     # FROZEN CODE --> WILL USE CODE FROM BEFORE even though we changed it (no re-eval)
@@ -109,10 +109,10 @@
     h = foo |> jd2html_td
 
     @test isapproxstr(h, """
-                <pre><code class="language-julia">println(randn())</code></pre> <pre><code>$a</code></pre>
+                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$a</code></pre>
                 <pre><code class="language-julia"># modif
-                println(randn())</code></pre> <pre><code>$d</code></pre>
-                <pre><code class="language-julia">println(randn())</code></pre> <pre><code>$e</code></pre>
+                println(randn())</code></pre> <pre><code class=\"plaintext\">$d</code></pre>
+                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$e</code></pre>
                 """)
 end
 
@@ -137,10 +137,10 @@ end
     @test isapproxstr(h, """
             <pre><code class="language-julia">a = 5
             println(a)</code></pre>
-            <pre><code>5</code></pre>
+            <pre><code class=\"plaintext\">5</code></pre>
             <pre><code class="language-julia">a += 3
             println(a)</code></pre>
-            <pre><code>8</code></pre>
+            <pre><code class=\"plaintext\">8</code></pre>
             """)
 
     @test J.LOCAL_PAGE_VARS["jd_code"].first == """
@@ -173,13 +173,13 @@ end
     @test isapproxstr(h, """
             <pre><code class="language-julia">a = 5
             println(a)</code></pre>
-            <pre><code>5</code></pre>
+            <pre><code class=\"plaintext\">5</code></pre>
             <pre><code class="language-julia">a += 1
             println(a)</code></pre>
-            <pre><code>6</code></pre>
+            <pre><code class=\"plaintext\">6</code></pre>
             <pre><code class="language-julia">a += 3
             println(a)</code></pre>
-            <pre><code>9</code></pre>
+            <pre><code class=\"plaintext\">9</code></pre>
             """)
     @test J.LOCAL_PAGE_VARS["jd_code"].first == """
         a = 5

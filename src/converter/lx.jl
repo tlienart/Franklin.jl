@@ -266,6 +266,7 @@ function show_res(rpath::AS)::String
     if !isempty(stdo)
         endswith(stdo, "\n") || (stdo *= "\n")
     end
+    res == "nothing" && (res = "")
     return html_div("code_output", html_code(stdo * res))
 end
 

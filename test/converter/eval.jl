@@ -43,7 +43,7 @@
             <pre><code class="language-julia">a = 5
             print(a^2)</code></pre>
             then:
-            <pre><code>25</code></pre>
+            <pre><code class="plaintext">25</code></pre>
             done.</p>""")
 end
 
@@ -91,7 +91,7 @@ end
             <pre><code class="language-julia">a = 5
             print(a^2)</code></pre>
             then:
-            <pre><code>25</code></pre>
+            <pre><code class="plaintext">25</code></pre>
             done.</p>""")
 
     # ------------
@@ -122,7 +122,7 @@ end
             <pre><code class="language-julia">a = 5
             print(a^2)</code></pre>
             then:
-            <pre><code>25</code></pre>  done.</p>""")
+            <pre><code class="plaintext">25</code></pre>  done.</p>""")
 end
 
 @testset "Eval (module)" begin
@@ -138,7 +138,7 @@ end
         done.
         """ * J.EOS |> seval
     # dot(a, a) == 54
-    @test occursin("then: <pre><code>54</code></pre> done.", h)
+    @test occursin("""then: <pre><code class="plaintext">54</code></pre> done.""", h)
 end
 
 @testset "Eval (img)" begin
@@ -166,7 +166,7 @@ end
         done.
         """ * J.EOS |> seval
     # errors silently
-    @test occursin("then: <pre><code>There was an error running the code:\nDomainError", h)
+    @test occursin("then: <pre><code class=\"plaintext\">There was an error running the code:\nDomainError", h)
 end
 
 @testset "Eval (nojl)" begin
@@ -202,7 +202,7 @@ end
             println("Is this a file? $(isfile(fn))")
             include(abspath(fn))
             println("Now: $a")
-            rm(fn)</code></pre> done. <pre><code>Is this a file? true
+            rm(fn)</code></pre> done. <pre><code class="plaintext">Is this a file? true
             Now: 2
             </code></pre></p>
             """)
@@ -222,7 +222,7 @@ end
     @test isapproxstr(h, """
         <pre><code class="language-julia">a = 5
         a *= 2</code></pre>
-        <div class="code_output"><pre><code>10</code></pre></div>
+        <div class="code_output"><pre><code class="plaintext">10</code></pre></div>
         """)
 
     # Show with stdout
@@ -240,7 +240,7 @@ end
         <pre><code class="language-julia">a = 5
         println("hello")
         a *= 2</code></pre>
-        <div class="code_output"><pre><code>hello
+        <div class="code_output"><pre><code class="plaintext">hello
         10</code></pre></div>
         """)
 end
