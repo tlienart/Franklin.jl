@@ -1,6 +1,7 @@
 @testset "Converter-lx" begin
     cd(td)
-    @test_throws ArgumentError J.check_input_rpath("aldjfk")
+    # Exception instead of ArgumentError as may fail with system error
+    @test_throws Exception J.check_input_rpath("aldjfk")
 end
 
 @testset "Converter-html" begin
