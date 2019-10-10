@@ -41,7 +41,7 @@ function literate_to_judoc(rpath::AS)::Tuple{String,Bool}
     endswith(fpath, ".jl") || (fpath *= ".jl")
     if !isfile(fpath)
         @warn "File not found when trying to convert a literate file ($fpath)."
-        return ""
+        return "", true
     end
     outpath = joinpath(PATHS[:assets], "literate", srpath[2:end-1]...)
     isdir(outpath) || mkdir(outpath)

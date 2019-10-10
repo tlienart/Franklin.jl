@@ -5,9 +5,9 @@ Specify the folder for the Literate scripts, by default this is `scripts/`.
 """
 function literate_folder(rp::String="")
     isempty(rp) && return PATHS[:literate]
-    path = joinpath(PATHS[:assets], rp)
+    path = joinpath(PATHS[:folder], rp)
     !isdir(path) && error("Specified Literate path not found ($rp -- $path)")
-    PATHS[:assets] = path
+    PATHS[:literate] = path
     return path
 end
 

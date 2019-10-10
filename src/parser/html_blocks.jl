@@ -130,7 +130,7 @@ function find_html_cdblocks(qblocks::Vector{AbstractBlock}
         # look forward until next `{{end}} block
         k = findfirst(cβ -> (typeof(cβ) == HEnd), qblocks[i+1:end])
         if isnothing(k)
-            throw(HTMLBlockError("Found an {{if(n)def ...}} block but no matching {{end}} block."))
+            throw(HTMLBlockError("Found an {{is(not)def ...}} block but no matching {{end}} block."))
         end
         k += i
         endβ = qblocks[k]

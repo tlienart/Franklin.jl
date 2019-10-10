@@ -16,7 +16,7 @@ import Base.push!
 import NodeJS
 import Literate
 
-export serve, publish, cleanpull, newsite, optimize, jd2html
+export serve, publish, cleanpull, newsite, optimize, jd2html, literate_folder
 
 # -----------------------------------------------------------------------------
 #
