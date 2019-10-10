@@ -27,7 +27,7 @@
     write(plain1, "2")
 
     r = J.resolve_lx_input_plainoutput("script1.jl", code=true)
-    @test r == "<pre><code>2</code></pre>"
+    @test r == "<pre><code class=\"plaintext\">2</code></pre>"
 end
 
 
@@ -52,7 +52,7 @@ end
     h = J.convert_html(m, J.PageVars())
 
     @test occursin("<p>Some string <pre><code class=\"language-julia\">$(read(joinpath(J.PATHS[:assets], "index", "code", "s1.jl"), String))</code></pre>", h)
-    @test occursin("Then maybe <pre><code>$(read(joinpath(J.PATHS[:assets], "index", "code",  "output", "s1.out"), String))</code></pre>", h)
+    @test occursin("Then maybe <pre><code class=\"plaintext\">$(read(joinpath(J.PATHS[:assets], "index", "code",  "output", "s1.out"), String))</code></pre>", h)
     @test occursin("Finally img: <img src=\"/assets/index/code/output/s1a.png\" alt=\"\"> done.", h)
 end
 

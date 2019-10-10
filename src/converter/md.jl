@@ -93,6 +93,11 @@ function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
             strip(prod(c*"\n" for c in codes)))
     end
 
+    # if no title is specified, grab the first header if there is one
+    if isnothing(LOCAL_PAGE_VARS["title"]) && !isempty(PAGE_HEADERS)
+        set_var!(LOCAL_PAGE_VARS, "title", first(values(PAGE_HEADERS))[1])
+    end
+
     # Return the string + judoc variables
     return hstring, jd_vars
 end
@@ -336,7 +341,7 @@ function process_md_defs(blocks::Vector{OCBlock}, isconfig::Bool,
     # Find all markdown definitions (MD_DEF) blocks
     mddefs = filter(β -> (β.name == :MD_DEF), blocks)
     # empty container for the assignments
-    assignments = Vector{Pair{String, String}}(undef, length(mddefs))
+    assignments = Vector{Pair{String, String}}()
     # go over the blocks, and extract the assignment
     for (i, mdd) ∈ enumerate(mddefs)
         matched = match(MD_DEF_PAT, mdd.ss)
@@ -346,7 +351,7 @@ function process_md_defs(blocks::Vector{OCBlock}, isconfig::Bool,
             continue
         end
         vname, vdef = matched.captures[1:2]
-        assignments[i] = (String(vname) => String(vdef))
+        push!(assignments, (String(vname) => String(vdef)))
     end
     # if we're currently looking at the config file, update the global page var dictionary
     # GLOBAL_PAGE_VARS and store the latex definition globally as well in GLOBAL_LXDEFS

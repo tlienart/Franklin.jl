@@ -99,6 +99,11 @@ is processed.
     LOCAL_PAGE_VARS["reeval"]        = Pair(false,  (Bool,)) # whether to always re-evals all on pg
     LOCAL_PAGE_VARS["freezecode"]    = Pair(false,  (Bool,)) # no-reevaluation of the code
     LOCAL_PAGE_VARS["showall"]       = Pair(false,  (Bool,)) # like a notebook on each cell
+    # NOTE: when using literate, `literate_only` will assume that it's the only source of
+    # code, so if it doesn't see change there, it will freeze the code to avoid an eval, this will
+    # cause problems if there's more code on the page than from just the call to \literate
+    # in such cases set literate_only to false.
+    LOCAL_PAGE_VARS["literate_only"] = Pair(true,       (Bool,))
     # the jd_* should not be assigned externally
     LOCAL_PAGE_VARS["jd_code_scope"] = code_scope
     LOCAL_PAGE_VARS["jd_code_head"]  = Pair(Ref(0),     (Ref{Int},))

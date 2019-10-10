@@ -53,13 +53,17 @@ Internal function to resolve a `\\literate{rpath}` see [`literate_to_judoc`](@re
 """
 function resolve_lx_literate(lxc::LxCom)::String
     rpath = strip(content(lxc.braces[1]))
-    path  = resolve_assets_rpath(rpath; canonical=true)
-    endswith(path, ".jl") || (path *= ".jl")
-    if !isfile(path)
-        @warn "File not found when trying to resolve a \\literate command ($path)."
-        return ""
+    opath, haschanged = literate_to_judoc(rpath)
+    isempty(opath) && return "~~~"*html_err("Literate file matching '$rpath' not found.")*"~~~"
+    if !haschanged
+        # page has not changed, check if literate is the only source of code
+        # and in that case skip eval of all code blocks via freezecode
+        if LOCAL_PAGE_VARS["literate_only"].first
+            set_var!(LOCAL_PAGE_VARS, "freezecode", true)
+        end
     end
-    opath = literate_to_judoc(path)
+    # if haschanged=true then this will be handled cell by cell
+    # comparing with cell files following `eval_and_resolve_code`
     return read(opath, String) * EOS
 end
 

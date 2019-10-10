@@ -93,12 +93,14 @@ function jd_setup(; clear::Bool=true)::NamedTuple
     # . recovering the list of files in the input dir we care about
     # -- these are stored in dictionaries, the key is the full path and the value is the time of
     # last change (useful for continuous monitoring)
-    md_files    = TrackedFiles()
-    html_files  = TrackedFiles()
-    other_files = TrackedFiles()
-    infra_files = TrackedFiles()
+    md_files       = TrackedFiles()
+    html_files     = TrackedFiles()
+    other_files    = TrackedFiles()
+    infra_files    = TrackedFiles()
+    literate_files = TrackedFiles()
     # named tuples of all the watched files
-    watched_files = (md=md_files, html=html_files, other=other_files, infra=infra_files)
+    watched_files = (md=md_files, html=html_files, other=other_files,
+                     infra=infra_files, literate=literate_files)
     # fill the dictionaries
     scan_input_dir!(watched_files...)
     return watched_files
@@ -228,12 +230,37 @@ function jd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, watched_files::Na
                 start = time()
                 jd_fullpass(watched_files; clear=false, verb=false, prerender=false)
                 verb && (print_final(rpad("✔ full pass...", 15), start); println(""))
+            # if it's a literate file
+            elseif haskey(watched_files[:literate], fpair)
+                fmsg = fmsg * rpad("→ updating... ", 15)
+                verb && print("\r" * fmsg)
+                start = time()
+                #
+                literate_path = joinpath(fpair...)
+                #
+                head    = read(joinpath(PATHS[:src_html], "head.html"), String)
+                pg_foot = read(joinpath(PATHS[:src_html], "page_foot.html"), String)
+                foot    = read(joinpath(PATHS[:src_html], "foot.html"), String)
+                # process all md files that have `\literate` with something that matches
+
+                for mdfpair in keys(watched_files.md)
+                    mdfpath = joinpath(mdfpair...)
+                    # read the content and look for `\\literate{...}`
+                    content = read(mdfpath, String)
+                    for m in eachmatch(r"\\literate\{(.*?)\}", content)
+                        if endswith(literate_path, m.captures[1])
+                            process_file(:md, mdfpair, head, pg_foot, foot, cur_t;
+                                         clear=false, prerender=false)
+                            break
+                        end
+                    end
+                end
+                verb && print_final(fmsg, start)
             else
                 fmsg = fmsg * rpad("→ updating... ", 15)
                 verb && print("\r" * fmsg)
                 start = time()
-                # TODO, ideally these would only be read if they've changed. Not super important
-                # but just not necessary. (Fixing may be a bit of a pain though)
+                #
                 head    = read(joinpath(PATHS[:src_html], "head.html"), String)
                 pg_foot = read(joinpath(PATHS[:src_html], "page_foot.html"), String)
                 foot    = read(joinpath(PATHS[:src_html], "foot.html"), String)

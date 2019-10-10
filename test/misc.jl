@@ -112,7 +112,7 @@ end
     @test J.html_ahref_key("cc", "dd") == "<a href=\"/pub/cpB/blah.html#cc\">dd</a>"
     @test J.html_div("dn","ct") == "<div class=\"dn\">ct</div>"
     @test J.html_img("src", "alt") == "<img src=\"src\" alt=\"alt\">"
-    @test J.html_code("code") == "<pre><code>code</code></pre>"
+    @test J.html_code("code") == "<pre><code class=\"plaintext\">code</code></pre>"
     @test J.html_code("code", "lang") == "<pre><code class=\"language-lang\">code</code></pre>"
     @test J.html_err("blah") == "<p><span style=\"color:red;\">// blah //</span></p>"
 end

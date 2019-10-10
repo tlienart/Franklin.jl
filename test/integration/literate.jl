@@ -1,5 +1,11 @@
-scripts = joinpath(J.PATHS[:folder], "scripts")
+scripts = joinpath(J.PATHS[:folder], "literate-scripts")
 cd(td); J.set_paths!(); mkpath(scripts)
+
+@testset "Literate-0" begin
+    @test_throws ErrorException literate_folder("foo/")
+    litpath = literate_folder("literate-scripts/")
+    @test litpath == joinpath(J.PATHS[:folder], "literate-scripts/")
+end
 
 @testset "Literate-a" begin
     # Post processing: numbering of julia blocks
@@ -17,6 +23,7 @@ cd(td); J.set_paths!(); mkpath(scripts)
         ```
         """
     @test J.literate_post_process(s) == """
+        <!--This file was generated, do not modify it.-->
         A
 
         ```julia:ex1
@@ -49,10 +56,11 @@ end
         """
     path = joinpath(scripts, "tutorial.jl")
     write(path, s)
-    opath = J.literate_to_judoc(path)
+    opath, = J.literate_to_judoc("/literate-scripts/tutorial")
     @test endswith(opath, joinpath(J.PATHS[:assets], "literate", "tutorial.md"))
     out = read(opath, String)
     @test out == """
+        <!--This file was generated, do not modify it.-->
         # Rational numbers
 
         In julia rational numbers can be constructed with the `//` operator.
@@ -76,8 +84,9 @@ end
     h = raw"""
         @def hascode = true
         @def showall = true
+        @def reeval = true
 
-        \literate{/scripts/tutorial.jl}
+        \literate{/literate-scripts/tutorial.jl}
         """ |> jd2html_td
     @test isapproxstr(h, """
         <h1 id="rational_numbers"><a href="/index.html#rational_numbers">Rational numbers</a></h1>
@@ -85,9 +94,20 @@ end
         <pre><code class="language-julia"># Define variable x and y
         x = 1//3
         y = 2//5</code></pre>
-        <div class="code_output"><pre><code>2//5</code></pre></div>
+        <div class="code_output"><pre><code class=\"plaintext\">2//5</code></pre></div>
         <p>When adding <code>x</code> and <code>y</code> together we obtain a new rational number:</p>
         <pre><code class="language-julia">z = x + y</code></pre>
-        <div class="code_output"><pre><code>11//15</code></pre></div>
+        <div class="code_output"><pre><code class=\"plaintext\">11//15</code></pre></div>
         """)
+end
+
+@testset "Literate-c" begin
+    s = raw"""
+        \literate{foo}
+        """
+    @test_throws ErrorException (s |> jd2html)
+    # s = raw"""
+    #     \literate{/foo}
+    #     """
+    # a = @test_logs (:warn, "File not found when trying to convert a literate file ($(joinpath(J.PATHS[:folder], "foo.jl"))).") (s |> jd2html_td)
 end
