@@ -287,11 +287,11 @@ function show_res(rpath::AS)::String
     # in those cases, ignore the result file
     code = strip(read(splitext(fpath)[1] * ".jl", String))
     check_suppress_show(code) && (res = "")
-    isempty(stdo) && isempty(res) && return ""
     if !isempty(stdo)
         endswith(stdo, "\n") || (stdo *= "\n")
     end
     res == "nothing" && (res = "")
+    isempty(stdo) && isempty(res) && return ""
     return html_div("code_output", html_code(stdo * res))
 end
 
