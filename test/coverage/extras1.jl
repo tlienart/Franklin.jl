@@ -1,10 +1,10 @@
-@testset "Converter-lx" begin
+@testset "Conv-lx" begin
     cd(td)
     # Exception instead of ArgumentError as may fail with system error
     @test_throws Exception J.check_input_rpath("aldjfk")
 end
 
-@testset "Converter-html" begin
+@testset "Conv-html" begin
     @test_throws J.HTMLFunctionError J.convert_html("{{fill bb cc}}", J.PageVars())
     @test_throws J.HTMLFunctionError J.convert_html("{{insert bb cc}}", J.PageVars())
     @test_throws J.HTMLFunctionError J.convert_html("{{href aa}}", J.PageVars())
@@ -15,7 +15,7 @@ end
     @test_throws J.HTMLBlockError J.convert_html("{{ispage asdf}}", J.PageVars())
 end
 
-@testset "Converter-md" begin
+@testset "Conv-md" begin
     s = """
         @def blah
         """

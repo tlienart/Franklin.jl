@@ -182,8 +182,8 @@ end
                         <p>
                         A <a href="https://julialang.org/">link</a> and
                         B <a href="https://www.mozilla.org/">link 2</a> and
-                        C <a href="https://www.python.org/" title="Python">Python</a> and
-                        D <a href="http://slashdot.org/">1</a> and blah end</p>""")
+                        C <a href="https://www.python.org/">Python</a> and
+                        D <a href="http://slashdot.org/">a link</a> and blah end</p>""")
 end
 
 @testset "fixlinks2" begin
@@ -318,4 +318,15 @@ end
          A ``blah``.
          """ * J.EOS
     @test isapproxstr(st |> seval, """<p>A <code>blah</code>.</p>""")
+end
+
+@testset "Issue 266" begin
+    s = """Blah [`hello`] and later
+       [`hello`]: https://github.com/cormullion/
+       """ |> jd2html_td
+    @test isapproxstr(s, """
+        <p>Blah
+        <a href="https://github.com/cormullion/"><code>hello</code></a>
+        and later </p>
+        """)
 end
