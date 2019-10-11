@@ -182,8 +182,8 @@ end
                         <p>
                         A <a href="https://julialang.org/">link</a> and
                         B <a href="https://www.mozilla.org/">link 2</a> and
-                        C <a href="https://www.python.org/" title="Python">Python</a> and
-                        D <a href="http://slashdot.org/">1</a> and blah end</p>""")
+                        C <a href="https://www.python.org/">Python</a> and
+                        D <a href="http://slashdot.org/">a link</a> and blah end</p>""")
 end
 
 @testset "fixlinks2" begin
