@@ -59,6 +59,7 @@ function validate_header_block(β::OCBlock)::Bool
     return false
 end
 
+postprocess_link(s::String) = replace(r"")
 
 """
 $(SIGNATURES)
@@ -84,7 +85,11 @@ function validate_and_store_link_defs!(blocks::Vector{OCBlock})::Nothing
                 # redefine the full block
                 ftk = Token(:FOO,subs(""))
                 # we have a [id]: lk add it to PAGE_LINK_DEFS
-                id = subs(parent, nextind(parent, k), ini) |> htmlesc
+                id = subs(parent, nextind(parent, k), ini)
+                # issue #266 in case there's formatting in the link
+                id = jd2html(id, internal=true)
+                id = replace(id, r"^<p>"=>"")
+                id = replace(id, r"<\/p>\n$"=>"")
                 lk = β |> content |> strip |> string
                 PAGE_LINK_DEFS[id] = lk
                 # replace the block by a full one so that it can be fully

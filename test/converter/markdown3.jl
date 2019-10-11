@@ -319,3 +319,14 @@ end
          """ * J.EOS
     @test isapproxstr(st |> seval, """<p>A <code>blah</code>.</p>""")
 end
+
+@testset "Issue 266" begin
+    s = """Blah [`hello`] and later
+       [`hello`]: https://github.com/cormullion/
+       """ |> jd2html_td
+    @test isapproxstr(s, """
+        <p>Blah
+        <a href="https://github.com/cormullion/"><code>hello</code></a>
+        and later </p>
+        """)
+end
