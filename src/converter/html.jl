@@ -95,8 +95,8 @@ Recursively process a conditional block from an opening HTML_COND_OPEN to a {{en
 function process_html_cond(hs::AS, allvars::PageVars, qblocks::Vector{AbstractBlock},
                            i::Int)::Tuple{String,Int,Int}
     if i == length(qblocks)
-        throw(HTLMBlockError("Could not close the conditional block " *
-                             "starting with '$(β.ss)'."))
+        throw(HTMLBlockError("Could not close the conditional block " *
+                             "starting with '$(qblocks[i].ss)'."))
     end
 
     init_idx      = i
@@ -140,31 +140,62 @@ function process_html_cond(hs::AS, allvars::PageVars, qblocks::Vector{AbstractBl
     # We now have a complete conditional block with possibly
     # several else-if blocks and possibly an else block.
     # Check which one applies and discard the rest
-    conds = [qblocks[init_idx].vname, (qblocks[c].vname for c in elseif_idx)...]
-    known = [haskey(allvars, c) for c in conds]
 
-    # XXX need to fix this, basically for {{if}} etc it's ok but not for
-    # XXX Isdef etc.
-    # XXX it's only the first block that needs to be checked though, subsequently it's fine
+    k   = 0
+    lag = 0
+    # initial block may be {{if..}} or {{isdef..}} or...
+    # if its not just a {{if...}}, need to act appropriately
+    # and if the condition is verified then k=1
+    βi = qblocks[init_idx]
+    if βi isa Union{HIsDef,HIsNotDef,HIsPage,HIsNotPage}
+        lag = 1
+        if βi isa HIsDef
+            k = Int(haskey(allvars, βi.vname))
+        elseif βi isa HIsNotDef
+            k = Int(!haskey(allvars, βi.vname))
+        else
+            # current path is relative to /src/ for instance
+            # /src/pages/blah.md -> pages/blah
+            rpath = splitext(unixify(CUR_PATH[]))[1] # if starts with `pages/`, replaces by `pub/`: pages/blah => pub/blah
+            rpath = replace(rpath, Regex("^pages") => "pub")
+            # compare with β.pages
+            inpage = any(p -> splitext(p)[1] == rpath, βi.pages)
 
-    if !all(known)
-        idx = findfirst(.!known)
-        throw(HTMLBlockError("At least one of the condition variable could not be found: " *
-                             "couldn't find '$(conds[idx])'."))
+            if βi isa HIsPage
+                k = Int(inpage)
+            else
+                k = Int(!inpage)
+            end
+        end
     end
-    # check that all these variables are boolean...
-    bools = [isa(allvars[c].first, Bool) for c  in conds]
-    if !all(bools)
-        idx = findfirst(.!bools)
-        throw(HTMLBlockError("At least one of the condition variable is not a Bool: " *
-                             "'$(conds[idx])' is not a bool."))
-    end
 
-    # which one is verified?
-    k = findfirst(c -> allvars[c].first, conds)
+    if iszero(k)
+        if lag == 0
+            conds = [βi.vname, (qblocks[c].vname for c in elseif_idx)...]
+        else
+            conds = [qblocks[c].vname for c in elseif_idx]
+        end
+        known = [haskey(allvars, c) for c in conds]
+
+        if !all(known)
+            idx = findfirst(.!known)
+            throw(HTMLBlockError("At least one of the condition variable could not be found: " *
+                                 "couldn't find '$(conds[idx])'."))
+        end
+        # check that all these variables are boolean...
+        bools = [isa(allvars[c].first, Bool) for c  in conds]
+        if !all(bools)
+            idx = findfirst(.!bools)
+            throw(HTMLBlockError("At least one of the condition variable is not a Bool: " *
+                                 "'$(conds[idx])' is not a bool."))
+        end
+        # which one is verified?
+        u = findfirst(c -> allvars[c].first, conds)
+        k = isnothing(u) ? 0 : u + lag
+    end
 
     # if none is verified, use the else clause if there is one
-    if isnothing(k)
+    if iszero(k)
         if !iszero(else_idx)
             # use elseblock, the content is from it to the β_close
             head = nextind(hs, to(qblocks[else_idx]))
