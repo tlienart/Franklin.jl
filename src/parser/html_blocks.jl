@@ -52,127 +52,15 @@ function qualify_html_hblocks(blocks::Vector{OCBlock})::Vector{AbstractBlock}
 end
 
 
-"""
-$(SIGNATURES)
-
-Given qualified blocks `HIf`, `HElse` etc, construct a vector of the conditional blocks which
-contain the list of conditions etc. No nesting is allowed at the moment.
-"""
-function find_html_cblocks(qblocks::Vector{AbstractBlock}
-                           )::Tuple{Vector{HCond},Vector{AbstractBlock}}
-    # container for the conditional blocks
-    cblocks = Vector{HCond}()
-    isempty(qblocks) && return cblocks, qblocks
-    active_qblocks = ones(Bool, length(qblocks))
-    i = 0
-    while i < length(qblocks)
-        i += 1
-        β = qblocks[i]
-        (typeof(β) == HIf) || continue
-
-        # look forward until the next `{{ end }}` block
-        k = findfirst(cβ -> (typeof(cβ) == HEnd), qblocks[i+1:end])
-        if isnothing(k)
-            throw(HTMLBlockError("Found an {{if ...}} block but no matching {{end}} block. "))
-        end
-
-        n_between = k - 1
-        k += i
-
-        initial_cond = β.vname
-        secondary_conds = Vector{String}()
-        afrom, ato = Vector{Int}(), Vector{Int}()
-        push!(afrom, to(β) + 1)
-
-        for bi ∈ 1:n_between
-            β = qblocks[i + bi]
-            if typeof(β) == HElseIf
-                push!(ato,   from(β) - 1)
-                push!(afrom, to(β) + 1)
-                push!(secondary_conds, β.vname)
-            elseif typeof(β) == HElse
-                # TODO, should check that there are no other HElseIf etc after
-                push!(ato,   from(β) - 1)
-                push!(afrom, to(β) + 1)
-            end
-        end
-        stβ, endβ = qblocks[i], qblocks[k]
-        hcondss = subs(str(stβ), from(stβ), to(endβ))
-        push!(ato, from(endβ) - 1)
-
-        # assemble the actions
-        actions = [subs(str(stβ), afrom[i], ato[i]) for i ∈ eachindex(afrom)]
-        # form the hcond
-        push!(cblocks, HCond(hcondss, initial_cond, secondary_conds, actions))
-        active_qblocks[i:k] .= false
-        i = k
-    end
-    return cblocks, qblocks[active_qblocks]
-end
+"""Blocks that can open a conditional block."""
+const HTML_OPEN_COND = Union{HIf,HIsDef,HIsNotDef,HIsPage,HIsNotPage}
 
 
 """
-$(SIGNATURES)
+$SIGNATURES
 
-Given qualified blocks `HIsDef` or `HIsNotDef` build conditional page blocks.
+Internal function to balance conditional blocks. See [`process_html_qblocks`](@ref).
 """
-function find_html_cdblocks(qblocks::Vector{AbstractBlock}
-                            )::Tuple{Vector{HCondDef},Vector{AbstractBlock}}
-    # container for the conditional blocks
-    cdblocks = Vector{HCondDef}()
-    isempty(qblocks) && return cdblocks, qblocks
-    active_qblocks = ones(Bool, length(qblocks))
-    i = 0
-    while i < length(qblocks)
-        i += 1
-        β = qblocks[i]
-        (typeof(β) ∈ (HIsDef, HIsNotDef)) || continue
-        # look forward until next `{{end}} block
-        k = findfirst(cβ -> (typeof(cβ) == HEnd), qblocks[i+1:end])
-        if isnothing(k)
-            throw(HTMLBlockError("Found an {{is(not)def ...}} block but no matching {{end}} block."))
-        end
-        k += i
-        endβ = qblocks[k]
-        hcondss = subs(str(β), from(β), to(endβ))
-        action = subs(str(β), to(β)+1, from(endβ)-1)
-        push!(cdblocks, HCondDef(β, hcondss, action))
-        active_qblocks[i:k] .= false
-        i = k
-    end
-    return cdblocks, qblocks[active_qblocks]
-end
-
-
-"""
-$(SIGNATURES)
-
-Given qualified blocks `HIsPage` or `HIsNotPage` build conditional page blocks.
-"""
-function find_html_cpblocks(qblocks::Vector{AbstractBlock}
-                            )::Tuple{Vector{HCondPage},Vector{AbstractBlock}}
-    # container for the conditional blocks
-    cpblocks = Vector{HCondPage}()
-    isempty(qblocks) && return cpblocks, qblocks
-    active_qblocks = ones(Bool, length(qblocks))
-    i = 0
-    while i < length(qblocks)
-        i += 1
-        β = qblocks[i]
-        (typeof(β) ∈ (HIsPage, HIsNotPage)) || continue
-        # look forward until next `{{end}} block
-        k = findfirst(cβ -> (typeof(cβ) == HEnd), qblocks[i+1:end])
-        if isnothing(k)
-            throw(HTMLBlockError("Found an {{is(not)page ...}} block but no matching {{end}} " *
-                                 "block."))
-        end
-        k += i
-        endβ = qblocks[k]
-        hcondss = subs(str(β), from(β), to(endβ))
-        action = subs(str(β), to(β)+1, from(endβ)-1)
-        push!(cpblocks, HCondPage(β, hcondss, action))
-        active_qblocks[i:k] .= false
-        i = k
-    end
-    return cpblocks, qblocks[active_qblocks]
-end
+hbalance(::HTML_OPEN_COND) = 1
+hbalance(::HEnd) = -1
+hbalance(::AbstractBlock) = 0

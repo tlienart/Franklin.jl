@@ -62,7 +62,7 @@ function find_and_fix_md_links(hs::String)::String
         head = nextind(hs, m.offset + lastindex(m.match) - 1)
     end
     strlen = lastindex(hs)
-    (head < strlen) && write(h, subs(hs, head, strlen))
+    (head ≤ strlen) && write(h, subs(hs, head, strlen))
 
     return String(take!(h))
 end

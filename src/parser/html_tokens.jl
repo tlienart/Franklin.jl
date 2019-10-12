@@ -59,12 +59,12 @@ HBLOCK_ISNOTPAGE_PAT
 
 Regex for the different HTML tokens.
 """
-const HBLOCK_IF_PAT        = r"{{\s*if\s+([a-zA-Z]\S+)\s*}}"        # {{if v1}}
+const HBLOCK_IF_PAT        = r"{{\s*if\s+([a-zA-Z]\S*)\s*}}"        # {{if v1}}
 const HBLOCK_ELSE_PAT      = r"{{\s*else\s*}}"                      # {{else}}
-const HBLOCK_ELSEIF_PAT    = r"{{\s*else\s*if\s+([a-zA-Z]\S+)\s*}}" # {{elseif v1}}
+const HBLOCK_ELSEIF_PAT    = r"{{\s*else\s*if\s+([a-zA-Z]\S*)\s*}}" # {{elseif v1}}
 const HBLOCK_END_PAT       = r"{{\s*end\s*}}"                       # {{end}}
-const HBLOCK_ISDEF_PAT     = r"{{\s*isdef\s+([a-zA-Z]\S+)\s*}}"     # {{isdef v1}}
-const HBLOCK_ISNOTDEF_PAT  = r"{{\s*isnotdef\s+([a-zA-Z]\S+)\s*}}"  # {{isnotdef v1}}
+const HBLOCK_ISDEF_PAT     = r"{{\s*isdef\s+([a-zA-Z]\S*)\s*}}"     # {{isdef v1}}
+const HBLOCK_ISNOTDEF_PAT  = r"{{\s*isnotdef\s+([a-zA-Z]\S*)\s*}}"  # {{isnotdef v1}}
 const HBLOCK_ISPAGE_PAT    = r"{{\s*ispage\s+((.|\n)+?)}}"          # {{ispage p1 p2}}
 const HBLOCK_ISNOTPAGE_PAT = r"{{\s*isnotpage\s+((.|\n)+?)}}"       # {{isnotpage p1 p2}}
 

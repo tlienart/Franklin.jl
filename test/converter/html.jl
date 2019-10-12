@@ -16,17 +16,12 @@
         final text
         """
 
-    hblocks, = explore_h_steps(hs)[:hblocks]
-    convhbs = [J.convert_html_block(hb, allvars) for hb ∈ hblocks]
-
-    @test convhbs[1] == "INPUT1"
-    @test convhbs[2] == "\nother stuff\n"
     @test J.convert_html(hs, allvars) == "Some text then INPUT1 and\n\nother stuff\n\nfinal text\n"
 
     hs = raw"""
         abc {{isdef no}}yada{{end}} def
         """
-    hblocks, = explore_h_steps(hs)[:hblocks]
+    J.convert_html(hs, allvars)
     @test J.convert_html_block(hblocks[1], allvars) == ""
 
     hs = raw"""abc {{ fill nope }} ... """
