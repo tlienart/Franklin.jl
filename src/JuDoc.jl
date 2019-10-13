@@ -105,7 +105,6 @@ include("converter/md.jl")
 include("converter/lx.jl")
 include("converter/lx_simple.jl")
 # > html
-include("converter/html_blocks.jl")
 include("converter/html_functions.jl")
 include("converter/html.jl")
 # > fighting Julia's markdown parser

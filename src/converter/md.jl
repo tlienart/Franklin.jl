@@ -157,7 +157,7 @@ function convert_md_math(ms::String, lxdefs::Vector{LxDef}=Vector{LxDef}(), offs
         next_lxc = from_ifsmaller(lxcoms, lxc_idx, len_lxc)
     end
     # add anything after the last command
-    (head <= strlen) && write(htmls, chop(ms, head=prevind(ms, head), tail=1))
+    (head ≤ strlen) && write(htmls, chop(ms, head=prevind(ms, head), tail=1))
     return String(take!(htmls))
 end
 

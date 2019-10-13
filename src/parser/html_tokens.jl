@@ -59,12 +59,12 @@ HBLOCK_ISNOTPAGE_PAT
 
 Regex for the different HTML tokens.
 """
-const HBLOCK_IF_PAT        = r"{{\s*if\s+([a-zA-Z]\S+)\s*}}"        # {{if v1}}
+const HBLOCK_IF_PAT        = r"{{\s*if\s+([a-zA-Z]\S*)\s*}}"        # {{if v1}}
 const HBLOCK_ELSE_PAT      = r"{{\s*else\s*}}"                      # {{else}}
-const HBLOCK_ELSEIF_PAT    = r"{{\s*else\s*if\s+([a-zA-Z]\S+)\s*}}" # {{elseif v1}}
+const HBLOCK_ELSEIF_PAT    = r"{{\s*else\s*if\s+([a-zA-Z]\S*)\s*}}" # {{elseif v1}}
 const HBLOCK_END_PAT       = r"{{\s*end\s*}}"                       # {{end}}
-const HBLOCK_ISDEF_PAT     = r"{{\s*isdef\s+([a-zA-Z]\S+)\s*}}"     # {{isdef v1}}
-const HBLOCK_ISNOTDEF_PAT  = r"{{\s*isnotdef\s+([a-zA-Z]\S+)\s*}}"  # {{isnotdef v1}}
+const HBLOCK_ISDEF_PAT     = r"{{\s*isdef\s+([a-zA-Z]\S*)\s*}}"     # {{isdef v1}}
+const HBLOCK_ISNOTDEF_PAT  = r"{{\s*isnotdef\s+([a-zA-Z]\S*)\s*}}"  # {{isnotdef v1}}
 const HBLOCK_ISPAGE_PAT    = r"{{\s*ispage\s+((.|\n)+?)}}"          # {{ispage p1 p2}}
 const HBLOCK_ISNOTPAGE_PAT = r"{{\s*isnotpage\s+((.|\n)+?)}}"       # {{isnotpage p1 p2}}
 
@@ -147,21 +147,6 @@ struct HIsNotDef <: AbstractBlock
     vname::String
 end
 
-
-"""
-$(TYPEDEF)
-
-HTML conditional block corresponding to `{{is[not]def var}} ... {{end}}`.
-"""
-struct HCondDef <: AbstractBlock
-    ss::SubString       # full block
-    checkisdef::Bool    # true if @isdefined, false if !@isdefined
-    vname::String       # initial condition (has to exist)
-    action::SubString   # what to do when condition is met
-end
-HCondDef(β::HIsDef, ss, action) = HCondDef(ss, true, β.vname, action)
-HCondDef(β::HIsNotDef, ss, action) = HCondDef(ss, false, β.vname, action)
-
 # ------------------------------------------------------------
 # Specific conditional block based on whether the current page
 # is or isn't in a group of given pages
@@ -187,21 +172,6 @@ struct HIsNotPage <: AbstractBlock
     ss::SubString
     pages::Vector{<:AS}
 end
-
-
-"""
-$(TYPEDEF)
-
-HTML conditional page block corresponding to `{{is[not]page path/page}} ... {{end}}`.
-"""
-struct HCondPage <: AbstractBlock
-    ss::SubString                    # full block
-    checkispage::Bool                # true for ispage false for isnotpage
-    pages::Vector{<:AS}  # page names
-    action::SubString                # what to do when condition is met
-end
-HCondPage(β::HIsPage, ss, action) = HCondPage(ss, true, β.pages, action)
-HCondPage(β::HIsNotPage, ss, action) = HCondPage(ss, false, β.pages, action)
 
 #= ============
 FUNCTION BLOCKS

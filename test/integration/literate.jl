@@ -105,9 +105,9 @@ end
     s = raw"""
         \literate{foo}
         """
-    @test_throws ErrorException (s |> jd2html)
-    # s = raw"""
-    #     \literate{/foo}
-    #     """
-    # a = @test_logs (:warn, "File not found when trying to convert a literate file ($(joinpath(J.PATHS[:folder], "foo.jl"))).") (s |> jd2html_td)
+    @test_throws ErrorException (s |> jd2html_td)
+    s = raw"""
+        \literate{/foo}
+        """
+    @test @test_logs (:warn, "File not found when trying to convert a literate file ($(joinpath(J.PATHS[:folder], "foo.jl"))).") (s |> jd2html_td) == """<p><span style="color:red;">// Literate file matching '/foo' not found. //</span></p></p>\n"""
 end

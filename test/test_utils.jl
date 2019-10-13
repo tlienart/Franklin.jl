@@ -93,7 +93,7 @@ function explore_md_steps(mds)
     return steps
 end
 
-function explore_h_steps(hs)
+function explore_h_steps(hs, allvars=J.PageVars())
     steps = OrderedDict{Symbol,NamedTuple}()
 
     tokens = J.find_tokens(hs, J.HTML_TOKENS, J.HTML_1C_TOKENS)
@@ -106,14 +106,8 @@ function explore_h_steps(hs)
     qblocks = J.qualify_html_hblocks(hblocks)
     steps[:qblocks] = (qblocks=qblocks,)
 
-    cblocks, qblocks = J.find_html_cblocks(qblocks)
-    cdblocks, qblocks = J.find_html_cdblocks(qblocks)
-    cpblocks, qblocks = J.find_html_cpblocks(qblocks)
-    steps[:cblocks] = (cblocks=cblocks, cdblocks=cdblocks, cpblocks=cpblocks,
-                         qblocks=qblocks)
-
-    hblocks = J.merge_blocks(qblocks, cblocks, cdblocks, cpblocks)
-    steps[:hblocks] = (hblocks=hblocks,)
+    fhs = J.process_html_qblocks(hs, allvars, qblocks)
+    steps[:fhs] = (fhs=fhs,)
 
     return steps
 end

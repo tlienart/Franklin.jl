@@ -15,30 +15,18 @@
         {{ end }}
         final text
         """
-
-    hblocks, = explore_h_steps(hs)[:hblocks]
-    convhbs = [J.convert_html_block(hb, allvars) for hb ∈ hblocks]
-
-    @test convhbs[1] == "INPUT1"
-    @test convhbs[2] == "\nother stuff\n"
     @test J.convert_html(hs, allvars) == "Some text then INPUT1 and\n\nother stuff\n\nfinal text\n"
 
     hs = raw"""
         abc {{isdef no}}yada{{end}} def
         """
-    hblocks, = explore_h_steps(hs)[:hblocks]
-    @test J.convert_html_block(hblocks[1], allvars) == ""
+    @test J.convert_html(hs, allvars) == "abc  def\n"
 
     hs = raw"""abc {{ fill nope }} ... """
-    qblocks, = explore_h_steps(hs)[:qblocks]
-    @test (@test_logs (:warn, "I found a '{{fill nope}}' but I do not know the variable 'nope'. Ignoring.") J.convert_html_block(qblocks[1], allvars)) == ""
+    @test (@test_logs (:warn, "I found a '{{fill nope}}' but I do not know the variable 'nope'. Ignoring.") J.convert_html(hs, allvars))  == "abc  ... "
 
-    hs = raw"""
-        unknown function {{ unknown fun }} and see.
-        """
-    qblocks, = explore_h_steps(hs)[:qblocks]
-    @test qblocks[1] isa J.HFun
-    @test (@test_logs (:warn, "I found a function block '{{unknown ...}}' but don't recognise the function name. Ignoring.") J.convert_html_block(qblocks[1], allvars)) == ""
+    hs = raw"""unknown fun {{ unknown fun }} and see."""
+    @test (@test_logs (:warn, "I found a function block '{{unknown ...}}' but don't recognise the function name. Ignoring.") J.convert_html(hs, allvars)) == "unknown fun  and see."
 end
 
 
@@ -53,8 +41,7 @@ end
     @test J.convert_html(hs, allvars) == "Trying to insert: some random text to insert and see.\n"
 
     hs = raw"""Trying to insert: {{ insert nope.rnd }} and see."""
-    qblocks, = explore_h_steps(hs)[:qblocks]
-    @test (@test_logs (:warn, "I found an {{insert ...}} block and tried to insert '$(joinpath(J.PATHS[:src_html], "nope.rnd"))' but I couldn't find the file. Ignoring.") J.convert_html_block(qblocks[1], allvars)) == ""
+    @test (@test_logs (:warn, "I found an {{insert ...}} block and tried to insert '$(joinpath(J.PATHS[:src_html], "nope.rnd"))' but I couldn't find the file. Ignoring.") J.convert_html(hs, allvars)) == "Trying to insert:  and see."
 end
 
 
@@ -109,11 +96,11 @@ end
     @test "{{if b2}} blah {{ else }} {{ end }}" |> jdc == " blah "      # if
     @test "{{if b2}} blah {{ end }}" |> jdc == " blah "                 # if
 
-    @test "{{if b1}} blah {{ else }} {{ end }}" |> jdc == "" # else, empty
-    @test "{{if b1}} {{ else }} {{ end }}" |> jdc == ""      # else, empty
+    @test "{{if b1}} blah {{ else }} {{ end }}" |> jdc == " " # else, empty
+    @test "{{if b1}} {{ else }} {{ end }}" |> jdc == " "      # else, empty
     @test "{{if b1}} blah {{ end }}" |> jdc == ""            # else, empty
-    @test "{{if b2}} {{ else }} {{ end }}" |> jdc == ""      # if, empty
-    @test "{{if b2}} {{ else }} blih {{ end }}" |> jdc == "" # if, empty
+    @test "{{if b2}} {{ else }} {{ end }}" |> jdc == " "      # if, empty
+    @test "{{if b2}} {{ else }} blih {{ end }}" |> jdc == " " # if, empty
 end
 
 
@@ -125,48 +112,6 @@ end
         {{isnotpage blah.html ya/xx}} blih {{end}} done.
         """
 
-    tokens = J.find_tokens(hs, J.HTML_TOKENS, J.HTML_1C_TOKENS)
-    hblocks, tokens = J.find_all_ocblocks(tokens, J.HTML_OCB)
-    qblocks = J.qualify_html_hblocks(hblocks)
-
-    @test qblocks[1] isa J.HIsPage
-    @test qblocks[1].pages[1] == "index.html"
-    @test qblocks[2] isa J.HEnd
-    @test qblocks[3] isa J.HIsNotPage
-    @test qblocks[3].pages[1] == "blah.html"
-    @test qblocks[3].pages[2] == "ya/xx"
-
-    cblocks, qblocks = J.find_html_cblocks(qblocks)
-    @test isempty(cblocks)
-    cdblocks, qblocks = J.find_html_cdblocks(qblocks)
-    @test isempty(cblocks)
-    cpblocks, qblocks = J.find_html_cpblocks(qblocks)
-
-    @test isempty(qblocks)
-    @test cpblocks[1].checkispage == true
-    @test cpblocks[1].pages[1] == "index.html"
-    @test cpblocks[1].action == " blah "
-    @test cpblocks[2].checkispage == false
-    @test cpblocks[2].pages[1] == "blah.html"
-
-    hblocks = J.merge_blocks(qblocks, cblocks, cdblocks, cpblocks)
-
-    @test hblocks[1] isa J.HCondPage
-    @test hblocks[1].pages == cpblocks[1].pages
-
-    J.CUR_PATH[] = "index.md"
-    @test J.convert_html_block(hblocks[1], allvars) == " blah "
-    J.CUR_PATH[] = "indosdf.md"
-    @test J.convert_html_block(hblocks[1], allvars) == ""
-    J.CUR_PATH[] = "index.md"
-    @test J.convert_html_block(hblocks[2], allvars) == " blih "
-    J.CUR_PATH[] = "blah.md"
-    @test J.convert_html_block(hblocks[2], allvars) == ""
-    J.CUR_PATH[] = "index.md"
-    convhbs = [J.convert_html_block(hb, allvars) for hb ∈ hblocks]
-
-    @test convhbs[1] == " blah " # condition is met
-    @test convhbs[2] == " blih " # condition is met
     J.CUR_PATH[] = "index.md"
     @test J.convert_html(hs, allvars) == "Some text then  blah  but\n blih  done.\n"
 end
