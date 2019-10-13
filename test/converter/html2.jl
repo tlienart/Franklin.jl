@@ -50,3 +50,22 @@ end
     fhs = J.process_html_qblocks(hs, allvars, qblocks)
     @test isapproxstr(fhs, "AEF")
 end
+
+
+@testset "Bad cases" begin
+    # Lonely End block
+    s = """A {{end}}"""
+    @test_throws J.HTMLBlockError J.convert_html(s, J.PageVars())
+
+    # Inbalanced
+    s = """A {{if a}} B {{if b}} C {{else}} {{end}}"""
+    @test_throws J.HTMLBlockError J.convert_html(s, J.PageVars())
+
+    # Some of the conditions are not bools
+    allvars = J.PageVars(
+        "a" => false => (Bool,),
+        "b" => false => (Bool,),
+        "c" => "Hello" => (String,))
+    s = """A {{if a}} A {{elseif c}} B {{end}}"""
+    @test_throws J.HTMLBlockError J.convert_html(s, allvars)
+end

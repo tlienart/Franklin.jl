@@ -141,8 +141,9 @@ function process_html_cond(hs::AS, allvars::PageVars, qblocks::Vector{AbstractBl
     # several else-if blocks and possibly an else block.
     # Check which one applies and discard the rest
 
-    k   = 0
-    lag = 0
+    k   = 0 # index of the first verified condition
+    lag = 0 # aux var to distinguish 1st block case
+
     # initial block may be {{if..}} or {{isdef..}} or...
     # if its not just a {{if...}}, need to act appropriately
     # and if the condition is verified then k=1
@@ -156,7 +157,8 @@ function process_html_cond(hs::AS, allvars::PageVars, qblocks::Vector{AbstractBl
         else
             # current path is relative to /src/ for instance
             # /src/pages/blah.md -> pages/blah
-            rpath = splitext(unixify(CUR_PATH[]))[1] # if starts with `pages/`, replaces by `pub/`: pages/blah => pub/blah
+            # if starts with `pages/`, replaces by `pub/`: pages/blah => pub/blah
+            rpath = splitext(unixify(CUR_PATH[]))[1]
             rpath = replace(rpath, Regex("^pages") => "pub")
             # compare with β.pages
             inpage = any(p -> splitext(p)[1] == rpath, βi.pages)
@@ -169,6 +171,8 @@ function process_html_cond(hs::AS, allvars::PageVars, qblocks::Vector{AbstractBl
         end
     end
 
+    # If we've not yet found a verified condition, keep looking
+    # Now all cond blocks ahead are {{if ...}} {{elseif  ...}}
     if iszero(k)
         if lag == 0
             conds = [βi.vname, (qblocks[c].vname for c in elseif_idx)...]
@@ -182,7 +186,7 @@ function process_html_cond(hs::AS, allvars::PageVars, qblocks::Vector{AbstractBl
             throw(HTMLBlockError("At least one of the condition variable could not be found: " *
                                  "couldn't find '$(conds[idx])'."))
         end
-        # check that all these variables are boolean...
+        # check that all these variables are bool
         bools = [isa(allvars[c].first, Bool) for c  in conds]
         if !all(bools)
             idx = findfirst(.!bools)
@@ -194,8 +198,8 @@ function process_html_cond(hs::AS, allvars::PageVars, qblocks::Vector{AbstractBl
         k = isnothing(u) ? 0 : u + lag
     end
 
-    # if none is verified, use the else clause if there is one
     if iszero(k)
+        # if we still haven't found a verified condition, use the else if there is one
         if !iszero(else_idx)
             # use elseblock, the content is from it to the β_close
             head = nextind(hs, to(qblocks[else_idx]))
@@ -207,8 +211,8 @@ function process_html_cond(hs::AS, allvars::PageVars, qblocks::Vector{AbstractBl
         end
     else
         # determine the span of blocks
-        oidx = 0 # opening 'qblock'
-        cidx = 0 # closing 'qblock'
+        oidx = 0 # opening conditional
+        cidx = 0 # closing conditional
         if k == 1
             oidx = init_idx
         else
@@ -229,6 +233,6 @@ function process_html_cond(hs::AS, allvars::PageVars, qblocks::Vector{AbstractBl
     end
     # move the head after the final {{end}}
     head = nextind(hs, to(β_close))
-    #
+
     return content, head, i_close
 end
