@@ -54,9 +54,12 @@ function literate_to_judoc(rpath::AS)::Tuple{String,Bool}
     end
     # don't show Literate's infos
     Logging.disable_logging(Logging.LogLevel(Logging.Info))
+    # >> output the markdown
     Literate.markdown(fpath, outpath; documenter=false,
                       postprocess=literate_post_process, credit=false)
+    # >> output the script
     Literate.script(fpath, outpath; documenter=false,
+                      postprocess=s->("# NOTE: this file was generated, do not modify it.\n\n"*s),
                       name=fname * "_script", credit=false)
     # bring back logging
     Logging.disable_logging(Logging.LogLevel(Logging.Debug))
