@@ -62,7 +62,10 @@ function resolve_lx_literate(lxc::LxCom)::String
             set_var!(LOCAL_PAGE_VARS, "freezecode", true)
         end
     end
-    # if haschanged=true then this will be handled cell by cell
+    if haschanged && FULL_PASS[]
+        set_var!(LOCAL_PAGE_VARS, "reeval", true)
+    end
+    # if haschanged=true and not full pass then this will be handled cell by cell
     # comparing with cell files following `eval_and_resolve_code`
     return read(opath, String) * EOS
 end

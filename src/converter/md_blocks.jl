@@ -125,6 +125,7 @@ function convert_header(β::OCBlock)::String
     return html_hk(hk, html_ahref_key(rstitle, title); id=rstitle)
 end
 
+
 """Convenience function to increment the eval' code block counter"""
 increment_code_head() = (LOCAL_PAGE_VARS["jd_code_head"].first[] += 1)
 
@@ -169,7 +170,7 @@ function eval_and_resolve_code(code::AS, rpath::AS;
         return resolve_lx_input_hlcode(rpath, "julia")
     end
 
-    write(path, MESSAGE_FILE_GEN * code)
+    write(path, MESSAGE_FILE_GEN_JMD * code)
     print(rpad("\r→ evaluating code [...] ($(CUR_PATH[]), $rpath)", 79) * "\r")
     # - execute the code while redirecting stdout to file
     Logging.disable_logging(Logging.LogLevel(3_000))
@@ -177,7 +178,7 @@ function eval_and_resolve_code(code::AS, rpath::AS;
     open(out_path, "w") do outf        # for stdout
         redirect_stdout(outf) do
             res = try
-                Main.include(path)
+                include(path)
             catch e
                 print("There was an error running the code:\n$(e.error)")
             end

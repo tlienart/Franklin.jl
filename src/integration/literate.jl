@@ -12,7 +12,7 @@ function literate_post_process(s::String)::String
     isempty(s) && return s
     em   = eachmatch(LITERATE_JULIA_FENCE_R, s)
     buf  = IOBuffer()
-    write(buf, "<!--This file was generated, do not modify it.-->\n")
+    write(buf, "<!--$MESSAGE_FILE_GEN-->\n")
     head = 1
     c    = 1
     for m in em
@@ -54,9 +54,12 @@ function literate_to_judoc(rpath::AS)::Tuple{String,Bool}
     end
     # don't show Literate's infos
     Logging.disable_logging(Logging.LogLevel(Logging.Info))
+    # >> output the markdown
     Literate.markdown(fpath, outpath; documenter=false,
                       postprocess=literate_post_process, credit=false)
+    # >> output the script
     Literate.script(fpath, outpath; documenter=false,
+                      postprocess=s->(MESSAGE_FILE_GEN_LIT * s),
                       name=fname * "_script", credit=false)
     # bring back logging
     Logging.disable_logging(Logging.LogLevel(Logging.Debug))
