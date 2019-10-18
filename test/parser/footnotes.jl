@@ -34,3 +34,19 @@
                 </table>
             </p>""")
 end
+
+
+@testset "Fn in code" begin
+    s = raw"""
+        ```markdown
+       this has[^1]
+
+       [^1]: def
+       ```
+       blah
+       """
+    @test isapproxstr(s |> jd2html_td, """
+        <pre><code class="language-markdown">this has[^1]
+        [^1]: def
+        </code></pre> blah""")
+end
