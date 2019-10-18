@@ -1,3 +1,53 @@
+"""
+$SIGNATURES
+
+"""
+function verify_links_page(path::AS, online::Bool)
+    fullpath = joinpath(PATHS[:folder], path)
+    mdpath   = replace(path, Regex("^pub$(escape_string(PATH_SEP))")=>"pages$(PATH_SEP)")
+    mdpath   = splitext(mdpath)[1] * ".md"
+    allok    = true
+    for m in eachmatch(r"\shref=\"(https?://)?(.*?)\"", read(fullpath, String))
+        if m.captures[1] === nothing
+            # internal link
+            link = m.captures[2]
+            if !isfile(joinpath(PATHS[:folder], link))
+                allok = false
+                println("- internal link error on page $mdpath: $link.")
+            end
+        else
+            # external link
+            link = m.captures[1] * m.captures[2]
+            if
+                allok = false
+            end
+        end
+    end
+    return allok
+end
+
+"""
+$SIGNATURES
+
+Verify all links in generated HTML.
+"""
+function verify_all_links()
+    # check that the user is online (otherwise only verify internal links)
+    r = HTTP.request("HEAD", "https://www.github.com")
+    online = (r.status == 200)
+
+    # go over `index.html` then everything in `pub/`
+    verify_links_page("index.html")
+
+    # 1. check external links (get HEAD)
+
+    # 2. check internal links (isfile)
+
+    # if all ok, print a nice thing
+end
+
+
+
 const JD_PY_MIN_NAME = ".__py_tmp_minscript.py"
 
 """
@@ -29,7 +79,7 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
               "You can install it with `npm install highlight.js`."
     end
     if !isempty(prepath)
-        GLOBAL_PAGE_VARS["prepath"] = prepath => (String, )
+        set_var!(GLOBAL_PAGE_VARS, "prepath", prepath)
     end
     # re-do a (silent) full pass
     start = time()
@@ -70,8 +120,7 @@ $(SIGNATURES)
 
 This is a simple wrapper doing a git commit and git push without much fanciness. It assumes the
 current directory is a git folder.
-This will work in most simple scenarios (e.g. there's only one person updating the website).
-In other scenarios you should probably do this manually.
+It also fixes all links if you specify `prepath` (or if it's set in `config.md`).
 
 **Keyword arguments**
 
