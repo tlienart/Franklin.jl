@@ -15,11 +15,8 @@ function validate_footnotes!(tokens::Vector{Token})
                 if !isnothing(m.captures[1])
                     # it's a def
                     tokens[i] = Token(:FOOTNOTE_DEF, τ.ss)
-                else
-                    # it's a ref, take and delete
-                    push!(fn_refs, τ)
-                    push!(rm, i)
                 end
+                # otherwise it's a ref, leave as is
             else
                 # delete
                 push!(rm, i)
@@ -27,7 +24,7 @@ function validate_footnotes!(tokens::Vector{Token})
         end
     end
     deleteat!(tokens, rm)
-    return fn_refs
+    return nothing
 end
 
 """

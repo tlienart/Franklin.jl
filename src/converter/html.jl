@@ -46,6 +46,8 @@ function jd2html(st::AbstractString; internal::Bool=false, dir::String="")::Stri
         FOLDER_PATH[] = isempty(dir) ? mktempdir() : dir
         set_paths!()
         CUR_PATH[] = "index.md"
+        def_GLOBAL_LXDEFS!()
+        def_GLOBAL_PAGE_VARS!()
     end
     m, v = convert_md(st * EOS, collect(values(GLOBAL_LXDEFS)); isinternal=internal)
     h = convert_html(m, v)

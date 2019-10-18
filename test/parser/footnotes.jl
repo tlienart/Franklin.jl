@@ -7,6 +7,7 @@
            <p>A<sup id="fnref:1"><a href="/index.html#fndef:1" class="fnref">[1]</a></sup>
               B<sup id="fnref:blah"><a href="/index.html#fndef:blah" class="fnref">[2]</a></sup>
               C</p>""")
+
     st = """
         A[^1] B[^blah]
         C
