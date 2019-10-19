@@ -36,7 +36,8 @@ function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
 
     #> 1. Tokenize
     tokens  = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
-    fn_refs = validate_footnotes!(tokens)
+    # distinguish fnref/fndef
+    validate_footnotes!(tokens)
     #> 1b. Find indented blocks
     tokens = find_indented_blocks(tokens, mds)
 
@@ -74,9 +75,12 @@ function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
     #
     # Forming of the html string
     #
+    # filter out the fnrefs that are left (still active)
+    # and add them to the blocks to insert
+    fnrefs = filter!(τ -> τ.name == :FOOTNOTE_REF, tokens)
 
     #> 1. Merge all the blocks that will need further processing before insertion
-    blocks2insert = merge_blocks(lxcoms, deactivate_divs(blocks), fn_refs, sp_chars)
+    blocks2insert = merge_blocks(lxcoms, deactivate_divs(blocks), sp_chars, fnrefs)
 
     #> 2. Form intermediate markdown + html
     inter_md, mblocks = form_inter_md(mds, blocks2insert, lxdefs)

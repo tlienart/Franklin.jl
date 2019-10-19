@@ -44,29 +44,34 @@ function explore_md_steps(mds)
     J.def_GLOBAL_PAGE_VARS!()
     J.def_GLOBAL_LXDEFS!()
     empty!(J.RSS_DICT)
+
     J.def_LOCAL_PAGE_VARS!()
+    J.def_PAGE_HEADERS!()
     J.def_PAGE_EQREFS!()
     J.def_PAGE_BIBREFS!()
     J.def_PAGE_FNREFS!()
+    J.def_PAGE_LINK_DEFS!()
 
     steps = OrderedDict{Symbol,NamedTuple}()
 
     # tokenize
-    tokens = J.find_tokens(mds, J.MD_TOKENS, J.MD_1C_TOKENS)
-    tokens = J.find_indented_blocks(tokens, mds)
-    steps[:tokenization] = (tokens=tokens,)
-
+    tokens  = J.find_tokens(mds, J.MD_TOKENS, J.MD_1C_TOKENS)
     fn_refs = J.validate_footnotes!(tokens)
-    steps[:fn_validation] = (tokens=tokens, fn_refs=fn_refs)
+    tokens  = J.find_indented_blocks(tokens, mds)
+    steps[:tokenization] =  (tokens=tokens,)
+    steps[:fn_validation] = (fn_refs=fn_refs,)
 
     # ocblocks
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
+    J.merge_indented_code_blocks!(blocks, mds)
     steps[:ocblocks] = (blocks=blocks, tokens=tokens)
 
     # filter
-    filter!(τ -> τ.name != :LINE_RETURN, tokens)
+    filter!(τ -> τ.name ∉ J.L_RETURNS, tokens)
     filter!(β -> J.validate_header_block(β), blocks)
     steps[:filter] = (tokens=tokens, blocks=blocks)
+
+    J.validate_and_store_link_defs!(blocks)
 
     # latex commands
     lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
