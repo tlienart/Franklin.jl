@@ -20,7 +20,7 @@
     end
     # ---------------
     # verify all links
-    JuDoc.verify_all_links()
+    JuDoc.verify_links()
 
     # ---------------
     # change the prepath

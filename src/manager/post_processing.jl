@@ -59,7 +59,7 @@ $SIGNATURES
 
 Verify all links in generated HTML.
 """
-function verify_all_links()::Nothing
+function verify_links()::Nothing
     # check that the user is online (otherwise only verify internal links)
     online = HTTP.request("HEAD", "https://discourse.julialang.org/").status == 200
 
