@@ -22,6 +22,7 @@ when JuDoc is started.
     GLOBAL_PAGE_VARS["date_format"] = Pair("U dd, yyyy",   (String,))
     GLOBAL_PAGE_VARS["prepath"]     = Pair("",             (String,))
     GLOBAL_PAGE_VARS["mintoclevel"] = Pair(1,              (Int,)) # set to 2 to ignore h1
+    GLOBAL_PAGE_VARS["maxtoclevel"] = Pair(100,            (Int,))
     # these must be defined for the RSS file to be generated
     GLOBAL_PAGE_VARS["website_title"] = Pair("",    (String,))
     GLOBAL_PAGE_VARS["website_descr"] = Pair("",    (String,))

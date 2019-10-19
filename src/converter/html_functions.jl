@@ -104,8 +104,8 @@ The split is as follows:
 function hfun_toc()::String
     isempty(PAGE_HEADERS) && return ""
     inner   = ""
-    headers = filter(p -> p.second[3] ≥ GLOBAL_PAGE_VARS["mintoclevel"].first,
-                     PAGE_HEADERS)
+    headers = filter(p -> p.second[3] ≥ GLOBAL_PAGE_VARS["mintoclevel"].first &&
+                          p.second[3] ≤ GLOBAL_PAGE_VARS["maxtoclevel"].first, PAGE_HEADERS)
     baselvl = minimum(h[3] for h in values(headers)) - 1
     curlvl  = baselvl
     for (rs, h) ∈ headers
