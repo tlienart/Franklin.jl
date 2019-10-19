@@ -1,3 +1,91 @@
+"""
+$SIGNATURES
+
+Take a page (in HTML) and check all `href` on it to see if they lead somewhere.
+"""
+function verify_links_page(path::AS, online::Bool)
+    shortpath = replace(path, PATHS[:folder] => "")
+    mdpath    = replace(shortpath, Regex("^pub$(escape_string(PATH_SEP))")=>"pages$(PATH_SEP)")
+    mdpath    = splitext(mdpath)[1] * ".md"
+    shortpath = replace(shortpath, r"^\/"=>"")
+    mdpath    = replace(mdpath, r"^\/"=>"")
+    allok     = true
+    page      = read(path, String)
+    for m in eachmatch(r"\shref=\"(https?://)?(.*?)(?:#(.*?))?\"", page)
+        if m.captures[1] === nothing
+            # internal link, remove the front / otherwise it fails with joinpath
+            link   = replace(m.captures[2], r"^\/"=>"")
+            # if it's empty it's `href="/"` which is always ok
+            isempty(link) && continue
+            anchor = m.captures[3]
+            full_link = joinpath(PATHS[:folder], link)
+            if !isfile(full_link)
+                allok && println("")
+                println("- internal link issue on page $mdpath: $link.")
+                allok = false
+            else
+                if !isnothing(anchor)
+                    if full_link != path
+                        rpage = read(full_link, String)
+                    else
+                        rpage = page
+                    end
+                    # look for `id=...` either with or without quotation marks
+                    if match(Regex("id=(?:\")?$anchor(?:\")?"), rpage) === nothing
+                        allok && println("")
+                        println("- internal link issue on page $mdpath: $link.")
+                        allok = false
+                    end
+                end
+            end
+        else
+            online || continue
+            # external link
+            link = m.captures[1] * m.captures[2]
+            try
+                HTTP.request("HEAD", link).status == 200 || throw()
+            catch
+                allok && println("")
+                println("- external link issue on page $mdpath: $link")
+                allok = false
+            end
+        end
+    end
+    return allok
+end
+
+"""
+$SIGNATURES
+
+Verify all links in generated HTML.
+"""
+function verify_links()::Nothing
+    # check that the user is online (otherwise only verify internal links)
+    online = HTTP.request("HEAD", "https://discourse.julialang.org/").status == 200
+
+    print("Verifying links...")
+    if online
+        print(" [you seem online ✓]")
+    else
+        print(" [you don't seem online ✗]")
+    end
+
+    # go over `index.html` then everything in `pub/`
+    overallok = verify_links_page(joinpath(PATHS[:folder], "index.html"), online)
+
+    for (root, _, files) ∈ walkdir(PATHS[:pub])
+        for file ∈ files
+            splitext(file)[2] == ".html" && continue
+            path = joinpath(root, file)
+            allok = verify_links_page(path)
+            overallok = overallok && allok
+        end
+    end
+    overallok && println("\rAll internal $(online && "and external ")links verified ✓.      ")
+    return nothing
+end
+
+
 const JD_PY_MIN_NAME = ".__py_tmp_minscript.py"
 
 """
@@ -29,7 +117,7 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
               "You can install it with `npm install highlight.js`."
     end
     if !isempty(prepath)
-        GLOBAL_PAGE_VARS["prepath"] = prepath => (String, )
+        GLOBAL_PAGE_VARS["prepath"] = prepath => (String,)
     end
     # re-do a (silent) full pass
     start = time()
@@ -70,8 +158,7 @@ $(SIGNATURES)
 
 This is a simple wrapper doing a git commit and git push without much fanciness. It assumes the
 current directory is a git folder.
-This will work in most simple scenarios (e.g. there's only one person updating the website).
-In other scenarios you should probably do this manually.
+It also fixes all links if you specify `prepath` (or if it's set in `config.md`).
 
 **Keyword arguments**
 

@@ -15,8 +15,9 @@ import LiveServer
 import Base.push!
 import NodeJS
 import Literate
+import HTTP
 
-export serve, publish, cleanpull, newsite, optimize, jd2html, literate_folder
+export serve, publish, cleanpull, newsite, optimize, jd2html, literate_folder, verify_links
 
 # -----------------------------------------------------------------------------
 #

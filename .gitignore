@@ -5,3 +5,4 @@
 Manifest.toml
 sandbox/
 docs/build/
+test/__tmp/

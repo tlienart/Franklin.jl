@@ -19,6 +19,10 @@
         @test stat("index.html").size < presize2
     end
     # ---------------
+    # verify all links
+    JuDoc.verify_links()
+
+    # ---------------
     # change the prepath
     index = read("index.html", String)
     @test occursin("=\"/css/basic.css", index)
