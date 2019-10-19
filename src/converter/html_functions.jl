@@ -93,7 +93,8 @@ end
 """
 $(SIGNATURES)
 
-H-Function of the form `{{toc}}` (table of contents).
+H-Function of the form `{{toc min max}}` (table of contents). Where `min` and `max`
+control the minimum level and maximum level of  the table of content.
 The split is as follows:
 
 * key is the refstring
@@ -101,11 +102,25 @@ The split is as follows:
 * f[2] is irrelevant (occurence, used for numbering)
 * f[3] is the level
 """
-function hfun_toc()::String
+function hfun_toc(params::Vector{String})::String
+    if length(params) != 2
+        throw(HTMLFunctionError("I found a {{toc ...}} block and expected 2 parameters" *
+                                "but got $(length(params)). Verify."))
+    end
     isempty(PAGE_HEADERS) && return ""
+
+    # try to parse min-max level
+    min = 0
+    max = 100
+    try
+        min = parse(Int, params[1])
+        max = parse(Int, params[2])
+    catch
+        throw(HTMLFunctionError("I found a {{toc min max}} but couldn't parse min/max. Verify."))
+    end
+
     inner   = ""
-    headers = filter(p -> p.second[3] ≥ GLOBAL_PAGE_VARS["mintoclevel"].first &&
-                          p.second[3] ≤ GLOBAL_PAGE_VARS["maxtoclevel"].first, PAGE_HEADERS)
+    headers = filter(p -> min ≤ p.second[3] ≤ max, PAGE_HEADERS)
     baselvl = minimum(h[3] for h in values(headers)) - 1
     curlvl  = baselvl
     for (rs, h) ∈ headers
@@ -148,5 +163,5 @@ const HTML_FUNCTIONS = LittleDict{String, Function}(
     "fill"   => ((π, ν) -> hfun_fill(π, ν)),
     "insert" => ((π, _) -> hfun_insert(π)),
     "href"   => ((π, _) -> hfun_href(π)),
-    "toc"    => ((_, _) -> hfun_toc()),
+    "toc"    => ((π, _) -> hfun_toc(π)),
     )

@@ -21,8 +21,6 @@ when JuDoc is started.
     GLOBAL_PAGE_VARS["author"]      = Pair("THE AUTHOR",   (String, Nothing))
     GLOBAL_PAGE_VARS["date_format"] = Pair("U dd, yyyy",   (String,))
     GLOBAL_PAGE_VARS["prepath"]     = Pair("",             (String,))
-    GLOBAL_PAGE_VARS["mintoclevel"] = Pair(1,              (Int,)) # set to 2 to ignore h1
-    GLOBAL_PAGE_VARS["maxtoclevel"] = Pair(100,            (Int,))
     # these must be defined for the RSS file to be generated
     GLOBAL_PAGE_VARS["website_title"] = Pair("",    (String,))
     GLOBAL_PAGE_VARS["website_descr"] = Pair("",    (String,))
@@ -95,7 +93,9 @@ is processed.
     LOCAL_PAGE_VARS["date"]       = Pair(Date(1), (String, Date, Nothing))
     LOCAL_PAGE_VARS["lang"]       = Pair("julia", (String,)) # default lang for indented code
     LOCAL_PAGE_VARS["reflinks"]   = Pair(true,    (Bool,))   # whether there are reflinks or not
-
+    # Table of contents controls
+    LOCAL_PAGE_VARS["mintoclevel"] = Pair(1,      (Int,)) # set to 2 to ignore h1
+    LOCAL_PAGE_VARS["maxtoclevel"] = Pair(100,    (Int,))
     # CODE EVALUATION
     #
     LOCAL_PAGE_VARS["reeval"]        = Pair(false,  (Bool,)) # whether to always re-evals all on pg
@@ -235,8 +235,8 @@ the site. See [`resolve_lxcom`](@ref).
     GLOBAL_LXDEFS["\\citep"]    = LxDef("\\citep",    1, EMPTY_SS)
     GLOBAL_LXDEFS["\\label"]    = LxDef("\\label",    1, EMPTY_SS)
     GLOBAL_LXDEFS["\\biblabel"] = LxDef("\\biblabel", 2, EMPTY_SS)
-    GLOBAL_LXDEFS["\\toc"]      = LxDef("\\toc",      0, subs("~~~{{toc}}~~~"))
-    GLOBAL_LXDEFS["\\tableofcontents"] = LxDef("\\tableofcontents", 0, subs("~~~{{toc}}~~~"))
+    GLOBAL_LXDEFS["\\toc"]      = LxDef("\\toc",      0, EMPTY_SS)
+    GLOBAL_LXDEFS["\\tableofcontents"] = LxDef("\\tableofcontents", 0, EMPTY_SS)
     # inclusion
     GLOBAL_LXDEFS["\\input"]      = LxDef("\\input",      2, EMPTY_SS)
     GLOBAL_LXDEFS["\\output"]     = LxDef("\\output",     1, EMPTY_SS)

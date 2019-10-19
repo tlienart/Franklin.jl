@@ -187,6 +187,17 @@ function resolve_lx_file(lxc::LxCom)::String
     return html_err("file matching '$path' not found")
 end
 
+"""
+$SIGNATURES
+
+Internal function to resolve a `\\toc` or `\\tableofcontents`.
+"""
+function insert_toc(::LxCom)::String
+    minlevel = LOCAL_PAGE_VARS["mintoclevel"].first
+    maxlevel = LOCAL_PAGE_VARS["maxtoclevel"].first
+    return "{{toc $minlevel $maxlevel}}"
+end
+
 
 """
 $SIGNATURES
@@ -200,6 +211,8 @@ const LXCOM_SIMPLE = LittleDict{String, Function}(
     "\\file"   => resolve_lx_file,    # include a file
     "\\tableinput" => resolve_lx_tableinput,    # include table from a csv file
     "\\show"   => resolve_lx_show,    # show result of a code block
+    "\\toc"    => insert_toc,
+    "\\tableofcontents" => insert_toc,
     )
 
 

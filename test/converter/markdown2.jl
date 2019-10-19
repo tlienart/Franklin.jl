@@ -60,11 +60,9 @@ end
 
 @testset "TOC"  begin
     J.CUR_PATH[] = "pages/ff/aa.md"
-    J.set_var!(J.GLOBAL_PAGE_VARS, "mintoclevel", 2)
-    J.set_var!(J.GLOBAL_PAGE_VARS, "maxtoclevel", 3)
-    J.def_LOCAL_PAGE_VARS!()
-    empty!(J.PAGE_HEADERS)
     s = raw"""
+        @def mintoclevel = 2
+        @def maxtoclevel = 3
         \toc
         # A
         ## B
@@ -73,8 +71,8 @@ end
         ## E
         ### F
         done.
-        """
-    @test isapproxstr(jd2html(s, internal=true), raw"""
+        """ |> seval
+    @test isapproxstr(s, raw"""
         <div class="jd-toc">
             <ol>
                 <li><a href="/pub/ff/aa.html#b">B</a>
