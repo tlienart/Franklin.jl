@@ -178,7 +178,7 @@ end
         done.
         """ * J.EOS
 
-    @test (@test_logs (:warn, "Eval of non-julia code blocks is not yet supported.") h |> seval) == "<p>Simple code: <pre><code class=\"language-python\">sqrt(-1)\n</code></pre> done.</p>\n"
+    @test (@test_logs (:warn, "Eval of non-julia code blocks is not yet supported.") h |> seval) == "<p>Simple code: <pre><code class=\"language-python\">sqrt(-1)</code></pre> done.</p>\n"
 end
 
 # temporary fix for 186: make error appear and also use `abspath` in internal include

@@ -207,7 +207,7 @@ function convert_code_block(ss::SubString)::String
     m      = match(reg, ss)
     lang   = m.captures[1]
     rpath  = m.captures[2]
-    code   = m.captures[3]
+    code   = strip(m.captures[3])
 
     # if no rpath is given, the code is not eval'
     isnothing(rpath) && return html_code(code, lang)

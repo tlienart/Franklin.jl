@@ -143,12 +143,12 @@ end
             <pre><code class=\"plaintext\">8</code></pre>
             """)
 
-    @test J.LOCAL_PAGE_VARS["jd_code"].first == """
+    @test isapproxstr(J.str(J.LOCAL_PAGE_VARS["jd_code"].first), """
         a = 5
         println(a)
 
         a += 3
-        println(a)"""
+        println(a)""")
 
     h = raw"""
         @def hascode = true
@@ -181,7 +181,7 @@ end
             println(a)</code></pre>
             <pre><code class=\"plaintext\">9</code></pre>
             """)
-    @test J.LOCAL_PAGE_VARS["jd_code"].first == """
+    @test isapproxstr(J.str(J.LOCAL_PAGE_VARS["jd_code"].first), """
         a = 5
         println(a)
 
@@ -189,5 +189,5 @@ end
         println(a)
 
         a += 3
-        println(a)"""
+        println(a)""")
 end
