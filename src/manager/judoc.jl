@@ -236,7 +236,7 @@ function jd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, watched_files::Na
                 verb && print("\r" * fmsg)
                 start = time()
                 #
-                literate_path = unixify(splitext(joinpath(fpair...))[1])
+                literate_path = splitext(unixify(joinpath(fpair...)))[1]
                 #
                 head    = read(joinpath(PATHS[:src_html], "head.html"), String)
                 pg_foot = read(joinpath(PATHS[:src_html], "page_foot.html"), String)
@@ -248,7 +248,7 @@ function jd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, watched_files::Na
                     # read the content and look for `{...}` that may refer
                     # to that script.
                     content = read(mdfpath, String)
-                    for m in eachmatch(r"\{(.*?)(.jl)?\}", content)
+                    for m in eachmatch(r"\{(.*?)(\.jl)?\}", content)
                         if endswith(literate_path, m.captures[1])
                             process_file(:md, mdfpair, head, pg_foot, foot, cur_t;
                                          clear=false, prerender=false)
