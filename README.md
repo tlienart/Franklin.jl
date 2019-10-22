@@ -11,6 +11,7 @@ See [the docs](https://tlienart.github.io/JuDoc.jl/stable) for more information.
 
 A couple of websites using JuDoc:
 * [@cormullion's website](https://cormullion.github.io), the author of [Luxor.jl](https://github.com/JuliaGraphics/Luxor.jl),
+* MLJ's [tutorial website](https://alan-turing-institute.github.io/MLJTutorials/) which shows how JuDoc can interact nicely with [Literate.jl](https://github.com/fredrikekre/Literate.jl)
 * [my website](https://tlienart.github.io).
 * see also how [some julia blog posts](https://tlienart.github.io/julia-blog-migration/) render with JuDoc (note: _focus on the rendering, not the layout/CSS_) see also [the source repo](https://github.com/tlienart/julia-blog-migration).
   * actually see [all of them](https://julialangblogmirror.netlify.com/) rendered with JuDoc thanks to massive help from [@cormullion](https://github.com/cormullion); see also the [source repo](https://github.com/cormullion/julialangblog)
