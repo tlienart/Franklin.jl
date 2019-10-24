@@ -186,7 +186,7 @@ function eval_and_resolve_code(code::AS, rpath::AS;
     end
     open(res_path, "w") do outf
         redirect_stdout(outf) do
-            show(res)
+            show(stdout, "text/plain", res)
         end
     end
     Logging.disable_logging(Logging.Debug)
