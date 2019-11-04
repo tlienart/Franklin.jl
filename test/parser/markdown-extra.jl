@@ -84,4 +84,22 @@ end
     \hello
     """ |> jd2html_td
     @test isapproxstr(h, raw"""yaya  bar bar""")
+    h = raw"""
+    @@da
+        @@db
+            @@dc
+                blah
+            @@
+        @@
+    @@
+    """ |> jd2html_td
+    @test isapproxstr(h, raw"""
+            <div class="da">
+                <div class="db">
+                    <div class="dc">
+                        blah
+                    </div>
+                </div>
+            </div>
+            """)
 end

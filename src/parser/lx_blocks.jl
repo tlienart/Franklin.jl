@@ -66,7 +66,7 @@ function find_md_lxdefs(tokens::Vector{Token}, blocks::Vector{OCBlock})
         lxdef = content(defining_braces)
         todef = to(defining_braces)
         # post-process the def
-        lxdef = post_process_lxdef(lxdef)
+        lxdef = ignore_starting_line_spaces(lxdef)
         # store the new latex command
         push!(lxdefs, LxDef(lxname, lxnarg, lxdef, fromτ, todef))
 
@@ -91,18 +91,6 @@ function find_md_lxdefs(tokens::Vector{Token}, blocks::Vector{OCBlock})
     blocks = blocks[@. ~braces_mask]
 
     return lxdefs, tokens, braces, blocks
-end
-
-
-"""
-$SIGNATURES
-
-In an lxdef, ignore any whitespace at the beginning of lines to avoid ambiguities with indented
-code blocks.
-"""
-function post_process_lxdef(lxdef::SubString)::AS
-    s = strip(lxdef)
-    return replace(s, r"\n\s*" => "\n ")
 end
 
 

@@ -201,7 +201,7 @@ end
 """
 $SIGNATURES
 
-Helper function to [`merge_indented_code_blocks`](@ref).
+Helper function to [`merge_indented_blocks`](@ref).
 """
 function form_super_block!(blocks::Vector{OCBlock}, idx::Vector{Int},
                            curseq::Vector{Int}, del_blocks::Vector{Int})::Nothing
@@ -251,11 +251,11 @@ function filter_indented_blocks!(blocks::Vector{OCBlock})::Nothing
             end
         end
         if update
-            froms[.!active] = typemax(Int)
-            tos[.!active]   = 0
-            minfrom         = froms |> minimum
-            maxto           = tos |> maximum
-            update          = false
+            froms[.!active] .= typemax(Int)
+            tos[.!active]   .= 0
+            minfrom          = froms |> minimum
+            maxto            = tos |> maximum
+            update           = false
         end
     end
     deleteat!(blocks, idx[.!active])
