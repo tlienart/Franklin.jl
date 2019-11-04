@@ -102,4 +102,11 @@ end
                 </div>
             </div>
             """)
+    h = raw"""
+    \newcommand{\hello}[1]{#1}
+    \hello{
+        good lord
+    }
+    """ |> jd2html_td
+    @test isapproxstr(h, "good lord")
 end
