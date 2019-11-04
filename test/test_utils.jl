@@ -63,7 +63,8 @@ function explore_md_steps(mds)
 
     # ocblocks
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
-    J.merge_indented_code_blocks!(blocks, mds)
+    J.merge_indented_blocks!(blocks, mds)
+    J.filter_indented_blocks!(blocks)
     steps[:ocblocks] = (blocks=blocks, tokens=tokens)
 
     # filter

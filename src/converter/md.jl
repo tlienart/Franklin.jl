@@ -45,7 +45,9 @@ function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
     #>> a. find them
     blocks, tokens = find_all_ocblocks(tokens, MD_OCB_ALL)
     #>> b. merge CODE_BLOCK_IND which are separated by emptyness
-    merge_indented_code_blocks!(blocks, mds)
+    merge_indented_blocks!(blocks, mds)
+    #>> b'. only keep indented code blocks which are not contained in larger blocks (#285)
+    filter_indented_blocks!(blocks)
     #>> c. now that blocks have been found, line-returns can be dropped
     filter!(τ -> τ.name ∉ L_RETURNS, tokens)
     #>> d. filter out "fake headers" (opening ### that are not at the start of a line)
