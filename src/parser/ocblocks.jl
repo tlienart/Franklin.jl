@@ -79,11 +79,17 @@ function find_all_ocblocks(tokens::Vector{Token}, ocplist::Vector{OCProto}; inma
         ocbs, tokens = find_ocblocks(tokens, ocp; inmath=inmath)
         append!(ocbs_all, ocbs)
     end
-    # it may happen that a block is contained in a larger escape block.
-    # For instance this can happen if there is a code block in an escape block
-    # (see e.g. #151) or if there's indentation in a math block.
-    # To fix this, we browse the escape blocks in backwards order and check if
-    # there is any other block within it.
+    # it may happen that a block is contained in a larger block
+    # there are two situations where we want to do something about it:
+    # Case 1 (solved here) where a block is inside a larger escape block
+    # Case 2 (solved in check_and_merge_indented_blocks!) when an indented
+    #   code block is contained inside a larger block
+    #
+    # CASE 1: block inside a larger escape block.
+    #   this can happen if there is a code block in an escape block
+    #   (see e.g. #151) or if there's indentation in a math block.
+    #   To fix this, we browse the escape blocks in backwards order and check if
+    #   there is any other block within it.
     i = length(ocbs_all)
     active = ones(Bool, i)
     all_heads = from.(ocbs_all)
@@ -165,7 +171,7 @@ $SIGNATURES
 When two indented code blocks follow each other and there's nothing in between (empty line(s)),
 merge them into a super block.
 """
-function merge_indented_code_blocks!(blocks::Vector{OCBlock}, mds::String)::Nothing
+function merge_indented_blocks!(blocks::Vector{OCBlock}, mds::String)::Nothing
     # indices of CODE_BLOCK_IND
     idx = [i for i in eachindex(blocks) if blocks[i].name == :CODE_BLOCK_IND]
     isempty(idx) && return
@@ -195,7 +201,7 @@ end
 """
 $SIGNATURES
 
-Helper function to [`merge_indented_code_blocks`](@ref).
+Helper function to [`merge_indented_blocks`](@ref).
 """
 function form_super_block!(blocks::Vector{OCBlock}, idx::Vector{Int},
                            curseq::Vector{Int}, del_blocks::Vector{Int})::Nothing
@@ -208,6 +214,52 @@ function form_super_block!(blocks::Vector{OCBlock}, idx::Vector{Int},
     append!(del_blocks, curseq[2:end])
     empty!(curseq)
     return
+end
+
+
+"""
+$SIGNATURES
+
+Discard any indented block that is within a larger block to avoid ambiguities (see #285).
+"""
+function filter_indented_blocks!(blocks::Vector{OCBlock})::Nothing
+    # retrieve the indices of the indented blocks
+    idx       = [i for i in eachindex(blocks) if blocks[i].name == :CODE_BLOCK_IND]
+    isempty(idx) && return nothing
+    # keep track of the ones that are active
+    active    = ones(Bool, length(idx))
+    # retrieve their span
+    indblocks = blocks[idx]
+    froms     = indblocks .|> from
+    tos       = indblocks .|> to
+    # retrieve the max/min span for faster processing
+    minfrom   = froms |> minimum
+    maxto     = tos |> maximum
+    update    = false
+    # go over all blocks and check if they contain an indented block
+    for block in blocks
+        # discard if the block is before or after all indented blocks
+        from_, to_ = from(block), to(block)
+        (to_ < minfrom || from_ > maxto) && continue
+        # otherwise check and deactivate if it's contained
+        for k in eachindex(active)
+            active[k] || continue
+            indblock = blocks[idx[k]]
+            if from_ < from(indblock) && to_ > to(indblock)
+                active[k] = false
+                update = true
+            end
+        end
+        if update
+            froms[.!active] .= typemax(Int)
+            tos[.!active]   .= 0
+            minfrom          = froms |> minimum
+            maxto            = tos |> maximum
+            update           = false
+        end
+    end
+    deleteat!(blocks, idx[.!active])
+    return nothing
 end
 
 

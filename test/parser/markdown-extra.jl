@@ -73,5 +73,40 @@ end
             ```
             </code></pre> C</p>
             """)
+end
 
+@testset "Nested ind" begin # issue 285
+    h = raw"""
+    \newcommand{\hello}{
+        yaya
+        bar bar
+    }
+    \hello
+    """ |> jd2html_td
+    @test isapproxstr(h, raw"""yaya  bar bar""")
+    h = raw"""
+    @@da
+        @@db
+            @@dc
+                blah
+            @@
+        @@
+    @@
+    """ |> jd2html_td
+    @test isapproxstr(h, raw"""
+            <div class="da">
+                <div class="db">
+                    <div class="dc">
+                        blah
+                    </div>
+                </div>
+            </div>
+            """)
+    h = raw"""
+    \newcommand{\hello}[1]{#1}
+    \hello{
+        good lord
+    }
+    """ |> jd2html_td
+    @test isapproxstr(h, "good lord")
 end

@@ -75,7 +75,7 @@ const CUR_PATH = Ref("")
 const CUR_PATH_WITH_EVAL = Ref("")
 
 """Shorter name for a type that we use everywhere"""
-const AS = AbstractString
+const AS = Union{String,SubString{String}}
 
 """Convenience constants for an automatic message to add to code files."""
 const MESSAGE_FILE_GEN     = "This file was generated, do not modify it."

@@ -81,7 +81,6 @@ julia> ss = SubString("hello", 2:4); JuDoc.to(ss)
 """
 to(ss::SubString)::Int = ss.offset + ss.ncodeunits
 
-
 """
 $(SIGNATURES)
 
@@ -94,6 +93,18 @@ julia> JuDoc.matchrange(match(r"ell", "hello"))
 ```
 """
 matchrange(m::RegexMatch)::UnitRange{Int} = m.offset .+ (0:(length(m.match)-1))
+
+
+"""
+$SIGNATURES
+
+In an lxdef or a div, ignore any whitespace at the beginning of lines to avoid ambiguities with indented
+code blocks.
+"""
+function ignore_starting_line_spaces(content::SubString)::AS
+    s = strip(content)
+    return replace(s, r"\n\s*" => "\n ")
+end
 
 # Other convenience functions
 
