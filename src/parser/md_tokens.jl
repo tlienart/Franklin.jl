@@ -7,8 +7,7 @@ cannot appear again in a larger token.
 const MD_1C_TOKENS = LittleDict{Char, Symbol}(
     '{'  => :LXB_OPEN,
     '}'  => :LXB_CLOSE,
-    '\n' => :LINE_RETURN,
-    EOS  => :EOS,
+    '\n' => :LINE_RETURN
     )
 
 
@@ -125,7 +124,7 @@ L_RETURNS
 Convenience tuple containing the name for standard line returns and line returns followed by an
 indentation (either a quadruple space or a tab).
 """
-const L_RETURNS = (:LINE_RETURN, :LR_INDENT)
+const L_RETURNS = (:LINE_RETURN, :LR_INDENT, :EOS)
 
 
 """
@@ -150,19 +149,19 @@ const MD_OCB = [
     OCProto(:CODE_INLINE,     :CODE_DOUBLE,  (:CODE_DOUBLE,),   false),
     OCProto(:CODE_INLINE,     :CODE_SINGLE,  (:CODE_SINGLE,),   false),
     OCProto(:ESCAPE,          :ESCAPE,       (:ESCAPE,),        false),
-    OCProto(:FOOTNOTE_DEF,    :FOOTNOTE_DEF, (L_RETURNS..., :EOS), false),
-    OCProto(:LINK_DEF,        :LINK_DEF,     (L_RETURNS..., :EOS), false),
+    OCProto(:FOOTNOTE_DEF,    :FOOTNOTE_DEF, L_RETURNS,         false),
+    OCProto(:LINK_DEF,        :LINK_DEF,     L_RETURNS,         false),
     # ------------------------------------------------------------------
-    OCProto(:H1,              :H1_OPEN,      (L_RETURNS..., :EOS), false), # see [^3]
-    OCProto(:H2,              :H2_OPEN,      (L_RETURNS..., :EOS), false),
-    OCProto(:H3,              :H3_OPEN,      (L_RETURNS..., :EOS), false),
-    OCProto(:H4,              :H4_OPEN,      (L_RETURNS..., :EOS), false),
-    OCProto(:H5,              :H5_OPEN,      (L_RETURNS..., :EOS), false),
-    OCProto(:H6,              :H6_OPEN,      (L_RETURNS..., :EOS), false),
+    OCProto(:H1,              :H1_OPEN,      L_RETURNS,     false), # see [^3]
+    OCProto(:H2,              :H2_OPEN,      L_RETURNS,     false),
+    OCProto(:H3,              :H3_OPEN,      L_RETURNS,     false),
+    OCProto(:H4,              :H4_OPEN,      L_RETURNS,     false),
+    OCProto(:H5,              :H5_OPEN,      L_RETURNS,     false),
+    OCProto(:H6,              :H6_OPEN,      L_RETURNS,     false),
     # ------------------------------------------------------------------
-    OCProto(:MD_DEF,          :MD_DEF_OPEN,  (L_RETURNS..., :EOS), false), # see [^4]
-    OCProto(:LXB,             :LXB_OPEN,     (:LXB_CLOSE,),        true ),
-    OCProto(:DIV,             :DIV_OPEN,     (:DIV_CLOSE,),        true ),
+    OCProto(:MD_DEF,          :MD_DEF_OPEN,  L_RETURNS,     false), # see [^4]
+    OCProto(:LXB,             :LXB_OPEN,     (:LXB_CLOSE,), true ),
+    OCProto(:DIV,             :DIV_OPEN,     (:DIV_CLOSE,), true ),
     ]
 #= NOTE:
 * [3] a header can be closed by either a line return or an end of string (for instance in the case
@@ -179,6 +178,13 @@ MD_HEADER
 All header symbols.
 """
 const MD_HEADER = (:H1, :H2, :H3, :H4, :H5, :H6)
+
+"""
+MD_HEADER_OPEN
+
+All header symbols (opening).
+"""
+const MD_HEADER_OPEN = (:H1_OPEN, :H2_OPEN, :H3_OPEN, :H4_OPEN, :H5_OPEN, :H6_OPEN)
 
 
 """

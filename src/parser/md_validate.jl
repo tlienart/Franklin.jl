@@ -8,19 +8,18 @@ function validate_footnotes!(tokens::Vector{Token})
     fn_refs = Vector{Token}()
     rm      = Int[]
     for (i, τ) in enumerate(tokens)
-        if τ.name == :FOOTNOTE_REF
-            # footnote ref [^1]:
-            m = match(r"^\[\^[a-zA-Z0-9]+\](:)?$", τ.ss)
-            if !isnothing(m)
-                if !isnothing(m.captures[1])
-                    # it's a def
-                    tokens[i] = Token(:FOOTNOTE_DEF, τ.ss)
-                end
-                # otherwise it's a ref, leave as is
-            else
-                # delete
-                push!(rm, i)
+        τ.name == :FOOTNOTE_REF || continue
+        # footnote ref [^1]:
+        m = match(r"^\[\^[a-zA-Z0-9]+\](:)?$", τ.ss)
+        if !isnothing(m)
+            if !isnothing(m.captures[1])
+                # it's a def
+                tokens[i] = Token(:FOOTNOTE_DEF, τ.ss)
             end
+            # otherwise it's a ref, leave as is
+        else
+            # delete
+            push!(rm, i)
         end
     end
     deleteat!(tokens, rm)
@@ -42,18 +41,22 @@ $(SIGNATURES)
 Given a candidate header block, check that the opening `#` is at the start of a line, otherwise
 ignore the block.
 """
-function validate_header_block(β::OCBlock)::Bool
-    # skip non-header blocks
-    β.name ∈ MD_HEADER || return true
-    # if it's a header block, have a look at the opening token
-    τ = otok(β)
-    # check if it overlaps with the first character
-    from(τ) == 1 && return true
-    # otherwise check if the previous character is a linereturn
-    s = str(β.ss) # does not allocate
-    prevc = s[prevind(str(β.ss), from(τ))]
-    prevc == '\n' && return true
-    return false
+function validate_headers!(tokens::Vector{Token})::Nothing
+    isempty(tokens) && return
+    s = str(tokens[1].ss) # does not allocate
+    rm = Int[]
+    for (i, τ) in enumerate(tokens)
+        τ.name in MD_HEADER_OPEN || continue
+        # check if it overlaps with the first character
+        fromτ = from(τ)
+        fromτ == 1 && continue
+        # otherwise check if the previous character is a linereturn
+        prevc = s[prevind(s, fromτ)]
+        prevc == '\n' && continue
+        push!(rm, i)
+    end
+    deleteat!(tokens, rm)
+    return
 end
 
 postprocess_link(s::String) = replace(r"")

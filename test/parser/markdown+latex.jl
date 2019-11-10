@@ -316,3 +316,31 @@ end
         """ |> seval
     @test isapproxstr(h, """<p>Hello <br/> goodbye</p>""")
 end
+
+@testset "Header+lx" begin
+    h = "# blah" |> jd2html_td
+    @test h == raw"""<h1 id="blah"><a href="/index.html#blah">blah</a></h1>"""
+    h = raw"""
+        \newcommand{\foo}{foo}
+        \newcommand{\header}{# hello}
+        \foo
+        \header
+        """ |> jd2html_td
+    @test h == raw"""foo <h1 id="hello"><a href="/index.html#hello">hello</a></h1>"""
+    h = raw"""
+        \newcommand{\foo}{foo}
+        \foo hello
+        """ |> jd2html_td
+    @test h == raw"""foo hello"""
+    h = raw"""
+        \newcommand{\foo}{blah}
+        # \foo hello
+        """ |> jd2html_td
+    @test h == raw"""<h1 id="blah_hello"><a href="/index.html#blah_hello">blah hello</a></h1>"""
+    h = raw"""
+        \newcommand{\foo}{foo}
+        \newcommand{\header}[2]{!#1 \foo #2}
+        \header{##}{hello}
+        """ |> jd2html_td
+    @test h == raw"""<h2 id="foo_hello"><a href="/index.html#foo_hello">foo  hello</a></h2>"""
+end

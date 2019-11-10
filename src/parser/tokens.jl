@@ -28,6 +28,7 @@ struct Token <: AbstractBlock
     ss::SubString
 end
 
+to(β::Token) = ifelse(β.name == :EOS, from(β), to(β.ss))
 
 """
 $(TYPEDEF)
@@ -350,5 +351,6 @@ function find_tokens(str::AS,
         # dictionaries have been checked etc, moving on to the next valid char
         head_idx = nextind(str, head_idx)
     end
+    push!(tokens, Token(:EOS, subs(str, EOS_idx, EOS_idx)))
     return tokens
 end
