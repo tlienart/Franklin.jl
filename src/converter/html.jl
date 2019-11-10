@@ -4,6 +4,7 @@ $(SIGNATURES)
 Convert a judoc html string into a html string (i.e. replace `{{ ... }}` blocks).
 """
 function convert_html(hs::AS, allvars::PageVars; isoptim::Bool=false)::String
+    isempty(hs) && return hs
     # Tokenize
     tokens = find_tokens(hs, HTML_TOKENS, HTML_1C_TOKENS)
 
@@ -42,6 +43,7 @@ $SIGNATURES
 Return the HTML corresponding to a JuDoc-Markdown string.
 """
 function jd2html(st::AbstractString; internal::Bool=false, dir::String="")::String
+    isempty(st) && return st
     if !internal
         FOLDER_PATH[] = isempty(dir) ? mktempdir() : dir
         set_paths!()
