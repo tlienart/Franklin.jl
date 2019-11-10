@@ -55,6 +55,12 @@ const CODE_LANG = LittleDict{String,NTuple{2,String}}(
     "toml"       => (".toml", "#"),
     )
 
+"""Flag to suppress all statements including eval ones."""
+const SILENT_MODE = Ref(false)
+
+"""Extreme negative offset for ordering of newcommands defined in config."""
+const OFFSET_GLOB_LXDEFS = Ref(-BIG_INT)
+
 # copied from Base/path.jl
 if Sys.isunix()
     """Indicator for directory separation on the OS."""

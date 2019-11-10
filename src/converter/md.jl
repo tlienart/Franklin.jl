@@ -61,7 +61,7 @@ function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
     #>> b. if any lxdefs are given in the context, merge them. `pastdef` specifies
     # that the definitions appeared "earlier"
     lprelx = length(pre_lxdefs)
-    (lprelx > 0) && (lxdefs = cat(pastdef(pre_lxdefs), lxdefs, dims=1))
+    (lprelx > 0) && (lxdefs = cat(pastdef.(pre_lxdefs), lxdefs, dims=1))
     #>> c. find latex commands
     lxcoms, _ = find_md_lxcoms(tokens, lxdefs, braces)
 
@@ -334,7 +334,7 @@ $(SIGNATURES)
 
 Convenience function to process markdown definitions `@def ...` as appropriate. Return a dictionary
 of local page variables or nothing in the case of the config file (which updates globally
-available page variable dictionaries).
+available page variable dictionaries and also the latex definitions).
 
 **Arguments**
 
@@ -364,7 +364,7 @@ function process_md_defs(blocks::Vector{OCBlock}, isconfig::Bool,
     if isconfig
         isempty(assignments) || set_vars!(GLOBAL_PAGE_VARS, assignments)
         for lxd ∈ lxdefs
-            GLOBAL_LXDEFS[lxd.name] = lxd
+            GLOBAL_LXDEFS[lxd.name] = pastdef(lxd)
         end
         return nothing
     end

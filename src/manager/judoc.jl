@@ -14,14 +14,24 @@ Keyword arguments:
 * `isoptim=false`:   whether we're in an optimisation phase or not (if so, links are fixed in case
                      of a project website, see [`write_page`](@ref).
 * `no_fail_prerender=true`: whether, in a prerendering phase, ignore errors and try to produce an output
-* `eval_all=false`:    whether to force re-evaluation of all code blocks
+* `eval_all=false`:  whether to force re-evaluation of all code blocks
+* `silent=false`:    switch this on to suppress all output (including eval statements).
 """
-function serve(; clear::Bool=true, verb::Bool=false, port::Int=8000, single::Bool=false,
-                 prerender::Bool=false, nomess::Bool=false, isoptim::Bool=false,
-                 no_fail_prerender::Bool=true, eval_all::Bool=false,
-                 cleanup::Bool=true)::Union{Nothing,Int}
+function serve(; clear::Bool=true,
+                 verb::Bool=false,
+                 port::Int=8000,
+                 single::Bool=false,
+                 prerender::Bool=false,
+                 nomess::Bool=false,
+                 isoptim::Bool=false,
+                 no_fail_prerender::Bool=true,
+                 eval_all::Bool=false,
+                 silent::Bool=false)::Union{Nothing,Int}
     # set the global path
     FOLDER_PATH[]  = pwd()
+
+    # silent mode?
+    silent && (SILENT_MODE[] = true; verb = false)
 
     # brief check to see if we're in a folder that looks promising, otherwise stop
     # and tell the user to check (#155)

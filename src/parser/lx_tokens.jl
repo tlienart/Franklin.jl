@@ -44,31 +44,23 @@ mutable struct LxDef
     from::Int
     to  ::Int
 end
-LxDef(name::String, narg::Int, def::AS) = LxDef(name, narg, def, 0, 0)
+# if offset unspecified, start from basically -∞ (configs etc)
+function LxDef(name::String, narg::Int, def::AS)
+    o = OFFSET_GLOB_LXDEFS[] += 5 # we don't care just fwd a bit
+    LxDef(name, narg, def, o, o + 3) # we also don't care YOLO
+end
 
 from(lxd::LxDef) = lxd.from
 to(lxd::LxDef)   = lxd.to
 
 
 """
-pastdef(λ, a)
-pastdef(vλ)
+pastdef(λ)
 
 Convenience function to mark a definition as having been defined in the context i.e.: earlier than
 any other definition appearing in the current page.
 """
-pastdef(λ::LxDef, a::Int) = LxDef(λ.name, λ.narg, λ.def, a, a + (λ.to-λ.from))
-function pastdef(vλ::Vector{LxDef})
-    # put the past defs far back but preserve order
-    vλc = deepcopy(vλ)
-    a = -BIG_INT
-    for (i, λ) ∈ enumerate(vλc)
-        vλc[i] = pastdef(λ, a)
-        a = to(vλc[i]) + 1
-    end
-    return vλc
-end
-
+pastdef(λ::LxDef) = LxDef(λ.name, λ.narg, λ.def)
 
 """
 $(TYPEDEF)
