@@ -179,6 +179,13 @@ All header symbols.
 """
 const MD_HEADER = (:H1, :H2, :H3, :H4, :H5, :H6)
 
+"""
+MD_HEADER_OPEN
+
+All header symbols (opening).
+"""
+const MD_HEADER_OPEN = (:H1_OPEN, :H2_OPEN, :H3_OPEN, :H4_OPEN, :H5_OPEN, :H6_OPEN)
+
 
 """
 MD_OCB_ESC

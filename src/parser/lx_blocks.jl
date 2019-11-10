@@ -136,7 +136,6 @@ function find_md_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
     for (i, τ) ∈ enumerate(tokens)
         active_τ[i] || continue
         (τ.name == :LX_COMMAND) || continue
-
         # 1. look for the definition given the command name
         lxname   = τ.ss
         lxdefref = retrieve_lxdefref(lxname, lxdefs, inmath, offset)
