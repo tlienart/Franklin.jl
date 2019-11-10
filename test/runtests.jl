@@ -1,5 +1,6 @@
 using JuDoc, Test, Markdown, Dates, Random, Literate
 const J = JuDoc
+const R = @__DIR__
 const D = joinpath(dirname(dirname(pathof(JuDoc))), "test", "_dummies")
 
 # NOTE this first file MUST be included before running the rest of the tests
@@ -12,6 +13,7 @@ include("misc.jl")
 # MANAGER folder
 include("manager/utils.jl")
 include("manager/rss.jl")
+include("manager/config.jl")
 println("🍺")
 
 # PARSER folder
