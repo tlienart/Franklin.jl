@@ -138,7 +138,7 @@ function process_file_err(case::Symbol, fpair::Pair{String, String}, head::AS=""
                 force=true)
         end
     end
-    FULL_PASS[] || print(rpad("\r→ page updated [✓]", 79)*"\r")
+    FULL_PASS[] || SILENT_MODE[] || print(rpad("\r→ page updated [✓]", 79)*"\r")
     return nothing
 end
 

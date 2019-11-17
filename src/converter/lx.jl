@@ -30,7 +30,8 @@ function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef}; inmath::Bool=false)::S
         # lxdef = something -> maybe inmath + found; retrieve & apply
         partial = lxdef
         for (argnum, β) ∈ enumerate(lxc.braces)
-            content_ = ignore_starting_line_spaces(content(β))
+            content_ = strip(content(β))
+#           content_ = ignore_starting_line_spaces(content(β))
             # space sensitive "unsafe" one
             # e.g. blah/!#1 --> blah/blah but note that
             # \command!#1 --> \commandblah and \commandblah would not be found

@@ -24,7 +24,8 @@ function convert_block(β::AbstractBlock, lxcontext::LxContext)::AS
 
     # Div block --> need to process the block as a sub-element
     if βn == :DIV
-        raw_ct = ignore_starting_line_spaces(content(β))
+        raw_ct = strip(content(β))
+#        raw_ct = ignore_starting_line_spaces(content(β))
         ct, _ = convert_md(raw_ct * EOS, lxcontext.lxdefs;
                            isrecursive=true, has_mddefs=false)
         name = chop(otok(β).ss, head=2, tail=0)
