@@ -173,7 +173,7 @@ function eval_and_resolve_code(code::AS, rpath::AS;
     end
 
     write(path, MESSAGE_FILE_GEN_JMD * code)
-    SILENT_MODE[] || print(rpad("\r→ evaluating code [...] ($(CUR_PATH[]), $rpath)", 79) * "\r")
+    JD_ENV[:SILENT_MODE] || print(rpad("\r→ evaluating code [...] ($(JD_ENV[:CUR_PATH]), $rpath)", 79) * "\r")
     # - execute the code while redirecting stdout to file
     Logging.disable_logging(Logging.LogLevel(3_000))
     res = nothing
@@ -192,7 +192,7 @@ function eval_and_resolve_code(code::AS, rpath::AS;
         end
     end
     Logging.disable_logging(Logging.Debug)
-    SILENT_MODE[] || print(rpad("\r→ evaluating code [✓]", 79) * "\r")
+    JD_ENV[:SILENT_MODE] || print(rpad("\r→ evaluating code [✓]", 79) * "\r")
 
     # resolve the code block (highlighting) and return it
     return resolve_lx_input_hlcode(rpath, "julia")
@@ -232,7 +232,7 @@ function convert_code_block(ss::SubString)::String
 
     # In the case of forced re-eval, we don't care about the
     # code scope just force-reeval everything sequentially
-    if FORCE_REEVAL[] || reeval || eval
+    if JD_ENV[:FORCE_REEVAL] || reeval || eval
         length(scope.codes) ≥ head && purgefrom!(scope, head)
         return eval_and_resolve_code(code, rpath)
     end
@@ -242,7 +242,7 @@ function convert_code_block(ss::SubString)::String
     # the case then there will be a check to see if the relevant
     # files exist, if they don't exist the code *will* be eval'ed
     # (see `eval_and_resolve_code`)
-    if FULL_PASS[] || freeze
+    if JD_ENV[:FULL_PASS] || freeze
         length(scope.codes) ≥ head && purgefrom!(scope, head)
         return eval_and_resolve_code(code, rpath, eval=false)
     end
@@ -252,14 +252,14 @@ function convert_code_block(ss::SubString)::String
     # B. local pass with non-frozen code
 
     # check if the page we're looking at is in scope
-    if CUR_PATH[] != CUR_PATH_WITH_EVAL[]
+    if JD_ENV[:CUR_PATH] != JD_ENV[:CUR_PATH_WITH_EVAL]
         # we're necessarily at the first code block of the page.
         # need to re-instantiate a code scope; note that if we
         # are here then necessarily a def_LOCAL_PAGE_VARS was
         # called, so LOCAL_PAGE_VARS["jd_code_head"] points to 1
         reset!(scope)
         # keep track that the page is now in scope
-        CUR_PATH_WITH_EVAL[] = CUR_PATH[]
+        JD_ENV[:CUR_PATH_WITH_EVAL] = JD_ENV[:CUR_PATH]
         # flag rest of page as to be eval-ed (might be stale)
         toggle_jd_code_eval()
         # eval and resolve code

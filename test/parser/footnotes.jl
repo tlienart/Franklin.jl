@@ -1,5 +1,5 @@
 @testset "footnotes" begin
-    J.CUR_PATH[] = "index.md"
+    J.JD_ENV[:CUR_PATH] = "index.md"
     st = """
         A[^1] B[^blah] C
         """ * J.EOS

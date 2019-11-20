@@ -206,8 +206,8 @@ function resolve_assets_rpath(rpath::AS; canonical::Bool=false, code::Bool=false
         # for instance if calling from `src/pages/pg1.md` with `./im1.png` it would refer to
         # /assets/pages/pg1/im1.png
         @assert length(rpath) > 2 "relative path '$rpath' doesn't seem right"
-        canonical || return "/assets/" * unixify(splitext(CUR_PATH[])[1]) * rpath[3:end]
-        return normpath(joinpath(PATHS[:assets], splitext(CUR_PATH[])[1], joinrp(rpath[3:end])))
+        canonical || return "/assets/" * unixify(splitext(JD_ENV[:CUR_PATH])[1]) * rpath[3:end]
+        return normpath(joinpath(PATHS[:assets], splitext(JD_ENV[:CUR_PATH])[1], joinrp(rpath[3:end])))
     end
     if code
         # in the code mode we allow a short, this: `julia:ex` is considered

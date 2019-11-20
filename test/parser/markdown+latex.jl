@@ -261,7 +261,7 @@ end
     @test blocks[5].name == :H5
     @test blocks[6].name == :H6
 
-    J.CUR_PATH[] = "index.md"
+    J.JD_ENV[:CUR_PATH] = "index.md"
 
     h = raw"""
         # t1

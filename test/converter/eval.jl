@@ -1,7 +1,10 @@
+J.JD_ENV[:CUR_PATH] = "index.md"
+
 @testset "Evalcode" begin
     # see `converter/md_blocks:convert_code_block`
     # see `converter/lx/resolve_lx_input_*`
     # --------------------------------------------
+
     h = raw"""
         Simple code:
         ```julia:./code/exca1
@@ -96,7 +99,7 @@ end
 
     # ------------
 
-    J.CUR_PATH[] = "pages/pg1.md"
+    J.JD_ENV[:CUR_PATH] = "pages/pg1.md"
 
     h = raw"""
         Simple code:
@@ -142,7 +145,7 @@ end
 end
 
 @testset "Eval (img)" begin
-    J.CUR_PATH[] = "index.html"
+    J.JD_ENV[:CUR_PATH] = "index.html"
     h = raw"""
         Simple code:
         ```julia:tv2

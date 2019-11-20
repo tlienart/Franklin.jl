@@ -46,7 +46,7 @@ mutable struct LxDef
 end
 # if offset unspecified, start from basically -∞ (configs etc)
 function LxDef(name::String, narg::Int, def::AS)
-    o = OFFSET_GLOB_LXDEFS[] += 5 # we don't care just fwd a bit
+    o = JD_ENV[:OFFSET_GLOB_LXDEFS] += 5 # we don't care just fwd a bit
     LxDef(name, narg, def, o, o + 3) # we also don't care YOLO
 end
 

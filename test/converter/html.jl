@@ -112,6 +112,6 @@ end
         {{isnotpage blah.html ya/xx}} blih {{end}} done.
         """
 
-    J.CUR_PATH[] = "index.md"
+    J.JD_ENV[:CUR_PATH] = "index.md"
     @test J.convert_html(hs, allvars) == "Some text then  blah  but\n blih  done.\n"
 end
