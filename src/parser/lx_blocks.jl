@@ -64,7 +64,6 @@ function find_md_lxdefs(tokens::Vector{Token}, blocks::Vector{OCBlock})
         # keep track of the command name, definition and where it stops
         lxname = matched.captures[1]
         lxdef = strip(content(defining_braces))
-    #        lxdef = ignore_starting_line_spaces(lxdef)
         todef = to(defining_braces)
         # store the new latex command
         push!(lxdefs, LxDef(lxname, lxnarg, lxdef, fromτ, todef))

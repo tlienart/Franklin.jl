@@ -63,7 +63,7 @@ function verify_links()::Nothing
     # check that the user is online (otherwise only verify internal links)
     online =
         try
-            HTTP.request("HEAD", "https://discourse.julialang.org/").status == 200
+            HTTP.request("HEAD", "https://discourse.julialang.org/", readtimeout=10).status == 200
         catch
             # might fail with DNSError
             false
