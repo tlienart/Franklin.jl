@@ -27,17 +27,16 @@ export serve, publish, cleanpull, newsite, optimize, jd2html, literate_folder, v
 """Big number when we want things to be far."""
 const BIG_INT = typemax(Int)
 
-"""Flag for debug mode."""
-const DEBUG_MODE = Ref(false)
-
-"""Flag for the initial pass over pages"""
-const FULL_PASS = Ref(true)
-
-"""Flag for re-evaluation of all code blocks"""
-const FORCE_REEVAL = Ref(false)
-
-"""Flag for error suppression mode (set and unset in optimize only)."""
-const SUPPRESS_ERR = Ref(false)
+const JD_ENV = LittleDict(
+    :DEBUG_MODE         => false,
+    :FULL_PASS          => true,
+    :FORCE_REEVAL       => false,
+    :SUPPRESS_ERR       => false,
+    :SILENT_MODE        => false,
+    :OFFSET_GLOB_LXDEFS => -BIG_INT,
+    :CUR_PATH           => "",
+    :CUR_PATH_WITH_EVAL => "",
+    )
 
 """Dict to keep track of languages and how comments are indicated and their extensions."""
 const CODE_LANG = LittleDict{String,NTuple{2,String}}(
@@ -55,12 +54,6 @@ const CODE_LANG = LittleDict{String,NTuple{2,String}}(
     "toml"       => (".toml", "#"),
     )
 
-"""Flag to suppress all statements including eval ones."""
-const SILENT_MODE = Ref(false)
-
-"""Extreme negative offset for ordering of newcommands defined in config."""
-const OFFSET_GLOB_LXDEFS = Ref(-BIG_INT)
-
 # copied from Base/path.jl
 if Sys.isunix()
     """Indicator for directory separation on the OS."""
@@ -73,12 +66,6 @@ end
 
 """Type of the containers for page variables (local and global)."""
 const PageVars = LittleDict{String,Pair{K,NTuple{N, DataType}} where {K, N}}
-
-"""Relative path to the current file being processed by JuDoc."""
-const CUR_PATH = Ref("")
-
-"""Relative path to the last with eval'd code blocks (to know what's in scope)."""
-const CUR_PATH_WITH_EVAL = Ref("")
 
 """Shorter name for a type that we use everywhere"""
 const AS = Union{String,SubString{String}}

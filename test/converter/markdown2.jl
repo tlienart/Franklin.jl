@@ -29,7 +29,7 @@ end
 
 
 @testset "TOC"  begin
-    J.CUR_PATH[] = "pages/ff/aa.md"
+    J.JD_ENV[:CUR_PATH] = "pages/ff/aa.md"
     h = raw"""
         \toc
         ## Hello `jd`
@@ -59,7 +59,7 @@ end
 end
 
 @testset "TOC"  begin
-    J.CUR_PATH[] = "pages/ff/aa.md"
+    J.JD_ENV[:CUR_PATH] = "pages/ff/aa.md"
     s = raw"""
         @def mintoclevel = 2
         @def maxtoclevel = 3

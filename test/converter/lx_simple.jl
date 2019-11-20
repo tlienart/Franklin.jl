@@ -62,11 +62,30 @@ end
         \tableinput{}{/assets/testcsv.csv}
         Done.
         """ |> seval
-    shouldbe = """<p>A table: <table><tr><th>h1</th><th>h2</th><th>h3</th></tr>
-            <tr><td>string1</td><td>1.567</td><td>0</td></tr>
-            <tr><td></td><td></td><td></td></tr>
-            <tr><td>l i n e</td><td>.158</td><td>99999999</td></tr></table>
+
+    # NOTE: in VERSION > 1.4, Markdown has alignment for tables:
+    # -- https://github.com/JuliaLang/julia/pull/33849
+    if VERSION > v"1.3.0-rc5.1"
+        shouldbe = """
+            <p>A table:
+            <table>
+              <tr><th align="right">h1</th><th align="right">h2</th><th align="right">h3</th></tr>
+              <tr><td align="right">string1</td><td align="right">1.567</td><td align="right">0</td></tr>
+              <tr><td align="right"></td><td align="right"></td><td align="right"></td></tr>
+              <tr><td align="right">l i n e</td><td align="right">.158</td><td align="right">99999999</td></tr>
+            </table>
             Done.</p>"""
+    else
+        shouldbe = """
+            <p>A table:
+            <table>
+              <tr><th>h1</th><th>h2</th><th>h3</th></tr>
+              <tr><td>string1</td><td>1.567</td><td>0</td></tr>
+              <tr><td></td><td></td><td></td></tr>
+              <tr><td>l i n e</td><td>.158</td><td>99999999</td></tr>
+            </table>
+            Done.</p>"""
+    end
     @test isapproxstr(h, shouldbe)
     # header specified
     h = raw"""
@@ -74,12 +93,29 @@ end
         \tableinput{A,B,C}{/assets/testcsv.csv}
         Done.
         """ |> seval
-    shouldbe = """<p>A table: <table><tr><th>A</th><th>B</th><th>C</th></tr>
-            <tr><td>h1</td><td>h2</td><td>h3</td></tr>
-            <tr><td>string1</td><td>1.567</td><td>0</td></tr>
-            <tr><td></td><td></td><td></td></tr>
-            <tr><td>l i n e</td><td>.158</td><td>99999999</td></tr></table>
+    if VERSION > v"1.3.0-rc5.1"
+        shouldbe = """
+            <p>A table:
+            <table>
+              <tr><th align="right">A</th><th align="right">B</th><th align="right">C</th></tr>
+              <tr><td align="right">h1</td><td align="right">h2</td><td align="right">h3</td></tr>
+              <tr><td align="right">string1</td><td align="right">1.567</td><td align="right">0</td></tr>
+              <tr><td align="right"></td><td align="right"></td><td align="right"></td></tr>
+              <tr><td align="right">l i n e</td><td align="right">.158</td><td align="right">99999999</td></tr>
+            </table>
             Done.</p>"""
+    else
+        shouldbe = """
+            <p>A table:
+            <table>
+              <tr><th>A</th><th>B</th><th>C</th></tr>
+              <tr><td>h1</td><td>h2</td><td>h3</td></tr>
+              <tr><td>string1</td><td>1.567</td><td>0</td></tr>
+              <tr><td></td><td></td><td></td></tr>
+              <tr><td>l i n e</td><td>.158</td><td>99999999</td></tr>
+            </table>
+            Done.</p>"""
+    end
     @test isapproxstr(h, shouldbe)
     # wrong header
     h = raw"""
@@ -103,10 +139,25 @@ end
         \tableinput{}{/assets/testcsv.csv}
         Done.
         """ |> seval
-    shouldbe = """<p>A table: <table><tr><th>string1</th><th>1.567</th><th>0</th></tr>
-            <tr><td></td><td></td><td></td></tr>
-            <tr><td>l i n e</td><td>.158</td><td>99999999</td></tr></table>
+    if VERSION > v"1.3.0-rc5.1"
+        shouldbe = """
+            <p>A table:
+            <table>
+              <tr><th align="right">string1</th><th align="right">1.567</th><th align="right">0</th></tr>
+              <tr><td align="right"></td><td align="right"></td><td align="right"></td></tr>
+              <tr><td align="right">l i n e</td><td align="right">.158</td><td align="right">99999999</td></tr>
+            </table>
             Done.</p>"""
+    else
+        shouldbe = """
+            <p>A table:
+            <table>
+              <tr><th>string1</th><th>1.567</th><th>0</th></tr>
+              <tr><td></td><td></td><td></td></tr>
+              <tr><td>l i n e</td><td>.158</td><td>99999999</td></tr>
+            </table>
+            Done.</p>"""
+    end
     @test isapproxstr(h, shouldbe)
     # header specified
     h = raw"""
@@ -114,11 +165,18 @@ end
         \tableinput{A,B,C}{/assets/testcsv.csv}
         Done.
         """ |> seval
-    shouldbe = """<p>A table: <table><tr><th>A</th><th>B</th><th>C</th></tr>
-            <tr><td>string1</td><td>1.567</td><td>0</td></tr>
-            <tr><td></td><td></td><td></td></tr>
-            <tr><td>l i n e</td><td>.158</td><td>99999999</td></tr></table>
+
+    if VERSION > v"1.3.0-rc5.1"
+        shouldbe = """
+            <p>A table: <table><tr><th align="right">A</th><th align="right">B</th><th align="right">C</th></tr><tr><td align="right">string1</td><td align="right">1.567</td><td align="right">0</td></tr><tr><td align="right"></td><td align="right"></td><td align="right"></td></tr><tr><td align="right">l i n e</td><td align="right">.158</td><td align="right">99999999</td></tr></table>
             Done.</p>"""
+    else
+        shouldbe = """<p>A table: <table><tr><th>A</th><th>B</th><th>C</th></tr>
+                <tr><td>string1</td><td>1.567</td><td>0</td></tr>
+                <tr><td></td><td></td><td></td></tr>
+                <tr><td>l i n e</td><td>.158</td><td>99999999</td></tr></table>
+                Done.</p>"""
+    end
     @test isapproxstr(h, shouldbe)
     # wrong header
     h = raw"""
@@ -126,6 +184,7 @@ end
         \tableinput{A,B}{/assets/testcsv.csv}
         Done.
         """ |> seval
+
     shouldbe = """<p>A table: <p><span style=\"color:red;\">// header size (2) and number of columns (3) do not match //</span></p>
             Done.</p>"""
     @test isapproxstr(h, shouldbe)

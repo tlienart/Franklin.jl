@@ -47,7 +47,7 @@ function jd2html(st::AbstractString; internal::Bool=false, dir::String="")::Stri
     if !internal
         FOLDER_PATH[] = isempty(dir) ? mktempdir() : dir
         set_paths!()
-        CUR_PATH[] = "index.md"
+        JD_ENV[:CUR_PATH] = "index.md"
         def_GLOBAL_LXDEFS!()
         def_GLOBAL_PAGE_VARS!()
     end
@@ -162,7 +162,7 @@ function process_html_cond(hs::AS, allvars::PageVars, qblocks::Vector{AbstractBl
             # current path is relative to /src/ for instance
             # /src/pages/blah.md -> pages/blah
             # if starts with `pages/`, replaces by `pub/`: pages/blah => pub/blah
-            rpath = splitext(unixify(CUR_PATH[]))[1]
+            rpath = splitext(unixify(JD_ENV[:CUR_PATH]))[1]
             rpath = replace(rpath, Regex("^pages") => "pub")
             # compare with β.pages
             inpage = any(p -> splitext(p)[1] == rpath, βi.pages)

@@ -172,11 +172,16 @@ end
         | C | D |
         """ * J.EOS
 
-    @test isapproxstr(st |> conv,
+    if VERSION > v"1.3.0-rc5.1"
+        @test isapproxstr(st |> conv,
+            """<table><tr><th align="center">A</th><th align="center">B</th></tr><tr><td align="center">C</td><td align="center">D</td></tr></table>""")
+    else
+        @test isapproxstr(st |> conv,
             """<table>
                  <tr><th>A</th><th>B</th></tr>
                  <tr><td>C</td><td>D</td></tr>
                </table>""")
+    end
 
     @test J.convert_md(st, isrecursive=true) |> chtml == st |> conv
 

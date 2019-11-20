@@ -94,18 +94,6 @@ julia> JuDoc.matchrange(match(r"ell", "hello"))
 """
 matchrange(m::RegexMatch)::UnitRange{Int} = m.offset .+ (0:(length(m.match)-1))
 
-
-"""
-$SIGNATURES
-
-In an lxdef or a div, ignore any whitespace at the beginning of lines to avoid ambiguities with indented
-code blocks.
-"""
-function ignore_starting_line_spaces(content::SubString)::AS
-    s = strip(content)
-    return replace(s, r"\n\s*" => "\n ")
-end
-
 # Other convenience functions
 
 """
@@ -218,8 +206,8 @@ function resolve_assets_rpath(rpath::AS; canonical::Bool=false, code::Bool=false
         # for instance if calling from `src/pages/pg1.md` with `./im1.png` it would refer to
         # /assets/pages/pg1/im1.png
         @assert length(rpath) > 2 "relative path '$rpath' doesn't seem right"
-        canonical || return "/assets/" * unixify(splitext(CUR_PATH[])[1]) * rpath[3:end]
-        return normpath(joinpath(PATHS[:assets], splitext(CUR_PATH[])[1], joinrp(rpath[3:end])))
+        canonical || return "/assets/" * unixify(splitext(JD_ENV[:CUR_PATH])[1]) * rpath[3:end]
+        return normpath(joinpath(PATHS[:assets], splitext(JD_ENV[:CUR_PATH])[1], joinrp(rpath[3:end])))
     end
     if code
         # in the code mode we allow a short, this: `julia:ex` is considered

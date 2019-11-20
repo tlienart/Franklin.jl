@@ -61,7 +61,13 @@ Verify all links in generated HTML.
 """
 function verify_links()::Nothing
     # check that the user is online (otherwise only verify internal links)
-    online = HTTP.request("HEAD", "https://discourse.julialang.org/").status == 200
+    online =
+        try
+            HTTP.request("HEAD", "https://discourse.julialang.org/", readtimeout=10).status == 200
+        catch
+            # might fail with DNSError
+            false
+        end
 
     print("Verifying links...")
     if online
@@ -81,7 +87,7 @@ function verify_links()::Nothing
             overallok = overallok && allok
         end
     end
-    overallok && println("\rAll internal $(online && "and external ")links verified ✓.      ")
+    overallok && println("\rAll internal $(ifelse(online,"and external ",""))links verified ✓.      ")
     return nothing
 end
 
@@ -104,7 +110,7 @@ will be larger (especially if you have lots of maths on pages).
 function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
                     prepath::String="", no_fail_prerender::Bool=true,
                     suppress_errors::Bool=true)::Union{Nothing,Bool}
-    suppress_errors && (SUPPRESS_ERR[] = true)
+    suppress_errors && (JD_ENV[:SUPPRESS_ERR] = true)
     #
     # Prerendering
     #
@@ -148,7 +154,7 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
                   "The output will not be minified."
         end
     end
-    SUPPRESS_ERR[] = false
+    JD_ENV[:SUPPRESS_ERR] = false
     return ifelse(sig, succ, nothing)
 end
 

@@ -34,12 +34,12 @@ function write_page(root::String, file::String, head::String,
      # The curpath is the relative path starting after /src/ so for instance:
      # f1/blah/page1.md or index.md etc... this is useful in the code evaluation and management
      # of paths
-    CUR_PATH[] = fpath[lastindex(PATHS[:src])+length(PATH_SEP)+1:end]
+    JD_ENV[:CUR_PATH] = fpath[lastindex(PATHS[:src])+length(PATH_SEP)+1:end]
 
     (content, jd_vars) = convert_md(read(fpath, String) * EOS, collect(values(GLOBAL_LXDEFS)))
 
     # Check for RSS elements
-    if GLOBAL_PAGE_VARS["generate_rss"].first && FULL_PASS[] &&
+    if GLOBAL_PAGE_VARS["generate_rss"].first && JD_ENV[:FULL_PASS] &&
         !all(e -> e |> first |> isempty, (jd_vars["rss"], jd_vars["rss_description"]))
         # add item to RSSDICT
         add_rss_item(jd_vars)
@@ -52,7 +52,7 @@ function write_page(root::String, file::String, head::String,
     s = stat(fpath)
     set_var!(jd_vars, "jd_ctime", jd_date(unix2datetime(s.ctime)))
     set_var!(jd_vars, "jd_mtime", jd_date(unix2datetime(s.mtime)))
-    set_var!(jd_vars, "jd_rpath", CUR_PATH[])
+    set_var!(jd_vars, "jd_rpath", JD_ENV[:CUR_PATH])
 
     # 3. process blocks in the html infra elements based on `jd_vars`
     # (e.g.: add the date in the footer)
@@ -93,12 +93,12 @@ function process_file(case::Symbol, fpair::Pair{String,String}, args...; kwargs.
     try
         process_file_err(case, fpair, args...; kwargs...)
     catch err
-        DEBUG_MODE[] && throw(err)
+        JD_ENV[:DEBUG_MODE] && throw(err)
         rp = fpair.first
         rp = rp[end-min(20, length(rp))+1 : end]
         println("\n... encountered an issue processing '$(fpair.second)' in ...$rp.")
         println("Verify, then start judoc again...\n")
-        SUPPRESS_ERR[] || @show err
+        JD_ENV[:SUPPRESS_ERR] || @show err
         return -1
     end
     return 0
@@ -138,7 +138,7 @@ function process_file_err(case::Symbol, fpair::Pair{String, String}, head::AS=""
                 force=true)
         end
     end
-    FULL_PASS[] || print(rpad("\r→ page updated [✓]", 79)*"\r")
+    JD_ENV[:FULL_PASS] || JD_ENV[:SILENT_MODE] || print(rpad("\r→ page updated [✓]", 79)*"\r")
     return nothing
 end
 

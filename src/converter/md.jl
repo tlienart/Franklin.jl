@@ -40,8 +40,10 @@ function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
     validate_footnotes!(tokens)
     # ignore header tokens that are not at the start of a line
     validate_headers!(tokens)
-    #> 1b. Find indented blocks
-    tokens = find_indented_blocks(tokens, mds)
+    #> 1b. Find indented blocks (ONLY if not recursive to avoid ambiguities!)
+    if !isrecursive
+        tokens = find_indented_blocks(tokens, mds)
+    end
 
     #> 2. Open-Close blocks (OCBlocks)
     #>> a. find them

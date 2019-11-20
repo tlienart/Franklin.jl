@@ -110,7 +110,7 @@ end
 
 
 @testset "headers" begin
-    J.CUR_PATH[] = "index.md"
+    J.JD_ENV[:CUR_PATH] = "index.md"
     h = """
         # Title
         and then

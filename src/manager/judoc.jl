@@ -31,7 +31,7 @@ function serve(; clear::Bool=true,
     FOLDER_PATH[]  = pwd()
 
     # silent mode?
-    silent && (SILENT_MODE[] = true; verb = false)
+    silent && (JD_ENV[:SILENT_MODE] = true; verb = false)
 
     # brief check to see if we're in a folder that looks promising, otherwise stop
     # and tell the user to check (#155)
@@ -55,10 +55,10 @@ function serve(; clear::Bool=true,
     # do a first full pass
     nomess || println("→ Initial full pass...")
     start = time()
-    FORCE_REEVAL[] = eval_all
+    JD_ENV[:FORCE_REEVAL] = eval_all
     sig = jd_fullpass(watched_files; clear=clear, verb=verb, prerender=prerender,
                       isoptim=isoptim, no_fail_prerender=no_fail_prerender)
-    FORCE_REEVAL[] = false
+    JD_ENV[:FORCE_REEVAL] = false
     sig < 0 && return sig
     fmsg = rpad("✔ full pass...", 40)
     verb && (println(""); print(fmsg); print_final(fmsg, start); println(""))
@@ -134,7 +134,7 @@ See also [`jd_loop`](@ref), [`serve`](@ref) and [`publish`](@ref).
 """
 function jd_fullpass(watched_files::NamedTuple; clear::Bool=false,
                      verb::Bool=false, prerender::Bool=false, isoptim::Bool=false, no_fail_prerender::Bool=true)::Int
-    FULL_PASS[] = true
+    JD_ENV[:FULL_PASS] = true
     # initiate page segments
     head    = read(joinpath(PATHS[:src_html], "head.html"), String)
     pg_foot = read(joinpath(PATHS[:src_html], "page_foot.html"), String)
@@ -192,7 +192,7 @@ function jd_fullpass(watched_files::NamedTuple; clear::Bool=false,
     end
     # generate RSS if appropriate
     GLOBAL_PAGE_VARS["generate_rss"].first && rss_generator()
-    FULL_PASS[] = false
+    JD_ENV[:FULL_PASS] = false
     # return -1 if any page
     return ifelse(s<0, -1, 0)
 end
