@@ -65,7 +65,7 @@ end
 
     # NOTE: in VERSION > 1.4, Markdown has alignment for tables:
     # -- https://github.com/JuliaLang/julia/pull/33849
-    if VERSION > v"1.3.0-rc5"
+    if VERSION > v"1.3.0-rc5.1"
         shouldbe = """
             <p>A table:
             <table>
@@ -93,7 +93,7 @@ end
         \tableinput{A,B,C}{/assets/testcsv.csv}
         Done.
         """ |> seval
-    if VERSION > v"1.3.0-rc5"
+    if VERSION > v"1.3.0-rc5.1"
         shouldbe = """
             <p>A table:
             <table>
@@ -139,7 +139,7 @@ end
         \tableinput{}{/assets/testcsv.csv}
         Done.
         """ |> seval
-    if VERSION > v"1.3.0-rc5"
+    if VERSION > v"1.3.0-rc5.1"
         shouldbe = """
             <p>A table:
             <table>
@@ -166,7 +166,7 @@ end
         Done.
         """ |> seval
 
-    if VERSION > v"1.3.0-rc5"
+    if VERSION > v"1.3.0-rc5.1"
         shouldbe = """
             <p>A table: <table><tr><th align="right">A</th><th align="right">B</th><th align="right">C</th></tr><tr><td align="right">string1</td><td align="right">1.567</td><td align="right">0</td></tr><tr><td align="right"></td><td align="right"></td><td align="right"></td></tr><tr><td align="right">l i n e</td><td align="right">.158</td><td align="right">99999999</td></tr></table>
             Done.</p>"""
