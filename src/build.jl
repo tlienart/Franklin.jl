@@ -20,7 +20,13 @@ const PIP = begin
         end
     end
 end
-const NODE = NodeJS.nodejs_cmd()
+const NODE = begin
+    if "NODE" ∈ keys(ENV)
+        ENV["NODE"]
+    else
+        NodeJS.nodejs_cmd()
+    end
+end
 
 #=
 Pre-rendering

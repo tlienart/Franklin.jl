@@ -23,7 +23,7 @@ HTTP = "^0.8"
 JuDocTemplates = "^0.2"
 Literate = "^2.0"
 LiveServer = "^0.3"
-NodeJS = "^0.6"
+NodeJS = "^0.6, ^1"
 OrderedCollections = "^1.1"
 julia = "^1.1"
 
