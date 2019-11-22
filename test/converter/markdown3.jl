@@ -330,3 +330,17 @@ end
         and later </p>
         """)
 end
+
+@testset "TOML lang" begin
+    s = raw"""
+       blah
+       ```TOML
+       socrates
+       ```
+       end
+       """
+    @test isapproxstr(s |> jd2html_td, """
+        <p>blah
+        <pre><code class=\"language-TOML\">socrates</code></pre>
+    end</p>""")
+end
