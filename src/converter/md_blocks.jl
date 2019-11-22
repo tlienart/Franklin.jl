@@ -205,7 +205,7 @@ Helper function for the code block case of `convert_block`.
 """
 function convert_code_block(ss::SubString)::String
     fencer = ifelse(startswith(ss, "`````"), "`````", "```")
-    reg    = Regex("$fencer([a-zA-Z]+)(\\:[a-zA-Z\\\\\\/-_\\.]+)?\\s*\\n?((?:.|\\n)*)$fencer")
+    reg    = Regex("$fencer([a-zA-Z][a-zA-Z-]*)(\\:[a-zA-Z\\\\\\/-_\\.]+)?\\s*\\n?((?:.|\\n)*)$fencer")
     m      = match(reg, ss)
     lang   = m.captures[1]
     rpath  = m.captures[2]
