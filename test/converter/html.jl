@@ -103,7 +103,6 @@ end
     @test "{{if b2}} {{ else }} blih {{ end }}" |> jdc == " " # if, empty
 end
 
-
 @testset "Cond ispage" begin
     allvars = J.PageVars()
 
@@ -114,4 +113,12 @@ end
 
     J.JD_ENV[:CUR_PATH] = "index.md"
     @test J.convert_html(hs, allvars) == "Some text then  blah  but\n blih  done.\n"
+
+    J.JD_ENV[:CUR_PATH] = "blah/blih.md"
+    hs = raw"""
+        A then {{ispage blah/*}}yes{{end}} but not {{isnotpage blih/*}}no{{end}} E.
+        """
+    @test J.convert_html(hs, allvars) == "A then yes but not no E.\n"
+
+    J.JD_ENV[:CUR_PATH] = "index.md"
 end
