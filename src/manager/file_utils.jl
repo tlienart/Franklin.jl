@@ -20,6 +20,14 @@ end
 """
 $(SIGNATURES)
 
+Executed after each page is rendered. Can be overwritten.
+"""
+function on_page_built(jd_vars) end
+
+
+"""
+$(SIGNATURES)
+
 Take a path to an input markdown file (via `root` and `file`), then construct the appropriate HTML
 page (inserting `head`, `pg_foot` and `foot`) and finally write it at the appropriate place.
 """
@@ -80,6 +88,7 @@ function write_page(root::String, file::String, head::String,
 
     # 5. write the html file where appropriate
     write(joinpath(out_path(root), change_ext(file)), pg)
+    on_page_built(jd_vars)
     return nothing
 end
 
