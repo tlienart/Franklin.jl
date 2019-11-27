@@ -343,4 +343,15 @@ end
         <p>blah
         <pre><code class=\"language-TOML\">socrates</code></pre>
     end</p>""")
+    s = raw"""
+       blah
+       ```julia-repl
+       socrates
+       ```
+       end
+       """
+    @test isapproxstr(s |> jd2html_td, """
+        <p>blah
+        <pre><code class=\"language-julia-repl\">socrates</code></pre>
+    end</p>""")
 end
