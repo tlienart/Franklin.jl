@@ -91,6 +91,12 @@ function process_html_qblocks(hs::AS, allvars::PageVars, qblocks::Vector{Abstrac
 end
 
 
+function match_url(base::AS, cand::AS)
+    endswith(cand, "/*") && return startswith(base, cand[1:prevind(cand, lastindex(cand))])
+    return splitext(cand)[1] == base
+end
+
+
 """
 $SIGNATURES
 
@@ -159,13 +165,16 @@ function process_html_cond(hs::AS, allvars::PageVars, qblocks::Vector{AbstractBl
         elseif βi isa HIsNotDef
             k = Int(!haskey(allvars, βi.vname))
         else
+            # HIsPage//HIsNotPage
+            #
             # current path is relative to /src/ for instance
             # /src/pages/blah.md -> pages/blah
             # if starts with `pages/`, replaces by `pub/`: pages/blah => pub/blah
             rpath = splitext(unixify(JD_ENV[:CUR_PATH]))[1]
             rpath = replace(rpath, Regex("^pages") => "pub")
+
             # compare with β.pages
-            inpage = any(p -> splitext(p)[1] == rpath, βi.pages)
+            inpage = any(p -> match_url(rpath, p), βi.pages)
 
             if βi isa HIsPage
                 k = Int(inpage)
