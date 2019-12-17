@@ -34,6 +34,7 @@ function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
     # (to find latex command, latex definitions, math envs etc.)
     #
 
+    # -----------------------------------------------------------------------------------
     #> 1. Tokenize
     tokens  = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
     # distinguish fnref/fndef
@@ -42,10 +43,12 @@ function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
     validate_headers!(tokens)
     #> 1b. Find indented blocks (ONLY if not recursive to avoid ambiguities!)
     if !isrecursive
-        tokens = find_indented_blocks(tokens, mds)
+        find_indented_blocks!(tokens, mds)
     end
 
+    # -----------------------------------------------------------------------------------
     #> 2. Open-Close blocks (OCBlocks)
+    #.> 0
     #>> a. find them
     blocks, tokens = find_all_ocblocks(tokens, MD_OCB_ALL)
     #>> b. merge CODE_BLOCK_IND which are separated by emptyness
@@ -57,6 +60,7 @@ function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
     #>> e. keep track of literal content of possible link definitions to use
     validate_and_store_link_defs!(blocks)
 
+    # -----------------------------------------------------------------------------------
     #> 3. LaTeX commands
     #>> a. find "newcommands", update active blocks/braces
     lxdefs, tokens, braces, blocks = find_md_lxdefs(tokens, blocks)
@@ -67,15 +71,18 @@ function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
     #>> c. find latex commands
     lxcoms, _ = find_md_lxcoms(tokens, lxdefs, braces)
 
+    # -----------------------------------------------------------------------------------
     #> 4. Page variable definition (mddefs)
     jd_vars = nothing
     has_mddefs && (jd_vars = process_md_defs(blocks, isconfig, lxdefs))
     isconfig && return "", jd_vars
 
+    # -----------------------------------------------------------------------------------
     #> 5. Process special characters and html entities so that they can be injected
     # as they are in the HTML later
     sp_chars = find_special_chars(tokens)
 
+    # ===================================================================================
     #
     # Forming of the html string
     #

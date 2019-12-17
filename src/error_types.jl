@@ -4,6 +4,12 @@
 """An OCBlock was not parsed properly (e.g. the closing token was not found)."""
 struct OCBlockError <: Exception
     m::String
+    c::String
+end
+
+function Base.showerror(io::IO, be::OCBlockError)
+    println(io, be.m)
+    print(io, be.c)
 end
 
 """A `\\newcommand` was not parsed properly."""
