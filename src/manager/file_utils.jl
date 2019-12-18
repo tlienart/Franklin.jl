@@ -30,7 +30,7 @@ function write_page(root::String, file::String, head::String,
     # 2. eval the definitions and update the variable dictionary, also retrieve
     # document variables (time of creation, time of last modif) and add those
     # to the dictionary.
-    fpath   = joinpath(root, file)
+    fpath = joinpath(root, file)
      # The curpath is the relative path starting after /src/ so for instance:
      # f1/blah/page1.md or index.md etc... this is useful in the code evaluation and management
      # of paths

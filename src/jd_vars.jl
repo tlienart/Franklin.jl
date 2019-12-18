@@ -93,11 +93,13 @@ is processed.
     LOCAL_PAGE_VARS["date"]       = Pair(Date(1), (String, Date, Nothing))
     LOCAL_PAGE_VARS["lang"]       = Pair("julia", (String,)) # default lang for indented code
     LOCAL_PAGE_VARS["reflinks"]   = Pair(true,    (Bool,))   # whether there are reflinks or not
+    LOCAL_PAGE_VARS["indented_code"] = Pair(true, (Bool,))   # whether to support indented code
+    #
     # Table of contents controls
     LOCAL_PAGE_VARS["mintoclevel"] = Pair(1,      (Int,)) # set to 2 to ignore h1
     LOCAL_PAGE_VARS["maxtoclevel"] = Pair(100,    (Int,))
-    # CODE EVALUATION
     #
+    # CODE EVALUATION
     LOCAL_PAGE_VARS["reeval"]        = Pair(false,  (Bool,)) # whether to always re-evals all on pg
     LOCAL_PAGE_VARS["freezecode"]    = Pair(false,  (Bool,)) # no-reevaluation of the code
     LOCAL_PAGE_VARS["showall"]       = Pair(false,  (Bool,)) # like a notebook on each cell
@@ -106,7 +108,8 @@ is processed.
     # cause problems if there's more code on the page than from just the call to \literate
     # in such cases set literate_only to false.
     LOCAL_PAGE_VARS["literate_only"] = Pair(true,       (Bool,))
-    # the jd_* should not be assigned externally
+    #
+    # the jd_* vars should not be assigned externally
     LOCAL_PAGE_VARS["jd_code_scope"] = code_scope
     LOCAL_PAGE_VARS["jd_code_head"]  = Pair(Ref(0),     (Ref{Int},))
     LOCAL_PAGE_VARS["jd_code_eval"]  = Pair(Ref(false), (Ref{Bool},)) # toggle reeval

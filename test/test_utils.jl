@@ -59,7 +59,7 @@ function explore_md_steps(mds)
     tokens  = J.find_tokens(mds, J.MD_TOKENS, J.MD_1C_TOKENS)
     fn_refs = J.validate_footnotes!(tokens)
     J.validate_headers!(tokens)
-    tokens  = J.find_indented_blocks(tokens, mds)
+    J.find_indented_blocks!(tokens, mds)
     steps[:tokenization] =  (tokens=tokens,)
     steps[:fn_validation] = (fn_refs=fn_refs,)
 

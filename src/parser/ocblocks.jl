@@ -29,7 +29,8 @@ function find_ocblocks(tokens::Vector{Token}, ocproto::OCProto;
             end
             if inbalance > 0
                 throw(OCBlockError("I found at least one opening  token " *
-                                   "'$(ocproto.otok)' that is not closed properly."))
+                                   "'$(ocproto.otok)' that is not closed properly.",
+                                   context(τ)))
             end
         else
             # seek forward to find the first closing token
@@ -37,7 +38,8 @@ function find_ocblocks(tokens::Vector{Token}, ocproto::OCProto;
             # error if no closing token is found
             if isnothing(j)
                 throw(OCBlockError("I found the opening token '$(τ.name)' but not " *
-                                   "the corresponding closing token."))
+                                   "the corresponding closing token.",
+                                   context(τ)))
             end
             j += i
         end
@@ -76,6 +78,9 @@ function find_all_ocblocks(tokens::Vector{Token}, ocplist::Vector{OCProto}; inma
 
     ocbs_all = Vector{OCBlock}()
     for ocp ∈ ocplist
+        if ocp.name == :CODE_BLOCK_IND && !LOCAL_PAGE_VARS["indented_code"].first
+           continue
+        end
         ocbs, tokens = find_ocblocks(tokens, ocp; inmath=inmath)
         append!(ocbs_all, ocbs)
     end
@@ -124,11 +129,12 @@ end
 """
 $(SIGNATURES)
 
-Find indented lines.
+Find markers for indented lines (i.e. a line return followed by a tab or 4 spaces).
 """
-function find_indented_blocks(tokens::Vector{Token}, st::AS)::Vector{Token}
+function find_indented_blocks!(tokens::Vector{Token}, st::String)::Nothing
     # index of the line return tokens
     lr_idx = [j for j in eachindex(tokens) if tokens[j].name == :LINE_RETURN]
+    remove = Int[]
     # go over all line return tokens; if they are followed by either four spaces
     # or by a tab, then check if the line is empty or looks like a list, otherwise
     # change the token for a LR_INDENT token which will be captured as part of code
@@ -161,7 +167,7 @@ function find_indented_blocks(tokens::Vector{Token}, st::AS)::Vector{Token}
         # if here, it looks like a code line (and will be considered as such)
         tokens[lr_idx[i]] = Token(:LR_INDENT, subs(st, start, start+length(indent)))
     end
-    return tokens
+    return nothing
 end
 
 
@@ -222,7 +228,7 @@ $SIGNATURES
 
 Discard any indented block that is within a larger block to avoid ambiguities (see #285).
 """
-function filter_indented_blocks!(blocks::Vector{OCBlock})::Nothing
+function filter_indented_blocks!(blocks::Vector{OCBlock})::Nothing\
     # retrieve the indices of the indented blocks
     idx       = [i for i in eachindex(blocks) if blocks[i].name == :CODE_BLOCK_IND]
     isempty(idx) && return nothing
