@@ -138,7 +138,7 @@ The only `OCBlock` not in this dictionary is the brace block since it should not
 content which is needed to find latex definitions (see parser/markdown/find_blocks/find_md_lxdefs).
 """
 const MD_OCB = [
-    # name                    opening token   closing token(s)     nestable
+    # name                    opening token   closing token(s)  nestable
     # ---------------------------------------------------------------------
     OCProto(:COMMENT,         :COMMENT_OPEN, (:COMMENT_CLOSE,), false),
     OCProto(:CODE_BLOCK_LANG, :CODE_LANG,    (:CODE_TRIPLE,),   false),

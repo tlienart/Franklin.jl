@@ -172,7 +172,7 @@ end
         | C | D |
         """ * J.EOS
 
-    if VERSION > v"1.3.0"
+    if VERSION >= v"1.4.0-"
         @test isapproxstr(st |> conv,
             """<table><tr><th align="center">A</th><th align="center">B</th></tr><tr><td align="center">C</td><td align="center">D</td></tr></table>""")
     else
