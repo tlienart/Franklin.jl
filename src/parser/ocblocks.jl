@@ -126,7 +126,7 @@ $(SIGNATURES)
 
 Find indented lines.
 """
-function find_indented_blocks(tokens::Vector{Token}, st::String)::Vector{Token}
+function find_indented_blocks(tokens::Vector{Token}, st::AS)::Vector{Token}
     # index of the line return tokens
     lr_idx = [j for j in eachindex(tokens) if tokens[j].name == :LINE_RETURN]
     # go over all line return tokens; if they are followed by either four spaces
@@ -171,7 +171,7 @@ $SIGNATURES
 When two indented code blocks follow each other and there's nothing in between (empty line(s)),
 merge them into a super block.
 """
-function merge_indented_blocks!(blocks::Vector{OCBlock}, mds::String)::Nothing
+function merge_indented_blocks!(blocks::Vector{OCBlock}, mds::AS)::Nothing
     # indices of CODE_BLOCK_IND
     idx = [i for i in eachindex(blocks) if blocks[i].name == :CODE_BLOCK_IND]
     isempty(idx) && return

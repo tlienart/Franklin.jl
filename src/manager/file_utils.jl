@@ -9,7 +9,7 @@ function process_config()::Nothing
     # read the config.md file if it is present
     config_path = joinpath(PATHS[:src], "config.md")
     if isfile(config_path)
-        convert_md(read(config_path, String) * EOS; isconfig=true)
+        convert_md(read(config_path, String); isconfig=true)
     else
         @warn "I didn't find a config file. Ignoring."
     end
@@ -36,7 +36,7 @@ function write_page(root::String, file::String, head::String,
      # of paths
     JD_ENV[:CUR_PATH] = fpath[lastindex(PATHS[:src])+length(PATH_SEP)+1:end]
 
-    (content, jd_vars) = convert_md(read(fpath, String) * EOS, collect(values(GLOBAL_LXDEFS)))
+    (content, jd_vars) = convert_md(read(fpath, String), collect(values(GLOBAL_LXDEFS)))
 
     # Check for RSS elements
     if GLOBAL_PAGE_VARS["generate_rss"].first && JD_ENV[:FULL_PASS] &&

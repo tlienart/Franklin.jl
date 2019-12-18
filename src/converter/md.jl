@@ -16,7 +16,7 @@ well as a dictionary of page variables.
 * `isconfig=false`:    a bool indicating whether the file to convert is the configuration file
 * `has_mddefs=true`:   a bool indicating whether to look for definitions of page variables
 """
-function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
+function convert_md(mds::AS, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
                     isrecursive::Bool=false, isinternal::Bool=false,
                     isconfig::Bool=false, has_mddefs::Bool=true
                     )::Tuple{String,Union{Nothing,PageVars}}
@@ -28,6 +28,9 @@ function convert_md(mds::String, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
         def_PAGE_FNREFS!()      # page-specific footnote dict
         def_PAGE_LINK_DEFS!()   # page-specific link definition candidates [..]: (...)
     end
+
+    # if it's a substring, force it to a string
+    mds = String(mds)
 
     #
     # Parsing of the markdown string
@@ -125,7 +128,9 @@ yet been defined.
 * `lxdefs`: existing latex definitions prior to the math block
 * `offset`: where the mathblock is with respect to the parent string
 """
-function convert_md_math(ms::String, lxdefs::Vector{LxDef}=Vector{LxDef}(), offset::Int=0)::String
+function convert_md_math(ms::AS, lxdefs::Vector{LxDef}=Vector{LxDef}(), offset::Int=0)::String
+    # if a substring is given, copy it as string
+    ms = String(ms)
     #
     # Parsing of the markdown string
     # (to find latex command, latex definitions, math envs etc.)
@@ -148,7 +153,7 @@ function convert_md_math(ms::String, lxdefs::Vector{LxDef}=Vector{LxDef}(), offs
 
     htmls = IOBuffer()
 
-    strlen   = prevind(ms, lastindex(ms))
+    strlen   = lastindex(ms)
     len_lxc  = length(lxcoms)
     next_lxc = iszero(len_lxc) ? BIG_INT : from(lxcoms[1])
 
@@ -196,8 +201,7 @@ that a piece will need to be plugged in there later.
 """
 function form_inter_md(mds::AS, blocks::Vector{<:AbstractBlock},
                       lxdefs::Vector{LxDef})::Tuple{String, Vector{AbstractBlock}}
-    # final character is the EOS character
-    strlen  = prevind(mds, lastindex(mds))
+    strlen  = lastindex(mds)
     intermd = IOBuffer()
     # keep track of the matching blocks for each insert
     mblocks = Vector{AbstractBlock}()

@@ -74,7 +74,7 @@ end
         3 | Facebook Social Circles | 4,039 | 88,234
 
         C
-        """ * J.EOS
+        """
 
     if VERSION > v"1.3.0"
         @test isapproxstr(st |> seval, raw"""<p>A</p>

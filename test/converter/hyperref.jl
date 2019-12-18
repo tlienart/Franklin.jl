@@ -11,7 +11,7 @@
 
        * \biblabel{amari98b}{Amari and Douglas., 1998} **Amari** and **Douglas**: *Why Natural Gradient*, 1998.
        * \biblabel{bardenet17}{Bardenet et al., 2017} **Bardenet**, **Doucet** and **Holmes**: *On Markov Chain Monte Carlo Methods for Tall Data*, 2017.
-    """ * J.EOS;
+    """;
 
     J.def_GLOBAL_PAGE_VARS!()
     J.def_GLOBAL_LXDEFS!()
@@ -58,7 +58,7 @@ end
        B
        C \eqref{eq 1}.
        and *B $E$*.
-    """ * J.EOS
+    """
     h = st |> seval
     @test occursin(raw"""<a id="eq_1"></a>\[ x = x \]""", h)
     @test occursin(raw"""<span class="eqref">(<a href="/index.html#eq_1">1</a>)</span>.""", h)
@@ -77,7 +77,7 @@ end
         but further
         \eqa{ 1 &=& 1 \label{beyond hope}}
         and finally a \eqref{eq:a trivial one} and maybe \eqref{beyond hope}.
-        """ * J.EOS
+        """
     m, _ = J.convert_md(st, collect(values(J.GLOBAL_LXDEFS)))
 
     @test J.PAGE_EQREFS[J.PAGE_EQREFS_COUNTER] == 3

@@ -56,7 +56,7 @@ end
         @def title = "blah" <!-- comment -->
         @def hasmath = false
         etc
-        """ * J.EOS
+        """
     (m, jdv) = J.convert_md(st)
     @test jdv["title"].first == "blah"
     @test jdv["hasmath"].first == false

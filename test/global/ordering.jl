@@ -9,7 +9,7 @@
             indent
         D -->
         B
-        """ * J.EOS
+        """
     steps = st |> explore_md_steps
     blocks, = steps[:ocblocks]
     @test length(blocks) == 1
@@ -27,7 +27,7 @@ end
             1 + 1 &=& 2
         \end{eqnarray}
         B
-        """ * J.EOS
+        """
     steps = st |> explore_md_steps
     blocks, = steps[:ocblocks]
     @test length(blocks) == 1
@@ -56,7 +56,7 @@ end
         [blah](hello)
         -->
         C
-        """ * J.EOS
+        """
     steps = st |> explore_md_steps
     blocks, = steps[:ocblocks]
     @test length(blocks) == 2
@@ -80,7 +80,7 @@ end
              B
         }
         C
-        """ * J.EOS
+        """
     steps = st |> explore_md_steps
     blocks, = steps[:ocblocks]
 
@@ -98,7 +98,7 @@ end
 @testset "Ordering-5" begin
     st = raw"""
         A [❗️_ongoing_ ] C
-        """ * J.EOS
+        """
     @test isapproxstr(st |> seval, raw"""
         <p>A &#91;❗️<em>ongoing</em> &#93; C</p>
         """)
@@ -110,7 +110,7 @@ end
                 >> url
             -->
         C
-        """ * J.EOS
+        """
     @test isapproxstr(st |> seval, raw"""
             <p>0</p>
             <ul>

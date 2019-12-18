@@ -25,8 +25,7 @@ function convert_block(β::AbstractBlock, lxcontext::LxContext)::AS
     # Div block --> need to process the block as a sub-element
     if βn == :DIV
         raw_ct = strip(content(β))
-        ct, _ = convert_md(raw_ct * EOS, lxcontext.lxdefs;
-                           isrecursive=true, has_mddefs=false)
+        ct, _ = convert_md(raw_ct, lxcontext.lxdefs; isrecursive=true, has_mddefs=false)
         name = chop(otok(β).ss, head=2, tail=0)
         return html_div(name, ct)
     end
@@ -92,7 +91,7 @@ function convert_math_block(β::OCBlock, lxdefs::Vector{LxDef})::String
         end
     end
     # assemble the katex decorators, the resolved content etc
-    write(htmls, pm[3], convert_md_math(inner * EOS, lxdefs, from(β)), pm[4])
+    write(htmls, pm[3], convert_md_math(inner, lxdefs, from(β)), pm[4])
     return String(take!(htmls))
 end
 
@@ -104,7 +103,7 @@ Helper function for the case of a header block (H1, ..., H6).
 """
 function convert_header(β::OCBlock, lxdefs::Vector{LxDef})::String
     hk       = lowercase(string(β.name)) # h1, h2, ...
-    title, _ = convert_md(content(β) * EOS, lxdefs;
+    title, _ = convert_md(content(β), lxdefs;
                           isrecursive=true, has_mddefs=false)
     rstitle  = refstring(title)
     # check if the header has appeared before and if so suggest
@@ -346,7 +345,7 @@ function convert_footnote_def(β::OCBlock, lxdefs::Vector{LxDef})::String
         return ""
     end
     # need to process the content which could contain stuff
-    ct, _ = convert_md(content(β) * EOS, lxdefs;
+    ct, _ = convert_md(content(β), lxdefs;
                        isrecursive=true, has_mddefs=false)
     """
     <table class="fndef" id="fndef:$id">

@@ -62,9 +62,9 @@ const MD_TOKENS = LittleDict{Char, Vector{TokenFinder}}(
               isexactly("\\newcommand")      => :LX_NEWCOMMAND,
               incrlook((_, c) -> α(c))       => :LX_COMMAND,     # \command⎵*
              ],
-    '@'  => [ isexactly("@def", (' ',)) => :MD_DEF_OPEN,  # @def var = ...
-              isexactly("@@", SPACER)   => :DIV_CLOSE,    # @@⎵*
-              incrlook(is_div_open)     => :DIV_OPEN, # @@dname
+    '@'  => [ isexactly("@def", (' ',))   => :MD_DEF_OPEN,  # @def var = ...
+              isexactly("@@", SPACE_CHAR) => :DIV_CLOSE,    # @@⎵*
+              incrlook(is_div_open)       => :DIV_OPEN, # @@dname
              ],
     '#'  => [ isexactly("#",      (' ',)) => :H1_OPEN, # see note [^2]
               isexactly("##",     (' ',)) => :H2_OPEN,
@@ -81,12 +81,12 @@ const MD_TOKENS = LittleDict{Char, Vector{TokenFinder}}(
     '_'  => [ isexactly("_\$>_") => :MATH_I_OPEN,   # internal use when resolving a latex command
               isexactly("_\$<_") => :MATH_I_CLOSE,  # within mathenv (e.g. \R <> \mathbb R)
              ],
-    '`'  => [ isexactly("`", ('`',), false) => :CODE_SINGLE, # `⎵
-              isexactly("``",('`',), false) => :CODE_DOUBLE, # ``⎵*
-              isexactly("```", SPACER)      => :CODE_TRIPLE, # ```⎵*
-              isexactly("`````", SPACER)    => :CODE_PENTA,  # `````⎵*
-              is_language()                 => :CODE_LANG,   # ```lang*
-              is_language2()                => :CODE_LANG2,  # `````lang*
+    '`'  => [ isexactly("`", ('`',), false)  => :CODE_SINGLE, # `⎵
+              isexactly("``",('`',), false)  => :CODE_DOUBLE, # ``⎵*
+              isexactly("```", SPACE_CHAR)   => :CODE_TRIPLE, # ```⎵*
+              isexactly("`````", SPACE_CHAR) => :CODE_PENTA,  # `````⎵*
+              is_language()                  => :CODE_LANG,   # ```lang*
+              is_language2()                 => :CODE_LANG2,  # `````lang*
              ],
     ) # end dict
 #= NOTE
