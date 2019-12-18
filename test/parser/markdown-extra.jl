@@ -85,19 +85,6 @@ end
     """ |> jd2html_td
     @test isapproxstr(h, raw"""yaya  bar bar""")
 
-    # XXX XXX
-    s = raw"""
-    @@da
-        @@db
-            @@dc
-                blah
-            @@
-        @@
-    @@
-    """
-    tokens = J.find_tokens(s, J.MD_TOKENS, J.MD_1C_TOKENS)
-    # XXX XXX
-
     h = raw"""
     @@da
         @@db

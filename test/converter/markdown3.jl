@@ -226,6 +226,7 @@ end
 @testset "IndCode" begin # issue 207
     st = raw"""
         A
+
             a = 1+1
             if a > 1
                 @show a
@@ -248,6 +249,7 @@ end
 
     st = raw"""
         A `single` and ```python blah``` and
+
             a = 1+1
         then
         * blah

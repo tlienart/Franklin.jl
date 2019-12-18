@@ -81,6 +81,7 @@ include("build.jl") # check if user has Node/minify
 
 # PARSING
 include("parser/tokens.jl")
+include("parser/indent.jl")
 include("parser/ocblocks.jl")
 # > latex
 include("parser/lx_tokens.jl")

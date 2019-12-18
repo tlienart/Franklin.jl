@@ -47,6 +47,7 @@ function convert_md(mds::AS, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
     #> 1b. Find indented blocks (ONLY if not recursive to avoid ambiguities!)
     if !isrecursive
         find_indented_blocks!(tokens, mds)
+        filter_lr_indent!(tokens, mds)
     end
 
     # -----------------------------------------------------------------------------------
@@ -177,7 +178,7 @@ function convert_md_math(ms::AS, lxdefs::Vector{LxDef}=Vector{LxDef}(), offset::
         next_lxc = from_ifsmaller(lxcoms, lxc_idx, len_lxc)
     end
     # add anything after the last command
-    (head ≤ strlen) && write(htmls, chop(ms, head=prevind(ms, head), tail=1))
+    (head ≤ strlen) && write(htmls, chop(ms, head=prevind(ms, head), tail=0))
     return String(take!(htmls))
 end
 

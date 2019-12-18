@@ -45,7 +45,7 @@ end
         Etc and `~~~` but hey.
         @@dd but `x` and `y`? @@
         done
-        """ * JuDoc.EOS
+        """
     @test isapproxstr(st |> conv,
             """<p>
             Etc and <code>~~~</code> but hey.
@@ -64,7 +64,7 @@ end
         end
         ```
         done
-        """ * JuDoc.EOS
+        """
     @test isapproxstr(st |> conv,
             """<p>
             Some code

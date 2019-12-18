@@ -26,7 +26,9 @@ math expression.
 struct Token <: AbstractBlock
     name::Symbol
     ss::SubString
+    lno::Int  # for LRINDENT it's useful to store line number
 end
+Token(n, s) = Token(n, s, 0)
 
 to(β::Token) = ifelse(β.name == :EOS, from(β), to(β.ss))
 
@@ -127,7 +129,7 @@ EOS
 Convenience symbol to mark the end of the string to parse (helps with corner cases where a token
 ends a document without being followed by a space).
 """
-const EOS         = '\0'
+const EOS = '\0'
 
 """
 SPACE_CHARS
@@ -143,7 +145,6 @@ SPACER
 Convenience list of characters corresponding to digits.
 """
 const NUM_CHAR   = ('1', '2', '3', '4', '5', '6', '7', '8', '9', '0')
-
 
 """
 $(SIGNATURES)
@@ -169,18 +170,26 @@ julia> s
 ```
 """
 function isexactly(refstring::AS, follow::NTuple{K,Char} where K = (),
-                   isfollowed=true)::Tuple{Int,Bool,Function,Nothing}
-    # number of steps from the start character
+                   isfollowed=true)::Tuple{Int,Bool,Function,Bool}
+    # number of code units from the start character
     steps = prevind(refstring, lastindex(refstring))
     # no offset (don't check next character)
-    isempty(follow) && return (steps, false, s -> (s == refstring), nothing)
-    # include next char for verification (--> offset of 1)
-    steps = nextind(refstring, steps)
+    isempty(follow) && return (steps, false, (s,_) -> (s == refstring), false)
+    # will include next char for verification (--> offset of 1)
+    steps  = lastindex(refstring)
+    nochop = !isfollowed || EOS ∈ follow
     # verification function; we want either (false false or true true))
-    λ(s) = (chop(s) == refstring) && !xor(isfollowed, s[end] ∈ follow)
-    return (steps, true, λ, nothing)
-end
+    # NOTE, chop because we will take the next char with it
 
+    λ(s, at_eos) = at_eos ?
+                    # if at_eos  then we don't get an extra char, compare as is
+                    # if isfollowed, then check EOS in follow
+                    s == refstring && !isfollowed || EOS ∈ follow :
+                    # if not, get extra char, compare  with
+                    chop(s) == refstring && !xor(isfollowed, s[end] ∈ follow)
+
+    return (steps, true, λ, nochop)
+end
 
 """
 $(SIGNATURES)
@@ -274,28 +283,7 @@ TokenFinder
 Convenience type to define tokens. The Tuple comes from the output of functions such as
 [`isexactly`](@ref).
 """
-const TokenFinder = Pair{Tuple{Int,Bool,Function,Union{Nothing,Function}},Symbol}
-
-
-"""
-next_char(parent, cur_pos)
-
-Given a parent string `parent` and a current valid string index `cur_pos`
-(or 0), return the next symbol and its position provided we're not at
-the end of the string (EOS).
-A named tuple is returned with fields
-* `symbol`: next symbol (`\0` if EOS).
-* `pos`:    valid index for the position of the symbol (or 0 at EOS).
-* `eos`:    boolean indicating whether it's the EOS.
-"""
-function next_char(parent::AS, cur_pos::Int)::NamedTuple
-    next_pos = nextind(parent, cur_pos)
-    if next_pos <= lastindex(parent)
-        return (char=parent[next_pos], pos=next_pos, eos=false)
-    end
-    # end of string reached
-    return (char=EOS, pos=0, eos=true)
-end
+const TokenFinder = Pair{Tuple{Int,Bool,Function,Union{Bool,Nothing,Function}},Symbol}
 
 
 """
@@ -313,12 +301,13 @@ that match specific tokens. The list of tokens found is returned.
 function find_tokens(str::AS,
                      dictn::AbstractDict{Char,Vector{TokenFinder}},
                      dict1::AbstractDict{Char,Symbol})::Vector{Token}
+    isempty(str) && return Token[]
     # storage to keep track of the tokens found
-    tokens  = Vector{Token}()
-    head    = next_char(str, 0)
-    end_idx = lastindex(str)
-    while !head.eos
-        head_idx, head_char = head.pos, head.char
+    tokens    = Vector{Token}()
+    head_idx  = 1                # valid string index
+    end_idx   = lastindex(str)   # outer bound
+    while head_idx <= end_idx
+        head_char = str[head_idx]
         # 1. is it one of the single-char token?
         if haskey(dict1, head_char)
             tok = Token(dict1[head_char], subs(str, head_idx))
@@ -349,42 +338,49 @@ function find_tokens(str::AS,
                 if steps > 0 # exact match of a given fixed pattern
                     tail_idx = nextind(str, head_idx, steps)
                     # is there space for the fixed pattern?
+                    at_eos = false
+                    if ν && tail_idx == nextind(str, end_idx)
+                        tail_idx = end_idx
+                        at_eos = true
+                    end
                     tail_idx > end_idx && continue
                     # consider the substring and verify whether it matches
                     cand_seq = subs(str, head_idx, tail_idx)
-                    if λ(cand_seq)
+                    if λ(cand_seq, at_eos)
                         # if offset==True --> looked at 1 extra char (lookahead)
-                        head_idx = prevind(str, tail_idx, offset)
-                        tok = Token(case, chop(cand_seq, tail=offset))
+                        back_one = offset & !at_eos
+                        head_idx = prevind(str, tail_idx, back_one)
+                        tok = Token(case, chop(cand_seq, tail=back_one))
                         push!(tokens, tok)
                         # token identified, no need to check other cases.
                         break
                     end
                 else # rule-based match: greedy catch until fail
-                    nchars = 1
-                    tail   = head
-                    probe  = next_char(str, head_idx)
-                    while λ(nchars, probe.char)
-                        tail    = probe
-                        probe   = next_char(str, probe.pos)
-                        nchars += 1
+                    nchars     = 1
+                    tail_idx   = head_idx
+                    probe_idx  = nextind(str, head_idx)
+                    probe_idx > end_idx && continue
+                    probe_char = str[probe_idx]
+                    while λ(nchars, probe_char)
+                        tail_idx   = probe_idx
+                        probe_idx  = nextind(str, probe_idx)
+                        probe_idx > end_idx && break
+                        probe_char = str[probe_idx]
+                        nchars   += 1
                     end
-                    tail_idx = tail.pos
                     if tail_idx > head_idx
-                        # if the validator is unhappy, don't move the head and
-                        # consider other rules
                         cand_seq = subs(str, head_idx, tail_idx)
+                        # check if the validator is happy otherwise skip
                         isnothing(ν) || ν(cand_seq) || continue
-                        # otherwise push the token & move after the match
+                        # if it's happy push the token & move after the match
                         tok = Token(case, cand_seq)
                         push!(tokens, tok)
-                        head_idx = tail.pos
+                        head_idx = tail_idx
                     end
                 end
             end
         end
-        # dictionaries have been checked etc, moving on to the next valid char
-        head = next_char(str, head_idx)
+        head_idx  = nextind(str, head_idx)
     end
     # finally push the end token
     eos = Token(:EOS, subs(str, end_idx))

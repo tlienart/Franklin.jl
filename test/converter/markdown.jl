@@ -42,7 +42,7 @@ end
         """
 
     inter_md, = explore_md_steps(st)[:inter_md]
-    @test inter_md == " ##JDINSERT## \nfinally ⊙⊙𝛴⊙ and\n ##JDINSERT## \ndone"
+    @test inter_md == " ##JDINSERT## \nfinally ⊙⊙𝛴⊙ and\n ##JDINSERT## \ndone\n"
 end
 
 
@@ -63,7 +63,6 @@ end
 
     @test J.convert_block(blocks2insert[1], lxcontext) == "<div class=\"d\">.</div>"
     @test isapproxstr(J.convert_block(blocks2insert[2], lxcontext), "\\[\\begin{array}{c} \\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\\]")
-
     hstring = J.convert_inter_html(inter_html, blocks2insert, lxcontext)
     @test isapproxstr(hstring, raw"""
                         <p>

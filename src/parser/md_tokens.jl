@@ -64,7 +64,7 @@ const MD_TOKENS = LittleDict{Char, Vector{TokenFinder}}(
              ],
     '@'  => [ isexactly("@def", (' ',))   => :MD_DEF_OPEN,  # @def var = ...
               isexactly("@@", SPACE_CHAR) => :DIV_CLOSE,    # @@⎵*
-              incrlook(is_div_open)       => :DIV_OPEN, # @@dname
+              incrlook(is_div_open)       => :DIV_OPEN,     # @@dname
              ],
     '#'  => [ isexactly("#",      (' ',)) => :H1_OPEN, # see note [^2]
               isexactly("##",     (' ',)) => :H2_OPEN,

@@ -33,23 +33,23 @@ end
     steps, b, λ = J.isexactly("<!--")
     @test steps == length("<!--") - 1 # minus start char
     @test b == false
-    @test λ("<!--") == true
-    @test λ("<--") == false
+    @test λ("<!--",false) == true
+    @test λ("<--",false) == false
 
-    steps, b, λ = J.isexactly("\$", ('\$',))
+    steps, b, λ, = J.isexactly("\$", ('\$',))
     @test steps == 1
     @test b == true
-    @test λ("\$\$") == true
-    @test λ("\$a") == false
-    @test λ("a\$") == false
+    @test λ("\$\$",false) == true
+    @test λ("\$a",false) == false
+    @test λ("a\$",false) == false
 
     rs = "\$"
     steps, b, λ = J.isexactly(rs, ('\$',), false)
     @test steps == nextind(rs, prevind(rs, lastindex(rs)))
     @test b == true
-    @test λ("\$\$") == false
-    @test λ("\$a") == true
-    @test λ("a\$") == false
+    @test λ("\$\$",false) == false
+    @test λ("\$a",false) == true
+    @test λ("a\$",false) == false
 
     steps, b, λ = J.incrlook(isletter)
     @test steps == 0
