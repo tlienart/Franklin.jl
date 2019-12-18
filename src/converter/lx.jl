@@ -40,7 +40,7 @@ function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef}; inmath::Bool=false)::S
             # \command#1 --> \command blah and no error.
             partial = replace(partial, "#$argnum" => " " * content_)
         end
-        partial = ifelse(inmath, mathenv(partial), partial) * EOS
+        partial = ifelse(inmath, mathenv(partial), partial)
     end
     # reprocess (we don't care about jd_vars=nothing)
     plug, _ = convert_md(partial, lxdefs, isrecursive=true, isconfig=false, has_mddefs=false)
@@ -312,7 +312,7 @@ function resolve_lx_input_plainoutput(rpath::AS, reproc::Bool=false; code::Bool=
     content = read(out_file, String)
     isempty(content) && return ""
     reproc || return html_code(content)
-    return content * EOS
+    return content
 end
 
 
@@ -330,7 +330,7 @@ function resolve_lx_input_textfile(rpath::AS)::String
     isfile(fpath) || throw(ErrorException("I found a \\textinput but no relevant file."))
     content = read(fpath, String)
     isempty(content) && return ""
-    return content * EOS
+    return content
 end
 
 

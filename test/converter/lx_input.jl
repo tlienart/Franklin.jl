@@ -43,7 +43,7 @@ end
         Finally img:
         \input{plot:a}{s1.jl}
         done.
-        """ * J.EOS;
+        """;
 
     J.def_GLOBAL_PAGE_VARS!()
     J.def_GLOBAL_LXDEFS!()
@@ -63,6 +63,6 @@ end
     st = raw"""
         Some string
         \textinput{ccc/asset1}
-        """ * J.EOS;
+        """;
     @test isapproxstr(st |> conv, "<p>Some string blah <strong>blih</strong></p>")
 end

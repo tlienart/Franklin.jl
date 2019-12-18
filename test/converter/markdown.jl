@@ -6,7 +6,7 @@
         * \com and \comb{blah}
         * $f$ is a function
         * a last element
-        """ * J.EOS
+        """
 
     steps = explore_md_steps(st)
     lxdefs, tokens, braces, blocks, lxcoms = steps[:latex]
@@ -42,7 +42,7 @@ end
         """
 
     inter_md, = explore_md_steps(st)[:inter_md]
-    @test inter_md == " ##JDINSERT## \nfinally ⊙⊙𝛴⊙ and\n ##JDINSERT## \ndone"
+    @test inter_md == " ##JDINSERT## \nfinally ⊙⊙𝛴⊙ and\n ##JDINSERT## \ndone\n"
 end
 
 
@@ -50,7 +50,7 @@ end
     st = raw"""
         a\newcommand{\eqa}[1]{\begin{eqnarray}#1\end{eqnarray}}b@@d .@@
         \eqa{\sin^2(x)+\cos^2(x) &=& 1}
-        """ * J.EOS
+        """
 
     steps = explore_md_steps(st)
     lxdefs, tokens, braces, blocks, lxcoms = steps[:latex]
@@ -63,7 +63,6 @@ end
 
     @test J.convert_block(blocks2insert[1], lxcontext) == "<div class=\"d\">.</div>"
     @test isapproxstr(J.convert_block(blocks2insert[2], lxcontext), "\\[\\begin{array}{c} \\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\\]")
-
     hstring = J.convert_inter_html(inter_html, blocks2insert, lxcontext)
     @test isapproxstr(hstring, raw"""
                         <p>
@@ -83,7 +82,7 @@ end
         ~~~
         \newcommand{\comb}[ 1]{\mathrm{#1}} text C1 $\comb{b}$ text C2
         \newcommand{\comc}[ 2]{part1:#1 and part2:#2} then \comc{AA}{BB}.
-        """ * J.EOS
+        """
 
     steps = explore_md_steps(st)
     lxdefs, tokens, braces, blocks, lxcoms = steps[:latex]

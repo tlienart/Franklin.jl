@@ -9,7 +9,7 @@
         A \ b
         ```
         done
-        """ * J.EOS
+        """
 
     steps = explore_md_steps(st)
     tokens, = steps[:tokenization]
@@ -50,7 +50,7 @@ end
         A \ b
         ```
         done
-        """ * J.EOS
+        """
     steps = explore_md_steps(st)
     tokens, = steps[:tokenization]
     @test tokens[7].name == :CHAR_LINEBREAK
@@ -64,32 +64,32 @@ end
 end
 
 @testset "Backtick" begin # see issue #205
-    st = raw"""Blah \` etc""" * J.EOS
+    st = raw"""Blah \` etc"""
     @test isapproxstr(st |> seval, "<p>Blah &#96; etc</p>")
 end
 
 @testset "HTMLEnts" begin # see issue #206
-    st = raw"""Blah &pi; etc""" * J.EOS
+    st = raw"""Blah &pi; etc"""
     @test isapproxstr(st |> seval, "<p>Blah &pi; etc</p>")
     # but ill-formed ones (either deliberately or not) will be parsed
-    st = raw"""AT&T""" * J.EOS
+    st = raw"""AT&T"""
     @test isapproxstr(st |> seval, "<p>AT&amp;T</p>")
 end
 
 @testset "DoubleTicks" begin # see issue #204
-    st = raw"""A `single` B""" * J.EOS
+    st = raw"""A `single` B"""
     steps = explore_md_steps(st)
     tokens = steps[:tokenization].tokens
     @test tokens[1].name == :CODE_SINGLE
     @test tokens[2].name == :CODE_SINGLE
 
-    st = raw"""A ``double`` B""" * J.EOS
+    st = raw"""A ``double`` B"""
     steps = explore_md_steps(st)
     tokens = steps[:tokenization].tokens
     @test tokens[1].name == :CODE_DOUBLE
     @test tokens[2].name == :CODE_DOUBLE
 
-    st = raw"""A `single` and ``double`` B""" * J.EOS
+    st = raw"""A `single` and ``double`` B"""
     steps = explore_md_steps(st)
     tokens = steps[:tokenization].tokens
     @test tokens[1].name == :CODE_SINGLE
@@ -97,7 +97,7 @@ end
     @test tokens[3].name == :CODE_DOUBLE
     @test tokens[4].name == :CODE_DOUBLE
 
-    st = raw"""A `single` and ``double ` double`` B""" * J.EOS
+    st = raw"""A `single` and ``double ` double`` B"""
     steps = explore_md_steps(st)
     blocks, tokens = steps[:ocblocks]
     @test blocks[1].name == :CODE_INLINE
@@ -105,7 +105,7 @@ end
     @test blocks[2].name == :CODE_INLINE
     @test J.content(blocks[2]) == "single"
 
-    st = raw"""A `single` and ``double ` double`` and ``` triple ``` B""" * J.EOS
+    st = raw"""A `single` and ``double ` double`` and ``` triple ``` B"""
     steps = explore_md_steps(st)
     tokens = steps[:tokenization].tokens
     @test tokens[1].name == :CODE_SINGLE
@@ -122,7 +122,7 @@ end
     @test blocks[3].name == :CODE_INLINE
 
     st = raw"""A `single` and ``double ` double`` and ``` triple `` triple```
-               and ```julia 1+1``` and `single again` done""" * J.EOS
+               and ```julia 1+1``` and `single again` done"""
     steps = explore_md_steps(st)
     blocks, _ = steps[:ocblocks]
     @test blocks[1].name == :CODE_BLOCK_LANG
@@ -136,7 +136,7 @@ end
 end
 
 @testset "\\ and \`" begin # see issue 203
-    st = raw"""The `"Hello\n"` after the `readall` command is a returned value, whereas the `Hello` after the `run` command is printed output.""" * J.EOS
+    st = raw"""The `"Hello\n"` after the `readall` command is a returned value, whereas the `Hello` after the `run` command is printed output."""
     st |> seval
     @test isapproxstr(st |> seval, raw"""
                         <p>The <code>&quot;Hello\n&quot;</code> after
@@ -152,7 +152,7 @@ end
             1. you can introduce definitions using `\newcommand`
             1. you can use hyper-references with `\eqref`, `\cite`, ...
             1. you can show nice maths (via KaTeX)
-            """ * J.EOS
+            """
 
     @test isapproxstr(st |> seval, raw"""
                     <p>Essentially three things are imitated from LaTeX</p>
@@ -177,7 +177,7 @@ end
         [Python]: https://www.python.org/
         [1]: http://slashdot.org/
         end
-        """ * J.EOS
+        """
     @test isapproxstr(st |> seval, """
                         <p>
                         A <a href="https://julialang.org/">link</a> and
@@ -193,7 +193,7 @@ end
         blah
         [link]: https://julialang.org/
         [id]: ./path/to/img.png
-        """ * J.EOS
+        """
 
     @test isapproxstr(st |> seval, """
                       <p>
@@ -212,7 +212,7 @@ end
         [link]: https://julialang.org/
         [id]: ./path/to/img.png
         [not]: https://www.mozilla.org/
-        """ * J.EOS
+        """
 
     @test isapproxstr(st |> seval, """
                       <p>
@@ -226,6 +226,7 @@ end
 @testset "IndCode" begin # issue 207
     st = raw"""
         A
+
             a = 1+1
             if a > 1
                 @show a
@@ -233,7 +234,7 @@ end
             b = 2
             @show a+b
         end
-        """ * J.EOS
+        """
     @test isapproxstr(st |> seval, raw"""
         <p>
             A
@@ -248,13 +249,14 @@ end
 
     st = raw"""
         A `single` and ```python blah``` and
+
             a = 1+1
         then
         * blah
             + blih
             + bloh
         end
-        """ * J.EOS
+        """
     @test isapproxstr(st |> seval, raw"""
                         <p>
                         A <code>single</code> and
@@ -294,7 +296,7 @@ end
             end
 
         C
-        """ * J.EOS
+        """
     isapproxstr(st |> seval, raw"""
                             <p>A <pre><code class="language-julia">function foo()
 
@@ -316,7 +318,7 @@ end
 @testset "More ``" begin
     st = raw"""
          A ``blah``.
-         """ * J.EOS
+         """
     @test isapproxstr(st |> seval, """<p>A <code>blah</code>.</p>""")
 end
 

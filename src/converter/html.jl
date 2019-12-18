@@ -51,7 +51,7 @@ function jd2html(st::AbstractString; internal::Bool=false, dir::String="")::Stri
         def_GLOBAL_LXDEFS!()
         def_GLOBAL_PAGE_VARS!()
     end
-    m, v = convert_md(st * EOS, collect(values(GLOBAL_LXDEFS)); isinternal=internal)
+    m, v = convert_md(st, collect(values(GLOBAL_LXDEFS)); isinternal=internal)
     h = convert_html(m, v)
     return h
 end

@@ -3,7 +3,7 @@
         \newcommand{ \coma }[ 1]{hello #1}
         \newcommand{ \comb} [2 ]{\coma{#1}, goodbye #1, #2!}
         Then \comb{auth1}{auth2}.
-        """ * J.EOS
+        """
     @test isapproxstr(st |> conv,
             """<p>
             Then hello auth1, goodbye auth1, auth2$(Markdown.htmlesc("!")).
@@ -18,7 +18,7 @@ end
         \newcommand{\R}{\mathbb R}
         Then something like
         \eqa{ \E{f(X)} \in \R &\text{if}& f:\R\maptso\R }
-        """ * J.EOS
+        """
     @test isapproxstr(st |> conv,
             """<p>
             Then something like
@@ -33,7 +33,7 @@ end
         \com{A}
         \newcommand{\com}[1]{◲!#1◲}
         \com{A}
-        """ * J.EOS
+        """
     steps = st |> explore_md_steps
     @test steps[:inter_md].inter_md == "\n ##JDINSERT## \n\n ##JDINSERT## \n"
     @test st |> conv == "⭒A⭒\n◲A◲"
@@ -45,7 +45,7 @@ end
         Etc and `~~~` but hey.
         @@dd but `x` and `y`? @@
         done
-        """ * JuDoc.EOS
+        """
     @test isapproxstr(st |> conv,
             """<p>
             Etc and <code>~~~</code> but hey.
@@ -64,7 +64,7 @@ end
         end
         ```
         done
-        """ * JuDoc.EOS
+        """
     @test isapproxstr(st |> conv,
             """<p>
             Some code
@@ -83,7 +83,7 @@ end
         $$
             \min_{x\in \R^n} \quad f(x)+i_C(x).
         $$
-        """ * J.EOS
+        """
     @test isapproxstr(st |> conv,
             """\\[ \\min_{x\\in \\mathbb R^n} \\quad f(x)+i_C(x). \\]""")
 end
@@ -93,7 +93,7 @@ end
     st = raw"""
         \newcommand{\com}[1]{⭒!#1⭒}
         abc\com{A}\com{B}def.
-        """ * J.EOS
+        """
     @test st |> conv == "<p>abc⭒A⭒⭒B⭒def.</p>\n"
 
     st = raw"""
@@ -103,7 +103,7 @@ end
         \com{A}\com{B}
 
         def.
-        """ * J.EOS
+        """
     @test st |> conv == "<p>abc</p>\n⭒A⭒⭒B⭒\n<p>def.</p>\n"
 
     st = raw"""
@@ -113,7 +113,7 @@ end
         \com{A}
 
         def.
-        """ * J.EOS
+        """
     @test st |> conv == "<p>abc</p>\n⭒A⭒\n<p>def.</p>\n"
 
     st = raw"""
@@ -121,7 +121,7 @@ end
         blah \com{a}
         * \com{aaa} tt
         * ss \com{bbb}
-        """ * J.EOS
+        """
     @test isapproxstr(st |> conv,
             """<p>blah †a†
             <ul>
@@ -139,7 +139,7 @@ end
            $\scal{\mu, \nu} = \E[X]$
            exhibit B
            $\E[X] = \scal{\mu, \nu}$
-           end.""" * J.EOS
+           end."""
     @test isapproxstr(st |> conv,
             """<p>exhibit A
             \\(\\left\\langle \\mu, \\nu\\right\\rangle = \\mathbb E[X]\\)
@@ -158,7 +158,7 @@ end
         {{ if var1 }} targ1 {{ else if var2 }} targ2 {{ else }} targ3 {{ end }}
         ~~~
         done
-        """ * J.EOS
+        """
     @test stv(true, true)   |> conv == "<p>start \n targ1 \n done</p>\n"
     @test stv(false, true)  |> conv == "<p>start \n targ2 \n done</p>\n"
     @test stv(false, false) |> conv == "<p>start \n targ3 \n done</p>\n"
@@ -170,7 +170,7 @@ end
         | A | B |
         | :---: | :---: |
         | C | D |
-        """ * J.EOS
+        """
 
     if VERSION >= v"1.4.0-"
         @test isapproxstr(st |> conv,
@@ -190,7 +190,7 @@ end
         @@emptycore
         @@
         @@
-        """ * J.EOS
+        """
     st |> conv == "<div class=\"emptydiv\"><div class=\"emptycore\"></div>\n</div>\n"
 end
 
@@ -200,7 +200,7 @@ end
         Blah blah
         ## some title
         and then an anchor here \label{anchor} done.
-        """ * J.EOS
+        """
     J.def_GLOBAL_LXDEFS!()
     r = st |> conv
     @test occursin("here <a id=\"anchor\"></a> done.", r)

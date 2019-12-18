@@ -1,43 +1,43 @@
 @testset "Bold x*" begin # issue 223
-    h = raw"**x\***" * J.EOS |> seval
+    h = raw"**x\***" |> seval
     @test h == "<p><strong>x&#42;</strong></p>\n"
 
-    h = raw"_x\__" * J.EOS |> seval
+    h = raw"_x\__" |> seval
     @test h == "<p><em>x&#95;</em></p>\n"
 end
 
 @testset "Bold code" begin # issue 222
-    h = raw"""A **`master`** B.""" * J.EOS |> seval
+    h = raw"""A **`master`** B.""" |> seval
     @test h == "<p>A <strong><code>master</code></strong> B.</p>\n"
 end
 
 @testset "Tickssss" begin # issue 219
-    st = raw"""A `B` C""" * J.EOS
+    st = raw"""A `B` C"""
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     @test tokens[1].name == :CODE_SINGLE
     @test tokens[2].name == :CODE_SINGLE
 
-    st = raw"""A ``B`` C""" * J.EOS
+    st = raw"""A ``B`` C"""
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     @test tokens[1].name == :CODE_DOUBLE
     @test tokens[2].name == :CODE_DOUBLE
 
-    st = raw"""A ``` B ``` C""" * J.EOS
+    st = raw"""A ``` B ``` C"""
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     @test tokens[1].name == :CODE_TRIPLE
     @test tokens[2].name == :CODE_TRIPLE
 
-    st = raw"""A ````` B ````` C""" * J.EOS
+    st = raw"""A ````` B ````` C"""
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     @test tokens[1].name == :CODE_PENTA
     @test tokens[2].name == :CODE_PENTA
 
-    st = raw"""A ```b B ``` C""" * J.EOS
+    st = raw"""A ```b B ``` C"""
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     @test tokens[1].name == :CODE_LANG
     @test tokens[2].name == :CODE_TRIPLE
 
-    st = raw"""A `````b B ````` C""" * J.EOS
+    st = raw"""A `````b B ````` C"""
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     @test tokens[1].name == :CODE_LANG2
     @test tokens[2].name == :CODE_PENTA
@@ -84,6 +84,7 @@ end
     \hello
     """ |> jd2html_td
     @test isapproxstr(h, raw"""yaya  bar bar""")
+
     h = raw"""
     @@da
         @@db

@@ -6,22 +6,22 @@ function inter(st::String)
 end
 
 @testset "issue163" begin
-    st = raw"""A _B `C` D_ E""" * J.EOS
+    st = raw"""A _B `C` D_ E"""
     imd, ih = inter(st)
     @test imd == "A _B  ##JDINSERT##  D_ E"
     @test ih == "<p>A <em>B  ##JDINSERT##  D</em> E</p>\n"
 
-    st = raw"""A _`B` C D_ E""" * J.EOS
+    st = raw"""A _`B` C D_ E"""
     imd, ih = inter(st)
     @test imd == "A _ ##JDINSERT##  C D_ E"
     @test ih == "<p>A <em>##JDINSERT##  C D</em> E</p>\n"
 
-    st = raw"""A _B C `D`_ E""" * J.EOS
+    st = raw"""A _B C `D`_ E"""
     imd, ih = inter(st)
     @test imd == "A _B C  ##JDINSERT## _ E"
     @test ih == "<p>A <em>B C  ##JDINSERT##</em> E</p>\n"
 
-    st = raw"""A _`B` C `D`_ E""" * J.EOS
+    st = raw"""A _`B` C `D`_ E"""
     imd, ih = inter(st)
     @test imd == "A _ ##JDINSERT##  C  ##JDINSERT## _ E"
     @test ih == "<p>A <em>##JDINSERT##  C  ##JDINSERT##</em> E</p>\n"
@@ -37,7 +37,7 @@ end
         ### Goodbye!
         ## Done
         done.
-        """ * J.EOS |> seval
+        """ |> seval
     @test isapproxstr(h, raw"""
         <div class="jd-toc">
           <ol>

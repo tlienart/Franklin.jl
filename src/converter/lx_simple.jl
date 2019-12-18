@@ -67,7 +67,7 @@ function resolve_lx_literate(lxc::LxCom)::String
     end
     # if haschanged=true and not full pass then this will be handled cell by cell
     # comparing with cell files following `eval_and_resolve_code`
-    return read(opath, String) * EOS
+    return read(opath, String)
 end
 
 

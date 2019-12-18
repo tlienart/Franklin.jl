@@ -66,7 +66,7 @@ julia> ss = SubString("hello", 2:4); JuDoc.from(ss)
 ```
 """
 from(ss::SubString)::Int = nextind(str(ss), ss.offset)
-
+from(s::String) = 1
 
 """
 $(SIGNATURES)
@@ -80,6 +80,7 @@ julia> ss = SubString("hello", 2:4); JuDoc.to(ss)
 ```
 """
 to(ss::SubString)::Int = ss.offset + ss.ncodeunits
+to(s::String) = lastindex(s)
 
 """
 $(SIGNATURES)

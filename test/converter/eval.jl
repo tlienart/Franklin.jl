@@ -14,7 +14,7 @@ J.JD_ENV[:CUR_PATH] = "index.md"
         then:
         \input{output}{./code/exca1}
         done.
-        """ * J.EOS |> seval
+        """ |> seval
 
     h2 = raw"""
         Simple code:
@@ -25,7 +25,7 @@ J.JD_ENV[:CUR_PATH] = "index.md"
         then:
         \input{output}{excb1}
         done.
-        """ * J.EOS |> seval
+        """ |> seval
 
     @test h == h2
 
@@ -60,7 +60,7 @@ end
         print(a**2)
         ```
         done.
-        """ * J.EOS |> seval
+        """ |> seval
 
     @test isapproxstr(h, raw"""
             <p>Simple code:
@@ -79,7 +79,7 @@ end
         then:
         \input{output}{/assets/scripts/test2}
         done.
-        """ * J.EOS |> seval
+        """ |> seval
 
     spath = joinpath(J.PATHS[:assets], "scripts", "test2.jl")
     @test isfile(spath)
@@ -110,7 +110,7 @@ end
         then:
         \input{output}{./code/abc2}
         done.
-        """ * J.EOS |> seval
+        """ |> seval
 
     spath = joinpath(J.PATHS[:assets], "pages", "pg1", "code", "abc2.jl")
     @test isfile(spath)
@@ -139,7 +139,7 @@ end
         then:
         \input{output}{scripts/test1}
         done.
-        """ * J.EOS |> seval
+        """ |> seval
     # dot(a, a) == 54
     @test occursin("""then: <pre><code class="plaintext">54</code></pre> done.""", h)
 end
@@ -154,7 +154,7 @@ end
         then:
         \input{plot}{tv2}
         done.
-        """ * J.EOS |> seval
+        """ |> seval
     @test occursin("then: <img src=\"/assets/index/code/output/tv2.png\" alt=\"\"> done.", h)
 end
 
@@ -167,7 +167,7 @@ end
         then:
         \input{output}{scripts/test1}
         done.
-        """ * J.EOS |> seval
+        """ |> seval
     # errors silently
     @test occursin("then: <pre><code class=\"plaintext\">There was an error running the code:\nDomainError", h)
 end
@@ -179,7 +179,7 @@ end
         sqrt(-1)
         ```
         done.
-        """ * J.EOS
+        """
 
     @test (@test_logs (:warn, "Eval of non-julia code blocks is not yet supported.") h |> seval) == "<p>Simple code: <pre><code class=\"language-python\">sqrt(-1)</code></pre> done.</p>\n"
 end
@@ -198,7 +198,7 @@ end
         ```
         done.
         \output{scripts/test186}
-        """ * J.EOS |> seval
+        """ |> seval
     @test isapproxstr(h, raw"""
             <p>Simple code: <pre><code class="language-julia">fn = "tempf.jl"
             write(fn, "a = 1+1")

@@ -1,14 +1,14 @@
 @testset "Find Tokens" begin
-    a = raw"""some markdown then `code` and @@dname block @@""" * J.EOS
+    a = raw"""some markdown then `code` and @@dname block @@"""
 
-    steps = explore_md_steps(a)
-    tokens, = steps[:tokenization]
+    tokens = J.find_tokens(a, J.MD_TOKENS, J.MD_1C_TOKENS)
 
     @test tokens[1].name == :CODE_SINGLE
     @test tokens[2].name == :CODE_SINGLE
     @test tokens[3].name == :DIV_OPEN
     @test tokens[3].ss == "@@dname"
     @test tokens[4].ss == "@@"
+    @test tokens[5].name == :EOS
 end
 
 
@@ -21,7 +21,7 @@ end
         escape block
         ~~~
         and done {target} done.
-        """ * J.EOS
+        """
 
     steps = explore_md_steps(st)
     blocks, tokens = steps[:ocblocks]
@@ -52,7 +52,7 @@ end
 @testset "Unicode lx" begin
     st = raw"""
     Call me “$x$”, not $🍕$.
-    """ * J.EOS
+    """
 
     steps = explore_md_steps(st)
     blocks, _ = steps[:ocblocks]
@@ -83,7 +83,7 @@ end
         ```latex
         \newcommand{\brol}{\mathbb B}
         ```
-        """ * J.EOS
+        """
 
     lxdefs, tokens, braces, blocks = explore_md_steps(st)[:latex]
 
@@ -112,7 +112,7 @@ end
     st = raw"""
         \newcommand{\com}{blah}
         \newcommand{\comb}[ 2]{hello #1 #2}
-        """ * J.EOS
+        """
 
     lxdefs, tokens, braces, blocks, lxcoms = explore_md_steps(st)[:latex]
 
@@ -128,12 +128,12 @@ end
     #
 
     # testing malformed newcommands
-    st = raw"""abc \newcommand abc""" * J.EOS
+    st = raw"""abc \newcommand abc"""
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
     # Ill formed newcommand (needs two {...})
     @test_throws J.LxDefError J.find_md_lxdefs(tokens, blocks)
-    st = raw"""abc \newcommand{abc} def""" * J.EOS
+    st = raw"""abc \newcommand{abc} def"""
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
     # Ill formed newcommand (needs two {...})
@@ -151,7 +151,7 @@ end
         ```
         etc \comb{blah} then maybe
         @@adiv inner part @@ final.
-        """ * J.EOS
+        """
 
     lxdefs, tokens, braces, blocks, lxcoms = explore_md_steps(st)[:latex]
 
@@ -173,7 +173,7 @@ end
     st = raw"""
         \newcommand{\comb}[1]{HH#1HH}
         etc \comb then.
-        """ * J.EOS
+        """
 
     tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
     blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
@@ -191,7 +191,7 @@ end
         ~~~
         \newcommand{\comb}[ 1]{\mathrm{#1}} text C1 $\comb{b}$ text C2
         \newcommand{\comc}[ 2]{part1:#1 and part2:#2} then \comc{AA}{BB}.
-        """ * J.EOS
+        """
 
     lxdefs, tokens, braces, blocks, lxcoms = explore_md_steps(st)[:latex]
 
@@ -212,7 +212,7 @@ end
         then some
         ## blah <!-- ✅ 19/9/999 -->
         end \com{B}.
-        """ * J.EOS
+        """
 
     lxdefs, tokens, braces, blocks, lxcoms = explore_md_steps(st)[:latex]
 
@@ -250,7 +250,7 @@ end
         5
         ###### t6
         6
-        """ * J.EOS
+        """
 
     tokens, blocks = explore_md_steps(st)[:filter]
 
@@ -276,7 +276,7 @@ end
         5
         ### t2
         6
-        """ * J.EOS |> seval
+        """ |> seval
     @test isapproxstr(h, """
         <h1 id="t1"><a href="/index.html#t1">t1</a></h1>
         1
@@ -299,7 +299,7 @@ end
         B
         ## example 2
         C
-        """ * J.EOS |> seval
+        """ |> seval
     @test  isapproxstr(h, """
         <h2 id="example"><a href="/index.html#example">example</a></h2>
         A
