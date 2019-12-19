@@ -7,7 +7,7 @@ cannot appear again in a larger token.
 const MD_1C_TOKENS = LittleDict{Char, Symbol}(
     '{'  => :LXB_OPEN,
     '}'  => :LXB_CLOSE,
-    '\n' => :LINE_RETURN
+    '\n' => :LINE_RETURN,
     )
 
 
