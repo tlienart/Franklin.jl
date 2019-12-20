@@ -22,7 +22,7 @@ include("parser/1-tokenize.jl")
 include("parser/2-blocks.jl")
 include("parser/markdown+latex.jl")
 include("parser/markdown-extra.jl")
-include("parser/footnotes.jl")
+include("parser/footnotes+links.jl")
 println("🍺")
 
 # CONVERTER folder
