@@ -105,7 +105,7 @@ include("converter/lx_simple.jl")
 include("converter/html_functions.jl")
 include("converter/html.jl")
 # > fighting Julia's markdown parser
-include("converter/link_fixer.jl")
+include("converter/html_link_fixer.jl")
 # > javascript
 include("converter/js_prerender.jl")
 
