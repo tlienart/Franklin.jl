@@ -64,7 +64,8 @@ postprocess_link(s::String) = replace(r"")
 """
 $(SIGNATURES)
 
-Keep track of link defs.
+Keep track of link defs. Deactivate any blocks that is within the span of
+a link definition (see issue #314).
 """
 function validate_and_store_link_defs!(blocks::Vector{OCBlock})::Nothing
     isempty(blocks) && return
@@ -72,7 +73,8 @@ function validate_and_store_link_defs!(blocks::Vector{OCBlock})::Nothing
     parent = str(blocks[1])
     for (i, β) in enumerate(blocks)
         if β.name == :LINK_DEF
-            # incremental backward look until we find a `[` or a `\n` if `\n` first, discard
+            # incremental backward look until we find a `[` or a `\n`
+            # if `\n` (or start of string) first, discard
             ini  = prevind(parent, from(β))
             k    = ini
             char = '\n'
@@ -101,6 +103,25 @@ function validate_and_store_link_defs!(blocks::Vector{OCBlock})::Nothing
             end
         end
     end
-    deleteat!(blocks, rm)
+    isempty(rm) || deleteat!(blocks, rm)
+    # cleanup: deactivate any block that it's in the span of a link def
+    spans = [(from(ld), to(ld)) for ld in blocks if ld.name == :LINK_DEF]
+    if !isempty(spans)
+        for (i, block) in enumerate(blocks)
+            # if it's in one of the span, discard
+            curspan = (from(block), to(block))
+            # early stopping if before all ld or after all of them
+            curspan[2] < spans[1][1]   && continue
+            curspan[1] > spans[end][2] && continue
+            # go over each span break as soon as it's in
+            for span in spans
+                if span[1] < curspan[1] && curspan[2] < span[2]
+                    push!(rm, i)
+                    break
+                end
+            end
+        end
+    end
+    isempty(rm) || deleteat!(blocks, rm)
     return nothing
 end

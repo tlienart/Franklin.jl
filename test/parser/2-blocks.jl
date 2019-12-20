@@ -8,6 +8,8 @@ blk  = s -> (J.def_LOCAL_PAGE_VARS!(); J.find_all_ocblocks(fib2(s), J.MD_OCB_ALL
 blk2 = s -> ((b, t) = blk(s); J.merge_indented_blocks!(b, s); b)
 blk3 = s -> (b = blk2(s); J.filter_indented_blocks!(b); b)
 
+blk4 = s -> (b = blk3(s); J.validate_and_store_link_defs!(b); b)
+
 isblk(b, n, s) = b.name == n && b.ss == s
 cont(b) = J.content(b)
 
@@ -132,4 +134,23 @@ end
     @test isblk(b[1], :LXB, raw"{\eqa}")
     @test isblk(b[2], :LXB, raw"{\begin{eqnarray}#1\end{eqnarray}}")
     @test isblk(b[3], :LXB, raw"{\sin^2(x)+\cos^2(x) &=& 1}")
+end
+
+# links
+@testset "P:2:blk-[]" begin
+    b = """
+    A [A] B.
+    [A]: http://example.com""" |> blk4
+    @test length(b) == 1
+    @test isblk(b[1], :LINK_DEF, "[A]: http://example.com")
+    b = """
+    A [A][B] C.
+    [B]: http://example.com""" |> blk4
+    @test isblk(b[1], :LINK_DEF, "[B]: http://example.com")
+    b = """
+    A [`B`] C
+    [`B`]: http://example.com""" |> blk4
+    @test length(b) == 2
+    @test isblk(b[1], :CODE_INLINE, "`B`")
+    @test isblk(b[2], :LINK_DEF,    "[`B`]: http://example.com")
 end
