@@ -129,8 +129,8 @@ is processed.
     #     pubDate     -- rss_pubdate // fallback date // fallback jd_ctime
     # (*) source      -- [unsupported assumes for now there's only one channel]
     #
-    LOCAL_PAGE_VARS["rss"]             = Pair("", (String,))
-    LOCAL_PAGE_VARS["rss_description"] = Pair("", (String,))
+    LOCAL_PAGE_VARS["rss"]             = Pair("",      (String,))
+    LOCAL_PAGE_VARS["rss_description"] = Pair("",      (String,))
     LOCAL_PAGE_VARS["rss_title"]       = Pair("",      (String,))
     LOCAL_PAGE_VARS["rss_author"]      = Pair("",      (String,))
     LOCAL_PAGE_VARS["rss_category"]    = Pair("",      (String,))
