@@ -113,7 +113,7 @@ function convert_md(mds::AS, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
     end
 
     # if no title is specified, grab the first header if there is one
-    if isnothing(LOCAL_PAGE_VARS["title"]) && !isempty(PAGE_HEADERS)
+    if isnothing(LOCAL_PAGE_VARS["title"].first) && !isempty(PAGE_HEADERS)
         set_var!(LOCAL_PAGE_VARS, "title", first(values(PAGE_HEADERS))[1])
     end
 

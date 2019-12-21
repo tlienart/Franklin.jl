@@ -104,3 +104,12 @@ end
             """)
     end
 end
+
+@testset "Auto title" begin
+    # if no title is set, then the first header is used
+    s = raw"""
+    # the title
+    etc
+    """ |> jd2html_td
+    @test J.LOCAL_PAGE_VARS["title"].first == "the title"
+end
