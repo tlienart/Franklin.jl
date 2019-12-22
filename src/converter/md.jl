@@ -105,16 +105,17 @@ function convert_md(mds::AS, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
     lxcontext = LxContext(lxcoms, lxdefs, braces)
     hstring   = convert_inter_html(inter_html, mblocks, lxcontext)
 
-    #> if there's code, assemble it so that can be shown or loaded in one shot
-    codes = LOCAL_PAGE_VARS["jd_code_scope"].first.codes
-    if !isempty(codes)
-        set_var!(LOCAL_PAGE_VARS, "jd_code",
-            strip(prod(c*"\n" for c in codes)))
-    end
-
-    # if no title is specified, grab the first header if there is one
-    if isnothing(LOCAL_PAGE_VARS["title"].first) && !isempty(PAGE_HEADERS)
-        set_var!(LOCAL_PAGE_VARS, "title", first(values(PAGE_HEADERS))[1])
+    # final vars adjustments
+    if !isnothing(jd_vars)
+        #> if there's code, assemble it so that can be shown or loaded in one shot
+        codes = LOCAL_PAGE_VARS["jd_code_scope"].first.codes
+        if !isempty(codes)
+            set_var!(jd_vars, "jd_code", strip(prod(c*"\n" for c in codes)))
+        end
+        #> if no title is specified, grab the first header if there is one
+        if isnothing(LOCAL_PAGE_VARS["title"].first) && !isempty(PAGE_HEADERS)
+            set_var!(jd_vars, "title", first(values(PAGE_HEADERS))[1])
+        end
     end
 
     # Return the string + judoc variables
