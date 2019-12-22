@@ -120,7 +120,7 @@ end
     flush_td(); set_globals()
 
     # Inserting new code block
-    h = raw"""
+    h, vars = raw"""
         @def hascode = true
         ```julia:ex1
         a = 5
@@ -132,7 +132,7 @@ end
         println(a)
         ```
         \output{ex2}
-        """ |> jd2html_td
+        """ |> jd2html_tdv
 
     @test isapproxstr(h, """
             <pre><code class="language-julia">a = 5
@@ -143,14 +143,14 @@ end
             <pre><code class=\"plaintext\">8</code></pre>
             """)
 
-    @test isapproxstr(J.str(J.LOCAL_PAGE_VARS["jd_code"].first), """
+    @test isapproxstr(J.str(vars["jd_code"].first), """
         a = 5
         println(a)
 
         a += 3
         println(a)""")
 
-    h = raw"""
+    h, vars = raw"""
         @def hascode = true
         @def reeval  = true
         ```julia:ex1
@@ -168,7 +168,7 @@ end
         println(a)
         ```
         \output{ex2}
-        """ |> jd2html_td
+        """ |> jd2html_tdv
 
     @test isapproxstr(h, """
             <pre><code class="language-julia">a = 5
@@ -181,7 +181,7 @@ end
             println(a)</code></pre>
             <pre><code class=\"plaintext\">9</code></pre>
             """)
-    @test isapproxstr(J.str(J.LOCAL_PAGE_VARS["jd_code"].first), """
+    @test isapproxstr(J.str(vars["jd_code"].first), """
         a = 5
         println(a)
 
