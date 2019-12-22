@@ -42,7 +42,7 @@ $SIGNATURES
 
 Return the HTML corresponding to a JuDoc-Markdown string.
 """
-function jd2html(st::AbstractString; internal::Bool=false, dir::String="")::String
+function jd2html_v(st::AbstractString; internal::Bool=false, dir::String="")::Tuple{String,Dict}
     isempty(st) && return st
     if !internal
         FOLDER_PATH[] = isempty(dir) ? mktempdir() : dir
@@ -53,8 +53,9 @@ function jd2html(st::AbstractString; internal::Bool=false, dir::String="")::Stri
     end
     m, v = convert_md(st, collect(values(GLOBAL_LXDEFS)); isinternal=internal)
     h = convert_html(m, v)
-    return h
+    return h, v
 end
+jd2html(a...; k...)::String = jd2html_v(a...; k...)[1]
 
 """
 $SIGNATURES

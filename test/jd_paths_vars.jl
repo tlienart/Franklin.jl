@@ -2,7 +2,8 @@ const td = mktempdir()
 flush_td() = (isdir(td) && rm(td; recursive=true); mkdir(td))
 J.FOLDER_PATH[] = td
 
-jd2html_td(e) = jd2html(e; dir=td)
+jd2html_td(e)  = jd2html(e; dir=td)
+jd2html_tdv(e) = J.jd2html_v(e; dir=td)
 
 J.def_GLOBAL_PAGE_VARS!()
 J.def_GLOBAL_LXDEFS!()
@@ -10,13 +11,13 @@ J.def_GLOBAL_LXDEFS!()
 @testset "Paths" begin
     P = J.set_paths!()
 
-    @test J.PATHS[:folder]       == td
+    @test J.PATHS[:folder]   == td
     @test J.PATHS[:src]      == joinpath(td, "src")
     @test J.PATHS[:src_css]  == joinpath(td, "src", "_css")
     @test J.PATHS[:src_html] == joinpath(td, "src", "_html_parts")
-    @test J.PATHS[:libs]    == joinpath(td, "libs")
-    @test J.PATHS[:pub]     == joinpath(td, "pub")
-    @test J.PATHS[:css] == joinpath(td, "css")
+    @test J.PATHS[:libs]     == joinpath(td, "libs")
+    @test J.PATHS[:pub]      == joinpath(td, "pub")
+    @test J.PATHS[:css]      == joinpath(td, "css")
 
     @test P == J.PATHS
 

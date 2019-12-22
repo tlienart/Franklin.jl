@@ -108,8 +108,9 @@ end
 @testset "Auto title" begin
     # if no title is set, then the first header is used
     s = raw"""
-    # the title
+    # AAA
     etc
+    ~~~{{fill title}}~~~
     """ |> jd2html_td
-    @test J.LOCAL_PAGE_VARS["title"].first == "the title"
+    @test isapproxstr(s, raw"""<h1 id="aaa"><a href="/index.html#aaa">AAA</a></h1>  etc AAA""")
 end
