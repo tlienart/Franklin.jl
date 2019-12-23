@@ -168,14 +168,19 @@ It also fixes all links if you specify `prepath` (or if it's set in `config.md`)
 
 **Keyword arguments**
 
-* `prerender=true`: prerender javascript before pushing see [`optimize`](@ref)
-* `minify=true`:    minify output before pushing see [`optimize`](@ref)
-* `nopass=false`:   set this to true if you have already run `optimize` manually.
-* `prepath=""`:     set this to something like "project-name" if it's a project page
+* `prerender=true`:      prerender javascript before pushing see [`optimize`](@ref)
+* `minify=true`:         minify output before pushing see [`optimize`](@ref)
+* `nopass=false`:        set this to true if you have already run `optimize` manually.
+* `prepath=""`:          set this to something like "project-name" if it's a project page
 * `message="jd-update"`: add commit message.
+* `final=jdf_empty`:     a function `()->nothing` to execute last, before doing the git push.
+                         It can be used to refresh a Lunr index, generate notebook files with
+                         Literate, etc, ... You might want to compose `jdf_*` functions that are
+                         exported by JuDoc (or imitate those).
 """
 function publish(; prerender::Bool=true, minify::Bool=true, nopass::Bool=false,
-                   prepath::String="", message::String="jd-update")::Nothing
+                   prepath::String="", message::String="jd-update",
+                   final::Function=jdf_empty)::Nothing
     succ = true
     if !isempty(prepath) || !nopass
         succ = optimize(prerender=prerender, minify=minify, sig=true, prepath=prepath)

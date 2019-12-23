@@ -19,6 +19,9 @@ import HTTP
 
 export serve, publish, cleanpull, newsite, optimize, jd2html, literate_folder, verify_links
 
+export lunr
+export jdf_empty, jdf_lunr, jdf_literate
+
 # -----------------------------------------------------------------------------
 #
 # CONSTANTS
@@ -118,6 +121,7 @@ include("manager/rss_generator.jl")
 include("manager/dir_utils.jl")
 include("manager/file_utils.jl")
 include("manager/judoc.jl")
+include("manager/extras.jl")
 include("manager/post_processing.jl")
 
 # MISC UTILS
