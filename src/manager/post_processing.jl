@@ -186,6 +186,9 @@ function publish(; prerender::Bool=true, minify::Bool=true, nopass::Bool=false,
         succ = optimize(prerender=prerender, minify=minify, sig=true, prepath=prepath)
     end
     if succ
+        # call final hook if any
+        final()
+        # then push
         start = time()
         pubmsg = rpad("→ Pushing updates with git...", 35)
         print(pubmsg)
