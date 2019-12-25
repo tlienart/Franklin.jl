@@ -103,13 +103,16 @@ Does a full pass followed by a pre-rendering and minification step.
 * `minify=true`:    whether to minify output (requires `python3` and `css_html_js_minify`)
 * `sig=false`:      whether to return an integer indicating success (see [`publish`](@ref))
 * `prepath=""`:     set this to something like "project-name" if it's a project page
+* `no_fail_prerender=true`:  whether to ignore errors during the pre-rendering process
+* `suppress_errors=true`:    whether to suppress errors
+* `cleanup=true`:   whether to empty environment dictionaries
 
 Note: if the prerendering is set to `true`, the minification will take longer as the HTML files
 will be larger (especially if you have lots of maths on pages).
 """
 function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
                     prepath::String="", no_fail_prerender::Bool=true,
-                    suppress_errors::Bool=true)::Union{Nothing,Bool}
+                    suppress_errors::Bool=true, cleanup::Bool=true)::Union{Nothing,Bool}
     suppress_errors && (JD_ENV[:SUPPRESS_ERR] = true)
     #
     # Prerendering
@@ -129,9 +132,14 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
     start = time()
     fmsg = "\r→ Full pass"
     print(fmsg)
-    withpre = fmsg * ifelse(prerender, rpad(" (with pre-rendering)", 24), rpad(" (no pre-rendering)", 24))
+    withpre = fmsg * ifelse(prerender,
+                                rpad(" (with pre-rendering)", 24),
+                                rpad(" (no pre-rendering)",   24))
     print(withpre)
-    succ = (serve(single=true, prerender=prerender, nomess=true, isoptim=true, no_fail_prerender=no_fail_prerender) === nothing)
+    succ = nothing === serve(single=true, prerender=prerender,
+                             nomess=true, isoptim=true,
+                             no_fail_prerender=no_fail_prerender,
+                             cleanup=cleanup)
     print_final(withpre, start)
 
     #
@@ -168,19 +176,31 @@ It also fixes all links if you specify `prepath` (or if it's set in `config.md`)
 
 **Keyword arguments**
 
-* `prerender=true`: prerender javascript before pushing see [`optimize`](@ref)
-* `minify=true`:    minify output before pushing see [`optimize`](@ref)
-* `nopass=false`:   set this to true if you have already run `optimize` manually.
-* `prepath=""`:     set this to something like "project-name" if it's a project page
+* `prerender=true`:      prerender javascript before pushing see [`optimize`](@ref)
+* `minify=true`:         minify output before pushing see [`optimize`](@ref)
+* `nopass=false`:        set this to true if you have already run `optimize` manually.
+* `prepath=""`:          set this to something like "project-name" if it's a project page
 * `message="jd-update"`: add commit message.
+* `cleanup=true`:        whether to cleanup environment dictionaries (should stay true).
+* `final=nothing`:       a function `()->nothing` to execute last, before doing the git push.
+                         It can be used to refresh a Lunr index, generate notebook files with
+                         Literate, etc, ... You might want to compose `jdf_*` functions that are
+                         exported by JuDoc (or imitate those). It can access GLOBAL_PAGE_VARS.
 """
 function publish(; prerender::Bool=true, minify::Bool=true, nopass::Bool=false,
-                   prepath::String="", message::String="jd-update")::Nothing
+                   prepath::String="", message::String="jd-update",
+                   cleanup::Bool=true, final::Union{Nothing,Function}=nothing)::Nothing
     succ = true
     if !isempty(prepath) || !nopass
-        succ = optimize(prerender=prerender, minify=minify, sig=true, prepath=prepath)
+        # no cleanup so that can access global page variables in final step
+        succ = optimize(prerender=prerender, minify=minify,
+                        sig=true, prepath=prepath, cleanup=false)
     end
     if succ
+        # final hook
+        final === nothing || final()
+        # --------------------------
+        # Push to git (publication)
         start = time()
         pubmsg = rpad("→ Pushing updates with git...", 35)
         print(pubmsg)

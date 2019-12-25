@@ -40,7 +40,8 @@ end
 """
 $SIGNATURES
 
-Return the HTML corresponding to a JuDoc-Markdown string.
+Return the HTML corresponding to a JuDoc-Markdown string as well as all the page variables.
+See also [`jd2html`](@ref) which only returns the html.
 """
 function jd2html_v(st::AbstractString; internal::Bool=false, dir::String="")::Tuple{String,Dict}
     isempty(st) && return st
