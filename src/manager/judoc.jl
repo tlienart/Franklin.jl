@@ -1,4 +1,11 @@
 """
+$SIGNATURES
+
+Clear the environment dictionaries.
+"""
+clear_dicts() = empty!.((GLOBAL_LXDEFS, GLOBAL_PAGE_VARS, LOCAL_PAGE_VARS))
+
+"""
 $(SIGNATURES)
 
 Runs JuDoc in the current directory.
@@ -16,6 +23,7 @@ Keyword arguments:
 * `no_fail_prerender=true`: whether, in a prerendering phase, ignore errors and try to produce an output
 * `eval_all=false`:  whether to force re-evaluation of all code blocks
 * `silent=false`:    switch this on to suppress all output (including eval statements).
+* `cleanup=true`:    whether to clear environment dictionatires, see [`cleanup`](@ref).
 """
 function serve(; clear::Bool=true,
                  verb::Bool=false,
@@ -26,7 +34,8 @@ function serve(; clear::Bool=true,
                  isoptim::Bool=false,
                  no_fail_prerender::Bool=true,
                  eval_all::Bool=false,
-                 silent::Bool=false)::Union{Nothing,Int}
+                 silent::Bool=false,
+                 cleanup::Bool=true)::Union{Nothing,Int}
     # set the global path
     FOLDER_PATH[]  = pwd()
 
@@ -73,9 +82,7 @@ function serve(; clear::Bool=true,
     end
     flag_env && println("→ Use Pkg.activate() to go back to your main environment.")
 
-    empty!(GLOBAL_LXDEFS)
-    empty!(GLOBAL_PAGE_VARS)
-    empty!(LOCAL_PAGE_VARS)
+    cleanup && clear_dicts()
 
     return nothing
 end
