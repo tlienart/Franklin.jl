@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://tlienart.github.io/JuDocWeb/">
-    <img src="https://tlienart.github.io/JuDocWeb/assets/infra/logo1.svg" alt="JuDoc" width="200">
+    <img src="https://tlienart.github.io/JuDocWeb/assets/infra/logo1.svg" alt="JuDoc" width="150">
   </a>
 </div>
 
