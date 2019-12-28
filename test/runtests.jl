@@ -49,6 +49,7 @@ println("GLOBAL")
 include("global/cases1.jl")
 include("global/cases2.jl")
 include("global/ordering.jl")
+include("global/html_esc.jl")
 
 begin
     # create temp dir to do complete integration testing (has to be here in order
