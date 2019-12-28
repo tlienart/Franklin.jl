@@ -118,27 +118,3 @@ function js2html(hs::String, jsbuffer::IOBuffer, matches::Vector{RegexMatch},
 
     return String(take!(htmls))
 end
-
-
-# Copied from https://github.com/JuliaLang/julia/blob/acb7bd93fb2d5adbbabeaed9f39ab3c85495b02f/stdlib/Markdown/src/render/html.jl#L25-L31
-const _htmlescape_chars = LittleDict(
-            '<' => "&lt;",
-            '>' => "&gt;",
-            '"' => "&quot;",
-            '&' => "&amp;"
-            )
-for ch in "'`!\$%()=+{}[]"
-    _htmlescape_chars[ch] = "&#$(Int(ch));"
-end
-
-const _htmlesc_to = values(_htmlescape_chars) |> collect
-
-is_html_escaped(cs::String) = !isnothing(findfirst(ss -> occursin(ss, cs), _htmlesc_to))
-
-function html_unescape(cs::String)
-    # this is a bit inefficient but whatever, `cs` shouldn't  be very long.
-    for (ssfrom, ssto) in _htmlescape_chars
-        cs = replace(cs, ssto => ssfrom)
-    end
-    return cs
-end

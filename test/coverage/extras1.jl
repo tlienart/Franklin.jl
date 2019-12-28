@@ -67,3 +67,9 @@ end
         """
     @test_throws J.OCBlockError (s |> jd2html)
 end
+
+@testset "tofrom" begin
+    s = "jμΛΙα"
+    @test J.from(s) == 1
+    @test J.to(s) == lastindex(s)
+end

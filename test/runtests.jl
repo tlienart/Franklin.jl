@@ -25,6 +25,11 @@ include("parser/markdown-extra.jl")
 include("parser/footnotes+links.jl")
 println("🍺")
 
+# ERRORS
+println("Errors")
+include("errors/context.jl")
+println("🍺")
+
 # CONVERTER folder
 println("CONVERTER/MD")
 include("converter/markdown.jl")
