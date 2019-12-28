@@ -63,8 +63,9 @@ $(SIGNATURES)
 Convenience function to introduce a code block.
 """
 function html_code(c::AS, lang::AS="")
-    isempty(c) && return ""
-    isempty(lang) && return "<pre><code class=\"plaintext\">$c</code></pre>"
+    isempty(c)     && return ""
+    isempty(lang)  && return "<pre><code class=\"plaintext\">$c</code></pre>"
+    lang == "html" && !is_html_escaped(c) && (c = htmlesc(c))
     return "<pre><code class=\"language-$lang\">$c</code></pre>"
 end
 
@@ -95,4 +96,38 @@ function url_curpage()
     rp = splitext(rp)[1] * ".html"
     startswith(rp, "/") || (rp = "/" * rp)
     return rp
+end
+
+# Copied from https://github.com/JuliaLang/julia/blob/acb7bd93fb2d5adbbabeaed9f39ab3c85495b02f/stdlib/Markdown/src/render/html.jl#L25-L31
+const _htmlescape_chars = LittleDict(
+            '<' => "&lt;",
+            '>' => "&gt;",
+            '"' => "&quot;",
+            '&' => "&amp;"
+            )
+for ch in "'`!\$%()=+{}[]"
+    _htmlescape_chars[ch] = "&#$(Int(ch));"
+end
+
+const _htmlesc_to = values(_htmlescape_chars) |> collect
+
+"""
+$(SIGNATURES)
+
+Internal function to check if some html code has been escaped.
+"""
+is_html_escaped(cs::AS) = !isnothing(findfirst(ss -> occursin(ss, cs), _htmlesc_to))
+
+"""
+$(SIGNATURES)
+
+Internal function to reverse the escaping of some html code (in order to avoid
+double escaping when pre-rendering with highlight, see issue 326).
+"""
+function html_unescape(cs::String)
+    # this is a bit inefficient but whatever, `cs` shouldn't  be very long.
+    for (ssfrom, ssto) in _htmlescape_chars
+        cs = replace(cs, ssto => ssfrom)
+    end
+    return cs
 end

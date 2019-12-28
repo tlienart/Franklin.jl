@@ -58,3 +58,17 @@ end
     """ |> jd2html_td
     @test isapproxstr(s, """<p>A <pre><code class="language-julia">C\n    B\n        E\nD</code></pre></p>\n""")
 end
+
+@testset "auto html esc" begin
+    s = raw"""
+    Blah
+    ```html
+    <div class="foo">Blah</div>
+    ```
+    End
+    """ |> jd2html_td
+    @test isapproxstr(s, """
+        <p>
+        Blah <pre><code class="language-html">&lt;div class&#61;&quot;foo&quot;&gt;Blah&lt;/div&gt;</code></pre>
+        End</p>""")
+end

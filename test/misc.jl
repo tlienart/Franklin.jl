@@ -19,7 +19,6 @@
     end
 end
 
-
 @testset "ocblock" begin
     st = "This is a block <!--comment--> and done"
     τ = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
@@ -27,7 +26,6 @@ end
     @test J.otok(ocb) == τ[1]
     @test J.ctok(ocb) == τ[2]
 end
-
 
 @testset "isexactly" begin
     steps, b, λ = J.isexactly("<!--")
@@ -58,7 +56,6 @@ end
     @test λ('[') == false
 end
 
-
 @testset "timeittook" begin
     start = time()
     sleep(0.5)
@@ -75,7 +72,6 @@ end
     @test parse(Float64, m.captures[1]) ≥ 500
 end
 
-
 @testset "refstring" begin
     @test J.refstring("aa  bb") == "aa_bb"
     @test J.refstring("aa <code>bb</code>") == "aa_bb"
@@ -86,7 +82,6 @@ end
     @test J.refstring("🔺🔺") == string(hash("🔺🔺"))
     @test J.refstring("blah&#33;") == "blah"
 end
-
 
 @testset "paths" begin
     @test J.unixify(pwd()) == replace(pwd(), J.PATH_SEP => "/") * "/"
@@ -103,8 +98,7 @@ end
     @test J.resolve_assets_rpath("blah/blih.txt"; canonical=true) == joinpath(J.PATHS[:assets], "blah", "blih.txt")
 end
 
-
-@testset "html misc" begin
+@testset "misc-html" begin
     λ = "blah/blah.ext"
     J.JD_ENV[:CUR_PATH] = "pages/cpB/blah.md"
     @test J.html_ahref(λ, 1) == "<a href=\"$λ\">1</a>"
@@ -115,4 +109,13 @@ end
     @test J.html_code("code") == "<pre><code class=\"plaintext\">code</code></pre>"
     @test J.html_code("code", "lang") == "<pre><code class=\"language-lang\">code</code></pre>"
     @test J.html_err("blah") == "<p><span style=\"color:red;\">// blah //</span></p>"
+end
+
+@testset "misc-html 2" begin
+   h = "<div class=\"foo\">blah</div>"
+   @test !J.is_html_escaped(h)
+   @test J.html_code(h, "html") == """<pre><code class="language-html">&lt;div class&#61;&quot;foo&quot;&gt;blah&lt;/div&gt;</code></pre>"""
+   he = Markdown.htmlesc(h)
+   @test J.is_html_escaped(he)
+   @test J.html_code(h, "html") == J.html_code(h, "html")
 end
