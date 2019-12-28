@@ -63,11 +63,16 @@ function js_prerender_highlight(hs::String)::String
         # core code
         cs = subs(hs, nextind(hs, matchrange(co).stop), prevind(hs, matchrange(cc).start))
         cs = escape_string(cs)
-
+        # lang
         lang = co.captures[2]
         if isnothing(lang)
             write(jsbuffer, """console.log("<pre><code class=hljs>$cs</code></pre>");\n""")
         else
+            if lang == "html" && is_html_escaped(cs)
+                # corner case, see https://github.com/tlienart/JuDoc.jl/issues/326
+                # highlight will re-escape the string further.
+                cs = html_unescape(cs) |> escape_string
+            end
             # add to content of jsbuffer
             write(jsbuffer, """console.log("<pre><code class=\\"$lang hljs\\">" + hljs.highlight("$lang", "$cs").value + "</code></pre>");""")
         end
@@ -112,4 +117,28 @@ function js2html(hs::String, jsbuffer::IOBuffer, matches::Vector{RegexMatch},
     head < lastindex(hs) && write(htmls, subs(hs, head, lastindex(hs)))
 
     return String(take!(htmls))
+end
+
+
+# Copied from https://github.com/JuliaLang/julia/blob/acb7bd93fb2d5adbbabeaed9f39ab3c85495b02f/stdlib/Markdown/src/render/html.jl#L25-L31
+const _htmlescape_chars = LittleDict(
+            '<' => "&lt;",
+            '>' => "&gt;",
+            '"' => "&quot;",
+            '&' => "&amp;"
+            )
+for ch in "'`!\$%()=+{}[]"
+    _htmlescape_chars[ch] = "&#$(Int(ch));"
+end
+
+const _htmlesc_to = values(_htmlescape_chars) |> collect
+
+is_html_escaped(cs::String) = !isnothing(findfirst(ss -> occursin(ss, cs), _htmlesc_to))
+
+function html_unescape(cs::String)
+    # this is a bit inefficient but whatever, `cs` shouldn't  be very long.
+    for (ssfrom, ssto) in _htmlescape_chars
+        cs = replace(cs, ssto => ssfrom)
+    end
+    return cs
 end
