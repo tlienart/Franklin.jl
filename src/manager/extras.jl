@@ -1,5 +1,5 @@
 function lunr()
-    prepath = GLOBAL_PAGE_VARS["prepath"].first
+    prepath = get(GLOBAL_PAGE_VARS, "prepath", ""=>0).first
     isempty(JuDoc.PATHS) && (FOLDER_PATH[] = pwd(); set_paths!())
     bkdir = pwd()
     lunr  = joinpath(PATHS[:libs], "lunr")
