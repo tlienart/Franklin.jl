@@ -35,7 +35,8 @@ function serve(; clear::Bool=true,
                  no_fail_prerender::Bool=true,
                  eval_all::Bool=false,
                  silent::Bool=false,
-                 cleanup::Bool=true)::Union{Nothing,Int}
+                 cleanup::Bool=true,
+                 on_write::Function=(_, _) -> nothing)::Union{Nothing,Int}
     # set the global path
     FOLDER_PATH[]  = pwd()
 
@@ -66,7 +67,8 @@ function serve(; clear::Bool=true,
     start = time()
     JD_ENV[:FORCE_REEVAL] = eval_all
     sig = jd_fullpass(watched_files; clear=clear, verb=verb, prerender=prerender,
-                      isoptim=isoptim, no_fail_prerender=no_fail_prerender)
+                      isoptim=isoptim, no_fail_prerender=no_fail_prerender, 
+                      on_write=on_write)
     JD_ENV[:FORCE_REEVAL] = false
     sig < 0 && return sig
     fmsg = rpad("✔ full pass...", 40)
@@ -75,7 +77,9 @@ function serve(; clear::Bool=true,
     # start the continuous loop
     if !single
         nomess || println("→ Starting the server...")
-        coreloopfun = (cntr, fw) -> jd_loop(cntr, fw, watched_files; clear=clear, verb=verb)
+        coreloopfun = (cntr, fw) -> jd_loop(cntr, fw, watched_files; 
+                                            clear=clear, verb=verb,
+                                            on_write=on_write)
         # start the liveserver in the current directory
         LiveServer.setverbose(verb)
         LiveServer.serve(port=port, coreloopfun=coreloopfun)
@@ -140,7 +144,8 @@ A single full pass of judoc looking at all watched files and processing them as 
 See also [`jd_loop`](@ref), [`serve`](@ref) and [`publish`](@ref).
 """
 function jd_fullpass(watched_files::NamedTuple; clear::Bool=false,
-                     verb::Bool=false, prerender::Bool=false, isoptim::Bool=false, no_fail_prerender::Bool=true)::Int
+                     verb::Bool=false, prerender::Bool=false, isoptim::Bool=false, no_fail_prerender::Bool=true,
+                     on_write::Function=(_, _) -> nothing)::Int
     JD_ENV[:FULL_PASS] = true
     # initiate page segments
     head    = read(joinpath(PATHS[:src_html], "head.html"), String)
@@ -168,18 +173,18 @@ function jd_fullpass(watched_files::NamedTuple; clear::Bool=false,
     begin
         if isfile(joinpath(indexmd...))
             a = process_file(:md, indexmd, head, pg_foot, foot; clear=clear,
-                             prerender=prerender, isoptim=isoptim)
+                             prerender=prerender, isoptim=isoptim, on_write=on_write)
             if a < 0 && prerender && no_fail_prerender
                 process_file(:md, indexmd, head, pg_foot, foot; clear=clear,
-                             prerender=false, isoptim=isoptim)
+                             prerender=false, isoptim=isoptim, on_write=on_write)
             end
             s += a
         elseif isfile(joinpath(indexhtml...))
             a = process_file(:html, indexhtml, head, pg_foot, foot; clear=clear,
-                             prerender=prerender, isoptim=isoptim)
+                             prerender=prerender, isoptim=isoptim, on_write=on_write)
             if a < 0 && prerender && no_fail_prerender
                 process_file(:html, indexhtml, head, pg_foot, foot; clear=clear,
-                             prerender=false, isoptim=isoptim)
+                             prerender=false, isoptim=isoptim, on_write=on_write)
             end
             s += a
         else
@@ -189,10 +194,10 @@ function jd_fullpass(watched_files::NamedTuple; clear::Bool=false,
         for (case, dict) ∈ pairs(watched_files), (fpair, t) ∈ dict
             occursin("index.", fpair.second) && continue
             a = process_file(case, fpair, head, pg_foot, foot, t; clear=clear,
-                             prerender=prerender, isoptim=isoptim)
+                             prerender=prerender, isoptim=isoptim, on_write=on_write)
             if a < 0 && prerender && no_fail_prerender
                 process_file(case, fpair, head, pg_foot, foot, t; clear=clear,
-                             prerender=false, isoptim=isoptim)
+                             prerender=false, isoptim=isoptim, on_write=on_write)
             end
             s += a
         end
@@ -217,7 +222,8 @@ updates the `watched_files`.
 * `verb=false`:  whether to display messages
 """
 function jd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, watched_files::NamedTuple;
-                 clear::Bool=false, verb::Bool=false)::Nothing
+                 clear::Bool=false, verb::Bool=false,
+                 on_write::Function=(_, _) -> nothing)::Nothing
     # every 30 cycles (3 seconds), scan directory to check for new or deleted files and
     # update dicts accordingly
     if mod(cycle_counter, 30) == 0
@@ -245,7 +251,7 @@ function jd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, watched_files::Na
             if haskey(watched_files[:infra], fpair)
                 verb && println("→ full pass...")
                 start = time()
-                jd_fullpass(watched_files; clear=false, verb=false, prerender=false)
+                jd_fullpass(watched_files; clear=false, verb=false, prerender=false, on_write=on_write)
                 verb && (print_final(rpad("✔ full pass...", 15), start); println(""))
             # if it's a literate file
             elseif haskey(watched_files[:literate], fpair)
@@ -268,7 +274,7 @@ function jd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, watched_files::Na
                     for m in eachmatch(r"\{(.*?)(\.jl)?\}", content)
                         if endswith(literate_path, m.captures[1])
                             process_file(:md, mdfpair, head, pg_foot, foot, cur_t;
-                                         clear=false, prerender=false)
+                                         clear=false, prerender=false, on_write=on_write)
                             break
                         end
                     end
@@ -285,7 +291,7 @@ function jd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, watched_files::Na
                 # if it's the first time we modify this file then all blocks need
                 # to be evaluated so that everything is in scope
                 process_file(case, fpair, head, pg_foot, foot, cur_t;
-                             clear=false, prerender=false)
+                             clear=false, prerender=false, on_write=on_write)
                 verb && print_final(fmsg, start)
             end
         end
