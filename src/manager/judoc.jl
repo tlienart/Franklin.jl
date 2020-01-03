@@ -23,7 +23,7 @@ Keyword arguments:
 * `no_fail_prerender=true`: whether, in a prerendering phase, ignore errors and try to produce an output
 * `eval_all=false`:  whether to force re-evaluation of all code blocks
 * `silent=false`:    switch this on to suppress all output (including eval statements).
-* `cleanup=true`:    whether to clear environment dictionatires, see [`cleanup`](@ref).
+* `cleanup=true`:    whether to clear environment dictionaries, see [`cleanup`](@ref).
 """
 function serve(; clear::Bool=true,
                  verb::Bool=false,
