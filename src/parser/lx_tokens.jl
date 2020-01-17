@@ -47,7 +47,7 @@ end
 # if offset unspecified, start from basically -∞ (configs etc)
 function LxDef(name::String, narg::Int, def::AS)
     o = JD_ENV[:OFFSET_GLOB_LXDEFS] += 5 # we don't care just fwd a bit
-    LxDef(name, narg, def, o, o + 3) # we also don't care YOLO
+    LxDef(name, narg, def, o, o + 3)     # we also don't care YOLO
 end
 
 from(lxd::LxDef) = lxd.from

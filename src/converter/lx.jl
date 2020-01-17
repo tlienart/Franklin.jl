@@ -158,50 +158,6 @@ const LXCOM_HREF = LittleDict{String, Function}(
 """
 $(SIGNATURES)
 
-Internal function to resolve a relative path to `/assets/` and return the resolved dir as well
-as the file name; it also checks that the dir exists. It returns the full path to the file, the
-path of the directory containing the file, and the name of the file without extension.
-See also [`resolve_lx_input`](@ref).
-Note: rpath here is always a UNIX path while the output correspond to SYSTEM paths.
-"""
-function check_input_rpath(rpath::AS, lang::AS=""; code::Bool=false)::NTuple{3,String}
-    # find the full system path to the asset
-    fpath = resolve_assets_rpath(rpath; canonical=true, code=code)
-    # check if an extension is given, if not, consider it's `.xx` with language `nothing`
-    if isempty(splitext(fpath)[2])
-        ext, _ = get(CODE_LANG, lang) do
-            (".xx", nothing)
-        end
-        fpath *= ext
-    end
-    dir, fname = splitdir(fpath)
-
-    # TODO: probably better to not throw an "argumenterror" here but maybe use html_err
-    # (though the return type needs to be adjusted accordingly and it shouldn't be propagated)
-
-    # see fill_extension, this is the case where nothing came up
-    if endswith(fname, ".xx")
-        # try to find a file with the same root and any extension otherwise throw an error
-        files = readdir(dir)
-        fn = splitext(fname)[1]
-        k = findfirst(e -> splitext(e)[1] == fn, files)
-        if isnothing(k)
-            throw(ArgumentError("Couldn't find a relevant file when trying to " *
-                                "resolve an \\input command. (given: $rpath)"))
-        end
-        fname = files[k]
-        fpath = joinpath(dir, fname)
-    elseif !isfile(fpath)
-        throw(ArgumentError("Couldn't find a relevant file when trying to resolve an \\input " *
-                            "command. (given: $rpath)"))
-    end
-    return fpath, dir, splitext(fname)[1]
-end
-
-
-"""
-$(SIGNATURES)
-
 Internal function to read the content of a script file. See also [`resolve_lx_input`](@ref).
 """
 function resolve_lx_input_hlcode(rpath::AS, lang::AS)::String

@@ -6,12 +6,12 @@ Helper function for `convert_inter_html` that processes an extracted block given
 """
 function convert_block(β::AbstractBlock, lxcontext::LxContext)::AS
     # case for special characters / html entities
-    β isa HTML_SPCH     && return ifelse(isempty(β.r), β.ss, β.r)
+    β isa HTML_SPCH && return ifelse(isempty(β.r), β.ss, β.r)
     # Return relevant interpolated string based on case
     βn = β.name
     βn ∈ MD_HEADER         && return convert_header(β, lxcontext.lxdefs)
     βn == :CODE_INLINE     && return html_code_inline(content(β) |> htmlesc)
-    βn == :CODE_BLOCK_LANG && return convert_code_block(β.ss)
+    βn == :CODE_BLOCK_LANG && return resolve_code_block(β.ss)
     βn == :CODE_BLOCK_IND  && return convert_indented_code_block(β.ss)
     βn == :CODE_BLOCK      && return html_code(strip(content(β)), "{{fill lang}}")
     βn == :ESCAPE          && return chop(β.ss, head=3, tail=3)

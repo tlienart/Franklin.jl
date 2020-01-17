@@ -61,13 +61,53 @@ html_img(src::AS, alt::AS="") = "<img src=\"$src\" alt=\"$(htmlesc(alt))\">"
 $(SIGNATURES)
 
 Convenience function to introduce a code block.
+
+Note: with indented blocks, the language will be resolved at build time;
+as a result no lines are skipped.
 """
-function html_code(c::AS, lang::AS="")
+function html_code(c::AS, lang::AS="")::String
     isempty(c)     && return ""
     isempty(lang)  && return "<pre><code class=\"plaintext\">$c</code></pre>"
+    # if it's html code, escape it first
     lang == "html" && !is_html_escaped(c) && (c = htmlesc(c))
+    # remove hidden lines if any
+    c = html_skip_hidden(c, lang)
     return "<pre><code class=\"language-$lang\">$c</code></pre>"
 end
+
+const REGEX_CODE_HIDE = Regex(raw"(?:^|[^\S\r\n]*?)#(\s)*?(?i)hide(all)?")
+const REGEX_LIT_HIDE  = Regex(raw"(?:^|[^\S\r\n]*?)#src")
+
+"""
+$(SIGNATURES)
+
+Convenience function to introduce a
+"""
+function html_skip_hidden(c::AS, lang::AS)
+    # if the language is not one of CODE_LANG, just return
+    # without hiding anything
+    lang in keys(CODE_LANG) || return c
+    # otherwise retrive the symbol marking a comment
+    _, comsym = CODE_LANG[lang]
+    # read code line by line and write to buffer
+    buf = IOBuffer()
+    for line in split(c, '\n')
+        m  = match(REGEX_CODE_HIDE, line)
+        ml = match(REGEX_LIT_HIDE, line)
+        if m === ml === nothing
+            println(buf, line)
+        elseif m !== nothing
+            # does it have a "all" or not?
+            isnothing(m.captures[2]) && continue
+            # if it doesn return an empty string
+            return ""
+        end
+        # in other cases: skip the line
+    end
+    # strip as there may be a stray `\n`
+    return strip(String(take!(buf)))
+end
+
 
 """
 $(SIGNATURES)

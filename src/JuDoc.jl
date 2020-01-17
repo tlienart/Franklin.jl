@@ -30,6 +30,7 @@ export jdf_empty, jdf_lunr, jdf_literate
 """Big number when we want things to be far."""
 const BIG_INT = typemax(Int)
 
+"""Global options for JuDoc"""
 const JD_ENV = LittleDict(
     :DEBUG_MODE         => false,
     :FULL_PASS          => true,
@@ -38,23 +39,29 @@ const JD_ENV = LittleDict(
     :SILENT_MODE        => false,
     :OFFSET_GLOB_LXDEFS => -BIG_INT,
     :CUR_PATH           => "",
-    :CUR_PATH_WITH_EVAL => "",
+    :CUR_PATH_WITH_EVAL => ""
     )
 
-"""Dict to keep track of languages and how comments are indicated and their extensions."""
+"""Dict to keep track of languages and how comments are indicated and their extensions. This is relevant to allow hiding lines of code. """
 const CODE_LANG = LittleDict{String,NTuple{2,String}}(
+    # expected most common ones
+    "julia"      => (".jl",   "#"),
+    "julia-repl" => (".jl",   "#"),
+    "python"     => (".py",   "#"),
+    "r"          => (".r",    "#"),
+    "matlab"     => (".m",    "%"),
+    # other ones that could appear (this may get completed over time)
+    # note: HTML,Markdown are not here on purpose as there can be
+    # ambiguities in context.
+    "bash"       => (".sh",   "#"),
     "c"          => (".c",    "//"),
     "cpp"        => (".cpp",  "//"),
     "fortran"    => (".f90",  "!"),
     "go"         => (".go",   "//"),
     "javascript" => (".js",   "//"),
-    "julia"      => (".jl",   "#"),
-    "julia-repl" => (".jl",   "#"),
     "lua"        => (".lua",  "--"),
-    "matlab"     => (".m",    "%"),
-    "python"     => (".py",   "#"),
-    "r"          => (".r",    "#"),
     "toml"       => (".toml", "#"),
+    "ruby"       => (".ruby", "#"),
     )
 
 # copied from Base/path.jl
@@ -96,6 +103,13 @@ include("parser/md_validate.jl")
 include("parser/html_tokens.jl")
 include("parser/html_blocks.jl")
 
+# EVAL
+include("eval/module.jl")
+include("eval/run.jl")
+include("eval/codeblock.jl")
+include("eval/io.jl")
+include("eval/literate.jl")
+
 # CONVERSION
 # > markdown
 include("converter/md_blocks.jl")
@@ -130,8 +144,5 @@ include("misc_html.jl")
 
 # ERROR TYPES
 include("error_types.jl")
-
-# INTEGRATION
-include("integration/literate.jl")
 
 end # module

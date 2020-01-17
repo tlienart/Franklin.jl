@@ -65,10 +65,8 @@ end
 """
 LOCAL_PAGE_VARS
 
-Dictionary of variables copied and then set for each page (through definitions). Entries have the
-same format as for `GLOBAL_PAGE_VARS`.
-
-DEVNOTE: marked as constant for perf reasons but can be modified since Dict.
+Dictionary of variables copied and then set for each page (through
+definitions). Entries have the same format as for `GLOBAL_PAGE_VARS`.
 """
 const LOCAL_PAGE_VARS = PageVars()
 
@@ -76,8 +74,8 @@ const LOCAL_PAGE_VARS = PageVars()
 """
 $(SIGNATURES)
 
-Convenience function to allocate default values of page variables. This is called every time a page
-is processed.
+Convenience function to allocate default values of page variables. This is
+called every time a page is processed.
 """
 @inline function def_LOCAL_PAGE_VARS!()::Nothing
     # NOTE `jd_code` is the only page var we KEEP (stays alive)

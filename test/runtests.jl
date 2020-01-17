@@ -30,6 +30,13 @@ println("Errors")
 include("errors/context.jl")
 println("🍺")
 
+# EVAL
+println("EVAL")
+include("eval/module.jl")
+include("eval/run.jl")
+include("eval/io.jl")
+include("eval/codeblock.jl")
+
 # CONVERTER folder
 println("CONVERTER/MD")
 include("converter/markdown.jl")
