@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://tlienart.github.io/franklindocs/">
-    <img src="https://tlienart.github.io/franklindocs/assets/infra/logoF.svg" alt="JuDoc" width="150">
+    <img src="https://tlienart.github.io/franklindocs/assets/infra/logoF2.svg" alt="JuDoc" width="150">
   </a>
 </div>
 
