@@ -20,7 +20,7 @@ Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 [compat]
 DocStringExtensions = "^0.8"
 HTTP = "^0.8"
-FranklinTemplates = "^0.1"
+FranklinTemplates = "^0.4"
 Literate = "^2.0"
 LiveServer = "^0.3"
 NodeJS = "^0.6, ^1"
