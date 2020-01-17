@@ -1,7 +1,7 @@
-using JuDoc, Test, Markdown, Dates, Random, Literate
-const J = JuDoc
+using Franklin, Test, Markdown, Dates, Random, Literate
+const J = Franklin
 const R = @__DIR__
-const D = joinpath(dirname(dirname(pathof(JuDoc))), "test", "_dummies")
+const D = joinpath(dirname(dirname(pathof(Franklin))), "test", "_dummies")
 
 # NOTE this first file MUST be included before running the rest of the tests
 # otherwise you may get an error like "key 0x099191234..." was not found or
@@ -73,13 +73,13 @@ begin
     # clean up
     rm(p; recursive=true, force=true)
 end
-cd(dirname(dirname(pathof(JuDoc))))
+cd(dirname(dirname(pathof(Franklin))))
 
 println("INTEGRATION")
 include("integration/literate.jl")
 
 flush_td()
-cd(joinpath(dirname(dirname(pathof(JuDoc)))))
+cd(joinpath(dirname(dirname(pathof(Franklin)))))
 
 println("COVERAGE")
 include("coverage/extras1.jl")

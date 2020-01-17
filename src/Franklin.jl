@@ -1,4 +1,4 @@
-module JuDoc
+module Franklin
 
 using JuDocTemplates
 

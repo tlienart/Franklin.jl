@@ -31,7 +31,7 @@ end
 
 # copying _libs/katex in the J.PATHS[:libs] so that it can be used in testing
 # the js_prerender_math
-cp(joinpath(dirname(dirname(pathof(JuDoc))), "test", "_libs", "katex"), joinpath(J.PATHS[:libs], "katex"))
+cp(joinpath(dirname(dirname(pathof(Franklin))), "test", "_libs", "katex"), joinpath(J.PATHS[:libs], "katex"))
 
 @testset "Set vars" begin
     d = J.PageVars(

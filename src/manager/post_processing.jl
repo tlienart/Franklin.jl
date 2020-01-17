@@ -151,7 +151,7 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
             mmsg = rpad("→ Minifying *.[html|css] files...", 35)
             print(mmsg)
             # copy the script to the current dir
-            cp(joinpath(dirname(pathof(JuDoc)), "scripts", "minify.py"), JD_PY_MIN_NAME; force=true)
+            cp(joinpath(dirname(pathof(Franklin)), "scripts", "minify.py"), JD_PY_MIN_NAME; force=true)
             # run it
             succ = success(`$([e for e in split(PY)]) $JD_PY_MIN_NAME`)
             # remove the script file

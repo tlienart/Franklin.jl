@@ -24,11 +24,11 @@ is a substring. Do not confuse with `String(s::SubString)` which casts `s` into 
 # Example
 
 ```julia-repl
-julia> a = SubString("hello JuDoc", 3:8);
-julia> JuDoc.str(a)
-"hello JuDoc"
+julia> a = SubString("hello Fraknlin", 3:8);
+julia> Franklin.str(a)
+"hello Franklin"
 julia> String(a)
-"llo Ju"
+"llo Fr"
 ```
 """
 str(s::String)::String    = s
@@ -45,7 +45,7 @@ Convenience functions to take a substring of a string.
 
 # Example
 ```julia-repl
-julia> JuDoc.subs("hello", 2:4)
+julia> Franklin.subs("hello", 2:4)
 "ell"
 ```
 """
@@ -61,7 +61,7 @@ Given a substring `ss`, returns the position in the parent string where the subs
 
 # Example
 ```julia-repl
-julia> ss = SubString("hello", 2:4); JuDoc.from(ss)
+julia> ss = SubString("hello", 2:4); Franklin.from(ss)
 2
 ```
 """
@@ -75,7 +75,7 @@ Given a substring `ss`, returns the position in the parent string where the subs
 
 # Example
 ```julia-repl
-julia> ss = SubString("hello", 2:4); JuDoc.to(ss)
+julia> ss = SubString("hello", 2:4); Franklin.to(ss)
 4
 ```
 """
@@ -89,7 +89,7 @@ Returns the string span of a regex match. Assumes there is no unicode in the mat
 
 # Example
 ```julia-repl
-julia> JuDoc.matchrange(match(r"ell", "hello"))
+julia> Franklin.matchrange(match(r"ell", "hello"))
 2:4
 ```
 """

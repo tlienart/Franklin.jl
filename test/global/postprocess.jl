@@ -11,7 +11,7 @@
                  )
               )
     # ---------------
-    if JuDoc.JD_CAN_MINIFY
+    if Franklin.JD_CAN_MINIFY
         presize1 = stat(joinpath("css", "basic.css")).size
         presize2 = stat("index.html").size
         optimize(prerender=false)
@@ -20,7 +20,7 @@
     end
     # ---------------
     # verify all links
-    JuDoc.verify_links()
+    Franklin.verify_links()
 
     # ---------------
     # change the prepath
