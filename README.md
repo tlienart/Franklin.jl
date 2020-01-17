@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://tlienart.github.io/franklindocs/">
-    <img src="https://tlienart.github.io/franklindocs/assets/infra/logo1.svg" alt="JuDoc" width="150">
+    <img src="https://tlienart.github.io/franklindocs/assets/infra/logoF.svg" alt="JuDoc" width="150">
   </a>
 </div>
 
@@ -76,14 +76,14 @@ Head to [the docs](https://tlienart.github.io/franklindocs/) for more informatio
 ## Associated repositories
 
 * [LiveServer.jl](https://github.com/asprionj/LiveServer.jl) a package coded with [Jonas Asprion](https://github.com/asprionj) to render and watch the content of a local folder in the browser.
-* [JuDocTemplates.jl](https://github.com/tlienart/JuDocTemplates.jl) the repositories where Franklin themes/templates are developed.
+* [FranklinTemplates.jl](https://github.com/tlienart/FranklinTemplates.jl) the repositories where Franklin themes/templates are developed.
 * [franklindocs](https://github.com/tlienart/franklindocs) the repository for Franklin's website.  
 
 ## Licenses
 
 **Core**:
 
-* Franklin, JuDocTemplates and LiveServer are all MIT licensed.
+* Franklin, FranklinTemplates and LiveServer are all MIT licensed.
 
 **External**:
 
