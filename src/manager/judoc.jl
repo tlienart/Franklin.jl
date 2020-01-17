@@ -38,6 +38,11 @@ function serve(; clear::Bool=true,
                  cleanup::Bool=true)::Union{Nothing,Int}
     # set the global path
     FOLDER_PATH[]  = pwd()
+    println("-----------------------------------------------------------")
+    println("⚠️  JuDoc.jl is being renamed to Franklin.jl ⚠️")
+    println("For future updates (>0.4.3), you will need to add Franklin.")
+    println("See also https://github.com/tlienart/JuDoc.jl/issues/338.")
+    println("-----------------------------------------------------------\n")
 
     # silent mode?
     silent && (JD_ENV[:SILENT_MODE] = true; verb = false)
