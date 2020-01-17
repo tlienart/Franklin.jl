@@ -1,3 +1,6 @@
+**WARNING**: this package will be renamed soon to `Franklin.jl` (see issue [#338](https://github.com/tlienart/JuDoc.jl/issues/338)); if you're new to the package maybe wait the end of January before giving it a shot as that might help avoid issues.
+If you're a current user on `<= 0.4.0` the package will keep working as it does; a coming patch release `0.4.1` will add a helper message then `0.5` will effectively be the first release of Franklin.
+
 <div align="center">
   <a href="https://tlienart.github.io/JuDocWeb/">
     <img src="https://tlienart.github.io/JuDocWeb/assets/infra/logo1.svg" alt="JuDoc" width="150">
