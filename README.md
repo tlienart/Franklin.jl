@@ -4,7 +4,7 @@
   </a>
 </div>
 
-<h2 align="center">A Static Site Generator in Julia.
+<h2 align="center">Franklin: a Static Site Generator in Julia.
 <p align="center">
   <img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg"
        alt="Lifecycle">
