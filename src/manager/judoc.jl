@@ -38,7 +38,7 @@ function serve(; clear::Bool=true,
                  cleanup::Bool=true)::Union{Nothing,Int}
     # set the global path
     FOLDER_PATH[]  = pwd()
-
+    
     # silent mode?
     silent && (JD_ENV[:SILENT_MODE] = true; verb = false)
 
