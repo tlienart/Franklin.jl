@@ -1,6 +1,6 @@
 <div align="center">
-  <a href="https://tlienart.github.io/JuDocWeb/">
-    <img src="https://tlienart.github.io/JuDocWeb/assets/infra/logo1.svg" alt="JuDoc" width="150">
+  <a href="https://tlienart.github.io/franklindocs/">
+    <img src="https://tlienart.github.io/franklindocs/assets/infra/logo1.svg" alt="JuDoc" width="150">
   </a>
 </div>
 
@@ -24,11 +24,11 @@ The base syntax is plain markdown with a few extensions such as the ability to d
 
 ## Docs
 
-Go to [Franklin's main website](https://tlienart.github.io/JuDocWeb/).
+Go to [Franklin's main website](https://tlienart.github.io/franklindocs/).
 
 Some examples of websites using Franklin
 
-* the main website is written in Franklin, [source](https://github.com/tlienart/JuDocWeb),
+* the main website is written in Franklin, [source](https://github.com/tlienart/franklindocs),
 * [@cormullion's website](https://cormullion.github.io), the author of [Luxor.jl](https://github.com/JuliaGraphics/Luxor.jl),
 * MLJ's [tutorial website](https://alan-turing-institute.github.io/MLJTutorials/) which shows how Franklin can interact nicely with [Literate.jl](https://github.com/fredrikekre/Literate.jl)
 * see also [all julia blog posts](https://julialangblogmirror.netlify.com/) rendered with Franklin thanks to massive help from [@cormullion](https://github.com/cormullion); see also the [source repo](https://github.com/cormullion/julialangblog)
@@ -44,7 +44,7 @@ Some examples of websites using Franklin
   - optional pre-rendering of KaTeX and highlighted code blocks to remove javascript dependency,
 * Easy HTML templating to define or adapt a given layout.
 
-See [the docs](https://tlienart.github.io/JuDocWeb/) for more information and examples.
+See [the docs](https://tlienart.github.io/franklindocs/) for more information and examples.
 
 ## Getting started
 
@@ -71,13 +71,13 @@ julia> serve()
 ```
 
 Modify the files in `MyNewSite/src` and see the changes being live-rendered in your browser.
-Head to [the docs](https://tlienart.github.io/JuDocWeb/) for more information.
+Head to [the docs](https://tlienart.github.io/franklindocs/) for more information.
 
 ## Associated repositories
 
 * [LiveServer.jl](https://github.com/asprionj/LiveServer.jl) a package coded with [Jonas Asprion](https://github.com/asprionj) to render and watch the content of a local folder in the browser.
 * [JuDocTemplates.jl](https://github.com/tlienart/JuDocTemplates.jl) the repositories where Franklin themes/templates are developed.
-* [JuDocWeb](https://github.com/tlienart/JuDocWeb) the repository for Franklin's website.  
+* [franklindocs](https://github.com/tlienart/franklindocs) the repository for Franklin's website.  
 
 ## Licenses
 
