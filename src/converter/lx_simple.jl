@@ -1,4 +1,4 @@
-# See src/jd_vars : def_GLOBAL_LXDEFS
+# See src/utils/vars : def_GLOBAL_LXDEFS
 
 """
 $SIGNATURES

@@ -44,7 +44,7 @@ if J.FD_CAN_PRERENDER; @testset "prerender" begin
         <!doctype html>
         <html lang=en>
         <meta charset=UTF-8>
-        <div class=jd-content>
+        <div class=franklin-content>
         <p>range is \(10\sqrt{3}\)–\(20\sqrt{2}\) <!-- non-ascii en dash --></p>
         <p>Consider an invertible matrix \(M\) made of blocks \(A\), \(B\), \(C\) and \(D\) with</p>
         \[ M \quad\!\! =\quad\!\! \begin{pmatrix} A & B \\ C & D \end{pmatrix} \]
@@ -65,7 +65,7 @@ if J.FD_CAN_PRERENDER; @testset "prerender" begin
         <!doctype html>
         <html lang=en>
         <meta charset=UTF-8>
-        <div class=jd-content>
+        <div class=franklin-content>
         <h1>Title</h1>
         <p>Blah</p>
         <pre><code class=language-julia >using Test

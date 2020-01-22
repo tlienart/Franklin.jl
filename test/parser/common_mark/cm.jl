@@ -17,8 +17,8 @@
 # those cases.
 # --------------------------------------------------------------------
 
-dir_jd = dirname(dirname(pathof(Franklin)))
-dir_specs = joinpath(dir_jd, "test", "parser", "common_mark")
+dir_fd = dirname(dirname(pathof(Franklin)))
+dir_specs = joinpath(dir_fd, "test", "parser", "common_mark")
 tests = read(joinpath(dir_specs, "spec029.json"),  String)
 
 md = eachmatch(r"\"markdown\":\s\"(.*?)\",", tests)
@@ -88,7 +88,7 @@ function check(r)
     fails
 end
 
-jdc(i) = cleanup(preprocess(md[i]) |> fd2html_td)
+fdc(i) = cleanup(preprocess(md[i]) |> fd2html_td)
 htc(i) = cleanup(html[i])
 
 # TABS

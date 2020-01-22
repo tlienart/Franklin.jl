@@ -15,7 +15,7 @@ function js_prerender_katex(hs::String)::String
             const katex = require("$(escape_string(joinpath(PATHS[:libs], "katex", "katex.min.js")))");
             """)
     # string to separate the output of the different blocks
-    splitter = "_>jdsplit<_"
+    splitter = "_>fdsplit<_"
 
     # go over each match and add the content to the jsbuffer
     for i ∈ 1:2:length(matches)-1
@@ -54,7 +54,7 @@ function js_prerender_highlight(hs::String)::String
     write(jsbuffer, """const hljs = require('highlight.js');""")
 
     # string to separate the output of the different blocks
-    splitter = "_>jdsplit<_"
+    splitter = "_>fdsplit<_"
 
     # go over each match and add the content to the jsbuffer
     for i ∈ 1:2:length(matches)-1

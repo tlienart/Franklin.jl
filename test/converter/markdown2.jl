@@ -32,17 +32,17 @@ end
     J.FD_ENV[:CUR_PATH] = "pages/ff/aa.md"
     h = raw"""
         \toc
-        ## Hello `jd`
+        ## Hello `fd`
         #### weirdly nested
         ### Goodbye!
         ## Done
         done.
         """ |> seval
     @test isapproxstr(h, raw"""
-        <div class="jd-toc">
+        <div class="franklin-toc">
           <ol>
             <li>
-              <a href="/pub/ff/aa.html#hello_jd">Hello <code>jd</code></a>
+              <a href="/pub/ff/aa.html#hello_fd">Hello <code>fd</code></a>
               <ol>
                 <li><ol><li><a href="/pub/ff/aa.html#weirdly_nested">weirdly nested</a></li></ol></li>
                 <li><a href="/pub/ff/aa.html#goodbye">Goodbye&#33;</a></li>
@@ -51,7 +51,7 @@ end
             <li><a href="/pub/ff/aa.html#done">Done</a></li>
           </ol>
         </div>
-        <h2 id="hello_jd"><a href="/pub/ff/aa.html#hello_jd">Hello <code>jd</code></a></h2>
+        <h2 id="hello_fd"><a href="/pub/ff/aa.html#hello_fd">Hello <code>fd</code></a></h2>
         <h4 id="weirdly_nested"><a href="/pub/ff/aa.html#weirdly_nested">weirdly nested</a></h4>
         <h3 id="goodbye"><a href="/pub/ff/aa.html#goodbye">Goodbye&#33;</a></h3>
         <h2 id="done"><a href="/pub/ff/aa.html#done">Done</a></h2>done.
@@ -73,7 +73,7 @@ end
         done.
         """ |> seval
     @test isapproxstr(s, raw"""
-        <div class="jd-toc">
+        <div class="franklin-toc">
             <ol>
                 <li><a href="/pub/ff/aa.html#b">B</a>
                     <ol>

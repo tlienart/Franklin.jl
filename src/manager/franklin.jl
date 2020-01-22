@@ -58,7 +58,7 @@ function serve(; clear::Bool=true,
     end
 
     # construct the set of files to watch
-    watched_files = jd_setup(clear=clear)
+    watched_files = fd_setup(clear=clear)
 
     nomess && (verb = false)
 
@@ -66,7 +66,7 @@ function serve(; clear::Bool=true,
     nomess || println("→ Initial full pass...")
     start = time()
     FD_ENV[:FORCE_REEVAL] = eval_all
-    sig = jd_fullpass(watched_files; clear=clear, verb=verb, prerender=prerender,
+    sig = fd_fullpass(watched_files; clear=clear, verb=verb, prerender=prerender,
                       isoptim=isoptim, no_fail_prerender=no_fail_prerender)
     FD_ENV[:FORCE_REEVAL] = false
     sig < 0 && return sig
@@ -76,7 +76,7 @@ function serve(; clear::Bool=true,
     # start the continuous loop
     if !single
         nomess || println("→ Starting the server...")
-        coreloopfun = (cntr, fw) -> jd_loop(cntr, fw, watched_files; clear=clear, verb=verb)
+        coreloopfun = (cntr, fw) -> fd_loop(cntr, fw, watched_files; clear=clear, verb=verb)
         # start the liveserver in the current directory
         LiveServer.setverbose(verb)
         LiveServer.serve(port=port, coreloopfun=coreloopfun)
@@ -101,7 +101,7 @@ It also sets the paths variables and prepares the output directory.
 
 See also [`serve`](@ref).
 """
-function jd_setup(; clear::Bool=true)::NamedTuple
+function fd_setup(; clear::Bool=true)::NamedTuple
     # . setting up:
     # -- reading and storing the path variables
     # -- setting up the output directory (see `clear`)
@@ -139,9 +139,9 @@ as appropriate.
 * `isoptim=false`  : whether it's an optimization pass
 * `no_fail_prerender=true`: whether to skip if a prerendering goes wrong in which case don't prerender
 
-See also [`jd_loop`](@ref), [`serve`](@ref) and [`publish`](@ref).
+See also [`fd_loop`](@ref), [`serve`](@ref) and [`publish`](@ref).
 """
-function jd_fullpass(watched_files::NamedTuple; clear::Bool=false,
+function fd_fullpass(watched_files::NamedTuple; clear::Bool=false,
                      verb::Bool=false, prerender::Bool=false, isoptim::Bool=false, no_fail_prerender::Bool=true)::Int
     FD_ENV[:FULL_PASS] = true
     # initiate page segments
@@ -218,7 +218,7 @@ updates the `watched_files`.
 * `clear=false`: whether to remove any existing output directory
 * `verb=false`:  whether to display messages
 """
-function jd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, watched_files::NamedTuple;
+function fd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, watched_files::NamedTuple;
                  clear::Bool=false, verb::Bool=false)::Nothing
     # every 30 cycles (3 seconds), scan directory to check for new or deleted files and
     # update dicts accordingly
@@ -247,7 +247,7 @@ function jd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, watched_files::Na
             if haskey(watched_files[:infra], fpair)
                 verb && println("→ full pass...")
                 start = time()
-                jd_fullpass(watched_files; clear=false, verb=false, prerender=false)
+                fd_fullpass(watched_files; clear=false, verb=false, prerender=false)
                 verb && (print_final(rpad("✔ full pass...", 15), start); println(""))
             # if it's a literate file
             elseif haskey(watched_files[:literate], fpair)

@@ -77,9 +77,9 @@ function convert_md(mds::AS, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
 
     # -----------------------------------------------------------------------------------
     #> 4. Page variable definition (mddefs)
-    jd_vars = nothing
-    has_mddefs && (jd_vars = process_md_defs(blocks, isconfig, lxdefs))
-    isconfig && return "", jd_vars
+    fd_vars = nothing
+    has_mddefs && (fd_vars = process_md_defs(blocks, isconfig, lxdefs))
+    isconfig && return "", fd_vars
 
     # -----------------------------------------------------------------------------------
     #> 5. Process special characters and html entities so that they can be injected
@@ -106,20 +106,20 @@ function convert_md(mds::AS, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
     hstring   = convert_inter_html(inter_html, mblocks, lxcontext)
 
     # final vars adjustments
-    if !isnothing(jd_vars)
+    if !isnothing(fd_vars)
         #> if there's code, assemble it so that can be shown or loaded in one shot
-        codes = LOCAL_PAGE_VARS["jd_code_scope"].first.codes
+        codes = LOCAL_PAGE_VARS["fd_code_scope"].first.codes
         if !isempty(codes)
-            set_var!(jd_vars, "jd_code", strip(prod(c*"\n" for c in codes)))
+            set_var!(fd_vars, "fd_code", strip(prod(c*"\n" for c in codes)))
         end
         #> if no title is specified, grab the first header if there is one
         if isnothing(LOCAL_PAGE_VARS["title"].first) && !isempty(PAGE_HEADERS)
-            set_var!(jd_vars, "title", first(values(PAGE_HEADERS))[1])
+            set_var!(fd_vars, "title", first(values(PAGE_HEADERS))[1])
         end
     end
 
     # Return the string + franklin variables
-    return hstring, jd_vars
+    return hstring, fd_vars
 end
 
 
@@ -384,6 +384,6 @@ function process_md_defs(blocks::Vector{OCBlock}, isconfig::Bool,
         return nothing
     end
     isempty(assignments) || set_vars!(LOCAL_PAGE_VARS, assignments)
-    jd_vars = merge(GLOBAL_PAGE_VARS, LOCAL_PAGE_VARS)
-    return jd_vars
+    fd_vars = merge(GLOBAL_PAGE_VARS, LOCAL_PAGE_VARS)
+    return fd_vars
 end

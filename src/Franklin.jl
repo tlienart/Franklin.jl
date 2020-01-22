@@ -4,7 +4,7 @@ using FranklinTemplates
 
 using Markdown
 using Markdown: htmlesc
-using Dates # see jd_vars
+using Dates # see fd_vars
 using DelimitedFiles: readdlm
 using OrderedCollections
 using Pkg
@@ -116,9 +116,12 @@ include("converter/html_link_fixer.jl")
 # > javascript
 include("converter/js_prerender.jl")
 
-# FILE PROCESSING
-include("jd_paths.jl")
-include("jd_vars.jl")
+# UTILS
+include("utils/paths.jl")
+include("utils/vars.jl")
+include("utils/misc.jl")
+include("utils/html.jl")
+include("utils/errors.jl")
 
 # FILE AND DIR MANAGEMENT
 include("manager/rss_generator.jl")
@@ -127,13 +130,6 @@ include("manager/file_utils.jl")
 include("manager/franklin.jl")
 include("manager/extras.jl")
 include("manager/post_processing.jl")
-
-# MISC UTILS
-include("misc_utils.jl")
-include("misc_html.jl")
-
-# ERROR TYPES
-include("error_types.jl")
 
 # INTEGRATION
 include("integration/literate.jl")

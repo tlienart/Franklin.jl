@@ -36,13 +36,13 @@ function write_page(root::String, file::String, head::String,
      # of paths
     FD_ENV[:CUR_PATH] = fpath[lastindex(PATHS[:src])+length(PATH_SEP)+1:end]
 
-    (content, jd_vars) = convert_md(read(fpath, String), collect(values(GLOBAL_LXDEFS)))
+    (content, fd_vars) = convert_md(read(fpath, String), collect(values(GLOBAL_LXDEFS)))
 
     # Check for RSS elements
     if GLOBAL_PAGE_VARS["generate_rss"].first && FD_ENV[:FULL_PASS] &&
-        !all(e -> e |> first |> isempty, (jd_vars["rss"], jd_vars["rss_description"]))
+        !all(e -> e |> first |> isempty, (fd_vars["rss"], fd_vars["rss_description"]))
         # add item to RSSDICT
-        add_rss_item(jd_vars)
+        add_rss_item(fd_vars)
     end
 
     # adding document variables to the dictionary
@@ -50,14 +50,14 @@ function write_page(root::String, file::String, head::String,
     # but it takes negligible time to do this so ¯\_(ツ)_/¯ (and it's less annoying
     # than keeping tabs on which file has already been treated etc).
     s = stat(fpath)
-    set_var!(jd_vars, "jd_ctime", jd_date(unix2datetime(s.ctime)))
-    set_var!(jd_vars, "jd_mtime", jd_date(unix2datetime(s.mtime)))
-    set_var!(jd_vars, "jd_rpath", FD_ENV[:CUR_PATH])
+    set_var!(fd_vars, "fd_ctime", fd_date(unix2datetime(s.ctime)))
+    set_var!(fd_vars, "fd_mtime", fd_date(unix2datetime(s.mtime)))
+    set_var!(fd_vars, "fd_rpath", FD_ENV[:CUR_PATH])
 
-    # 3. process blocks in the html infra elements based on `jd_vars`
+    # 3. process blocks in the html infra elements based on `fd_vars`
     # (e.g.: add the date in the footer)
-    content = convert_html(str(content), jd_vars)
-    head, pg_foot, foot = (e->convert_html(e, jd_vars)).([head, pg_foot, foot])
+    content = convert_html(str(content), fd_vars)
+    head, pg_foot, foot = (e->convert_html(e, fd_vars)).([head, pg_foot, foot])
 
     # 4. construct the page proper & prerender if needed
     pg = build_page(head, content, pg_foot, foot)
@@ -158,4 +158,4 @@ $(SIGNATURES)
 Convenience function to assemble the html out of its parts.
 """
 build_page(head::String, content::String, pg_foot::String, foot::String)::String =
-    "$head\n<div class=\"jd-content\">\n$content\n$pg_foot\n</div>\n$foot"
+    "$head\n<div class=\"franklin-content\">\n$content\n$pg_foot\n</div>\n$foot"

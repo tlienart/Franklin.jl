@@ -58,7 +58,7 @@ end
         @def hasmath = false
         etc
         """
-    (m, jdv) = J.convert_md(st)
-    @test jdv["title"].first == "blah"
-    @test jdv["hasmath"].first == false
+    (m, fdv) = J.convert_md(st)
+    @test fdv["title"].first == "blah"
+    @test fdv["hasmath"].first == false
 end
