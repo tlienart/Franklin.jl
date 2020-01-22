@@ -87,7 +87,7 @@ end
         @def reeval = true
 
         \literate{/literate-scripts/tutorial.jl}
-        """ |> jd2html_td
+        """ |> fd2html_td
     @test isapproxstr(h, """
         <h1 id="rational_numbers"><a href="/index.html#rational_numbers">Rational numbers</a></h1>
         <p>In julia rational numbers can be constructed with the <code>//</code> operator. Lets define two rational numbers, <code>x</code> and <code>y</code>:</p>
@@ -105,9 +105,9 @@ end
     s = raw"""
         \literate{foo}
         """
-    @test_throws ErrorException (s |> jd2html_td)
+    @test_throws ErrorException (s |> fd2html_td)
     s = raw"""
         \literate{/foo}
         """
-    @test @test_logs (:warn, "File not found when trying to convert a literate file ($(joinpath(J.PATHS[:folder], "foo.jl"))).") (s |> jd2html_td) == """<p><span style="color:red;">// Literate file matching '/foo' not found. //</span></p></p>\n"""
+    @test @test_logs (:warn, "File not found when trying to convert a literate file ($(joinpath(J.PATHS[:folder], "foo.jl"))).") (s |> fd2html_td) == """<p><span style="color:red;">// Literate file matching '/foo' not found. //</span></p></p>\n"""
 end

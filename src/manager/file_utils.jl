@@ -34,12 +34,12 @@ function write_page(root::String, file::String, head::String,
      # The curpath is the relative path starting after /src/ so for instance:
      # f1/blah/page1.md or index.md etc... this is useful in the code evaluation and management
      # of paths
-    JD_ENV[:CUR_PATH] = fpath[lastindex(PATHS[:src])+length(PATH_SEP)+1:end]
+    FD_ENV[:CUR_PATH] = fpath[lastindex(PATHS[:src])+length(PATH_SEP)+1:end]
 
     (content, jd_vars) = convert_md(read(fpath, String), collect(values(GLOBAL_LXDEFS)))
 
     # Check for RSS elements
-    if GLOBAL_PAGE_VARS["generate_rss"].first && JD_ENV[:FULL_PASS] &&
+    if GLOBAL_PAGE_VARS["generate_rss"].first && FD_ENV[:FULL_PASS] &&
         !all(e -> e |> first |> isempty, (jd_vars["rss"], jd_vars["rss_description"]))
         # add item to RSSDICT
         add_rss_item(jd_vars)
@@ -52,7 +52,7 @@ function write_page(root::String, file::String, head::String,
     s = stat(fpath)
     set_var!(jd_vars, "jd_ctime", jd_date(unix2datetime(s.ctime)))
     set_var!(jd_vars, "jd_mtime", jd_date(unix2datetime(s.mtime)))
-    set_var!(jd_vars, "jd_rpath", JD_ENV[:CUR_PATH])
+    set_var!(jd_vars, "jd_rpath", FD_ENV[:CUR_PATH])
 
     # 3. process blocks in the html infra elements based on `jd_vars`
     # (e.g.: add the date in the footer)
@@ -65,7 +65,7 @@ function write_page(root::String, file::String, head::String,
         # KATEX
         pg = js_prerender_katex(pg)
         # HIGHLIGHT
-        if JD_CAN_HIGHLIGHT
+        if FD_CAN_HIGHLIGHT
             pg = js_prerender_highlight(pg)
             # remove script
             pg = replace(pg, r"<script.*?(?:highlight\.pack\.js|initHighlightingOnLoad).*?<\/script>"=>"")
@@ -93,12 +93,12 @@ function process_file(case::Symbol, fpair::Pair{String,String}, args...; kwargs.
     try
         process_file_err(case, fpair, args...; kwargs...)
     catch err
-        JD_ENV[:DEBUG_MODE] && throw(err)
+        FD_ENV[:DEBUG_MODE] && throw(err)
         rp = fpair.first
         rp = rp[end-min(20, length(rp))+1 : end]
         println("\n... encountered an issue processing '$(fpair.second)' in ...$rp.")
         println("Verify, then start franklin again...\n")
-        JD_ENV[:SUPPRESS_ERR] || @show err
+        FD_ENV[:SUPPRESS_ERR] || @show err
         return -1
     end
     return 0
@@ -139,7 +139,7 @@ function process_file_err(case::Symbol, fpair::Pair{String, String}, head::AS=""
                 force=true)
         end
     end
-    JD_ENV[:FULL_PASS] || JD_ENV[:SILENT_MODE] || print(rpad("\r→ page updated [✓]", 79)*"\r")
+    FD_ENV[:FULL_PASS] || FD_ENV[:SILENT_MODE] || print(rpad("\r→ page updated [✓]", 79)*"\r")
     return nothing
 end
 

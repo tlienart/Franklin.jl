@@ -55,7 +55,7 @@ function add_rss_item(jdv::PageVars)::RSSItem
     title  = jor(jdv, "rss_title", "title")
     descr  = jor(jdv, "rss", "rss_description")
 
-    descr = jd2html(descr; internal=true) |> remove_html_ps
+    descr = fd2html(descr; internal=true) |> remove_html_ps
 
     author    = jdv["rss_author"]    |> first
     category  = jdv["rss_category"]  |> first
@@ -103,7 +103,7 @@ function rss_generator()::Nothing
     end
 
     endswith(rss_link, "/") || (rss_link *= "/")
-    rss_descr = jd2html(rss_descr; internal=true) |> remove_html_ps
+    rss_descr = fd2html(rss_descr; internal=true) |> remove_html_ps
 
     # is there an RSS file already? if so remove it
     rss_path = joinpath(PATHS[:folder], "feed.xml")

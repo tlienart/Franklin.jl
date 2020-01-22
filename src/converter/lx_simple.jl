@@ -63,7 +63,7 @@ function resolve_lx_literate(lxc::LxCom)::String
             set_var!(LOCAL_PAGE_VARS, "freezecode", true)
         end
     end
-    if haschanged && JD_ENV[:FULL_PASS]
+    if haschanged && FD_ENV[:FULL_PASS]
         set_var!(LOCAL_PAGE_VARS, "reeval", true)
     end
     # if haschanged=true and not full pass then this will be handled cell by cell

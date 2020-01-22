@@ -2,8 +2,8 @@ const td = mktempdir()
 flush_td() = (isdir(td) && rm(td; recursive=true); mkdir(td))
 J.FOLDER_PATH[] = td
 
-jd2html_td(e)  = jd2html(e; dir=td)
-jd2html_tdv(e) = J.jd2html_v(e; dir=td)
+fd2html_td(e)  = fd2html(e; dir=td)
+fd2html_tdv(e) = J.fd2html_v(e; dir=td)
 
 J.def_GLOBAL_PAGE_VARS!()
 J.def_GLOBAL_LXDEFS!()

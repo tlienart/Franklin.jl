@@ -35,7 +35,7 @@ foofig(p, s) = (write(joinpath(p, "src", "config.md"), s); J.process_config())
           J.GLOBAL_LXDEFS["\\hellob"].from < J.GLOBAL_LXDEFS["\\hellob"].to <
           J.GLOBAL_LXDEFS["\\helloc"].from < J.GLOBAL_LXDEFS["\\helloc"].to
 
-    @test jd2html(raw"""\helloc"""; dir=p, internal=true) == "goodbye"
+    @test fd2html(raw"""\helloc"""; dir=p, internal=true) == "goodbye"
 
     # ================================
     # go back and cleanup

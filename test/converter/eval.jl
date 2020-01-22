@@ -1,4 +1,4 @@
-J.JD_ENV[:CUR_PATH] = "index.md"
+J.FD_ENV[:CUR_PATH] = "index.md"
 
 @testset "Evalcode" begin
     # see `converter/md_blocks:convert_code_block`
@@ -99,7 +99,7 @@ end
 
     # ------------
 
-    J.JD_ENV[:CUR_PATH] = "pages/pg1.md"
+    J.FD_ENV[:CUR_PATH] = "pages/pg1.md"
 
     h = raw"""
         Simple code:
@@ -145,7 +145,7 @@ end
 end
 
 @testset "Eval (img)" begin
-    J.JD_ENV[:CUR_PATH] = "index.html"
+    J.FD_ENV[:CUR_PATH] = "index.html"
     h = raw"""
         Simple code:
         ```julia:tv2
@@ -221,7 +221,7 @@ end
         a *= 2
         ```
         \show{ex}
-        """ |> jd2html_td
+        """ |> fd2html_td
     @test isapproxstr(h, """
         <pre><code class="language-julia">a = 5
         a *= 2</code></pre>
@@ -238,7 +238,7 @@ end
         a *= 2
         ```
         \show{ex}
-        """ |> jd2html_td
+        """ |> fd2html_td
     @test isapproxstr(h, """
         <pre><code class="language-julia">a = 5
         println("hello")

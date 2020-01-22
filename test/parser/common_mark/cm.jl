@@ -73,7 +73,7 @@ function check(r)
 
         htmli = html[i]
         flag = try
-            similar_enough(htmli, mdi |> jd2html_td)
+            similar_enough(htmli, mdi |> fd2html_td)
         catch
             false
         end
@@ -88,7 +88,7 @@ function check(r)
     fails
 end
 
-jdc(i) = cleanup(preprocess(md[i]) |> jd2html_td)
+jdc(i) = cleanup(preprocess(md[i]) |> fd2html_td)
 htc(i) = cleanup(html[i])
 
 # TABS

@@ -92,7 +92,7 @@ function verify_links()::Nothing
 end
 
 
-const JD_PY_MIN_NAME = ".__py_tmp_minscript.py"
+const FD_PY_MIN_NAME = ".__py_tmp_minscript.py"
 
 """
 $(SIGNATURES)
@@ -113,15 +113,15 @@ will be larger (especially if you have lots of maths on pages).
 function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
                     prepath::String="", no_fail_prerender::Bool=true,
                     suppress_errors::Bool=true, cleanup::Bool=true)::Union{Nothing,Bool}
-    suppress_errors && (JD_ENV[:SUPPRESS_ERR] = true)
+    suppress_errors && (FD_ENV[:SUPPRESS_ERR] = true)
     #
     # Prerendering
     #
-    if prerender && !JD_CAN_PRERENDER
+    if prerender && !FD_CAN_PRERENDER
         @warn "I couldn't find node and so will not be able to pre-render javascript."
         prerender = false
     end
-    if prerender && !JD_CAN_HIGHLIGHT
+    if prerender && !FD_CAN_HIGHLIGHT
         @warn "I couldn't load 'highlight.js' so will not be able to pre-render code blocks. " *
               "You can install it with `npm install highlight.js`."
     end
@@ -146,23 +146,23 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
     # Minification
     #
     if minify && (succ || no_fail_prerender)
-        if JD_CAN_MINIFY
+        if FD_CAN_MINIFY
             start = time()
             mmsg = rpad("→ Minifying *.[html|css] files...", 35)
             print(mmsg)
             # copy the script to the current dir
-            cp(joinpath(dirname(pathof(Franklin)), "scripts", "minify.py"), JD_PY_MIN_NAME; force=true)
+            cp(joinpath(dirname(pathof(Franklin)), "scripts", "minify.py"), FD_PY_MIN_NAME; force=true)
             # run it
-            succ = success(`$([e for e in split(PY)]) $JD_PY_MIN_NAME`)
+            succ = success(`$([e for e in split(PY)]) $FD_PY_MIN_NAME`)
             # remove the script file
-            rm(JD_PY_MIN_NAME)
+            rm(FD_PY_MIN_NAME)
             print_final(mmsg, start)
         else
             @warn "I didn't find css_html_js_minify, you can install it via pip."*
                   "The output will not be minified."
         end
     end
-    JD_ENV[:SUPPRESS_ERR] = false
+    FD_ENV[:SUPPRESS_ERR] = false
     return ifelse(sig, succ, nothing)
 end
 
@@ -180,15 +180,15 @@ It also fixes all links if you specify `prepath` (or if it's set in `config.md`)
 * `minify=true`:         minify output before pushing see [`optimize`](@ref)
 * `nopass=false`:        set this to true if you have already run `optimize` manually.
 * `prepath=""`:          set this to something like "project-name" if it's a project page
-* `message="jd-update"`: add commit message.
+* `message="franklin-update"`: add commit message.
 * `cleanup=true`:        whether to cleanup environment dictionaries (should stay true).
 * `final=nothing`:       a function `()->nothing` to execute last, before doing the git push.
                          It can be used to refresh a Lunr index, generate notebook files with
-                         Literate, etc, ... You might want to compose `jdf_*` functions that are
+                         Literate, etc, ... You might want to compose `fdf_*` functions that are
                          exported by Franklin (or imitate those). It can access GLOBAL_PAGE_VARS.
 """
 function publish(; prerender::Bool=true, minify::Bool=true, nopass::Bool=false,
-                   prepath::String="", message::String="jd-update",
+                   prepath::String="", message::String="franklin-update",
                    cleanup::Bool=true, final::Union{Nothing,Function}=nothing)::Nothing
     succ = true
     if !isempty(prepath) || !nopass

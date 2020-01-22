@@ -1,5 +1,5 @@
 @testset "footnotes" begin
-    J.JD_ENV[:CUR_PATH] = "index.md"
+    J.FD_ENV[:CUR_PATH] = "index.md"
     st = """
         A[^1] B[^blah] C
         """
@@ -45,7 +45,7 @@ end
        ```
        blah
        """
-    @test isapproxstr(s |> jd2html_td, """
+    @test isapproxstr(s |> fd2html_td, """
         <pre><code class="language-markdown">this has[^1]
         [^1]: def
         </code></pre> blah""")

@@ -17,10 +17,14 @@ import NodeJS
 import Literate
 import HTTP
 
-export serve, publish, cleanpull, newsite, optimize, jd2html, literate_folder, verify_links
+export serve, publish, cleanpull, newsite, optimize, fd2html,
+       literate_folder, verify_links
 
 export lunr
-export jdf_empty, jdf_lunr, jdf_literate
+
+# -----------------------------------------------------------------------------
+# Legacy with JuDoc
+export jd2html # = fd2html
 
 # -----------------------------------------------------------------------------
 #
@@ -30,7 +34,7 @@ export jdf_empty, jdf_lunr, jdf_literate
 """Big number when we want things to be far."""
 const BIG_INT = typemax(Int)
 
-const JD_ENV = LittleDict(
+const FD_ENV = LittleDict(
     :DEBUG_MODE         => false,
     :FULL_PASS          => true,
     :FORCE_REEVAL       => false,

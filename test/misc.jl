@@ -86,7 +86,7 @@ end
 @testset "paths" begin
     @test J.unixify(pwd()) == replace(pwd(), J.PATH_SEP => "/") * "/"
     #
-    J.JD_ENV[:CUR_PATH] = "cpA/cpB/"
+    J.FD_ENV[:CUR_PATH] = "cpA/cpB/"
     # non-canonical mode
     @test J.resolve_assets_rpath("./hello/goodbye") == "/assets/cpA/cpB/hello/goodbye"
     @test J.resolve_assets_rpath("/blah/blih.txt") == "/blah/blih.txt"
@@ -100,7 +100,7 @@ end
 
 @testset "misc-html" begin
     λ = "blah/blah.ext"
-    J.JD_ENV[:CUR_PATH] = "pages/cpB/blah.md"
+    J.FD_ENV[:CUR_PATH] = "pages/cpB/blah.md"
     @test J.html_ahref(λ, 1) == "<a href=\"$λ\">1</a>"
     @test J.html_ahref(λ, "bb") == "<a href=\"$λ\">bb</a>"
     @test J.html_ahref_key("cc", "dd") == "<a href=\"/pub/cpB/blah.html#cc\">dd</a>"

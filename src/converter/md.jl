@@ -12,7 +12,7 @@ Returns the html string as well as a dictionary of page variables.
 **Keyword arguments**
 
 * `isrecursive=false`: a bool indicating whether the call is the parent call or a child call
-* `isinternal=false`:  a bool indicating whether the call stems from `jd2html` in internal mode
+* `isinternal=false`:  a bool indicating whether the call stems from `fd2html` in internal mode
 * `isconfig=false`:    a bool indicating whether the file to convert is the configuration file
 * `has_mddefs=true`:   a bool indicating whether to look for definitions of page variables
 """
@@ -190,7 +190,7 @@ end
 String that is plugged as a placeholder of blocks that need further processing. The spaces allow to
 handle overzealous inclusion of `<p>...</p>` from the base Markdown to HTML conversion.
 """
-const INSERT     = " ##JDINSERT## "
+const INSERT     = " ##FDINSERT## "
 const INSERT_    = strip(INSERT)
 const INSERT_PAT = Regex(INSERT_)
 const INSERT_LEN = length(INSERT_)
@@ -300,8 +300,8 @@ function convert_inter_html(ihtml::AS,
     for (i, m) ∈ enumerate(allmatches)
         # two cases can happen based on whitespaces around an insertion that we
         # want to get rid of, potentially both happen simultaneously.
-        # 1. <p>##JDINSERT##...
-        # 2. ...##JDINSERT##</p>
+        # 1. <p>##FDINSERT##...
+        # 2. ...##FDINSERT##</p>
         # exceptions,
         # - list items introduce <li><p> and </p>\n</li> which shouldn't remove
         # - end of doc introduces </p>(\n?) which should not be removed

@@ -111,14 +111,14 @@ end
         {{isnotpage blah.html ya/xx}} blih {{end}} done.
         """
 
-    J.JD_ENV[:CUR_PATH] = "index.md"
+    J.FD_ENV[:CUR_PATH] = "index.md"
     @test J.convert_html(hs, allvars) == "Some text then  blah  but\n blih  done.\n"
 
-    J.JD_ENV[:CUR_PATH] = "blah/blih.md"
+    J.FD_ENV[:CUR_PATH] = "blah/blih.md"
     hs = raw"""
         A then {{ispage blah/*}}yes{{end}} but not {{isnotpage blih/*}}no{{end}} E.
         """
     @test J.convert_html(hs, allvars) == "A then yes but not no E.\n"
 
-    J.JD_ENV[:CUR_PATH] = "index.md"
+    J.FD_ENV[:CUR_PATH] = "index.md"
 end

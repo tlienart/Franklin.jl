@@ -14,7 +14,7 @@ end
 
 @testset "RSSbasics" begin
     empty!(J.RSS_DICT)
-    J.JD_ENV[:CUR_PATH] = "hey/ho.md"
+    J.FD_ENV[:CUR_PATH] = "hey/ho.md"
     J.set_var!(J.GLOBAL_PAGE_VARS, "website_title", "Website title")
     J.set_var!(J.GLOBAL_PAGE_VARS, "website_descr", "Website descr")
     J.set_var!(J.GLOBAL_PAGE_VARS, "website_url", "https://github.com/tlienart/Franklin.jl/")

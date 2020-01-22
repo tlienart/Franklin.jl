@@ -21,7 +21,7 @@
 
     # FIRST PASS --> EVAL
 
-    h = foo |> jd2html_td
+    h = foo |> fd2html_td
 
     @test isapproxstr(h, """
                 <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$a</code></pre>
@@ -31,7 +31,7 @@
 
     foo *= "etc"
 
-    h = foo |> jd2html_td
+    h = foo |> fd2html_td
 
     @test isapproxstr(h, """
                 <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$a</code></pre> etc
@@ -50,7 +50,7 @@
         \output{ex3}
         """
 
-    h = foo |> jd2html_td
+    h = foo |> fd2html_td
 
     @test isapproxstr(h, """
                 <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$a</code></pre> etc
@@ -77,7 +77,7 @@
         \output{ex3}
         """
 
-    h = foo |> jd2html_td
+    h = foo |> fd2html_td
 
     @test isapproxstr(h, """
                 <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$a</code></pre>
@@ -106,7 +106,7 @@
         \output{ex3}
         """
 
-    h = foo |> jd2html_td
+    h = foo |> fd2html_td
 
     @test isapproxstr(h, """
                 <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$a</code></pre>
@@ -132,7 +132,7 @@ end
         println(a)
         ```
         \output{ex2}
-        """ |> jd2html_tdv
+        """ |> fd2html_tdv
 
     @test isapproxstr(h, """
             <pre><code class="language-julia">a = 5
@@ -168,7 +168,7 @@ end
         println(a)
         ```
         \output{ex2}
-        """ |> jd2html_tdv
+        """ |> fd2html_tdv
 
     @test isapproxstr(h, """
             <pre><code class="language-julia">a = 5

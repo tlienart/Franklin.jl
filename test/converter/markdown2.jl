@@ -8,28 +8,28 @@ end
 @testset "issue163" begin
     st = raw"""A _B `C` D_ E"""
     imd, ih = inter(st)
-    @test imd == "A _B  ##JDINSERT##  D_ E"
-    @test ih == "<p>A <em>B  ##JDINSERT##  D</em> E</p>\n"
+    @test imd == "A _B  ##FDINSERT##  D_ E"
+    @test ih == "<p>A <em>B  ##FDINSERT##  D</em> E</p>\n"
 
     st = raw"""A _`B` C D_ E"""
     imd, ih = inter(st)
-    @test imd == "A _ ##JDINSERT##  C D_ E"
-    @test ih == "<p>A <em>##JDINSERT##  C D</em> E</p>\n"
+    @test imd == "A _ ##FDINSERT##  C D_ E"
+    @test ih == "<p>A <em>##FDINSERT##  C D</em> E</p>\n"
 
     st = raw"""A _B C `D`_ E"""
     imd, ih = inter(st)
-    @test imd == "A _B C  ##JDINSERT## _ E"
-    @test ih == "<p>A <em>B C  ##JDINSERT##</em> E</p>\n"
+    @test imd == "A _B C  ##FDINSERT## _ E"
+    @test ih == "<p>A <em>B C  ##FDINSERT##</em> E</p>\n"
 
     st = raw"""A _`B` C `D`_ E"""
     imd, ih = inter(st)
-    @test imd == "A _ ##JDINSERT##  C  ##JDINSERT## _ E"
-    @test ih == "<p>A <em>##JDINSERT##  C  ##JDINSERT##</em> E</p>\n"
+    @test imd == "A _ ##FDINSERT##  C  ##FDINSERT## _ E"
+    @test ih == "<p>A <em>##FDINSERT##  C  ##FDINSERT##</em> E</p>\n"
 end
 
 
 @testset "TOC"  begin
-    J.JD_ENV[:CUR_PATH] = "pages/ff/aa.md"
+    J.FD_ENV[:CUR_PATH] = "pages/ff/aa.md"
     h = raw"""
         \toc
         ## Hello `jd`
@@ -59,7 +59,7 @@ end
 end
 
 @testset "TOC"  begin
-    J.JD_ENV[:CUR_PATH] = "pages/ff/aa.md"
+    J.FD_ENV[:CUR_PATH] = "pages/ff/aa.md"
     s = raw"""
         @def mintoclevel = 2
         @def maxtoclevel = 3

@@ -11,7 +11,7 @@
                  )
               )
     # ---------------
-    if Franklin.JD_CAN_MINIFY
+    if Franklin.FD_CAN_MINIFY
         presize1 = stat(joinpath("css", "basic.css")).size
         presize2 = stat("index.html").size
         optimize(prerender=false)
@@ -38,7 +38,7 @@
     @test occursin("=\"/prependme/libs/katex/katex.min.css", index)
 end
 
-if J.JD_CAN_PRERENDER; @testset "prerender" begin
+if J.FD_CAN_PRERENDER; @testset "prerender" begin
     @testset "katex" begin
         hs = raw"""
         <!doctype html>
@@ -60,7 +60,7 @@ if J.JD_CAN_PRERENDER; @testset "prerender" begin
         @test occursin("""<span class=\"katex-display\"><span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi>""", jskx)
     end
 
-    if J.JD_CAN_HIGHLIGHT; @testset "highlight" begin
+    if J.FD_CAN_HIGHLIGHT; @testset "highlight" begin
         hs = raw"""
         <!doctype html>
         <html lang=en>
