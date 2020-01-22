@@ -13,8 +13,8 @@ const GLOBAL_PAGE_VARS = PageVars()
 """
 $(SIGNATURES)
 
-Convenience function to allocate default values of the global site variables. This is called once,
-when JuDoc is started.
+Convenience function to allocate default values of the global site variables.
+This is called once, when Franklin is started.
 """
 @inline function def_GLOBAL_PAGE_VARS!()::Nothing
     empty!(GLOBAL_PAGE_VARS)
@@ -138,7 +138,7 @@ is processed.
     LOCAL_PAGE_VARS["rss_enclosure"]   = Pair("",      (String,))
     LOCAL_PAGE_VARS["rss_pubdate"]     = Pair(Date(1), (Date,))
 
-    # page vars used by judoc, should not be accessed or defined
+    # page vars used by franklin, should not be accessed or defined
     LOCAL_PAGE_VARS["jd_ctime"]  = Pair(Date(1), (Date,))   # time of creation
     LOCAL_PAGE_VARS["jd_mtime"]  = Pair(Date(1), (Date,))   # time of last modification
     LOCAL_PAGE_VARS["jd_rpath"]  = Pair("",      (String,)) # local path to file src/[...]/blah.md

@@ -185,7 +185,7 @@ It also fixes all links if you specify `prepath` (or if it's set in `config.md`)
 * `final=nothing`:       a function `()->nothing` to execute last, before doing the git push.
                          It can be used to refresh a Lunr index, generate notebook files with
                          Literate, etc, ... You might want to compose `jdf_*` functions that are
-                         exported by JuDoc (or imitate those). It can access GLOBAL_PAGE_VARS.
+                         exported by Franklin (or imitate those). It can access GLOBAL_PAGE_VARS.
 """
 function publish(; prerender::Bool=true, minify::Bool=true, nopass::Bool=false,
                    prepath::String="", message::String="jd-update",

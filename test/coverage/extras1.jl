@@ -28,7 +28,7 @@ end
     @test isapproxstr(s, "<p>Blah </p>")
 end
 
-@testset "Judoc" begin
+@testset "Franklin" begin
     cd(td); mkpath("foo"); cd("foo");
     @test_throws ArgumentError serve(single=true)
     cd(td)

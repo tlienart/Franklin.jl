@@ -69,7 +69,7 @@ function js_prerender_highlight(hs::String)::String
             write(jsbuffer, """console.log("<pre><code class=hljs>$cs</code></pre>");\n""")
         else
             if lang == "html" && is_html_escaped(cs)
-                # corner case, see https://github.com/tlienart/JuDoc.jl/issues/326
+                # corner case, see Franklin.jl/issues/326
                 # highlight will re-escape the string further.
                 cs = html_unescape(cs) |> escape_string
             end

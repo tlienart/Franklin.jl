@@ -4,7 +4,7 @@
 $SIGNATURES
 
 Internal function to resolve a `\\output{rpath}` (finds the output of a code block and shows it).
-The `reprocess` argument indicates whether the output should be processed as judoc markdown or
+The `reprocess` argument indicates whether the output should be processed as Franklin-Markdown or
 inserted as is.
 """
 function resolve_lx_output(lxc::LxCom; reprocess::Bool=false)::String
@@ -49,11 +49,12 @@ end
 """
 $SIGNATURES
 
-Internal function to resolve a `\\literate{rpath}` see [`literate_to_judoc`](@ref).
+Internal function to resolve a `\\literate{rpath}` see
+[`literate_to_franklin`](@ref).
 """
 function resolve_lx_literate(lxc::LxCom)::String
     rpath = strip(content(lxc.braces[1]))
-    opath, haschanged = literate_to_judoc(rpath)
+    opath, haschanged = literate_to_franklin(rpath)
     isempty(opath) && return "~~~"*html_err("Literate file matching '$rpath' not found.")*"~~~"
     if !haschanged
         # page has not changed, check if literate is the only source of code

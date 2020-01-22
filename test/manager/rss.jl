@@ -17,7 +17,7 @@ end
     J.JD_ENV[:CUR_PATH] = "hey/ho.md"
     J.set_var!(J.GLOBAL_PAGE_VARS, "website_title", "Website title")
     J.set_var!(J.GLOBAL_PAGE_VARS, "website_descr", "Website descr")
-    J.set_var!(J.GLOBAL_PAGE_VARS, "website_url", "https://github.com/tlienart/JuDoc.jl/")
+    J.set_var!(J.GLOBAL_PAGE_VARS, "website_url", "https://github.com/tlienart/Franklin.jl/")
     jdv = merge(J.GLOBAL_PAGE_VARS, copy(J.LOCAL_PAGE_VARS))
     J.set_var!(jdv, "rss_title", "title")
     J.set_var!(jdv, "rss", "A **description** done.")

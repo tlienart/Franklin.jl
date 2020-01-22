@@ -8,7 +8,7 @@ clear_dicts() = empty!.((GLOBAL_LXDEFS, GLOBAL_PAGE_VARS, LOCAL_PAGE_VARS))
 """
 $(SIGNATURES)
 
-Runs JuDoc in the current directory.
+Runs Franklin in the current directory.
 
 Keyword arguments:
 
@@ -38,15 +38,16 @@ function serve(; clear::Bool=true,
                  cleanup::Bool=true)::Union{Nothing,Int}
     # set the global path
     FOLDER_PATH[]  = pwd()
-    
+
     # silent mode?
     silent && (JD_ENV[:SILENT_MODE] = true; verb = false)
 
     # brief check to see if we're in a folder that looks promising, otherwise stop
     # and tell the user to check (#155)
     if !isdir(joinpath(FOLDER_PATH[], "src"))
-        throw(ArgumentError("The current directory doesn't have a src/ folder. " *
-                            "Please change directory to a valid JuDoc folder."))
+        throw(ArgumentError("The current directory doesn't have a src/ " *
+                            "folder. Please change directory to a valid " *
+                            "Franklin folder."))
     end
 
     # check if a Project.toml file is available, if so activate the folder
@@ -127,7 +128,8 @@ end
 """
 $(SIGNATURES)
 
-A single full pass of judoc looking at all watched files and processing them as appropriate.
+A single full pass of Franklin looking at all watched files and processing them
+as appropriate.
 
 **Keyword arguments**
 

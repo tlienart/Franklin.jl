@@ -120,7 +120,7 @@ include("jd_vars.jl")
 include("manager/rss_generator.jl")
 include("manager/dir_utils.jl")
 include("manager/file_utils.jl")
-include("manager/judoc.jl")
+include("manager/franklin.jl")
 include("manager/extras.jl")
 include("manager/post_processing.jl")
 

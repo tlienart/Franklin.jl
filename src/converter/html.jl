@@ -1,7 +1,7 @@
 """
 $(SIGNATURES)
 
-Convert a judoc html string into a html string (i.e. replace `{{ ... }}` blocks).
+Convert a Franklin html string into a html string (i.e. replace `{{ ... }}` blocks).
 """
 function convert_html(hs::AS, allvars::PageVars; isoptim::Bool=false)::String
     isempty(hs) && return hs
@@ -40,8 +40,8 @@ end
 """
 $SIGNATURES
 
-Return the HTML corresponding to a JuDoc-Markdown string as well as all the page variables.
-See also [`jd2html`](@ref) which only returns the html.
+Return the HTML corresponding to a Franklin-Markdown string as well as all the
+page variables. See also [`jd2html`](@ref) which only returns the html.
 """
 function jd2html_v(st::AbstractString; internal::Bool=false, dir::String="")::Tuple{String,Dict}
     isempty(st) && return st

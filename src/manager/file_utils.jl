@@ -97,7 +97,7 @@ function process_file(case::Symbol, fpair::Pair{String,String}, args...; kwargs.
         rp = fpair.first
         rp = rp[end-min(20, length(rp))+1 : end]
         println("\n... encountered an issue processing '$(fpair.second)' in ...$rp.")
-        println("Verify, then start judoc again...\n")
+        println("Verify, then start franklin again...\n")
         JD_ENV[:SUPPRESS_ERR] || @show err
         return -1
     end
@@ -108,9 +108,10 @@ end
 """
 $(SIGNATURES)
 
-Considers a source file which, depending on `case` could be a html file or a file in judoc markdown
-etc, located in a place described by `fpair`, processes it by converting it and adding appropriate
-header and footer and writes it to the appropriate place. It can throw an error which will be
+Considers a source file which, depending on `case` could be a HTML file or a
+file in Franklin-Markdown etc, located in a place described by `fpair`,
+processes it by converting it and adding appropriate header and footer and
+writes it to the appropriate place. It can throw an error which will be
 caught in `process_file(args...)`.
 """
 function process_file_err(case::Symbol, fpair::Pair{String, String}, head::AS="",

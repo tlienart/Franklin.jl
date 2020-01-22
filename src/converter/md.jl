@@ -1,8 +1,8 @@
 """
 $(SIGNATURES)
 
-Convert a judoc markdown file read as `mds` into a judoc html string. Returns the html string as
-well as a dictionary of page variables.
+Convert a Franklin-Markdown file read as `mds` into a Franklin HTML string.
+Returns the html string as well as a dictionary of page variables.
 
 **Arguments**
 
@@ -118,7 +118,7 @@ function convert_md(mds::AS, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
         end
     end
 
-    # Return the string + judoc variables
+    # Return the string + franklin variables
     return hstring, jd_vars
 end
 

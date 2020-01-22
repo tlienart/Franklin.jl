@@ -39,7 +39,7 @@ end
 end
 
 @testset "Literate-b" begin
-    # Literate to JuDoc
+    # Literate to Franklin
     s = raw"""
         # # Rational numbers
         #
@@ -56,7 +56,7 @@ end
         """
     path = joinpath(scripts, "tutorial.jl")
     write(path, s)
-    opath, = J.literate_to_judoc("/literate-scripts/tutorial")
+    opath, = J.literate_to_franklin("/literate-scripts/tutorial")
     @test endswith(opath, joinpath(J.PATHS[:assets], "literate", "tutorial.md"))
     out = read(opath, String)
     @test out == """
