@@ -10,8 +10,9 @@ const HTML_1C_TOKENS = LittleDict{Char, Symbol}()
 """
 HTML_TOKENS
 
-Dictionary of tokens for HTML. Note that for each, there may be several possibilities to consider
-in which case the order is important: the first case that works will be taken.
+Dictionary of tokens for HTML. Note that for each, there may be several
+possibilities to consider in which case the order is important: the first case
+that works will be taken.
 """
 const HTML_TOKENS = LittleDict{Char, Vector{TokenFinder}}(
     '<' => [ isexactly("<!--") => :COMMENT_OPEN  ],  # <!-- ...
@@ -180,8 +181,9 @@ FUNCTION BLOCKS
 """
 HBLOCK_FUN_PAT
 
-Regex to match `{{ fname param₁ param₂ }}` where `fname` is a html processing function and `paramᵢ`
-should refer to appropriate variables in the current scope.
+Regex to match `{{ fname param₁ param₂ }}` where `fname` is a html processing
+function and `paramᵢ` should refer to appropriate variables in the current
+scope.
 
 Available functions are:
     * `{{ fill vname }}`: to plug a variable (e.g.: a date, author name)

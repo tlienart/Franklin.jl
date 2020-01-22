@@ -1,9 +1,9 @@
 """
 $(SIGNATURES)
 
-In initial phase, discard all `:LR_INDENT` that don't meet the requirements for an
-indented code block. I.e.: where the first  line is not preceded by a blank line and
-then subsequently followed by indented lines.
+In initial phase, discard all `:LR_INDENT` that don't meet the requirements for
+an indented code block. I.e.: where the first  line is not preceded by a blank
+line and then subsequently followed by indented lines.
 """
 function filter_lr_indent!(vt::Vector{Token}, s::String)::Nothing
     tind_idx = [i for i in eachindex(vt) if vt[i].name == :LR_INDENT]
@@ -44,7 +44,8 @@ end
 """
 $(SIGNATURES)
 
-Find markers for indented lines (i.e. a line return followed by a tab or 4 spaces).
+Find markers for indented lines (i.e. a line return followed by a tab or 4
+spaces).
 """
 function find_indented_blocks!(tokens::Vector{Token}, st::String)::Nothing
     # index of the line return tokens
@@ -89,8 +90,8 @@ end
 """
 $SIGNATURES
 
-When two indented code blocks follow each other and there's nothing in between (empty line(s)),
-merge them into a super block.
+When two indented code blocks follow each other and there's nothing in between
+(empty line(s)), merge them into a super block.
 """
 function merge_indented_blocks!(blocks::Vector{OCBlock}, mds::AS)::Nothing
     # indices of CODE_BLOCK_IND
@@ -141,7 +142,8 @@ end
 """
 $SIGNATURES
 
-Discard any indented block that is within a larger block to avoid ambiguities (see #285).
+Discard any indented block that is within a larger block to avoid ambiguities
+(see #285).
 """
 function filter_indented_blocks!(blocks::Vector{OCBlock})::Nothing\
     # retrieve the indices of the indented blocks

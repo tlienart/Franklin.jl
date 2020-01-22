@@ -1,8 +1,8 @@
 """
 $(SIGNATURES)
 
-Given `{{ ... }}` blocks, identify what kind of blocks they are and return a vector
-of qualified blocks of type `AbstractBlock`.
+Given `{{ ... }}` blocks, identify what kind of blocks they are and return a
+vector of qualified blocks of type `AbstractBlock`.
 """
 function qualify_html_hblocks(blocks::Vector{OCBlock})::Vector{AbstractBlock}
 
