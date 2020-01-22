@@ -1,8 +1,8 @@
 """
 MD_1C_TOKENS
 
-Dictionary of single-char tokens for Markdown. Note that these characters are exclusive, they
-cannot appear again in a larger token.
+Dictionary of single-char tokens for Markdown. Note that these characters are
+exclusive, they cannot appear again in a larger token.
 """
 const MD_1C_TOKENS = LittleDict{Char, Symbol}(
     '{'  => :LXB_OPEN,
@@ -25,8 +25,9 @@ const MD_1C_TOKENS_LX = LittleDict{Char, Symbol}(
 """
 MD_TOKENS
 
-Dictionary of tokens for Markdown. Note that for each, there may be several possibilities to
-consider in which case the order is important: the first case that works will be taken.
+Dictionary of tokens for Markdown. Note that for each, there may be several
+possibilities to consider in which case the order is important: the first case
+that works will be taken.
 """
 const MD_TOKENS = LittleDict{Char, Vector{TokenFinder}}(
     '<'  => [ isexactly("<!--") => :COMMENT_OPEN,     # <!-- ...
@@ -112,7 +113,9 @@ const MD_TOKENS_LX = Dict{Char, Vector{TokenFinder}}(
 MD_DEF_PAT
 
 Regex to match an assignment of the form
+
     @def var = value
+
 The first group captures the name (`var`), the second the assignment (`value`).
 """
 const MD_DEF_PAT = r"@def\s+(\S+)\s*?=\s*?(\S.*)"
@@ -121,8 +124,8 @@ const MD_DEF_PAT = r"@def\s+(\S+)\s*?=\s*?(\S.*)"
 """
 L_RETURNS
 
-Convenience tuple containing the name for standard line returns and line returns followed by an
-indentation (either a quadruple space or a tab).
+Convenience tuple containing the name for standard line returns and line
+returns followed by an indentation (either a quadruple space or a tab).
 """
 const L_RETURNS = (:LINE_RETURN, :LR_INDENT, :EOS)
 
@@ -130,12 +133,14 @@ const L_RETURNS = (:LINE_RETURN, :LR_INDENT, :EOS)
 """
 MD_OCB
 
-List of Open-Close Blocks whose content should be deactivated (any token within their span
-should be marked as inactive) until further processing.
-The keys are identifier for the type of block, the value is a pair with the opening and closing
-tokens followed by a boolean indicating whether the content of the block should be reprocessed.
-The only `OCBlock` not in this dictionary is the brace block since it should not deactivate its
-content which is needed to find latex definitions (see parser/markdown/find_blocks/find_md_lxdefs).
+List of Open-Close Blocks whose content should be deactivated (any token within
+their span should be marked as inactive) until further processing.
+The keys are identifier for the type of block, the value is a pair with the
+opening and closing tokens followed by a boolean indicating whether the content
+of the block should be reprocessed.
+The only `OCBlock` not in this dictionary is the brace block since it should
+not deactivate its content which is needed to find latex definitions
+(see parser/markdown/find_blocks/find_md_lxdefs).
 """
 const MD_OCB = [
     # name                    opening token   closing token(s)  nestable
@@ -164,8 +169,9 @@ const MD_OCB = [
     OCProto(:DIV,             :DIV_OPEN,     (:DIV_CLOSE,), true ),
     ]
 #= NOTE:
-* [3] a header can be closed by either a line return or an end of string (for instance in the case
-where a user defines a latex command like so: \newcommand{\section}{# blah} (no line return).)
+* [3] a header can be closed by either a line return or an end of string (for
+instance in the case where a user defines a latex command like so:
+\newcommand{\section}{# blah} (no line return).)
 * [4] an `MD_DEF` goes from an `@def` to the next `\n` so no multiple-line
 def are allowed.
 * ordering matters!
@@ -178,6 +184,7 @@ MD_HEADER
 All header symbols.
 """
 const MD_HEADER = (:H1, :H2, :H3, :H4, :H5, :H6)
+
 
 """
 MD_HEADER_OPEN
@@ -199,8 +206,8 @@ const MD_OCB_ESC = [e.name for e ∈ MD_OCB if !e.nest]
 """
 MD_OCB_MATH
 
-Same concept as `MD_OCB` but for math blocks, they can't be nested. Separating them from the other
-dictionary makes their processing easier.
+Same concept as `MD_OCB` but for math blocks, they can't be nested. Separating
+them from the other dictionary makes their processing easier.
 Dev note: order does not matter.
 """
 const MD_OCB_MATH = [

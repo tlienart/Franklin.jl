@@ -1,10 +1,11 @@
 """
 $(TYPEDEF)
 
-This is the supertype defining a section of the string into consideration which can be considered
-as a "block". For instance, `abc { ... } def` contains one braces block corresponding to the
-substring `{ ... }`. All subtypes of AbstractBlock must have a `ss` field corresponding to the
-substring associated to the block. See also [`Token`](@ref), [`OCBlock`](@ref).
+This is the supertype defining a section of the string into consideration which
+can be considered as a "block". For instance, `abc { ... } def` contains one
+braces block corresponding to the substring `{ ... }`. All subtypes of
+AbstractBlock must have a `ss` field corresponding to the substring associated
+to the block. See also [`Token`](@ref), [`OCBlock`](@ref).
 """
 abstract type AbstractBlock end
 
@@ -17,11 +18,12 @@ str(β::AbstractBlock)  = str(β.ss)
 """
 $(TYPEDEF)
 
-A token `τ::Token` denotes a part of the source string indicating a region that may need further
-processing. It is identified by a symbol `τ.name` (e.g.: `:MATH_ALIGN_OPEN`). Tokens are typically
-used in this code to identify delimiters of environments. For instance, `abc \$ ... \$ def`
-contains two tokens `:MATH_A` associated with the `\$` sign. Together they delimit here an inline
-math expression.
+A token `τ::Token` denotes a part of the source string indicating a region that
+may need further processing. It is identified by a symbol `τ.name` (e.g.:
+`:MATH_ALIGN_OPEN`). Tokens are typically used in this code to identify
+delimiters of environments. For instance, `abc \$ ... \$ def` contains two
+tokens `:MATH_A` associated with the `\$` sign. Together they delimit here an
+inline math expression.
 """
 struct Token <: AbstractBlock
     name::Symbol
@@ -35,8 +37,9 @@ to(β::Token) = ifelse(β.name == :EOS, from(β), to(β.ss))
 """
 $(TYPEDEF)
 
-A special block to wrap special characters like like a html entity and have it left unaffected
-by the Markdown to HTML transformation so that it can be  inserted "as is" in the HTML.
+A special block to wrap special characters like like a html entity and have it
+left unaffected by the Markdown to HTML transformation so that it can be
+inserted "as is" in the HTML.
 """
 struct HTML_SPCH <: AbstractBlock
     ss::SubString
@@ -48,9 +51,9 @@ HTML_SPCH(ss) = HTML_SPCH(ss, "")
 """
 $(TYPEDEF)
 
-Prototype for an open-close block (see [`OCBlock`](@ref)) with the symbol of the opening token
-(e.g. `:MATH_A`) and a corresponding list of closing tokens (e.g. `(:MATH_A,)`).
-See also their definitions in `parser/md_tokens.jl`.
+Prototype for an open-close block (see [`OCBlock`](@ref)) with the symbol of
+the opening token (e.g. `:MATH_A`) and a corresponding list of closing tokens
+(e.g. `(:MATH_A,)`). See also their definitions in `parser/md_tokens.jl`.
 """
 struct OCProto
     name::Symbol
@@ -63,9 +66,9 @@ end
 """
 $(TYPEDEF)
 
-Open-Close block, blocks that are defined by an opening `Token` and a closing `Token`, they may be
-nested. For instance braces block are formed of an opening `{` and a closing `}` and could be
-nested.
+Open-Close block, blocks that are defined by an opening `Token` and a closing
+`Token`, they may be nested. For instance braces block are formed of an opening
+`{` and a closing `}` and could be nested.
 """
 struct OCBlock <: AbstractBlock
     name::Symbol
@@ -77,8 +80,8 @@ end
 """
 $(SIGNATURES)
 
-Shorthand constructor to instantiate an `OCBlock` inferring the associated substring from the
-`ocpair` (since it's the substring in between the tokens).
+Shorthand constructor to instantiate an `OCBlock` inferring the associated
+substring from the `ocpair` (since it's the substring in between the tokens).
 """
 OCBlock(η::Symbol, ω::Pair{Token,Token}, nestable::Bool=false) =
     OCBlock(η, ω, subs(str(ω.first), from(ω.first), to(ω.second)))
@@ -103,8 +106,8 @@ ctok(ocb::OCBlock)::Token = ocb.ocpair.second
 """
 $(SIGNATURES)
 
-Convenience function to return the content of an open-close block (`OCBlock`), for instance the
-content of a `{...}` block would be `...`.
+Convenience function to return the content of an open-close block (`OCBlock`),
+for instance the content of a `{...}` block would be `...`.
 """
 function content(ocb::OCBlock)::SubString
     s = str(ocb.ss) # this does not allocate
@@ -126,8 +129,8 @@ FUNCTIONS / CONSTANTS THAT HELP DEFINE TOKENS
 """
 EOS
 
-Convenience symbol to mark the end of the string to parse (helps with corner cases where a token
-ends a document without being followed by a space).
+Convenience symbol to mark the end of the string to parse (helps with corner
+cases where a token ends a document without being followed by a space).
 """
 const EOS = '\0'
 
@@ -149,12 +152,13 @@ const NUM_CHAR   = ('1', '2', '3', '4', '5', '6', '7', '8', '9', '0')
 """
 $(SIGNATURES)
 
-Forward lookup checking if a sequence of characters matches `refstring` and is followed (or not
-followed if `isfollowed==false`) by a character out of a list of characters (`follow`).
-It returns
+Forward lookup checking if a sequence of characters matches `refstring` and is
+followed (or not followed if `isfollowed==false`) by a character out of a list
+of characters (`follow`). It returns
 
 1. a number of steps indicating the number of characters to check,
-2. whether there is an offset or not (if it is required to check a following character or not),
+2. whether there is an offset or not (if it is required to check a following
+character or not),
 3. a function that can be applied on a sequence of character.
 
 # Example
@@ -208,27 +212,28 @@ Check whether `c` is alpha numeric or in vector of character `ac`
 """
 $(SIGNATURES)
 
-Syntactic sugar for the incremental look case for which `steps=0` as well as the `offset`. This is
-a case where from a start character we lazily accept the next sequence of characters stopping as
-soon as a character fails to verify `λ(c)`.
-See also [`isexactly`](@ref).
+Syntactic sugar for the incremental look case for which `steps=0` as well as
+the `offset`. This is a case where from a start character we lazily accept the
+next sequence of characters stopping as soon as a character fails to verify
+`λ(c)`. See also [`isexactly`](@ref).
 """
 incrlook(λ::Function, validator=nothing) = (0, false, λ, validator)
 
 """
 $(SIGNATURES)
 
-In combination with `incrlook`, checks to see if we have something that looks like a @@div
-describing the opening of a div block. Triggering char is a first `@`.
+In combination with `incrlook`, checks to see if we have something that looks
+like a @@div describing the opening of a div block. Triggering char is a first
+`@`.
 """
 is_div_open(i::Int, c::Char) = (i == 1 && return c == '@'; return α(c, ('-','_', NUM_CHAR...)))
 
 """
 $(SIGNATURES)
 
-In combination with `incrlook`, checks to see if we have something that looks like a triple
-backtick followed by a valid combination of letter defining a language. Triggering char is a
-first backtick.
+In combination with `incrlook`, checks to see if we have something that looks
+like a triple backtick followed by a valid combination of letter defining a
+language. Triggering char is a first backtick.
 """
 is_language() = incrlook(_is_language, _validate_language)
 
@@ -260,9 +265,10 @@ _validate_language2(stack::AS) = !isnothing(match(r"^`````[a-zA-Z]", stack))
 """
 $(SIGNATURES)
 
-In combination with `incrlook`, checks to see if we have something that looks like a html entity.
-Note that there can be fake matches, so this will need to be validated later on; if validated
-it will be treated as HTML; otherwise it will be shown as markdown. Triggerin char is a `&`.
+In combination with `incrlook`, checks to see if we have something that looks
+like a html entity. Note that there can be fake matches, so this will need to
+be validated later on; if validated it will be treated as HTML; otherwise it
+will be shown as markdown. Triggerin char is a `&`.
 """
 is_html_entity(i::Int, c::Char) = αη(c, ('#',';'))
 
@@ -280,8 +286,8 @@ end
 """
 TokenFinder
 
-Convenience type to define tokens. The Tuple comes from the output of functions such as
-[`isexactly`](@ref).
+Convenience type to define tokens. The Tuple comes from the output of functions
+such as [`isexactly`](@ref).
 """
 const TokenFinder = Pair{Tuple{Int,Bool,Function,Union{Bool,Nothing,Function}},Symbol}
 
@@ -289,8 +295,9 @@ const TokenFinder = Pair{Tuple{Int,Bool,Function,Union{Bool,Nothing,Function}},S
 """
 $(SIGNATURES)
 
-Go through a text left to right, one (valid) char at the time and keep track of sequences of chars
-that match specific tokens. The list of tokens found is returned.
+Go through a text left to right, one (valid) char at the time and keep track of
+sequences of chars that match specific tokens. The list of tokens found is
+returned.
 
 **Arguments**
 
