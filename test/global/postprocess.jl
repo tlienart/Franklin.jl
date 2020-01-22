@@ -11,7 +11,7 @@
                  )
               )
     # ---------------
-    if Franklin.JD_CAN_MINIFY
+    if Franklin.FD_CAN_MINIFY
         presize1 = stat(joinpath("css", "basic.css")).size
         presize2 = stat("index.html").size
         optimize(prerender=false)
@@ -38,13 +38,13 @@
     @test occursin("=\"/prependme/libs/katex/katex.min.css", index)
 end
 
-if J.JD_CAN_PRERENDER; @testset "prerender" begin
+if J.FD_CAN_PRERENDER; @testset "prerender" begin
     @testset "katex" begin
         hs = raw"""
         <!doctype html>
         <html lang=en>
         <meta charset=UTF-8>
-        <div class=jd-content>
+        <div class=franklin-content>
         <p>range is \(10\sqrt{3}\)–\(20\sqrt{2}\) <!-- non-ascii en dash --></p>
         <p>Consider an invertible matrix \(M\) made of blocks \(A\), \(B\), \(C\) and \(D\) with</p>
         \[ M \quad\!\! =\quad\!\! \begin{pmatrix} A & B \\ C & D \end{pmatrix} \]
@@ -60,12 +60,12 @@ if J.JD_CAN_PRERENDER; @testset "prerender" begin
         @test occursin("""<span class=\"katex-display\"><span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi>""", jskx)
     end
 
-    if J.JD_CAN_HIGHLIGHT; @testset "highlight" begin
+    if J.FD_CAN_HIGHLIGHT; @testset "highlight" begin
         hs = raw"""
         <!doctype html>
         <html lang=en>
         <meta charset=UTF-8>
-        <div class=jd-content>
+        <div class=franklin-content>
         <h1>Title</h1>
         <p>Blah</p>
         <pre><code class=language-julia >using Test

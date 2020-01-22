@@ -1,24 +1,24 @@
 # NOTE:
 # - this is an experimental script comparing Common Mark specs
-# with what JuDoc supports. A lot of things break but not all
-# of it is a sign of JuDoc doing the wrong thing. For instance:
+# with what Franklin supports. A lot of things break but not all
+# of it is a sign of Franklin doing the wrong thing. For instance:
 #
-# --> support for headers in JuDoc is a bit more involved adding links
+# --> support for headers in Franklin is a bit more involved adding links
 # to headers by default which Common Mark does not do so of course
 # all examples with headers currently fail.
 #
-# --> common mark accepts stray backticks, JuDoc doesn't
+# --> common mark accepts stray backticks, Franklin doesn't
 #
-# --> double backslash mean something specific in JuDoc
+# --> double backslash mean something specific in Franklin
 #
-# --> JuDoc doesn't cleanly handle <p> </p>
+# --> Franklin doesn't cleanly handle <p> </p>
 #
 # Eventually  the `similar_enough` function will be adjusted to ignore
 # those cases.
 # --------------------------------------------------------------------
 
-dir_jd = dirname(dirname(pathof(JuDoc)))
-dir_specs = joinpath(dir_jd, "test", "parser", "common_mark")
+dir_fd = dirname(dirname(pathof(Franklin)))
+dir_specs = joinpath(dir_fd, "test", "parser", "common_mark")
 tests = read(joinpath(dir_specs, "spec029.json"),  String)
 
 md = eachmatch(r"\"markdown\":\s\"(.*?)\",", tests)
@@ -73,7 +73,7 @@ function check(r)
 
         htmli = html[i]
         flag = try
-            similar_enough(htmli, mdi |> jd2html_td)
+            similar_enough(htmli, mdi |> fd2html_td)
         catch
             false
         end
@@ -88,15 +88,15 @@ function check(r)
     fails
 end
 
-jdc(i) = cleanup(preprocess(md[i]) |> jd2html_td)
+fdc(i) = cleanup(preprocess(md[i]) |> fd2html_td)
 htc(i) = cleanup(html[i])
 
 # TABS
 # NOTE: issue with `\t`
-# - also thing with first line tab (currently not accepted in JuDoc)
+# - also thing with first line tab (currently not accepted in Franklin)
 check(1:11)
 
-# PRECEDENCE (fails because judoc does not support stray `)
+# PRECEDENCE (fails because Franklin does not support stray `)
 check(12)
 
 check(13:31)
@@ -108,7 +108,7 @@ check(70)
 println("\n==Indented code blocks==\n")
 f = check(77:88)
 
-# HTML code blocks (not expected to work in  JuDoc)
+# HTML code blocks (not expected to work in  Franklin)
 # fail: all
 # println("HTML code blocks")
 # check(117:160)

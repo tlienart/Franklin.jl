@@ -37,8 +37,8 @@ function set_globals()
     J.def_GLOBAL_LXDEFS!()
     empty!(J.LOCAL_PAGE_VARS)
     J.def_LOCAL_PAGE_VARS!()
-    J.JD_ENV[:CUR_PATH] = "index.md"
-    J.JD_ENV[:CUR_PATH_WITH_EVAL] = ""
+    J.FD_ENV[:CUR_PATH] = "index.md"
+    J.FD_ENV[:CUR_PATH_WITH_EVAL] = ""
 end
 
 function explore_md_steps(mds)

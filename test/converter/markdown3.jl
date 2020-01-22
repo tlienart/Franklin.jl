@@ -32,7 +32,7 @@
 
     inter_html, = steps[:inter_html]
 
-    @test isapproxstr(inter_html, "<p>Hello  ##JDINSERT##  blah  ##JDINSERT##  end and  ##JDINSERT##  end and  ##JDINSERT##  done</p>")
+    @test isapproxstr(inter_html, "<p>Hello  ##FDINSERT##  blah  ##FDINSERT##  end and  ##FDINSERT##  end and  ##FDINSERT##  done</p>")
 
     @test isapproxstr(st |> seval, raw"""
                 <p>Hello &#92; blah &#92; end
@@ -325,7 +325,7 @@ end
 @testset "Issue 266" begin
     s = """Blah [`hello`] and later
        [`hello`]: https://github.com/cormullion/
-       """ |> jd2html_td
+       """ |> fd2html_td
     @test isapproxstr(s, """
         <p>Blah
         <a href="https://github.com/cormullion/"><code>hello</code></a>
@@ -341,7 +341,7 @@ end
        ```
        end
        """
-    @test isapproxstr(s |> jd2html_td, """
+    @test isapproxstr(s |> fd2html_td, """
         <p>blah
         <pre><code class=\"language-TOML\">socrates</code></pre>
     end</p>""")
@@ -352,7 +352,7 @@ end
        ```
        end
        """
-    @test isapproxstr(s |> jd2html_td, """
+    @test isapproxstr(s |> fd2html_td, """
         <p>blah
         <pre><code class=\"language-julia-repl\">socrates</code></pre>
     end</p>""")

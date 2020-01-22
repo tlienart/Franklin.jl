@@ -59,7 +59,7 @@ end
     out_file = joinpath(Franklin.out_path(Franklin.PATHS[:folder]), "index.html")
 
     @test isfile(out_file)
-    @test read(out_file, String) == "head\n<div class=\"jd-content\">\n<p>blah blah</p>\n\n\npage_foot\n</div>\nfoot  Stefan Zweig"
+    @test read(out_file, String) == "head\n<div class=\"franklin-content\">\n<p>blah blah</p>\n\n\npage_foot\n</div>\nfoot  Stefan Zweig"
 end
 
 
@@ -88,13 +88,13 @@ rm(temp_index2)
 
     clear = true
 
-    watched_files = J.jd_setup(; clear=clear)
+    watched_files = J.fd_setup(; clear=clear)
 
-    J.jd_fullpass(watched_files; clear=clear)
+    J.fd_fullpass(watched_files; clear=clear)
 
     @test issubset(["css", "libs", "index.html"], readdir(Franklin.PATHS[:folder]))
     @test issubset(["temp.html", "temp.rnd"], readdir(Franklin.PATHS[:pub]))
-    @test all(split(read(joinpath(Franklin.PATHS[:folder], "index.html"), String)) .== split("<!doctype html>\n<html lang=\"en-UK\">\n\t<head>\n\t\t<meta charset=\"UTF-8\">\n\t\t<link rel=\"stylesheet\" href=\"/css/main.css\">\n\t</head>\n<body>\n<div class=\"jd-content\">\n<p>blah blah</p>\n\n<div class=\"page-foot\">\n\t\t<div class=\"copyright\">\n\t\t\t\t&copy; All rights reserved.\n\t\t</div>\n</div>\n</div>\n    </body>\n</html>"))
+    @test all(split(read(joinpath(Franklin.PATHS[:folder], "index.html"), String)) .== split("<!doctype html>\n<html lang=\"en-UK\">\n\t<head>\n\t\t<meta charset=\"UTF-8\">\n\t\t<link rel=\"stylesheet\" href=\"/css/main.css\">\n\t</head>\n<body>\n<div class=\"franklin-content\">\n<p>blah blah</p>\n\n<div class=\"page-foot\">\n\t\t<div class=\"copyright\">\n\t\t\t\t&copy; All rights reserved.\n\t\t</div>\n</div>\n</div>\n    </body>\n</html>"))
 end
 
 

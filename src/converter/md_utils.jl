@@ -51,11 +51,11 @@ end
 """
 $(SIGNATURES)
 
-The insertion token have whitespaces around them: ` ##JDINSERT## `, this mostly helps but causes
+The insertion token have whitespaces around them: ` ##FDINSERT## `, this mostly helps but causes
 a problem when combined with italic or bold markdown mode since `_blah_` works but not `_ blah _`.
-This function looks for any occurrence of `[\\*_] ##JDINSERT##` or the opposite and removes the
+This function looks for any occurrence of `[\\*_] ##FDINSERT##` or the opposite and removes the
 extraneous whitespace.
 """
 fix_inserts(s::AS)::String =
-    replace(replace(s, r"([\*_]) ##JDINSERT##" => s"\1##JDINSERT##"),
-                       r"##JDINSERT## ([\*_])" => s"##JDINSERT##\1")
+    replace(replace(s, r"([\*_]) ##FDINSERT##" => s"\1##FDINSERT##"),
+                       r"##FDINSERT## ([\*_])" => s"##FDINSERT##\1")
