@@ -1,6 +1,6 @@
 module Franklin
 
-using JuDocTemplates
+using FranklinTemplates
 
 using Markdown
 using Markdown: htmlesc
