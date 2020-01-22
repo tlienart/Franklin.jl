@@ -221,7 +221,7 @@ $(SIGNATURES)
 In combination with `incrlook`, checks to see if we have something that looks like a @@div
 describing the opening of a div block. Triggering char is a first `@`.
 """
-is_div_open(i::Int, c::Char) = (i == 1 && return c == '@'; return α(c, ('-','_')))
+is_div_open(i::Int, c::Char) = (i == 1 && return c == '@'; return α(c, ('-','_', NUM_CHAR...)))
 
 """
 $(SIGNATURES)
