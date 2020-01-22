@@ -15,7 +15,7 @@ function js_prerender_katex(hs::String)::String
             const katex = require("$(escape_string(joinpath(PATHS[:libs], "katex", "katex.min.js")))");
             """)
     # string to separate the output of the different blocks
-    splitter = "_>jdsplit<_"
+    splitter = "_>fdsplit<_"
 
     # go over each match and add the content to the jsbuffer
     for i ∈ 1:2:length(matches)-1
@@ -54,7 +54,7 @@ function js_prerender_highlight(hs::String)::String
     write(jsbuffer, """const hljs = require('highlight.js');""")
 
     # string to separate the output of the different blocks
-    splitter = "_>jdsplit<_"
+    splitter = "_>fdsplit<_"
 
     # go over each match and add the content to the jsbuffer
     for i ∈ 1:2:length(matches)-1
@@ -69,7 +69,7 @@ function js_prerender_highlight(hs::String)::String
             write(jsbuffer, """console.log("<pre><code class=hljs>$cs</code></pre>");\n""")
         else
             if lang == "html" && is_html_escaped(cs)
-                # corner case, see https://github.com/tlienart/JuDoc.jl/issues/326
+                # corner case, see Franklin.jl/issues/326
                 # highlight will re-escape the string further.
                 cs = html_unescape(cs) |> escape_string
             end

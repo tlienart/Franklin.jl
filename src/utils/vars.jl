@@ -13,8 +13,8 @@ const GLOBAL_PAGE_VARS = PageVars()
 """
 $(SIGNATURES)
 
-Convenience function to allocate default values of the global site variables. This is called once,
-when JuDoc is started.
+Convenience function to allocate default values of the global site variables.
+This is called once, when Franklin is started.
 """
 @inline function def_GLOBAL_PAGE_VARS!()::Nothing
     empty!(GLOBAL_PAGE_VARS)
@@ -78,8 +78,8 @@ Convenience function to allocate default values of page variables. This is
 called every time a page is processed.
 """
 @inline function def_LOCAL_PAGE_VARS!()::Nothing
-    # NOTE `jd_code` is the only page var we KEEP (stays alive)
-    code_scope = get(LOCAL_PAGE_VARS, "jd_code_scope") do
+    # NOTE `fd_code` is the only page var we KEEP (stays alive)
+    code_scope = get(LOCAL_PAGE_VARS, "fd_code_scope") do
         Pair(CodeScope(),  (CodeScope,)) # the "Any" is lazy but easy
     end
     empty!(LOCAL_PAGE_VARS)
@@ -107,11 +107,11 @@ called every time a page is processed.
     # in such cases set literate_only to false.
     LOCAL_PAGE_VARS["literate_only"] = Pair(true,       (Bool,))
     #
-    # the jd_* vars should not be assigned externally
-    LOCAL_PAGE_VARS["jd_code_scope"] = code_scope
-    LOCAL_PAGE_VARS["jd_code_head"]  = Pair(Ref(0),     (Ref{Int},))
-    LOCAL_PAGE_VARS["jd_code_eval"]  = Pair(Ref(false), (Ref{Bool},)) # toggle reeval
-    LOCAL_PAGE_VARS["jd_code"]       = Pair("",         (String,))    # just the script
+    # the fd_* vars should not be assigned externally
+    LOCAL_PAGE_VARS["fd_code_scope"] = code_scope
+    LOCAL_PAGE_VARS["fd_code_head"]  = Pair(Ref(0),     (Ref{Int},))
+    LOCAL_PAGE_VARS["fd_code_eval"]  = Pair(Ref(false), (Ref{Bool},)) # toggle reeval
+    LOCAL_PAGE_VARS["fd_code"]       = Pair("",         (String,))    # just the script
 
     # RSS 2.0 item specs:
     # only title, link and description must be defined
@@ -124,7 +124,7 @@ called every time a page is processed.
     #     comments    -- rss_comments
     #     enclosure   -- rss_enclosure
     # (*) guid        -- [automatically generated from link]
-    #     pubDate     -- rss_pubdate // fallback date // fallback jd_ctime
+    #     pubDate     -- rss_pubdate // fallback date // fallback fd_ctime
     # (*) source      -- [unsupported assumes for now there's only one channel]
     #
     LOCAL_PAGE_VARS["rss"]             = Pair("",      (String,))
@@ -136,10 +136,10 @@ called every time a page is processed.
     LOCAL_PAGE_VARS["rss_enclosure"]   = Pair("",      (String,))
     LOCAL_PAGE_VARS["rss_pubdate"]     = Pair(Date(1), (Date,))
 
-    # page vars used by judoc, should not be accessed or defined
-    LOCAL_PAGE_VARS["jd_ctime"]  = Pair(Date(1), (Date,))   # time of creation
-    LOCAL_PAGE_VARS["jd_mtime"]  = Pair(Date(1), (Date,))   # time of last modification
-    LOCAL_PAGE_VARS["jd_rpath"]  = Pair("",      (String,)) # local path to file src/[...]/blah.md
+    # page vars used by franklin, should not be accessed or defined
+    LOCAL_PAGE_VARS["fd_ctime"]  = Pair(Date(1), (Date,))   # time of creation
+    LOCAL_PAGE_VARS["fd_mtime"]  = Pair(Date(1), (Date,))   # time of last modification
+    LOCAL_PAGE_VARS["fd_rpath"]  = Pair("",      (String,)) # local path to file src/[...]/blah.md
 
     # If there are GLOBAL vars that are defined, they take precedence
     local_keys = keys(LOCAL_PAGE_VARS)
@@ -259,7 +259,7 @@ the site. See [`resolve_lxcom`](@ref).
 end
 
 #= ==========================================
-Convenience functions related to the jd_vars
+Convenience functions related to the fd_vars
 ============================================= =#
 
 """
@@ -268,7 +268,7 @@ $(SIGNATURES)
 Convenience function taking a `DateTime` object and returning the corresponding formatted string
 with the format contained in `GLOBAL_PAGE_VARS["date_format"]`.
 """
-jd_date(d::DateTime)::AS = Dates.format(d, GLOBAL_PAGE_VARS["date_format"].first)
+fd_date(d::DateTime)::AS = Dates.format(d, GLOBAL_PAGE_VARS["date_format"].first)
 
 
 """
@@ -296,14 +296,14 @@ set_vars, the key function to assign site variables
 """
 $(SIGNATURES)
 
-Given a set of definitions `assignments`, update the variables dictionary `jd_vars`. Keys in
-`assignments` that do not match keys in `jd_vars` are ignored (a warning message is displayed).
+Given a set of definitions `assignments`, update the variables dictionary `fd_vars`. Keys in
+`assignments` that do not match keys in `fd_vars` are ignored (a warning message is displayed).
 The entries in `assignments` are of the form `KEY => STR` where `KEY` is a string key (e.g.:
 "hasmath") and `STR` is an assignment to evaluate (e.g.: "=false").
 """
-function set_vars!(jd_vars::PageVars, assignments::Vector{Pair{String,String}})::PageVars
+function set_vars!(fd_vars::PageVars, assignments::Vector{Pair{String,String}})::PageVars
     # if there's no assignment, cut it short
-    isempty(assignments) && return jd_vars
+    isempty(assignments) && return fd_vars
     # process each assignment in turn
     for (key, assign) ∈ assignments
         # at this point there may still be a comment in the assignment
@@ -321,19 +321,19 @@ function set_vars!(jd_vars::PageVars, assignments::Vector{Pair{String,String}}):
             break
         end
 
-        if haskey(jd_vars, key)
+        if haskey(fd_vars, key)
             # if the retrieved value has the right type, assign it to the corresponding key
             type_tmp  = typeof(tmp)
-            acc_types = jd_vars[key].second
+            acc_types = fd_vars[key].second
             if check_type(type_tmp, acc_types)
-                jd_vars[key] = Pair(tmp, acc_types)
+                fd_vars[key] = Pair(tmp, acc_types)
             else
                 @warn "Doc var '$key' (type(s): $acc_types) can't be set to value '$tmp' (type: $type_tmp). Assignment ignored."
             end
         else
             # there is no key, so directly assign, the type is not checked
-            jd_vars[key] = Pair(tmp, (typeof(tmp), ))
+            fd_vars[key] = Pair(tmp, (typeof(tmp), ))
         end
     end
-    return jd_vars
+    return fd_vars
 end

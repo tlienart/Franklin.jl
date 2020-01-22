@@ -1,8 +1,9 @@
 """
 $SIGNATURES
 
-Find footnotes refs and defs and eliminate the ones that don't verify the appropriate regex.
-For a footnote ref: `\\[\\^[a-zA-Z0-0]+\\]` and `\\[\\^[a-zA-Z0-0]+\\]:` for the def.
+Find footnotes refs and defs and eliminate the ones that don't verify the
+appropriate regex. For a footnote ref: `\\[\\^[a-zA-Z0-0]+\\]` and
+`\\[\\^[a-zA-Z0-0]+\\]:` for the def.
 """
 function validate_footnotes!(tokens::Vector{Token})
     fn_refs = Vector{Token}()
@@ -38,8 +39,8 @@ end
 """
 $(SIGNATURES)
 
-Given a candidate header block, check that the opening `#` is at the start of a line, otherwise
-ignore the block.
+Given a candidate header block, check that the opening `#` is at the start of a
+line, otherwise ignore the block.
 """
 function validate_headers!(tokens::Vector{Token})::Nothing
     isempty(tokens) && return
@@ -89,7 +90,7 @@ function validate_and_store_link_defs!(blocks::Vector{OCBlock})::Nothing
                 # we have a [id]: lk add it to PAGE_LINK_DEFS
                 id = subs(parent, nextind(parent, k), ini)
                 # issue #266 in case there's formatting in the link
-                id = jd2html(id, internal=true)
+                id = fd2html(id, internal=true)
                 id = replace(id, r"^<p>"=>"")
                 id = replace(id, r"<\/p>\n$"=>"")
                 lk = β |> content |> strip |> string

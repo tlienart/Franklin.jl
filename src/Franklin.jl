@@ -1,10 +1,10 @@
 module Franklin
 
-using JuDocTemplates
+using FranklinTemplates
 
 using Markdown
 using Markdown: htmlesc
-using Dates # see jd_vars
+using Dates # see fd_vars
 using DelimitedFiles: readdlm
 using OrderedCollections
 using Pkg
@@ -17,10 +17,14 @@ import NodeJS
 import Literate
 import HTTP
 
-export serve, publish, cleanpull, newsite, optimize, jd2html, literate_folder, verify_links
+export serve, publish, cleanpull, newsite, optimize, fd2html,
+       literate_folder, verify_links
 
 export lunr
-export jdf_empty, jdf_lunr, jdf_literate
+
+# -----------------------------------------------------------------------------
+# Legacy with JuDoc
+export jd2html # = fd2html
 
 # -----------------------------------------------------------------------------
 #
@@ -30,8 +34,7 @@ export jdf_empty, jdf_lunr, jdf_literate
 """Big number when we want things to be far."""
 const BIG_INT = typemax(Int)
 
-"""Global options for JuDoc"""
-const JD_ENV = LittleDict(
+const FD_ENV = LittleDict(
     :DEBUG_MODE         => false,
     :FULL_PASS          => true,
     :FORCE_REEVAL       => false,
@@ -126,23 +129,22 @@ include("converter/html_link_fixer.jl")
 # > javascript
 include("converter/js_prerender.jl")
 
-# FILE PROCESSING
-include("jd_paths.jl")
-include("jd_vars.jl")
+# UTILS
+include("utils/paths.jl")
+include("utils/vars.jl")
+include("utils/misc.jl")
+include("utils/html.jl")
+include("utils/errors.jl")
 
 # FILE AND DIR MANAGEMENT
 include("manager/rss_generator.jl")
 include("manager/dir_utils.jl")
 include("manager/file_utils.jl")
-include("manager/judoc.jl")
+include("manager/franklin.jl")
 include("manager/extras.jl")
 include("manager/post_processing.jl")
 
-# MISC UTILS
-include("misc_utils.jl")
-include("misc_html.jl")
-
-# ERROR TYPES
-include("error_types.jl")
+# INTEGRATION
+include("integration/literate.jl")
 
 end # module

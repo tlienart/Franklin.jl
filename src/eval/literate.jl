@@ -30,9 +30,9 @@ end
 """
 $SIGNATURES
 
-Take a Literate.jl script and transform it into a JuDoc-markdown file.
+Take a Literate.jl script and transform it into a Franklin-Markdown file.
 """
-function literate_to_judoc(rpath::AS)::Tuple{String,Bool}
+function literate_to_franklin(rpath::AS)::Tuple{String,Bool}
     startswith(rpath, "/") || error("Literate expects a paths starting with '/'")
     # rpath is of the form "/scripts/[path/]tutorial[.jl]"
     # split it so that when recombining it will lead to valid path inc windows

@@ -131,7 +131,7 @@ Helper function to get the relative url of the current page.
 function url_curpage()
     # go from /pages/.../something.md to /pub/.../something.html note that if
     # on windows then it would be \\ whence the PATH_SEP
-    rp = replace(JD_ENV[:CUR_PATH], Regex("^pages$(escape_string(PATH_SEP))")=>"pub$(PATH_SEP)")
+    rp = replace(FD_ENV[:CUR_PATH], Regex("^pages$(escape_string(PATH_SEP))")=>"pub$(PATH_SEP)")
     rp = unixify(rp)
     rp = splitext(rp)[1] * ".html"
     startswith(rp, "/") || (rp = "/" * rp)

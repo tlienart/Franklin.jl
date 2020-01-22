@@ -8,41 +8,41 @@ end
 @testset "issue163" begin
     st = raw"""A _B `C` D_ E"""
     imd, ih = inter(st)
-    @test imd == "A _B  ##JDINSERT##  D_ E"
-    @test ih == "<p>A <em>B  ##JDINSERT##  D</em> E</p>\n"
+    @test imd == "A _B  ##FDINSERT##  D_ E"
+    @test ih == "<p>A <em>B  ##FDINSERT##  D</em> E</p>\n"
 
     st = raw"""A _`B` C D_ E"""
     imd, ih = inter(st)
-    @test imd == "A _ ##JDINSERT##  C D_ E"
-    @test ih == "<p>A <em>##JDINSERT##  C D</em> E</p>\n"
+    @test imd == "A _ ##FDINSERT##  C D_ E"
+    @test ih == "<p>A <em>##FDINSERT##  C D</em> E</p>\n"
 
     st = raw"""A _B C `D`_ E"""
     imd, ih = inter(st)
-    @test imd == "A _B C  ##JDINSERT## _ E"
-    @test ih == "<p>A <em>B C  ##JDINSERT##</em> E</p>\n"
+    @test imd == "A _B C  ##FDINSERT## _ E"
+    @test ih == "<p>A <em>B C  ##FDINSERT##</em> E</p>\n"
 
     st = raw"""A _`B` C `D`_ E"""
     imd, ih = inter(st)
-    @test imd == "A _ ##JDINSERT##  C  ##JDINSERT## _ E"
-    @test ih == "<p>A <em>##JDINSERT##  C  ##JDINSERT##</em> E</p>\n"
+    @test imd == "A _ ##FDINSERT##  C  ##FDINSERT## _ E"
+    @test ih == "<p>A <em>##FDINSERT##  C  ##FDINSERT##</em> E</p>\n"
 end
 
 
 @testset "TOC"  begin
-    J.JD_ENV[:CUR_PATH] = "pages/ff/aa.md"
+    J.FD_ENV[:CUR_PATH] = "pages/ff/aa.md"
     h = raw"""
         \toc
-        ## Hello `jd`
+        ## Hello `fd`
         #### weirdly nested
         ### Goodbye!
         ## Done
         done.
         """ |> seval
     @test isapproxstr(h, raw"""
-        <div class="jd-toc">
+        <div class="franklin-toc">
           <ol>
             <li>
-              <a href="/pub/ff/aa.html#hello_jd">Hello <code>jd</code></a>
+              <a href="/pub/ff/aa.html#hello_fd">Hello <code>fd</code></a>
               <ol>
                 <li><ol><li><a href="/pub/ff/aa.html#weirdly_nested">weirdly nested</a></li></ol></li>
                 <li><a href="/pub/ff/aa.html#goodbye">Goodbye&#33;</a></li>
@@ -51,7 +51,7 @@ end
             <li><a href="/pub/ff/aa.html#done">Done</a></li>
           </ol>
         </div>
-        <h2 id="hello_jd"><a href="/pub/ff/aa.html#hello_jd">Hello <code>jd</code></a></h2>
+        <h2 id="hello_fd"><a href="/pub/ff/aa.html#hello_fd">Hello <code>fd</code></a></h2>
         <h4 id="weirdly_nested"><a href="/pub/ff/aa.html#weirdly_nested">weirdly nested</a></h4>
         <h3 id="goodbye"><a href="/pub/ff/aa.html#goodbye">Goodbye&#33;</a></h3>
         <h2 id="done"><a href="/pub/ff/aa.html#done">Done</a></h2>done.
@@ -59,7 +59,7 @@ end
 end
 
 @testset "TOC"  begin
-    J.JD_ENV[:CUR_PATH] = "pages/ff/aa.md"
+    J.FD_ENV[:CUR_PATH] = "pages/ff/aa.md"
     s = raw"""
         @def mintoclevel = 2
         @def maxtoclevel = 3
@@ -73,7 +73,7 @@ end
         done.
         """ |> seval
     @test isapproxstr(s, raw"""
-        <div class="jd-toc">
+        <div class="franklin-toc">
             <ol>
                 <li><a href="/pub/ff/aa.html#b">B</a>
                     <ol>
