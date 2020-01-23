@@ -1,5 +1,5 @@
 @testset "RSSItem" begin
-    rss = J.RSSItem(
+    rss = F.RSSItem(
         "title", "www.link.com", "description", "author@author.com", "category",
         "www.comments.com", "enclosure", Date(2012,12,12))
     @test rss.title == "title"
@@ -13,32 +13,32 @@
 end
 
 @testset "RSSbasics" begin
-    empty!(J.RSS_DICT)
-    J.FD_ENV[:CUR_PATH] = "hey/ho.md"
-    J.set_var!(J.GLOBAL_PAGE_VARS, "website_title", "Website title")
-    J.set_var!(J.GLOBAL_PAGE_VARS, "website_descr", "Website descr")
-    J.set_var!(J.GLOBAL_PAGE_VARS, "website_url", "https://github.com/tlienart/Franklin.jl/")
-    fdv = merge(J.GLOBAL_PAGE_VARS, copy(J.LOCAL_PAGE_VARS))
-    J.set_var!(fdv, "rss_title", "title")
-    J.set_var!(fdv, "rss", "A **description** done.")
-    J.set_var!(fdv, "rss_author", "chuck@norris.com")
+    empty!(F.RSS_DICT)
+    F.FD_ENV[:CUR_PATH] = "hey/ho.md"
+    F.set_var!(F.GLOBAL_PAGE_VARS, "website_title", "Website title")
+    F.set_var!(F.GLOBAL_PAGE_VARS, "website_descr", "Website descr")
+    F.set_var!(F.GLOBAL_PAGE_VARS, "website_url", "https://github.com/tlienart/Franklin.jl/")
+    fdv = merge(F.GLOBAL_PAGE_VARS, copy(F.LOCAL_PAGE_VARS))
+    F.set_var!(fdv, "rss_title", "title")
+    F.set_var!(fdv, "rss", "A **description** done.")
+    F.set_var!(fdv, "rss_author", "chuck@norris.com")
 
-    item = J.add_rss_item(fdv)
+    item = F.add_rss_item(fdv)
     @test item.title == "title"
     @test item.description == "A <strong>description</strong> done.\n"
     @test item.author == "chuck@norris.com"
     # unchanged bc all three fallbacks lead to Data(1)
     @test item.pubDate == Date(1)
 
-    J.set_var!(fdv, "rss_title", "")
-    @test @test_logs (:warn, "Found an RSS description but no title for page /hey/ho.html.") J.add_rss_item(fdv).title == ""
+    F.set_var!(fdv, "rss_title", "")
+    @test @test_logs (:warn, "Found an RSS description but no title for page /hey/ho.html.") F.add_rss_item(fdv).title == ""
 
-    @test J.RSS_DICT["/hey/ho.html"].description == item.description
+    @test F.RSS_DICT["/hey/ho.html"].description == item.description
 
     # Generation
-    J.PATHS[:folder] = td
-    J.rss_generator()
-    feed = joinpath(J.PATHS[:folder], "feed.xml")
+    F.PATHS[:folder] = td
+    F.rss_generator()
+    feed = joinpath(F.PATHS[:folder], "feed.xml")
     @test isfile(feed)
     fc = prod(readlines(feed, keep=true))
     @test occursin("<description><![CDATA[A <strong>description</strong> done.", fc)

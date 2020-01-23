@@ -143,7 +143,7 @@ end
             <pre><code class=\"plaintext\">8</code></pre>
             """)
 
-    @test isapproxstr(J.str(vars["fd_code"].first), """
+    @test isapproxstr(F.str(vars["fd_code"].first), """
         a = 5
         println(a)
 
@@ -181,7 +181,7 @@ end
             println(a)</code></pre>
             <pre><code class=\"plaintext\">9</code></pre>
             """)
-    @test isapproxstr(J.str(vars["fd_code"].first), """
+    @test isapproxstr(F.str(vars["fd_code"].first), """
         a = 5
         println(a)
 

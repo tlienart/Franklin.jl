@@ -9,7 +9,7 @@
         B
         """
     css = SubString(s, 3, 63)
-    lang, rpath, code = J.parse_fenced_block(css)
+    lang, rpath, code = F.parse_fenced_block(css)
     @test lang == "julia"
     @test rpath === nothing
     @test code ==
@@ -26,7 +26,7 @@
         B
         """
     css = SubString(s, 3, 67)
-    lang, rpath, code = J.parse_fenced_block(css)
+    lang, rpath, code = F.parse_fenced_block(css)
     @test lang == "julia"
     @test rpath == "ex1"
     @test code ==
@@ -42,7 +42,7 @@ end
         a = 5
         b = 7
         ```""")
-    @test J.resolve_code_block(c) ==
+    @test F.resolve_code_block(c) ==
         """<pre><code class="language-julia">a = 5
         b = 7</code></pre>"""
     # not julia code
@@ -51,7 +51,7 @@ end
         a = 5
         b = 7
         ```""")
-    @test @test_logs (:warn, "Evaluation of non-Julia code blocks is not yet supported.") J.resolve_code_block(c) ==
+    @test @test_logs (:warn, "Evaluation of non-Julia code blocks is not yet supported.") F.resolve_code_block(c) ==
         """<pre><code class="language-python">a = 5
         b = 7</code></pre>"""
 
@@ -60,16 +60,16 @@ end
     tmp = mktempdir()
     begin
         cd(tmp)
-        J.FD_ENV[:CUR_PATH] = "index.md"
-        J.FOLDER_PATH[] = tmp
-        J.def_LOCAL_PAGE_VARS!()
-        J.set_paths!()
+        F.FD_ENV[:CUR_PATH] = "index.md"
+        F.FOLDER_PATH[] = tmp
+        F.def_LOCAL_PAGE_VARS!()
+        F.set_paths!()
         c = SubString(
             """```julia:ex
             a = 5
             b = 7
             ```""")
-        r = J.resolve_code_block(c)
+        r = F.resolve_code_block(c)
         @test r ==
             """<pre><code class="language-julia">a = 5
             b = 7</code></pre>"""

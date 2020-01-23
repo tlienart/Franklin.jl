@@ -1,10 +1,10 @@
-scripts = joinpath(J.PATHS[:folder], "literate-scripts")
-cd(td); J.set_paths!(); mkpath(scripts)
+scripts = joinpath(F.PATHS[:folder], "literate-scripts")
+cd(td); F.set_paths!(); mkpath(scripts)
 
 @testset "Literate-0" begin
     @test_throws ErrorException literate_folder("foo/")
     litpath = literate_folder("literate-scripts/")
-    @test litpath == joinpath(J.PATHS[:folder], "literate-scripts/")
+    @test litpath == joinpath(F.PATHS[:folder], "literate-scripts/")
 end
 
 @testset "Literate-a" begin
@@ -22,7 +22,7 @@ end
         D
         ```
         """
-    @test J.literate_post_process(s) == """
+    @test F.literate_post_process(s) == """
         <!--This file was generated, do not modify it.-->
         A
 
@@ -56,8 +56,8 @@ end
         """
     path = joinpath(scripts, "tutorial.jl")
     write(path, s)
-    opath, = J.literate_to_franklin("/literate-scripts/tutorial")
-    @test endswith(opath, joinpath(J.PATHS[:assets], "literate", "tutorial.md"))
+    opath, = F.literate_to_franklin("/literate-scripts/tutorial")
+    @test endswith(opath, joinpath(F.PATHS[:assets], "literate", "tutorial.md"))
     out = read(opath, String)
     @test out == """
         <!--This file was generated, do not modify it.-->
@@ -109,5 +109,5 @@ end
     s = raw"""
         \literate{/foo}
         """
-    @test @test_logs (:warn, "File not found when trying to convert a literate file ($(joinpath(J.PATHS[:folder], "foo.jl"))).") (s |> fd2html_td) == """<p><span style="color:red;">// Literate file matching '/foo' not found. //</span></p></p>\n"""
+    @test @test_logs (:warn, "File not found when trying to convert a literate file ($(joinpath(F.PATHS[:folder], "foo.jl"))).") (s |> fd2html_td) == """<p><span style="color:red;">// Literate file matching '/foo' not found. //</span></p></p>\n"""
 end

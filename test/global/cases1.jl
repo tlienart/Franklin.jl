@@ -183,7 +183,7 @@ end
                </table>""")
     end
 
-    @test J.convert_md(st, isrecursive=true) |> chtml == st |> conv
+    @test F.convert_md(st, isrecursive=true) |> chtml == st |> conv
 
     st = raw"""
         @@emptydiv
@@ -201,7 +201,7 @@ end
         ## some title
         and then an anchor here \label{anchor} done.
         """
-    J.def_GLOBAL_LXDEFS!()
+    F.def_GLOBAL_LXDEFS!()
     r = st |> conv
     @test occursin("here <a id=\"anchor\"></a> done.", r)
 end

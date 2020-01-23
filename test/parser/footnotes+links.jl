@@ -1,5 +1,5 @@
 @testset "footnotes" begin
-    J.FD_ENV[:CUR_PATH] = "index.md"
+    F.FD_ENV[:CUR_PATH] = "index.md"
     st = """
         A[^1] B[^blah] C
         """

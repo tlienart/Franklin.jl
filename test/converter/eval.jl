@@ -1,4 +1,4 @@
-J.FD_ENV[:CUR_PATH] = "index.md"
+F.FD_ENV[:CUR_PATH] = "index.md"
 
 @testset "Evalcode" begin
     # see `converter/md_blocks:convert_code_block`
@@ -29,15 +29,15 @@ J.FD_ENV[:CUR_PATH] = "index.md"
 
     @test h == h2
 
-    spatha = joinpath(J.PATHS[:assets], "index", "code", "exca1.jl")
-    spathb = joinpath(J.PATHS[:assets], "index", "code", "excb1.jl")
+    spatha = joinpath(F.PATHS[:assets], "index", "code", "exca1.jl")
+    spathb = joinpath(F.PATHS[:assets], "index", "code", "excb1.jl")
     @test isfile(spatha)
     @test isfile(spathb)
     @test isapproxstr(read(spatha, String), """
-        $(J.MESSAGE_FILE_GEN_JMD)
+        $(F.MESSAGE_FILE_GEN_JMD)
         a = 5\nprint(a^2)""")
 
-    opath = joinpath(J.PATHS[:assets], "index", "code", "output", "exca1.out")
+    opath = joinpath(F.PATHS[:assets], "index", "code", "output", "exca1.out")
     @test isfile(opath)
     @test read(opath, String) == "25"
 
@@ -81,11 +81,11 @@ end
         done.
         """ |> seval
 
-    spath = joinpath(J.PATHS[:assets], "scripts", "test2.jl")
+    spath = joinpath(F.PATHS[:assets], "scripts", "test2.jl")
     @test isfile(spath)
     @test occursin("a = 5\nprint(a^2)", read(spath, String))
 
-    opath = joinpath(J.PATHS[:assets], "scripts", "output", "test2.out")
+    opath = joinpath(F.PATHS[:assets], "scripts", "output", "test2.out")
     @test isfile(opath)
     @test read(opath, String) == "25"
 
@@ -99,7 +99,7 @@ end
 
     # ------------
 
-    J.FD_ENV[:CUR_PATH] = "pages/pg1.md"
+    F.FD_ENV[:CUR_PATH] = "pages/pg1.md"
 
     h = raw"""
         Simple code:
@@ -112,11 +112,11 @@ end
         done.
         """ |> seval
 
-    spath = joinpath(J.PATHS[:assets], "pages", "pg1", "code", "abc2.jl")
+    spath = joinpath(F.PATHS[:assets], "pages", "pg1", "code", "abc2.jl")
     @test isfile(spath)
     @test occursin("a = 5\nprint(a^2)", read(spath, String))
 
-    opath = joinpath(J.PATHS[:assets], "pages", "pg1", "code", "output" ,"abc2.out")
+    opath = joinpath(F.PATHS[:assets], "pages", "pg1", "code", "output" ,"abc2.out")
     @test isfile(opath)
     @test read(opath, String) == "25"
 
@@ -145,7 +145,7 @@ end
 end
 
 @testset "Eval (img)" begin
-    J.FD_ENV[:CUR_PATH] = "index.html"
+    F.FD_ENV[:CUR_PATH] = "index.html"
     h = raw"""
         Simple code:
         ```julia:tv2

@@ -12,17 +12,17 @@
     lxdefs, tokens, braces, blocks, lxcoms = steps[:latex]
 
     @test length(braces) == 1
-    @test J.content(braces[1]) == "blah"
+    @test F.content(braces[1]) == "blah"
 
     @test length(blocks) == 1
     @test blocks[1].name == :MATH_A
-    @test J.content(blocks[1]) == "f"
+    @test F.content(blocks[1]) == "f"
 
     blocks2insert, = steps[:blocks2insert]
 
-    inter_md, mblocks = J.form_inter_md(st, blocks2insert, lxdefs)
+    inter_md, mblocks = F.form_inter_md(st, blocks2insert, lxdefs)
     @test inter_md == "\n\nA list\n*  ##FDINSERT##  and  ##FDINSERT## \n*  ##FDINSERT##  is a function\n* a last element\n"
-    inter_html = J.md2html(inter_md)
+    inter_html = F.md2html(inter_md)
     @test inter_html == "<p>A list</p>\n<ul>\n<li><p>##FDINSERT##  and  ##FDINSERT## </p>\n</li>\n<li><p>##FDINSERT##  is a function</p>\n</li>\n<li><p>a last element</p>\n</li>\n</ul>\n"
 end
 
@@ -59,11 +59,11 @@ end
     @test inter_md == "ab ##FDINSERT## \n ##FDINSERT## \n"
 
     inter_html, = steps[:inter_html]
-    lxcontext = J.LxContext(lxcoms, lxdefs, braces)
+    lxcontext = F.LxContext(lxcoms, lxdefs, braces)
 
-    @test J.convert_block(blocks2insert[1], lxcontext) == "<div class=\"d\">.</div>"
-    @test isapproxstr(J.convert_block(blocks2insert[2], lxcontext), "\\[\\begin{array}{c} \\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\\]")
-    hstring = J.convert_inter_html(inter_html, blocks2insert, lxcontext)
+    @test F.convert_block(blocks2insert[1], lxcontext) == "<div class=\"d\">.</div>"
+    @test isapproxstr(F.convert_block(blocks2insert[2], lxcontext), "\\[\\begin{array}{c} \\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\\]")
+    hstring = F.convert_inter_html(inter_html, blocks2insert, lxcontext)
     @test isapproxstr(hstring, raw"""
                         <p>
                           ab<div class="d">.</div>
@@ -98,8 +98,8 @@ end
 
     @test isapproxstr(inter_html, """<p>text A1 text A2  ##FDINSERT##  and  ##FDINSERT##   text C1  ##FDINSERT##  text C2  then  ##FDINSERT## .</p>""")
 
-    lxcontext = J.LxContext(lxcoms, lxdefs, braces)
-    hstring = J.convert_inter_html(inter_html, blocks2insert, lxcontext)
+    lxcontext = F.LxContext(lxcoms, lxdefs, braces)
+    hstring = F.convert_inter_html(inter_html, blocks2insert, lxcontext)
     @test isapproxstr(hstring, """
                                 <p>text A1 text A2 blah and
                                 escape B1
@@ -109,7 +109,7 @@ end
 
 
 @testset "headers" begin
-    J.FD_ENV[:CUR_PATH] = "index.md"
+    F.FD_ENV[:CUR_PATH] = "index.md"
     h = """
         # Title
         and then

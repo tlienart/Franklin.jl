@@ -88,9 +88,9 @@ rm(temp_index2)
 
     clear = true
 
-    watched_files = J.fd_setup(; clear=clear)
+    watched_files = F.fd_setup(; clear=clear)
 
-    J.fd_fullpass(watched_files; clear=clear)
+    F.fd_fullpass(watched_files; clear=clear)
 
     @test issubset(["css", "libs", "index.html"], readdir(Franklin.PATHS[:folder]))
     @test issubset(["temp.html", "temp.rnd"], readdir(Franklin.PATHS[:pub]))
@@ -101,5 +101,5 @@ end
 @testset "Err procfile" begin
     write(temp_index, "blah blah { blih etc")
     println("🐝 Testing error message...:")
-    @test_throws J.OCBlockError Franklin.process_file_err(:md, Franklin.PATHS[:src] => "index.md"; clear=false)
+    @test_throws F.OCBlockError Franklin.process_file_err(:md, Franklin.PATHS[:src] => "index.md"; clear=false)
 end

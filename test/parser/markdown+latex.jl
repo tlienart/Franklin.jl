@@ -1,7 +1,7 @@
 @testset "Find Tokens" begin
     a = raw"""some markdown then `code` and @@dname block @@"""
 
-    tokens = J.find_tokens(a, J.MD_TOKENS, J.MD_1C_TOKENS)
+    tokens = F.find_tokens(a, F.MD_TOKENS, F.MD_1C_TOKENS)
 
     @test tokens[1].name == :CODE_SINGLE
     @test tokens[2].name == :CODE_SINGLE
@@ -100,7 +100,7 @@ end
     @test blocks[2].name == :ESCAPE
     @test blocks[1].name == :CODE_BLOCK_LANG
 
-    lxcoms, tokens = J.find_md_lxcoms(tokens, lxdefs, braces)
+    lxcoms, tokens = F.find_md_lxcoms(tokens, lxdefs, braces)
 
     @test lxcoms[1].ss == "\\eqa{ \\E{f(X)} \\in \\R &\\text{if}& f:\\R\\maptso\\R }"
     lxd = getindex(lxcoms[1].lxdef)
@@ -129,15 +129,15 @@ end
 
     # testing malformed newcommands
     st = raw"""abc \newcommand abc"""
-    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
-    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
+    tokens = F.find_tokens(st, F.MD_TOKENS, F.MD_1C_TOKENS)
+    blocks, tokens = F.find_all_ocblocks(tokens, F.MD_OCB_ALL)
     # Ill formed newcommand (needs two {...})
-    @test_throws J.LxDefError J.find_md_lxdefs(tokens, blocks)
+    @test_throws F.LxDefError F.find_md_lxdefs(tokens, blocks)
     st = raw"""abc \newcommand{abc} def"""
-    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
-    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
+    tokens = F.find_tokens(st, F.MD_TOKENS, F.MD_1C_TOKENS)
+    blocks, tokens = F.find_all_ocblocks(tokens, F.MD_OCB_ALL)
     # Ill formed newcommand (needs two {...})
-    @test_throws J.LxDefError J.find_md_lxdefs(tokens, blocks)
+    @test_throws F.LxDefError F.find_md_lxdefs(tokens, blocks)
 end
 
 
@@ -160,11 +160,11 @@ end
 
     @test blocks[1].name == :CODE_BLOCK_LANG
     @test blocks[1].ss == "```julia\nf(x) = x^2\n```"
-    @test J.content(blocks[1]) == "\nf(x) = x^2\n"
+    @test F.content(blocks[1]) == "\nf(x) = x^2\n"
 
     @test blocks[2].name == :DIV
     @test blocks[2].ss == "@@adiv inner part @@"
-    @test J.content(blocks[2]) == " inner part "
+    @test F.content(blocks[2]) == " inner part "
 
     #
     # Errors
@@ -175,11 +175,11 @@ end
         etc \comb then.
         """
 
-    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
-    blocks, tokens = J.find_all_ocblocks(tokens, J.MD_OCB_ALL)
-    lxdefs, tokens, braces, blocks = J.find_md_lxdefs(tokens, blocks)
+    tokens = F.find_tokens(st, F.MD_TOKENS, F.MD_1C_TOKENS)
+    blocks, tokens = F.find_all_ocblocks(tokens, F.MD_OCB_ALL)
+    lxdefs, tokens, braces, blocks = F.find_md_lxdefs(tokens, blocks)
     # Command comb expects 1 argument and there should be no spaces ...
-    @test_throws J.LxComError J.find_md_lxcoms(tokens, lxdefs, braces)
+    @test_throws F.LxComError F.find_md_lxcoms(tokens, lxdefs, braces)
 end
 
 
@@ -217,16 +217,16 @@ end
     lxdefs, tokens, braces, blocks, lxcoms = explore_md_steps(st)[:latex]
 
     @test blocks[1].name == :COMMENT
-    @test J.content(blocks[1]) == " comment "
+    @test F.content(blocks[1]) == " comment "
     @test blocks[2].name == :H2
-    @test J.content(blocks[2]) == " blah <!-- ✅ 19/9/999 -->"
+    @test F.content(blocks[2]) == " blah <!-- ✅ 19/9/999 -->"
     @test blocks[3].name == :MD_DEF
-    @test J.content(blocks[3]) == " title = \"Convex Optimisation I\""
+    @test F.content(blocks[3]) == " title = \"Convex Optimisation I\""
 
     @test lxcoms[1].ss == "\\com{A}"
     @test lxcoms[2].ss == "\\com{B}"
 
-    b2i = J.merge_blocks(lxcoms, blocks)
+    b2i = F.merge_blocks(lxcoms, blocks)
 
     @test b2i[1].ss == "@def title = \"Convex Optimisation I\"\n"
     @test b2i[2].ss == "\\com{A}"
@@ -261,7 +261,7 @@ end
     @test blocks[5].name == :H5
     @test blocks[6].name == :H6
 
-    J.FD_ENV[:CUR_PATH] = "index.md"
+    F.FD_ENV[:CUR_PATH] = "index.md"
 
     h = raw"""
         # t1

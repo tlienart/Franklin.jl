@@ -8,21 +8,21 @@ Corn amaranth salsify bunya nuts nori azuki bean chickweed potato bell pepper ar
 """
 
 @testset "context" begin
-    mess = J.context(s, 101)
+    mess = F.context(s, 101)
     @test s[101] == 't'
     # println(mess)
     @test mess == "Context:\n\t...ikon amaranth tatsoi tomatillo melon azuki ... (near line 1)\n	                        ^---\n"
 
-    mess = J.context(s, 211)
+    mess = F.context(s, 211)
     @test s[211] == 't'
     # println(mess)
     @test mess == "Context:\n\t...ey shallot courgette tatsoi pea sprouts fav... (near line 2)\n	                        ^---\n"
 
-    mess = J.context(s, 10)
+    mess = F.context(s, 10)
     # println(mess)
     @test mess == "Context:\n\tVeggies es bonus vobis, proinde... (near line 1)\n	         ^---\n"
 
-    mess = J.context(s, 880)
+    mess = F.context(s, 880)
     # println(mess)
     @test mess == "Context:\n\t... potato bell pepper artichoke. (near line 5)\n	                        ^---\n"
 end

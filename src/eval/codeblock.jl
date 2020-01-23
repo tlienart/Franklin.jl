@@ -11,8 +11,8 @@ which also handles hide
 """
 $SIGNATURES
 
-Take a fenced code block and return the language, the relative path (if any)
-and the code.
+Take a fenced code block and return a tuple with the language, the relative
+path (if any) and the code.
 """
 function parse_fenced_block(ss::SubString)::Tuple
     fence = ifelse(startswith(ss, "`````"), "`````", "```")
@@ -74,7 +74,7 @@ function resolve_code_block(ss::SubString)::String
         end
     end
     # >> since we've evaluated a code block, toggle scope as stale
-    LOCAL_PAGE_VARS["jd_code_eval"].first[] = true
+    LOCAL_PAGE_VARS["fd_code_eval"].first[] = true
     # >> finally return as html
     return html_code(code, lang)
 end
@@ -100,7 +100,7 @@ function should_eval(code::AS, rpath::AS)
 
     # 3. if space previously marked as stale, return true
     # note that on every page build, this is re-init as false.
-    LOCAL_PAGE_VARS["jd_code_eval"].first[] && return true
+    LOCAL_PAGE_VARS["fd_code_eval"].first[] && return true
 
     # 4. if the code has changed reeval
     cp = form_codepaths(rpath)

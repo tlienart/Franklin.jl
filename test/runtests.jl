@@ -1,5 +1,5 @@
 using Franklin, Test, Markdown, Dates, Random, Literate
-const J = Franklin
+const F = Franklin
 const R = @__DIR__
 const D = joinpath(dirname(dirname(pathof(Franklin))), "test", "_dummies")
 

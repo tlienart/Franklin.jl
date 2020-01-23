@@ -61,7 +61,7 @@ end
 
 
 @testset "Table" begin
-    J.FD_ENV[:CUR_PATH] = "pages/pg1.html"
+    F.FD_ENV[:CUR_PATH] = "pages/pg1.html"
     st = """
         A
 

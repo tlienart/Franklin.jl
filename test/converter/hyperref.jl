@@ -1,5 +1,5 @@
 @testset "Hyperref" begin
-    J.FD_ENV[:CUR_PATH] = "index.md"
+    F.FD_ENV[:CUR_PATH] = "index.md"
     st = raw"""
        Some string
        $$ x = x \label{eq 1}$$
@@ -13,24 +13,24 @@
        * \biblabel{bardenet17}{Bardenet et al., 2017} **Bardenet**, **Doucet** and **Holmes**: *On Markov Chain Monte Carlo Methods for Tall Data*, 2017.
     """;
 
-    J.def_GLOBAL_PAGE_VARS!()
-    J.def_GLOBAL_LXDEFS!()
+    F.def_GLOBAL_PAGE_VARS!()
+    F.def_GLOBAL_LXDEFS!()
 
-    m, _ = J.convert_md(st, collect(values(J.GLOBAL_LXDEFS)))
+    m, _ = F.convert_md(st, collect(values(F.GLOBAL_LXDEFS)))
 
-    h1 = J.refstring("eq 1")
-    h2 = J.refstring("amari98b")
-    h3 = J.refstring("bardenet17")
+    h1 = F.refstring("eq 1")
+    h2 = F.refstring("amari98b")
+    h3 = F.refstring("bardenet17")
 
-    @test haskey(J.PAGE_EQREFS,  h1)
-    @test haskey(J.PAGE_BIBREFS, h2)
-    @test haskey(J.PAGE_BIBREFS, h3)
+    @test haskey(F.PAGE_EQREFS,  h1)
+    @test haskey(F.PAGE_BIBREFS, h2)
+    @test haskey(F.PAGE_BIBREFS, h3)
 
-    @test J.PAGE_EQREFS[h1]  == 1 # first equation
-    @test J.PAGE_BIBREFS[h2] == "Amari and Douglas., 1998"
-    @test J.PAGE_BIBREFS[h3] == "Bardenet et al., 2017"
+    @test F.PAGE_EQREFS[h1]  == 1 # first equation
+    @test F.PAGE_BIBREFS[h2] == "Amari and Douglas., 1998"
+    @test F.PAGE_BIBREFS[h3] == "Bardenet et al., 2017"
 
-    h = J.convert_html(m, J.PageVars())
+    h = F.convert_html(m, F.PageVars())
 
     @test isapproxstr(h, """
         <p>
@@ -51,7 +51,7 @@
 end
 
 @testset "Href-space" begin
-    J.FD_ENV[:CUR_PATH] = "index.md"
+    F.FD_ENV[:CUR_PATH] = "index.md"
     st = raw"""
        A
        $$ x = x \label{eq 1}$$
@@ -78,14 +78,14 @@ end
         \eqa{ 1 &=& 1 \label{beyond hope}}
         and finally a \eqref{eq:a trivial one} and maybe \eqref{beyond hope}.
         """
-    m, _ = J.convert_md(st, collect(values(J.GLOBAL_LXDEFS)))
+    m, _ = F.convert_md(st, collect(values(F.GLOBAL_LXDEFS)))
 
-    @test J.PAGE_EQREFS[J.PAGE_EQREFS_COUNTER] == 3
-    @test J.PAGE_EQREFS[J.refstring("eq:a trivial one")] == 2
-    @test J.PAGE_EQREFS[J.refstring("beyond hope")] == 3
+    @test F.PAGE_EQREFS[F.PAGE_EQREFS_COUNTER] == 3
+    @test F.PAGE_EQREFS[F.refstring("eq:a trivial one")] == 2
+    @test F.PAGE_EQREFS[F.refstring("beyond hope")] == 3
 
-    h1 = J.refstring("eq:a trivial one")
-    h2 = J.refstring("beyond hope")
+    h1 = F.refstring("eq:a trivial one")
+    h2 = F.refstring("beyond hope")
 
     m == "<p>Then something like  \$\$\\begin{array}{c}  \\mathbb E\\left[ f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R\\end{array}\$\$ and then  <a id=\"$h1\"></a>\$\$\\begin{array}{c}  1+1 &=&2 \\end{array}\$\$ but further  <a id=\"$h2\"></a>\$\$\\begin{array}{c}  1 &=& 1 \\end{array}\$\$ and finally a  <span class=\"eqref)\">({{href EQR $h1}})</span> and maybe  <span class=\"eqref)\">({{href EQR $h2}})</span>.</p>\n"
 end
