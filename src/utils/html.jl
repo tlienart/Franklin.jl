@@ -108,7 +108,6 @@ function html_skip_hidden(c::AS, lang::AS)
     return strip(String(take!(buf)))
 end
 
-
 """
 $(SIGNATURES)
 

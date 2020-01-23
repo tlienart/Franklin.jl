@@ -75,14 +75,14 @@ function parse_rpath(rpath::AS; canonical::Bool=false,
         length(rpath) > 2 || throw(RelativePathError("Relative path `$rpath` doesn't look right."))
         if canonical
             full_path = joinpath(PATHS[:assets],
-                                 splitext(JD_ENV[:CUR_PATH])[1],
+                                 splitext(FD_ENV[:CUR_PATH])[1],
                                  join_rpath(rpath[3:end]))
             return normpath(full_path)
         else
             # here we want to remain unix-style, so we don't use joinpath
-            # note that JD_ENV[:CUR_PATH] never starts with "/" so there's
+            # note that FD_ENV[:CUR_PATH] never starts with "/" so there's
             # no doubling of "//"
-            rpath = unixify(splitext(JD_ENV[:CUR_PATH])[1]) * rpath[3:end]
+            rpath = unixify(splitext(FD_ENV[:CUR_PATH])[1]) * rpath[3:end]
             return "/assets/" * rpath
         end
     end

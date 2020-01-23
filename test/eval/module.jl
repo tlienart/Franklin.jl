@@ -2,7 +2,7 @@
     # Module name
     path = "blah/index.md"
     mn   = J.modulename("blah/index.md")
-    @test mn == "JD_SANDBOX_$(hash(path))"
+    @test mn == "FD_SANDBOX_$(hash(path))"
     # New module
     mod = J.newmodule(mn)
     # ismodule

@@ -19,7 +19,7 @@ end
     @test J.parse_rpath("/a/../b", canonical=true) == joinpath("fld", "b")
 
     # ./[path]
-    J.JD_ENV[:CUR_PATH] = joinpath("pages", "pg1.md")
+    J.FD_ENV[:CUR_PATH] = joinpath("pages", "pg1.md")
     J.PATHS[:assets] = joinpath("fld", "assets")
     @test_throws J.RelativePathError J.parse_rpath("./")
     @test J.parse_rpath("./a") == "/assets/pages/pg1/a"

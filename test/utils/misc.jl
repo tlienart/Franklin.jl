@@ -83,21 +83,6 @@ end
     @test J.refstring("blah&#33;") == "blah"
 end
 
-@testset "paths" begin
-    @test J.unixify(pwd()) == replace(pwd(), J.PATH_SEP => "/") * "/"
-    #
-    J.FD_ENV[:CUR_PATH] = "cpA/cpB/"
-    # non-canonical mode
-    @test J.resolve_assets_rpath("./hello/goodbye") == "/assets/cpA/cpB/hello/goodbye"
-    @test J.resolve_assets_rpath("/blah/blih.txt") == "/blah/blih.txt"
-    @test J.resolve_assets_rpath("blah/blih.txt") == "/assets/blah/blih.txt"
-    @test J.resolve_assets_rpath("ex"; code=true) == "/assets/cpA/cpB/code/ex"
-    # canonical mode
-    @test J.resolve_assets_rpath("./hello/goodbye"; canonical=true) == joinpath(J.PATHS[:assets], "cpA", "cpB", "hello", "goodbye")
-    @test J.resolve_assets_rpath("/blah/blih.txt"; canonical=true) == joinpath(J.PATHS[:folder], "blah", "blih.txt")
-    @test J.resolve_assets_rpath("blah/blih.txt"; canonical=true) == joinpath(J.PATHS[:assets], "blah", "blih.txt")
-end
-
 @testset "misc-html" begin
     λ = "blah/blah.ext"
     J.FD_ENV[:CUR_PATH] = "pages/cpB/blah.md"

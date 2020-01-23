@@ -6,9 +6,9 @@ Functionalities to generate a sandbox module.
 $SIGNATURES
 
 Return a sandbox module name corresponding to the page at `fpath`, effectively
-`JD_SANDBOX_*` where `*` is a hash of the path.
+`FD_SANDBOX_*` where `*` is a hash of the path.
 """
-modulename(fpath::AS) = "JD_SANDBOX_$(hash(fpath))"
+modulename(fpath::AS) = "FD_SANDBOX_$(hash(fpath))"
 
 """
 $SIGNATURES

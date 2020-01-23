@@ -144,7 +144,4 @@ include("manager/franklin.jl")
 include("manager/extras.jl")
 include("manager/post_processing.jl")
 
-# INTEGRATION
-include("integration/literate.jl")
-
 end # module

@@ -3,14 +3,20 @@ const J = Franklin
 const R = @__DIR__
 const D = joinpath(dirname(dirname(pathof(Franklin))), "test", "_dummies")
 
+# UTILS
 # NOTE this first file MUST be included before running the rest of the tests
 # otherwise you may get an error like "key 0x099191234..." was not found or
 # saying that the key :in doesn't exist or something along those lines
-include("frank_paths_vars.jl"); include("test_utils.jl")
 
-include("misc.jl")
+println("UTILS")
+include("utils/paths_vars.jl"); include("test_utils.jl")
+include("utils/misc.jl")
+include("utils/errors.jl")
+include("utils/html.jl")
+println("🍺")
 
 # MANAGER folder
+println("MANAGER")
 include("manager/utils.jl")
 include("manager/rss.jl")
 include("manager/config.jl")
@@ -23,11 +29,6 @@ include("parser/2-blocks.jl")
 include("parser/markdown+latex.jl")
 include("parser/markdown-extra.jl")
 include("parser/footnotes+links.jl")
-println("🍺")
-
-# ERRORS
-println("Errors")
-include("errors/context.jl")
 println("🍺")
 
 # EVAL

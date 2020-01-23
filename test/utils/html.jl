@@ -1,6 +1,6 @@
 @testset "misc-html" begin
     λ = "blah/blah.ext"
-    J.JD_ENV[:CUR_PATH] = "pages/cpB/blah.md"
+    J.FD_ENV[:CUR_PATH] = "pages/cpB/blah.md"
     @test J.html_ahref(λ, 1) == "<a href=\"$λ\">1</a>"
     @test J.html_ahref(λ, "bb") == "<a href=\"$λ\">bb</a>"
     @test J.html_ahref_key("cc", "dd") == "<a href=\"/pub/cpB/blah.html#cc\">dd</a>"

@@ -58,7 +58,7 @@ function resolve_code_block(ss::SubString)::String
 
     # 3. here we have code that should be (re)evaluated
     # >> retrieve the modulename, the module may not exist (& may not need to)
-    modname = modulename(JD_ENV[:CUR_PATH])
+    modname = modulename(FD_ENV[:CUR_PATH])
     # >> check if relevant module exists, otherwise create one
     mod = ismodule(modname) ?
             getfield(Main, Symbol(modname)) :
@@ -93,7 +93,7 @@ The code should be reevaluated if any of following flags are true:
 """
 function should_eval(code::AS, rpath::AS)
     # 1. global setting forcing all pages to reeval
-    JD_ENV[:FORCE_REEVAL] && return true
+    FD_ENV[:FORCE_REEVAL] && return true
 
     # 2. local setting forcing the current page to reeval everything
     LOCAL_PAGE_VARS["reeval"].first && return true

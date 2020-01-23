@@ -60,7 +60,7 @@ end
     tmp = mktempdir()
     begin
         cd(tmp)
-        J.JD_ENV[:CUR_PATH] = "index.md"
+        J.FD_ENV[:CUR_PATH] = "index.md"
         J.FOLDER_PATH[] = tmp
         J.def_LOCAL_PAGE_VARS!()
         J.set_paths!()
