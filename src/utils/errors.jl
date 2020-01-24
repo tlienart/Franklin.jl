@@ -1,11 +1,11 @@
-abstract type JuDocException <: Exception end
+abstract type FranklinException <: Exception end
 
 #
 # Parsing related
 #
 
 """An OCBlock was not parsed properly (e.g. the closing token was not found)."""
-struct OCBlockError <: JuDocException
+struct OCBlockError <: FranklinException
     m::String
     c::String
 end
@@ -16,17 +16,17 @@ function Base.showerror(io::IO, be::OCBlockError)
 end
 
 """A `\\newcommand` was not parsed properly."""
-struct LxDefError <: JuDocException
+struct LxDefError <: FranklinException
     m::String
 end
 
 """A latex command was found but could not be processed properly."""
-struct LxComError <: JuDocException
+struct LxComError <: FranklinException
     m::String
 end
 
 """A math block name failed to parse."""
-struct MathBlockError <: JuDocException
+struct MathBlockError <: FranklinException
     m::String
 end
 
@@ -35,12 +35,12 @@ end
 #
 
 """An HTML block (e.g. [`HCond`](@see)) was erroneous."""
-struct HTMLBlockError <: JuDocException
+struct HTMLBlockError <: FranklinException
     m::String
 end
 
 """An HTML function (e.g. `{{fill ...}}`) failed."""
-struct HTMLFunctionError <: JuDocException
+struct HTMLFunctionError <: FranklinException
     m::String
 end
 
@@ -49,11 +49,20 @@ end
 #
 
 """A relative path was erroneous."""
-struct RelativePathError <: JuDocException
+struct RelativePathError <: FranklinException
     m::String
 end
 
 """A file was not found."""
-struct FileNotFoundError <: JuDocException
+struct FileNotFoundError <: FranklinException
+    m::String
+end
+
+#
+# CODE
+#
+
+"""A relative path was erroneous for Literate."""
+struct LiterateRelativePathError <: FranklinException
     m::String
 end

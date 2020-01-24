@@ -214,11 +214,11 @@ const GLOBAL_LXDEFS = LittleDict{String, LxDef}()
 
 
 """
-EMPTY_SS
+ESS
 
 Convenience constant for an empty substring, used in LXDEFS.
 """
-const EMPTY_SS = SubString("")
+const ESS = SubString("")
 
 
 """
@@ -229,31 +229,34 @@ the site. See [`resolve_lxcom`](@ref).
 """
 @inline function def_GLOBAL_LXDEFS!()::Nothing
     empty!(GLOBAL_LXDEFS)
+    # ---------------
     # hyperreferences
-    GLOBAL_LXDEFS["\\eqref"]    = LxDef("\\eqref",    1, EMPTY_SS)
-    GLOBAL_LXDEFS["\\cite"]     = LxDef("\\cite",     1, EMPTY_SS)
-    GLOBAL_LXDEFS["\\citet"]    = LxDef("\\citet",    1, EMPTY_SS)
-    GLOBAL_LXDEFS["\\citep"]    = LxDef("\\citep",    1, EMPTY_SS)
-    GLOBAL_LXDEFS["\\label"]    = LxDef("\\label",    1, EMPTY_SS)
-    GLOBAL_LXDEFS["\\biblabel"] = LxDef("\\biblabel", 2, EMPTY_SS)
-    GLOBAL_LXDEFS["\\toc"]      = LxDef("\\toc",      0, EMPTY_SS)
-    GLOBAL_LXDEFS["\\tableofcontents"] = LxDef("\\tableofcontents", 0, EMPTY_SS)
+    GLOBAL_LXDEFS["\\eqref"]    = LxDef("\\eqref",    1, ESS)
+    GLOBAL_LXDEFS["\\cite"]     = LxDef("\\cite",     1, ESS)
+    GLOBAL_LXDEFS["\\citet"]    = LxDef("\\citet",    1, ESS)
+    GLOBAL_LXDEFS["\\citep"]    = LxDef("\\citep",    1, ESS)
+    GLOBAL_LXDEFS["\\label"]    = LxDef("\\label",    1, ESS)
+    GLOBAL_LXDEFS["\\biblabel"] = LxDef("\\biblabel", 2, ESS)
+    GLOBAL_LXDEFS["\\toc"]      = LxDef("\\toc",      0, ESS)
+    GLOBAL_LXDEFS["\\tableofcontents"] = LxDef("\\tableofcontents", 0, ESS)
+    # ---------------
     # inclusion
-    GLOBAL_LXDEFS["\\input"]      = LxDef("\\input",      2, EMPTY_SS)
-    GLOBAL_LXDEFS["\\output"]     = LxDef("\\output",     1, EMPTY_SS)
+    GLOBAL_LXDEFS["\\input"]      = LxDef("\\input",      2, ESS)
+    GLOBAL_LXDEFS["\\output"]     = LxDef("\\output",     1, ESS)
     GLOBAL_LXDEFS["\\codeoutput"] = LxDef("\\codeoutput", 1, subs("@@code_output \\output{#1}@@"))
-    GLOBAL_LXDEFS["\\textoutput"] = LxDef("\\textoutput", 1, EMPTY_SS)
-    GLOBAL_LXDEFS["\\textinput"]  = LxDef("\\textinput",  1, EMPTY_SS)
-    GLOBAL_LXDEFS["\\show"]       = LxDef("\\show",       1, EMPTY_SS)
-    GLOBAL_LXDEFS["\\figalt"]     = LxDef("\\figalt",     2, EMPTY_SS)
+    GLOBAL_LXDEFS["\\textoutput"] = LxDef("\\textoutput", 1, ESS)
+    GLOBAL_LXDEFS["\\textinput"]  = LxDef("\\textinput",  1, ESS)
+    GLOBAL_LXDEFS["\\show"]       = LxDef("\\show",       1, ESS)
+    GLOBAL_LXDEFS["\\figalt"]     = LxDef("\\figalt",     2, ESS)
     GLOBAL_LXDEFS["\\fig"]        = LxDef("\\fig",        1, subs("\\figalt{}{#1}"))
     GLOBAL_LXDEFS["\\file"]       = LxDef("\\file",       2, subs("[#1]()"))
-    GLOBAL_LXDEFS["\\tableinput"] = LxDef("\\tableinput", 2, EMPTY_SS)
-    GLOBAL_LXDEFS["\\literate"]   = LxDef("\\literate",   1, EMPTY_SS)
+    GLOBAL_LXDEFS["\\tableinput"] = LxDef("\\tableinput", 2, ESS)
+    GLOBAL_LXDEFS["\\literate"]   = LxDef("\\literate",   1, ESS)
+    # ---------------
     # text formatting
     GLOBAL_LXDEFS["\\underline"] = LxDef("\\underline", 1,
                             subs("~~~<span style=\"text-decoration:underline;\">!#1</span>~~~"))
-    GLOBAL_LXDEFS["\\textcss"]   = LxDef("\\underline", 2,
+    GLOBAL_LXDEFS["\\style"]     = LxDef("\\style", 2,
                             subs("~~~<span style=\"!#1\">!#2</span>~~~"))
     return nothing
 end

@@ -79,7 +79,8 @@ function find_all_ocblocks(tokens::Vector{Token}, ocplist::Vector{OCProto}; inma
 
     ocbs_all = Vector{OCBlock}()
     for ocp ∈ ocplist
-        if ocp.name == :CODE_BLOCK_IND && !LOCAL_PAGE_VARS["indented_code"].first
+        if ocp.name == :CODE_BLOCK_IND &&
+            !LOCAL_PAGE_VARS["indented_code"].first
            continue
         end
         ocbs, tokens = find_ocblocks(tokens, ocp; inmath=inmath)

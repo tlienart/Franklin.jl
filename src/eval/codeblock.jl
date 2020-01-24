@@ -1,11 +1,6 @@
 #=
 Functionalities to take a code block and process it.
 These functionalities are called from `convert/md_blocks`.
-
-DEV NOTE:
-
-- probably remove `resolve_lx_input_hlcode` in favour of a better `html_code`
-which also handles hide
 =#
 
 """
@@ -27,6 +22,46 @@ function parse_fenced_block(ss::SubString)::Tuple
     code  = strip(m.captures[3])
     rpath === nothing || (rpath = rpath[2:end]) # ignore starting `:`
     return lang, rpath, code
+end
+
+"""
+$SIGNATURES
+
+Return true if the code should be reevaluated and false otherwise.
+The code should be reevaluated if any of following flags are true:
+
+1. global eval flag (`eval_all`)
+1. local eval flag (`reeval`)
+1. stale scope (due to a prior code block having been evaluated)
+1. the code is different than what's in the script
+1. the output is missings
+"""
+function should_eval(code::AS, rpath::AS)
+    # 1. global setting forcing all pages to reeval
+    FD_ENV[:FORCE_REEVAL] && return true
+
+    # 2. local setting forcing the current page to reeval everything
+    LOCAL_PAGE_VARS["reeval"].first && return true
+
+    # 3. if space previously marked as stale, return true
+    # note that on every page build, this is re-init as false.
+    LOCAL_PAGE_VARS["fd_code_eval"].first[] && return true
+
+    # 4. if the code has changed reeval
+    cp = form_codepaths(rpath)
+    # >> does the script exist?
+    isfile(cp.script_path) || return true
+    # >> does the script match the code?
+    code == read(cp.script_path, String) || return true
+
+    # 5. if the outputs aren't there, reeval
+    # >> does the output dir exist
+    isdir(cp.out_dir) || return true
+    # >> do the output files exist?
+    all(isfile, (cp.out_path, cp.res_path)) || return true
+
+    # otherwise don't reeval
+    return false
 end
 
 """
@@ -77,44 +112,4 @@ function resolve_code_block(ss::SubString)::String
     LOCAL_PAGE_VARS["fd_code_eval"].first[] = true
     # >> finally return as html
     return html_code(code, lang)
-end
-
-"""
-$SIGNATURES
-
-Return true if the code should be reevaluated and false otherwise.
-The code should be reevaluated if any of following flags are true:
-
-1. global eval flag (`eval_all`)
-1. local eval flag (`reeval`)
-1. stale scope (due to a prior code block having been evaluated)
-1. the code is different than what's in the script
-1. the output is missings
-"""
-function should_eval(code::AS, rpath::AS)
-    # 1. global setting forcing all pages to reeval
-    FD_ENV[:FORCE_REEVAL] && return true
-
-    # 2. local setting forcing the current page to reeval everything
-    LOCAL_PAGE_VARS["reeval"].first && return true
-
-    # 3. if space previously marked as stale, return true
-    # note that on every page build, this is re-init as false.
-    LOCAL_PAGE_VARS["fd_code_eval"].first[] && return true
-
-    # 4. if the code has changed reeval
-    cp = form_codepaths(rpath)
-    # >> does the script exist?
-    isfile(cp.script_path) || return true
-    # >> does the script match the code?
-    code == read(cp.script_path, String) || return true
-
-    # 5. if the outputs aren't there, reeval
-    # >> does the output dir exist
-    isdir(cp.out_dir) || return true
-    # >> do the output files exist?
-    all(isfile, (cp.out_path, cp.res_path)) || return true
-
-    # otherwise don't reeval
-    return false
 end

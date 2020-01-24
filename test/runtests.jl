@@ -37,6 +37,8 @@ include("eval/module.jl")
 include("eval/run.jl")
 include("eval/io.jl")
 include("eval/codeblock.jl")
+include("eval/eval.jl")
+
 
 # CONVERTER folder
 println("CONVERTER/MD")
@@ -49,9 +51,6 @@ println("🍺")
 println("CONVERTER/HTML")
 include("converter/html.jl")
 include("converter/html2.jl")
-println("🍺")
-println("CONVERTER/EVAL")
-include("converter/eval.jl")
 println("🍺")
 println("CONVERTER/LX")
 include("converter/lx_input.jl")

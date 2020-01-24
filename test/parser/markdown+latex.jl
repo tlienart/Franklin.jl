@@ -11,7 +11,6 @@
     @test tokens[5].name == :EOS
 end
 
-
 @testset "Find blocks" begin
     st = raw"""
         some markdown then `code` and

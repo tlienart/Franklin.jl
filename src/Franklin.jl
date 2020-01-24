@@ -54,7 +54,7 @@ const CODE_LANG = LittleDict{String,NTuple{2,String}}(
     "r"          => (".r",    "#"),
     "matlab"     => (".m",    "%"),
     # other ones that could appear (this may get completed over time)
-    # note: HTML,Markdown are not here on purpose as there can be
+    # note: HTML, Markdown are not here **on purpose** as there can be
     # ambiguities in context.
     "bash"       => (".sh",   "#"),
     "c"          => (".c",    "//"),
@@ -94,40 +94,39 @@ include("build.jl") # check if user has Node/minify
 
 # PARSING
 include("parser/tokens.jl")
-include("parser/indent.jl")
 include("parser/ocblocks.jl")
-# > latex
-include("parser/lx_tokens.jl")
-include("parser/lx_blocks.jl")
 # > markdown
-include("parser/md_tokens.jl")
-include("parser/md_validate.jl")
+include("parser/markdown/tokens.jl")
+include("parser/markdown/indent.jl")
+include("parser/markdown/validate.jl")
+# > latex
+include("parser/latex/tokens.jl")
+include("parser/latex/blocks.jl")
 # > html
-include("parser/html_tokens.jl")
-include("parser/html_blocks.jl")
+include("parser/html/tokens.jl")
+include("parser/html/blocks.jl")
 
 # EVAL
 include("eval/module.jl")
 include("eval/run.jl")
 include("eval/codeblock.jl")
 include("eval/io.jl")
+include("eval/show.jl")
 include("eval/literate.jl")
 
 # CONVERSION
 # > markdown
-include("converter/md_blocks.jl")
-include("converter/md_utils.jl")
-include("converter/md.jl")
+include("converter/markdown/blocks.jl")
+include("converter/markdown/utils.jl")
+include("converter/markdown/md.jl")
 # > latex
-include("converter/lx.jl")
-include("converter/lx_simple.jl")
+include("converter/latex/latex.jl")
+include("converter/latex/lx_simple.jl")
 # > html
-include("converter/html_functions.jl")
-include("converter/html.jl")
-# > fighting Julia's markdown parser
-include("converter/html_link_fixer.jl")
-# > javascript
-include("converter/js_prerender.jl")
+include("converter/html/functions.jl")
+include("converter/html/html.jl")
+include("converter/html/link_fixer.jl")
+include("converter/html/prerender.jl")
 
 # UTILS
 include("utils/paths.jl")
