@@ -3,7 +3,7 @@ $SIGNATURES
 
 Clear the environment dictionaries.
 """
-clear_dicts() = empty!.((GLOBAL_LXDEFS, GLOBAL_PAGE_VARS, LOCAL_PAGE_VARS))
+clear_dicts() = empty!.((GLOBAL_LXDEFS, LOCAL_LXDEFS, GLOBAL_VARS, LOCAL_VARS))
 
 """
 $(SIGNATURES)
@@ -66,8 +66,9 @@ function serve(; clear::Bool=true,
     nomess || println("→ Initial full pass...")
     start = time()
     FD_ENV[:FORCE_REEVAL] = eval_all
-    sig = fd_fullpass(watched_files; clear=clear, verb=verb, prerender=prerender,
-                      isoptim=isoptim, no_fail_prerender=no_fail_prerender)
+    sig = fd_fullpass(watched_files; clear=clear, verb=verb,
+                      prerender=prerender, isoptim=isoptim,
+                      no_fail_prerender=no_fail_prerender)
     FD_ENV[:FORCE_REEVAL] = false
     sig < 0 && return sig
     fmsg = rpad("✔ full pass...", 40)
@@ -76,7 +77,8 @@ function serve(; clear::Bool=true,
     # start the continuous loop
     if !single
         nomess || println("→ Starting the server...")
-        coreloopfun = (cntr, fw) -> fd_loop(cntr, fw, watched_files; clear=clear, verb=verb)
+        coreloopfun = (cntr, fw) -> fd_loop(cntr, fw, watched_files;
+                                            clear=clear, verb=verb)
         # start the liveserver in the current directory
         LiveServer.setverbose(verb)
         LiveServer.serve(port=port, coreloopfun=coreloopfun)
@@ -92,8 +94,8 @@ end
 """
 $(SIGNATURES)
 
-Sets up the collection of watched files by doing an initial scan of the input directory.
-It also sets the paths variables and prepares the output directory.
+Sets up the collection of watched files by doing an initial scan of the input
+directory. It also sets the paths variables and prepares the output directory.
 
 **Keyword argument**
 
@@ -151,14 +153,14 @@ function fd_fullpass(watched_files::NamedTuple; clear::Bool=false,
 
     # reset global page variables and latex definitions
     # NOTE: need to keep track of pre-path if specified, see optimize
-    prepath = get(GLOBAL_PAGE_VARS, "prepath", nothing)
-    def_GLOBAL_PAGE_VARS!()
+    prepath = GLOBAL_VARS["prepath"]
+    def_GLOBAL_VARS!()
     def_GLOBAL_LXDEFS!()
     empty!(RSS_DICT)
     # reinsert prepath if specified
-    isnothing(prepath) || (GLOBAL_PAGE_VARS["prepath"] = prepath)
+    isnothing(prepath) || (GLOBAL_VARS["prepath"] = prepath)
 
-    # process configuration file (see also `process_md_defs`)
+    # process configuration file (see also `process_mddefs!`)
     process_config()
 
     # looking for an index file to process
@@ -200,7 +202,7 @@ function fd_fullpass(watched_files::NamedTuple; clear::Bool=false,
         end
     end
     # generate RSS if appropriate
-    GLOBAL_PAGE_VARS["generate_rss"].first && rss_generator()
+    globvar("generate_rss") && rss_generator()
     FD_ENV[:FULL_PASS] = false
     # return -1 if any page
     return ifelse(s<0, -1, 0)
@@ -209,9 +211,9 @@ end
 """
 $(SIGNATURES)
 
-This is the function that is continuously run, checks if files have been modified and if so,
-processes them. Every 30 cycles, it checks whether any file was added or deleted and consequently
-updates the `watched_files`.
+This is the function that is continuously run, checks if files have been
+modified and if so, processes them. Every 30 cycles, it checks whether any file
+was added or deleted and consequently updates the `watched_files`.
 
 **Keyword arguments**
 
@@ -220,16 +222,17 @@ updates the `watched_files`.
 """
 function fd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, watched_files::NamedTuple;
                  clear::Bool=false, verb::Bool=false)::Nothing
-    # every 30 cycles (3 seconds), scan directory to check for new or deleted files and
-    # update dicts accordingly
+    # every 30 cycles (~3 seconds), scan directory to check for new or deleted
+    # files and update dicts accordingly
     if mod(cycle_counter, 30) == 0
-        # 1) check if some files have been deleted; note that we don't do anything,
-        # we just remove the file reference from the corresponding dictionary.
+        # 1) check if some files have been deleted; note that we don't do
+        # anything, we just remove the file reference from the corresponding
+        # dictionary.
         for d ∈ watched_files, (fpair, _) ∈ d
             isfile(joinpath(fpair...)) || delete!(d, fpair)
         end
-        # 2) scan the input folder, if new files have been added then this will update
-        # the dictionaries
+        # 2) scan the input folder, if new files have been added then this will
+        # update the dictionaries
         scan_input_dir!(watched_files..., verb)
     else
         # do a pass over the files, check if one has changed and if so trigger
@@ -239,7 +242,8 @@ function fd_loop(cycle_counter::Int, ::LiveServer.FileWatcher, watched_files::Na
             fpath = joinpath(fpair...)
             cur_t = mtime(fpath)
             cur_t <= t && continue
-            # if there was then the file has been modified and should be re-processed + copied
+            # if there was then the file has been modified and should be
+            # re-processed + copied
             fmsg = rpad("→ file $(fpath[length(FOLDER_PATH[])+1:end]) was modified ", 30)
             verb && print(fmsg)
             dict[fpair] = cur_t

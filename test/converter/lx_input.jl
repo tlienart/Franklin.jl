@@ -2,7 +2,7 @@
     #
     # check_input_fname
     #
-    F.FD_ENV[:CUR_PATH] = "index.html"
+    set_curpath("index.html")
     script1 = joinpath(F.PATHS[:assets], "index", "code", "script1.jl")
     write(script1, "1+1")
     fp, d, fn = F.check_input_rpath("script1.jl", code=true)
@@ -45,7 +45,7 @@ end
         done.
         """;
 
-    F.def_GLOBAL_PAGE_VARS!()
+    F.def_GLOBAL_VARS!()
     F.def_GLOBAL_LXDEFS!()
 
     m, _ = F.convert_md(st, collect(values(F.GLOBAL_LXDEFS)))

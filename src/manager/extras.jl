@@ -1,6 +1,6 @@
-function lunr()
-    prepath = get(GLOBAL_PAGE_VARS, "prepath", ""=>0).first
-    isempty(Franklin.PATHS) && (FOLDER_PATH[] = pwd(); set_paths!())
+function lunr()::Nothing
+    prepath = GLOBAL_VARS["prepath"].first
+    isempty(PATHS) && (FOLDER_PATH[] = pwd(); set_paths!())
     bkdir = pwd()
     lunr  = joinpath(PATHS[:libs], "lunr")
     # is there a lunr folder in /libs/

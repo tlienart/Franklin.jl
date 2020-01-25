@@ -30,6 +30,11 @@ struct MathBlockError <: FranklinException
     m::String
 end
 
+"""A Page Variable wasn't set properly."""
+struct PageVariableError <: FranklinException
+    m::String
+end
+
 #
 # HTML related
 #

@@ -1,5 +1,5 @@
 @testset "Hyperref" begin
-    F.FD_ENV[:CUR_PATH] = "index.md"
+    set_curpath("index.md")
     st = raw"""
        Some string
        $$ x = x \label{eq 1}$$
@@ -13,7 +13,7 @@
        * \biblabel{bardenet17}{Bardenet et al., 2017} **Bardenet**, **Doucet** and **Holmes**: *On Markov Chain Monte Carlo Methods for Tall Data*, 2017.
     """;
 
-    F.def_GLOBAL_PAGE_VARS!()
+    F.def_GLOBAL_VARS!()
     F.def_GLOBAL_LXDEFS!()
 
     m, _ = F.convert_md(st, collect(values(F.GLOBAL_LXDEFS)))
@@ -51,7 +51,7 @@
 end
 
 @testset "Href-space" begin
-    F.FD_ENV[:CUR_PATH] = "index.md"
+    set_curpath("index.md")
     st = raw"""
        A
        $$ x = x \label{eq 1}$$

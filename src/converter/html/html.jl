@@ -4,7 +4,7 @@ $(SIGNATURES)
 Convert a Franklin html string into a html string (i.e. replace `{{ ... }}`
 blocks).
 """
-function convert_html(hs::AS, allvars::PageVars; isoptim::Bool=false)::String
+function convert_html(hs::AS; isoptim::Bool=false)::String
     isempty(hs) && return hs
     # Tokenize
     tokens = find_tokens(hs, HTML_TOKENS, HTML_1C_TOKENS)
@@ -16,12 +16,12 @@ function convert_html(hs::AS, allvars::PageVars; isoptim::Bool=false)::String
     # Find qblocks (qualify the hblocks)
     qblocks = qualify_html_hblocks(hblocks)
 
-    fhs = process_html_qblocks(hs, allvars, qblocks)
+    fhs = process_html_qblocks(hs, qblocks)
 
     # See issue #204, basically not all markdown links are processed  as
     # per common mark with the JuliaMarkdown, so this is a patch that kind
     # of does
-    if haskey(allvars, "reflinks") && allvars["reflinks"].first
+    if locvar("reflinks")
         fhs = find_and_fix_md_links(fhs)
     end
     # if it ends with </p>\n but doesn't start with <p>, chop it off
@@ -30,7 +30,7 @@ function convert_html(hs::AS, allvars::PageVars; isoptim::Bool=false)::String
 
     isempty(fhs) && return ""
 
-    if !isempty(GLOBAL_PAGE_VARS["prepath"].first) && isoptim
+    if !isempty(GLOBAL_VARS["prepath"].first) && isoptim
         fhs = fix_links(fhs)
     end
 
@@ -49,13 +49,12 @@ function fd2html_v(st::AbstractString; internal::Bool=false, dir::String="")::Tu
     if !internal
         FOLDER_PATH[] = isempty(dir) ? mktempdir() : dir
         set_paths!()
-        FD_ENV[:CUR_PATH] = "index.md"
         def_GLOBAL_LXDEFS!()
-        def_GLOBAL_PAGE_VARS!()
+        def_GLOBAL_VARS!()
     end
-    m, v = convert_md(st, collect(values(GLOBAL_LXDEFS)); isinternal=internal)
-    h = convert_html(m, v)
-    return h, v
+    m = convert_md(st, collect(values(GLOBAL_LXDEFS)); isinternal=internal)
+    h = convert_html(m)
+    return h, LOCAL_VARS
 end
 fd2html(a...; k...)::String = fd2html_v(a...; k...)[1]
 
@@ -67,7 +66,7 @@ $SIGNATURES
 
 Take a qualified html block stack and go through it, with recursive calling.
 """
-function process_html_qblocks(hs::AS, allvars::PageVars, qblocks::Vector{AbstractBlock},
+function process_html_qblocks(hs::AS, qblocks::Vector{AbstractBlock},
                               head::Int=1, tail::Int=lastindex(hs))::String
     htmls = IOBuffer()
     head  = head # (sub)string index
@@ -79,14 +78,14 @@ function process_html_qblocks(hs::AS, allvars::PageVars, qblocks::Vector{Abstrac
         (head < fromβ) && write(htmls, subs(hs, head, prevind(hs, fromβ)))
 
         if β isa HTML_OPEN_COND
-            content, head, i = process_html_cond(hs, allvars, qblocks, i)
+            content, head, i = process_html_cond(hs, qblocks, i)
             write(htmls, content)
         # should not see an HEnd by itself --> error
         elseif β isa HEnd
             throw(HTMLBlockError("I found a lonely {{end}}."))
         # it's a function block, process it
         else
-            write(htmls, convert_html_fblock(β, allvars))
+            write(htmls, convert_html_fblock(β))
             head = nextind(hs, to(β))
         end
         i += 1
@@ -108,7 +107,7 @@ $SIGNATURES
 
 Recursively process a conditional block from an opening HTML_COND_OPEN to a {{end}}.
 """
-function process_html_cond(hs::AS, allvars::PageVars, qblocks::Vector{AbstractBlock},
+function process_html_cond(hs::AS, qblocks::Vector{AbstractBlock},
                            i::Int)::Tuple{String,Int,Int}
     if i == length(qblocks)
         throw(HTMLBlockError("Could not close the conditional block " *
@@ -167,16 +166,16 @@ function process_html_cond(hs::AS, allvars::PageVars, qblocks::Vector{AbstractBl
     if βi isa Union{HIsDef,HIsNotDef,HIsPage,HIsNotPage}
         lag = 1
         if βi isa HIsDef
-            k = Int(haskey(allvars, βi.vname))
+            k = Int(haskey(LOCAL_VARS, βi.vname))
         elseif βi isa HIsNotDef
-            k = Int(!haskey(allvars, βi.vname))
+            k = Int(!haskey(LOCAL_VARS, βi.vname))
         else
             # HIsPage//HIsNotPage
             #
             # current path is relative to /src/ for instance
             # /src/pages/blah.md -> pages/blah
             # if starts with `pages/`, replaces by `pub/`: pages/blah => pub/blah
-            rpath = splitext(unixify(FD_ENV[:CUR_PATH]))[1]
+            rpath = splitext(unixify(locvar("fd_rpath")))[1]
             rpath = replace(rpath, Regex("^pages") => "pub")
 
             # compare with β.pages
@@ -198,7 +197,7 @@ function process_html_cond(hs::AS, allvars::PageVars, qblocks::Vector{AbstractBl
         else
             conds = [qblocks[c].vname for c in elseif_idx]
         end
-        known = [haskey(allvars, c) for c in conds]
+        known = [haskey(LOCAL_VARS, c) for c in conds]
 
         if !all(known)
             idx = findfirst(.!known)
@@ -206,14 +205,14 @@ function process_html_cond(hs::AS, allvars::PageVars, qblocks::Vector{AbstractBl
                                  "couldn't find '$(conds[idx])'."))
         end
         # check that all these variables are bool
-        bools = [isa(allvars[c].first, Bool) for c  in conds]
+        bools = [isa(locvar(c), Bool) for c  in conds]
         if !all(bools)
             idx = findfirst(.!bools)
             throw(HTMLBlockError("At least one of the condition variable is not a Bool: " *
                                  "'$(conds[idx])' is not a bool."))
         end
         # which one is verified?
-        u = findfirst(c -> allvars[c].first, conds)
+        u = findfirst(c -> locvar(c), conds)
         k = isnothing(u) ? 0 : u + lag
     end
 
@@ -226,7 +225,7 @@ function process_html_cond(hs::AS, allvars::PageVars, qblocks::Vector{AbstractBl
             # get the stack of blocks in there
             action_qblocks = qblocks[else_idx+1:i_close-1]
             # process
-            content = process_html_qblocks(hs, allvars, action_qblocks, head, tail)
+            content = process_html_qblocks(hs, action_qblocks, head, tail)
         end
     else
         # determine the span of blocks
@@ -248,7 +247,7 @@ function process_html_cond(hs::AS, allvars::PageVars, qblocks::Vector{AbstractBl
         # Get the stack of blocks in there
         action_qblocks = qblocks[oidx+1:cidx-1]
         # process
-        content = process_html_qblocks(hs, allvars, action_qblocks, head, tail)
+        content = process_html_qblocks(hs, action_qblocks, head, tail)
     end
     # move the head after the final {{end}}
     head = nextind(hs, to(β_close))

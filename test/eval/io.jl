@@ -19,7 +19,7 @@ end
     @test F.parse_rpath("/a/../b", canonical=true) == joinpath("fld", "b")
 
     # ./[path]
-    F.FD_ENV[:CUR_PATH] = joinpath("pages", "pg1.md")
+    set_curpath(joinpath("pages", "pg1.md"))
     F.PATHS[:assets] = joinpath("fld", "assets")
     @test_throws F.RelativePathError F.parse_rpath("./")
     @test F.parse_rpath("./a") == "/assets/pages/pg1/a"
@@ -59,7 +59,7 @@ end
     root = F.PATHS[:folder] = mktempdir()
     ass  = F.PATHS[:assets] = joinpath(root, "assets")
     mkdir(ass)
-    curpath = F.FD_ENV[:CUR_PATH] = joinpath("pages", "pg1.md")
+    curpath = set_curpath(joinpath("pages", "pg1.md"))
 
     write(joinpath(ass, "p1.jl"), "a = 5")
     write(joinpath(ass, "p2.png"), "gibberish")

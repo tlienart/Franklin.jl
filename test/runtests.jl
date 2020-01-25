@@ -4,10 +4,6 @@ const R = @__DIR__
 const D = joinpath(dirname(dirname(pathof(Franklin))), "test", "_dummies")
 
 # UTILS
-# NOTE this first file MUST be included before running the rest of the tests
-# otherwise you may get an error like "key 0x099191234..." was not found or
-# saying that the key :in doesn't exist or something along those lines
-
 println("UTILS")
 include("utils/paths_vars.jl"); include("test_utils.jl")
 include("utils/misc.jl")

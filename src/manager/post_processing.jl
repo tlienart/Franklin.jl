@@ -126,7 +126,7 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
               "You can install it with `npm install highlight.js`."
     end
     if !isempty(prepath)
-        GLOBAL_PAGE_VARS["prepath"] = prepath => (String,)
+        GLOBAL_VARS["prepath"] = prepath => (String,)
     end
     # re-do a (silent) full pass
     start = time()
@@ -185,7 +185,7 @@ It also fixes all links if you specify `prepath` (or if it's set in `config.md`)
 * `final=nothing`:       a function `()->nothing` to execute last, before doing the git push.
                          It can be used to refresh a Lunr index, generate notebook files with
                          Literate, etc, ... You might want to compose `fdf_*` functions that are
-                         exported by Franklin (or imitate those). It can access GLOBAL_PAGE_VARS.
+                         exported by Franklin (or imitate those). It can access GLOBAL_VARS.
 """
 function publish(; prerender::Bool=true, minify::Bool=true, nopass::Bool=false,
                    prepath::String="", message::String="franklin-update",

@@ -35,7 +35,7 @@ end
 end
 
 @testset "RSS" begin
-    F.set_var!(F.GLOBAL_PAGE_VARS, "website_descr", "")
+    F.set_var!(F.GLOBAL_VARS, "website_descr", "")
     F.RSS_DICT["hello"] = F.RSSItem("","","","","","","",Date(1))
     @test (@test_logs (:warn, """
               I found RSS items but the RSS feed is not properly described:

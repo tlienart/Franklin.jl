@@ -75,7 +75,7 @@ for a project website, for instance `username.github.io/project/` all paths shou
 be pre-prended with `/project/`. This would happen just before you publish the website.
 """
 function fix_links(pg::String)::String
-    pp = strip(GLOBAL_PAGE_VARS["prepath"].first, '/')
+    pp = strip(GLOBAL_VARS["prepath"].first, '/')
     ss = SubstitutionString("\\1=\"/$(pp)/")
     return replace(pg, r"(src|href|formaction)\s*?=\s*?\"\/" => ss)
 end

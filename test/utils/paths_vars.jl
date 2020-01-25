@@ -5,7 +5,7 @@ F.FOLDER_PATH[] = td
 fd2html_td(e)  = fd2html(e; dir=td)
 fd2html_tdv(e) = F.fd2html_v(e; dir=td)
 
-F.def_GLOBAL_PAGE_VARS!()
+F.def_GLOBAL_VARS!()
 F.def_GLOBAL_LXDEFS!()
 
 @testset "Paths" begin
@@ -42,8 +42,9 @@ cp(joinpath(dirname(dirname(pathof(Franklin))), "test", "_libs", "katex"), joinp
     @test d["a"].first == 5
     @test d["b"].first === nothing
 
-    @test_logs (:warn, "Doc var 'a' (type(s): (Real,)) can't be set to value 'blah' (type: String). Assignment ignored.") F.set_vars!(d, ["a"=>"\"blah\""])
-    @test_logs (:error, "I got an error (of type 'DomainError') trying to evaluate '__tmp__ = sqrt(-1)', fix the assignment.") F.set_vars!(d, ["a"=> "sqrt(-1)"])
+    @test_logs (:warn, "Page var 'a' (type(s): (Real,)) can't be set to value 'blah' (type: String). Assignment ignored.") F.set_vars!(d, ["a"=>"\"blah\""])
+
+    @test_throws F.PageVariableError F.set_vars!(d, ["a"=> "sqrt(-1)"])
 
     # assigning new variables
 
@@ -51,14 +52,13 @@ cp(joinpath(dirname(dirname(pathof(Franklin))), "test", "_libs", "katex"), joinp
     @test d["blah"].first == 1
 end
 
-
 @testset "Def+coms" begin # see #78
     st = raw"""
         @def title = "blah" <!-- comment -->
         @def hasmath = false
         etc
         """
-    (m, fdv) = F.convert_md(st)
-    @test fdv["title"].first == "blah"
-    @test fdv["hasmath"].first == false
+    m = F.convert_md(st)
+    @test F.locvar("title") == "blah"
+    @test F.locvar("hasmath") == false
 end

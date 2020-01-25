@@ -53,7 +53,7 @@ the given path as a full path relative to the `/assets/` folder.
 
 ## Argument
 
-1. `rpath`: the relative path
+1. `rpath`: the relative path (always in Unix format)
 
 ## Keywords
 
@@ -62,8 +62,7 @@ the given path as a full path relative to the `/assets/` folder.
 * `code=false`:      whether we're in a code context or not (in which case an
                      additional shortcut form is allowed).
 """
-function parse_rpath(rpath::AS; canonical::Bool=false,
-                     code::Bool=false)::AS
+function parse_rpath(rpath::AS; canonical::Bool=false, code::Bool=false)::AS
     # path from the website root folder
     if startswith(rpath, "/")
         length(rpath) > 1 || throw(RelativePathError("Relative path `$rpath` doesn't look right."))
@@ -75,14 +74,14 @@ function parse_rpath(rpath::AS; canonical::Bool=false,
         length(rpath) > 2 || throw(RelativePathError("Relative path `$rpath` doesn't look right."))
         if canonical
             full_path = joinpath(PATHS[:assets],
-                                 splitext(FD_ENV[:CUR_PATH])[1],
+                                 splitext(locvar("fd_rpath"))[1],
                                  join_rpath(rpath[3:end]))
             return normpath(full_path)
         else
             # here we want to remain unix-style, so we don't use joinpath
-            # note that FD_ENV[:CUR_PATH] never starts with "/" so there's
+            # note that rpath never starts with "/" so there's
             # no doubling of "//"
-            rpath = unixify(splitext(FD_ENV[:CUR_PATH])[1]) * rpath[3:end]
+            rpath = unixify(splitext(locvar("fd_rpath"))[1]) * rpath[3:end]
             return "/assets/" * rpath
         end
     end
@@ -114,8 +113,8 @@ the file name.
 function resolve_rpath(rpath::AS, lang::AS="")::NTuple{3,String}
     # parse the relative path
     fpath = parse_rpath(rpath; canonical=true)
-    # check if an extension is given, if not, consider it's `.xx` with
-    # language `nothing`; note that if lang="" then it's ".xx".
+    # check if an extension is given, if not, consider it's
+    # `.xx` with language `nothing`
     fp, ext = splitext(fpath)
     if isempty(ext)
         ext, = get(CODE_LANG, lang) do

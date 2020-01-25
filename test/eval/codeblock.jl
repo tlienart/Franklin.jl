@@ -60,9 +60,9 @@ end
     tmp = mktempdir()
     begin
         cd(tmp)
-        F.FD_ENV[:CUR_PATH] = "index.md"
+        set_curpath("index.md")
         F.FOLDER_PATH[] = tmp
-        F.def_LOCAL_PAGE_VARS!()
+        F.def_LOCAL_VARS!()
         F.set_paths!()
         c = SubString(
             """```julia:ex

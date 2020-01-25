@@ -99,7 +99,7 @@ end
     @test blocks[2].name == :ESCAPE
     @test blocks[1].name == :CODE_BLOCK_LANG
 
-    lxcoms, tokens = F.find_md_lxcoms(tokens, lxdefs, braces)
+    lxcoms, tokens = F.find_lxcoms(tokens, lxdefs, braces)
 
     @test lxcoms[1].ss == "\\eqa{ \\E{f(X)} \\in \\R &\\text{if}& f:\\R\\maptso\\R }"
     lxd = getindex(lxcoms[1].lxdef)
@@ -131,12 +131,12 @@ end
     tokens = F.find_tokens(st, F.MD_TOKENS, F.MD_1C_TOKENS)
     blocks, tokens = F.find_all_ocblocks(tokens, F.MD_OCB_ALL)
     # Ill formed newcommand (needs two {...})
-    @test_throws F.LxDefError F.find_md_lxdefs(tokens, blocks)
+    @test_throws F.LxDefError F.find_lxdefs(tokens, blocks)
     st = raw"""abc \newcommand{abc} def"""
     tokens = F.find_tokens(st, F.MD_TOKENS, F.MD_1C_TOKENS)
     blocks, tokens = F.find_all_ocblocks(tokens, F.MD_OCB_ALL)
     # Ill formed newcommand (needs two {...})
-    @test_throws F.LxDefError F.find_md_lxdefs(tokens, blocks)
+    @test_throws F.LxDefError F.find_lxdefs(tokens, blocks)
 end
 
 
@@ -176,9 +176,9 @@ end
 
     tokens = F.find_tokens(st, F.MD_TOKENS, F.MD_1C_TOKENS)
     blocks, tokens = F.find_all_ocblocks(tokens, F.MD_OCB_ALL)
-    lxdefs, tokens, braces, blocks = F.find_md_lxdefs(tokens, blocks)
+    lxdefs, tokens, braces, blocks = F.find_lxdefs(tokens, blocks)
     # Command comb expects 1 argument and there should be no spaces ...
-    @test_throws F.LxComError F.find_md_lxcoms(tokens, lxdefs, braces)
+    @test_throws F.LxComError F.find_lxcoms(tokens, lxdefs, braces)
 end
 
 
@@ -260,7 +260,7 @@ end
     @test blocks[5].name == :H5
     @test blocks[6].name == :H6
 
-    F.FD_ENV[:CUR_PATH] = "index.md"
+    set_curpath("index.md")
 
     h = raw"""
         # t1
@@ -290,6 +290,7 @@ end
         <h3 id="t2__3"><a href="/index.html#t2__3">t2</a></h3>
         6
         """)
+
     # pathological issue 241
     h = raw"""
         ## example

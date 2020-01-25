@@ -1,4 +1,4 @@
-F.FD_ENV[:CUR_PATH] = "index.md"
+set_curpath("index.md")
 
 @testset "Evalcode" begin
     h = raw"""
@@ -30,7 +30,7 @@ F.FD_ENV[:CUR_PATH] = "index.md"
     @test isfile(spatha)
     @test isfile(spathb)
     @test isapproxstr(read(spatha, String), """
-        $(F.MESSAGE_FILE_GEN_JMD)
+        $(F.MESSAGE_FILE_GEN_FMD)
         a = 5\nprint(a^2)""")
 
     opath = joinpath(F.PATHS[:assets], "index", "code", "output", "exca1.out")
@@ -95,7 +95,7 @@ end
 
     # ------------
 
-    F.FD_ENV[:CUR_PATH] = "pages/pg1.md"
+    set_curpath("pages/pg1.md")
 
     h = raw"""
         Simple code:
@@ -141,7 +141,7 @@ end
 end
 
 @testset "Eval (img)" begin
-    F.FD_ENV[:CUR_PATH] = "index.html"
+    set_curpath("index.html")
     h = raw"""
         Simple code:
         ```julia:tv2

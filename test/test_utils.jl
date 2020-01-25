@@ -8,6 +8,8 @@ cmd   = st -> F.convert_md(st, collect(values(F.GLOBAL_LXDEFS)))
 chtml = t -> F.convert_html(t...)
 conv  = st -> st |> cmd |> chtml
 
+set_curpath(path) = F.set_var!(F.LOCAL_VARS, "fd_rpath", path)
+
 # convenience function that squeezes out all whitespaces and line returns out of a string
 # and checks if the resulting strings are equal. When expecting a specific string +- some
 # spaces, this is very convenient. Use == if want to check exact strings.
@@ -25,28 +27,28 @@ end
 
 # takes md input and outputs the html (good for integration testing)
 function seval(st)
-    F.def_GLOBAL_PAGE_VARS!()
+    F.def_GLOBAL_VARS!()
     F.def_GLOBAL_LXDEFS!()
-    m, v = F.convert_md(st, collect(values(F.GLOBAL_LXDEFS)))
-    h = F.convert_html(m, v)
+    m = F.convert_md(st)
+    h = F.convert_html(m)
     return h
 end
 
 function set_globals()
-    F.def_GLOBAL_PAGE_VARS!()
+    F.def_GLOBAL_VARS!()
     F.def_GLOBAL_LXDEFS!()
-    empty!(F.LOCAL_PAGE_VARS)
-    F.def_LOCAL_PAGE_VARS!()
-    F.FD_ENV[:CUR_PATH] = "index.md"
-    F.FD_ENV[:CUR_PATH_WITH_EVAL] = ""
+    empty!(F.LOCAL_VARS)
+    F.def_LOCAL_VARS!()
+    set_curpath("index.md")
+    # F.FD_ENV[:CUR_PATH_WITH_EVAL] = ""
 end
 
 function explore_md_steps(mds)
-    F.def_GLOBAL_PAGE_VARS!()
+    F.def_GLOBAL_VARS!()
     F.def_GLOBAL_LXDEFS!()
     empty!(F.RSS_DICT)
 
-    F.def_LOCAL_PAGE_VARS!()
+    F.def_LOCAL_VARS!()
     F.def_PAGE_HEADERS!()
     F.def_PAGE_EQREFS!()
     F.def_PAGE_BIBREFS!()
@@ -76,25 +78,24 @@ function explore_md_steps(mds)
     F.validate_and_store_link_defs!(blocks)
 
     # latex commands
-    lxdefs, tokens, braces, blocks = F.find_md_lxdefs(tokens, blocks)
-    lxcoms, _ = F.find_md_lxcoms(tokens, lxdefs, braces)
+    lxdefs, tokens, braces, blocks = F.find_lxdefs(tokens, blocks)
+    lxcoms, _ = F.find_lxcoms(tokens, lxdefs, braces)
     steps[:latex] = (lxdefs=lxdefs, tokens=tokens, braces=braces,
                      blocks=blocks, lxcoms=lxcoms)
 
     sp_chars = F.find_special_chars(tokens)
     steps[:spchars] = (spchars=sp_chars,)
 
-    blocks2insert = F.merge_blocks(lxcoms, F.deactivate_divs(blocks), sp_chars)
-    steps[:blocks2insert] = (blocks2insert=blocks2insert,)
+    b2insert = F.merge_blocks(lxcoms, F.deactivate_divs(blocks), sp_chars)
+    steps[:b2insert] = (b2insert=b2insert,)
 
-    inter_md, mblocks = F.form_inter_md(mds, blocks2insert, lxdefs)
+    inter_md, mblocks = F.form_inter_md(mds, b2insert, lxdefs)
     steps[:inter_md] = (inter_md=inter_md, mblocks=mblocks)
 
     inter_html = F.md2html(inter_md; stripp=false)
     steps[:inter_html] = (inter_html=inter_html,)
 
-    lxcontext = F.LxContext(lxcoms, lxdefs, braces)
-    hstring   = F.convert_inter_html(inter_html, mblocks, lxcontext)
+    hstring   = F.convert_inter_html(inter_html, mblocks, lxdefs)
     steps[:hstring] = (hstring=hstring,)
 
     return steps

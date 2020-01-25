@@ -5,12 +5,12 @@ Helper function for `convert_inter_html` that processes an extracted block
 given a latex context `lxc` and returns the processed html that needs to be
 plugged in the final html.
 """
-function convert_block(β::AbstractBlock, lxcontext::LxContext)::AS
+function convert_block(β::AbstractBlock, lxdefs::Vector{LxDef})::AS
     # case for special characters / html entities
     β isa HTML_SPCH        && return ifelse(isempty(β.r), β.ss, β.r)
     # Return relevant interpolated string based on case
     βn = β.name
-    βn ∈ MD_HEADER         && return convert_header(β, lxcontext.lxdefs)
+    βn ∈ MD_HEADER         && return convert_header(β, lxdefs)
 
     βn == :CODE_INLINE     && return html_code_inline(content(β) |> htmlesc)
     βn == :CODE_BLOCK_LANG && return resolve_code_block(β.ss)
@@ -19,16 +19,16 @@ function convert_block(β::AbstractBlock, lxcontext::LxContext)::AS
 
     βn == :ESCAPE          && return chop(β.ss, head=3, tail=3)
     βn == :FOOTNOTE_REF    && return convert_footnote_ref(β)
-    βn == :FOOTNOTE_DEF    && return convert_footnote_def(β, lxcontext.lxdefs)
+    βn == :FOOTNOTE_DEF    && return convert_footnote_def(β, lxdefs)
     βn == :LINK_DEF        && return ""
 
     # Math block --> needs to call further processing to resolve possible latex
-    βn ∈ MATH_BLOCKS_NAMES && return convert_math_block(β, lxcontext.lxdefs)
+    βn ∈ MATH_BLOCKS_NAMES && return convert_math_block(β, lxdefs)
 
     # Div block --> need to process the block as a sub-element
     if βn == :DIV
         raw_cont = strip(content(β))
-        cont, _  = convert_md(raw_cont, lxcontext.lxdefs;
+        cont     = convert_md(raw_cont, lxdefs;
                               isrecursive=true, has_mddefs=false)
         divname  = chop(otok(β).ss, head=2, tail=0)
         return html_div(divname, cont)
@@ -37,7 +37,7 @@ function convert_block(β::AbstractBlock, lxcontext::LxContext)::AS
     # default case, ignore block (should not happen)
     return ""
 end
-convert_block(β::LxCom, λ::LxContext) = resolve_lxcom(β, λ.lxdefs)
+convert_block(β::LxCom, lxdefs::Vector{LxDef}) = resolve_lxcom(β, lxdefs)
 
 
 """
@@ -107,10 +107,10 @@ $(SIGNATURES)
 Helper function for the case of a header block (H1, ..., H6).
 """
 function convert_header(β::OCBlock, lxdefs::Vector{LxDef})::String
-    hk       = lowercase(string(β.name)) # h1, h2, ...
-    title, _ = convert_md(content(β), lxdefs;
-                          isrecursive=true, has_mddefs=false)
-    rstitle  = refstring(title)
+    hk    = lowercase(string(β.name)) # h1, h2, ...
+    title = convert_md(content(β), lxdefs;
+                       isrecursive=true, has_mddefs=false)
+    rstitle = refstring(title)
     # check if the header has appeared before and if so suggest
     # an altered refstring; if that altered refstring also exist
     # (pathological case, see #241), then extend it with a letter
@@ -131,168 +131,6 @@ function convert_header(β::OCBlock, lxdefs::Vector{LxDef})::String
     return html_hk(hk, html_ahref_key(rstitle, title); id=rstitle)
 end
 
-#
-# """Increment the eval' code block counter"""
-# increment_code_head() = (LOCAL_PAGE_VARS["fd_code_head"].first[] += 1)
-#
-# """Set `fd_code_eval` as true (subsequent blocks will be evaled)"""
-# toggle_fd_code_eval() = (LOCAL_PAGE_VARS["fd_code_eval"].first[] = true)
-#
-# """
-# $SIGNATURES
-#
-# Helper function to eval a code block, write it where appropriate, and finally
-# return a resolved block that can be displayed in the html.
-# """
-# function eval_and_resolve_code(code::AS, rpath::AS;
-#                                eval::Bool=true, nopush::Bool=false)::String
-#     # Here we have a julia code block that was provided with a script path
-#     # It will consequently be
-#     #  1. written to script file unless it's already there
-#     #  2. eval with redirect (unless file+output already there)
-#     #  3. inserted after cleaning out lines (see resolve_lx_input)
-#
-#     # start by adding it to code scope
-#     nopush || push!(LOCAL_PAGE_VARS["fd_code_scope"].first, rpath, code)
-#
-#     # form the path
-#     path = resolve_assets_rpath(rpath; canonical=true, code=true)
-#
-#     # lazy names are allowed without extensions, add one if that's the case
-#     endswith(path, ".jl") || (path *= ".jl")
-#
-#     # output directory etc
-#     out_path, fname = splitdir(path)
-#     out_path = mkpath(joinpath(out_path, "output"))
-#     out_name = splitext(fname)[1] * ".out"
-#     res_name = splitext(fname)[1] * ".res"
-#     res_path = joinpath(out_path, res_name)
-#     out_path = joinpath(out_path, out_name)
-#
-#     # if we're in the no-eval case, check that the relevant files are
-#     # there otherwise do re-eval with re-write
-#     if !eval && isfile(path) && isfile(out_path) && isfile(res_path)
-#         # just return the resolved code block
-#         return resolve_lx_input_hlcode(rpath, "julia")
-#     end
-#
-#     write(path, MESSAGE_FILE_GEN_JMD * code)
-#     FD_ENV[:SILENT_MODE] || print(rpad("\r→ evaluating code [...] ($(FD_ENV[:CUR_PATH]), $rpath)", 79) * "\r")
-#     # - execute the code while redirecting stdout to file
-#     Logging.disable_logging(Logging.LogLevel(3_000))
-#     res = nothing
-#     open(out_path, "w") do outf        # for stdout
-#         redirect_stdout(outf) do
-#             res = try
-#                 include(path)
-#             catch e
-#                 print("There was an error running the code:\n$(e.error)")
-#             end
-#         end
-#     end
-#     open(res_path, "w") do outf
-#         redirect_stdout(outf) do
-#             show(stdout, "text/plain", res)
-#         end
-#     end
-#     Logging.disable_logging(Logging.Debug)
-#     FD_ENV[:SILENT_MODE] || print(rpad("\r→ evaluating code [✓]", 79) * "\r")
-#
-#     # resolve the code block (highlighting) and return it
-#     return resolve_lx_input_hlcode(rpath, "julia")
-# end
-#
-# """
-# $(SIGNATURES)
-#
-# Helper function for the code block case of `convert_block`.
-# """
-# function convert_code_block(ss::SubString)::String
-#     fencer = ifelse(startswith(ss, "`````"), "`````", "```")
-#     reg    = Regex("$fencer([a-zA-Z][a-zA-Z-]*)(\\:[a-zA-Z\\\\\\/-_\\.]+)?\\s*\\n?((?:.|\\n)*)$fencer")
-#     m      = match(reg, ss)
-#     lang   = m.captures[1]
-#     rpath  = m.captures[2]
-#     code   = strip(m.captures[3])
-#
-#     # if no rpath is given, the code is not eval'
-#     isnothing(rpath) && return html_code(code, lang)
-#
-#     # if the code is not in julia, it's not eval'ed
-#     if lang!="julia"
-#         @warn "Eval of non-julia code blocks is not yet supported."
-#         return html_code(code, lang)
-#     end
-#
-#     # path currently has an indicative `:` we don't care about
-#     rpath = rpath[2:end]
-#
-#     # extract handles of relevant local page variables
-#     reeval = LOCAL_PAGE_VARS["reeval"].first         # full page re-eval
-#     eval   = LOCAL_PAGE_VARS["fd_code_eval"].first[] # eval toggle from given point
-#     freeze = LOCAL_PAGE_VARS["freezecode"].first
-#     scope  = LOCAL_PAGE_VARS["fd_code_scope"].first
-#     head   = increment_code_head()
-#
-#     # In the case of forced re-eval, we don't care about the
-#     # code scope just force-reeval everything sequentially
-#     if FD_ENV[:FORCE_REEVAL] || reeval || eval
-#         length(scope.codes) ≥ head && purgefrom!(scope, head)
-#         return eval_and_resolve_code(code, rpath)
-#     end
-#
-#     # Now we have Julia code with a path; check briefly if there
-#     # are explicit flags indicating we should not eval; if that's
-#     # the case then there will be a check to see if the relevant
-#     # files exist, if they don't exist the code *will* be eval'ed
-#     # (see `eval_and_resolve_code`)
-#     if FD_ENV[:FULL_PASS] || freeze
-#         length(scope.codes) ≥ head && purgefrom!(scope, head)
-#         return eval_and_resolve_code(code, rpath, eval=false)
-#     end
-#
-#     # Here we're either in
-#     # A. full pass but with forced-reeval
-#     # B. local pass with non-frozen code
-#
-#     # check if the page we're looking at is in scope
-#     if FD_ENV[:CUR_PATH] != FD_ENV[:CUR_PATH_WITH_EVAL]
-#         # we're necessarily at the first code block of the page.
-#         # need to re-instantiate a code scope; note that if we
-#         # are here then necessarily a def_LOCAL_PAGE_VARS was
-#         # called, so LOCAL_PAGE_VARS["fd_code_head"] points to 1
-#         reset!(scope)
-#         # keep track that the page is now in scope
-#         FD_ENV[:CUR_PATH_WITH_EVAL] = FD_ENV[:CUR_PATH]
-#         # flag rest of page as to be eval-ed (might be stale)
-#         toggle_fd_code_eval()
-#         # eval and resolve code
-#         return eval_and_resolve_code(code, rpath)
-#     end
-#
-#     # we're in scope, compare the code block with the
-#     # current code scope and act appropriately
-#     ncodes = length(scope.codes)
-#
-#     # there is only one case where we might not add and eval
-#     # --> if c ≤ length(code_dict)  -- code block may be among seen ones
-#     # --> code == code_dict[rpath]  -- the content matches exactly
-#     if (head ≤ ncodes)
-#         if (scope.rpaths[head] == rpath && code == scope.codes[head])
-#             # resolve with no eval (the function will check if the files are
-#             # present and if they're not, there will be an evaluation)
-#             return eval_and_resolve_code(code, rpath; eval=false, nopush=true)
-#         else
-#             # purge subsequent code blocks as stale
-#             purgefrom!(scope, head)
-#             # flag rest of page as to be eval-ed (stale)
-#             toggle_fd_code_eval()
-#         end
-#     end
-#     return eval_and_resolve_code(code, rpath)
-# end
-
-
 """
 $(SIGNATURES)
 
@@ -301,7 +139,7 @@ Helper function for the indented code block case of `convert_block`.
 function convert_indented_code_block(ss::SubString)::String
     # 1. decrease indentation of all lines (either frontal \n\t or \n⎵⎵⎵⎵)
     code = replace(ss, r"\n(?:\t| {4})" => "\n")
-    # 2. return; lang is a LOCAL_PAGE_VARS that is julia by default and can be set
+    # 2. return; lang is a LOCAL_VARS that is julia by default and can be set
     sc = strip(code)
     isempty(sc) && return ""
     return html_code(sc, "{{fill lang}}")
@@ -350,7 +188,7 @@ function convert_footnote_def(β::OCBlock, lxdefs::Vector{LxDef})::String
         return ""
     end
     # need to process the content which could contain stuff
-    ct, _ = convert_md(content(β), lxdefs;
+    ct = convert_md(content(β), lxdefs;
                        isrecursive=true, has_mddefs=false)
     """
     <table class="fndef" id="fndef:$id">

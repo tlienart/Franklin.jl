@@ -61,7 +61,7 @@ end
 
 
 @testset "Table" begin
-    F.FD_ENV[:CUR_PATH] = "pages/pg1.html"
+    set_curpath("pages/pg1.html")
     st = """
         A
 

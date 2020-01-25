@@ -14,24 +14,25 @@ end
 
 @testset "RSSbasics" begin
     empty!(F.RSS_DICT)
-    F.FD_ENV[:CUR_PATH] = "hey/ho.md"
-    F.set_var!(F.GLOBAL_PAGE_VARS, "website_title", "Website title")
-    F.set_var!(F.GLOBAL_PAGE_VARS, "website_descr", "Website descr")
-    F.set_var!(F.GLOBAL_PAGE_VARS, "website_url", "https://github.com/tlienart/Franklin.jl/")
-    fdv = merge(F.GLOBAL_PAGE_VARS, copy(F.LOCAL_PAGE_VARS))
-    F.set_var!(fdv, "rss_title", "title")
-    F.set_var!(fdv, "rss", "A **description** done.")
-    F.set_var!(fdv, "rss_author", "chuck@norris.com")
+    F.def_GLOBAL_VARS!()
+    F.set_var!(F.GLOBAL_VARS, "website_title", "Website title")
+    F.set_var!(F.GLOBAL_VARS, "website_descr", "Website descr")
+    F.set_var!(F.GLOBAL_VARS, "website_url", "https://github.com/tlienart/Franklin.jl/")
+    F.def_LOCAL_VARS!()
+    set_curpath("hey/ho.md")
+    F.set_var!(F.LOCAL_VARS, "rss_title", "title")
+    F.set_var!(F.LOCAL_VARS, "rss", "A **description** done.")
+    F.set_var!(F.LOCAL_VARS, "rss_author", "chuck@norris.com")
 
-    item = F.add_rss_item(fdv)
+    item = F.add_rss_item()
     @test item.title == "title"
     @test item.description == "A <strong>description</strong> done.\n"
     @test item.author == "chuck@norris.com"
     # unchanged bc all three fallbacks lead to Data(1)
     @test item.pubDate == Date(1)
 
-    F.set_var!(fdv, "rss_title", "")
-    @test @test_logs (:warn, "Found an RSS description but no title for page /hey/ho.html.") F.add_rss_item(fdv).title == ""
+    F.set_var!(F.LOCAL_VARS, "rss_title", "")
+    @test @test_logs (:warn, "Found an RSS description but no title for page /hey/ho.html.") F.add_rss_item().title == ""
 
     @test F.RSS_DICT["/hey/ho.html"].description == item.description
 

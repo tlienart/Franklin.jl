@@ -41,11 +41,11 @@ function should_eval(code::AS, rpath::AS)
     FD_ENV[:FORCE_REEVAL] && return true
 
     # 2. local setting forcing the current page to reeval everything
-    LOCAL_PAGE_VARS["reeval"].first && return true
+    LOCAL_VARS["reeval"].first && return true
 
     # 3. if space previously marked as stale, return true
     # note that on every page build, this is re-init as false.
-    LOCAL_PAGE_VARS["fd_code_eval"].first[] && return true
+    LOCAL_VARS["fd_eval"].first[] && return true
 
     # 4. if the code has changed reeval
     cp = form_codepaths(rpath)
@@ -93,7 +93,7 @@ function resolve_code_block(ss::SubString)::String
 
     # 3. here we have code that should be (re)evaluated
     # >> retrieve the modulename, the module may not exist (& may not need to)
-    modname = modulename(FD_ENV[:CUR_PATH])
+    modname = modulename(locvar("fd_rpath"))
     # >> check if relevant module exists, otherwise create one
     mod = ismodule(modname) ?
             getfield(Main, Symbol(modname)) :
@@ -109,7 +109,7 @@ function resolve_code_block(ss::SubString)::String
         end
     end
     # >> since we've evaluated a code block, toggle scope as stale
-    LOCAL_PAGE_VARS["fd_code_eval"].first[] = true
+    LOCAL_VARS["fd_eval"].first[] = true
     # >> finally return as html
     return html_code(code, lang)
 end

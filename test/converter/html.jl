@@ -15,18 +15,18 @@
         {{ end }}
         final text
         """
-    @test F.convert_html(hs, allvars) == "Some text then INPUT1 and\n\nother stuff\n\nfinal text\n"
+    @test F.convert_html(hs) == "Some text then INPUT1 and\n\nother stuff\n\nfinal text\n"
 
     hs = raw"""
         abc {{isdef no}}yada{{end}} def
         """
-    @test F.convert_html(hs, allvars) == "abc  def\n"
+    @test F.convert_html(hs) == "abc  def\n"
 
     hs = raw"""abc {{ fill nope }} ... """
-    @test (@test_logs (:warn, "I found a '{{fill nope}}' but I do not know the variable 'nope'. Ignoring.") F.convert_html(hs, allvars))  == "abc  ... "
+    @test (@test_logs (:warn, "I found a '{{fill nope}}' but I do not know the variable 'nope'. Ignoring.") F.convert_html(hs))  == "abc  ... "
 
     hs = raw"""unknown fun {{ unknown fun }} and see."""
-    @test (@test_logs (:warn, "I found a function block '{{unknown ...}}' but don't recognise the function name. Ignoring.") F.convert_html(hs, allvars)) == "unknown fun  and see."
+    @test (@test_logs (:warn, "I found a function block '{{unknown ...}}' but don't recognise the function name. Ignoring.") F.convert_html(hs)) == "unknown fun  and see."
 end
 
 
@@ -111,14 +111,14 @@ end
         {{isnotpage blah.html ya/xx}} blih {{end}} done.
         """
 
-    F.FD_ENV[:CUR_PATH] = "index.md"
+    set_curpath("index.md")
     @test F.convert_html(hs, allvars) == "Some text then  blah  but\n blih  done.\n"
 
-    F.FD_ENV[:CUR_PATH] = "blah/blih.md"
+    set_curpath("blah/blih.md")
     hs = raw"""
         A then {{ispage blah/*}}yes{{end}} but not {{isnotpage blih/*}}no{{end}} E.
         """
     @test F.convert_html(hs, allvars) == "A then yes but not no E.\n"
 
-    F.FD_ENV[:CUR_PATH] = "index.md"
+    set_curpath("index.md")
 end

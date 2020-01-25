@@ -85,7 +85,7 @@ end
 
 @testset "misc-html" begin
     λ = "blah/blah.ext"
-    F.FD_ENV[:CUR_PATH] = "pages/cpB/blah.md"
+    set_curpath("pages/cpB/blah.md")
     @test F.html_ahref(λ, 1) == "<a href=\"$λ\">1</a>"
     @test F.html_ahref(λ, "bb") == "<a href=\"$λ\">bb</a>"
     @test F.html_ahref_key("cc", "dd") == "<a href=\"/pub/cpB/blah.html#cc\">dd</a>"

@@ -4,7 +4,7 @@ vh   = s -> (t = vfn(s); F.validate_headers!(t); t)
 fib  = s -> (t = vh(s); F.find_indented_blocks!(t, s); t)
 fib2 = s -> (t = fib(s); F.filter_lr_indent!(t, s); t)
 
-blk  = s -> (F.def_LOCAL_PAGE_VARS!(); F.find_all_ocblocks(fib2(s), F.MD_OCB_ALL))
+blk  = s -> (F.def_LOCAL_VARS!(); F.find_all_ocblocks(fib2(s), F.MD_OCB_ALL))
 blk2 = s -> ((b, t) = blk(s); F.merge_indented_blocks!(b, s); b)
 blk3 = s -> (b = blk2(s); F.filter_indented_blocks!(b); b)
 
