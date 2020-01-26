@@ -65,23 +65,23 @@ function form_href(lxc::LxCom, dname::String;
     return html_span(class, parens.first * inner * parens.second)
 end
 
-lx_eqref(λ::LxCom) = form_href(λ, "EQR";  class="eqref")
-lx_cite(λ::LxCom)  = form_href(λ, "BIBR"; parens=""=>"", class="bibref")
-lx_citet(λ::LxCom) = form_href(λ, "BIBR"; parens=""=>"", class="bibref")
-lx_citep(λ::LxCom) = form_href(λ, "BIBR"; class="bibref")
+lx_eqref(lxc::LxCom, _) = form_href(lxc, "EQR";  class="eqref")
+lx_cite(lxc::LxCom, _)  = form_href(lxc, "BIBR"; parens=""=>"", class="bibref")
+lx_citet(lxc::LxCom, _) = form_href(lxc, "BIBR"; parens=""=>"", class="bibref")
+lx_citep(lxc::LxCom, _) = form_href(lxc, "BIBR"; class="bibref")
 
-function lx_label(λ::LxCom)
-    refs = content(λ.braces[1]) |> strip |> refstring
+function lx_label(lxc::LxCom, _)
+    refs = content(lxc.braces[1]) |> strip |> refstring
     return "<a id=\"$refs\"></a>"
 end
 
-function lx_biblabel(λ::LxCom)::String
-    name = refstring(strip(content(λ.braces[1])))
-    PAGE_BIBREFS[name] = content(λ.braces[2])
+function lx_biblabel(lxc::LxCom, _)::String
+    name = refstring(strip(content(lxc.braces[1])))
+    PAGE_BIBREFS[name] = content(lxc.braces[2])
     return "<a id=\"$name\"></a>"
 end
 
-function lx_toc(::LxCom)
+function lx_toc(::LxCom, _)
     minlevel = LOCAL_VARS["mintoclevel"].first
     maxlevel = LOCAL_VARS["maxtoclevel"].first
     return "{{toc $minlevel $maxlevel}}"

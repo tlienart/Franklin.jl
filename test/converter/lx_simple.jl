@@ -30,23 +30,7 @@
         \fig{/assets/testimg_3.png}
         """ |> seval
     @test isapproxstr(h, """
-            <p>No fig: $(F.html_err("image matching '/assets/testimg_3.png' not found"))</p>
-            """)
-end
-
-@testset "file" begin
-    write(joinpath(F.PATHS[:assets], "blah.pdf"), "pdf code")
-    h = raw"""
-        View \file{the file}{/assets/blah.pdf} here.
-        """ |> seval
-    @test isapproxstr(h, """
-            <p>View <a href=\"/assets/blah.pdf\">the file</a> here.</p>
-            """)
-    h = raw"""
-        View \file{no file}{/assets/blih.pdf} here.
-        """ |> seval
-    @test isapproxstr(h, """
-            <p>View $(F.html_err("file matching '/assets/blih.pdf' not found")) here.</p>
+            <p>No fig: $(F.html_err("Image matching '/assets/testimg_3.png' not found."))</p>
             """)
 end
 
@@ -123,7 +107,7 @@ end
         \tableinput{,}{/assets/testcsv.csv}
         Done.
         """ |> seval
-    shouldbe = """<p>A table: <p><span style=\"color:red;\">// header size (2) and number of columns (3) do not match //</span></p>
+    shouldbe = """<p>A table: <p><span style=\"color:red;\">// In `\\tableinput`: header size (2) and number of columns (3) do not match. //</span></p>
             Done.</p>"""
     @test isapproxstr(h, shouldbe)
 
@@ -185,7 +169,7 @@ end
         Done.
         """ |> seval
 
-    shouldbe = """<p>A table: <p><span style=\"color:red;\">// header size (2) and number of columns (3) do not match //</span></p>
+    shouldbe = """<p>A table: <p><span style=\"color:red;\">// In `\\tableinput`: header size (2) and number of columns (3) do not match. //</span></p>
             Done.</p>"""
     @test isapproxstr(h, shouldbe)
 end

@@ -21,7 +21,7 @@ function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef};
         fun  = Symbol("lx_" * name)
         if isdefined(Franklin, fun)
             # apply that function
-            return eval(:($fun($lxc)))
+            return eval(:($fun($lxc, $lxdefs)))
         else
             return ""
         end

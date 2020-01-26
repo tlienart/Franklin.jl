@@ -4,8 +4,8 @@ import DataStructures: OrderedDict
 # And checks the behaviour is as expected.
 
 F.def_GLOBAL_LXDEFS!()
-cmd   = st -> F.convert_md(st, collect(values(F.GLOBAL_LXDEFS)))
-chtml = t -> F.convert_html(t...)
+cmd   = st -> F.convert_md(st)
+chtml = t -> F.convert_html(t)
 conv  = st -> st |> cmd |> chtml
 
 set_curpath(path) =

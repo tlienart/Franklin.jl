@@ -112,7 +112,7 @@ the file name.
 """
 function resolve_rpath(rpath::AS, lang::AS="")::NTuple{3,String}
     # parse the relative path
-    fpath = parse_rpath(rpath; canonical=true)
+    fpath = parse_rpath(rpath; canonical=true, code=!isempty(lang))
     # check if an extension is given, if not, consider it's
     # `.xx` with language `nothing`
     fp, ext = splitext(fpath)
