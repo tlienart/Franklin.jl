@@ -5,14 +5,14 @@
 end
 
 @testset "Conv-html" begin
-    @test_throws F.HTMLFunctionError F.convert_html("{{fill bb cc}}", F.PageVars())
-    @test_throws F.HTMLFunctionError F.convert_html("{{insert bb cc}}", F.PageVars())
-    @test_throws F.HTMLFunctionError F.convert_html("{{href aa}}", F.PageVars())
-    @test (@test_logs (:warn, "Unknown dictionary name aa in {{href ...}}. Ignoring") F.convert_html("{{href aa bb}}", F.PageVars())) == "<b>??</b>"
-    @test_throws F.HTMLBlockError F.convert_html("{{if asdf}}{{end}}", F.PageVars())
-    @test_throws F.HTMLBlockError F.convert_html("{{if asdf}}", F.PageVars())
-    @test_throws F.HTMLBlockError F.convert_html("{{isdef asdf}}", F.PageVars())
-    @test_throws F.HTMLBlockError F.convert_html("{{ispage asdf}}", F.PageVars())
+    @test_throws F.HTMLFunctionError F.convert_html("{{fill bb cc}}")
+    @test_throws F.HTMLFunctionError F.convert_html("{{insert bb cc}}")
+    @test_throws F.HTMLFunctionError F.convert_html("{{href aa}}")
+    @test (@test_logs (:warn, "Unknown dictionary name aa in {{href ...}}. Ignoring") F.convert_html("{{href aa bb}}")) == "<b>??</b>"
+    @test_throws F.HTMLBlockError F.convert_html("{{if asdf}}{{end}}")
+    @test_throws F.HTMLBlockError F.convert_html("{{if asdf}}")
+    @test_throws F.HTMLBlockError F.convert_html("{{isdef asdf}}")
+    @test_throws F.HTMLBlockError F.convert_html("{{ispage asdf}}")
 end
 
 @testset "Conv-md" begin
