@@ -18,8 +18,9 @@ end
 """
 $(SIGNATURES)
 
-Returns the string corresponding to `s`: `s` itself if it is a string, or the parent string if `s`
-is a substring. Do not confuse with `String(s::SubString)` which casts `s` into its own object.
+Returns the string corresponding to `s`: `s` itself if it is a string, or the
+parent string if `s` is a substring. Do not confuse with `String(s::SubString)`
+which casts `s` into its own object.
 
 # Example
 

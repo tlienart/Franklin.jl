@@ -40,7 +40,7 @@ const GLOBAL_LXDEFS = LittleDict{String,LxDef}()
 Convenience function to allocate default values for global latex commands
 accessible throughout the site. See [`resolve_lxcom`](@ref).
 """
-@inline function def_GLOBAL_LXDEFS!()::Nothing
+ function def_GLOBAL_LXDEFS!()::Nothing
     empty!(GLOBAL_LXDEFS)
     for (name, def) in LX_INTERNAL_COMMANDS
         GLOBAL_LXDEFS[name] = def

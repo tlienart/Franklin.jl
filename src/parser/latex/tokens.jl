@@ -81,9 +81,13 @@ to(lxc::LxCom)   = to(lxc.ss)
 
 
 """
-$(SIGNATURES)
-
 For a given `LxCom`, retrieve the definition attached to the corresponding
 `LxDef` via the reference.
 """
 getdef(lxc::LxCom)::AS = getindex(lxc.lxdef).def
+
+"""
+For a given `LxCom`, retrieve the name of the command via the reference.
+Example: `\\cite` --> `cite`.
+"""
+getname(lxc::LxCom)::String = String(getindex(lxc.lxdef).name)[2:end]

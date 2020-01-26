@@ -100,7 +100,12 @@ function resolve_code_block(ss::SubString)::String
             newmodule(modname)
     # >> retrieve the code paths
     cp = form_codepaths(rpath)
-    # >> eval the code in the relevant module
+    # >> write the code to file
+    mkpath(cp.script_dir)
+    write(cp.script_path, MESSAGE_FILE_GEN_FMD * code)
+    # make the output directory available to the code block (see @OUTPUT macro)
+    OUT_PATH[] = cp.out_dir
+    # >> eval the code in the relevant module (this creates output/)
     res = run_code(mod, code, cp.out_path; strip_code=false)
     # >> write res to file
     open(cp.res_path, "w") do resf

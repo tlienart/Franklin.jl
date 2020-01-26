@@ -12,7 +12,7 @@ Consumes a string with Julia code, returns a vector of expression(s).
 Note: this function was adapted from the `parse_input` function from Weave.jl.
 """
 function parse_code(code::AS)
-    exs = Expr[]
+    exs = Union{Expr,Nothing}[]
     n   = sizeof(code)
     pos = 1
     while pos ≤ n

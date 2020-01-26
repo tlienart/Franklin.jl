@@ -34,7 +34,11 @@ function newmodule(name::String)::Module
     open(junk, "w") do outf
         # discard the "WARNING: redefining module X"
         redirect_stderr(outf) do
-            mod = Core.eval(Main, Meta.parse("module $name\nend"))
+            mod = Core.eval(Main, Meta.parse("""
+                module $name
+                    import Franklin: @OUTPUT
+                end
+                """))
         end
     end
     return mod

@@ -8,7 +8,7 @@ set_curpath("index.md")
         print(a^2)
         ```
         then:
-        \input{output}{./code/exca1}
+        \output{./code/exca1}
         done.
         """ |> seval
 
@@ -19,7 +19,7 @@ set_curpath("index.md")
         print(a^2)
         ```
         then:
-        \input{output}{excb1}
+        \output{excb1}
         done.
         """ |> seval
 
@@ -42,21 +42,21 @@ set_curpath("index.md")
             <pre><code class="language-julia">a = 5
             print(a^2)</code></pre>
             then:
-            <pre><code class="plaintext">25</code></pre>
+            <pre><code class="plaintext output">25</code></pre>
             done.</p>""")
 end
 
 @testset "Eval (errs)" begin
-    # see `converter/md_blocks:convert_code_block`
-    # --------------------------------------------
-    h = raw"""
+    s = raw"""
         Simple code:
         ```python:./scripts/testpy
         a = 5
         print(a**2)
         ```
         done.
-        """ |> seval
+        """
+    h = ""
+    @test_logs (:warn, "Evaluation of non-Julia code blocks is not yet supported.") (h = s |> seval)
 
     @test isapproxstr(h, raw"""
             <p>Simple code:
@@ -73,7 +73,7 @@ end
         print(a^2)
         ```
         then:
-        \input{output}{/assets/scripts/test2}
+        \output{/assets/scripts/test2}
         done.
         """ |> seval
 
@@ -90,21 +90,20 @@ end
             <pre><code class="language-julia">a = 5
             print(a^2)</code></pre>
             then:
-            <pre><code class="plaintext">25</code></pre>
+            <pre><code class="plaintext output">25</code></pre>
             done.</p>""")
 
     # ------------
 
-    set_curpath("pages/pg1.md")
-
     h = raw"""
+        @def fd_rpath = "pages/pg1.md"
         Simple code:
         ```julia:./code/abc2
         a = 5
         print(a^2)
         ```
         then:
-        \input{output}{./code/abc2}
+        \output{./code/abc2}
         done.
         """ |> seval
 
@@ -121,7 +120,7 @@ end
             <pre><code class="language-julia">a = 5
             print(a^2)</code></pre>
             then:
-            <pre><code class="plaintext">25</code></pre>  done.</p>""")
+            <pre><code class="plaintext output">25</code></pre>  done.</p>""")
 end
 
 @testset "Eval (module)" begin
@@ -133,19 +132,20 @@ end
         print(dot(a, a))
         ```
         then:
-        \input{output}{scripts/test1}
+        \output{scripts/test1}
         done.
         """ |> seval
     # dot(a, a) == 54
-    @test occursin("""then: <pre><code class="plaintext">54</code></pre> done.""", h)
+    @test occursin("""then: <pre><code class="plaintext output">54</code></pre> done.""", h)
 end
 
 @testset "Eval (img)" begin
-    set_curpath("index.html")
     h = raw"""
+        @def reeval=true
         Simple code:
         ```julia:tv2
-        write(joinpath(@__DIR__, "output", "tv2.png"), "blah")
+        #hideall
+        write(joinpath(@OUTPUT, "tv2.png"), "blah")
         ```
         then:
         \input{plot}{tv2}
@@ -155,17 +155,19 @@ end
 end
 
 @testset "Eval (throw)" begin
-    h = raw"""
+    s = raw"""
         Simple code:
         ```julia:scripts/test1
         sqrt(-1)
         ```
         then:
-        \input{output}{scripts/test1}
+        \output{scripts/test1}
         done.
-        """ |> seval
+        """
+    h = ""
+    @test_logs (:warn, "There was an error of type DomainError running the code.") (h = s |> seval)
     # errors silently
-    @test occursin("then: <pre><code class=\"plaintext\">There was an error running the code:\nDomainError", h)
+    @test occursin("then: <pre><code class=\"plaintext output\">DomainError(-1.0, \"sqrt will only return a complex result if called with a complex argument. Try sqrt(Complex(x)).\")</code></pre> done.</p>\n", h)
 end
 
 @testset "Eval (nojl)" begin
@@ -177,7 +179,7 @@ end
         done.
         """
 
-    @test (@test_logs (:warn, "Eval of non-julia code blocks is not yet supported.") h |> seval) == "<p>Simple code: <pre><code class=\"language-python\">sqrt(-1)</code></pre> done.</p>\n"
+    @test (@test_logs (:warn, "Evaluation of non-Julia code blocks is not yet supported.") h |> seval) == "<p>Simple code: <pre><code class=\"language-python\">sqrt(-1)</code></pre> done.</p>\n"
 end
 
 # temporary fix for 186: make error appear and also use `abspath` in internal include
@@ -201,7 +203,7 @@ end
             println("Is this a file? $(isfile(fn))")
             include(abspath(fn))
             println("Now: $a")
-            rm(fn)</code></pre> done. <pre><code class="plaintext">Is this a file? true
+            rm(fn)</code></pre> done. <pre><code class="plaintext output">Is this a file? true
             Now: 2
             </code></pre></p>
             """)
@@ -221,7 +223,7 @@ end
     @test isapproxstr(h, """
         <pre><code class="language-julia">a = 5
         a *= 2</code></pre>
-        <div class="code_output"><pre><code class="plaintext">10</code></pre></div>
+        <pre><code class="plaintext output">10</code></pre>
         """)
 
     # Show with stdout
@@ -239,7 +241,7 @@ end
         <pre><code class="language-julia">a = 5
         println("hello")
         a *= 2</code></pre>
-        <div class="code_output"><pre><code class="plaintext">hello
-        10</code></pre></div>
+        <pre><code class="plaintext output">hello
+        10</code></pre>
         """)
 end

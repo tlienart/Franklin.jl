@@ -35,7 +35,6 @@ function write_page(root::String, file::String, head::String,
     # The curpath is the relative path starting after /src/ so for instance:
     # f1/blah/page1.md or index.md etc... this is useful in the code evaluation and management
     # of paths
-
     cur_rpath = fpath[lastindex(PATHS[:src])+length(PATH_SEP)+1:end]
     set_var!(LOCAL_VARS, "fd_rpath", cur_rpath)
 

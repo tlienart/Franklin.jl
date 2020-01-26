@@ -17,7 +17,7 @@ function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef};
     # -> non-empty, in which case just apply that.
     if isempty(lxd)
         # see if a function `lx_name` exists
-        name = lxc.name[2:end] # `\\cite` -> `cites`
+        name = getname(lxc) # `\\cite` -> `cite`
         fun  = Symbol("lx_" * name)
         if isdefined(Franklin, fun)
             # apply that function

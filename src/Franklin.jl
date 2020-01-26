@@ -18,7 +18,7 @@ import Literate
 import HTTP
 
 export serve, publish, cleanpull, newsite, optimize, fd2html,
-       literate_folder, verify_links
+       literate_folder, verify_links, @OUTPUT
 
 export lunr
 

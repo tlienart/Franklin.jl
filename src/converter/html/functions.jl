@@ -5,10 +5,8 @@ Helper function to process an individual block when it's a `HFun` such as
 `{{ fill author }}`. See also [`convert_html`](@ref).
 """
 function convert_html_fblock(β::HFun)::String
-    # normalise function name and apply the function
-    fn = lowercase(β.fname)
     # try to find a function `hfun_...`
-    fun = Symbol("hfun_" * fn)
+    fun = Symbol("hfun_" * lowercase(β.fname))
     isdefined(Franklin, fun) && return eval(:($fun($β.params)))
     # if we get here, then the function name is unknown, warn and ignore
     @warn "I found a function block '{{$fn ...}}' but I don't " *

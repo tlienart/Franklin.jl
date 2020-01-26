@@ -20,7 +20,7 @@ $(SIGNATURES)
 
 Reset the PAGE_EQREFS dictionary.
 """
-@inline function def_PAGE_EQREFS!()
+ function def_PAGE_EQREFS!()
     empty!(PAGE_EQREFS)
     PAGE_EQREFS[PAGE_EQREFS_COUNTER] = 0
     return nothing

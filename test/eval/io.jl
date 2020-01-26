@@ -55,7 +55,7 @@ end
     @test_throws F.FileNotFoundError F.resolve_rpath("foo", "julia")
 end
 
-@testset "form_codepaths" begin
+@testset "form_cpaths" begin
     root = F.PATHS[:folder] = mktempdir()
     ass  = F.PATHS[:assets] = joinpath(root, "assets")
     mkdir(ass)
@@ -64,8 +64,10 @@ end
     write(joinpath(ass, "p1.jl"), "a = 5")
     write(joinpath(ass, "p2.png"), "gibberish")
 
-    sp, od, op, rp = F.form_codepaths("p1")
+    sp, sd, sn, od, op, rp = F.form_codepaths("p1")
     @test sp == joinpath(ass, splitext(curpath)[1], "code", "p1.jl")
+    @test sd == joinpath(ass, splitext(curpath)[1], "code")
+    @test sn == "p1.jl"
     @test od == joinpath(ass, splitext(curpath)[1], "code", "output")
     @test op == joinpath(od, "p1.out")
     @test rp == joinpath(od, "p1.res")

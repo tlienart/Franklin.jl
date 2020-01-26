@@ -59,3 +59,18 @@ function set_paths!()::LittleDict{Symbol,String}
 
     return PATHS
 end
+
+"""
+Pointer to the `/output/` folder associated with an eval block (see also
+[`@OUTPUT`](@ref)).
+"""
+const OUT_PATH = Ref("")
+
+"""
+This macro points to the `/output/` folder associated with an eval block.
+So for instance, if an eval block generates a plot, you could save the plot
+with something like `savefig(joinpath(@OUTPUT, "ex1.png"))`.
+"""
+macro OUTPUT()
+    return OUT_PATH[]
+end

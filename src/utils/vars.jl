@@ -23,7 +23,7 @@ const GLOBAL_VARS_DEFAULT = [
 """
 Re-initialise the global page vars dictionary. (This is done once).
 """
-function def_GLOBAL_VARS!()::Nothing
+ function def_GLOBAL_VARS!()::Nothing
     empty!(GLOBAL_VARS)
     for (v, p) in GLOBAL_VARS_DEFAULT
         GLOBAL_VARS[v] = p
@@ -127,7 +127,7 @@ $(SIGNATURES)
 
 Empties `PAGE_HEADERS`.
 """
-@inline function def_PAGE_HEADERS!()::Nothing
+ function def_PAGE_HEADERS!()::Nothing
     empty!(PAGE_HEADERS)
     return nothing
 end
@@ -145,7 +145,7 @@ $(SIGNATURES)
 
 Empties `PAGE_FNREFS`.
 """
-@inline function def_PAGE_FNREFS!()::Nothing
+ function def_PAGE_FNREFS!()::Nothing
     empty!(PAGE_FNREFS)
     return nothing
 end
@@ -162,7 +162,7 @@ $(SIGNATURES)
 
 Empties `PAGE_LINK_DEFS`.
 """
-@inline function def_PAGE_LINK_DEFS!()::Nothing
+ function def_PAGE_LINK_DEFS!()::Nothing
     empty!(PAGE_LINK_DEFS)
     return nothing
 end

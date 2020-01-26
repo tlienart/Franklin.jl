@@ -8,7 +8,8 @@ cmd   = st -> F.convert_md(st, collect(values(F.GLOBAL_LXDEFS)))
 chtml = t -> F.convert_html(t...)
 conv  = st -> st |> cmd |> chtml
 
-set_curpath(path) = F.set_var!(F.LOCAL_VARS, "fd_rpath", path)
+set_curpath(path) =
+    (F.set_var!(F.LOCAL_VARS, "fd_rpath", path); F.locvar("fd_rpath"))
 
 # convenience function that squeezes out all whitespaces and line returns out of a string
 # and checks if the resulting strings are equal. When expecting a specific string +- some
@@ -79,6 +80,9 @@ function explore_md_steps(mds)
 
     # latex commands
     lxdefs, tokens, braces, blocks = F.find_lxdefs(tokens, blocks)
+
+    # lxdefs = cat(F.pastdef.(collect(values(F.GLOBAL_LXDEFS))), lxdefs, dims=1)
+
     lxcoms, _ = F.find_lxcoms(tokens, lxdefs, braces)
     steps[:latex] = (lxdefs=lxdefs, tokens=tokens, braces=braces,
                      blocks=blocks, lxcoms=lxcoms)

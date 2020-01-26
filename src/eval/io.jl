@@ -171,6 +171,8 @@ function form_codepaths(rpath::AS)::NamedTuple
     res_path    = joinpath(out_dir, fname_noext * ".res")
     # return everything
     return (script_path = script_path,
+            script_dir  = dir,
+            script_name = fname,
             out_dir     = out_dir,
             out_path    = out_path,
             res_path    = res_path)
