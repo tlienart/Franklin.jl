@@ -47,6 +47,8 @@ function html_code(c::AS, lang::AS=""; name::AS="")::String
     lang == "html" && !is_html_escaped(c) && (c = htmlesc(c))
     # remove hidden lines if any
     c = html_skip_hidden(c, lang)
+    # if empty (e.g. via #hideall) return ""
+    c == "" && return ""
     return "<pre><code class=\"language-$lang$addclass\">$c</code></pre>"
 end
 
@@ -55,7 +57,7 @@ const REGEX_CODE_HIDE = Regex(raw"(?:^|[^\S\r\n]*?)#(\s)*?(?i)hide(all)?")
 const REGEX_LIT_HIDE  = Regex(raw"(?:^|[^\S\r\n]*?)#src")
 
 """Convenience function to process a code string and hide some lines."""
-function html_skip_hidden(c::AS, lang::AS)
+function html_skip_hidden(c::AS, lang::AS)::String
     # if the language is not one of CODE_LANG, just return
     # without hiding anything
     lang in keys(CODE_LANG) || return c

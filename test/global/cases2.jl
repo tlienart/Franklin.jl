@@ -61,8 +61,8 @@ end
 
 
 @testset "Table" begin
-    set_curpath("pages/pg1.html")
     st = """
+        @def fd_rpath = "pages/pg1.html"
         A
 
         ### Title
