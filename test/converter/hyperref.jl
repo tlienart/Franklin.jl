@@ -1,5 +1,4 @@
 @testset "Hyperref" begin
-    set_curpath("index.md")
     st = raw"""
        Some string
        $$ x = x \label{eq 1}$$
@@ -16,7 +15,7 @@
     F.def_GLOBAL_VARS!()
     F.def_GLOBAL_LXDEFS!()
 
-    m, _ = F.convert_md(st, collect(values(F.GLOBAL_LXDEFS)))
+    m = F.convert_md(st)
 
     h1 = F.refstring("eq 1")
     h2 = F.refstring("amari98b")
@@ -30,7 +29,7 @@
     @test F.PAGE_BIBREFS[h2] == "Amari and Douglas., 1998"
     @test F.PAGE_BIBREFS[h3] == "Bardenet et al., 2017"
 
-    h = F.convert_html(m, F.PageVars())
+    h = F.convert_html(m)
 
     @test isapproxstr(h, """
         <p>
@@ -51,7 +50,6 @@
 end
 
 @testset "Href-space" begin
-    set_curpath("index.md")
     st = raw"""
        A
        $$ x = x \label{eq 1}$$
@@ -78,7 +76,7 @@ end
         \eqa{ 1 &=& 1 \label{beyond hope}}
         and finally a \eqref{eq:a trivial one} and maybe \eqref{beyond hope}.
         """
-    m, _ = F.convert_md(st, collect(values(F.GLOBAL_LXDEFS)))
+    m = F.convert_md(st, collect(values(F.GLOBAL_LXDEFS)))
 
     @test F.PAGE_EQREFS[F.PAGE_EQREFS_COUNTER] == 3
     @test F.PAGE_EQREFS[F.refstring("eq:a trivial one")] == 2

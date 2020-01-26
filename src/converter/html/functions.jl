@@ -9,7 +9,7 @@ function convert_html_fblock(β::HFun)::String
     fun = Symbol("hfun_" * lowercase(β.fname))
     isdefined(Franklin, fun) && return eval(:($fun($β.params)))
     # if we get here, then the function name is unknown, warn and ignore
-    @warn "I found a function block '{{$fn ...}}' but I don't " *
+    @warn "I found a function block '{{$(β.fname) ...}}' but I don't " *
           "recognise the function name. Ignoring."
     # returning empty
     return ""
@@ -62,7 +62,7 @@ function hfun_insert(params::Vector{String})::String
     else
         @warn "I found an {{insert ...}} block and tried to insert '$fpath' but I couldn't find the file. Ignoring."
     end
-    return replacement
+    return repl
 end
 
 
@@ -78,18 +78,18 @@ function hfun_href(params::Vector{String})::String
                                 "but got $(length(params)). Verify."))
     end
     # apply
-    replacement = "<b>??</b>"
+    repl = "<b>??</b>"
     dname, hkey = params[1], params[2]
     if params[1] == "EQR"
-        haskey(PAGE_EQREFS, hkey) || return replacement
-        replacement = html_ahref_key(hkey, PAGE_EQREFS[hkey])
+        haskey(PAGE_EQREFS, hkey) || return repl
+        repl = html_ahref_key(hkey, PAGE_EQREFS[hkey])
     elseif params[1] == "BIBR"
-        haskey(PAGE_BIBREFS, hkey) || return replacement
-        replacement = html_ahref_key(hkey, PAGE_BIBREFS[hkey])
+        haskey(PAGE_BIBREFS, hkey) || return repl
+        repl = html_ahref_key(hkey, PAGE_BIBREFS[hkey])
     else
         @warn "Unknown dictionary name $dname in {{href ...}}. Ignoring"
     end
-    return replacement
+    return repl
 end
 
 

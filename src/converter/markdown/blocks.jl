@@ -46,7 +46,7 @@ MATH_BLOCKS_PARENS
 Dictionary to keep track of how math blocks are fenced in standard LaTeX and
 how these fences need to be adapted for compatibility with KaTeX. Each tuple
 contains the number of characters to chop off the front and the back of the
-maths expression (fences) as well as the KaTeX-compatible replacement.
+maths expression (fences) as well as the KaTeX-compatible repl.
 For instance, `\$ ... \$` will become `\\( ... \\)` chopping off 1 character at
 the front and the back (`\$` sign).
 """
