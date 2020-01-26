@@ -1,4 +1,5 @@
 scripts = joinpath(F.PATHS[:folder], "literate-scripts")
+flush_td()
 cd(td); F.set_paths!(); mkpath(scripts)
 
 @testset "Literate-0" begin
@@ -39,6 +40,7 @@ end
 end
 
 @testset "Literate-b" begin
+    flush_td(); cd(td); F.set_paths!(); mkpath(scripts)
     # Literate to Franklin
     s = raw"""
         # # Rational numbers
@@ -94,10 +96,10 @@ end
         <pre><code class="language-julia"># Define variable x and y
         x = 1//3
         y = 2//5</code></pre>
-        <div class="code_output"><pre><code class=\"plaintext\">2//5</code></pre></div>
+        <pre><code class=\"plaintext output\">2//5</code></pre>
         <p>When adding <code>x</code> and <code>y</code> together we obtain a new rational number:</p>
         <pre><code class="language-julia">z = x + y</code></pre>
-        <div class="code_output"><pre><code class=\"plaintext\">11//15</code></pre></div>
+        <pre><code class=\"plaintext output\">11//15</code></pre>
         """)
 end
 
@@ -105,7 +107,7 @@ end
     s = raw"""
         \literate{foo}
         """
-    @test_throws ErrorException (s |> fd2html_td)
+    @test_throws F.LiterateRelativePathError (s |> fd2html_td)
     s = raw"""
         \literate{/foo}
         """

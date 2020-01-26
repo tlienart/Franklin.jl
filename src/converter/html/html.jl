@@ -44,7 +44,8 @@ $SIGNATURES
 Return the HTML corresponding to a Franklin-Markdown string as well as all the
 page variables. See also [`fd2html`](@ref) which only returns the html.
 """
-function fd2html_v(st::AbstractString; internal::Bool=false, dir::String="")::Tuple{String,Dict}
+function fd2html_v(st::AS; internal::Bool=false,
+                   dir::String="")::Tuple{String,Dict}
     isempty(st) && return st
     if !internal
         FOLDER_PATH[] = isempty(dir) ? mktempdir() : dir
@@ -52,7 +53,7 @@ function fd2html_v(st::AbstractString; internal::Bool=false, dir::String="")::Tu
         def_GLOBAL_LXDEFS!()
         def_GLOBAL_VARS!()
     end
-    m = convert_md(st, collect(values(GLOBAL_LXDEFS)); isinternal=internal)
+    m = convert_md(st; isinternal=internal)
     h = convert_html(m)
     return h, LOCAL_VARS
 end

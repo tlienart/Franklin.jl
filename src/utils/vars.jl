@@ -55,10 +55,9 @@ const LOCAL_VARS_DEFAULT = [
     "maxtoclevel" => Pair(10, (Int,)), # set to 3 to ignore h4,h5,h6
     # ---------------
     # CODE EVALUATION
-    "reeval"        => Pair(false,      (Bool,)), # whether to reeval all pg
-    "showall"       => Pair(false,      (Bool,)), # if true, notebook style
-    "literate_only" => Pair(true,       (Bool,)), # [^1]
-    "fd_eval"       => Pair(Ref(false), (Ref{Bool},)), # toggle re-eval
+    "reeval"        => Pair(false,  (Bool,)), # whether to reeval all pg
+    "showall"       => Pair(false,  (Bool,)), # if true, notebook style
+    "fd_eval"       => Pair(false,  (Bool,)), # toggle re-eval
     # ------------------
     # RSS 2.0 specs [^2]
     "rss"             => Pair("",      (String,)),
@@ -77,11 +76,6 @@ const LOCAL_VARS_DEFAULT = [
     ]
 #=
 NOTE:
- 1. when using literate, `literate_only=true` will assume  that it's the only
-    source of code, so if it doesn't see change in the literate script, it
-    will  freeze the code to avoid an  eval, this will cause problems if
-    there is more code  on the p age than from just the call to \literate
-    in such  cases, set it to false.
  2. only title, link and description *must*
         title       -- rss_title // fallback to title
     (*) link        -- [automatically generated]

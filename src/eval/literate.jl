@@ -46,7 +46,7 @@ function literate_to_franklin(rpath::AS)::Tuple{String,Bool}
         return "", true
     end
     outpath = joinpath(PATHS[:assets], "literate", srpath[2:end-1]...)
-    isdir(outpath) || mkdir(outpath)
+    isdir(outpath) || mkpath(outpath)
     # retrieve the file name
     fname = splitext(splitdir(fpath)[2])[1]
     spath = joinpath(outpath, fname * "_script.jl")

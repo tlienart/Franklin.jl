@@ -3,7 +3,7 @@ $SIGNATURES
 
 Clear the environment dictionaries.
 """
-clear_dicts() = empty!.((GLOBAL_LXDEFS, LOCAL_LXDEFS, GLOBAL_VARS, LOCAL_VARS))
+clear_dicts() = empty!.((GLOBAL_LXDEFS, GLOBAL_VARS, LOCAL_VARS))
 
 """
 $(SIGNATURES)
@@ -153,12 +153,12 @@ function fd_fullpass(watched_files::NamedTuple; clear::Bool=false,
 
     # reset global page variables and latex definitions
     # NOTE: need to keep track of pre-path if specified, see optimize
-    prepath = GLOBAL_VARS["prepath"]
+    prepath = get(GLOBAL_VARS, "prepath", "")
     def_GLOBAL_VARS!()
     def_GLOBAL_LXDEFS!()
     empty!(RSS_DICT)
     # reinsert prepath if specified
-    isnothing(prepath) || (GLOBAL_VARS["prepath"] = prepath)
+    isempty(prepath) || (GLOBAL_VARS["prepath"] = prepath)
 
     # process configuration file (see also `process_mddefs!`)
     process_config()

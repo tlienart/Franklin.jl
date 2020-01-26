@@ -41,18 +41,18 @@ function should_eval(code::AS, rpath::AS)
     FD_ENV[:FORCE_REEVAL] && return true
 
     # 2. local setting forcing the current page to reeval everything
-    LOCAL_VARS["reeval"].first && return true
+    locvar("reeval") && return true
 
     # 3. if space previously marked as stale, return true
     # note that on every page build, this is re-init as false.
-    LOCAL_VARS["fd_eval"].first[] && return true
+    locvar("fd_eval") && return true
 
     # 4. if the code has changed reeval
     cp = form_codepaths(rpath)
     # >> does the script exist?
     isfile(cp.script_path) || return true
     # >> does the script match the code?
-    code == read(cp.script_path, String) || return true
+    MESSAGE_FILE_GEN_FMD * code == read(cp.script_path, String) || return true
 
     # 5. if the outputs aren't there, reeval
     # >> does the output dir exist
@@ -114,7 +114,11 @@ function resolve_code_block(ss::SubString)::String
         end
     end
     # >> since we've evaluated a code block, toggle scope as stale
-    LOCAL_VARS["fd_eval"].first[] = true
+    set_var!(LOCAL_VARS, "fd_eval", true)
     # >> finally return as html
+    if locvar("showall")
+        return html_code(code, lang) *
+                reprocess("\\show{$rpath}", [GLOBAL_LXDEFS["\\show"]])
+    end
     return html_code(code, lang)
 end

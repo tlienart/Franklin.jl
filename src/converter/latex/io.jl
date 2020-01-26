@@ -198,13 +198,6 @@ function lx_literate(lxc::LxCom, lxd::Vector{LxDef})
     if isempty(opath)
         return html_err("Literate file matching '$rpath' not found.")
     end
-    if !haschanged
-        # page has not changed, check if literate is the only source of code
-        # and in that case skip eval of all code blocks via freezecode
-        if LOCAL_VARS["literate_only"].first
-            set_var!(LOCAL_VARS, "freezecode", true)
-        end
-    end
     if haschanged && FD_ENV[:FULL_PASS]
         set_var!(LOCAL_VARS, "reeval", true)
     end
