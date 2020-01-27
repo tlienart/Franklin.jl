@@ -82,7 +82,7 @@ function write_page(root::String, file::String, head::String,
     # 5. write the html file where appropriate
     write(joinpath(out_path(root), change_ext(file)), pg)
     
-    on_write(pg, jd_vars)
+    on_write(pg, fd_vars)
     return nothing
 end
 

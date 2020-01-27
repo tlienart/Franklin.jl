@@ -24,7 +24,8 @@ Keyword arguments:
 * `eval_all=false`:  whether to force re-evaluation of all code blocks
 * `silent=false`:    switch this on to suppress all output (including eval statements).
 * `cleanup=true`:    whether to clear environment dictionaries, see [`cleanup`](@ref).
-* `onwrite(pg, jd_vars)`:
+* `on_write(pg, fd_vars)`: callback function after the page is rendered, passing as arguments
+                     the rendered page and the page variables
 """
 function serve(; clear::Bool=true,
                  verb::Bool=false,
