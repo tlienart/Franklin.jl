@@ -1,16 +1,17 @@
 """
 $(SIGNATURES)
 
-Helper function to process an individual block when it's a `HFun` such as `{{ fill author }}`.
-Dev Note: `fpath` is (currently) unused but is passed to all `convert_html_block` functions.
-See [`convert_html`](@ref).
+Helper function to process an individual block when it's a `HFun` such as
+`{{ fill author }}`. See also [`convert_html`](@ref).
 """
-function convert_html_fblock(β::HFun, allvars::PageVars, ::AS="")::String
-    # normalise function name and apply the function
-    fn = lowercase(β.fname)
-    haskey(HTML_FUNCTIONS, fn) && return HTML_FUNCTIONS[fn](β.params, allvars)
+function convert_html_fblock(β::HFun)::String
+    # try to find a function `hfun_...`
+    fun = Symbol("hfun_" * lowercase(β.fname))
+    isdefined(Franklin, fun) && return eval(:($fun($β.params)))
     # if we get here, then the function name is unknown, warn and ignore
-    @warn "I found a function block '{{$fn ...}}' but don't recognise the function name. Ignoring."
+    @warn "I found a function block '{{$(β.fname) ...}}' but I don't " *
+          "recognise the function name. Ignoring."
+    # returning empty
     return ""
 end
 
@@ -21,30 +22,32 @@ $(SIGNATURES)
 H-Function of the form `{{ fill vname }}` to plug in the content of a
 franklin-var `vname` (assuming it can be represented as a string).
 """
-function hfun_fill(params::Vector{String}, allvars::PageVars)::String
+function hfun_fill(params::Vector{String})::String
     # check params
     if length(params) != 1
         throw(HTMLFunctionError("I found a {{fill ...}} with more than one parameter. Verify."))
     end
     # form the fill
-    replacement = ""
+    repl  = ""
     vname = params[1]
-    if haskey(allvars, vname)
+    if haskey(LOCAL_VARS, vname)
         # retrieve the value stored
-        tmp_repl = allvars[vname].first
-        isnothing(tmp_repl) || (replacement = string(tmp_repl))
+        tmp_repl = locvar(vname)
+        isnothing(tmp_repl) || (repl = string(tmp_repl))
     else
-        @warn "I found a '{{fill $vname}}' but I do not know the variable '$vname'. Ignoring."
+        @warn "I found a '{{fill $vname}}' but I do not know the " *
+              "variable '$vname'. Ignoring."
     end
-    return replacement
+    return repl
 end
 
 
 """
 $(SIGNATURES)
 
-H-Function of the form `{{ insert fpath }}` to plug in the content of a file at `fpath`. Note that
-the base path is assumed to be `PATHS[:src_html]` so paths have to be expressed relative to that.
+H-Function of the form `{{ insert fpath }}` to plug in the content of a file at
+`fpath`. Note that the base path is assumed to be `PATHS[:src_html]` so paths
+have to be expressed relative to that.
 """
 function hfun_insert(params::Vector{String})::String
     # check params
@@ -52,14 +55,14 @@ function hfun_insert(params::Vector{String})::String
         throw(HTMLFunctionError("I found a {{insert ...}} with more than one parameter. Verify."))
     end
     # apply
-    replacement = ""
+    repl  = ""
     fpath = joinpath(PATHS[:src_html], split(params[1], "/")...)
     if isfile(fpath)
-        replacement = convert_html(read(fpath, String), merge(GLOBAL_PAGE_VARS, LOCAL_PAGE_VARS))
+        repl = convert_html(read(fpath, String))
     else
         @warn "I found an {{insert ...}} block and tried to insert '$fpath' but I couldn't find the file. Ignoring."
     end
-    return replacement
+    return repl
 end
 
 
@@ -75,26 +78,26 @@ function hfun_href(params::Vector{String})::String
                                 "but got $(length(params)). Verify."))
     end
     # apply
-    replacement = "<b>??</b>"
+    repl = "<b>??</b>"
     dname, hkey = params[1], params[2]
     if params[1] == "EQR"
-        haskey(PAGE_EQREFS, hkey) || return replacement
-        replacement = html_ahref_key(hkey, PAGE_EQREFS[hkey])
+        haskey(PAGE_EQREFS, hkey) || return repl
+        repl = html_ahref_key(hkey, PAGE_EQREFS[hkey])
     elseif params[1] == "BIBR"
-        haskey(PAGE_BIBREFS, hkey) || return replacement
-        replacement = html_ahref_key(hkey, PAGE_BIBREFS[hkey])
+        haskey(PAGE_BIBREFS, hkey) || return repl
+        repl = html_ahref_key(hkey, PAGE_BIBREFS[hkey])
     else
         @warn "Unknown dictionary name $dname in {{href ...}}. Ignoring"
     end
-    return replacement
+    return repl
 end
 
 
 """
 $(SIGNATURES)
 
-H-Function of the form `{{toc min max}}` (table of contents). Where `min` and `max`
-control the minimum level and maximum level of  the table of content.
+H-Function of the form `{{toc min max}}` (table of contents). Where `min` and
+`max` control the minimum level and maximum level of  the table of content.
 The split is as follows:
 
 * key is the refstring
@@ -104,8 +107,8 @@ The split is as follows:
 """
 function hfun_toc(params::Vector{String})::String
     if length(params) != 2
-        throw(HTMLFunctionError("I found a {{toc ...}} block and expected 2 parameters" *
-                                "but got $(length(params)). Verify."))
+        throw(HTMLFunctionError("I found a {{toc ...}} block and expected 2 " *
+                              "parameters but got $(length(params)). Verify."))
     end
     isempty(PAGE_HEADERS) && return ""
 
@@ -116,7 +119,8 @@ function hfun_toc(params::Vector{String})::String
         min = parse(Int, params[1])
         max = parse(Int, params[2])
     catch
-        throw(HTMLFunctionError("I found a {{toc min max}} but couldn't parse min/max. Verify."))
+        throw(HTMLFunctionError("I found a {{toc min max}} but couldn't " *
+                                "parse min/max. Verify."))
     end
 
     inner   = ""
@@ -155,13 +159,13 @@ end
 """
 HTML_FUNCTIONS
 
-Dictionary for special html functions. They can take two variables, the first one `π` refers to the
-arguments passed to the function, the second one `ν` refers to the page variables (i.e. the
-context) available to the function.
+Dictionary for special html functions. They can take two variables, the first
+one `π` refers to the arguments passed to the function, the second one `ν`
+refers to the page variables (i.e. the context) available to the function.
 """
 const HTML_FUNCTIONS = LittleDict{String, Function}(
-    "fill"   => ((π, ν) -> hfun_fill(π, ν)),
-    "insert" => ((π, _) -> hfun_insert(π)),
-    "href"   => ((π, _) -> hfun_href(π)),
-    "toc"    => ((π, _) -> hfun_toc(π)),
+    "fill"   => hfun_fill,
+    "insert" => hfun_insert,
+    "href"   => hfun_href,
+    "toc"    => hfun_toc,
     )

@@ -140,7 +140,7 @@ opening and closing tokens followed by a boolean indicating whether the content
 of the block should be reprocessed.
 The only `OCBlock` not in this dictionary is the brace block since it should
 not deactivate its content which is needed to find latex definitions
-(see parser/markdown/find_blocks/find_md_lxdefs).
+(see parser/markdown/find_blocks/find_lxdefs).
 """
 const MD_OCB = [
     # name                    opening token   closing token(s)  nestable

@@ -1,17 +1,17 @@
-tok  = s -> J.find_tokens(s, J.MD_TOKENS, J.MD_1C_TOKENS)
-vfn  = s -> (t = tok(s); J.validate_footnotes!(t); t)
-vh   = s -> (t = vfn(s); J.validate_headers!(t); t)
-fib  = s -> (t = vh(s); J.find_indented_blocks!(t, s); t)
-fib2 = s -> (t = fib(s); J.filter_lr_indent!(t, s); t)
+tok  = s -> F.find_tokens(s, F.MD_TOKENS, F.MD_1C_TOKENS)
+vfn  = s -> (t = tok(s); F.validate_footnotes!(t); t)
+vh   = s -> (t = vfn(s); F.validate_headers!(t); t)
+fib  = s -> (t = vh(s); F.find_indented_blocks!(t, s); t)
+fib2 = s -> (t = fib(s); F.filter_lr_indent!(t, s); t)
 
-blk  = s -> (J.def_LOCAL_PAGE_VARS!(); J.find_all_ocblocks(fib2(s), J.MD_OCB_ALL))
-blk2 = s -> ((b, t) = blk(s); J.merge_indented_blocks!(b, s); b)
-blk3 = s -> (b = blk2(s); J.filter_indented_blocks!(b); b)
+blk  = s -> (F.def_LOCAL_VARS!(); F.find_all_ocblocks(fib2(s), F.MD_OCB_ALL))
+blk2 = s -> ((b, t) = blk(s); F.merge_indented_blocks!(b, s); b)
+blk3 = s -> (b = blk2(s); F.filter_indented_blocks!(b); b)
 
-blk4 = s -> (b = blk3(s); J.validate_and_store_link_defs!(b); b)
+blk4 = s -> (b = blk3(s); F.validate_and_store_link_defs!(b); b)
 
 isblk(b, n, s) = b.name == n && b.ss == s
-cont(b) = J.content(b)
+cont(b) = F.content(b)
 
 # Basics
 @testset "P:2:blk" begin
@@ -124,7 +124,7 @@ end
 
 @testset "P:2:blk-{}" begin
     b = "{ABC}" |> blk3
-    @test J.content(b[1]) == "ABC"
+    @test F.content(b[1]) == "ABC"
     b = "\\begin{eqnarray} \\sin^2(x)+\\cos^2(x) &=& 1\\end{eqnarray}" |> blk3
     @test cont(b[1]) == " \\sin^2(x)+\\cos^2(x) &=& 1"
     b = raw"""

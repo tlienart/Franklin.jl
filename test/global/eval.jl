@@ -19,7 +19,7 @@
         \output{ex}
         """
 
-    # FIRST PASS --> EVAL
+    # XXX FIRST PASS --> EVAL
 
     h = foo |> fd2html_td
 
@@ -27,7 +27,7 @@
                 <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$a</code></pre>
                 """)
 
-    # TEXT MODIFICATION + IN SCOPE --> NO REEVAL
+    # XXX TEXT MODIFICATION + IN SCOPE --> NO REEVAL
 
     foo *= "etc"
 
@@ -37,7 +37,7 @@
                 <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$a</code></pre> etc
                 """)
 
-    # CODE ADDITION + IN SCOPE --> NO REEVAL OF FIRST BLOCK
+    # XXX CODE ADDITION --> NO REEVAL OF FIRST BLOCK
 
     foo *= raw"""
         ```julia:ex2
@@ -58,7 +58,7 @@
                 <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$c</code></pre>
                 """)
 
-    # CODE MODIFICATION + IN SCOPE --> REEVAL OF BLOCK AND AFTER
+    # XXX CODE MODIFICATION --> REEVAL OF BLOCK AND AFTER
 
     foo = raw"""
         @def hascode = true
@@ -68,35 +68,6 @@
         \output{ex}
         ```julia:ex2
         # modif
-        println(randn())
-        ```
-        \output{ex2}
-        ```julia:ex3
-        println(randn())
-        ```
-        \output{ex3}
-        """
-
-    h = foo |> fd2html_td
-
-    @test isapproxstr(h, """
-                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$a</code></pre>
-                <pre><code class="language-julia"># modif
-                println(randn())</code></pre> <pre><code class=\"plaintext\">$d</code></pre>
-                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$e</code></pre>
-                """)
-
-    # FROZEN CODE --> WILL USE CODE FROM BEFORE even though we changed it (no re-eval)
-
-    foo = raw"""
-        @def hascode = true
-        @def freezecode = true
-        ```julia:ex
-        # modif
-        println(randn())
-        ```
-        \output{ex}
-        ```julia:ex2
         println(randn())
         ```
         \output{ex2}
@@ -120,7 +91,7 @@ end
     flush_td(); set_globals()
 
     # Inserting new code block
-    h, vars = raw"""
+    h = raw"""
         @def hascode = true
         ```julia:ex1
         a = 5
@@ -132,7 +103,7 @@ end
         println(a)
         ```
         \output{ex2}
-        """ |> fd2html_tdv
+        """ |> fd2html_td
 
     @test isapproxstr(h, """
             <pre><code class="language-julia">a = 5
@@ -143,14 +114,7 @@ end
             <pre><code class=\"plaintext\">8</code></pre>
             """)
 
-    @test isapproxstr(J.str(vars["fd_code"].first), """
-        a = 5
-        println(a)
-
-        a += 3
-        println(a)""")
-
-    h, vars = raw"""
+    h = raw"""
         @def hascode = true
         @def reeval  = true
         ```julia:ex1
@@ -168,7 +132,7 @@ end
         println(a)
         ```
         \output{ex2}
-        """ |> fd2html_tdv
+        """ |> fd2html_td
 
     @test isapproxstr(h, """
             <pre><code class="language-julia">a = 5
@@ -181,13 +145,4 @@ end
             println(a)</code></pre>
             <pre><code class=\"plaintext\">9</code></pre>
             """)
-    @test isapproxstr(J.str(vars["fd_code"].first), """
-        a = 5
-        println(a)
-
-        a += 1
-        println(a)
-
-        a += 3
-        println(a)""")
 end

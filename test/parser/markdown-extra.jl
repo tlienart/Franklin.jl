@@ -13,32 +13,32 @@ end
 
 @testset "Tickssss" begin # issue 219
     st = raw"""A `B` C"""
-    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
+    tokens = F.find_tokens(st, F.MD_TOKENS, F.MD_1C_TOKENS)
     @test tokens[1].name == :CODE_SINGLE
     @test tokens[2].name == :CODE_SINGLE
 
     st = raw"""A ``B`` C"""
-    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
+    tokens = F.find_tokens(st, F.MD_TOKENS, F.MD_1C_TOKENS)
     @test tokens[1].name == :CODE_DOUBLE
     @test tokens[2].name == :CODE_DOUBLE
 
     st = raw"""A ``` B ``` C"""
-    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
+    tokens = F.find_tokens(st, F.MD_TOKENS, F.MD_1C_TOKENS)
     @test tokens[1].name == :CODE_TRIPLE
     @test tokens[2].name == :CODE_TRIPLE
 
     st = raw"""A ````` B ````` C"""
-    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
+    tokens = F.find_tokens(st, F.MD_TOKENS, F.MD_1C_TOKENS)
     @test tokens[1].name == :CODE_PENTA
     @test tokens[2].name == :CODE_PENTA
 
     st = raw"""A ```b B ``` C"""
-    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
+    tokens = F.find_tokens(st, F.MD_TOKENS, F.MD_1C_TOKENS)
     @test tokens[1].name == :CODE_LANG
     @test tokens[2].name == :CODE_TRIPLE
 
     st = raw"""A `````b B ````` C"""
-    tokens = J.find_tokens(st, J.MD_TOKENS, J.MD_1C_TOKENS)
+    tokens = F.find_tokens(st, F.MD_TOKENS, F.MD_1C_TOKENS)
     @test tokens[1].name == :CODE_LANG2
     @test tokens[2].name == :CODE_PENTA
 

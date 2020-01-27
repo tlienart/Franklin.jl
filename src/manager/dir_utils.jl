@@ -7,12 +7,12 @@ const TrackedFiles = Dict{Pair{String, String}, Float64}
 
 
 """
-$(SIGNATURES)
-
 Prepare the output directory `PATHS[:pub]`.
 
-* `clear=true` removes the content of the output directory if it exists to start from a blank
-slate
+## Argument
+
+* `clear=true`: removes the content of the output directory if it exists to
+                start from a blank slate
 """
 function prepare_output_dir(clear::Bool=true)::Nothing
     # if required to start from a blank slate -> remove the output dir
@@ -27,8 +27,8 @@ end
 """
 $(SIGNATURES)
 
-Take a `root` path to an input file and convert to output path. If the output path does not exist,
-create it.
+Take a `root` path to an input file and convert to output path. If the output
+path does not exist, create it.
 """
 function out_path(root::String)::String
     len_in = lastindex(joinpath(PATHS[:src], ""))
@@ -46,8 +46,8 @@ end
 """
 $(SIGNATURES)
 
-Update the dictionaries referring to input files and their time of last change. The variable `verb`
-propagates verbosity.
+Update the dictionaries referring to input files and their time of last change.
+The variable `verb` propagates verbosity.
 """
 function scan_input_dir!(md_files::TrackedFiles, html_files::TrackedFiles,
                          other_files::TrackedFiles, infra_files::TrackedFiles,
@@ -111,10 +111,8 @@ end
 
 
 """
-$(SIGNATURES)
-
-Helper function, if `fpair` is not referenced in the dictionary (new file) add the entry to the
-dictionary with the time of last modification as val.
+Helper function, if `fpair` is not referenced in the dictionary (new file) add
+the entry to the dictionary with the time of last modification as val.
 """
 function add_if_new_file!(dict::TrackedFiles, fpair::Pair{String,String}, verb::Bool)::Nothing
     haskey(dict, fpair) && return nothing

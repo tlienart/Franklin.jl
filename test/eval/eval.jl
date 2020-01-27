@@ -1,10 +1,6 @@
-J.FD_ENV[:CUR_PATH] = "index.md"
+set_curpath("index.md")
 
 @testset "Evalcode" begin
-    # see `converter/md_blocks:convert_code_block`
-    # see `converter/lx/resolve_lx_input_*`
-    # --------------------------------------------
-
     h = raw"""
         Simple code:
         ```julia:./code/exca1
@@ -12,7 +8,7 @@ J.FD_ENV[:CUR_PATH] = "index.md"
         print(a^2)
         ```
         then:
-        \input{output}{./code/exca1}
+        \output{./code/exca1}
         done.
         """ |> seval
 
@@ -23,21 +19,21 @@ J.FD_ENV[:CUR_PATH] = "index.md"
         print(a^2)
         ```
         then:
-        \input{output}{excb1}
+        \output{excb1}
         done.
         """ |> seval
 
     @test h == h2
 
-    spatha = joinpath(J.PATHS[:assets], "index", "code", "exca1.jl")
-    spathb = joinpath(J.PATHS[:assets], "index", "code", "excb1.jl")
+    spatha = joinpath(F.PATHS[:assets], "index", "code", "exca1.jl")
+    spathb = joinpath(F.PATHS[:assets], "index", "code", "excb1.jl")
     @test isfile(spatha)
     @test isfile(spathb)
     @test isapproxstr(read(spatha, String), """
-        $(J.MESSAGE_FILE_GEN_JMD)
+        $(F.MESSAGE_FILE_GEN_FMD)
         a = 5\nprint(a^2)""")
 
-    opath = joinpath(J.PATHS[:assets], "index", "code", "output", "exca1.out")
+    opath = joinpath(F.PATHS[:assets], "index", "code", "output", "exca1.out")
     @test isfile(opath)
     @test read(opath, String) == "25"
 
@@ -51,16 +47,16 @@ J.FD_ENV[:CUR_PATH] = "index.md"
 end
 
 @testset "Eval (errs)" begin
-    # see `converter/md_blocks:convert_code_block`
-    # --------------------------------------------
-    h = raw"""
+    s = raw"""
         Simple code:
         ```python:./scripts/testpy
         a = 5
         print(a**2)
         ```
         done.
-        """ |> seval
+        """
+    h = ""
+    @test_logs (:warn, "Evaluation of non-Julia code blocks is not yet supported.") (h = s |> seval)
 
     @test isapproxstr(h, raw"""
             <p>Simple code:
@@ -77,15 +73,15 @@ end
         print(a^2)
         ```
         then:
-        \input{output}{/assets/scripts/test2}
+        \output{/assets/scripts/test2}
         done.
         """ |> seval
 
-    spath = joinpath(J.PATHS[:assets], "scripts", "test2.jl")
+    spath = joinpath(F.PATHS[:assets], "scripts", "test2.jl")
     @test isfile(spath)
     @test occursin("a = 5\nprint(a^2)", read(spath, String))
 
-    opath = joinpath(J.PATHS[:assets], "scripts", "output", "test2.out")
+    opath = joinpath(F.PATHS[:assets], "scripts", "output", "test2.out")
     @test isfile(opath)
     @test read(opath, String) == "25"
 
@@ -99,24 +95,23 @@ end
 
     # ------------
 
-    J.FD_ENV[:CUR_PATH] = "pages/pg1.md"
-
     h = raw"""
+        @def fd_rpath = "pages/pg1.md"
         Simple code:
         ```julia:./code/abc2
         a = 5
         print(a^2)
         ```
         then:
-        \input{output}{./code/abc2}
+        \output{./code/abc2}
         done.
         """ |> seval
 
-    spath = joinpath(J.PATHS[:assets], "pages", "pg1", "code", "abc2.jl")
+    spath = joinpath(F.PATHS[:assets], "pages", "pg1", "code", "abc2.jl")
     @test isfile(spath)
     @test occursin("a = 5\nprint(a^2)", read(spath, String))
 
-    opath = joinpath(J.PATHS[:assets], "pages", "pg1", "code", "output" ,"abc2.out")
+    opath = joinpath(F.PATHS[:assets], "pages", "pg1", "code", "output" ,"abc2.out")
     @test isfile(opath)
     @test read(opath, String) == "25"
 
@@ -137,7 +132,7 @@ end
         print(dot(a, a))
         ```
         then:
-        \input{output}{scripts/test1}
+        \output{scripts/test1}
         done.
         """ |> seval
     # dot(a, a) == 54
@@ -145,11 +140,12 @@ end
 end
 
 @testset "Eval (img)" begin
-    J.FD_ENV[:CUR_PATH] = "index.html"
     h = raw"""
+        @def reeval=true
         Simple code:
         ```julia:tv2
-        write(joinpath(@__DIR__, "output", "tv2.png"), "blah")
+        #hideall
+        write(joinpath(@OUTPUT, "tv2.png"), "blah")
         ```
         then:
         \input{plot}{tv2}
@@ -159,17 +155,19 @@ end
 end
 
 @testset "Eval (throw)" begin
-    h = raw"""
+    s = raw"""
         Simple code:
         ```julia:scripts/test1
         sqrt(-1)
         ```
         then:
-        \input{output}{scripts/test1}
+        \output{scripts/test1}
         done.
-        """ |> seval
+        """
+    h = ""
+    @test_logs (:warn, "There was an error of type DomainError running the code.") (h = s |> seval)
     # errors silently
-    @test occursin("then: <pre><code class=\"plaintext\">There was an error running the code:\nDomainError", h)
+    @test occursin("then: <pre><code class=\"plaintext\">DomainError(-1.0, \"sqrt will only return a complex result if called with a complex argument. Try sqrt(Complex(x)).\"", h)
 end
 
 @testset "Eval (nojl)" begin
@@ -181,7 +179,7 @@ end
         done.
         """
 
-    @test (@test_logs (:warn, "Eval of non-julia code blocks is not yet supported.") h |> seval) == "<p>Simple code: <pre><code class=\"language-python\">sqrt(-1)</code></pre> done.</p>\n"
+    @test (@test_logs (:warn, "Evaluation of non-Julia code blocks is not yet supported.") h |> seval) == "<p>Simple code: <pre><code class=\"language-python\">sqrt(-1)</code></pre> done.</p>\n"
 end
 
 # temporary fix for 186: make error appear and also use `abspath` in internal include
@@ -225,7 +223,7 @@ end
     @test isapproxstr(h, """
         <pre><code class="language-julia">a = 5
         a *= 2</code></pre>
-        <div class="code_output"><pre><code class="plaintext">10</code></pre></div>
+        <pre><code class="plaintext">10</code></pre>
         """)
 
     # Show with stdout
@@ -243,7 +241,7 @@ end
         <pre><code class="language-julia">a = 5
         println("hello")
         a *= 2</code></pre>
-        <div class="code_output"><pre><code class="plaintext">hello
-        10</code></pre></div>
+        <pre><code class="plaintext">hello
+        10</code></pre>
         """)
 end

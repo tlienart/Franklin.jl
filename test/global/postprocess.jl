@@ -38,7 +38,7 @@
     @test occursin("=\"/prependme/libs/katex/katex.min.css", index)
 end
 
-if J.FD_CAN_PRERENDER; @testset "prerender" begin
+if F.FD_CAN_PRERENDER; @testset "prerender" begin
     @testset "katex" begin
         hs = raw"""
         <!doctype html>
@@ -51,7 +51,7 @@ if J.FD_CAN_PRERENDER; @testset "prerender" begin
         </div>
         """
 
-        jskx = J.js_prerender_katex(hs)
+        jskx = F.js_prerender_katex(hs)
         # conversion of the non-ascii endash (inline)
         @test occursin("""–<span class=\"katex\">""", jskx)
         # conversion of `\(M\)` (inline)
@@ -60,7 +60,7 @@ if J.FD_CAN_PRERENDER; @testset "prerender" begin
         @test occursin("""<span class=\"katex-display\"><span class=\"katex\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi>""", jskx)
     end
 
-    if J.FD_CAN_HIGHLIGHT; @testset "highlight" begin
+    if F.FD_CAN_HIGHLIGHT; @testset "highlight" begin
         hs = raw"""
         <!doctype html>
         <html lang=en>
@@ -75,7 +75,7 @@ if J.FD_CAN_PRERENDER; @testset "prerender" begin
         </code></pre>
         </div>
         """
-        jshl = J.js_prerender_highlight(hs)
+        jshl = F.js_prerender_highlight(hs)
         # conversion of the code
         @test occursin("""<pre><code class="julia hljs"><span class="hljs-keyword">using</span>""", jshl)
         @test occursin(raw"""<span class="hljs-string">"hello <span class="hljs-variable">$b</span>"</span>""", jshl)

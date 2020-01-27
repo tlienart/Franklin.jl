@@ -31,7 +31,7 @@ const RSS_DICT = LittleDict{String,RSSItem}()
 
 
 """Convenience function for fallback fields"""
-jor(v::PageVars, a::String, b::String) = ifelse(isempty(first(v[a])), first(v[b]), first(v[a]))
+jor(a::String, b::String) = ifelse(isempty(locvar(a)), locvar(b), locvar(a))
 
 """Convenience function to remove <p> and </p> in RSS description (not supposed to happen)"""
 remove_html_ps(s::String)::String = replace(s, r"</?p>" => "")
@@ -50,32 +50,33 @@ $SIGNATURES
 
 Create an `RSSItem` out of the provided fields defined in the page vars.
 """
-function add_rss_item(fdv::PageVars)::RSSItem
-    link   = url_curpage()
-    title  = jor(fdv, "rss_title", "title")
-    descr  = jor(fdv, "rss", "rss_description")
+function add_rss_item()::RSSItem
+    link  = url_curpage()
+    title = jor("rss_title", "title")
+    descr = jor("rss", "rss_description")
 
     descr = fd2html(descr; internal=true) |> remove_html_ps
 
-    author    = fdv["rss_author"]    |> first
-    category  = fdv["rss_category"]  |> first
-    comments  = fdv["rss_comments"]  |> first
-    enclosure = fdv["rss_enclosure"] |> first
+    author    = locvar("rss_author")
+    category  = locvar("rss_category")
+    comments  = locvar("rss_comments")
+    enclosure = locvar("rss_enclosure")
 
-    pubDate = fdv["rss_pubdate"] |> first
+    pubDate = locvar("rss_pubdate")
     if pubDate == Date(1)
-        pubDate = fdv["date"] |> first
+        pubDate = locvar("date")
         if !isa(pubDate, Date) || pubDate == Date(1)
-            pubDate = fdv["fd_mtime"] |> first
+            pubDate = locvar("fd_mtime")
         end
     end
 
     # warning for title which should really be defined
     isnothing(title) && (title = "")
-    isempty(title) && @warn "Found an RSS description but no title for page $link."
+    isempty(title)   && @warn "Found an RSS description but no " *
+                              "title for page $link."
 
     RSS_DICT[link] = RSSItem(title, link, descr, author,
-        category, comments, enclosure, pubDate)
+                             category, comments, enclosure, pubDate)
 end
 
 
@@ -90,9 +91,9 @@ function rss_generator()::Nothing
     isempty(RSS_DICT) && return nothing
 
     # are the basic defs there? otherwise warn and break
-    rss_title = GLOBAL_PAGE_VARS["website_title"] |> first
-    rss_descr = GLOBAL_PAGE_VARS["website_descr"] |> first
-    rss_link  = GLOBAL_PAGE_VARS["website_url"]   |> first
+    rss_title = GLOBAL_VARS["website_title"] |> first
+    rss_descr = GLOBAL_VARS["website_descr"] |> first
+    rss_link  = GLOBAL_VARS["website_url"]   |> first
 
     if any(isempty, (rss_title, rss_descr, rss_link))
         @warn """I found RSS items but the RSS feed is not properly described:

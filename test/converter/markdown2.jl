@@ -29,8 +29,8 @@ end
 
 
 @testset "TOC"  begin
-    J.FD_ENV[:CUR_PATH] = "pages/ff/aa.md"
     h = raw"""
+        @def fd_rpath = "pages/ff/aa.md"
         \toc
         ## Hello `fd`
         #### weirdly nested
@@ -59,8 +59,8 @@ end
 end
 
 @testset "TOC"  begin
-    J.FD_ENV[:CUR_PATH] = "pages/ff/aa.md"
     s = raw"""
+        @def fd_rpath = "pages/ff/aa.md"
         @def mintoclevel = 2
         @def maxtoclevel = 3
         \toc

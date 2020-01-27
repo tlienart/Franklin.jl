@@ -1,8 +1,8 @@
-tok  = s -> J.find_tokens(s, J.MD_TOKENS, J.MD_1C_TOKENS)
-vfn  = s -> (t = tok(s); J.validate_footnotes!(t); t)
-vh   = s -> (t = vfn(s); J.validate_headers!(t); t)
-fib  = s -> (t = vh(s); J.find_indented_blocks!(t, s); t)
-fib2 = s -> (t = fib(s); J.filter_lr_indent!(t, s); t)
+tok  = s -> F.find_tokens(s, F.MD_TOKENS, F.MD_1C_TOKENS)
+vfn  = s -> (t = tok(s); F.validate_footnotes!(t); t)
+vh   = s -> (t = vfn(s); F.validate_headers!(t); t)
+fib  = s -> (t = vh(s); F.find_indented_blocks!(t, s); t)
+fib2 = s -> (t = fib(s); F.filter_lr_indent!(t, s); t)
 
 islr(t) = t.name == :LINE_RETURN && t.ss == "\n"
 istok(t, n, s) = t.name == n && t.ss == s
