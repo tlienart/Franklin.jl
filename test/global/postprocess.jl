@@ -2,7 +2,18 @@
     isdir("basic") && rm("basic", recursive=true, force=true)
     newsite("basic")
 
-    serve(single=true)
+    global silly_call = 0
+    function foo_on_write(pg, vars)
+        global silly_call
+        silly_call += length(pg)
+        vars["fd_rpath"] # should not error
+        return nothing
+    end
+
+    serve(single=true, on_write=foo_on_write)
+
+    @test silly_call > 0
+
     # ---------------
     @test all(isdir, ("assets", "css", "libs", "pub", "src"))
     @test all(isfile, ("index.html",

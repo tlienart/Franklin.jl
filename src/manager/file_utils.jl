@@ -26,7 +26,8 @@ write it at the appropriate place.
 """
 function write_page(root::String, file::String, head::String,
                     pg_foot::String, foot::String;
-                    prerender::Bool=false, isoptim::Bool=false)::Nothing
+                    prerender::Bool=false, isoptim::Bool=false,
+                    on_write::Function=(_, _) -> nothing)::Nothing
     # 1. read the markdown into string, convert it and extract definitions
     # 2. eval the definitions and update the variable dictionary, also retrieve
     # document variables (time of creation, time of last modif) and add those
@@ -85,6 +86,8 @@ function write_page(root::String, file::String, head::String,
 
     # 5. write the html file where appropriate
     write(joinpath(out_path(root), change_ext(file)), pg)
+
+    on_write(pg, LOCAL_VARS)
     return nothing
 end
 
@@ -121,9 +124,10 @@ caught in `process_file(args...)`.
 """
 function process_file_err(case::Symbol, fpair::Pair{String, String}, head::AS="",
                           pg_foot::AS="", foot::AS="", t::Float64=0.;
-                          clear::Bool=false, prerender::Bool=false, isoptim::Bool=false)::Nothing
+                          clear::Bool=false, prerender::Bool=false, isoptim::Bool=false,
+                          on_write::Function=(_, _) -> nothing)::Nothing
     if case == :md
-        write_page(fpair..., head, pg_foot, foot; prerender=prerender, isoptim=isoptim)
+        write_page(fpair..., head, pg_foot, foot; prerender=prerender, isoptim=isoptim, on_write=on_write)
     elseif case == :html
         fpath = joinpath(fpair...)
         raw_html = read(fpath, String)
