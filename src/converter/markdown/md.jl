@@ -11,25 +11,31 @@ Returns the html string as well as a dictionary of page variables.
 
 **Keyword arguments**
 
-* `isrecursive=false`: a bool indicating whether the call is the parent call or a child call
-* `isinternal=false`:  a bool indicating whether the call stems from `fd2html` in internal mode
-* `isconfig=false`:    a bool indicating whether the file to convert is the configuration file
-* `has_mddefs=true`:   a bool indicating whether to look for definitions of page variables
+* `isrecursive=false`: a bool indicating whether the call is the parent call or
+                        a child call
+* `isinternal=false`:  a bool indicating whether the call stems from `fd2html`
+                        in internal mode
+* `isconfig=false`:    a bool indicating whether the file to convert is the
+                        configuration file
+* `has_mddefs=true`:   a bool indicating whether to look for definitions of
+                        page variables
 """
-function convert_md(mds::AS, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
-                    isrecursive::Bool=false, isinternal::Bool=false,
-                    isconfig::Bool=false, has_mddefs::Bool=true
-                    )::Tuple{String,Union{Nothing,PageVars}}
+function convert_md(mds::AS,
+                    pre_lxdefs::Vector{LxDef}=collect(values(GLOBAL_LXDEFS));
+                    isrecursive::Bool=false,
+                    isinternal::Bool=false,
+                    isconfig::Bool=false,
+                    has_mddefs::Bool=true )::String
+    # instantiate page dictionaries
     if !(isrecursive || isinternal)
-        def_LOCAL_PAGE_VARS!()  # page-specific variables
+        def_LOCAL_VARS!()       # page-specific variables
         def_PAGE_HEADERS!()     # all the headers
         def_PAGE_EQREFS!()      # page-specific equation dict (hrefs)
         def_PAGE_BIBREFS!()     # page-specific reference dict (hrefs)
         def_PAGE_FNREFS!()      # page-specific footnote dict
-        def_PAGE_LINK_DEFS!()   # page-specific link definition candidates [..]: (...)
+        def_PAGE_LINK_DEFS!()   # page-specific link definition candidates
     end
-
-    # if it's a substring, force it to a string
+    # if we're given a substring, force it to a string
     mds = String(mds)
 
     #
@@ -37,9 +43,9 @@ function convert_md(mds::AS, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
     # (to find latex command, latex definitions, math envs etc.)
     #
 
-    # -----------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------
     #> 1. Tokenize
-    tokens  = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
+    tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
     # distinguish fnref/fndef
     validate_footnotes!(tokens)
     # ignore header tokens that are not at the start of a line
@@ -50,43 +56,52 @@ function convert_md(mds::AS, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
         filter_lr_indent!(tokens, mds)
     end
 
-    # -----------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------
     #> 2. Open-Close blocks (OCBlocks)
     #.> 0
     #>> a. find them
     blocks, tokens = find_all_ocblocks(tokens, MD_OCB_ALL)
     #>> b. merge CODE_BLOCK_IND which are separated by emptyness
     merge_indented_blocks!(blocks, mds)
-    #>> b'. only keep indented code blocks which are not contained in larger blocks (#285)
+    #>> b'. only keep indented code blocks which are not contained in larger
+    # blocks (#285)
     filter_indented_blocks!(blocks)
     #>> c. now that blocks have been found, line-returns can be dropped
     filter!(τ -> τ.name ∉ L_RETURNS, tokens)
     #>> e. keep track of literal content of possible link definitions to use
     validate_and_store_link_defs!(blocks)
 
-    # -----------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------
     #> 3. LaTeX commands
     #>> a. find "newcommands", update active blocks/braces
-    lxdefs, tokens, braces, blocks = find_md_lxdefs(tokens, blocks)
+    lxdefs, tokens, braces, blocks = find_lxdefs(tokens, blocks)
     #>> b. if any lxdefs are given in the context, merge them. `pastdef` specifies
     # that the definitions appeared "earlier"
     lprelx = length(pre_lxdefs)
     (lprelx > 0) && (lxdefs = cat(pastdef.(pre_lxdefs), lxdefs, dims=1))
     #>> c. find latex commands
-    lxcoms, _ = find_md_lxcoms(tokens, lxdefs, braces)
+    lxcoms, _ = find_lxcoms(tokens, lxdefs, braces)
 
-    # -----------------------------------------------------------------------------------
-    #> 4. Page variable definition (mddefs)
-    fd_vars = nothing
-    has_mddefs && (fd_vars = process_md_defs(blocks, isconfig, lxdefs))
-    isconfig && return "", fd_vars
+    # ------------------------------------------------------------------------
+    #> 4. Page variable definition (mddefs), also if in config, update lxdefs
+    if has_mddefs
+        process_mddefs(blocks, isconfig)
+    end
+    #> 4.b if config, update global lxdefs as well
+    if isconfig
+        for lxd ∈ lxdefs
+            GLOBAL_LXDEFS[lxd.name] = pastdef(lxd)
+        end
+        # if it's the config file we don't need to go further
+        return ""
+    end
 
-    # -----------------------------------------------------------------------------------
-    #> 5. Process special characters and html entities so that they can be injected
-    # as they are in the HTML later
+    # ------------------------------------------------------------------------
+    #> 5. Process special characters and html entities so that they can be
+    # injected as they are in the HTML later
     sp_chars = find_special_chars(tokens)
 
-    # ===================================================================================
+    # ========================================================================
     #
     # Forming of the html string
     #
@@ -94,42 +109,34 @@ function convert_md(mds::AS, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
     # and add them to the blocks to insert
     fnrefs = filter!(τ -> τ.name == :FOOTNOTE_REF, tokens)
 
-    #> 1. Merge all the blocks that will need further processing before insertion
-    blocks2insert = merge_blocks(lxcoms, deactivate_divs(blocks), sp_chars, fnrefs)
+    #> 1. Merge all the blocks that will need further processing before
+    # insertion
+    b2insert = merge_blocks(lxcoms, deactivate_divs(blocks), sp_chars, fnrefs)
 
     #> 2. Form intermediate markdown + html
-    inter_md, mblocks = form_inter_md(mds, blocks2insert, lxdefs)
+    inter_md, mblocks = form_inter_md(mds, b2insert, lxdefs)
     inter_html = md2html(inter_md; stripp=isrecursive)
 
     #> 3. Plug resolved blocks in partial html to form the final html
-    lxcontext = LxContext(lxcoms, lxdefs, braces)
-    hstring   = convert_inter_html(inter_html, mblocks, lxcontext)
+    hstring = convert_inter_html(inter_html, mblocks, lxdefs)
 
-    # final vars adjustments
-    if !isnothing(fd_vars)
-        #> if there's code, assemble it so that can be shown or loaded in one shot
-        codes = LOCAL_PAGE_VARS["fd_code_scope"].first.codes
-        if !isempty(codes)
-            set_var!(fd_vars, "fd_code", strip(prod(c*"\n" for c in codes)))
-        end
-        #> if no title is specified, grab the first header if there is one
-        if isnothing(LOCAL_PAGE_VARS["title"].first) && !isempty(PAGE_HEADERS)
-            set_var!(fd_vars, "title", first(values(PAGE_HEADERS))[1])
-        end
+    # final var adjustment, infer title if not given
+    if isnothing(locvar("title")) && !isempty(PAGE_HEADERS)
+        set_var!(LOCAL_VARS, "title", first(values(PAGE_HEADERS))[1])
     end
 
-    # Return the string + franklin variables
-    return hstring, fd_vars
+    # Return the string
+    return hstring
 end
 
 
 """
 $(SIGNATURES)
 
-Same as `convert_md` except tailored for conversion of the inside of a math block (no command
-definitions, restricted tokenisation to latex tokens). The offset keeps track of where the math
-block was, which is useful to check whether any of the latex command used in the block have not
-yet been defined.
+Same as `convert_md` except tailored for conversion of the inside of a math
+block (no command definitions, restricted tokenisation to latex tokens). The
+offset keeps track of where the math block was, which is useful to check
+whether any of the latex command used in the block have not yet been defined.
 
 **Arguments**
 
@@ -137,7 +144,8 @@ yet been defined.
 * `lxdefs`: existing latex definitions prior to the math block
 * `offset`: where the mathblock is with respect to the parent string
 """
-function convert_md_math(ms::AS, lxdefs::Vector{LxDef}=Vector{LxDef}(), offset::Int=0)::String
+function convert_md_math(ms::AS, lxdefs::Vector{LxDef}=Vector{LxDef}(),
+                         offset::Int=0)::String
     # if a substring is given, copy it as string
     ms = String(ms)
     #
@@ -153,13 +161,13 @@ function convert_md_math(ms::AS, lxdefs::Vector{LxDef}=Vector{LxDef}(), offset::
     braces = filter(β -> β.name == :LXB, blocks)
 
     #> 3. Find latex commands (indicate we're in a math environment + offset)
-    lxcoms, _ = find_md_lxcoms(tokens, lxdefs,  braces, offset; inmath=true)
+    lxcoms, _ = find_lxcoms(tokens, lxdefs,  braces, offset; inmath=true)
 
     #
     # Forming of the html string
-    # (see `form_inter_md`, it's similar but simplified since there are fewer conditions)
+    # (see `form_inter_md`, it's similar but simplified since there are fewer
+    # conditions)
     #
-
     htmls = IOBuffer()
 
     strlen   = lastindex(ms)
@@ -171,7 +179,8 @@ function convert_md_math(ms::AS, lxdefs::Vector{LxDef}=Vector{LxDef}(), offset::
     while (next_lxc < BIG_INT) && (head < strlen)
         # add anything that may occur before the first command
         (head < next_lxc) && write(htmls, subs(ms, head, prevind(ms, next_lxc)))
-        # add the first command after resolving, bool to indicate that we're in a math env
+        # add the first command after resolving, bool to indicate that we're in
+        # a math env
         write(htmls, resolve_lxcom(lxcoms[lxc_idx], lxdefs, inmath=true))
         # move the head to after the lxcom and increment the com counter
         head     = nextind(ms, to(lxcoms[lxc_idx]))
@@ -185,10 +194,11 @@ end
 
 
 """
-    INSERT
+INSERT
 
-String that is plugged as a placeholder of blocks that need further processing. The spaces allow to
-handle overzealous inclusion of `<p>...</p>` from the base Markdown to HTML conversion.
+String that is plugged as a placeholder of blocks that need further processing.
+The spaces allow to handle overzealous inclusion of `<p>...</p>` from the base
+Markdown to HTML conversion.
 """
 const INSERT     = " ##FDINSERT## "
 const INSERT_    = strip(INSERT)
@@ -197,10 +207,8 @@ const INSERT_LEN = length(INSERT_)
 
 
 """
-$(SIGNATURES)
-
-Form an intermediate MD file where special blocks are replaced by a marker (`INSERT`) indicating
-that a piece will need to be plugged in there later.
+Form an intermediate MD file where special blocks are replaced by a marker
+(`INSERT`) indicating that a piece will need to be plugged in there later.
 
 **Arguments**
 
@@ -209,7 +217,8 @@ that a piece will need to be plugged in there later.
 * `lxdefs`: existing latex definitions prior to the math block
 """
 function form_inter_md(mds::AS, blocks::Vector{<:AbstractBlock},
-                      lxdefs::Vector{LxDef})::Tuple{String, Vector{AbstractBlock}}
+                       lxdefs::Vector{LxDef}
+                       )::Tuple{String, Vector{AbstractBlock}}
     strlen  = lastindex(mds)
     intermd = IOBuffer()
     # keep track of the matching blocks for each insert
@@ -246,8 +255,9 @@ function form_inter_md(mds::AS, blocks::Vector{<:AbstractBlock},
             else
                 if isa(β, OCBlock) && β.name ∈ MD_HEADER
                     # this is a trick to allow whatever follows the title to be
-                    # properly parsed by Markdown.parse; it could otherwise cause
-                    # issues for instance if a table starts immediately after the title
+                    # properly parsed by Markdown.parse; it could otherwise
+                    # cause issues for instance if a table starts immediately
+                    # after the title
                     write(intermd, INSERT * "\n ")
                 else
                     write(intermd, INSERT)
@@ -278,28 +288,29 @@ end
 """
 $(SIGNATURES)
 
-Take a partial markdown string with the `INSERT` marker and plug in the appropriately processed
-block.
+Take a partial markdown string with the `INSERT` marker and plug in the
+appropriately processed block.
 
 **Arguments**
 
-* `ihtml`:     the intermediary html string (with `INSERT`)
-* `blocks`:    vector of blocks
-* `lxcontext`: latex context
+* `ihtml`:  the intermediary html string (with `INSERT`)
+* `blocks`: vector of blocks
+* `lxdefs`: latex context
 """
 function convert_inter_html(ihtml::AS,
                             blocks::Vector{<:AbstractBlock},
-                            lxcontext::LxContext)::String
+                            lxdefs::Vector{LxDef})::String
     # Find the INSERT indicators
     allmatches = collect(eachmatch(INSERT_PAT, ihtml))
     strlen = lastindex(ihtml)
 
-    # write the pieces of the final html in order, gradually processing the blocks to insert
+    # write the pieces of the final html in order, gradually processing the
+    # blocks to insert
     htmls = IOBuffer()
     head  = 1
     for (i, m) ∈ enumerate(allmatches)
-        # two cases can happen based on whitespaces around an insertion that we
-        # want to get rid of, potentially both happen simultaneously.
+        # two cases can happen based on whitespaces around an insertion that
+        # we want to get rid of, potentially both happen simultaneously.
         # 1. <p>##FDINSERT##...
         # 2. ...##FDINSERT##</p>
         # exceptions,
@@ -335,7 +346,7 @@ function convert_inter_html(ihtml::AS,
             head = ifelse(ihtml[head] in (' ', '>'), nextind(ihtml, head), head)
         end
         # store the resolved block
-        write(htmls, convert_block(blocks[i], lxcontext))
+        write(htmls, convert_block(blocks[i], lxdefs))
     end
     # store whatever is after the last INSERT if anything
     (head ≤ strlen) && write(htmls, subs(ihtml, head:strlen))
@@ -347,18 +358,16 @@ end
 """
 $(SIGNATURES)
 
-Convenience function to process markdown definitions `@def ...` as appropriate. Return a dictionary
-of local page variables or nothing in the case of the config file (which updates globally
-available page variable dictionaries and also the latex definitions).
+Convenience function to process markdown definitions `@def ...` as appropriate.
+Depending on `isconfig`, will update `GLOBAL_VARS` or `LOCAL_VARS`.
 
 **Arguments**
 
 * `blocks`:    vector of active docs
-* `isconfig`:  whether the file being processed is the config file (--> global page variables)
-* `lxdefs`:    latex definitions
+* `isconfig`:  whether the file being processed is the config file
+                (--> global page variables)
 """
-function process_md_defs(blocks::Vector{OCBlock}, isconfig::Bool,
-                         lxdefs::Vector{LxDef})::Union{Nothing,PageVars}
+function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool)::Nothing
     # Find all markdown definitions (MD_DEF) blocks
     mddefs = filter(β -> (β.name == :MD_DEF), blocks)
     # empty container for the assignments
@@ -367,23 +376,20 @@ function process_md_defs(blocks::Vector{OCBlock}, isconfig::Bool,
     for (i, mdd) ∈ enumerate(mddefs)
         matched = match(MD_DEF_PAT, mdd.ss)
         if isnothing(matched)
-            @warn "Found delimiters for an @def environment but it didn't have the right " *
-                  "@def var = ... format. Verify (ignoring for now)."
+            @warn "Found delimiters for an @def environment but it didn't " *
+                  "have the right @def var = ... format. Verify (ignoring " *
+                  "for now)."
             continue
         end
         vname, vdef = matched.captures[1:2]
         push!(assignments, (String(vname) => String(vdef)))
     end
-    # if we're currently looking at the config file, update the global page var dictionary
-    # GLOBAL_PAGE_VARS and store the latex definition globally as well in GLOBAL_LXDEFS
+
+    # if in config file, update `GLOBAL_VARS` and `GLOBAL_LXDEFS`
     if isconfig
-        isempty(assignments) || set_vars!(GLOBAL_PAGE_VARS, assignments)
-        for lxd ∈ lxdefs
-            GLOBAL_LXDEFS[lxd.name] = pastdef(lxd)
-        end
-        return nothing
+        set_vars!(GLOBAL_VARS, assignments)
+    else
+        set_vars!(LOCAL_VARS, assignments)
     end
-    isempty(assignments) || set_vars!(LOCAL_PAGE_VARS, assignments)
-    fd_vars = merge(GLOBAL_PAGE_VARS, LOCAL_PAGE_VARS)
-    return fd_vars
+    return nothing
 end

@@ -1,5 +1,5 @@
 @testset "figalt, fig" begin
-    write(joinpath(J.PATHS[:assets], "testimg.png"), "png code")
+    write(joinpath(F.PATHS[:assets], "testimg.png"), "png code")
     h = raw"""
         A figure:
         \figalt{fig 1}{/assets/testimg.png}
@@ -14,7 +14,7 @@
             <img src=\"/assets/testimg.png\" alt=\"\">
             Done.</p>
             """)
-    p = mkpath(joinpath(J.PATHS[:assets], "output"))
+    p = mkpath(joinpath(F.PATHS[:assets], "output"))
     write(joinpath(p, "testimg_2.png"), "png code")
     h = raw"""
         Another figure:
@@ -30,23 +30,7 @@
         \fig{/assets/testimg_3.png}
         """ |> seval
     @test isapproxstr(h, """
-            <p>No fig: $(J.html_err("image matching '/assets/testimg_3.png' not found"))</p>
-            """)
-end
-
-@testset "file" begin
-    write(joinpath(J.PATHS[:assets], "blah.pdf"), "pdf code")
-    h = raw"""
-        View \file{the file}{/assets/blah.pdf} here.
-        """ |> seval
-    @test isapproxstr(h, """
-            <p>View <a href=\"/assets/blah.pdf\">the file</a> here.</p>
-            """)
-    h = raw"""
-        View \file{no file}{/assets/blih.pdf} here.
-        """ |> seval
-    @test isapproxstr(h, """
-            <p>View $(J.html_err("file matching '/assets/blih.pdf' not found")) here.</p>
+            <p>No fig: $(F.html_err("Image matching '/assets/testimg_3.png' not found."))</p>
             """)
 end
 
@@ -55,7 +39,7 @@ end
     # has header in source
     #
     testcsv = "h1,h2,h3\nstring1, 1.567, 0\n,,\n l i n e ,.158,99999999"
-    write(joinpath(J.PATHS[:assets], "testcsv.csv"), testcsv)
+    write(joinpath(F.PATHS[:assets], "testcsv.csv"), testcsv)
     # no header specified
     h = raw"""
         A table:
@@ -123,7 +107,7 @@ end
         \tableinput{,}{/assets/testcsv.csv}
         Done.
         """ |> seval
-    shouldbe = """<p>A table: <p><span style=\"color:red;\">// header size (2) and number of columns (3) do not match //</span></p>
+    shouldbe = """<p>A table: <p><span style=\"color:red;\">// In `\\tableinput`: header size (2) and number of columns (3) do not match. //</span></p>
             Done.</p>"""
     @test isapproxstr(h, shouldbe)
 
@@ -132,7 +116,7 @@ end
     #
 
     testcsv = "string1, 1.567, 0\n,,\n l i n e ,.158,99999999"
-    write(joinpath(J.PATHS[:assets], "testcsv.csv"), testcsv)
+    write(joinpath(F.PATHS[:assets], "testcsv.csv"), testcsv)
     # no header specified
     h = raw"""
         A table:
@@ -185,7 +169,7 @@ end
         Done.
         """ |> seval
 
-    shouldbe = """<p>A table: <p><span style=\"color:red;\">// header size (2) and number of columns (3) do not match //</span></p>
+    shouldbe = """<p>A table: <p><span style=\"color:red;\">// In `\\tableinput`: header size (2) and number of columns (3) do not match. //</span></p>
             Done.</p>"""
     @test isapproxstr(h, shouldbe)
 end

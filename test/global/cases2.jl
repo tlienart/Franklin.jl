@@ -61,8 +61,8 @@ end
 
 
 @testset "Table" begin
-    J.FD_ENV[:CUR_PATH] = "pages/pg1.html"
     st = """
+        @def fd_rpath = "pages/pg1.html"
         A
 
         ### Title

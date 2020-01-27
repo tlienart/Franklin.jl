@@ -195,14 +195,14 @@ f = check(609:629)
 
 # Hard line break
 # NOTE: fail due to Julia Markdown chomping off `\n`
-println("\n==Hard line breaks== (JMD CHOMP LR)\n")
+println("\n==Hard line breaks== (FMD CHOMP LR)\n")
 f = check(630:644)
 
 ### -- ALL NOK
 
 # Lists
 # NOTE: fail due to Julia Markdown inserting paragraphs in lists
-println("\n==List items== (JMD ADDS PARAGRAPH)\n")
+println("\n==List items== (FMD ADDS PARAGRAPH)\n")
 f = check(271:296)
 
 # inline
@@ -212,7 +212,7 @@ f = check(297)
 
 # soft line break
 # NOTE: fail due to Julia's Markdown chomping off the `\n`
-println("\n==Soft line breaks (JMD CHOMP  LR)==\n")
+println("\n==Soft line breaks (FMD CHOMP  LR)==\n")
 f = check(645:646)
 
 # ---------------------------------------------------------

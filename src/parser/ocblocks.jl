@@ -79,7 +79,7 @@ function find_all_ocblocks(tokens::Vector{Token}, ocplist::Vector{OCProto}; inma
 
     ocbs_all = Vector{OCBlock}()
     for ocp ∈ ocplist
-        if ocp.name == :CODE_BLOCK_IND && !LOCAL_PAGE_VARS["indented_code"].first
+        if ocp.name == :CODE_BLOCK_IND && !locvar("indented_code")
            continue
         end
         ocbs, tokens = find_ocblocks(tokens, ocp; inmath=inmath)
@@ -143,7 +143,8 @@ function find_special_chars(tokens::Vector{Token})
         τ.name == :CHAR_BACKSPACE   && push!(spch, HTML_SPCH(τ.ss, "&#92;"))
         τ.name == :CHAR_BACKTICK    && push!(spch, HTML_SPCH(τ.ss, "&#96;"))
         τ.name == :CHAR_LINEBREAK   && push!(spch, HTML_SPCH(τ.ss, "<br/>"))
-        τ.name == :CHAR_HTML_ENTITY && validate_html_entity(τ.ss) && push!(spch, HTML_SPCH(τ.ss))
+        τ.name == :CHAR_HTML_ENTITY &&
+            validate_html_entity(τ.ss) && push!(spch, HTML_SPCH(τ.ss))
     end
     return spch
 end

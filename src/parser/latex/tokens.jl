@@ -37,22 +37,19 @@ $(TYPEDEF)
 
 Structure to keep track of the definition of a latex command declared via a
 `\newcommand{\name}[narg]{def}`.
-
-NOTE: mutable so that we can modify the `from` element to mark it as zero when
-the command has been defined in the context of what we're currently parsing.
 """
-mutable struct LxDef
+struct LxDef
     name::String
     narg::Int
     def ::AS
-    # location of the definition > only things that can be mutated via pastdef!
+    # location of the definition
     from::Int
     to  ::Int
 end
 # if offset unspecified, start from basically -∞ (configs etc)
 function LxDef(name::String, narg::Int, def::AS)
-    o = FD_ENV[:OFFSET_GLOB_LXDEFS] += 5 # we don't care just fwd a bit
-    LxDef(name, narg, def, o, o + 3) # we also don't care YOLO
+    o = FD_ENV[:OFFSET_LXDEFS] += 5  # precise offset doesn't matter, jus
+    LxDef(name, narg, def, o, o + 3) # just forward a bit
 end
 
 from(lxd::LxDef) = lxd.from
@@ -62,8 +59,9 @@ to(lxd::LxDef)   = lxd.to
 """
 pastdef(λ)
 
-Convenience function to mark a definition as having been defined in the context
-i.e.: earlier than any other definition appearing in the current page.
+Convenience function to return a copy of a definition indicated as having
+already been earlier in the context i.e.: earlier than any other definition
+appearing in the current chunk.
 """
 pastdef(λ::LxDef) = LxDef(λ.name, λ.narg, λ.def)
 
@@ -77,27 +75,19 @@ struct LxCom <: AbstractBlock
     lxdef ::Ref{LxDef}      # definition of the command
     braces::Vector{OCBlock} # relevant {...} associated with the command
 end
-LxCom(ss, def) = LxCom(ss, def, Vector{OCBlock}())
+LxCom(ss, def)   = LxCom(ss, def, Vector{OCBlock}())
 from(lxc::LxCom) = from(lxc.ss)
-to(lxc::LxCom) = to(lxc.ss)
+to(lxc::LxCom)   = to(lxc.ss)
 
 
 """
-$(SIGNATURES)
-
 For a given `LxCom`, retrieve the definition attached to the corresponding
 `LxDef` via the reference.
 """
-getdef(lxc::LxCom) = getindex(lxc.lxdef).def
-
+getdef(lxc::LxCom)::AS = getindex(lxc.lxdef).def
 
 """
-$(TYPEDEF)
-
-Convenience structure to keep track of the latex commands and braces.
+For a given `LxCom`, retrieve the name of the command via the reference.
+Example: `\\cite` --> `cite`.
 """
-struct LxContext
-    lxcoms::Vector{LxCom}
-    lxdefs::Vector{LxDef}
-    bblocks::Vector{OCBlock}
-end
+getname(lxc::LxCom)::String = String(getindex(lxc.lxdef).name)[2:end]

@@ -1,16 +1,20 @@
 using Franklin, Test, Markdown, Dates, Random, Literate
-const J = Franklin
+const F = Franklin
 const R = @__DIR__
 const D = joinpath(dirname(dirname(pathof(Franklin))), "test", "_dummies")
 
-# NOTE this first file MUST be included before running the rest of the tests
-# otherwise you may get an error like "key 0x099191234..." was not found or
-# saying that the key :in doesn't exist or something along those lines
-include("frank_paths_vars.jl"); include("test_utils.jl")
+F.FD_ENV[:SILENT_MODE] = true
 
-include("misc.jl")
+# UTILS
+println("UTILS")
+include("utils/paths_vars.jl"); include("test_utils.jl")
+include("utils/misc.jl")
+include("utils/errors.jl")
+include("utils/html.jl")
+println("🍺")
 
 # MANAGER folder
+println("MANAGER")
 include("manager/utils.jl")
 include("manager/rss.jl")
 include("manager/config.jl")
@@ -25,10 +29,13 @@ include("parser/markdown-extra.jl")
 include("parser/footnotes+links.jl")
 println("🍺")
 
-# ERRORS
-println("Errors")
-include("errors/context.jl")
-println("🍺")
+# EVAL
+println("EVAL")
+include("eval/module.jl")
+include("eval/run.jl")
+include("eval/io.jl")
+include("eval/codeblock.jl")
+include("eval/eval.jl")
 
 # CONVERTER folder
 println("CONVERTER/MD")
@@ -41,9 +48,6 @@ println("🍺")
 println("CONVERTER/HTML")
 include("converter/html.jl")
 include("converter/html2.jl")
-println("🍺")
-println("CONVERTER/EVAL")
-include("converter/eval.jl")
 println("🍺")
 println("CONVERTER/LX")
 include("converter/lx_input.jl")

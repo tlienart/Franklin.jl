@@ -1,10 +1,11 @@
-scripts = joinpath(J.PATHS[:folder], "literate-scripts")
-cd(td); J.set_paths!(); mkpath(scripts)
+scripts = joinpath(F.PATHS[:folder], "literate-scripts")
+flush_td()
+cd(td); F.set_paths!(); mkpath(scripts)
 
 @testset "Literate-0" begin
     @test_throws ErrorException literate_folder("foo/")
     litpath = literate_folder("literate-scripts/")
-    @test litpath == joinpath(J.PATHS[:folder], "literate-scripts/")
+    @test litpath == joinpath(F.PATHS[:folder], "literate-scripts/")
 end
 
 @testset "Literate-a" begin
@@ -22,7 +23,7 @@ end
         D
         ```
         """
-    @test J.literate_post_process(s) == """
+    @test F.literate_post_process(s) == """
         <!--This file was generated, do not modify it.-->
         A
 
@@ -39,6 +40,7 @@ end
 end
 
 @testset "Literate-b" begin
+    flush_td(); cd(td); F.set_paths!(); mkpath(scripts)
     # Literate to Franklin
     s = raw"""
         # # Rational numbers
@@ -56,8 +58,8 @@ end
         """
     path = joinpath(scripts, "tutorial.jl")
     write(path, s)
-    opath, = J.literate_to_franklin("/literate-scripts/tutorial")
-    @test endswith(opath, joinpath(J.PATHS[:assets], "literate", "tutorial.md"))
+    opath, = F.literate_to_franklin("/literate-scripts/tutorial")
+    @test endswith(opath, joinpath(F.PATHS[:assets], "literate", "tutorial.md"))
     out = read(opath, String)
     @test out == """
         <!--This file was generated, do not modify it.-->
@@ -94,10 +96,10 @@ end
         <pre><code class="language-julia"># Define variable x and y
         x = 1//3
         y = 2//5</code></pre>
-        <div class="code_output"><pre><code class=\"plaintext\">2//5</code></pre></div>
+        <pre><code class=\"plaintext\">2//5</code></pre>
         <p>When adding <code>x</code> and <code>y</code> together we obtain a new rational number:</p>
         <pre><code class="language-julia">z = x + y</code></pre>
-        <div class="code_output"><pre><code class=\"plaintext\">11//15</code></pre></div>
+        <pre><code class=\"plaintext\">11//15</code></pre>
         """)
 end
 
@@ -105,9 +107,9 @@ end
     s = raw"""
         \literate{foo}
         """
-    @test_throws ErrorException (s |> fd2html_td)
+    @test_throws F.LiterateRelativePathError (s |> fd2html_td)
     s = raw"""
         \literate{/foo}
         """
-    @test @test_logs (:warn, "File not found when trying to convert a literate file ($(joinpath(J.PATHS[:folder], "foo.jl"))).") (s |> fd2html_td) == """<p><span style="color:red;">// Literate file matching '/foo' not found. //</span></p></p>\n"""
+    @test @test_logs (:warn, "File not found when trying to convert a literate file ($(joinpath(F.PATHS[:folder], "foo.jl"))).") (s |> fd2html_td) == """<p><span style="color:red;">// Literate file matching '/foo' not found. //</span></p></p>\n"""
 end

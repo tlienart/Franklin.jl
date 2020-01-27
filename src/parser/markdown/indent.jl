@@ -147,7 +147,7 @@ Discard any indented block that is within a larger block to avoid ambiguities
 """
 function filter_indented_blocks!(blocks::Vector{OCBlock})::Nothing\
     # retrieve the indices of the indented blocks
-    idx       = [i for i in eachindex(blocks) if blocks[i].name == :CODE_BLOCK_IND]
+    idx = [i for i in eachindex(blocks) if blocks[i].name == :CODE_BLOCK_IND]
     isempty(idx) && return nothing
     # keep track of the ones that are active
     active    = ones(Bool, length(idx))

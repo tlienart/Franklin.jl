@@ -10,11 +10,11 @@ The format is:
 
 where [NARG] is optional (see `LX_NARG_PAT`).
 """
-function find_md_lxdefs(tokens::Vector{Token}, blocks::Vector{OCBlock})
+function find_lxdefs(tokens::Vector{Token}, blocks::Vector{OCBlock})
     # container for the definitions
-    lxdefs = Vector{LxDef}()
+    lxdefs  = Vector{LxDef}()
     # find braces `{` and `}`
-    braces = filter(β -> β.name == :LXB, blocks)
+    braces  = filter(β -> β.name == :LXB, blocks)
     nbraces = length(braces)
     # keep track of active tokens
     active_tokens = ones(Bool, length(tokens))
@@ -38,7 +38,7 @@ function find_md_lxdefs(tokens::Vector{Token}, blocks::Vector{OCBlock})
 
         # try to find a number of arg between these two first {...} to see
         # if it may contain something which we'll try to interpret as [.d.]
-        rge = (to(braces[k])+1):(from(braces[k+1])-1)
+        rge    = (to(braces[k])+1):(from(braces[k+1])-1)
         lxnarg = 0
         # it found something between the naming brace and the def brace
         # check if it looks like [.d.] where d is a number and . are
@@ -50,11 +50,11 @@ function find_md_lxdefs(tokens::Vector{Token}, blocks::Vector{OCBlock})
                                  "the specification of the number of " * "arguments)."))
             end
             matched = lxnarg.captures[2]
-            lxnarg = isnothing(matched) ? 0 : parse(Int, matched)
+            lxnarg  = isnothing(matched) ? 0 : parse(Int, matched)
         end
 
         # assign naming / def
-        naming_braces = braces[k]
+        naming_braces  = braces[k]
         defining_braces = braces[k+1]
         # try to find a valid command name in the first set of braces
         matched = match(LX_NAME_PAT, content(naming_braces))
@@ -65,8 +65,8 @@ function find_md_lxdefs(tokens::Vector{Token}, blocks::Vector{OCBlock})
 
         # keep track of the command name, definition and where it stops
         lxname = matched.captures[1]
-        lxdef = strip(content(defining_braces))
-        todef = to(defining_braces)
+        lxdef  = strip(content(defining_braces))
+        todef  = to(defining_braces)
         # store the new latex command
         push!(lxdefs, LxDef(lxname, lxnarg, lxdef, fromτ, todef))
 
@@ -97,13 +97,13 @@ end
 """
 $(SIGNATURES)
 
-Retrieve the reference pointing to a `LxDef` corresponding to a given `lxname`.
+Get the reference pointing to a `LxDef` corresponding to a given `lxname`.
 If no reference is found but `inmath=true`, we propagate and let KaTeX deal
 with it. If something is found, the reference is returned and will be accessed
 further down.
 """
-function retrieve_lxdefref(lxname::SubString, lxdefs::Vector{LxDef},
-                           inmath::Bool=false, offset::Int=0)::Ref
+function get_lxdef_ref(lxname::SubString, lxdefs::Vector{LxDef},
+                       inmath::Bool=false, offset::Int=0)::Ref
     # find lxdefs with matching name
     ks = findall(δ -> (δ.name == lxname), lxdefs)
     # check that the def is before the usage
@@ -125,9 +125,9 @@ $(SIGNATURES)
 
 Find `\\command{arg1}{arg2}...` outside of `xblocks` and `lxdefs`.
 """
-function find_md_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
-                        braces::Vector{OCBlock}, offset::Int=0;
-                        inmath::Bool=false)::Tuple{Vector{LxCom},Vector{Token}}
+function find_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
+                     braces::Vector{OCBlock}, offset::Int=0;
+                     inmath::Bool=false)::Tuple{Vector{LxCom},Vector{Token}}
     # containers for the lxcoms
     lxcoms   = Vector{LxCom}()
     active_τ = ones(Bool, length(tokens))
@@ -139,7 +139,7 @@ function find_md_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
         (τ.name == :LX_COMMAND) || continue
         # 1. look for the definition given the command name
         lxname   = τ.ss
-        lxdefref = retrieve_lxdefref(lxname, lxdefs, inmath, offset)
+        lxdefref = get_lxdef_ref(lxname, lxdefs, inmath, offset)
         # will only be nothing in a 'inmath' --> no failure, just ignore token
         isnothing(lxdefref[]) && continue
 

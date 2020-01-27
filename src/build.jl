@@ -28,15 +28,16 @@ const NODE = begin
     end
 end
 
+shell_try(com)::Bool = try success(com); catch; false; end
+
 #=
 Pre-rendering
 - In order to prerender KaTeX, the only thing that is required is `node` and then we can just
 require `katex.min.js`
 - For highlights, we need `node` and also to have the `highlight.js` installed via `npm`.
 =#
-const FD_CAN_PRERENDER = try success(`$NODE -v`); catch; false; end
-const FD_CAN_HIGHLIGHT = try success(`$NODE -e "require('highlight.js')"`); catch;
-                                 false; end
+const FD_CAN_PRERENDER = shell_try(`$NODE -v`)
+const FD_CAN_HIGHLIGHT = shell_try(`$NODE -e "require('highlight.js')"`)
 
 #=
 Minification
@@ -44,13 +45,11 @@ Minification
 - Here we check there is python3, and pip3, and then if we fail to import, we try to
 use pip3 to install it.
 =#
-const FD_HAS_PY3    = try success(`$([e for e in split(PY)]) -V`); catch; false; end
-const FD_HAS_PIP3   = try success(`$([e for e in split(PIP)]) -V`); catch; false; end
+const FD_HAS_PY3    = shell_try(`$([e for e in split(PY)]) -V`)
+const FD_HAS_PIP3   = shell_try(`$([e for e in split(PIP)]) -V`)
 const FD_CAN_MINIFY = FD_HAS_PY3 && FD_HAS_PIP3 &&
-                      try success(`$([e for e in split(PY)]) -m "import css_html_js_minify"`) ||
-                          success(`$([e for e in split(PIP)]) install css_html_js_minify`); catch;
-                              false; end
-
+        (success(`$([e for e in split(PY)]) -m "import css_html_js_minify"`) ||
+         success(`$([e for e in split(PIP)]) install css_html_js_minify`))
 #=
 Information to the user
 - what Franklin couldn't find

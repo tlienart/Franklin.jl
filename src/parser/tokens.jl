@@ -34,6 +34,8 @@ Token(n, s) = Token(n, s, 0)
 
 to(β::Token) = ifelse(β.name == :EOS, from(β), to(β.ss))
 
+context(t::Token) = context(str(t), from(t))
+
 """
 $(TYPEDEF)
 
@@ -245,7 +247,6 @@ end
 
 _validate_language(stack::AS) = !isnothing(match(r"^```[a-zA-Z]", stack))
 
-
 """
 $(SIGNATURES)
 
@@ -289,7 +290,14 @@ TokenFinder
 Convenience type to define tokens. The Tuple comes from the output of functions
 such as [`isexactly`](@ref).
 """
-const TokenFinder = Pair{Tuple{Int,Bool,Function,Union{Bool,Nothing,Function}},Symbol}
+const TokenFinder =
+        Pair{
+            Tuple{
+                Int,
+                Bool,
+                Function,
+                Union{Bool,Nothing,Function}},
+            Symbol}
 
 
 """

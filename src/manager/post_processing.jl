@@ -1,6 +1,4 @@
 """
-$SIGNATURES
-
 Take a page (in HTML) and check all `href` on it to see if they lead somewhere.
 """
 function verify_links_page(path::AS, online::Bool)
@@ -54,11 +52,7 @@ function verify_links_page(path::AS, online::Bool)
     return allok
 end
 
-"""
-$SIGNATURES
-
-Verify all links in generated HTML.
-"""
+"""Verify all links in generated HTML."""
 function verify_links()::Nothing
     # check that the user is online (otherwise only verify internal links)
     online =
@@ -99,16 +93,22 @@ $(SIGNATURES)
 
 Does a full pass followed by a pre-rendering and minification step.
 
-* `prerender=true`: whether to pre-render katex and highlight.js (requires `node.js`)
-* `minify=true`:    whether to minify output (requires `python3` and `css_html_js_minify`)
-* `sig=false`:      whether to return an integer indicating success (see [`publish`](@ref))
-* `prepath=""`:     set this to something like "project-name" if it's a project page
-* `no_fail_prerender=true`:  whether to ignore errors during the pre-rendering process
-* `suppress_errors=true`:    whether to suppress errors
+* `prerender=true`: whether to pre-render katex and highlight.js (requires
+                     `node.js`)
+* `minify=true`:    whether to minify output (requires `python3` and
+                     `css_html_js_minify`)
+* `sig=false`:      whether to return an integer indicating success (see
+                     [`publish`](@ref))
+* `prepath=""`:     set this to something like "project-name" if it's a project
+                     page
+* `no_fail_prerender=true`: whether to ignore errors during the pre-rendering
+                             process
+* `suppress_errors=true`:   whether to suppress errors
 * `cleanup=true`:   whether to empty environment dictionaries
 
-Note: if the prerendering is set to `true`, the minification will take longer as the HTML files
-will be larger (especially if you have lots of maths on pages).
+Note: if the prerendering is set to `true`, the minification will take longer
+as the HTML files will be larger (especially if you have lots of maths on
+pages).
 """
 function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
                     prepath::String="", no_fail_prerender::Bool=true,
@@ -126,16 +126,14 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
               "You can install it with `npm install highlight.js`."
     end
     if !isempty(prepath)
-        GLOBAL_PAGE_VARS["prepath"] = prepath => (String,)
+        GLOBAL_VARS["prepath"] = prepath => (String,)
     end
     # re-do a (silent) full pass
     start = time()
     fmsg = "\r→ Full pass"
-    print(fmsg)
     withpre = fmsg * ifelse(prerender,
                                 rpad(" (with pre-rendering)", 24),
                                 rpad(" (no pre-rendering)",   24))
-    print(withpre)
     succ = nothing === serve(single=true, prerender=prerender,
                              nomess=true, isoptim=true,
                              no_fail_prerender=no_fail_prerender,
@@ -158,8 +156,8 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
             rm(FD_PY_MIN_NAME)
             print_final(mmsg, start)
         else
-            @warn "I didn't find css_html_js_minify, you can install it via pip."*
-                  "The output will not be minified."
+            @warn "I didn't find css_html_js_minify, you can install it via " *
+                  "pip. The output will not be minified."
         end
     end
     FD_ENV[:SUPPRESS_ERR] = false
@@ -176,16 +174,22 @@ It also fixes all links if you specify `prepath` (or if it's set in `config.md`)
 
 **Keyword arguments**
 
-* `prerender=true`:      prerender javascript before pushing see [`optimize`](@ref)
-* `minify=true`:         minify output before pushing see [`optimize`](@ref)
-* `nopass=false`:        set this to true if you have already run `optimize` manually.
-* `prepath=""`:          set this to something like "project-name" if it's a project page
+* `prerender=true`: prerender javascript before pushing see
+                     [`optimize`](@ref)
+* `minify=true`:    minify output before pushing see [`optimize`](@ref)
+* `nopass=false`:   set this to true if you have already run `optimize`
+                     manually.
+* `prepath=""`:     set this to something like "project-name" if it's a
+                     project page
 * `message="franklin-update"`: add commit message.
-* `cleanup=true`:        whether to cleanup environment dictionaries (should stay true).
-* `final=nothing`:       a function `()->nothing` to execute last, before doing the git push.
-                         It can be used to refresh a Lunr index, generate notebook files with
-                         Literate, etc, ... You might want to compose `fdf_*` functions that are
-                         exported by Franklin (or imitate those). It can access GLOBAL_PAGE_VARS.
+* `cleanup=true`:   whether to cleanup environment dictionaries (should
+                     stay true).
+* `final=nothing`:  a function `()->nothing` to execute last, before doing
+                     the git push. It can be used to refresh a Lunr index,
+                     generate notebook files with Literate, etc, ...
+                     You might want to compose `fdf_*` functions that are
+                     exported by Franklin (or imitate those). It can
+                     access GLOBAL_VARS.
 """
 function publish(; prerender::Bool=true, minify::Bool=true, nopass::Bool=false,
                    prepath::String="", message::String="franklin-update",
@@ -221,10 +225,8 @@ end
 
 
 """
-$(SIGNATURES)
-
-Cleanpull allows you to pull from your remote git repository after having removed the local
-output directory. This will help avoid merge clashes.
+Allows you to pull from your remote git repository after having
+removed the local output directory. This will help avoid merge clashes.
 """
 function cleanpull()::Nothing
     FOLDER_PATH[] = pwd()
