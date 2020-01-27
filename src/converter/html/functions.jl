@@ -96,8 +96,8 @@ end
 """
 $(SIGNATURES)
 
-H-Function of the form `{{toc min max}}` (table of contents). Where `min` and `max`
-control the minimum level and maximum level of  the table of content.
+H-Function of the form `{{toc min max}}` (table of contents). Where `min` and
+`max` control the minimum level and maximum level of  the table of content.
 The split is as follows:
 
 * key is the refstring
@@ -107,8 +107,8 @@ The split is as follows:
 """
 function hfun_toc(params::Vector{String})::String
     if length(params) != 2
-        throw(HTMLFunctionError("I found a {{toc ...}} block and expected 2 parameters" *
-                                "but got $(length(params)). Verify."))
+        throw(HTMLFunctionError("I found a {{toc ...}} block and expected 2 " *
+                              "parameters but got $(length(params)). Verify."))
     end
     isempty(PAGE_HEADERS) && return ""
 
@@ -119,7 +119,8 @@ function hfun_toc(params::Vector{String})::String
         min = parse(Int, params[1])
         max = parse(Int, params[2])
     catch
-        throw(HTMLFunctionError("I found a {{toc min max}} but couldn't parse min/max. Verify."))
+        throw(HTMLFunctionError("I found a {{toc min max}} but couldn't " *
+                                "parse min/max. Verify."))
     end
 
     inner   = ""
@@ -158,9 +159,9 @@ end
 """
 HTML_FUNCTIONS
 
-Dictionary for special html functions. They can take two variables, the first one `π` refers to the
-arguments passed to the function, the second one `ν` refers to the page variables (i.e. the
-context) available to the function.
+Dictionary for special html functions. They can take two variables, the first
+one `π` refers to the arguments passed to the function, the second one `ν`
+refers to the page variables (i.e. the context) available to the function.
 """
 const HTML_FUNCTIONS = LittleDict{String, Function}(
     "fill"   => hfun_fill,

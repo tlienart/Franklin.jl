@@ -24,7 +24,7 @@
     h = foo |> fd2html_td
 
     @test isapproxstr(h, """
-                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext output\">$a</code></pre>
+                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$a</code></pre>
                 """)
 
     # XXX TEXT MODIFICATION + IN SCOPE --> NO REEVAL
@@ -34,7 +34,7 @@
     h = foo |> fd2html_td
 
     @test isapproxstr(h, """
-                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext output\">$a</code></pre> etc
+                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$a</code></pre> etc
                 """)
 
     # XXX CODE ADDITION --> NO REEVAL OF FIRST BLOCK
@@ -53,9 +53,9 @@
     h = foo |> fd2html_td
 
     @test isapproxstr(h, """
-                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext output\">$a</code></pre> etc
-                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext output\">$b</code></pre>
-                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext output\">$c</code></pre>
+                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$a</code></pre> etc
+                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$b</code></pre>
+                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$c</code></pre>
                 """)
 
     # XXX CODE MODIFICATION --> REEVAL OF BLOCK AND AFTER
@@ -80,10 +80,10 @@
     h = foo |> fd2html_td
 
     @test isapproxstr(h, """
-                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext output\">$a</code></pre>
+                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$a</code></pre>
                 <pre><code class="language-julia"># modif
-                println(randn())</code></pre> <pre><code class=\"plaintext output\">$d</code></pre>
-                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext output\">$e</code></pre>
+                println(randn())</code></pre> <pre><code class=\"plaintext\">$d</code></pre>
+                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$e</code></pre>
                 """)
 end
 
@@ -108,10 +108,10 @@ end
     @test isapproxstr(h, """
             <pre><code class="language-julia">a = 5
             println(a)</code></pre>
-            <pre><code class=\"plaintext output\">5</code></pre>
+            <pre><code class=\"plaintext\">5</code></pre>
             <pre><code class="language-julia">a += 3
             println(a)</code></pre>
-            <pre><code class=\"plaintext output\">8</code></pre>
+            <pre><code class=\"plaintext\">8</code></pre>
             """)
 
     h = raw"""
@@ -137,12 +137,12 @@ end
     @test isapproxstr(h, """
             <pre><code class="language-julia">a = 5
             println(a)</code></pre>
-            <pre><code class=\"plaintext output\">5</code></pre>
+            <pre><code class=\"plaintext\">5</code></pre>
             <pre><code class="language-julia">a += 1
             println(a)</code></pre>
-            <pre><code class=\"plaintext output\">6</code></pre>
+            <pre><code class=\"plaintext\">6</code></pre>
             <pre><code class="language-julia">a += 3
             println(a)</code></pre>
-            <pre><code class=\"plaintext output\">9</code></pre>
+            <pre><code class=\"plaintext\">9</code></pre>
             """)
 end

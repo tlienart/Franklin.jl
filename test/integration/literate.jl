@@ -96,10 +96,10 @@ end
         <pre><code class="language-julia"># Define variable x and y
         x = 1//3
         y = 2//5</code></pre>
-        <pre><code class=\"plaintext output\">2//5</code></pre>
+        <pre><code class=\"plaintext\">2//5</code></pre>
         <p>When adding <code>x</code> and <code>y</code> together we obtain a new rational number:</p>
         <pre><code class="language-julia">z = x + y</code></pre>
-        <pre><code class=\"plaintext output\">11//15</code></pre>
+        <pre><code class=\"plaintext\">11//15</code></pre>
         """)
 end
 

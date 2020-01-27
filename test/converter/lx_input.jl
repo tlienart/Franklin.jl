@@ -19,8 +19,8 @@
     m = F.convert_md(st)
     h = F.convert_html(m)
 
-    @test occursin("<p>Some string <pre><code class=\"language-julia input\">$(read(joinpath(F.PATHS[:assets], "index", "code", "s1.jl"), String))</code></pre>", h)
-    @test occursin("Then maybe <pre><code class=\"plaintext output\">$(read(joinpath(F.PATHS[:assets], "index", "code",  "output", "s1.out"), String))</code></pre>", h)
+    @test occursin("<p>Some string <pre><code class=\"language-julia\">$(read(joinpath(F.PATHS[:assets], "index", "code", "s1.jl"), String))</code></pre>", h)
+    @test occursin("Then maybe <pre><code class=\"plaintext\">$(read(joinpath(F.PATHS[:assets], "index", "code",  "output", "s1.out"), String))</code></pre>", h)
     @test occursin("Finally img: <img src=\"/assets/index/code/output/s1a.png\" alt=\"\"> done.", h)
 end
 

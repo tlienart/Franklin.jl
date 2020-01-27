@@ -1,6 +1,4 @@
 """
-$(SIGNATURES)
-
 Convert a Franklin html string into a html string (i.e. replace `{{ ... }}`
 blocks).
 """
@@ -39,8 +37,6 @@ end
 
 
 """
-$SIGNATURES
-
 Return the HTML corresponding to a Franklin-Markdown string as well as all the
 page variables. See also [`fd2html`](@ref) which only returns the html.
 """
@@ -63,8 +59,6 @@ fd2html(a...; k...)::String = fd2html_v(a...; k...)[1]
 jd2html = fd2html
 
 """
-$SIGNATURES
-
 Take a qualified html block stack and go through it, with recursive calling.
 """
 function process_html_qblocks(hs::AS, qblocks::Vector{AbstractBlock},
@@ -98,14 +92,17 @@ end
 
 
 function match_url(base::AS, cand::AS)
-    endswith(cand, "/*") && return startswith(base, cand[1:prevind(cand, lastindex(cand))])
-    return splitext(cand)[1] == base
+    sbase = base[1] == "/" ? base[2:end] : base
+    scand = cand[1] == "/" ? cand[2:end] : cand
+    # joker-style syntax
+    if endswith(cand, "/*")
+        return startswith(sbase, scand[1:prevind(scand, lastindex(scand))])
+    end
+    return splitext(scand)[1] == sbase
 end
 
 
 """
-$SIGNATURES
-
 Recursively process a conditional block from an opening HTML_COND_OPEN to a {{end}}.
 """
 function process_html_cond(hs::AS, qblocks::Vector{AbstractBlock},
@@ -133,8 +130,8 @@ function process_html_cond(hs::AS, qblocks::Vector{AbstractBlock},
         # keep track of them
         if inbalance == 1
             if probe isa HElseIf
-                accept_elseif || throw(HTMLBlockError("Saw a {{elseif ...}} after a "*
-                                                      "{{else}} block."))
+                accept_elseif || throw(HTMLBlockError("Saw a {{elseif ...}} " *
+                                            "after a {{else}} block."))
                 push!(elseif_idx, i)
             elseif probe isa HElse
                 else_idx      = i
@@ -175,10 +172,10 @@ function process_html_cond(hs::AS, qblocks::Vector{AbstractBlock},
             #
             # current path is relative to /src/ for instance
             # /src/pages/blah.md -> pages/blah
-            # if starts with `pages/`, replaces by `pub/`: pages/blah => pub/blah
+            # if starts with `pages/`, replaces by `pub/`:
+            # pages/blah => pub/blah
             rpath = splitext(unixify(locvar("fd_rpath")))[1]
             rpath = replace(rpath, Regex("^pages") => "pub")
-
             # compare with β.pages
             inpage = any(p -> match_url(rpath, p), βi.pages)
 

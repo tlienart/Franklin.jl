@@ -42,7 +42,7 @@ set_curpath("index.md")
             <pre><code class="language-julia">a = 5
             print(a^2)</code></pre>
             then:
-            <pre><code class="plaintext output">25</code></pre>
+            <pre><code class="plaintext">25</code></pre>
             done.</p>""")
 end
 
@@ -90,7 +90,7 @@ end
             <pre><code class="language-julia">a = 5
             print(a^2)</code></pre>
             then:
-            <pre><code class="plaintext output">25</code></pre>
+            <pre><code class="plaintext">25</code></pre>
             done.</p>""")
 
     # ------------
@@ -120,7 +120,7 @@ end
             <pre><code class="language-julia">a = 5
             print(a^2)</code></pre>
             then:
-            <pre><code class="plaintext output">25</code></pre>  done.</p>""")
+            <pre><code class="plaintext">25</code></pre>  done.</p>""")
 end
 
 @testset "Eval (module)" begin
@@ -136,7 +136,7 @@ end
         done.
         """ |> seval
     # dot(a, a) == 54
-    @test occursin("""then: <pre><code class="plaintext output">54</code></pre> done.""", h)
+    @test occursin("""then: <pre><code class="plaintext">54</code></pre> done.""", h)
 end
 
 @testset "Eval (img)" begin
@@ -167,7 +167,7 @@ end
     h = ""
     @test_logs (:warn, "There was an error of type DomainError running the code.") (h = s |> seval)
     # errors silently
-    @test occursin("then: <pre><code class=\"plaintext output\">DomainError(-1.0, \"sqrt will only return a complex result if called with a complex argument. Try sqrt(Complex(x)).\")</code></pre> done.</p>\n", h)
+    @test occursin("then: <pre><code class=\"plaintext\">DomainError(-1.0, \"sqrt will only return a complex result if called with a complex argument. Try sqrt(Complex(x)).\")</code></pre> done.</p>\n", h)
 end
 
 @testset "Eval (nojl)" begin
@@ -203,7 +203,7 @@ end
             println("Is this a file? $(isfile(fn))")
             include(abspath(fn))
             println("Now: $a")
-            rm(fn)</code></pre> done. <pre><code class="plaintext output">Is this a file? true
+            rm(fn)</code></pre> done. <pre><code class="plaintext">Is this a file? true
             Now: 2
             </code></pre></p>
             """)
@@ -223,7 +223,7 @@ end
     @test isapproxstr(h, """
         <pre><code class="language-julia">a = 5
         a *= 2</code></pre>
-        <pre><code class="plaintext output">10</code></pre>
+        <pre><code class="plaintext">10</code></pre>
         """)
 
     # Show with stdout
@@ -241,7 +241,7 @@ end
         <pre><code class="language-julia">a = 5
         println("hello")
         a *= 2</code></pre>
-        <pre><code class="plaintext output">hello
+        <pre><code class="plaintext">hello
         10</code></pre>
         """)
 end
