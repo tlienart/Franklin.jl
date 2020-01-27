@@ -1,11 +1,13 @@
 """
 $(SIGNATURES)
 
-Find `\\newcommand` elements and try to parse what follows to form a proper Latex command.
-Return a list of such elements.
+Find `\\newcommand` elements and try to parse what follows to form a proper
+Latex command. Return a list of such elements.
 
 The format is:
+
     \\newcommand{NAMING}[NARG]{DEFINING}
+
 where [NARG] is optional (see `LX_NARG_PAT`).
 """
 function find_md_lxdefs(tokens::Vector{Token}, blocks::Vector{OCBlock})
@@ -44,8 +46,8 @@ function find_md_lxdefs(tokens::Vector{Token}, blocks::Vector{OCBlock})
         if !isempty(rge)
             lxnarg = match(LX_NARG_PAT, subs(str(braces[k]), rge))
             if isnothing(lxnarg)
-                throw(LxDefError("Ill formed newcommand (where I expected the "*
-                                 "specification of the number of arguments)."))
+                throw(LxDefError("Ill formed newcommand (where I expected " *
+                                 "the specification of the number of " * "arguments)."))
             end
             matched = lxnarg.captures[2]
             lxnarg = isnothing(matched) ? 0 : parse(Int, matched)
@@ -57,8 +59,8 @@ function find_md_lxdefs(tokens::Vector{Token}, blocks::Vector{OCBlock})
         # try to find a valid command name in the first set of braces
         matched = match(LX_NAME_PAT, content(naming_braces))
         if isnothing(matched)
-            throw(LxDefError("Invalid definition of a new command expected a command name " *
-                             "of the form `\\command`."))
+            throw(LxDefError("Invalid definition of a new command expected " *
+                             "a command name of the form `\\command`."))
         end
 
         # keep track of the command name, definition and where it stops
@@ -96,8 +98,9 @@ end
 $(SIGNATURES)
 
 Retrieve the reference pointing to a `LxDef` corresponding to a given `lxname`.
-If no reference is found but `inmath=true`, we propagate and let KaTeX deal with it. If something
-is found, the reference is returned and will be accessed further down.
+If no reference is found but `inmath=true`, we propagate and let KaTeX deal
+with it. If something is found, the reference is returned and will be accessed
+further down.
 """
 function retrieve_lxdefref(lxname::SubString, lxdefs::Vector{LxDef},
                            inmath::Bool=false, offset::Int=0)::Ref
@@ -154,9 +157,10 @@ function find_md_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
             b1_idx = findfirst(β -> (from(β) == nxtidx), braces)
             # --> it needs to exist + there should be enough braces left
             if isnothing(b1_idx) || (b1_idx + lxnarg - 1 > nbraces)
-                throw(LxComError("Command '$lxname' expects $lxnarg argument(s) and there " *
-                                 "should be no space(s) between the command name and the first " *
-                                 "brace: \\com{arg1}..."))
+                throw(LxComError("Command '$lxname' expects $lxnarg " *
+                                 "argument(s) and there should be no " *
+                                 "space(s) between the command name and " *
+                                 "the first brace: \\com{arg1}..."))
             end
 
             # --> examine candidate braces, there should be no spaces between
@@ -164,8 +168,10 @@ function find_md_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
             cand_braces = braces[b1_idx:b1_idx+lxnarg-1]
             for bidx ∈ 1:lxnarg-1
                 if (to(cand_braces[bidx]) + 1 != from(cand_braces[bidx+1]))
-                    throw(LxComError("Argument braces should not be separated by space(s): " *
-                                     "\\com{arg1}{arg2}... Verify a '$lxname' command."))
+                    throw(LxComError("Argument braces should not be " *
+                                     "separated by space(s): " *
+                                     "\\com{arg1}{arg2}... Verify a " *
+                                     "'$lxname' command."))
                 end
             end
 

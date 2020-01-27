@@ -48,7 +48,7 @@ end
         B
         `````
         C
-        """ |> jd2html_td
+        """ |> fd2html_td
 
     @test isapproxstr(h, raw"""
             <p>A
@@ -64,7 +64,7 @@ end
         ```
         `````
         C
-        """ |> jd2html_td
+        """ |> fd2html_td
 
     @test isapproxstr(h, raw"""
             <p>A
@@ -82,7 +82,7 @@ end
         bar bar
     }
     \hello
-    """ |> jd2html_td
+    """ |> fd2html_td
     @test isapproxstr(h, raw"""yaya  bar bar""")
 
     h = raw"""
@@ -93,7 +93,7 @@ end
             @@
         @@
     @@
-    """ |> jd2html_td
+    """ |> fd2html_td
     @test isapproxstr(h, raw"""
             <div class="da">
                 <div class="db">
@@ -108,6 +108,6 @@ end
     \hello{
         good lord
     }
-    """ |> jd2html_td
+    """ |> fd2html_td
     @test isapproxstr(h, "good lord")
 end

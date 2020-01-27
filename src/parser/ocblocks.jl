@@ -1,9 +1,10 @@
 """
 $(SIGNATURES)
 
-Find active blocks between an opening token (`otoken`) and a closing token `ctoken`. These can be
-nested (e.g. braces). Return the list of such blocks. If `deactivate` is `true`, all the tokens
-within the block will be marked as inactive (for further, separate processing).
+Find active blocks between an opening token (`otoken`) and a closing token
+`ctoken`. These can be nested (e.g. braces). Return the list of such blocks.
+If `deactivate` is `true`, all the tokens within the block will be marked as
+inactive (for further, separate processing).
 """
 function find_ocblocks(tokens::Vector{Token}, ocproto::OCProto;
                        inmath=false)::Tuple{Vector{OCBlock}, Vector{Token}}
@@ -37,8 +38,8 @@ function find_ocblocks(tokens::Vector{Token}, ocproto::OCProto;
             j = findfirst(cτ -> (cτ.name ∈ ocproto.ctok), tokens[i+1:end])
             # error if no closing token is found
             if isnothing(j)
-                throw(OCBlockError("I found the opening token '$(τ.name)' but not " *
-                                   "the corresponding closing token.",
+                throw(OCBlockError("I found the opening token '$(τ.name)' " *
+                                   "but not the corresponding closing token.",
                                    context(τ)))
             end
             j += i
@@ -57,9 +58,9 @@ end
 """
 $(SIGNATURES)
 
-Helper function to update the inbalance counter when looking for the closing token of a block with
-nesting. Adds 1 if the token corresponds to an opening token, removes 1 if it's a closing token and
-0 otherwise.
+Helper function to update the inbalance counter when looking for the closing
+token of a block with nesting. Adds 1 if the token corresponds to an opening
+token, removes 1 if it's a closing token and 0 otherwise.
 """
 function ocbalance(τ::Token, ocp::OCProto)::Int
     (τ.name == ocp.otok) && return 1
@@ -71,8 +72,8 @@ end
 """
 $(SIGNATURES)
 
-Convenience function to find all ocblocks e.g. such as `MD_OCBLOCKS`. Returns a vector of vectors
-of ocblocks.
+Convenience function to find all ocblocks e.g. such as `MD_OCBLOCKS`. Returns a
+vector of vectors of ocblocks.
 """
 function find_all_ocblocks(tokens::Vector{Token}, ocplist::Vector{OCProto}; inmath=false)
 
@@ -93,8 +94,8 @@ function find_all_ocblocks(tokens::Vector{Token}, ocplist::Vector{OCProto}; inma
     # CASE 1: block inside a larger escape block.
     #   this can happen if there is a code block in an escape block
     #   (see e.g. #151) or if there's indentation in a math block.
-    #   To fix this, we browse the escape blocks in backwards order and check if
-    #   there is any other block within it.
+    #   To fix this, we browse the escape blocks in backwards order and check
+    #   if there is any other block within it.
     i = length(ocbs_all)
     active = ones(Bool, i)
     all_heads = from.(ocbs_all)
@@ -128,9 +129,9 @@ end
 """
 $SIGNATURES
 
-Take a list of token and return those corresponding to special characters or html entities wrapped
-in `HTML_SPCH` types (will be left alone by the markdown conversion and be inserted as is in the
-HTML).
+Take a list of token and return those corresponding to special characters or
+html entities wrapped in `HTML_SPCH` types (will be left alone by the markdown
+conversion and be inserted as is in the HTML).
 """
 function find_special_chars(tokens::Vector{Token})
     spch = Vector{HTML_SPCH}()

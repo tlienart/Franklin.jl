@@ -19,16 +19,16 @@ end
     s = """
         @def blah
         """
-    @test (@test_logs (:warn, "Found delimiters for an @def environment but it didn't have the right @def var = ... format. Verify (ignoring for now).") (s |> jd2html_td)) == ""
+    @test (@test_logs (:warn, "Found delimiters for an @def environment but it didn't have the right @def var = ... format. Verify (ignoring for now).") (s |> fd2html_td)) == ""
 
     s = """
         Blah
         [^1]: hello
-        """ |> jd2html_td
+        """ |> fd2html_td
     @test isapproxstr(s, "<p>Blah </p>")
 end
 
-@testset "Judoc" begin
+@testset "Franklin" begin
     cd(td); mkpath("foo"); cd("foo");
     @test_throws ArgumentError serve(single=true)
     cd(td)
@@ -49,23 +49,23 @@ end
     s = raw"""
         \newcommand{hello}{hello}
         """
-    @test_throws J.LxDefError (s |> jd2html)
+    @test_throws J.LxDefError (s |> fd2html)
     s = raw"""
         \foo
         """
-    @test_throws J.LxComError (s |> jd2html)
+    @test_throws J.LxComError (s |> fd2html)
     s = raw"""
         \newcommand{\foo}[2]{hello #1 #2}
         \foo{a} {}
         """
-    @test_throws J.LxComError (s |> jd2html)
+    @test_throws J.LxComError (s |> fd2html)
 end
 
 @testset "ocblocks" begin
     s = raw"""
         @@foo
         """
-    @test_throws J.OCBlockError (s |> jd2html)
+    @test_throws J.OCBlockError (s |> fd2html)
 end
 
 @testset "tofrom" begin

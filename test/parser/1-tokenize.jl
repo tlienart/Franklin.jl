@@ -40,6 +40,12 @@ isind(t) = t.name == :LR_INDENT && t.ss == "\n    "
     @test istok(t[17], :LXB_CLOSE, "}")
     @test islr(t[18])
     @test istok(t[19], :EOS, "\n")
+
+    # complement div with `-` or `_`
+    t = raw"""A @@d-a B@@ C""" |> tok
+    @test istok(t[1], :DIV_OPEN, "@@d-a")
+    t = raw"""A @@d-1 B@@ C""" |> tok
+    @test istok(t[1], :DIV_OPEN, "@@d-1")
 end
 
 @testset "P:1:ctok" begin

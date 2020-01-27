@@ -14,24 +14,24 @@ end
 
 @testset "RSSbasics" begin
     empty!(J.RSS_DICT)
-    J.JD_ENV[:CUR_PATH] = "hey/ho.md"
+    J.FD_ENV[:CUR_PATH] = "hey/ho.md"
     J.set_var!(J.GLOBAL_PAGE_VARS, "website_title", "Website title")
     J.set_var!(J.GLOBAL_PAGE_VARS, "website_descr", "Website descr")
-    J.set_var!(J.GLOBAL_PAGE_VARS, "website_url", "https://github.com/tlienart/JuDoc.jl/")
-    jdv = merge(J.GLOBAL_PAGE_VARS, copy(J.LOCAL_PAGE_VARS))
-    J.set_var!(jdv, "rss_title", "title")
-    J.set_var!(jdv, "rss", "A **description** done.")
-    J.set_var!(jdv, "rss_author", "chuck@norris.com")
+    J.set_var!(J.GLOBAL_PAGE_VARS, "website_url", "https://github.com/tlienart/Franklin.jl/")
+    fdv = merge(J.GLOBAL_PAGE_VARS, copy(J.LOCAL_PAGE_VARS))
+    J.set_var!(fdv, "rss_title", "title")
+    J.set_var!(fdv, "rss", "A **description** done.")
+    J.set_var!(fdv, "rss_author", "chuck@norris.com")
 
-    item = J.add_rss_item(jdv)
+    item = J.add_rss_item(fdv)
     @test item.title == "title"
     @test item.description == "A <strong>description</strong> done.\n"
     @test item.author == "chuck@norris.com"
     # unchanged bc all three fallbacks lead to Data(1)
     @test item.pubDate == Date(1)
 
-    J.set_var!(jdv, "rss_title", "")
-    @test @test_logs (:warn, "Found an RSS description but no title for page /hey/ho.html.") J.add_rss_item(jdv).title == ""
+    J.set_var!(fdv, "rss_title", "")
+    @test @test_logs (:warn, "Found an RSS description but no title for page /hey/ho.html.") J.add_rss_item(fdv).title == ""
 
     @test J.RSS_DICT["/hey/ho.html"].description == item.description
 

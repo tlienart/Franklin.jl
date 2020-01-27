@@ -10,7 +10,7 @@
 # 2. go over all pages
 #  --> is there a rss var?
 #  NO  --> skip
-#  YES --> recuperate the `jd_ctime` and `jd_mtime` and add a RSS channel object
+#  YES --> recuperate the `fd_ctime` and `fd_mtime` and add a RSS channel object
 # 3. save the file
 
 struct RSSItem
@@ -50,23 +50,23 @@ $SIGNATURES
 
 Create an `RSSItem` out of the provided fields defined in the page vars.
 """
-function add_rss_item(jdv::PageVars)::RSSItem
+function add_rss_item(fdv::PageVars)::RSSItem
     link   = url_curpage()
-    title  = jor(jdv, "rss_title", "title")
-    descr  = jor(jdv, "rss", "rss_description")
+    title  = jor(fdv, "rss_title", "title")
+    descr  = jor(fdv, "rss", "rss_description")
 
-    descr = jd2html(descr; internal=true) |> remove_html_ps
+    descr = fd2html(descr; internal=true) |> remove_html_ps
 
-    author    = jdv["rss_author"]    |> first
-    category  = jdv["rss_category"]  |> first
-    comments  = jdv["rss_comments"]  |> first
-    enclosure = jdv["rss_enclosure"] |> first
+    author    = fdv["rss_author"]    |> first
+    category  = fdv["rss_category"]  |> first
+    comments  = fdv["rss_comments"]  |> first
+    enclosure = fdv["rss_enclosure"] |> first
 
-    pubDate = jdv["rss_pubdate"] |> first
+    pubDate = fdv["rss_pubdate"] |> first
     if pubDate == Date(1)
-        pubDate = jdv["date"] |> first
+        pubDate = fdv["date"] |> first
         if !isa(pubDate, Date) || pubDate == Date(1)
-            pubDate = jdv["jd_mtime"] |> first
+            pubDate = fdv["fd_mtime"] |> first
         end
     end
 
@@ -103,7 +103,7 @@ function rss_generator()::Nothing
     end
 
     endswith(rss_link, "/") || (rss_link *= "/")
-    rss_descr = jd2html(rss_descr; internal=true) |> remove_html_ps
+    rss_descr = fd2html(rss_descr; internal=true) |> remove_html_ps
 
     # is there an RSS file already? if so remove it
     rss_path = joinpath(PATHS[:folder], "feed.xml")

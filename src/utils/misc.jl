@@ -24,11 +24,11 @@ is a substring. Do not confuse with `String(s::SubString)` which casts `s` into 
 # Example
 
 ```julia-repl
-julia> a = SubString("hello JuDoc", 3:8);
-julia> JuDoc.str(a)
-"hello JuDoc"
+julia> a = SubString("hello Fraknlin", 3:8);
+julia> Franklin.str(a)
+"hello Franklin"
 julia> String(a)
-"llo Ju"
+"llo Fr"
 ```
 """
 str(s::String)::String    = s
@@ -45,7 +45,7 @@ Convenience functions to take a substring of a string.
 
 # Example
 ```julia-repl
-julia> JuDoc.subs("hello", 2:4)
+julia> Franklin.subs("hello", 2:4)
 "ell"
 ```
 """
@@ -61,7 +61,7 @@ Given a substring `ss`, returns the position in the parent string where the subs
 
 # Example
 ```julia-repl
-julia> ss = SubString("hello", 2:4); JuDoc.from(ss)
+julia> ss = SubString("hello", 2:4); Franklin.from(ss)
 2
 ```
 """
@@ -75,7 +75,7 @@ Given a substring `ss`, returns the position in the parent string where the subs
 
 # Example
 ```julia-repl
-julia> ss = SubString("hello", 2:4); JuDoc.to(ss)
+julia> ss = SubString("hello", 2:4); Franklin.to(ss)
 4
 ```
 """
@@ -89,7 +89,7 @@ Returns the string span of a regex match. Assumes there is no unicode in the mat
 
 # Example
 ```julia-repl
-julia> JuDoc.matchrange(match(r"ell", "hello"))
+julia> Franklin.matchrange(match(r"ell", "hello"))
 2:4
 ```
 """
@@ -207,8 +207,8 @@ function resolve_assets_rpath(rpath::AS; canonical::Bool=false, code::Bool=false
         # for instance if calling from `src/pages/pg1.md` with `./im1.png` it would refer to
         # /assets/pages/pg1/im1.png
         @assert length(rpath) > 2 "relative path '$rpath' doesn't seem right"
-        canonical || return "/assets/" * unixify(splitext(JD_ENV[:CUR_PATH])[1]) * rpath[3:end]
-        return normpath(joinpath(PATHS[:assets], splitext(JD_ENV[:CUR_PATH])[1], joinrp(rpath[3:end])))
+        canonical || return "/assets/" * unixify(splitext(FD_ENV[:CUR_PATH])[1]) * rpath[3:end]
+        return normpath(joinpath(PATHS[:assets], splitext(FD_ENV[:CUR_PATH])[1], joinrp(rpath[3:end])))
     end
     if code
         # in the code mode we allow a short, this: `julia:ex` is considered

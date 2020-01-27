@@ -35,7 +35,7 @@ end
         \com{A}
         """
     steps = st |> explore_md_steps
-    @test steps[:inter_md].inter_md == "\n ##JDINSERT## \n\n ##JDINSERT## \n"
+    @test steps[:inter_md].inter_md == "\n ##FDINSERT## \n\n ##FDINSERT## \n"
     @test st |> conv == "⭒A⭒\n◲A◲"
 end
 

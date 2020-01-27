@@ -1,7 +1,7 @@
 """
 FOLDER_PATH
 
-Container to keep track of where JuDoc is being run.
+Container to keep track of where Franklin is being run.
 """
 const FOLDER_PATH = Ref{String}()
 
@@ -44,7 +44,7 @@ function set_paths!()::LittleDict{Symbol,String}
 
     # NOTE it is recommended not to change the names of those paths.
     # Particularly for the output dir. If you do, check for example that
-    # functions such as JuDoc.publish point to the right dirs/files.
+    # functions such as Franklin.publish point to the right dirs/files.
 
     PATHS[:folder]    = normpath(FOLDER_PATH[])
     PATHS[:src]       = joinpath(PATHS[:folder],  "src")

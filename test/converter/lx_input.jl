@@ -2,7 +2,7 @@
     #
     # check_input_fname
     #
-    J.JD_ENV[:CUR_PATH] = "index.html"
+    J.FD_ENV[:CUR_PATH] = "index.html"
     script1 = joinpath(J.PATHS[:assets], "index", "code", "script1.jl")
     write(script1, "1+1")
     fp, d, fn = J.check_input_rpath("script1.jl", code=true)

@@ -85,22 +85,22 @@ end
         "b1" => false => (Bool,),
         "b2" => true => (Bool,))
 
-    jdc = x->J.convert_html(x, allvars)
+    fdc = x->J.convert_html(x, allvars)
 
     # flag b1 is false
-    @test "{{if b1}} blah {{ else }} blih {{ end }}" |> jdc == " blih " # else
-    @test "{{if b1}} {{ else }} blih {{ end }}" |> jdc == " blih "      # else
+    @test "{{if b1}} blah {{ else }} blih {{ end }}" |> fdc == " blih " # else
+    @test "{{if b1}} {{ else }} blih {{ end }}" |> fdc == " blih "      # else
 
     # flag b2 is true
-    @test "{{if b2}} blah {{ else }} blih {{ end }}" |> jdc == " blah " # if
-    @test "{{if b2}} blah {{ else }} {{ end }}" |> jdc == " blah "      # if
-    @test "{{if b2}} blah {{ end }}" |> jdc == " blah "                 # if
+    @test "{{if b2}} blah {{ else }} blih {{ end }}" |> fdc == " blah " # if
+    @test "{{if b2}} blah {{ else }} {{ end }}" |> fdc == " blah "      # if
+    @test "{{if b2}} blah {{ end }}" |> fdc == " blah "                 # if
 
-    @test "{{if b1}} blah {{ else }} {{ end }}" |> jdc == " " # else, empty
-    @test "{{if b1}} {{ else }} {{ end }}" |> jdc == " "      # else, empty
-    @test "{{if b1}} blah {{ end }}" |> jdc == ""            # else, empty
-    @test "{{if b2}} {{ else }} {{ end }}" |> jdc == " "      # if, empty
-    @test "{{if b2}} {{ else }} blih {{ end }}" |> jdc == " " # if, empty
+    @test "{{if b1}} blah {{ else }} {{ end }}" |> fdc == " " # else, empty
+    @test "{{if b1}} {{ else }} {{ end }}" |> fdc == " "      # else, empty
+    @test "{{if b1}} blah {{ end }}" |> fdc == ""            # else, empty
+    @test "{{if b2}} {{ else }} {{ end }}" |> fdc == " "      # if, empty
+    @test "{{if b2}} {{ else }} blih {{ end }}" |> fdc == " " # if, empty
 end
 
 @testset "Cond ispage" begin
@@ -111,14 +111,14 @@ end
         {{isnotpage blah.html ya/xx}} blih {{end}} done.
         """
 
-    J.JD_ENV[:CUR_PATH] = "index.md"
+    J.FD_ENV[:CUR_PATH] = "index.md"
     @test J.convert_html(hs, allvars) == "Some text then  blah  but\n blih  done.\n"
 
-    J.JD_ENV[:CUR_PATH] = "blah/blih.md"
+    J.FD_ENV[:CUR_PATH] = "blah/blih.md"
     hs = raw"""
         A then {{ispage blah/*}}yes{{end}} but not {{isnotpage blih/*}}no{{end}} E.
         """
     @test J.convert_html(hs, allvars) == "A then yes but not no E.\n"
 
-    J.JD_ENV[:CUR_PATH] = "index.md"
+    J.FD_ENV[:CUR_PATH] = "index.md"
 end
