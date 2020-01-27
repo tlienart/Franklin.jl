@@ -1,5 +1,6 @@
 function lunr()::Nothing
-    prepath = GLOBAL_VARS["prepath"].first
+    prepath = ""
+    haskey(GLOBAL_VARS, "prepath") && (prepath = GLOBAL_VARS["prepath"].first)
     isempty(PATHS) && (FOLDER_PATH[] = pwd(); set_paths!())
     bkdir = pwd()
     lunr  = joinpath(PATHS[:libs], "lunr")
@@ -31,4 +32,20 @@ function lunr()::Nothing
         cd(bkdir)
     end
     return
+end
+
+function fdplotly(plt; id="fdp"*Random.randstring('a':'z', 3),
+	 			  style="width:600px;height:350px")::Nothing
+    println("""
+		~~~
+		<div id="$id" style="$style"></div>
+
+		<script>
+			var fig = $(json(plt));
+			CONTAINER = document.getElementById('$id');
+			Plotly.newPlot(CONTAINER, fig.data, fig.layout)
+		</script>
+		~~~
+		""")
+    return nothing
 end

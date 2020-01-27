@@ -76,6 +76,10 @@ function run_code(mod::Module, code::AS, out_path::AS;
     end
     # if last bit ends with `;` return nothing (no display)
     code[end] == ';' && return nothing
+    # if last line of the code is a `show`
+    if length(exs[end].args) > 1 && exs[end].args[1] == Symbol("@show")
+        return nothing
+    end
     # otherwise return the result of the last expression
     return res
 end

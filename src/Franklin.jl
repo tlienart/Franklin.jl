@@ -16,11 +16,13 @@ import Base.push!
 import NodeJS
 import Literate
 import HTTP
+import Random
 
 export serve, publish, cleanpull, newsite, optimize, fd2html,
        literate_folder, verify_links, @OUTPUT
 
-export lunr
+# Extra functions
+export lunr, fdplotly
 
 # -----------------------------------------------------------------------------
 # Legacy with JuDoc

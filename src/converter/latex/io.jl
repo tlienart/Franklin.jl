@@ -136,7 +136,7 @@ Resolve a `\\figalt{alt}{rpath}` (find a fig and include it with alt).
 function lx_figalt(lxc::LxCom, _)
     rpath = strip(content(lxc.braces[2]))
     alt   = strip(content(lxc.braces[1]))
-    path  = parse_rpath(rpath; canonical=false)
+    path  = parse_rpath(rpath; canonical=false, code=true)
     fdir, fext = splitext(path)
     # there are several cases
     # A. a path with no extension --> guess extension
