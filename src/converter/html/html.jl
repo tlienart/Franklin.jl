@@ -48,6 +48,7 @@ function fd2html_v(st::AS; internal::Bool=false,
         set_paths!()
         def_GLOBAL_LXDEFS!()
         def_GLOBAL_VARS!()
+        FD_ENV[:CUR_PATH] = "index.md"
     end
     m = convert_md(st; isinternal=internal)
     h = convert_html(m)

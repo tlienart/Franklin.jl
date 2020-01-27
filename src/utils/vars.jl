@@ -72,7 +72,7 @@ const LOCAL_VARS_DEFAULT = [
     # MISCELLANEOUS (should not be modified)
     "fd_ctime"  => Pair(Date(1),    (Date,)),   # time of creation
     "fd_mtime"  => Pair(Date(1),    (Date,)),   # time of last modification
-    "fd_rpath"  => Pair("index.md", (String,)), # rpath to current page
+    "fd_rpath"  => Pair("",         (String,)), # rpath to current page
     ]
 #=
 NOTE:
@@ -103,6 +103,8 @@ function def_LOCAL_VARS!()::Nothing
     # Merge global page vars, if it defines anything that local defines, then
     # global takes precedence.
     merge!(LOCAL_VARS, GLOBAL_VARS)
+    # which page we're on, see write_page which sets :CUR_PATH
+    set_var!(LOCAL_VARS, "fd_rpath", FD_ENV[:CUR_PATH])
     return nothing
 end
 

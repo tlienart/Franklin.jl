@@ -36,7 +36,7 @@ function write_page(root::String, file::String, head::String,
     # f1/blah/page1.md or index.md etc... this is useful in the code evaluation and management
     # of paths
     cur_rpath = fpath[lastindex(PATHS[:src])+length(PATH_SEP)+1:end]
-    set_var!(LOCAL_VARS, "fd_rpath", cur_rpath)
+    FD_ENV[:CUR_PATH] = cur_rpath
 
     content = convert_md(read(fpath, String))
 
