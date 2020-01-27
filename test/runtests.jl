@@ -3,6 +3,8 @@ const F = Franklin
 const R = @__DIR__
 const D = joinpath(dirname(dirname(pathof(Franklin))), "test", "_dummies")
 
+F.FD_ENV[:SILENT_MODE] = true
+
 # UTILS
 println("UTILS")
 include("utils/paths_vars.jl"); include("test_utils.jl")

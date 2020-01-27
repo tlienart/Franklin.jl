@@ -53,7 +53,9 @@ function run_code(mod::Module, code::AS, out_path::AS;
     err  = nothing
     ispath(out_path) || mkpath(dirname(out_path))
     open(out_path, "w") do outf
-        rprint("→ evaluating code [...] ($(locvar("fd_rpath")))")
+        if !FD_ENV[:SILENT_MODE]
+            rprint("→ evaluating code [...] ($(locvar("fd_rpath")))")
+        end
         redirect_stdout(outf) do
             e = 1
             while e <= ne
@@ -72,6 +74,7 @@ function run_code(mod::Module, code::AS, out_path::AS;
     if !isnothing(err)
         # TODO: add more informative message, maybe show type of error
         # + parent path
+        FD_ENV[:SILENT_MODE] || print("\n")
         warn_err && @warn "There was an error of type $err running the code."
         res = nothing
     end

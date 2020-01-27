@@ -164,10 +164,11 @@ end
         \output{scripts/test1}
         done.
         """
+    # h = s|>seval
     h = ""
     @test_logs (:warn, "There was an error of type DomainError running the code.") (h = s |> seval)
     # errors silently
-    @test occursin("then: <pre><code class=\"plaintext\">DomainError(-1.0, \"sqrt will only return a complex result if called with a complex argument. Try sqrt(Complex(x)).\")</code></pre> done.</p>\n", h)
+    @test occursin("then: <pre><code class=\"plaintext\">$(Markdown.htmlesc("DomainError(-1.0, \"sqrt will only return a complex result if called with a complex argument. Try sqrt(Complex(x)).\""))", h)
 end
 
 @testset "Eval (nojl)" begin

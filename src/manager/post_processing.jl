@@ -131,17 +131,14 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
     # re-do a (silent) full pass
     start = time()
     fmsg = "\r→ Full pass"
-    print(fmsg)
     withpre = fmsg * ifelse(prerender,
                                 rpad(" (with pre-rendering)", 24),
                                 rpad(" (no pre-rendering)",   24))
-    print(withpre)
     succ = nothing === serve(single=true, prerender=prerender,
                              nomess=true, isoptim=true,
                              no_fail_prerender=no_fail_prerender,
                              cleanup=cleanup)
     print_final(withpre, start)
-    prerender || print("\n")
 
     #
     # Minification
