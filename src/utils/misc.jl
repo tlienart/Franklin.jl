@@ -118,7 +118,8 @@ Nicer printing of processes.
 ```
 function print_final(startmsg::AS, starttime::Float64)::Nothing
     tit = time_it_took(starttime)
-    println("\r$startmsg$tit")
+    rprint("$startmsg$tit")
+    print("\n")
 end
 
 
