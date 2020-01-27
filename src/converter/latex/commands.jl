@@ -24,8 +24,8 @@ const LX_INTERNAL_COMMANDS = [
     # ------------------
     # DERIVED / EXPLICIT
     lxd("fig",             1, "\\figalt{}{#1}"),
-    lxd("style",           2, "~~~<span style=\"!#1\">!#2</span>~~~"),
-    lxd("underline",       1, "\\style{decoration:underline}{!#1}"),
+    lxd("style",           2, "~~~<span style=\"!#1\">~~~!#2~~~</span>~~~"),
+    lxd("underline",       1, "\\style{text-decoration:underline}{!#1}"),
     lxd("tableofcontents", 0, "\\toc"),
     lxd("codeoutput",      1, "\\output{#1}"), # \codeoutput{rpath}
     ]

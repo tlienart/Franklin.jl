@@ -92,7 +92,9 @@ function lx_output(lxc::LxCom, lxd::Vector{LxDef};
                                            "the relevant result file.")
         result = read(respath, String)
         if result != "nothing"
-            endswith(output, "\n") || (output *= "\n")
+            if !isempty(output) && !endswith(output, "\n")
+                output *= "\n"
+            end
             output *= result
         end
     end
