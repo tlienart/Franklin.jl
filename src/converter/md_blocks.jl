@@ -128,10 +128,10 @@ end
 
 
 """Convenience function to increment the eval' code block counter"""
-increment_code_head() = (LOCAL_PAGE_VARS["jd_code_head"].first[] += 1)
+increment_code_head() = (LOCAL_PAGE_VARS["fd_code_head"].first[] += 1)
 
-"""Convenience function to mark `jd_code_eval` as true (subsequent blocks will be evaled)"""
-toggle_jd_code_eval() = (LOCAL_PAGE_VARS["jd_code_eval"].first[] = true)
+"""Convenience function to mark `fd_code_eval` as true (subsequent blocks will be evaled)"""
+toggle_fd_code_eval() = (LOCAL_PAGE_VARS["fd_code_eval"].first[] = true)
 
 """
 $SIGNATURES
@@ -148,7 +148,7 @@ function eval_and_resolve_code(code::AS, rpath::AS;
     #  3. inserted after cleaning out lines (see resolve_lx_input)
 
     # start by adding it to code scope
-    nopush || push!(LOCAL_PAGE_VARS["jd_code_scope"].first, rpath, code)
+    nopush || push!(LOCAL_PAGE_VARS["fd_code_scope"].first, rpath, code)
 
     # form the path
     path = resolve_assets_rpath(rpath; canonical=true, code=true)
@@ -172,7 +172,7 @@ function eval_and_resolve_code(code::AS, rpath::AS;
     end
 
     write(path, MESSAGE_FILE_GEN_JMD * code)
-    JD_ENV[:SILENT_MODE] || print(rpad("\r→ evaluating code [...] ($(JD_ENV[:CUR_PATH]), $rpath)", 79) * "\r")
+    FD_ENV[:SILENT_MODE] || print(rpad("\r→ evaluating code [...] ($(FD_ENV[:CUR_PATH]), $rpath)", 79) * "\r")
     # - execute the code while redirecting stdout to file
     Logging.disable_logging(Logging.LogLevel(3_000))
     res = nothing
@@ -191,7 +191,7 @@ function eval_and_resolve_code(code::AS, rpath::AS;
         end
     end
     Logging.disable_logging(Logging.Debug)
-    JD_ENV[:SILENT_MODE] || print(rpad("\r→ evaluating code [✓]", 79) * "\r")
+    FD_ENV[:SILENT_MODE] || print(rpad("\r→ evaluating code [✓]", 79) * "\r")
 
     # resolve the code block (highlighting) and return it
     return resolve_lx_input_hlcode(rpath, "julia")
@@ -224,14 +224,14 @@ function convert_code_block(ss::SubString)::String
 
     # extract handles of relevant local page variables
     reeval = LOCAL_PAGE_VARS["reeval"].first         # full page re-eval
-    eval   = LOCAL_PAGE_VARS["jd_code_eval"].first[] # eval toggle from given point
+    eval   = LOCAL_PAGE_VARS["fd_code_eval"].first[] # eval toggle from given point
     freeze = LOCAL_PAGE_VARS["freezecode"].first
-    scope  = LOCAL_PAGE_VARS["jd_code_scope"].first
+    scope  = LOCAL_PAGE_VARS["fd_code_scope"].first
     head   = increment_code_head()
 
     # In the case of forced re-eval, we don't care about the
     # code scope just force-reeval everything sequentially
-    if JD_ENV[:FORCE_REEVAL] || reeval || eval
+    if FD_ENV[:FORCE_REEVAL] || reeval || eval
         length(scope.codes) ≥ head && purgefrom!(scope, head)
         return eval_and_resolve_code(code, rpath)
     end
@@ -241,7 +241,7 @@ function convert_code_block(ss::SubString)::String
     # the case then there will be a check to see if the relevant
     # files exist, if they don't exist the code *will* be eval'ed
     # (see `eval_and_resolve_code`)
-    if JD_ENV[:FULL_PASS] || freeze
+    if FD_ENV[:FULL_PASS] || freeze
         length(scope.codes) ≥ head && purgefrom!(scope, head)
         return eval_and_resolve_code(code, rpath, eval=false)
     end
@@ -251,16 +251,16 @@ function convert_code_block(ss::SubString)::String
     # B. local pass with non-frozen code
 
     # check if the page we're looking at is in scope
-    if JD_ENV[:CUR_PATH] != JD_ENV[:CUR_PATH_WITH_EVAL]
+    if FD_ENV[:CUR_PATH] != FD_ENV[:CUR_PATH_WITH_EVAL]
         # we're necessarily at the first code block of the page.
         # need to re-instantiate a code scope; note that if we
         # are here then necessarily a def_LOCAL_PAGE_VARS was
-        # called, so LOCAL_PAGE_VARS["jd_code_head"] points to 1
+        # called, so LOCAL_PAGE_VARS["fd_code_head"] points to 1
         reset!(scope)
         # keep track that the page is now in scope
-        JD_ENV[:CUR_PATH_WITH_EVAL] = JD_ENV[:CUR_PATH]
+        FD_ENV[:CUR_PATH_WITH_EVAL] = FD_ENV[:CUR_PATH]
         # flag rest of page as to be eval-ed (might be stale)
-        toggle_jd_code_eval()
+        toggle_fd_code_eval()
         # eval and resolve code
         return eval_and_resolve_code(code, rpath)
     end
@@ -281,7 +281,7 @@ function convert_code_block(ss::SubString)::String
             # purge subsequent code blocks as stale
             purgefrom!(scope, head)
             # flag rest of page as to be eval-ed (stale)
-            toggle_jd_code_eval()
+            toggle_fd_code_eval()
         end
     end
     return eval_and_resolve_code(code, rpath)

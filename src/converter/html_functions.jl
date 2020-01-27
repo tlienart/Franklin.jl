@@ -18,8 +18,8 @@ end
 """
 $(SIGNATURES)
 
-H-Function of the form `{{ fill vname }}` to plug in the content of a jd-var `vname` (assuming it
-can be represented as a string).
+H-Function of the form `{{ fill vname }}` to plug in the content of a
+franklin-var `vname` (assuming it can be represented as a string).
 """
 function hfun_fill(params::Vector{String}, allvars::PageVars)::String
     # check params
@@ -148,7 +148,7 @@ function hfun_toc(params::Vector{String})::String
     for i = curlvl-1:-1:baselvl
         inner *= "</li></ol>"
     end
-    toc = "<div class=\"jd-toc\">" * inner * "</div>"
+    toc = "<div class=\"franklin-toc\">" * inner * "</div>"
 end
 
 

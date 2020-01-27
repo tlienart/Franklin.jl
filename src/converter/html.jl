@@ -1,7 +1,8 @@
 """
 $(SIGNATURES)
 
-Convert a judoc html string into a html string (i.e. replace `{{ ... }}` blocks).
+Convert a Franklin html string into a html string (i.e. replace `{{ ... }}`
+blocks).
 """
 function convert_html(hs::AS, allvars::PageVars; isoptim::Bool=false)::String
     isempty(hs) && return hs
@@ -40,15 +41,15 @@ end
 """
 $SIGNATURES
 
-Return the HTML corresponding to a JuDoc-Markdown string as well as all the page variables.
-See also [`jd2html`](@ref) which only returns the html.
+Return the HTML corresponding to a Franklin-Markdown string as well as all the
+page variables. See also [`fd2html`](@ref) which only returns the html.
 """
-function jd2html_v(st::AbstractString; internal::Bool=false, dir::String="")::Tuple{String,Dict}
+function fd2html_v(st::AbstractString; internal::Bool=false, dir::String="")::Tuple{String,Dict}
     isempty(st) && return st
     if !internal
         FOLDER_PATH[] = isempty(dir) ? mktempdir() : dir
         set_paths!()
-        JD_ENV[:CUR_PATH] = "index.md"
+        FD_ENV[:CUR_PATH] = "index.md"
         def_GLOBAL_LXDEFS!()
         def_GLOBAL_PAGE_VARS!()
     end
@@ -56,7 +57,10 @@ function jd2html_v(st::AbstractString; internal::Bool=false, dir::String="")::Tu
     h = convert_html(m, v)
     return h, v
 end
-jd2html(a...; k...)::String = jd2html_v(a...; k...)[1]
+fd2html(a...; k...)::String = fd2html_v(a...; k...)[1]
+
+# legacy JuDoc
+jd2html = fd2html
 
 """
 $SIGNATURES
@@ -172,7 +176,7 @@ function process_html_cond(hs::AS, allvars::PageVars, qblocks::Vector{AbstractBl
             # current path is relative to /src/ for instance
             # /src/pages/blah.md -> pages/blah
             # if starts with `pages/`, replaces by `pub/`: pages/blah => pub/blah
-            rpath = splitext(unixify(JD_ENV[:CUR_PATH]))[1]
+            rpath = splitext(unixify(FD_ENV[:CUR_PATH]))[1]
             rpath = replace(rpath, Regex("^pages") => "pub")
 
             # compare with β.pages

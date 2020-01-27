@@ -1,12 +1,12 @@
-using JuDoc, Test, Markdown, Dates, Random, Literate
-const J = JuDoc
+using Franklin, Test, Markdown, Dates, Random, Literate
+const J = Franklin
 const R = @__DIR__
-const D = joinpath(dirname(dirname(pathof(JuDoc))), "test", "_dummies")
+const D = joinpath(dirname(dirname(pathof(Franklin))), "test", "_dummies")
 
 # NOTE this first file MUST be included before running the rest of the tests
 # otherwise you may get an error like "key 0x099191234..." was not found or
 # saying that the key :in doesn't exist or something along those lines
-include("jd_paths_vars.jl"); include("test_utils.jl")
+include("frank_paths_vars.jl"); include("test_utils.jl")
 
 include("misc.jl")
 
@@ -57,13 +57,14 @@ include("global/ordering.jl")
 include("global/html_esc.jl")
 
 begin
-    # create temp dir to do complete integration testing (has to be here in order
-    # to locally play nice with node variables etc, otherwise it's a big headache)
+    # create temp dir to do complete integration testing (has to be here in
+    # order to locally play nice with node variables etc, otherwise it's a big
+    # headache)
     p = joinpath(D, "..", "__tmp");
     # after errors, this may not have been deleted properly
     isdir(p) && rm(p; recursive=true, force=true)
-    # make dir, go in it, do the tests, then get completely out (otherwise windows
-    # can't delete the folder)
+    # make dir, go in it, do the tests, then get completely out (otherwise
+    # windows can't delete the folder)
     mkdir(p); cd(p);
     include("global/postprocess.jl");
     include("global/rss.jl")
@@ -73,13 +74,13 @@ begin
     # clean up
     rm(p; recursive=true, force=true)
 end
-cd(dirname(dirname(pathof(JuDoc))))
+cd(dirname(dirname(pathof(Franklin))))
 
 println("INTEGRATION")
 include("integration/literate.jl")
 
 flush_td()
-cd(joinpath(dirname(dirname(pathof(JuDoc)))))
+cd(joinpath(dirname(dirname(pathof(Franklin)))))
 
 println("COVERAGE")
 include("coverage/extras1.jl")

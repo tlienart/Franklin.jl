@@ -61,7 +61,7 @@ end
 
 
 @testset "Table" begin
-    J.JD_ENV[:CUR_PATH] = "pages/pg1.html"
+    J.FD_ENV[:CUR_PATH] = "pages/pg1.html"
     st = """
         A
 
@@ -111,6 +111,6 @@ end
     # AAA
     etc
     ~~~{{fill title}}~~~
-    """ |> jd2html_td
+    """ |> fd2html_td
     @test isapproxstr(s, raw"""<h1 id="aaa"><a href="/index.html#aaa">AAA</a></h1>  etc AAA""")
 end

@@ -1,8 +1,8 @@
 """
 $(SIGNATURES)
 
-Convert a judoc markdown file read as `mds` into a judoc html string. Returns the html string as
-well as a dictionary of page variables.
+Convert a Franklin-Markdown file read as `mds` into a Franklin HTML string.
+Returns the html string as well as a dictionary of page variables.
 
 **Arguments**
 
@@ -12,7 +12,7 @@ well as a dictionary of page variables.
 **Keyword arguments**
 
 * `isrecursive=false`: a bool indicating whether the call is the parent call or a child call
-* `isinternal=false`:  a bool indicating whether the call stems from `jd2html` in internal mode
+* `isinternal=false`:  a bool indicating whether the call stems from `fd2html` in internal mode
 * `isconfig=false`:    a bool indicating whether the file to convert is the configuration file
 * `has_mddefs=true`:   a bool indicating whether to look for definitions of page variables
 """
@@ -77,9 +77,9 @@ function convert_md(mds::AS, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
 
     # -----------------------------------------------------------------------------------
     #> 4. Page variable definition (mddefs)
-    jd_vars = nothing
-    has_mddefs && (jd_vars = process_md_defs(blocks, isconfig, lxdefs))
-    isconfig && return "", jd_vars
+    fd_vars = nothing
+    has_mddefs && (fd_vars = process_md_defs(blocks, isconfig, lxdefs))
+    isconfig && return "", fd_vars
 
     # -----------------------------------------------------------------------------------
     #> 5. Process special characters and html entities so that they can be injected
@@ -106,20 +106,20 @@ function convert_md(mds::AS, pre_lxdefs::Vector{LxDef}=Vector{LxDef}();
     hstring   = convert_inter_html(inter_html, mblocks, lxcontext)
 
     # final vars adjustments
-    if !isnothing(jd_vars)
+    if !isnothing(fd_vars)
         #> if there's code, assemble it so that can be shown or loaded in one shot
-        codes = LOCAL_PAGE_VARS["jd_code_scope"].first.codes
+        codes = LOCAL_PAGE_VARS["fd_code_scope"].first.codes
         if !isempty(codes)
-            set_var!(jd_vars, "jd_code", strip(prod(c*"\n" for c in codes)))
+            set_var!(fd_vars, "fd_code", strip(prod(c*"\n" for c in codes)))
         end
         #> if no title is specified, grab the first header if there is one
         if isnothing(LOCAL_PAGE_VARS["title"].first) && !isempty(PAGE_HEADERS)
-            set_var!(jd_vars, "title", first(values(PAGE_HEADERS))[1])
+            set_var!(fd_vars, "title", first(values(PAGE_HEADERS))[1])
         end
     end
 
-    # Return the string + judoc variables
-    return hstring, jd_vars
+    # Return the string + franklin variables
+    return hstring, fd_vars
 end
 
 
@@ -190,7 +190,7 @@ end
 String that is plugged as a placeholder of blocks that need further processing. The spaces allow to
 handle overzealous inclusion of `<p>...</p>` from the base Markdown to HTML conversion.
 """
-const INSERT     = " ##JDINSERT## "
+const INSERT     = " ##FDINSERT## "
 const INSERT_    = strip(INSERT)
 const INSERT_PAT = Regex(INSERT_)
 const INSERT_LEN = length(INSERT_)
@@ -300,8 +300,8 @@ function convert_inter_html(ihtml::AS,
     for (i, m) ∈ enumerate(allmatches)
         # two cases can happen based on whitespaces around an insertion that we
         # want to get rid of, potentially both happen simultaneously.
-        # 1. <p>##JDINSERT##...
-        # 2. ...##JDINSERT##</p>
+        # 1. <p>##FDINSERT##...
+        # 2. ...##FDINSERT##</p>
         # exceptions,
         # - list items introduce <li><p> and </p>\n</li> which shouldn't remove
         # - end of doc introduces </p>(\n?) which should not be removed
@@ -384,6 +384,6 @@ function process_md_defs(blocks::Vector{OCBlock}, isconfig::Bool,
         return nothing
     end
     isempty(assignments) || set_vars!(LOCAL_PAGE_VARS, assignments)
-    jd_vars = merge(GLOBAL_PAGE_VARS, LOCAL_PAGE_VARS)
-    return jd_vars
+    fd_vars = merge(GLOBAL_PAGE_VARS, LOCAL_PAGE_VARS)
+    return fd_vars
 end

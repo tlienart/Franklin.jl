@@ -1,5 +1,5 @@
 @testset "Hyperref" begin
-    J.JD_ENV[:CUR_PATH] = "index.md"
+    J.FD_ENV[:CUR_PATH] = "index.md"
     st = raw"""
        Some string
        $$ x = x \label{eq 1}$$
@@ -51,7 +51,7 @@
 end
 
 @testset "Href-space" begin
-    J.JD_ENV[:CUR_PATH] = "index.md"
+    J.FD_ENV[:CUR_PATH] = "index.md"
     st = raw"""
        A
        $$ x = x \label{eq 1}$$
