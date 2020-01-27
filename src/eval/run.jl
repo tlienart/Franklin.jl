@@ -53,6 +53,7 @@ function run_code(mod::Module, code::AS, out_path::AS;
     err  = nothing
     ispath(out_path) || mkpath(dirname(out_path))
     open(out_path, "w") do outf
+        rprint("→ evaluating code [...] ($(locvar("fd_rpath")))")
         redirect_stdout(outf) do
             e = 1
             while e <= ne

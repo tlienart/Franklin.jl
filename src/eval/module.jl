@@ -36,7 +36,7 @@ function newmodule(name::String)::Module
         redirect_stderr(outf) do
             mod = Core.eval(Main, Meta.parse("""
                 module $name
-                    import Franklin: @OUTPUT
+                    import Franklin: @OUTPUT, fdplotly
                 end
                 """))
         end

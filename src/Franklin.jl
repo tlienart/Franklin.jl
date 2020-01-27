@@ -22,7 +22,10 @@ export serve, publish, cleanpull, newsite, optimize, fd2html,
        literate_folder, verify_links, @OUTPUT
 
 # Extra functions
-export lunr, fdplotly
+export lunr
+
+# Convenience functions that get loaded in every module, see eval/module
+export fdplotly
 
 # -----------------------------------------------------------------------------
 # Legacy with JuDoc
@@ -98,6 +101,7 @@ include("utils/vars.jl")
 include("utils/misc.jl")
 include("utils/html.jl")
 include("utils/errors.jl")
+include("utils/easyr.jl")
 
 # PARSING
 include("parser/tokens.jl")

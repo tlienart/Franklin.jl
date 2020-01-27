@@ -141,6 +141,7 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
                              no_fail_prerender=no_fail_prerender,
                              cleanup=cleanup)
     print_final(withpre, start)
+    prerender || print("\n")
 
     #
     # Minification

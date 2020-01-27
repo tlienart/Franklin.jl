@@ -76,14 +76,14 @@ function serve(; clear::Bool=true,
 
     # start the continuous loop
     if !single
-        nomess || println("→ Starting the server...")
+        nomess || println("\n→ Starting the server...")
         coreloopfun = (cntr, fw) -> fd_loop(cntr, fw, watched_files;
                                             clear=clear, verb=verb)
         # start the liveserver in the current directory
         LiveServer.setverbose(verb)
         LiveServer.serve(port=port, coreloopfun=coreloopfun)
     end
-    flag_env && println("→ Use Pkg.activate() to go back to your main environment.")
+    flag_env && rprint("→ Use Pkg.activate() to go back to your main environment.")
 
     cleanup && clear_dicts()
 

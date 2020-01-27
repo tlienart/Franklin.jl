@@ -39,9 +39,11 @@ for such blocks.
 """
 function html_code(c::AS, lang::AS="")::String
     isempty(c)    && return ""
+    # if it's html code or plaintext escape it if it isn't
+    if isempty(lang) || lang == "html"
+        !is_html_escaped(c) && (c = htmlesc(c))
+    end
     isempty(lang) && return "<pre><code class=\"plaintext\">$c</code></pre>"
-    # if it's html code, escape it first
-    lang == "html" && !is_html_escaped(c) && (c = htmlesc(c))
     # remove hidden lines if any
     c = html_skip_hidden(c, lang)
     # if empty (e.g. via #hideall) return ""

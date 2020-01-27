@@ -34,14 +34,14 @@ function lunr()::Nothing
     return
 end
 
-function fdplotly(plt; id="fdp"*Random.randstring('a':'z', 3),
+function fdplotly(json; id="fdp"*Random.randstring('a':'z', 3),
 	 			  style="width:600px;height:350px")::Nothing
     println("""
 		~~~
 		<div id="$id" style="$style"></div>
 
 		<script>
-			var fig = $(json(plt));
+			var fig = $json;
 			CONTAINER = document.getElementById('$id');
 			Plotly.newPlot(CONTAINER, fig.data, fig.layout)
 		</script>

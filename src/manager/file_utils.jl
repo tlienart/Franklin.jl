@@ -144,7 +144,7 @@ function process_file_err(case::Symbol, fpair::Pair{String, String}, head::AS=""
                 force=true)
         end
     end
-    FD_ENV[:FULL_PASS] || FD_ENV[:SILENT_MODE] || print(rpad("\r→ page updated [✓]", 79)*"\r")
+    FD_ENV[:FULL_PASS] || FD_ENV[:SILENT_MODE] || rprint("→ page updated [✓]")
     return nothing
 end
 
