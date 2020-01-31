@@ -36,6 +36,7 @@ include("eval/run.jl")
 include("eval/io.jl")
 include("eval/codeblock.jl")
 include("eval/eval.jl")
+include("eval/integration.jl")
 
 # CONVERTER folder
 println("CONVERTER/MD")
