@@ -40,17 +40,29 @@ function serve(; clear::Bool=true,
                  cleanup::Bool=true,
                  on_write::Function=(_, _) -> nothing)::Union{Nothing,Int}
     # set the global path
-    FOLDER_PATH[]  = pwd()
-
+    FOLDER_PATH[] = pwd()
     # silent mode?
     silent && (FD_ENV[:SILENT_MODE] = true; verb = false)
 
-    # brief check to see if we're in a folder that looks promising, otherwise stop
-    # and tell the user to check (#155)
-    if !isdir(joinpath(FOLDER_PATH[], "src"))
-        throw(ArgumentError("The current directory doesn't have a src/ " *
-                            "folder. Please change directory to a valid " *
-                            "Franklin folder."))
+    # check if there's a config file, if there is, check the variable
+    # definitions looking at the ones that would affect overall structure etc.
+    process_config(init=true)
+
+    # in order to avoid the user incidentally causing troubles by redefining
+    # folder_structure along the way, we store it in FD_ENV.
+    fsv = GLOBAL_VARS["folder_structure"].first
+    if fsv < FD_ENV[:STRUCTURE]
+        FD_ENV[:STRUCTURE] = fsv
+    end
+
+    if FD_ENV[:STRUCTURE] < v"0.2"
+        # check to see if we're in a folder that has the right structure,
+        # otherwise stop and tell the user to check (#155)
+        if !isdir(joinpath(FOLDER_PATH[], "src"))
+            throw(ArgumentError(
+                "The current directory doesn't have a `src/` folder. " *
+                "Please change directory to a valid Franklin folder."))
+        end
     end
 
     # check if a Project.toml file is available, if so activate the folder
@@ -63,6 +75,7 @@ function serve(; clear::Bool=true,
     # construct the set of files to watch
     watched_files = fd_setup(clear=clear)
 
+    # set a verbosity var that we'll use in the rest of the function
     nomess && (verb = false)
 
     # do a first full pass
@@ -85,13 +98,14 @@ function serve(; clear::Bool=true,
                                             clear=clear, verb=verb,
                                             on_write=on_write)
         # start the liveserver in the current directory
+        live_server_dir = ifelse(FD_ENV[:STRUCTURE] < v"0.2", "", "__site")
         LiveServer.setverbose(verb)
         LiveServer.serve(port=port, coreloopfun=coreloopfun)
     end
-    flag_env && rprint("→ Use Pkg.activate() to go back to your main environment.")
+    flag_env &&
+        rprint("→ Use Pkg.activate() to go back to your main environment.")
 
     cleanup && clear_dicts()
-
     return nothing
 end
 

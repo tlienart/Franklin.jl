@@ -40,7 +40,7 @@ which is assigned at runtime.
 """
 function set_paths!()::LittleDict{Symbol,String}
     @assert isassigned(FOLDER_PATH) "FOLDER_PATH undefined"
-    @assert isdir(FOLDER_PATH[]) "FOLDER_PATH is not a valid path"
+    @assert isdir(FOLDER_PATH[])    "FOLDER_PATH is not a valid path"
 
     # NOTE it is recommended not to change the names of those paths.
     # Particularly for the output dir. If you do, check for example that

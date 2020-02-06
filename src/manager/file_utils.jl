@@ -4,13 +4,16 @@ $(SIGNATURES)
 Checks for a `config.md` file in `PATHS[:src]` and uses it to set the global
 variables referenced in `GLOBAL_VARS` it also sets the global latex commands
 via `GLOBAL_LXDEFS`. If the configuration file is not found a warning is shown.
+The keyword `init` is used internally to distinguish between the first call
+where only structural variables are considered (e.g. controlling folder
+structure).
 """
-function process_config()::Nothing
+function process_config(; init::Bool=false)::Nothing
     # read the config.md file if it is present
     config_path = joinpath(PATHS[:src], "config.md")
     if isfile(config_path)
         convert_md(read(config_path, String); isconfig=true)
-    else
+    elseif !init
         @warn "I didn't find a config file. Ignoring."
     end
     return nothing
