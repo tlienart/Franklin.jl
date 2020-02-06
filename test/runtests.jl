@@ -4,6 +4,7 @@ const R = @__DIR__
 const D = joinpath(dirname(dirname(pathof(Franklin))), "test", "_dummies")
 
 F.FD_ENV[:SILENT_MODE] = true
+F.FD_ENV[:STRUCTURE] = v"0.1" # legacy, it's switched up in the tests.
 
 # UTILS
 println("UTILS")
@@ -11,6 +12,7 @@ include("utils/paths_vars.jl"); include("test_utils.jl")
 include("utils/misc.jl")
 include("utils/errors.jl")
 include("utils/html.jl")
+include("utils/folder_structure.jl")
 println("🍺")
 
 # MANAGER folder
