@@ -1,6 +1,4 @@
 """
-$SIGNATURES
-
 Specify the folder for the Literate scripts, by default this is `scripts/`.
 """
 function literate_folder(rp::String="")
@@ -16,7 +14,7 @@ end
 #
 
 """
-$(SIGNATURES)
+    str(s)
 
 Returns the string corresponding to `s`: `s` itself if it is a string, or the
 parent string if `s` is a substring. Do not confuse with `String(s::SubString)`
@@ -162,7 +160,7 @@ function refstring(s::AS)::String
 end
 
 """
-context(parent, position)
+    context(parent, position)
 
 Return an informative message of the context of a position and where the
 position is, this is useful when throwing error messages.
@@ -206,4 +204,20 @@ function context(par::AS, pos::Int)
     \t$(" "^(pos-head+length(prepend)))^---
     """
     return mess
+end
+
+"""
+    rprint(s)
+
+Print an overwriting line being aware of the display width.
+"""
+function rprint(s::AS)::Nothing
+    dwidth  = displaysize(stdout)[2]
+
+    padded_s = rpad(s, dwidth)
+    trunc_s  = padded_s[1:prevind(padded_s, min(dwidth, lastindex(padded_s)))]
+    padded_s = rpad(trunc_s, dwidth)
+
+    print("\r$padded_s")
+    return nothing
 end

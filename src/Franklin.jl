@@ -101,7 +101,6 @@ include("utils/vars.jl")
 include("utils/misc.jl")
 include("utils/html.jl")
 include("utils/errors.jl")
-include("utils/easyr.jl")
 
 # PARSING
 include("parser/tokens.jl")

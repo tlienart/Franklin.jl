@@ -168,9 +168,10 @@ end
 """
 $(SIGNATURES)
 
-This is a simple wrapper doing a git commit and git push without much fanciness. It assumes the
-current directory is a git folder.
-It also fixes all links if you specify `prepath` (or if it's set in `config.md`).
+This is a simple wrapper doing a git commit and git push without much
+fanciness. It assumes the current directory is a git folder.
+It also fixes all links if you specify `prepath` (or if it's set in
+`config.md`).
 
 **Keyword arguments**
 
