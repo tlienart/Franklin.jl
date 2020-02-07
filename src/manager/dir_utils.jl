@@ -15,11 +15,16 @@ Prepare the output directory `PATHS[:pub]`.
                 start from a blank slate
 """
 function prepare_output_dir(clear::Bool=true)::Nothing
-    # if required to start from a blank slate -> remove the output dir
-    (clear & isdir(PATHS[:pub])) && rm(PATHS[:pub], recursive=true)
-    # create the output dir and the css dir if necessary
-    !isdir(PATHS[:pub]) && mkdir(PATHS[:pub])
-    !isdir(PATHS[:css]) && mkdir(PATHS[:css])
+    if FD_ENV[:STRUCTURE] < v"0.2"
+        # if required to start from a blank slate -> remove the output dir
+        (clear & isdir(PATHS[:pub])) && rm(PATHS[:pub], recursive=true)
+        # create the output dir and the css dir if necessary
+        !isdir(path(:pub)) && mkdir(path(:pub))
+        !isdir(path(:css)) && mkdir(path(:css))
+    else
+        (clear & isdir(path(:site))) && rm(path(:site), recursive=true)
+        !isdir(path(:site)) && mkdir(path(:site))
+    end
     return nothing
 end
 
@@ -49,9 +54,19 @@ $(SIGNATURES)
 Update the dictionaries referring to input files and their time of last change.
 The variable `verb` propagates verbosity.
 """
-function scan_input_dir!(md_files::TrackedFiles, html_files::TrackedFiles,
-                         other_files::TrackedFiles, infra_files::TrackedFiles,
-                         literate_files::TrackedFiles, verb::Bool=false)::Nothing
+function scan_input_dir!(args...)
+    if FD_ENV[:STRUCTURE] < v"0.2"
+        return _scan_input_dir!(args...)
+    end
+    return _scan_input_dir2!(args...)
+end
+
+function _scan_input_dir!(md_files::TrackedFiles,
+                          html_files::TrackedFiles,
+                          other_files::TrackedFiles,
+                          infra_files::TrackedFiles,
+                          literate_files::TrackedFiles,
+                          verb::Bool=false)::Nothing
     # top level files (src/*)
     for file ∈ readdir(PATHS[:src])
         isfile(joinpath(PATHS[:src], file)) || continue
@@ -106,6 +121,21 @@ function scan_input_dir!(md_files::TrackedFiles, html_files::TrackedFiles,
             end
         end
     end
+    return nothing
+end
+
+# XXX STOPPED HERE
+
+function _scan_input_dir2!(md_pages::TrackedFiles,
+                           html_pages::TrackedFiles,
+                           css_sheets::TrackedFiles,
+                           infra_files::TrackedFiles,
+                           literate_files::TrackedFiles,
+                           verb::Bool=false)::Nothing
+    # markdown pages
+    # html pages
+    # other files: CSS,
+
     return nothing
 end
 

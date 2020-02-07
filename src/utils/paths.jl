@@ -77,6 +77,14 @@ function set_paths!()::LittleDict{Symbol,String}
 end
 
 """
+    path(s)
+
+Return the paths corresponding to `s` e.g. `path(:folder)`.
+"""
+path(s) = PATHS[Symbol(s)]
+
+
+"""
 Pointer to the `/output/` folder associated with an eval block (see also
 [`@OUTPUT`](@ref)).
 """

@@ -8,11 +8,11 @@ F.FD_ENV[:STRUCTURE] = v"0.1" # legacy, it's switched up in the tests.
 
 # UTILS
 println("UTILS")
+include("utils/folder_structure.jl")
 include("utils/paths_vars.jl"); include("test_utils.jl")
 include("utils/misc.jl")
 include("utils/errors.jl")
 include("utils/html.jl")
-include("utils/folder_structure.jl")
 println("🍺")
 
 # MANAGER folder
