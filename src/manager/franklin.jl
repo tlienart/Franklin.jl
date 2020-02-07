@@ -132,14 +132,17 @@ function fd_setup(; clear::Bool=true)::NamedTuple
     # . recovering the list of files in the input dir we care about
     # -- these are stored in dictionaries, the key is the full path and the value is the time of
     # last change (useful for continuous monitoring)
-    md_files       = TrackedFiles()
-    html_files     = TrackedFiles()
-    other_files    = TrackedFiles()
-    infra_files    = TrackedFiles()
-    literate_files = TrackedFiles()
+    md_pages         = TrackedFiles()
+    html_pages       = TrackedFiles()
+    other_files      = TrackedFiles()
+    infra_files      = TrackedFiles()
+    literate_scripts = TrackedFiles()
     # named tuples of all the watched files
-    watched_files = (md=md_files, html=html_files, other=other_files,
-                     infra=infra_files, literate=literate_files)
+    watched_files = (md    = md_pages,
+                     html  = html_pages,
+                     other = other_files,
+                     infra = infra_files,
+                     literate = literate_scripts)
     # fill the dictionaries
     scan_input_dir!(watched_files...)
     return watched_files
@@ -168,9 +171,17 @@ function fd_fullpass(watched_files::NamedTuple; clear::Bool=false,
                      on_write::Function=(_, _) -> nothing)::Int
     FD_ENV[:FULL_PASS] = true
     # initiate page segments
-    head    = read(joinpath(PATHS[:src_html], "head.html"), String)
-    pg_foot = read(joinpath(PATHS[:src_html], "page_foot.html"), String)
-    foot    = read(joinpath(PATHS[:src_html], "foot.html"), String)
+    if FD_ENV[:STRUCTURE] < v"0.2"
+        head    = read(joinpath(path(:src_html), "head.html"),      String)
+        pg_foot = read(joinpath(path(:src_html), "page_foot.html"), String)
+        foot    = read(joinpath(path(:src_html), "foot.html"),      String)
+    else
+        head    = read(joinpath(path(:layout), "head.html"),      String)
+        pg_foot = read(joinpath(path(:layout), "page_foot.html"), String)
+        foot    = read(joinpath(path(:layout), "foot.html"),      String)
+    end
+
+# XXX ae1
 
     # reset global page variables and latex definitions
     # NOTE: need to keep track of pre-path if specified, see optimize

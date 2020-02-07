@@ -124,18 +124,49 @@ function _scan_input_dir!(md_files::TrackedFiles,
     return nothing
 end
 
-# XXX STOPPED HERE
-
 function _scan_input_dir2!(md_pages::TrackedFiles,
                            html_pages::TrackedFiles,
-                           css_sheets::TrackedFiles,
+                           other_files::TrackedFiles,
                            infra_files::TrackedFiles,
-                           literate_files::TrackedFiles,
+                           literate_scripts::TrackedFiles,
                            verb::Bool=false)::Nothing
-    # markdown pages
-    # html pages
-    # other files: CSS,
-
+    # go over all files in the website folder
+    for (root, _, files) ∈ walkdir(path(:folder))
+        for file in files
+            # early skip
+            file ∈ IGNORE_FILES && continue
+            # assemble full path (root is an absolute path)
+            fpath = joinpath(root, file)
+            # skip over `__site` folder
+            startswith(fpath, path(:site)) && continue
+            fpair = root => file
+            fext  = splitext(file)[2]
+            # assets file --> other
+            if startswith(fpath, path(:assets))
+                add_if_new_file!(other_files, fpair, verb)
+            # infra_files
+            elseif startswith(fpath, path(:css))    ||
+                   startswith(fpath, path(:layout)) ||
+                   startswith(fpath, path(:libs))
+                add_if_new_file!(infra_files, fpair, verb)
+            # literate_files
+            elseif startswith(fpath, path(:literate))
+                # ignore files that are not script files
+                fext == ".jl" || continue
+                add_if_new_file!(literate_scripts, fpair, verb)
+            else
+                if file == "config.md"
+                    add_if_new_file!(infra_files, fpair, verb)
+                elseif fext == ".md"
+                    add_if_new_file!(md_pages, fpair, verb)
+                elseif fext ∈ (".html", ".htm")
+                    add_if_new_file!(html_pages, fpair, verb)
+                else
+                    add_if_new_file!(other_files, fpair, verb)
+                end
+            end
+        end
+    end
     return nothing
 end
 
@@ -144,7 +175,8 @@ end
 Helper function, if `fpair` is not referenced in the dictionary (new file) add
 the entry to the dictionary with the time of last modification as val.
 """
-function add_if_new_file!(dict::TrackedFiles, fpair::Pair{String,String}, verb::Bool)::Nothing
+function add_if_new_file!(dict::TrackedFiles, fpair::Pair{String,String},
+                          verb::Bool)::Nothing
     haskey(dict, fpair) && return nothing
     # it's a new file
     verb && println("tracking new file '$(fpair.second)'.")

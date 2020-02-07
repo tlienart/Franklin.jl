@@ -68,7 +68,6 @@ function set_paths!()::LittleDict{Symbol,String}
 
         # subfolders of assets
         PATHS[:a_aux]      = joinpath(PATHS[:assets], "aux")      # generated
-        PATHS[:a_infra]    = joinpath(PATHS[:assets], "infra")    # optional
         PATHS[:a_scripts]  = joinpath(PATHS[:assets], "scripts")  # optional
         PATHS[:a_literate] = joinpath(PATHS[:assets], "literate") # generated
     end
