@@ -32,19 +32,52 @@ end
 """
 $(SIGNATURES)
 
-Take a `root` path to an input file and convert to output path. If the output
+Take a `base` path to an input file and convert to output path. If the output
 path does not exist, create it.
 """
-function out_path(root::String)::String
+function out_path(base::String)::String
+    if FD_ENV[:STRUCTURE] < v"0.2"
+        return _out_path(base)
+    end
+    return _out_path2(base)
+end
+
+# NOTE: LEGACY way of getting the target path
+function _out_path(base::String)::String
+    if startswith(base, PATHS[:src_css])
+        f_out_path = replace(base, PATHS[:src_css] => PATHS[:css])
+        !ispath(f_out_path) && mkpath(f_out_path)
+        return f_out_path
+    end
     len_in = lastindex(joinpath(PATHS[:src], ""))
-    length(root) <= len_in && return PATHS[:folder]
-    dpath = root[nextind(root, len_in):end]
+    length(base) <= len_in && return PATHS[:folder]
+    dpath = base[nextind(base, len_in):end]
     # construct the out path
     f_out_path = joinpath(PATHS[:folder], dpath)
     f_out_path = replace(f_out_path, r"([^a-zA-Z\d\s_:])pages" => s"\1pub")
     # if it doesn't exist, make the path
     !ispath(f_out_path) && mkpath(f_out_path)
     return f_out_path
+end
+
+function _out_path2(base::String)::String
+    if startswith(base, path(:assets)) ||
+       startswith(base, path(:css))    ||
+       startswith(base, path(:layout)) ||
+       startswith(base, path(:libs))   ||
+       startswith(base, path(:literate))
+
+       # add a closing separator to folder path
+       rbase   = joinpath(path(:folder), "")
+       outpath = replace(base, Regex("$(rbase)_([a-z]+)") => s"\1")
+       outpath = joinpath(path(:site), outpath)
+   else
+       # path is not a 'special folder'
+       outpath = replace(base, path(:folder) => path(:site))
+   end
+    # if it doesn't exist, make the path
+    !ispath(outpath) && mkpath(outpath)
+    return outpath
 end
 
 

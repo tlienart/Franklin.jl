@@ -148,7 +148,6 @@ function fd_setup(; clear::Bool=true)::NamedTuple
     return watched_files
 end
 
-
 """
 $(SIGNATURES)
 
@@ -170,18 +169,6 @@ function fd_fullpass(watched_files::NamedTuple; clear::Bool=false,
                      no_fail_prerender::Bool=true,
                      on_write::Function=(_, _) -> nothing)::Int
     FD_ENV[:FULL_PASS] = true
-    # initiate page segments
-    if FD_ENV[:STRUCTURE] < v"0.2"
-        head    = read(joinpath(path(:src_html), "head.html"),      String)
-        pg_foot = read(joinpath(path(:src_html), "page_foot.html"), String)
-        foot    = read(joinpath(path(:src_html), "foot.html"),      String)
-    else
-        head    = read(joinpath(path(:layout), "head.html"),      String)
-        pg_foot = read(joinpath(path(:layout), "page_foot.html"), String)
-        foot    = read(joinpath(path(:layout), "foot.html"),      String)
-    end
-
-# XXX ae1
 
     # reset global page variables and latex definitions
     # NOTE: need to keep track of pre-path if specified, see optimize
@@ -195,44 +182,41 @@ function fd_fullpass(watched_files::NamedTuple; clear::Bool=false,
     # process configuration file (see also `process_mddefs!`)
     process_config()
 
-    # looking for an index file to process
-    indexmd   = PATHS[:src] => "index.md"
-    indexhtml = PATHS[:src] => "index.html"
+    # form page segments
+    root   = ifelse(FD_ENV[:STRUCTURE]<v"0.2", path(:src), path(:folder))
+    layout = ifelse(FD_ENV[:STRUCTURE]<v"0.2", path(:src_html), path(:layout))
 
-    # rest of the pages
-    s = 0
-    begin
-        if isfile(joinpath(indexmd...))
-            a = process_file(:md, indexmd, head, pg_foot, foot; clear=clear,
-                             prerender=prerender, isoptim=isoptim, on_write=on_write)
-            if a < 0 && prerender && no_fail_prerender
-                process_file(:md, indexmd, head, pg_foot, foot; clear=clear,
-                             prerender=false, isoptim=isoptim, on_write=on_write)
-            end
-            s += a
-        elseif isfile(joinpath(indexhtml...))
-            a = process_file(:html, indexhtml, head, pg_foot, foot; clear=clear,
-                             prerender=prerender, isoptim=isoptim, on_write=on_write)
-            if a < 0 && prerender && no_fail_prerender
-                process_file(:html, indexhtml, head, pg_foot, foot; clear=clear,
-                             prerender=false, isoptim=isoptim, on_write=on_write)
-            end
-            s += a
-        else
-            @warn "I didn't find an index.[md|html], there should be one. Ignoring."
-        end
-        # process rest of the files
-        for (case, dict) ∈ pairs(watched_files), (fpair, t) ∈ dict
-            occursin("index.", fpair.second) && continue
-            a = process_file(case, fpair, head, pg_foot, foot, t; clear=clear,
-                             prerender=prerender, isoptim=isoptim, on_write=on_write)
-            if a < 0 && prerender && no_fail_prerender
-                process_file(case, fpair, head, pg_foot, foot, t; clear=clear,
-                             prerender=false, isoptim=isoptim, on_write=on_write)
-            end
-            s += a
-        end
+    head    = read(joinpath(layout, "head.html"),      String)
+    pg_foot = read(joinpath(layout, "page_foot.html"), String)
+    foot    = read(joinpath(layout, "foot.html"),      String)
+
+    # look for an index file to process
+    hasindexmd   = isfile(joinpath(root, "index.md"))
+    hasindexhtml = isfile(joinpath(root, "index.html"))
+
+    if !hasindexmd && !hasindexhtml
+        @warn "No /index.md or /index.html found, there should be one. " *
+              "Ignoring..."
     end
+
+    # go over all pages note that the html files are processed AFTER the
+    # markdown files and so if you both have an `index.md` and an `index.html`
+    # with otherwise the same path, it's the latter that will be considered.
+    s = 0
+    for (case, dict) ∈ pairs(watched_files), (fpair, t) ∈ dict
+        a = process_file(case, fpair, head, pg_foot, foot, t;
+                         clear=clear, prerender=prerender,
+                         isoptim=isoptim, on_write=on_write)
+        # in case of failure of prerendering, if no_fail_prerender, we force
+        # prerender=false
+        if a < 0 && prerender && no_fail_prerender
+            process_file(case, fpair, head, pg_foot, foot, t;
+                         clear=clear, prerender=false,
+                         isoptim=isoptim, on_write=on_write)
+        end
+        s += a
+    end
+
     # generate RSS if appropriate
     globvar("generate_rss") && rss_generator()
     FD_ENV[:FULL_PASS] = false

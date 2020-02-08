@@ -100,15 +100,16 @@ $(SIGNATURES)
 
 See [`process_file_err`](@ref).
 """
-function process_file(case::Symbol, fpair::Pair{String,String}, args...; kwargs...)::Int
+function process_file(case::Symbol, fpair::Pair{String,String}, args...;
+                      kwargs...)::Int
     try
         process_file_err(case, fpair, args...; kwargs...)
     catch err
         FD_ENV[:DEBUG_MODE] && throw(err)
         rp = fpair.first
         rp = rp[end-min(20, length(rp))+1 : end]
-        println("\n... encountered an issue processing '$(fpair.second)' in ...$rp.")
-        println("Verify, then start franklin again...\n")
+        println("\n... encountered an issue processing '$(fpair.second)' " *
+                "in ...$rp. Verify, then start franklin again...\n")
         FD_ENV[:SUPPRESS_ERR] || @show err
         return -1
     end
@@ -125,30 +126,28 @@ processes it by converting it and adding appropriate header and footer and
 writes it to the appropriate place. It can throw an error which will be
 caught in `process_file(args...)`.
 """
-function process_file_err(case::Symbol, fpair::Pair{String, String}, head::AS="",
-                          pg_foot::AS="", foot::AS="", t::Float64=0.;
-                          clear::Bool=false, prerender::Bool=false, isoptim::Bool=false,
-                          on_write::Function=(_, _) -> nothing)::Nothing
+function process_file_err(
+            case::Symbol, fpair::Pair{String, String},
+            head::AS="", pg_foot::AS="", foot::AS="", t::Float64=0.;
+            clear::Bool=false, prerender::Bool=false, isoptim::Bool=false,
+            on_write::Function=(_, _) -> nothing)::Nothing
+    # depending on the file extension, either full process (.md), partial
+    # process (.html) or no process (everything else)
+    inp  = joinpath(fpair...)
+    outp = joinpath(out_path(fpair.first), fpair.second)
     if case == :md
-        write_page(fpair..., head, pg_foot, foot; prerender=prerender, isoptim=isoptim, on_write=on_write)
+        write_page(fpair..., head, pg_foot, foot;
+                   prerender=prerender, isoptim=isoptim, on_write=on_write)
     elseif case == :html
-        fpath = joinpath(fpair...)
-        raw_html = read(fpath, String)
+        raw_html  = read(inp, String)
         proc_html = convert_html(raw_html; isoptim=isoptim)
-        write(joinpath(out_path(fpair.first), fpair.second), proc_html)
-    elseif case == :other
-        opath = joinpath(out_path(fpair.first), fpair.second)
-        # only copy it again if necessary (particularly relevant when the asset
-        # files take quite a bit of space.
-        if clear || !isfile(opath) || mtime(opath) < t
-            cp(joinpath(fpair...), opath, force=true)
-        end
-    else # case == :infra
-        # copy over css files
-        # NOTE some processing may be further added here later on.
-        if splitext(fpair.second)[2] == ".css"
-            cp(joinpath(fpair...), joinpath(PATHS[:css], fpair.second),
-                force=true)
+        write(outp, proc_html)
+    else # case in (:other, :infra)
+        # NOTE: some processing may be further added here later on (e.g.
+        # parsing) of CSS files)
+        # only copy again if necessary (file is not there or has changed)
+        if clear || !isfile(outp) || (mtime(outp) < t && !filecmp(inp, outp))
+            cp(inp, outp, force=true)
         end
     end
     FD_ENV[:FULL_PASS] || FD_ENV[:SILENT_MODE] || rprint("→ page updated [✓]")
