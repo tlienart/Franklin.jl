@@ -46,8 +46,9 @@ end
 $(SIGNATURES)
 
 H-Function of the form `{{ insert fpath }}` to plug in the content of a file at
-`fpath`. Note that the base path is assumed to be `PATHS[:src_html]` so paths
-have to be expressed relative to that.
+`fpath`. Note that the base path is assumed to be `PATHS[:src_html]`
+(`< v"0.2"`) and `PATHS[:layout]` otherwise and so paths have to be expressed
+relative to that.
 """
 function hfun_insert(params::Vector{String})::String
     # check params
@@ -55,8 +56,9 @@ function hfun_insert(params::Vector{String})::String
         throw(HTMLFunctionError("I found a {{insert ...}} with more than one parameter. Verify."))
     end
     # apply
-    repl  = ""
-    fpath = joinpath(PATHS[:src_html], split(params[1], "/")...)
+    repl   = ""
+    layout = path(ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src_html, :layout))
+    fpath  = joinpath(layout, split(params[1], "/")...)
     if isfile(fpath)
         repl = convert_html(read(fpath, String))
     else

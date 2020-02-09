@@ -20,7 +20,7 @@ Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [compat]
 DocStringExtensions = "^0.8"
-FranklinTemplates = "^0.4.2"
+FranklinTemplates = "^0.4.4,^0.5"
 HTTP = "^0.8"
 Literate = "^2.2"
 LiveServer = "^0.3"

@@ -51,7 +51,10 @@ function form_output_path(base::AS, file::AS, case::Symbol)
             end
         end
     end
-    return joinpath(outbase, file)
+    outpath = joinpath(outbase, file)
+    outdir  = splitdir(outpath)[1]
+    isdir(outdir) || mkpath(outdir)
+    return outpath
 end
 
 # NOTE: LEGACY way of getting the target path

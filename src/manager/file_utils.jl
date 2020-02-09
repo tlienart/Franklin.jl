@@ -9,12 +9,27 @@ where only structural variables are considered (e.g. controlling folder
 structure).
 """
 function process_config(; init::Bool=false)::Nothing
-    # read the config.md file if it is present
-    config_path = joinpath(PATHS[:src], "config.md")
-    if isfile(config_path)
-        convert_md(read(config_path, String); isconfig=true)
-    elseif !init
-        @warn "I didn't find a config file. Ignoring."
+    if init
+        # initially the paths variable aren't set, try to find a config.md
+        # and read definitions in it; in particular folder_structure.
+        config_path_v1 = joinpath(FOLDER_PATH[], "src", "config.md")
+        config_path_v2 = joinpath(FOLDER_PATH[], "config.md")
+        if isfile(config_path_v2)
+            convert_md(read(config_path_v2, String); isconfig=true)
+        elseif isfile(config_path_v1)
+            convert_md(read(config_path_v1, String); isconfig=true)
+        else
+            @warn "I didn't find a config file. Ignoring."
+        end
+    else
+        key = ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src, :folder)
+        dir = path(key)
+        config_path = joinpath(dir, "config.md")
+        if isfile(config_path)
+            convert_md(read(config_path, String); isconfig=true)
+        else
+            @warn "I didn't find a config file. Ignoring."
+        end
     end
     return nothing
 end
@@ -39,7 +54,8 @@ function write_page(root::String, file::String, head::String,
     # The curpath is the relative path starting after /src/ so for instance:
     # f1/blah/page1.md or index.md etc... this is useful in the code evaluation and management
     # of paths
-    cur_rpath = fpath[lastindex(PATHS[:src])+length(PATH_SEP)+1:end]
+    root = path(ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src, :folder))
+    cur_rpath = fpath[lastindex(root)+length(PATH_SEP)+1:end]
     FD_ENV[:CUR_PATH] = cur_rpath
 
     content = convert_md(read(fpath, String))

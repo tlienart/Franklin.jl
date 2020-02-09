@@ -46,14 +46,13 @@ function serve(; clear::Bool=true,
 
     # check if there's a config file, if there is, check the variable
     # definitions looking at the ones that would affect overall structure etc.
+    def_GLOBAL_VARS!()
     process_config(init=true)
 
     # in order to avoid the user incidentally causing troubles by redefining
     # folder_structure along the way, we store it in FD_ENV.
     fsv = GLOBAL_VARS["folder_structure"].first
-    if fsv < FD_ENV[:STRUCTURE]
-        FD_ENV[:STRUCTURE] = fsv
-    end
+    FD_ENV[:STRUCTURE] = fsv
 
     if FD_ENV[:STRUCTURE] < v"0.2"
         # check to see if we're in a folder that has the right structure,
@@ -100,7 +99,8 @@ function serve(; clear::Bool=true,
         # start the liveserver in the current directory
         live_server_dir = ifelse(FD_ENV[:STRUCTURE] < v"0.2", "", "__site")
         LiveServer.setverbose(verb)
-        LiveServer.serve(port=port, coreloopfun=coreloopfun)
+        LiveServer.serve(port=port, coreloopfun=coreloopfun,
+                         dir=live_server_dir)
     end
     flag_env &&
         rprint("→ Use Pkg.activate() to go back to your main environment.")
