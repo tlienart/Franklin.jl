@@ -47,7 +47,7 @@ function form_output_path(base::AS, file::AS, case::Symbol)
             # file is page.html  --> .../page/index.html
             fname = splitext(file)[1]
             if fname != "index"
-                file = joinpath(file, "index.html")
+                file = joinpath(fname, "index.html")
             end
         end
     end
@@ -72,7 +72,7 @@ function _out_path(base::String)::String
     return f_out_path
 end
 
-function _out_path2(base::String, case::Symbol)::String
+function _out_path2(base::String)::String
     if startswith(base, path(:assets)) ||
        startswith(base, path(:css))    ||
        startswith(base, path(:layout)) ||

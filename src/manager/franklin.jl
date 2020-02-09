@@ -183,8 +183,10 @@ function fd_fullpass(watched_files::NamedTuple; clear::Bool=false,
     process_config()
 
     # form page segments
-    root   = ifelse(FD_ENV[:STRUCTURE]<v"0.2", path(:src), path(:folder))
-    layout = ifelse(FD_ENV[:STRUCTURE]<v"0.2", path(:src_html), path(:layout))
+    root_key   = ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src, :folder)
+    layout_key = ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src_html, :layout)
+    root       = path(root_key)
+    layout     = path(layout_key)
 
     head    = read(joinpath(layout, "head.html"),      String)
     pg_foot = read(joinpath(layout, "page_foot.html"), String)
@@ -254,7 +256,7 @@ function fd_loop(cycle_counter::Int, ::LiveServer.FileWatcher,
         scan_input_dir!(watched_files..., verb)
     else
         layout_key = ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src_html, :layout)
-        layout = PATHS[layout_key]
+        layout     = path(layout_key)
         # do a pass over the files, check if one has changed and if so trigger
         # the appropriate file processing mechanism
         for (case, dict) ∈ pairs(watched_files), (fpair, t) ∈ dict
