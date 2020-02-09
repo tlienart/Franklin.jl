@@ -240,8 +240,8 @@ function fd_loop(cycle_counter::Int, ::LiveServer.FileWatcher,
                  watched_files::NamedTuple;
                  clear::Bool=false, verb::Bool=false,
                  on_write::Function=(_, _) -> nothing)::Nothing
-    # every 30 cycles (3 seconds), scan directory to check for new or deleted files and
-    # update dicts accordingly
+    # every 30 cycles (3 seconds), scan directory to check for new or deleted
+    # files and update dicts accordingly
     if mod(cycle_counter, 30) == 0
         # 1) check if some files have been deleted; note that we don't do
         # anything, we just remove the file reference from the corresponding
@@ -253,6 +253,8 @@ function fd_loop(cycle_counter::Int, ::LiveServer.FileWatcher,
         # update the dictionaries
         scan_input_dir!(watched_files..., verb)
     else
+        layout_key = ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src_html, :layout)
+        layout = PATHS[layout_key]
         # do a pass over the files, check if one has changed and if so trigger
         # the appropriate file processing mechanism
         for (case, dict) ∈ pairs(watched_files), (fpair, t) ∈ dict
@@ -265,50 +267,62 @@ function fd_loop(cycle_counter::Int, ::LiveServer.FileWatcher,
             fmsg = rpad("→ file $(fpath[length(FOLDER_PATH[])+1:end]) was modified ", 30)
             verb && print(fmsg)
             dict[fpair] = cur_t
-            # if it's an infra_file
+
+            # if it's an infra_file trigger a fullpass as potentially
+            # the whole website depends upon it (e.g. CSS)
             if haskey(watched_files[:infra], fpair)
                 verb && println("→ full pass...")
                 start = time()
-                fd_fullpass(watched_files; clear=false, verb=false, prerender=false, on_write=on_write)
-                verb && (print_final(rpad("✔ full pass...", 15), start); println(""))
-            # if it's a literate file
+                fd_fullpass(watched_files;
+                            clear=false, verb=false, prerender=false,
+                            on_write=on_write)
+                if verb
+                    print_final(rpad("✔ full pass...", 15), start)
+                    println("")
+                end
+
+            # if it's a literate_file, check that it's included on some page
+            # and if it is, then trigger build of that (or those) page(s)
             elseif haskey(watched_files[:literate], fpair)
                 fmsg = fmsg * rpad("→ updating... ", 15)
                 verb && print("\r" * fmsg)
                 start = time()
                 #
                 literate_path = splitext(unixify(joinpath(fpair...)))[1]
-                #
-                head    = read(joinpath(PATHS[:src_html], "head.html"), String)
-                pg_foot = read(joinpath(PATHS[:src_html], "page_foot.html"), String)
-                foot    = read(joinpath(PATHS[:src_html], "foot.html"), String)
-                # process all md files that have `\literate` with something that matches
-
+                # retrieve head, foot etc
+                head   = read(joinpath(layout, "head.html"),      String)
+                pgfoot = read(joinpath(layout, "page_foot.html"), String)
+                foot   = read(joinpath(layout, "foot.html"),      String)
+                # process all md files that have `\literate` with something
+                # that matches
                 for mdfpair in keys(watched_files.md)
-                    mdfpath = joinpath(mdfpair...)
                     # read the content and look for `{...}` that may refer
                     # to that script.
-                    content = read(mdfpath, String)
+                    content = read(joinpath(mdfpair...), String)
                     for m in eachmatch(r"\{(.*?)(\.jl)?\}", content)
                         if endswith(literate_path, m.captures[1])
-                            process_file(:md, mdfpair, head, pg_foot, foot, cur_t;
-                                         clear=false, prerender=false, on_write=on_write)
+                            process_file(:md, mdfpair, head, pgfoot, foot,
+                                         cur_t; clear=false, prerender=false,
+                                         on_write=on_write)
+                            # no need to look at further matches on that page
+                            # since we've already triggered the page build
                             break
                         end
                     end
                 end
                 verb && print_final(fmsg, start)
+
+            # for any other file, just call `process_file`
             else
                 fmsg = fmsg * rpad("→ updating... ", 15)
                 verb && print("\r" * fmsg)
                 start = time()
-                #
-                head    = read(joinpath(PATHS[:src_html], "head.html"), String)
-                pg_foot = read(joinpath(PATHS[:src_html], "page_foot.html"), String)
-                foot    = read(joinpath(PATHS[:src_html], "foot.html"), String)
-                # if it's the first time we modify this file then all blocks need
-                # to be evaluated so that everything is in scope
-                process_file(case, fpair, head, pg_foot, foot, cur_t;
+                # retrieve head, foot etc
+                head   = read(joinpath(layout, "head.html"),      String)
+                pgfoot = read(joinpath(layout, "page_foot.html"), String)
+                foot   = read(joinpath(layout, "foot.html"),      String)
+                # then process
+                process_file(case, fpair, head, pgfoot, foot, cur_t;
                              clear=false, prerender=false, on_write=on_write)
                 verb && print_final(fmsg, start)
             end

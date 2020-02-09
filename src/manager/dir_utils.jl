@@ -28,18 +28,30 @@ function prepare_output_dir(clear::Bool=true)::Nothing
     return nothing
 end
 
-
 """
 $(SIGNATURES)
 
-Take a `base` path to an input file and convert to output path. If the output
-path does not exist, create it.
+Given a file path split in `(base, file)`, form the output path (where the
+output file will be written/copied).
 """
-function out_path(base::String)::String
+function form_output_path(base::AS, file::AS, case::Symbol)
+    # .md -> .html for md pages:
+    case == :md && (file = change_ext(file))
+
     if FD_ENV[:STRUCTURE] < v"0.2"
-        return _out_path(base)
+        outbase = _out_path(base)
+    else
+        outbase = _out_path2(base)
+        if case in (:md, :html)
+            # file is index.html --> keep the path
+            # file is page.html  --> .../page/index.html
+            fname = splitext(file)[1]
+            if fname != "index"
+                file = joinpath(file, "index.html")
+            end
+        end
     end
-    return _out_path2(base)
+    return joinpath(outbase, file)
 end
 
 # NOTE: LEGACY way of getting the target path
@@ -60,7 +72,7 @@ function _out_path(base::String)::String
     return f_out_path
 end
 
-function _out_path2(base::String)::String
+function _out_path2(base::String, case::Symbol)::String
     if startswith(base, path(:assets)) ||
        startswith(base, path(:css))    ||
        startswith(base, path(:layout)) ||

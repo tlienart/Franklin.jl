@@ -55,8 +55,8 @@ end
     pg_foot = "\npage_foot"
     foot = "foot {{if hasmath}} {{fill author}}{{end}}"
 
-    F.write_page(F.PATHS[:src], "index.md", head, pg_foot, foot)
-    out_file = joinpath(F.out_path(F.PATHS[:folder]), "index.html")
+    out_file = F.form_output_path(F.PATHS[:folder], "index.html", :html)
+    F.write_page(F.PATHS[:src], "index.md", head, pg_foot, foot, out_file)
 
     @test isfile(out_file)
     @test read(out_file, String) == "head\n<div class=\"franklin-content\">\n<p>blah blah</p>\n\n\npage_foot\n</div>\nfoot  Stefan Zweig"
