@@ -29,7 +29,7 @@ end
 end
 
 @testset "Franklin" begin
-    cd(td); mkpath("foo"); cd("foo");
+    cd(td); mkpath("foo"); cd("foo"); write("config.md","")
     @test_throws ArgumentError serve(single=true)
     cd(td)
 end

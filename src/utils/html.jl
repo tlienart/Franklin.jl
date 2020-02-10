@@ -92,6 +92,13 @@ html_err(mess::String="") =
 
 """Helper function to get the relative url of the current page."""
 function url_curpage()
+    if FD_ENV[:STRUCTURE] < v"0.2"
+        return _url_curpage()
+    end
+    return _url_curpage2()
+end
+
+function _url_curpage()
     # go from /pages/.../something.md to /pub/.../something.html note that if
     # on windows then it would be \\ whence the PATH_SEP
     rp = replace(locvar("fd_rpath"),
@@ -100,6 +107,22 @@ function url_curpage()
     rp = splitext(rp)[1] * ".html"
     startswith(rp, "/") || (rp = "/" * rp)
     return rp
+end
+
+function _url_curpage2()
+    # get the relative path to current page and split extension (.md)
+    fn = splitext(locvar("fd_rpath"))[1]
+    # if it's not `index` then add `index`:
+    if fn != "index"
+        fn = joinpath(fn, "index")
+    end
+    fn *= ".html"
+    # unixify
+    fn = unixify(fn)
+    # if it does not start with "/", add a "/" in front
+    startswith(fn, "/") || (fn = "/" * fn)
+    # append .html and return
+    return fn
 end
 
 # Copied from https://github.com/JuliaLang/julia/blob/acb7bd93fb2d5adbbabeaed9f39ab3c85495b02f/stdlib/Markdown/src/render/html.jl#L25-L31

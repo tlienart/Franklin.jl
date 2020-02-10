@@ -123,3 +123,7 @@ function explore_h_steps(hs, allvars=F.PageVars())
 
     return steps
 end
+
+
+fs1() = (empty!(F.PATHS); F.FD_ENV[:STRUCTURE] = v"0.1"; F.set_paths!())
+fs2() = (empty!(F.PATHS); F.FD_ENV[:STRUCTURE] = v"0.2"; F.set_paths!())

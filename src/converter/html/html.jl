@@ -170,13 +170,14 @@ function process_html_cond(hs::AS, qblocks::Vector{AbstractBlock},
             k = Int(!haskey(LOCAL_VARS, βi.vname))
         else
             # HIsPage//HIsNotPage
-            #
-            # current path is relative to /src/ for instance
-            # /src/pages/blah.md -> pages/blah
-            # if starts with `pages/`, replaces by `pub/`:
-            # pages/blah => pub/blah
             rpath = splitext(unixify(locvar("fd_rpath")))[1]
-            rpath = replace(rpath, Regex("^pages") => "pub")
+            if FD_ENV[:STRUCTURE] < v"0.2"
+                # current path is relative to /src/ for instance
+                # /src/pages/blah.md -> pages/blah
+                # if starts with `pages/`, replaces by `pub/`:
+                # pages/blah => pub/blah
+                rpath = replace(rpath, Regex("^pages") => "pub")
+            end
             # compare with β.pages
             inpage = any(p -> match_url(rpath, p), βi.pages)
 

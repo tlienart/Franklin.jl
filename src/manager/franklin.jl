@@ -44,11 +44,15 @@ function serve(; clear::Bool=true,
     # silent mode?
     silent && (FD_ENV[:SILENT_MODE] = true; verb = false)
 
+    # in case of optim, there may be a prepath given which should be
+    # kept
+    prepath = get(GLOBAL_VARS, "prepath", nothing)
+    def_GLOBAL_VARS!()
+    isnothing(prepath) || set_var!(GLOBAL_VARS, "prepath", prepath.first)
+
     # check if there's a config file, if there is, check the variable
     # definitions looking at the ones that would affect overall structure etc.
-    def_GLOBAL_VARS!()
     process_config(init=true)
-
     # in order to avoid the user incidentally causing troubles by redefining
     # folder_structure along the way, we store it in FD_ENV.
     fsv = GLOBAL_VARS["folder_structure"].first
@@ -61,6 +65,15 @@ function serve(; clear::Bool=true,
             throw(ArgumentError(
                 "The current directory doesn't have a `src/` folder. " *
                 "Please change directory to a valid Franklin folder."))
+        end
+    else
+        if !all(isdir, (joinpath(FOLDER_PATH[], "_layout"),
+                        joinpath(FOLDER_PATH[], "_css")))
+            throw(ArgumentError(
+                "The current directory doens't  have a `_layout` or `_css` " *
+                "folder, if you are using the old folder structure, please " *
+                "add `@def folder_structure = v\"0.1\"` in your config.md; " *
+                "otherwise, change directory to a valid Franklin folder."))
         end
     end
 
