@@ -58,12 +58,13 @@ where `__site` will contain the full generated site. To migrate from old to new:
 1. move `libs` to `_libs`
 1. move the rest of the content of `src/` up one level
 1. optionally move the content of `pages/` up one level (1)
-1. remove `pub/`
+1. remove `pub/` and `css/`
 
 (1): since the `pub` disappears, there's also no need for the `pages/` folder but you can keep it if you like.
 
 Then you may have to:
 
+- fix links in `_layout/head.html` removing `/pub/` and `.html` so for instance `/pub/menu1.html` becomes `/menu1/`,
 - fix a few of your internal links (use `verify_links()` to help you with that),
 - set things up so that the content of  `__site` is what's served on GitHub or elsewhere.
 

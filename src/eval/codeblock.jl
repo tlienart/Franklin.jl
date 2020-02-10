@@ -50,6 +50,12 @@ function should_eval(code::AS, rpath::AS)
     # 4. if the code has changed reeval
     cp = form_codepaths(rpath)
     # >> does the script exist?
+
+    # @show isfile(cp.script_path)
+    # @show MESSAGE_FILE_GEN_FMD * code == read(cp.script_path, String)
+    # @show isdir(cp.out_dir)
+    # @show all(isfile, (cp.out_path, cp.res_path))
+
     isfile(cp.script_path) || return true
     # >> does the script match the code?
     MESSAGE_FILE_GEN_FMD * code == read(cp.script_path, String) || return true

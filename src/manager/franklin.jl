@@ -27,7 +27,7 @@ Keyword arguments:
 * `on_write(pg, fd_vars)`: callback function after the page is rendered, passing as arguments
                      the rendered page and the page variables
 """
-function serve(; clear::Bool=true,
+function serve(; clear::Bool=false,
                  verb::Bool=false,
                  port::Int=8000,
                  single::Bool=false,
@@ -151,10 +151,11 @@ function fd_setup(; clear::Bool=true)::NamedTuple
     infra_files      = TrackedFiles()
     literate_scripts = TrackedFiles()
     # named tuples of all the watched files
-    watched_files = (md    = md_pages,
-                     html  = html_pages,
-                     other = other_files,
+    # NOTE: with FS2 the ordering now matters, i.p. other should be first
+    watched_files = (other = other_files,
                      infra = infra_files,
+                     md    = md_pages,
+                     html  = html_pages,
                      literate = literate_scripts)
     # fill the dictionaries
     scan_input_dir!(watched_files...)

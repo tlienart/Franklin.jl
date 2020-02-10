@@ -109,10 +109,10 @@ function scan_input_dir!(args...)
     return _scan_input_dir2!(args...)
 end
 
-function _scan_input_dir!(md_files::TrackedFiles,
-                          html_files::TrackedFiles,
-                          other_files::TrackedFiles,
+function _scan_input_dir!(other_files::TrackedFiles,
                           infra_files::TrackedFiles,
+                          md_files::TrackedFiles,
+                          html_files::TrackedFiles,
                           literate_files::TrackedFiles,
                           verb::Bool=false)::Nothing
     # top level files (src/*)
@@ -172,10 +172,10 @@ function _scan_input_dir!(md_files::TrackedFiles,
     return nothing
 end
 
-function _scan_input_dir2!(md_pages::TrackedFiles,
-                           html_pages::TrackedFiles,
-                           other_files::TrackedFiles,
+function _scan_input_dir2!(other_files::TrackedFiles,
                            infra_files::TrackedFiles,
+                           md_pages::TrackedFiles,
+                           html_pages::TrackedFiles,
                            literate_scripts::TrackedFiles,
                            verb::Bool=false)::Nothing
     # go over all files in the website folder
