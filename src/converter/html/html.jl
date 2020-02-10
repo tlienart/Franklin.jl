@@ -91,13 +91,19 @@ function process_html_qblocks(hs::AS, qblocks::Vector{AbstractBlock},
     return String(take!(htmls))
 end
 
+"""
+    match_url(base, cand)
 
+Try to match two url indicators.
+"""
 function match_url(base::AS, cand::AS)
-    sbase = base[1] == "/" ? base[2:end] : base
-    scand = cand[1] == "/" ? cand[2:end] : cand
+    sbase = base[1] == '/' ? base[2:end] : base
+    scand = cand[1] == '/' ? cand[2:end] : cand
     # joker-style syntax
-    if endswith(cand, "/*")
-        return startswith(sbase, scand[1:prevind(scand, lastindex(scand))])
+    if endswith(scand, "/*")
+        return startswith(sbase, scand[1:prevind(scand, lastindex(scand), 2)])
+    elseif endswith(scand, "/")
+        scand = scand[1:prevind(scand, lastindex(scand))]
     end
     return splitext(scand)[1] == sbase
 end
