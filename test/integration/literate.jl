@@ -40,7 +40,7 @@ end
 end
 
 @testset "Literate-b" begin
-    flush_td(); cd(td); F.set_paths!(); mkpath(scripts)
+    flush_td(); cd(td); fs1(); mkpath(scripts);
     # Literate to Franklin
     s = raw"""
         # # Rational numbers

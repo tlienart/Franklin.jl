@@ -160,12 +160,23 @@ function process_file_err(
         proc_html = convert_html(raw_html; isoptim=isoptim)
         write(outp, proc_html)
     else # case in (:other, :infra)
+        if FD_ENV[:STRUCTURE] >= v"0.2"
+            # there's a bunch of thing we don't want to copy over
+            if startswith(inp, path(:layout))   ||
+                startswith(inp, path(:literate)) ||
+                endswith(inp, "config.md") ||
+                endswith(inp, "search.md")
+                # skip
+                @goto end_copyblock
+            end
+        end
         # NOTE: some processing may be further added here later on (e.g.
         # parsing) of CSS files)
         # only copy again if necessary (file is not there or has changed)
-        if clear || !isfile(outp) || (mtime(outp) < t && !filecmp(inp, outp))
+        if !isfile(outp) || (mtime(outp) < t && !filecmp(inp, outp))
             cp(inp, outp, force=true)
         end
+        @label end_copyblock
     end
     FD_ENV[:FULL_PASS] || FD_ENV[:SILENT_MODE] || rprint("→ page updated [✓]")
     return nothing

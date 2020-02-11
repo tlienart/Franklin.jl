@@ -37,8 +37,8 @@ end
     other_files = empty(md_files)
     infra_files = empty(md_files)
     literate_files = empty(md_files)
-    watched_files = [md_files, html_files, other_files, infra_files, literate_files]
-    F.scan_input_dir!(md_files, html_files, other_files, infra_files, literate_files, true)
+    watched_files = [other_files, infra_files, md_files, html_files, literate_files]
+    F.scan_input_dir!(other_files, infra_files, md_files, html_files, literate_files, true)
     @test haskey(md_files, F.PATHS[:src_pages]=>"blah.md")
     @test md_files[F.PATHS[:src_pages]=>"blah.md"] == mtime(temp_blah) == stat(temp_blah).mtime
     @test html_files[F.PATHS[:src_pages]=>"temp.html"] == mtime(temp_html)

@@ -73,6 +73,11 @@ end
 
 """Verify all links in generated HTML."""
 function verify_links()::Nothing
+    # if this is done before `serve` is called
+    if isempty(PATHS)
+        FOLDER_PATH[] = pwd()
+        set_paths!()
+    end
     # check that the user is online (otherwise only verify internal links)
     online =
         try
@@ -102,7 +107,6 @@ function verify_links()::Nothing
             end
         end
     else
-        # go over `index.html` then everything in `pub/`
         overallok = true
         for (root, _, files) ∈ walkdir(PATHS[:folder])
             for file ∈ files
@@ -113,6 +117,7 @@ function verify_links()::Nothing
                    startswith(fpath, path(:layout)) ||
                    startswith(fpath, path(:libs))   ||
                    startswith(fpath, path(:literate))
+                   startswith(fpath, joinpath(path(:folder), ".git"))
                    continue
                 end
                 allok = verify_links_page(fpath, online)

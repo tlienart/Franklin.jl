@@ -37,7 +37,6 @@ output file will be written/copied).
 function form_output_path(base::AS, file::AS, case::Symbol)
     # .md -> .html for md pages:
     case == :md && (file = change_ext(file))
-
     if FD_ENV[:STRUCTURE] < v"0.2"
         outbase = _out_path(base)
     else
@@ -181,14 +180,19 @@ function _scan_input_dir2!(other_files::TrackedFiles,
     # go over all files in the website folder
     for (root, _, files) ∈ walkdir(path(:folder))
         for file in files
-            # early skip
-            file ∈ IGNORE_FILES && continue
             # assemble full path (root is an absolute path)
             fpath = joinpath(root, file)
-            # skip over `__site` folder
-            startswith(fpath, path(:site)) && continue
             fpair = root => file
             fext  = splitext(file)[2]
+
+            # early skips
+            (!isfile(fpath) || file ∈ IGNORE_FILES) && continue
+            # skip over `__site` folder and `.git` folder
+            startswith(fpath, path(:site)) && continue
+            startswith(fpath, joinpath(path(:folder), ".git")) && continue
+            # skip over toml files
+            fext == ".toml" && continue
+
             # assets file --> other
             if startswith(fpath, path(:assets))
                 add_if_new_file!(other_files, fpair, verb)

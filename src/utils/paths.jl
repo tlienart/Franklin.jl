@@ -11,7 +11,7 @@ IGNORE_FILES
 
 Collection of file names that will be ignored at compile time.
 """
-const IGNORE_FILES = [".DS_Store"]
+const IGNORE_FILES = [".DS_Store", ".gitignore", "LICENSE.md", "README.md"]
 
 
 """

@@ -113,7 +113,7 @@ function _url_curpage2()
     # get the relative path to current page and split extension (.md)
     fn = splitext(locvar("fd_rpath"))[1]
     # if it's not `index` then add `index`:
-    if fn != "index"
+    if splitdir(fn)[2] != "index"
         fn = joinpath(fn, "index")
     end
     fn *= ".html"
