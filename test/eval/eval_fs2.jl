@@ -1,4 +1,4 @@
-fs1()
+fs2()
 
 set_curpath("index.md")
 
@@ -27,15 +27,15 @@ set_curpath("index.md")
 
     @test h == h2
 
-    spatha = joinpath(F.PATHS[:assets], "index", "code", "exca1.jl")
-    spathb = joinpath(F.PATHS[:assets], "index", "code", "excb1.jl")
+    spatha = joinpath(F.PATHS[:site], "assets", "index", "code", "exca1.jl")
+    spathb = joinpath(F.PATHS[:site], "assets", "index", "code", "excb1.jl")
     @test isfile(spatha)
     @test isfile(spathb)
     @test isapproxstr(read(spatha, String), """
         $(F.MESSAGE_FILE_GEN_FMD)
         a = 5\nprint(a^2)""")
 
-    opath = joinpath(F.PATHS[:assets], "index", "code", "output", "exca1.out")
+    opath = joinpath(F.PATHS[:site], "assets", "index", "code", "output", "exca1.out")
     @test isfile(opath)
     @test read(opath, String) == "25"
 
@@ -79,11 +79,11 @@ end
         done.
         """ |> seval
 
-    spath = joinpath(F.PATHS[:assets], "scripts", "test2.jl")
+    spath = joinpath(F.PATHS[:site], "assets", "scripts", "test2.jl")
     @test isfile(spath)
     @test occursin("a = 5\nprint(a^2)", read(spath, String))
 
-    opath = joinpath(F.PATHS[:assets], "scripts", "output", "test2.out")
+    opath = joinpath(F.PATHS[:site], "assets", "scripts", "output", "test2.out")
     @test isfile(opath)
     @test read(opath, String) == "25"
 
@@ -109,11 +109,11 @@ end
         done.
         """ |> seval
 
-    spath = joinpath(F.PATHS[:assets], "pages", "pg1", "code", "abc2.jl")
+    spath = joinpath(F.PATHS[:site], "assets", "pages", "pg1", "code", "abc2.jl")
     @test isfile(spath)
     @test occursin("a = 5\nprint(a^2)", read(spath, String))
 
-    opath = joinpath(F.PATHS[:assets], "pages", "pg1", "code", "output" ,"abc2.out")
+    opath = joinpath(F.PATHS[:site], "assets", "pages", "pg1", "code", "output" ,"abc2.out")
     @test isfile(opath)
     @test read(opath, String) == "25"
 
