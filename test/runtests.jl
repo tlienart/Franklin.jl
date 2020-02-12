@@ -18,6 +18,7 @@ println("🍺")
 # MANAGER folder
 println("MANAGER")
 include("manager/utils.jl")
+include("manager/utils_fs2.jl")
 include("manager/rss.jl")
 include("manager/config.jl")
 println("🍺")

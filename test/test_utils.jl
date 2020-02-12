@@ -124,6 +124,30 @@ function explore_h_steps(hs, allvars=F.PageVars())
     return steps
 end
 
+gotd() = (flush_td(); cd(td))
 
-fs1() = (empty!(F.PATHS); F.FD_ENV[:STRUCTURE] = v"0.1"; F.set_paths!())
-fs2() = (empty!(F.PATHS); F.FD_ENV[:STRUCTURE] = v"0.2"; F.set_paths!())
+function fs1()
+    gotd()
+    empty!(F.PATHS)
+    F.FD_ENV[:STRUCTURE] = v"0.1"
+    F.set_paths!()
+    mkdir(F.PATHS[:src])
+    mkdir(F.PATHS[:src_pages])
+    mkdir(F.PATHS[:libs])
+    mkdir(F.PATHS[:src_css])
+    mkdir(F.PATHS[:src_html])
+    mkdir(F.PATHS[:assets])
+end
+
+function fs2()
+    gotd()
+    empty!(F.PATHS)
+    F.FD_ENV[:STRUCTURE] = v"0.2"
+    F.set_paths!()
+    mkdir(F.PATHS[:site])
+    mkdir(F.PATHS[:assets])
+    mkdir(F.PATHS[:css])
+    mkdir(F.PATHS[:layout])
+    mkdir(F.PATHS[:libs])
+    mkdir(F.PATHS[:literate])
+end

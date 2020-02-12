@@ -1,3 +1,5 @@
+fs1()
+
 temp_config = joinpath(F.PATHS[:src], "config.md")
 write(temp_config, "@def author = \"Stefan Zweig\"\n")
 temp_index = joinpath(F.PATHS[:src], "index.md")

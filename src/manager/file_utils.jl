@@ -127,7 +127,7 @@ function process_file(case::Symbol, fpair::Pair{String,String}, args...;
         rp = rp[end-min(20, length(rp))+1 : end]
         println("\n... encountered an issue processing '$(fpair.second)' " *
                 "in ...$rp. Verify, then start franklin again...\n")
-        FD_ENV[:SUPPRESS_ERR] || @show err
+        FD_ENV[:SUPPRESS_ERR] || throw(err)
         return -1
     end
     return 0
