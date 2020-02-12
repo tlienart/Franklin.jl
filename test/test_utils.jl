@@ -127,9 +127,9 @@ end
 gotd() = (flush_td(); cd(td))
 
 function fs1()
+    F.FD_ENV[:STRUCTURE] = v"0.1"
     gotd()
     empty!(F.PATHS)
-    F.FD_ENV[:STRUCTURE] = v"0.1"
     F.set_paths!()
     mkdir(F.PATHS[:src])
     mkdir(F.PATHS[:src_pages])
@@ -140,9 +140,9 @@ function fs1()
 end
 
 function fs2()
+    F.FD_ENV[:STRUCTURE] = v"0.2"
     gotd()
     empty!(F.PATHS)
-    F.FD_ENV[:STRUCTURE] = v"0.2"
     F.set_paths!()
     mkdir(F.PATHS[:site])
     mkdir(F.PATHS[:assets])

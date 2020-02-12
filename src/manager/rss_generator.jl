@@ -116,7 +116,11 @@ function rss_generator()::Nothing
     rss_descr = fd2html(rss_descr; internal=true) |> remove_html_ps
 
     # is there an RSS file already? if so remove it
-    rss_path = joinpath(PATHS[:folder], "feed.xml")
+    if FD_ENV[:STRUCTURE] < v"0.2"
+        rss_path = joinpath(PATHS[:folder], "feed.xml")
+    else
+        rss_path = joinpath(PATHS[:site], "feed.xml")
+    end
     isfile(rss_path) && rm(rss_path)
 
     # create a buffer which will correspond to the output
