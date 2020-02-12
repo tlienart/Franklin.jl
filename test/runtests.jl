@@ -62,6 +62,8 @@ include("converter/lx_simple.jl")
 include("converter/lx_simple_fs2.jl")
 println("🍺")
 
+fs1() # XXX stopping here
+
 println("GLOBAL")
 include("global/cases1.jl")
 include("global/cases2.jl")
