@@ -59,6 +59,7 @@ println("🍺")
 println("CONVERTER/LX")
 include("converter/lx_input.jl")
 include("converter/lx_simple.jl")
+include("converter/lx_simple_fs2.jl")
 println("🍺")
 
 println("GLOBAL")
