@@ -124,7 +124,7 @@ function explore_h_steps(hs, allvars=F.PageVars())
     return steps
 end
 
-gotd() = (flush_td(); cd(td))
+gotd() = (flush_td(); cd(td); F.FOLDER_PATH[] = td)
 
 function fs1()
     F.FD_ENV[:STRUCTURE] = v"0.1"
