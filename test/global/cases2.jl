@@ -130,7 +130,7 @@ end
 <p>C</p>""")
     else
         @test isapproxstr(st |> seval, raw""" <p>A</p>
-            <h3 id="title"><a href="/pages/pg1/index#title">Title</a></h3>
+            <h3 id="title"><a href="/pages/pg1/index.html#title">Title</a></h3>
 
             <table>
               <tr>
