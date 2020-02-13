@@ -104,3 +104,14 @@ end
    @test F.is_html_escaped(he)
    @test F.html_code(h, "html") == F.html_code(h, "html")
 end
+
+@testset "match_url" begin
+    @test F.match_url("index", "/index.html")
+    @test F.match_url("index", "/index.html")
+    @test F.match_url("index", "index.html")
+    @test F.match_url("/index", "index.html")
+    @test F.match_url("menu1", "/menu1/")
+    @test F.match_url("menu1", "menu1/")
+    @test F.match_url("menu1", "menu1")
+    @test F.match_url("menu1", "/menu1/*")
+end

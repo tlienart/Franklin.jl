@@ -15,19 +15,21 @@
     @test silly_call > 0
 
     # ---------------
-    @test all(isdir, ("assets", "css", "libs", "pub", "src"))
-    @test all(isfile, ("index.html",
-                 map(e->joinpath("pub", "menu$e.html"), 1:3)...,
-                 map(e->joinpath("css", e), ("basic.css", "franklin.css"))...,
-                 )
-              )
+    @test all(isdir, ("_assets", "_css", "_libs", "_layout", "__site"))
+    @test isfile(joinpath("__site", "index.html"))
+    @test isfile(joinpath("__site", "menu1", "index.html"))
+    @test isfile(joinpath("__site", "menu2", "index.html"))
+    @test isfile(joinpath("__site", "menu3", "index.html"))
+    @test isfile(joinpath("__site", "css", "basic.css"))
+    @test isfile(joinpath("__site", "css", "franklin.css"))
+
     # ---------------
     if Franklin.FD_CAN_MINIFY
-        presize1 = stat(joinpath("css", "basic.css")).size
-        presize2 = stat("index.html").size
+        presize1 = stat(joinpath("__site", "css", "basic.css")).size
+        presize2 = stat(joinpath("__site", "index.html")).size
         optimize(prerender=false)
-        @test stat(joinpath("css", "basic.css")).size < presize1
-        @test stat("index.html").size < presize2
+        @test stat(joinpath("__site", "css", "basic.css")).size < presize1
+        @test stat(joinpath("__site", "index.html")).size < presize2
     end
     # ---------------
     # verify all links
@@ -35,14 +37,14 @@
 
     # ---------------
     # change the prepath
-    index = read("index.html", String)
+    index = read(joinpath("__site","index.html"), String)
     @test occursin("=\"/css/basic.css", index)
     @test occursin("=\"/css/franklin.css", index)
     @test occursin("=\"/libs/highlight/github.min.css", index)
     @test occursin("=\"/libs/katex/katex.min.css", index)
 
     optimize(minify=false, prerender=false, prepath="prependme")
-    index = read("index.html", String)
+    index = read(joinpath("__site","index.html"), String)
     @test occursin("=\"/prependme/css/basic.css", index)
     @test occursin("=\"/prependme/css/franklin.css", index)
     @test occursin("=\"/prependme/libs/highlight/github.min.css", index)

@@ -9,15 +9,17 @@ for that value. (e.g.: "THE AUTHOR" => (String, Nothing))
 const GLOBAL_VARS = PageVars()
 
 const GLOBAL_VARS_DEFAULT = [
+    # Folder org
+    "folder_structure" => Pair(FD_ENV[:STRUCTURE], (VersionNumber,)),
     # General
-    "author"        => Pair("THE AUTHOR",   (String, Nothing)),
-    "date_format"   => Pair("U dd, yyyy",   (String,)),
-    "prepath"       => Pair("",             (String,)),
+    "author"           => Pair("THE AUTHOR",   (String, Nothing)),
+    "date_format"      => Pair("U dd, yyyy",   (String,)),
+    "prepath"          => Pair("",             (String,)),
     # RSS
-    "website_title" => Pair("",             (String,)),
-    "website_descr" => Pair("",             (String,)),
-    "website_url"   => Pair("",             (String,)),
-    "generate_rss"  => Pair(true,           (Bool,)),
+    "website_title"    => Pair("",             (String,)),
+    "website_descr"    => Pair("",             (String,)),
+    "website_url"      => Pair("",             (String,)),
+    "generate_rss"     => Pair(true,           (Bool,)),
     ]
 
 """

@@ -36,6 +36,15 @@ export jd2html # = fd2html
 # CONSTANTS
 #
 
+# Obtained via `dig www...`; may change over time; see check_ping
+# we check in sequence, one should work... this may need to be updated
+# over time.
+const IP_CHECK = (
+    "172.217.21.132" => "Google", # google
+    "140.82.118.4"   => "GitHub",   # github
+    "103.235.46.39"  => "Baidu",  # baidu
+    )
+
 """Big number when we want things to be far."""
 const BIG_INT = typemax(Int)
 
@@ -46,7 +55,8 @@ const FD_ENV = LittleDict(
     :SUPPRESS_ERR  => false,
     :SILENT_MODE   => false,
     :OFFSET_LXDEFS => -BIG_INT,
-    :CUR_PATH      => "")
+    :CUR_PATH      => "",
+    :STRUCTURE     => v"0.2")
 
 """Dict to keep track of languages and how comments are indicated and their extensions. This is relevant to allow hiding lines of code. """
 const CODE_LANG = LittleDict{String,NTuple{2,String}}(
@@ -101,7 +111,6 @@ include("utils/vars.jl")
 include("utils/misc.jl")
 include("utils/html.jl")
 include("utils/errors.jl")
-include("utils/easyr.jl")
 
 # PARSING
 include("parser/tokens.jl")

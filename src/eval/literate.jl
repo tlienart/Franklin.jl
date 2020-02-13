@@ -33,8 +33,8 @@ $SIGNATURES
 Take a Literate.jl script and transform it into a Franklin-Markdown file.
 """
 function literate_to_franklin(rpath::AS)::Tuple{String,Bool}
-    startswith(rpath, "/") || throw(LiterateRelativePathError(
-                                "Literate expects a path starting with '/'"))
+    startswith(rpath, "/") || throw(
+        LiterateRelativePathError("Literate expects a path starting with '/'"))
     # rpath is of the form "/scripts/[path/]tutorial[.jl]"
     # split it so that when recombining it will lead to valid path inc windows
     srpath = split(rpath, '/')[2:end] # discard empty [1] since starts with "/"
@@ -45,7 +45,13 @@ function literate_to_franklin(rpath::AS)::Tuple{String,Bool}
         @warn "File not found when trying to convert a literate file ($fpath)."
         return "", true
     end
-    outpath = joinpath(PATHS[:assets], "literate", srpath[2:end-1]...)
+    if FD_ENV[:STRUCTURE] < v"0.2"
+        outpath = joinpath(PATHS[:assets], "literate",
+                            srpath[2:end-1]...)
+    else
+        outpath = joinpath(PATHS[:site], "assets", "literate",
+                            srpath[2:end-1]...)
+    end
     isdir(outpath) || mkpath(outpath)
     # retrieve the file name
     fname = splitext(splitdir(fpath)[2])[1]

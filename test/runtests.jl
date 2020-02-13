@@ -4,9 +4,11 @@ const R = @__DIR__
 const D = joinpath(dirname(dirname(pathof(Franklin))), "test", "_dummies")
 
 F.FD_ENV[:SILENT_MODE] = true
+F.FD_ENV[:STRUCTURE] = v"0.1" # legacy, it's switched up in the tests.
 
 # UTILS
 println("UTILS")
+include("utils/folder_structure.jl")
 include("utils/paths_vars.jl"); include("test_utils.jl")
 include("utils/misc.jl")
 include("utils/errors.jl")
@@ -16,8 +18,10 @@ println("🍺")
 # MANAGER folder
 println("MANAGER")
 include("manager/utils.jl")
+include("manager/utils_fs2.jl")
 include("manager/rss.jl")
 include("manager/config.jl")
+include("manager/config_fs2.jl")
 println("🍺")
 
 # PARSER folder
@@ -34,8 +38,10 @@ println("EVAL")
 include("eval/module.jl")
 include("eval/run.jl")
 include("eval/io.jl")
+include("eval/io_fs2.jl")
 include("eval/codeblock.jl")
 include("eval/eval.jl")
+include("eval/eval_fs2.jl")
 include("eval/integration.jl")
 
 # CONVERTER folder
@@ -53,7 +59,10 @@ println("🍺")
 println("CONVERTER/LX")
 include("converter/lx_input.jl")
 include("converter/lx_simple.jl")
+include("converter/lx_simple_fs2.jl")
 println("🍺")
+
+fs2()
 
 println("GLOBAL")
 include("global/cases1.jl")
@@ -83,6 +92,7 @@ cd(dirname(dirname(pathof(Franklin))))
 
 println("INTEGRATION")
 include("integration/literate.jl")
+include("integration/literate_fs2.jl")
 
 flush_td()
 cd(joinpath(dirname(dirname(pathof(Franklin)))))
@@ -91,3 +101,9 @@ println("COVERAGE")
 include("coverage/extras1.jl")
 
 println("😅 😅 😅 😅")
+
+# check quickly if the IPs in IP_CHECK are still ok
+println("Verifying ip addresses, if online these should succeed.")
+for (addr, name) in F.IP_CHECK
+    println(rpad("Ping $name:", 13), ifelse(F.check_ping(addr), "✓", "✗"), ".")
+end

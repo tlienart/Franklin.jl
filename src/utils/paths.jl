@@ -11,7 +11,7 @@ IGNORE_FILES
 
 Collection of file names that will be ignored at compile time.
 """
-const IGNORE_FILES = [".DS_Store"]
+const IGNORE_FILES = [".DS_Store", ".gitignore", "LICENSE.md", "README.md"]
 
 
 """
@@ -40,25 +40,43 @@ which is assigned at runtime.
 """
 function set_paths!()::LittleDict{Symbol,String}
     @assert isassigned(FOLDER_PATH) "FOLDER_PATH undefined"
-    @assert isdir(FOLDER_PATH[]) "FOLDER_PATH is not a valid path"
+    @assert isdir(FOLDER_PATH[])    "FOLDER_PATH is not a valid path"
 
     # NOTE it is recommended not to change the names of those paths.
     # Particularly for the output dir. If you do, check for example that
     # functions such as Franklin.publish point to the right dirs/files.
 
-    PATHS[:folder]    = normpath(FOLDER_PATH[])
-    PATHS[:src]       = joinpath(PATHS[:folder],  "src")
-    PATHS[:src_pages] = joinpath(PATHS[:src],     "pages")
-    PATHS[:src_css]   = joinpath(PATHS[:src],     "_css")
-    PATHS[:src_html]  = joinpath(PATHS[:src],     "_html_parts")
-    PATHS[:pub]       = joinpath(PATHS[:folder],  "pub")
-    PATHS[:css]       = joinpath(PATHS[:folder],  "css")
-    PATHS[:libs]      = joinpath(PATHS[:folder],  "libs")
-    PATHS[:assets]    = joinpath(PATHS[:folder],  "assets")
-    PATHS[:literate]  = joinpath(PATHS[:folder],  "scripts")
+    if FD_ENV[:STRUCTURE] < v"0.2"
+        PATHS[:folder]    = normpath(FOLDER_PATH[])
+        PATHS[:src]       = joinpath(PATHS[:folder], "src")
+        PATHS[:src_pages] = joinpath(PATHS[:src],    "pages")
+        PATHS[:src_css]   = joinpath(PATHS[:src],    "_css")
+        PATHS[:src_html]  = joinpath(PATHS[:src],    "_html_parts")
+        PATHS[:pub]       = joinpath(PATHS[:folder], "pub")
+        PATHS[:css]       = joinpath(PATHS[:folder], "css")
+        PATHS[:libs]      = joinpath(PATHS[:folder], "libs")
+        PATHS[:assets]    = joinpath(PATHS[:folder], "assets")
+        PATHS[:literate]  = joinpath(PATHS[:folder], "scripts")
+    else
+        PATHS[:folder]   = normpath(FOLDER_PATH[])
+        PATHS[:site]     = joinpath(PATHS[:folder], "__site")    # mandatory
+        PATHS[:assets]   = joinpath(PATHS[:folder], "_assets")   # mandatory
+        PATHS[:css]      = joinpath(PATHS[:folder], "_css")      # mandatory
+        PATHS[:layout]   = joinpath(PATHS[:folder], "_layout")   # mandatory
+        PATHS[:libs]     = joinpath(PATHS[:folder], "_libs")     # mandatory
+        PATHS[:literate] = joinpath(PATHS[:folder], "_literate") # optional
+    end
 
     return PATHS
 end
+
+"""
+    path(s)
+
+Return the paths corresponding to `s` e.g. `path(:folder)`.
+"""
+path(s) = PATHS[Symbol(s)]
+
 
 """
 Pointer to the `/output/` folder associated with an eval block (see also

@@ -9,12 +9,16 @@ function lunr()::Nothing
         (@warn "No `lunr` folder found in the `/libs/` folder."; return)
     # are there the relevant files in /libs/lunr/
     buildindex = joinpath(lunr, "build_index.js")
-    isfile(buildindex) ||
-        (@warn "No `build_index.js` file found in the `/libs/lunr/` folder."; return)
+    if !isfile(buildindex)
+		@warn "No `build_index.js` file found in the `/libs/lunr/` folder."
+		return nothing
+	end
     # overwrite PATH_PREPEND = "..";
     if !isempty(prepath)
         f = String(read(buildindex))
-        f = replace(f, r"const\s+PATH_PREPEND\s*?=\s*?\".*?\"\;" => "const PATH_PREPEND = \"$(prepath)\";"; count=1)
+        f = replace(f,
+					r"const\s+PATH_PREPEND\s*?=\s*?\".*?\"\;" =>
+					 "const PATH_PREPEND = \"$(prepath)\";"; count=1)
         buildindex = replace(buildindex, r".js$" => ".tmp.js")
         write(buildindex, f)
     end

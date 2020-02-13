@@ -30,17 +30,26 @@ end
 const RSS_DICT = LittleDict{String,RSSItem}()
 
 
-"""Convenience function for fallback fields"""
+"""
+    jor(a, b)
+
+Convenience function for fallback fields.
+"""
 jor(a::String, b::String) = ifelse(isempty(locvar(a)), locvar(b), locvar(a))
 
-"""Convenience function to remove <p> and </p> in RSS description (not supposed to happen)"""
+"""
+    remove_html_ps
+
+Convenience function to remove <p> and </p> in RSS description (not supposed to
+happen).
+"""
 remove_html_ps(s::String)::String = replace(s, r"</?p>" => "")
 
 """
 $SIGNATURES
 
-RSS should not contain relative links so this finds relative links and prepends them with the
-canonical link.
+RSS should not contain relative links so this finds relative links and prepends
+them with the canonical link.
 """
 fix_relative_links(s::String, link::String) =
     replace(s, r"(href|src)\s*?=\s*?\"\/" => SubstitutionString("\\1=\"$link"))
@@ -107,7 +116,11 @@ function rss_generator()::Nothing
     rss_descr = fd2html(rss_descr; internal=true) |> remove_html_ps
 
     # is there an RSS file already? if so remove it
-    rss_path = joinpath(PATHS[:folder], "feed.xml")
+    if FD_ENV[:STRUCTURE] < v"0.2"
+        rss_path = joinpath(PATHS[:folder], "feed.xml")
+    else
+        rss_path = joinpath(PATHS[:site], "feed.xml")
+    end
     isfile(rss_path) && rm(rss_path)
 
     # create a buffer which will correspond to the output

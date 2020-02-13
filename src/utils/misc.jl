@@ -1,6 +1,4 @@
 """
-$SIGNATURES
-
 Specify the folder for the Literate scripts, by default this is `scripts/`.
 """
 function literate_folder(rp::String="")
@@ -16,7 +14,7 @@ end
 #
 
 """
-$(SIGNATURES)
+    str(s)
 
 Returns the string corresponding to `s`: `s` itself if it is a string, or the
 parent string if `s` is a substring. Do not confuse with `String(s::SubString)`
@@ -162,7 +160,7 @@ function refstring(s::AS)::String
 end
 
 """
-context(parent, position)
+    context(parent, position)
 
 Return an informative message of the context of a position and where the
 position is, this is useful when throwing error messages.
@@ -206,4 +204,59 @@ function context(par::AS, pos::Int)
     \t$(" "^(pos-head+length(prepend)))^---
     """
     return mess
+end
+
+"""
+    rprint(s)
+
+Print an overwriting line being aware of the display width.
+"""
+function rprint(s::AS)::Nothing
+    dwidth  = displaysize(stdout)[2]
+
+    padded_s = rpad(s, dwidth)
+    trunc_s  = padded_s[1:prevind(padded_s, min(dwidth, lastindex(padded_s)))]
+    padded_s = rpad(trunc_s, dwidth)
+
+    print("\r$padded_s")
+    return nothing
+end
+
+"""
+    filecmp(path1, path2)
+
+Takes 2 absolute paths and check if the files are different.
+This code was suggested by Steven J. Johnson on discourse:
+https://discourse.julialang.org/t/how-to-obtain-the-result-of-a-diff-between-2-files-in-a-loop/23784/4
+"""
+function filecmp(path1::AbstractString, path2::AbstractString)
+    stat1, stat2 = stat(path1), stat(path2)
+    if !(isfile(stat1) && isfile(stat2)) || filesize(stat1) != filesize(stat2)
+        return false
+    end
+    stat1 == stat2 && return true # same file
+    open(path1, "r") do file1
+        open(path2, "r") do file2
+            buf1 = Vector{UInt8}(undef, 32768)
+            buf2 = similar(buf1)
+            while !eof(file1) && !eof(file2)
+                n1 = readbytes!(file1, buf1)
+                n2 = readbytes!(file2, buf2)
+                n1 != n2 && return false
+                0 != Base._memcmp(buf1, buf2, n1) && return false
+            end
+            return eof(file1) == eof(file2)
+        end
+    end
+end
+
+"""
+    check_ping(ipaddr)
+
+Try a single ping to an address `ipaddr`. There's a timeout of 1s.
+"""
+function check_ping(ipaddr)
+    # portable count (creds https://docdave.science/writing-ping-in-julia/)
+    opt = ifelse(Sys.iswindows(), "-n", "-c")
+    return success(`ping $opt 1 -t 1 $ipaddr`)
 end

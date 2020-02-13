@@ -27,6 +27,7 @@ end
 
 
 @testset "h-insert" begin
+    fs1()
     temp_rnd = joinpath(F.PATHS[:src_html], "temp.rnd")
     write(temp_rnd, "some random text to insert")
     hs = raw"""
@@ -36,6 +37,19 @@ end
 
     hs = raw"""Trying to insert: {{ insert nope.rnd }} and see."""
     @test (@test_logs (:warn, "I found an {{insert ...}} block and tried to insert '$(joinpath(F.PATHS[:src_html], "nope.rnd"))' but I couldn't find the file. Ignoring.") F.convert_html(hs)) == "Trying to insert:  and see."
+end
+
+@testset "h-insert-fs2" begin
+    fs2()
+    temp_rnd = joinpath(F.PATHS[:layout], "temp.rnd")
+    write(temp_rnd, "some random text to insert")
+    hs = raw"""
+        Trying to insert: {{ insert temp.rnd }} and see.
+        """
+    @test F.convert_html(hs) == "Trying to insert: some random text to insert and see.\n"
+
+    hs = raw"""Trying to insert: {{ insert nope.rnd }} and see."""
+    @test (@test_logs (:warn, "I found an {{insert ...}} block and tried to insert '$(joinpath(F.PATHS[:layout], "nope.rnd"))' but I couldn't find the file. Ignoring.") F.convert_html(hs)) == "Trying to insert:  and see."
 end
 
 

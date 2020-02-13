@@ -1,3 +1,5 @@
+fs1()
+
 temp_config = joinpath(F.PATHS[:src], "config.md")
 write(temp_config, "@def author = \"Stefan Zweig\"\n")
 temp_index = joinpath(F.PATHS[:src], "index.md")
@@ -37,8 +39,8 @@ end
     other_files = empty(md_files)
     infra_files = empty(md_files)
     literate_files = empty(md_files)
-    watched_files = [md_files, html_files, other_files, infra_files, literate_files]
-    F.scan_input_dir!(md_files, html_files, other_files, infra_files, literate_files, true)
+    watched_files = [other_files, infra_files, md_files, html_files, literate_files]
+    F.scan_input_dir!(other_files, infra_files, md_files, html_files, literate_files, true)
     @test haskey(md_files, F.PATHS[:src_pages]=>"blah.md")
     @test md_files[F.PATHS[:src_pages]=>"blah.md"] == mtime(temp_blah) == stat(temp_blah).mtime
     @test html_files[F.PATHS[:src_pages]=>"temp.html"] == mtime(temp_html)
@@ -55,8 +57,8 @@ end
     pg_foot = "\npage_foot"
     foot = "foot {{if hasmath}} {{fill author}}{{end}}"
 
-    F.write_page(F.PATHS[:src], "index.md", head, pg_foot, foot)
-    out_file = joinpath(F.out_path(F.PATHS[:folder]), "index.html")
+    out_file = F.form_output_path(F.PATHS[:folder], "index.html", :html)
+    F.write_page(F.PATHS[:src], "index.md", head, pg_foot, foot, out_file)
 
     @test isfile(out_file)
     @test read(out_file, String) == "head\n<div class=\"franklin-content\">\n<p>blah blah</p>\n\n\npage_foot\n</div>\nfoot  Stefan Zweig"

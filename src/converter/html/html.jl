@@ -91,13 +91,19 @@ function process_html_qblocks(hs::AS, qblocks::Vector{AbstractBlock},
     return String(take!(htmls))
 end
 
+"""
+    match_url(base, cand)
 
+Try to match two url indicators.
+"""
 function match_url(base::AS, cand::AS)
-    sbase = base[1] == "/" ? base[2:end] : base
-    scand = cand[1] == "/" ? cand[2:end] : cand
+    sbase = base[1] == '/' ? base[2:end] : base
+    scand = cand[1] == '/' ? cand[2:end] : cand
     # joker-style syntax
-    if endswith(cand, "/*")
-        return startswith(sbase, scand[1:prevind(scand, lastindex(scand))])
+    if endswith(scand, "/*")
+        return startswith(sbase, scand[1:prevind(scand, lastindex(scand), 2)])
+    elseif endswith(scand, "/")
+        scand = scand[1:prevind(scand, lastindex(scand))]
     end
     return splitext(scand)[1] == sbase
 end
@@ -170,13 +176,14 @@ function process_html_cond(hs::AS, qblocks::Vector{AbstractBlock},
             k = Int(!haskey(LOCAL_VARS, βi.vname))
         else
             # HIsPage//HIsNotPage
-            #
-            # current path is relative to /src/ for instance
-            # /src/pages/blah.md -> pages/blah
-            # if starts with `pages/`, replaces by `pub/`:
-            # pages/blah => pub/blah
             rpath = splitext(unixify(locvar("fd_rpath")))[1]
-            rpath = replace(rpath, Regex("^pages") => "pub")
+            if FD_ENV[:STRUCTURE] < v"0.2"
+                # current path is relative to /src/ for instance
+                # /src/pages/blah.md -> pages/blah
+                # if starts with `pages/`, replaces by `pub/`:
+                # pages/blah => pub/blah
+                rpath = replace(rpath, Regex("^pages") => "pub")
+            end
             # compare with β.pages
             inpage = any(p -> match_url(rpath, p), βi.pages)
 

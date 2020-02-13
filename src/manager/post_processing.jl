@@ -3,20 +3,39 @@ Take a page (in HTML) and check all `href` on it to see if they lead somewhere.
 """
 function verify_links_page(path::AS, online::Bool)
     shortpath = replace(path, PATHS[:folder] => "")
-    mdpath    = replace(shortpath, Regex("^pub$(escape_string(PATH_SEP))")=>"pages$(PATH_SEP)")
-    mdpath    = splitext(mdpath)[1] * ".md"
-    shortpath = replace(shortpath, r"^\/"=>"")
-    mdpath    = replace(mdpath, r"^\/"=>"")
-    allok     = true
-    page      = read(path, String)
+    if FD_ENV[:STRUCTURE] < v"0.2"
+        mdpath    = replace(shortpath,
+                        Regex(joinpath("^pub", "")=>joinpath("pages", "")))
+        mdpath    = splitext(mdpath)[1] * ".md"
+        shortpath = replace(shortpath, r"^\/"=>"")
+        mdpath    = replace(mdpath, r"^\/"=>"")
+    else
+        mdpath = replace(path, PATHS[:site] => "")
+        mdpath = splitext(mdpath)[1] * ".md"
+        dir, fn = splitdir(mdpath) # fn will be index.md
+        if dir == "/"
+            mdpath = dir * "index.md"
+        else
+            mdpath = dir * "[" * PATH_SEP *  "index].md"
+        end
+    end
+    allok = true
+    page  = read(path, String)
     for m in eachmatch(r"\shref=\"(https?://)?(.*?)(?:#(.*?))?\"", page)
         if m.captures[1] === nothing
             # internal link, remove the front / otherwise it fails with joinpath
-            link   = replace(m.captures[2], r"^\/"=>"")
+            link = replace(m.captures[2], r"^\/"=>"")
             # if it's empty it's `href="/"` which is always ok
             isempty(link) && continue
             anchor = m.captures[3]
-            full_link = joinpath(PATHS[:folder], link)
+            if FD_ENV[:STRUCTURE] < v"0.2"
+                full_link = joinpath(PATHS[:folder], link)
+            else
+                full_link = joinpath(PATHS[:site], link)
+                if endswith(full_link, "/")
+                    full_link *= "index.html"
+                end
+            end
             if !isfile(full_link)
                 allok && println("")
                 println("- internal link issue on page $mdpath: $link.")
@@ -40,9 +59,12 @@ function verify_links_page(path::AS, online::Bool)
             online || continue
             # external link
             link = m.captures[1] * m.captures[2]
+            ok = false
             try
-                HTTP.request("HEAD", link).status == 200 || throw()
-            catch
+                ok = HTTP.request("HEAD", link, timeout=3).status == 200
+            catch e
+            end
+            if !ok
                 allok && println("")
                 println("- external link issue on page $mdpath: $link")
                 allok = false
@@ -54,14 +76,14 @@ end
 
 """Verify all links in generated HTML."""
 function verify_links()::Nothing
+    # if this is done before `serve` is called
+    if isempty(PATHS)
+        FOLDER_PATH[] = pwd()
+        set_paths!()
+    end
     # check that the user is online (otherwise only verify internal links)
-    online =
-        try
-            HTTP.request("HEAD", "https://discourse.julialang.org/", readtimeout=10).status == 200
-        catch
-            # might fail with DNSError
-            false
-        end
+    # this is fast as it uses `ping` and does not resolve a request
+    online = findfirst(check_ping, first.(IP_CHECK)) !== nothing
 
     print("Verifying links...")
     if online
@@ -70,15 +92,35 @@ function verify_links()::Nothing
         print(" [you don't seem online ✗]")
     end
 
-    # go over `index.html` then everything in `pub/`
-    overallok = verify_links_page(joinpath(PATHS[:folder], "index.html"), online)
+    if FD_ENV[:STRUCTURE] < v"0.2"
+        # go over `index.html` then everything in `pub/`
+        overallok = verify_links_page(joinpath(PATHS[:folder], "index.html"), online)
 
-    for (root, _, files) ∈ walkdir(PATHS[:pub])
-        for file ∈ files
-            splitext(file)[2] == ".html" && continue
-            path = joinpath(root, file)
-            allok = verify_links_page(path)
-            overallok = overallok && allok
+        for (root, _, files) ∈ walkdir(PATHS[:pub])
+            for file ∈ files
+                splitext(file)[2] == ".html" || continue
+                path = joinpath(root, file)
+                allok = verify_links_page(path, online)
+                overallok = overallok && allok
+            end
+        end
+    else
+        overallok = true
+        for (root, _, files) ∈ walkdir(PATHS[:folder])
+            for file ∈ files
+                splitext(file)[2] == ".html" || continue
+                fpath = joinpath(root, file)
+                if startswith(fpath, path(:assets)) ||
+                   startswith(fpath, path(:css))    ||
+                   startswith(fpath, path(:layout)) ||
+                   startswith(fpath, path(:libs))   ||
+                   startswith(fpath, path(:literate))
+                   startswith(fpath, joinpath(path(:folder), ".git"))
+                   continue
+                end
+                allok = verify_links_page(fpath, online)
+                overallok = overallok && allok
+            end
         end
     end
     overallok && println("\rAll internal $(ifelse(online,"and external ",""))links verified ✓.      ")
@@ -128,6 +170,7 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
     if !isempty(prepath)
         GLOBAL_VARS["prepath"] = prepath => (String,)
     end
+
     # re-do a (silent) full pass
     start = time()
     fmsg = "\r→ Full pass"
@@ -149,7 +192,12 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
             mmsg = rpad("→ Minifying *.[html|css] files...", 35)
             print(mmsg)
             # copy the script to the current dir
-            cp(joinpath(dirname(pathof(Franklin)), "scripts", "minify.py"), FD_PY_MIN_NAME; force=true)
+            path_to = joinpath(dirname(pathof(Franklin)),
+                                "scripts", "minify.py")
+            py_script = read(path_to, String)
+            oldfs     = ifelse(FD_ENV[:STRUCTURE] < v"0.2",  "True", "False")
+            py_script = "old_folder_structure = $oldfs\n" * py_script
+            write(FD_PY_MIN_NAME, py_script)
             # run it
             succ = success(`$([e for e in split(PY)]) $FD_PY_MIN_NAME`)
             # remove the script file
@@ -168,9 +216,10 @@ end
 """
 $(SIGNATURES)
 
-This is a simple wrapper doing a git commit and git push without much fanciness. It assumes the
-current directory is a git folder.
-It also fixes all links if you specify `prepath` (or if it's set in `config.md`).
+This is a simple wrapper doing a git commit and git push without much
+fanciness. It assumes the current directory is a git folder.
+It also fixes all links if you specify `prepath` (or if it's set in
+`config.md`).
 
 **Keyword arguments**
 
@@ -214,11 +263,13 @@ function publish(; prerender::Bool=true, minify::Bool=true, nopass::Bool=false,
             run(`git push --quiet`)
             print_final(pubmsg, start)
         catch e
-            println("✘ Could not push updates, verify your connection and try manually.\n")
+            println("✘ Could not push updates, verify your connection " *
+                    "and/or try manually.\n")
             @show e
         end
     else
-        println("✘ Something went wrong in the optimisation step. Not pushing updates.")
+        println("✘ Something went wrong in the optimisation step. " *
+                "Not pushing updates.")
     end
     return nothing
 end
