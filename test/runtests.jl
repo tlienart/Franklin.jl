@@ -62,7 +62,7 @@ include("converter/lx_simple.jl")
 include("converter/lx_simple_fs2.jl")
 println("🍺")
 
-fs1() # XXX stopping here
+fs2()
 
 println("GLOBAL")
 include("global/cases1.jl")
@@ -92,6 +92,7 @@ cd(dirname(dirname(pathof(Franklin))))
 
 println("INTEGRATION")
 include("integration/literate.jl")
+include("integration/literate_fs2.jl")
 
 flush_td()
 cd(joinpath(dirname(dirname(pathof(Franklin)))))
