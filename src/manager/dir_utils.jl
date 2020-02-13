@@ -187,7 +187,7 @@ function _scan_input_dir2!(other_files::TrackedFiles,
 
             # early skips
             (!isfile(fpath) || file ∈ IGNORE_FILES) && continue
-            # skip over `__site` folder and `.git` folder
+            # skip over `__site` folder, `.git` and `.github` folder
             startswith(fpath, path(:site)) && continue
             startswith(fpath, joinpath(path(:folder), ".git")) && continue
             # skip over toml files
