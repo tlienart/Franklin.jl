@@ -100,3 +100,9 @@ println("COVERAGE")
 include("coverage/extras1.jl")
 
 println("😅 😅 😅 😅")
+
+# check quickly if the IPs in IP_CHECK are still ok
+println("Verifying ip addresses, if online these should succeed.")
+for (addr, name) in F.IP_CHECK
+    println(rpad("Ping $name:", 13), ifelse(F.check_ping(addr), "✓", "✗"), ".")
+end

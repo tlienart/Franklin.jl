@@ -222,7 +222,6 @@ function rprint(s::AS)::Nothing
     return nothing
 end
 
-
 """
     filecmp(path1, path2)
 
@@ -249,4 +248,15 @@ function filecmp(path1::AbstractString, path2::AbstractString)
             return eof(file1) == eof(file2)
         end
     end
+end
+
+"""
+    check_ping(ipaddr)
+
+Try a single ping to an address `ipaddr`. There's a timeout of 1s.
+"""
+function check_ping(ipaddr)
+    # portable count (creds https://docdave.science/writing-ping-in-julia/)
+    opt = ifelse(Sys.iswindows(), "-n", "-c")
+    return success(`ping $opt 1 -t 1 $ipaddr`)
 end

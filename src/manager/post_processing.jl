@@ -59,9 +59,12 @@ function verify_links_page(path::AS, online::Bool)
             online || continue
             # external link
             link = m.captures[1] * m.captures[2]
+            ok = false
             try
-                HTTP.request("HEAD", link).status == 200 || throw()
-            catch
+                ok = HTTP.request("HEAD", link, timeout=3).status == 200
+            catch e
+            end
+            if !ok
                 allok && println("")
                 println("- external link issue on page $mdpath: $link")
                 allok = false
@@ -79,13 +82,8 @@ function verify_links()::Nothing
         set_paths!()
     end
     # check that the user is online (otherwise only verify internal links)
-    online =
-        try
-            HTTP.request("HEAD", "https://discourse.julialang.org/", readtimeout=10).status == 200
-        catch
-            # might fail with DNSError
-            false
-        end
+    # this is fast as it uses `ping` and does not resolve a request
+    online = findfirst(check_ping, first.(IP_CHECK)) !== nothing
 
     print("Verifying links...")
     if online
