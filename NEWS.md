@@ -67,6 +67,7 @@ Then you may have to:
 - fix links in `_layout/head.html` removing `/pub/` and `.html` so for instance `/pub/menu1.html` becomes `/menu1/`,
 - fix a few of your internal links (use `verify_links()` to help you with that),
 - set things up so that the content of  `__site` is what's served on GitHub or elsewhere.
+- **Note**: links to stylesheets should still be ok, even though the source is now in `_css`, this gets mapped to `__site/_css/` and so `/css/somesheet.css` will still work fine.
 
 In terms of understanding how the generated paths look, consider the following mappings:
 
@@ -79,6 +80,8 @@ In terms of understanding how the generated paths look, consider the following m
 ```
 
 This allows to have urls like `www.site.ext/menu1/`.
+
+**If you encounter issues during the process, open an issue on  GitHub, I'll try to help and improve these instructions at the same time, thanks!**
 
 ### v0.5 (JuDoc -> Frankin)
 
