@@ -101,11 +101,11 @@ $(SIGNATURES)
 Update the dictionaries referring to input files and their time of last change.
 The variable `verb` propagates verbosity.
 """
-function scan_input_dir!(args...)
+function scan_input_dir!(args...; kw...)
     if FD_ENV[:STRUCTURE] < v"0.2"
         return _scan_input_dir!(args...)
     end
-    return _scan_input_dir2!(args...)
+    return _scan_input_dir2!(args...; kw...)
 end
 
 function _scan_input_dir!(other_files::TrackedFiles,
@@ -176,7 +176,8 @@ function _scan_input_dir2!(other_files::TrackedFiles,
                            md_pages::TrackedFiles,
                            html_pages::TrackedFiles,
                            literate_scripts::TrackedFiles,
-                           verb::Bool=false)::Nothing
+                           verb::Bool=false;
+                           in_loop::Bool=false)::Nothing
     # go over all files in the website folder
     for (root, _, files) ∈ walkdir(path(:folder))
         for file in files
@@ -184,6 +185,8 @@ function _scan_input_dir2!(other_files::TrackedFiles,
             fpath = joinpath(root, file)
             fpair = root => file
             fext  = splitext(file)[2]
+
+            opts = (fpair, verb, in_loop)
 
             # early skips
             (!isfile(fpath) || file ∈ IGNORE_FILES) && continue
@@ -195,26 +198,26 @@ function _scan_input_dir2!(other_files::TrackedFiles,
 
             # assets file --> other
             if startswith(fpath, path(:assets))
-                add_if_new_file!(other_files, fpair, verb)
+                add_if_new_file!(other_files, opts...)
             # infra_files
             elseif startswith(fpath, path(:css))    ||
                    startswith(fpath, path(:layout)) ||
                    startswith(fpath, path(:libs))
-                add_if_new_file!(infra_files, fpair, verb)
+                add_if_new_file!(infra_files, opts...)
             # literate_files
             elseif startswith(fpath, path(:literate))
                 # ignore files that are not script files
                 fext == ".jl" || continue
-                add_if_new_file!(literate_scripts, fpair, verb)
+                add_if_new_file!(literate_scripts, opts...)
             else
                 if file == "config.md"
-                    add_if_new_file!(infra_files, fpair, verb)
+                    add_if_new_file!(infra_files, opts...)
                 elseif fext == ".md"
-                    add_if_new_file!(md_pages, fpair, verb)
+                    add_if_new_file!(md_pages, opts...)
                 elseif fext ∈ (".html", ".htm")
-                    add_if_new_file!(html_pages, fpair, verb)
+                    add_if_new_file!(html_pages, opts...)
                 else
-                    add_if_new_file!(other_files, fpair, verb)
+                    add_if_new_file!(other_files, opts...)
                 end
             end
         end
@@ -228,10 +231,12 @@ Helper function, if `fpair` is not referenced in the dictionary (new file) add
 the entry to the dictionary with the time of last modification as val.
 """
 function add_if_new_file!(dict::TrackedFiles, fpair::Pair{String,String},
-                          verb::Bool)::Nothing
+                          verb::Bool, in_loop::Bool=false)::Nothing
     haskey(dict, fpair) && return nothing
     # it's a new file
     verb && println("tracking new file '$(fpair.second)'.")
-    dict[fpair] = mtime(joinpath(fpair...))
+    # save it's modification time, set to zero if it's a new file in a loop
+    # to force its processing in FS2
+    dict[fpair] = ifelse(in_loop, 0, mtime(joinpath(fpair...)))
     return nothing
 end

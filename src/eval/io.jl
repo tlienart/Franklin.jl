@@ -43,13 +43,13 @@ see [`resolve_rpath`](@ref).
 
 * `/[path]`:  this is a path relative to the website root folder, e.g.:
               `/foo/figs/img1.png`.
+* `[path]`:   this is a path relative to the site assets folder, e.g.:
+              `/assets/foo`.
 * `./[path]`: this is a path relative to the assets folder with the same path
-              as the calling page.
-              For instance, `./im1.png` in `src/pages/pg1.md` will point to
-              `/assets/pages/pg1/im1.png`
+              as the calling page. For instance, `./im1.png` in
+              `src/pages/pg1.md` will point to `/assets/pages/pg1/im1.png`.
 
-Otherwise, if in `code` mode, recurse with `./code/path`, otherwise consider
-the given path as a full path relative to the `/assets/` folder.
+Otherwise, if in `code` mode, recurse with `./code/path`.
 
 ## Argument
 

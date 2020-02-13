@@ -267,7 +267,7 @@ function fd_loop(cycle_counter::Int, ::LiveServer.FileWatcher,
         end
         # 2) scan the input folder, if new files have been added then this will
         # update the dictionaries
-        scan_input_dir!(watched_files..., verb)
+        scan_input_dir!(watched_files..., verb; in_loop=true)
     else
         layout_key = ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src_html, :layout)
         layout     = path(layout_key)
