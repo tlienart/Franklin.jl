@@ -263,11 +263,13 @@ function publish(; prerender::Bool=true, minify::Bool=true, nopass::Bool=false,
             run(`git push --quiet`)
             print_final(pubmsg, start)
         catch e
-            println("✘ Could not push updates, verify your connection and try manually.\n")
+            println("✘ Could not push updates, verify your connection " *
+                    "and/or try manually.\n")
             @show e
         end
     else
-        println("✘ Something went wrong in the optimisation step. Not pushing updates.")
+        println("✘ Something went wrong in the optimisation step. " *
+                "Not pushing updates.")
     end
     return nothing
 end
