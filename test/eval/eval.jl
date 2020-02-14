@@ -171,10 +171,12 @@ end
     h = ""
     @test_logs (:warn, "There was an error of type DomainError running the code.") (global h; h = s |> seval)
     # errors silently
-    @test occursin("""<p>Simple code: <pre><code class="language-julia">sqrt(-1)</code></pre> then: <pre><code class="plaintext">DomainError with -1.0:
-sqrt will only return a complex result if called with a complex argument. Try sqrt(Complex(x)).
-</code></pre> done.</p>
-""", h)
+    if VERSION >= v"1.2"
+        @test occursin("""<p>Simple code: <pre><code class="language-julia">sqrt(-1)</code></pre> then: <pre><code class="plaintext">DomainError with -1.0:
+    sqrt will only return a complex result if called with a complex argument. Try sqrt(Complex(x)).
+    </code></pre> done.</p>
+    """, h)
+    end
 end
 
 @testset "Eval (nojl)" begin
