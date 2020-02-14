@@ -61,7 +61,7 @@ end
         """
     r = F.run_code(mod, c, junk)
     @test isnothing(r)
-    @test read(junk, String) == "x = 5\n" 
+    @test read(junk, String) == "x = 5\n"
 
     # code with errorr
     c = """
@@ -70,5 +70,7 @@ end
         b = 7
         """
     @test (@test_logs (:warn, "There was an error of type DomainError running the code.") F.run_code(mod, c, junk)) === nothing
-    @test read(junk, String) == """DomainError(-1.0, "sqrt will only return a complex result if called with a complex argument. Try sqrt(Complex(x)).")"""
+    @test read(junk, String) == """DomainError with -1.0:
+        sqrt will only return a complex result if called with a complex argument. Try sqrt(Complex(x)).
+        """
 end

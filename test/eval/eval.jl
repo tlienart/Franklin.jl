@@ -158,6 +158,7 @@ end
 
 @testset "Eval (throw)" begin
     s = raw"""
+        @def reeval=true
         Simple code:
         ```julia:scripts/test1
         sqrt(-1)
@@ -166,10 +167,14 @@ end
         \output{scripts/test1}
         done.
         """
+    global h
     h = ""
-    @test_logs (:warn, "There was an error of type DomainError running the code.") (h = s |> seval)
+    @test_logs (:warn, "There was an error of type DomainError running the code.") (global h; h = s |> seval)
     # errors silently
-    @test occursin("then: <pre><code class=\"plaintext\">DomainError(-1.0, \"sqrt will only return a complex result if called with a complex argument. Try sqrt(Complex(x)).\"", h)
+    @test occursin("""<p>Simple code: <pre><code class="language-julia">sqrt(-1)</code></pre> then: <pre><code class="plaintext">DomainError with -1.0:
+sqrt will only return a complex result if called with a complex argument. Try sqrt(Complex(x)).
+</code></pre> done.</p>
+""", h)
 end
 
 @testset "Eval (nojl)" begin
