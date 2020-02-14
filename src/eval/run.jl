@@ -62,7 +62,9 @@ function run_code(mod::Module, code::AS, out_path::AS;
                 try
                     res = Core.eval(mod, exs[e])
                 catch e
-                    show(stdout, "text/plain", e)
+                    io = IOBuffer()
+                    showerror(io, e)
+                    println(String(take!(io)))
                     err = typeof(e)
                     break
                 end
