@@ -64,7 +64,7 @@ where `__site` will contain the full generated site. To migrate from old to new:
 
 Then you may have to:
 
-- fix links in `_layout/head.html` removing `/pub/` and `.html` so for instance `/pub/menu1.html` becomes `/menu1/`,
+- fix links in `_layout/head.html` removing `/pub/` and `.html` so for instance `/pub/menu1.html` becomes `/menu1/`, relative links **must start and end with a `/`**,
 - fix a few of your internal links (use `verify_links()` to help you with that),
 - set things up so that the content of  `__site` is what's served on GitHub or elsewhere.
 - **Note**: links to stylesheets should still be ok, even though the source is now in `_css`, this gets mapped to `__site/_css/` and so `/css/somesheet.css` will still work fine.
@@ -81,8 +81,10 @@ In terms of understanding how the generated paths look, consider the following m
 
 This allows to have urls like `www.site.ext/menu1/`.
 
-**If you encounter issues during the process, open an issue on  GitHub, I'll try to help and improve these instructions at the same time, thanks!**
+Finally note that the deployment of the `__site/` folder is now automated, but to get there you need to set up your repository properly, see the [docs on how to do this](https://tlienart.github.io/franklindocs/workflow/deploy/).
+
+**If you encounter issues during the process, open an issue on  GitHub or ask on Slack, I'll try to help and improve these instructions at the same time, thanks!**
 
 ### v0.5 (JuDoc -> Frankin)
 
-See [the corresponding release notes](https://github.com/tlienart/Franklin.jl/releases/tag/v0.5.0) which include a step-by-step of how to migrate from JuDoc to Franklin.s
+See [the corresponding release notes](https://github.com/tlienart/Franklin.jl/releases/tag/v0.5.0) which include a step-by-step of how to migrate from JuDoc to Franklin.
