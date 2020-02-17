@@ -1,6 +1,6 @@
 <div align="center">
-  <a href="https://tlienart.github.io/franklindocs/">
-    <img src="https://tlienart.github.io/franklindocs/assets/infra/logoF2.svg" alt="Franklin" width="150">
+  <a href="https://franklinjl.org">
+    <img src="https://franklinjl.org/assets/infra/logoF2.svg" alt="Franklin" width="150">
   </a>
 </div>
 
@@ -26,7 +26,7 @@ Franklin now has a channel **#franklin** on the Julia slack.
 
 ## Docs
 
-Go to [Franklin's main website](https://tlienart.github.io/franklindocs/).
+Go to [Franklin's main website](https://franklinjl.org).
 
 Some examples of websites using Franklin
 
@@ -47,7 +47,7 @@ Some examples of websites using Franklin
   - optional pre-rendering of KaTeX and highlighted code blocks to remove javascript dependency,
 * Easy HTML templating to define or adapt a given layout.
 
-See [the docs](https://tlienart.github.io/franklindocs/) for more information and examples.
+See [the docs](https://franklinjl.org) for more information and examples.
 
 ## Getting started
 
@@ -74,13 +74,13 @@ julia> serve()
 ```
 
 Modify the files in `MyNewSite/src` and see the changes being live-rendered in your browser.
-Head to [the docs](https://tlienart.github.io/franklindocs/) for more information.
+Head to [the docs](https://franklinjl.org) for more information.
 
 ## Associated repositories
 
 * [LiveServer.jl](https://github.com/asprionj/LiveServer.jl) a package coded with [Jonas Asprion](https://github.com/asprionj) to render and watch the content of a local folder in the browser.
 * [FranklinTemplates.jl](https://github.com/tlienart/FranklinTemplates.jl) the repositories where Franklin themes/templates are developed.
-* [franklindocs](https://github.com/tlienart/franklindocs) the repository for Franklin's website.  
+* [franklindocs](https://franklinjl.org) the repository for Franklin's website.  
 
 ## Licenses
 

@@ -81,7 +81,7 @@ In terms of understanding how the generated paths look, consider the following m
 
 This allows to have urls like `www.site.ext/menu1/`.
 
-Finally note that the deployment of the `__site/` folder is now automated, but to get there you need to set up your repository properly, see the [docs on how to do this](https://tlienart.github.io/franklindocs/workflow/deploy/).
+Finally note that the deployment of the `__site/` folder is now automated, but to get there you need to set up your repository properly, see the [docs on how to do this](https://franklinjl.org/workflow/deploy/).
 
 **If you encounter issues during the process, open an issue on  GitHub or ask on Slack, I'll try to help and improve these instructions at the same time, thanks!**
 
