@@ -93,6 +93,7 @@ cd(dirname(dirname(pathof(Franklin))))
 println("INTEGRATION")
 include("integration/literate.jl")
 include("integration/literate_fs2.jl")
+include("integration/literate_extras.jl")
 
 flush_td()
 cd(joinpath(dirname(dirname(pathof(Franklin)))))
