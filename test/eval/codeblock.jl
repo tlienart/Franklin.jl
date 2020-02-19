@@ -33,6 +33,30 @@
         """using Random
         Random.seed!(55) # hide
         a = randn()"""
+
+    # more cases to test REGEX_CODE
+    rx3 = Regex(F.REGEX_CODE_RP3)
+    rx5 = Regex(F.REGEX_CODE_RP5)
+
+    s = "```julia:ex1 A```"
+    m = match(rx3, s)
+    @test m.captures[2] == ":ex1"
+    s = "```julia:ex1_b2 A```"
+    m = match(rx3, s)
+    @test m.captures[2] == ":ex1_b2"
+    s = "```julia:ex1_b2-33 A```"
+    m = match(rx3, s)
+    @test m.captures[2] == ":ex1_b2-33"
+    s = "```julia:./ex1/v1_b2 A```"
+    m = match(rx3, s)
+    @test m.captures[2] == ":./ex1/v1_b2"
+    s = "```julia:./ex1/v1_b2.f99 A```"
+    m = match(rx3, s)
+    @test m.captures[2] == ":./ex1/v1_b2.f99"
+
+    s = "`````julia:./ex1/v1_b2.f99 A`````"
+    m = match(rx5, s)
+    @test m.captures[2] == ":./ex1/v1_b2.f99"
 end
 
 @testset "resolve code" begin
