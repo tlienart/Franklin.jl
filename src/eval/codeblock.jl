@@ -3,6 +3,9 @@ Functionalities to take a code block and process it.
 These functionalities are called from `convert/md_blocks`.
 =#
 
+const REGEX_CODE_RP3 = "```([a-zA-Z][a-zA-Z-]*)(\\:[a-zA-Z\\\\\\/_\\.][a-zA-Z_0-9-\\\\\\/]+(?:\\.[a-zA-Z0-9]+)?)?\\s*\\n?((?:.|\\n)*)```"
+const REGEX_CODE_RP5 = "``" * REGEX_CODE_RP3 * "``"
+
 """
 $SIGNATURES
 
@@ -10,13 +13,12 @@ Take a fenced code block and return a tuple with the language, the relative
 path (if any) and the code.
 """
 function parse_fenced_block(ss::SubString)::Tuple
-    fence = ifelse(startswith(ss, "`````"), "`````", "```")
     # cases: (note there's necessarily a lang, see `convert_block`)
     # * ```lang ... ``` where lang can be something like julia-repl
     # * ```lang:path ... ``` where path is a relative path like "this/path"
     # group 1 => lang; group 2 => path; group 3 => code
-    reg   = Regex("$fence([a-zA-Z][a-zA-Z-]*)(\\:[a-zA-Z\\\\\\/-_\\.]+)?\\s*\\n?((?:.|\\n)*)$fence")
-    m     = match(reg, ss)
+    reg   = ifelse(startswith(ss, "`````"), REGEX_CODE_RP5, REGEX_CODE_RP3)
+    m     = match(Regex(reg), ss)
     lang  = m.captures[1]
     rpath = m.captures[2]
     code  = strip(m.captures[3])
@@ -122,7 +124,7 @@ function resolve_code_block(ss::SubString)::String
         end
         # >> since we've evaluated a code block, toggle scope as stale
         set_var!(LOCAL_VARS, "fd_eval", true)
-    end    
+    end
     # >> finally return as html
     if locvar("showall")
         return html_code(code, lang) *
