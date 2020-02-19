@@ -95,32 +95,34 @@ function resolve_code_block(ss::SubString)::String
 
     # 2. here we have Julia code, assess whether to run it or not
     # if not, just return the code as a html block
-    should_eval(code, rpath) || return html_code(code, lang)
-
-    # 3. here we have code that should be (re)evaluated
-    # >> retrieve the modulename, the module may not exist (& may not need to)
-    modname = modulename(locvar("fd_rpath"))
-    # >> check if relevant module exists, otherwise create one
-    mod = ismodule(modname) ?
-            getfield(Main, Symbol(modname)) :
-            newmodule(modname)
-    # >> retrieve the code paths
-    cp = form_codepaths(rpath)
-    # >> write the code to file
-    mkpath(cp.script_dir)
-    write(cp.script_path, MESSAGE_FILE_GEN_FMD * code)
-    # make the output directory available to the code block (see @OUTPUT macro)
-    OUT_PATH[] = cp.out_dir
-    # >> eval the code in the relevant module (this creates output/)
-    res = run_code(mod, code, cp.out_path; strip_code=false)
-    # >> write res to file
-    open(cp.res_path, "w") do resf
-        redirect_stdout(resf) do
-            show(stdout, "text/plain", res)
+    if should_eval(code, rpath)
+        # 3. here we have code that should be (re)evaluated
+        # >> retrieve the modulename, the module may not exist
+        # (& may not need to)
+        modname = modulename(locvar("fd_rpath"))
+        # >> check if relevant module exists, otherwise create one
+        mod = ismodule(modname) ?
+                getfield(Main, Symbol(modname)) :
+                newmodule(modname)
+        # >> retrieve the code paths
+        cp = form_codepaths(rpath)
+        # >> write the code to file
+        mkpath(cp.script_dir)
+        write(cp.script_path, MESSAGE_FILE_GEN_FMD * code)
+        # make the output directory available to the code block
+        # (see @OUTPUT macro)
+        OUT_PATH[] = cp.out_dir
+        # >> eval the code in the relevant module (this creates output/)
+        res = run_code(mod, code, cp.out_path; strip_code=false)
+        # >> write res to file
+        open(cp.res_path, "w") do resf
+            redirect_stdout(resf) do
+                show(stdout, "text/plain", res)
+            end
         end
-    end
-    # >> since we've evaluated a code block, toggle scope as stale
-    set_var!(LOCAL_VARS, "fd_eval", true)
+        # >> since we've evaluated a code block, toggle scope as stale
+        set_var!(LOCAL_VARS, "fd_eval", true)
+    end    
     # >> finally return as html
     if locvar("showall")
         return html_code(code, lang) *
