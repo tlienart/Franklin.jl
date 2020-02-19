@@ -87,12 +87,12 @@ function lx_output(lxc::LxCom, lxd::Vector{LxDef};
     outpath = cpaths.out_path
     respath = cpaths.res_path
     # does output exist?
-    isfile(outpath) || return html_err("`$(λ.ss)`: could not find the " *
+    isfile(outpath) || return html_err("`$(lxc.ss)`: could not find the " *
                                        "relevant output file.")
     output = read(outpath, String)
     # if result should be appended, check the relevant file and append
     if res
-        isfile(respath) || return html_err("`$(λ.ss)`: could not find " *
+        isfile(respath) || return html_err("`$(lxc.ss)`: could not find " *
                                            "the relevant result file.")
         result = read(respath, String)
         if result != "nothing"
