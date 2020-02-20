@@ -108,17 +108,14 @@ const MD_TOKENS_LX = Dict{Char, Vector{TokenFinder}}(
         incrlook((_, c) -> α(c)) => :LX_COMMAND ]
     )
 
-
 """
-MD_DEF_PAT
+    ASSIGN_PAT
 
-Regex to match an assignment of the form
+Regex to match 'var' in an assignment of the form
 
-    @def var = value
-
-The first group captures the name (`var`), the second the assignment (`value`).
+    var = value
 """
-const MD_DEF_PAT = r"@def\s+(\S+)\s*?=\s*?(\S.*)"
+const ASSIGN_PAT = r"^([a-zA-Z_]\S*)\s*?=((?:.|\n)*)"
 
 
 """
@@ -150,9 +147,10 @@ const MD_OCB = [
     OCProto(:CODE_BLOCK_LANG, :CODE_LANG2,   (:CODE_PENTA,),    false),
     OCProto(:CODE_BLOCK,      :CODE_TRIPLE,  (:CODE_TRIPLE,),   false),
     OCProto(:CODE_BLOCK,      :CODE_PENTA,   (:CODE_PENTA,),    false),
-    OCProto(:CODE_BLOCK_IND,  :LR_INDENT,    (:LINE_RETURN,),   false),
     OCProto(:CODE_INLINE,     :CODE_DOUBLE,  (:CODE_DOUBLE,),   false),
     OCProto(:CODE_INLINE,     :CODE_SINGLE,  (:CODE_SINGLE,),   false),
+    OCProto(:MD_DEF,          :MD_DEF_OPEN,  L_RETURNS,         false), # [^4]
+    OCProto(:CODE_BLOCK_IND,  :LR_INDENT,    (:LINE_RETURN,),   false),
     OCProto(:ESCAPE,          :ESCAPE,       (:ESCAPE,),        false),
     OCProto(:FOOTNOTE_DEF,    :FOOTNOTE_DEF, L_RETURNS,         false),
     OCProto(:LINK_DEF,        :LINK_DEF,     L_RETURNS,         false),
@@ -164,7 +162,6 @@ const MD_OCB = [
     OCProto(:H5,              :H5_OPEN,      L_RETURNS,     false),
     OCProto(:H6,              :H6_OPEN,      L_RETURNS,     false),
     # ------------------------------------------------------------------
-    OCProto(:MD_DEF,          :MD_DEF_OPEN,  L_RETURNS,     false), # see [^4]
     OCProto(:LXB,             :LXB_OPEN,     (:LXB_CLOSE,), true ),
     OCProto(:DIV,             :DIV_OPEN,     (:DIV_CLOSE,), true ),
     ]
@@ -172,8 +169,8 @@ const MD_OCB = [
 * [3] a header can be closed by either a line return or an end of string (for
 instance in the case where a user defines a latex command like so:
 \newcommand{\section}{# blah} (no line return).)
-* [4] an `MD_DEF` goes from an `@def` to the next `\n` so no multiple-line
-def are allowed.
+* [4] MD_DEF take precedence over CODE_IND, note that if you have an indented
+* block with @def in it, things may go bad.
 * ordering matters!
 =#
 

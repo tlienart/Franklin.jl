@@ -59,3 +59,59 @@ extraneous whitespace.
 fix_inserts(s::AS)::String =
     replace(replace(s, r"([\*_]) ##FDINSERT##" => s"\1##FDINSERT##"),
                        r"##FDINSERT## ([\*_])" => s"##FDINSERT##\1")
+
+"""
+$(SIGNATURES)
+
+Takes a list of tokens and deactivate tokens that happen to be in a multi-line
+md-def. Used in [`convert_md`](@ref).
+"""
+function preprocess_candidate_mddefs!(tokens::Vector{Token})
+    isempty(tokens) && return nothing
+    # process:
+    # 1. find a MD_DEF_OPEN token
+    # 2. Look for the first LINE_RETURN (proper)
+    # 3. try to parse the content with Meta.parse. If it completely fails,
+    # error, otherwise consider the  span of the first ok expression and
+    # discard all tokens within its span leaving effectively just the
+    # opening MD_DEF_OPEN and closing LINE_RETURN
+    from_to_list = Pair{Int,Int}[]
+    i = 0
+    while i < length(tokens)
+        i += 1
+        τ  = tokens[i]
+        τ.name == :MD_DEF_OPEN || continue
+        # look ahead stopping with the first LINE_RETURN
+        j = findfirst(τc -> τc.name ∈ (:LINE_RETURN, :EOS), tokens[i+1:end])
+        if j !== nothing
+            e = i+j
+            # discard if it's a single line
+            any(τx -> τx.name == :LR_INDENT, tokens[i:e]) || continue
+            push!(from_to_list, (i => e))
+        end
+    end
+    remove = Int[]
+    s = str(first(tokens))
+    for (i, j) in from_to_list
+        si = nextind(s, to(tokens[i]))
+        sj = prevind(s, from(tokens[j]))
+        sc = subs(s, si, sj)
+        ex, pos = Meta.parse(sc, 1)
+
+        # find where's the first character after the effective end of the
+        # definition (right-strip)
+        str_expr = subs(s, si, si + prevind(sc, pos))
+        stripped = strip(str_expr)
+        start_id = findfirst(c -> c == stripped[1], str_expr)
+        last_id  = prevind(str_expr, start_id + length(stripped))
+
+        # find the first token after si + next_id - 1 and discard what's before
+        c = findfirst(k -> from(tokens[k]) > si + last_id - 1, i+1:j)
+        # we discard everything between i+1 and i+c-1 (we want to keep i+c)
+        if !isnothing(c)
+            append!(remove, i+1:i+c-1)
+        end
+    end
+    deleteat!(tokens, remove)
+    return nothing
+end
