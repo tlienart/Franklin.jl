@@ -4,6 +4,33 @@ This document keeps track of breaking changes and what you can do if you update 
 
 Notes are in reverse chronological order.
 
+### v0.6+ (new functionalities)
+
+* Multiline markdown definitions are now allowed, the lines **must** be indented with four spaces e.g. this is ok:
+
+```
+@def x = begin
+    z = [1,2,3]
+    z .+ 3
+    end
+```
+
+which is a convoluted way of writing
+
+```
+@def x = [4,5,6]
+```
+
+* template for loop is now available so that you can do this:
+
+```
+{{for e in x}}
+  {{fill e}}
+{{end}}
+```
+
+which with the definition above would show `4 5 6` on separate lines.
+
 ### v0.6
 
 The most important change is a complete re-vamp of the folder structure resulting from issue #335.
