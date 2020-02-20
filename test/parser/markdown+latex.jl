@@ -217,10 +217,10 @@ end
 
     @test blocks[1].name == :COMMENT
     @test F.content(blocks[1]) == " comment "
-    @test blocks[2].name == :H2
-    @test F.content(blocks[2]) == " blah <!-- ✅ 19/9/999 -->"
-    @test blocks[3].name == :MD_DEF
-    @test F.content(blocks[3]) == " title = \"Convex Optimisation I\""
+    @test blocks[3].name == :H2
+    @test F.content(blocks[3]) == " blah <!-- ✅ 19/9/999 -->"
+    @test blocks[2].name == :MD_DEF
+    @test F.content(blocks[2]) == " title = \"Convex Optimisation I\""
 
     @test lxcoms[1].ss == "\\com{A}"
     @test lxcoms[2].ss == "\\com{B}"

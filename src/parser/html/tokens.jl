@@ -49,25 +49,27 @@ at this point. This second point might fix the first one by making sure that
 =#
 
 """
-HBLOCK_IF_PAT
-HBLOCK_ELSE_PAT
-HBLOCK_ELSEIF_PAT
-HBLOCK_END_PAT
-HBLOCK_ISDEF_PAT
-HBLOCK_ISNOTDEF_PAT
-HBLOCK_ISPAGE_PAT
-HBLOCK_ISNOTPAGE_PAT
+HBLOCK_IF_PAT           # {{if v1}}
+HBLOCK_ELSE_PAT         # {{else}}
+HBLOCK_ELSEIF_PAT       # {{elseif v1}}
+HBLOCK_END_PAT          # {{end}}
+HBLOCK_ISDEF_PAT        # {{isdef v1}}
+HBLOCK_ISNOTDEF_PAT     # {{isnotdef v1}}
+HBLOCK_ISPAGE_PAT       # {{ispage p1 p2}}
+HBLOCK_ISNOTPAGE_PAT    # {{isnotpage p1 p2}}
+HBLOCK_FOR_PAT          # {{for x in iterable}}
 
 Regex for the different HTML tokens.
 """
-const HBLOCK_IF_PAT        = r"{{\s*if\s+([a-zA-Z]\S*)\s*}}"        # {{if v1}}
-const HBLOCK_ELSE_PAT      = r"{{\s*else\s*}}"                      # {{else}}
-const HBLOCK_ELSEIF_PAT    = r"{{\s*else\s*if\s+([a-zA-Z]\S*)\s*}}" # {{elseif v1}}
-const HBLOCK_END_PAT       = r"{{\s*end\s*}}"                       # {{end}}
-const HBLOCK_ISDEF_PAT     = r"{{\s*isdef\s+([a-zA-Z]\S*)\s*}}"     # {{isdef v1}}
-const HBLOCK_ISNOTDEF_PAT  = r"{{\s*isnotdef\s+([a-zA-Z]\S*)\s*}}"  # {{isnotdef v1}}
-const HBLOCK_ISPAGE_PAT    = r"{{\s*ispage\s+((.|\n)+?)}}"          # {{ispage p1 p2}}
-const HBLOCK_ISNOTPAGE_PAT = r"{{\s*isnotpage\s+((.|\n)+?)}}"       # {{isnotpage p1 p2}}
+const HBLOCK_IF_PAT        = r"{{\s*if\s+([a-zA-Z_]\S*)\s*}}"
+const HBLOCK_ELSE_PAT      = r"{{\s*else\s*}}"
+const HBLOCK_ELSEIF_PAT    = r"{{\s*else\s*if\s+([a-zA-Z_]\S*)\s*}}"
+const HBLOCK_END_PAT       = r"{{\s*end\s*}}"
+const HBLOCK_ISDEF_PAT     = r"{{\s*isdef\s+([a-zA-Z_]\S*)\s*}}"
+const HBLOCK_ISNOTDEF_PAT  = r"{{\s*isnotdef\s+([a-zA-Z_]\S*)\s*}}"
+const HBLOCK_ISPAGE_PAT    = r"{{\s*ispage\s+((.|\n)+?)}}"
+const HBLOCK_ISNOTPAGE_PAT = r"{{\s*isnotpage\s+((.|\n)+?)}}"
+const HBLOCK_FOR_PAT = r"{{\s*for\s+([a-zA-Z_]\S*)\s+in\s+([a-zA-Z_]\S*)\s*}}"
 
 """
 $(TYPEDEF)
@@ -172,6 +174,17 @@ HTML token corresponding to `{{isnotpage path/page}}`.
 struct HIsNotPage <: AbstractBlock
     ss::SubString
     pages::Vector{<:AS}
+end
+
+"""
+$(TYPEDEF)
+
+HTML token corresponding to `{{for x in iterable}}`.
+"""
+struct HFor <: AbstractBlock
+    ss::SubString
+    vname::String
+    iname::String
 end
 
 #= ============

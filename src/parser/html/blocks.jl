@@ -37,6 +37,10 @@ function qualify_html_hblocks(blocks::Vector{OCBlock})::Vector{AbstractBlock}
         m = match(HBLOCK_ISNOTPAGE_PAT, β.ss)
         isnothing(m) || (qb[i] = HIsNotPage(β.ss, split(m.captures[1])); continue)
         # ---
+        # for block
+        m = match(HBLOCK_FOR_PAT, β.ss)
+        isnothing(m) || (qb[i] = HFor(β.ss, m.captures[1], m.captures[2]); continue)
+        # ---
         # function block {{ fname v1 v2 ... }}
         m = match(HBLOCK_FUN_PAT, β.ss)
         isnothing(m) || (qb[i] = HFun(β.ss, m.captures[1], split(m.captures[2])); continue)

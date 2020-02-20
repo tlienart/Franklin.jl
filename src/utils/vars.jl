@@ -223,7 +223,7 @@ function set_vars!(vars::PageVars, assignments::Vector{Pair{String,String}}
         # this in a string it would fail (but come on...)
         idx = findfirst("<!--", assign)
         !isnothing(idx) && (assign = assign[1:prevind(assign, idx[1])])
-        tmp = Meta.parse("__tmp__ = " * assign)
+        tmp, = Meta.parse(assign, 1)
         # try to evaluate the parsed assignment
         try
             tmp = eval(tmp)

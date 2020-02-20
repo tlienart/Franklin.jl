@@ -53,6 +53,15 @@ function convert_md(mds::AS,
     #> 1b. Find indented blocks (ONLY if not recursive to avoid ambiguities!)
     if !isrecursive
         find_indented_blocks!(tokens, mds)
+        if has_mddefs
+            # look for multi-line definitions, for those that meet the
+            # requirements, discard *all* tokens in the span leaving only
+            # the opening and closing one. Note: expressions will be parsed
+            # twice as a result but really it's negligible time.
+            preprocess_candidate_mddefs!(tokens)
+        end
+        # any remaining indented lines that don't meet the requirements for
+        # an indented code block get removed here
         filter_lr_indent!(tokens, mds)
     end
 
@@ -374,17 +383,17 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool)::Nothing
     assignments = Vector{Pair{String, String}}()
     # go over the blocks, and extract the assignment
     for (i, mdd) ∈ enumerate(mddefs)
-        matched = match(MD_DEF_PAT, mdd.ss)
-        if isnothing(matched)
+        inner = strip(content(mdd))
+        m = match(ASSIGN_PAT, inner)
+        if isnothing(m)
             @warn "Found delimiters for an @def environment but it didn't " *
                   "have the right @def var = ... format. Verify (ignoring " *
                   "for now)."
             continue
         end
-        vname, vdef = matched.captures[1:2]
+        vname, vdef = m.captures[1:2]
         push!(assignments, (String(vname) => String(vdef)))
     end
-
     # if in config file, update `GLOBAL_VARS` and `GLOBAL_LXDEFS`
     if isconfig
         set_vars!(GLOBAL_VARS, assignments)
