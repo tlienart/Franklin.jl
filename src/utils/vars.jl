@@ -20,6 +20,8 @@ const GLOBAL_VARS_DEFAULT = [
     "website_descr"    => Pair("",             (String,)),
     "website_url"      => Pair("",             (String,)),
     "generate_rss"     => Pair(true,           (Bool,)),
+    # div names
+    "div_content"      => Pair("franklin-content", (String,))
     ]
 
 """
