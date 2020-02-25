@@ -15,6 +15,8 @@ const GLOBAL_VARS_DEFAULT = [
     "author"           => Pair("THE AUTHOR",   (String, Nothing)),
     "date_format"      => Pair("U dd, yyyy",   (String,)),
     "prepath"          => Pair("",             (String,)),
+    # will be added to IGNORE_FILES
+    "ignore"           => Pair(String[],       (Vector{String},)),
     # RSS
     "website_title"    => Pair("",             (String,)),
     "website_descr"    => Pair("",             (String,)),
@@ -34,9 +36,6 @@ Re-initialise the global page vars dictionary. (This is done once).
     end
     return nothing
 end
-
-"""Convenience function to get the value associated with a global var."""
-globvar(name::String) = LOCAL_VARS[name].first
 
 """
 Dictionary of variables accessible to the current page. It's initialised with
@@ -114,6 +113,9 @@ end
 
 """Convenience function to get the value associated with a local var."""
 locvar(name::String) = LOCAL_VARS[name].first
+
+"""Convenience function to get the value associated with a global var."""
+globvar(name::String) = GLOBAL_VARS[name].first
 
 """
 Keep track of seen headers. The key is the refstring, the value contains the
