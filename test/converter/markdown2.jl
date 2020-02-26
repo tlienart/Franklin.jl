@@ -43,19 +43,19 @@ end
         <div class="franklin-toc">
           <ol>
             <li>
-              <a href="/pub/ff/aa.html#hello_fd">Hello <code>fd</code></a>
+              <a href="#hello_fd">Hello <code>fd</code></a>
               <ol>
-                <li><ol><li><a href="/pub/ff/aa.html#weirdly_nested">weirdly nested</a></li></ol></li>
-                <li><a href="/pub/ff/aa.html#goodbye">Goodbye&#33;</a></li>
+                <li><ol><li><a href="#weirdly_nested">weirdly nested</a></li></ol></li>
+                <li><a href="#goodbye">Goodbye&#33;</a></li>
               </ol>
             </li>
-            <li><a href="/pub/ff/aa.html#done">Done</a></li>
+            <li><a href="#done">Done</a></li>
           </ol>
         </div>
-        <h2 id="hello_fd"><a href="/pub/ff/aa.html#hello_fd">Hello <code>fd</code></a></h2>
-        <h4 id="weirdly_nested"><a href="/pub/ff/aa.html#weirdly_nested">weirdly nested</a></h4>
-        <h3 id="goodbye"><a href="/pub/ff/aa.html#goodbye">Goodbye&#33;</a></h3>
-        <h2 id="done"><a href="/pub/ff/aa.html#done">Done</a></h2>done.
+        <h2 id="hello_fd"><a href="#hello_fd">Hello <code>fd</code></a></h2>
+        <h4 id="weirdly_nested"><a href="#weirdly_nested">weirdly nested</a></h4>
+        <h3 id="goodbye"><a href="#goodbye">Goodbye&#33;</a></h3>
+        <h2 id="done"><a href="#done">Done</a></h2>done.
         """)
 end
 
@@ -77,24 +77,24 @@ end
     @test isapproxstr(s, raw"""
         <div class="franklin-toc">
             <ol>
-                <li><a href="/pub/ff/aa.html#b">B</a>
+                <li><a href="#b">B</a>
                     <ol>
-                        <li><a href="/pub/ff/aa.html#d">D</a></li>
+                        <li><a href="#d">D</a></li>
                     </ol>
                 </li>
-                <li><a href="/pub/ff/aa.html#e">E</a>
+                <li><a href="#e">E</a>
                     <ol>
-                        <li><a href="/pub/ff/aa.html#f">F</a></li>
+                        <li><a href="#f">F</a></li>
                     </ol>
                 </li>
             </ol>
         </div>
-        <h1 id="a"><a href="/pub/ff/aa.html#a">A</a></h1>
-        <h2 id="b"><a href="/pub/ff/aa.html#b">B</a></h2>
-        <h4 id="c"><a href="/pub/ff/aa.html#c">C</a></h4>
-        <h3 id="d"><a href="/pub/ff/aa.html#d">D</a></h3>
-        <h2 id="e"><a href="/pub/ff/aa.html#e">E</a></h2>
-        <h3 id="f"><a href="/pub/ff/aa.html#f">F</a></h3> done.
+        <h1 id="a"><a href="#a">A</a></h1>
+        <h2 id="b"><a href="#b">B</a></h2>
+        <h4 id="c"><a href="#c">C</a></h4>
+        <h3 id="d"><a href="#d">D</a></h3>
+        <h2 id="e"><a href="#e">E</a></h2>
+        <h3 id="f"><a href="#f">F</a></h3> done.
         """)
 end
 
@@ -113,19 +113,19 @@ end
         <div class="franklin-toc">
           <ol>
             <li>
-              <a href="/pages/ff/aa/index.html#hello_fd">Hello <code>fd</code></a>
+              <a href="#hello_fd">Hello <code>fd</code></a>
               <ol>
-                <li><ol><li><a href="/pages/ff/aa/index.html#weirdly_nested">weirdly nested</a></li></ol></li>
-                <li><a href="/pages/ff/aa/index.html#goodbye">Goodbye&#33;</a></li>
+                <li><ol><li><a href="#weirdly_nested">weirdly nested</a></li></ol></li>
+                <li><a href="#goodbye">Goodbye&#33;</a></li>
               </ol>
             </li>
-            <li><a href="/pages/ff/aa/index.html#done">Done</a></li>
+            <li><a href="#done">Done</a></li>
           </ol>
         </div>
-        <h2 id="hello_fd"><a href="/pages/ff/aa/index.html#hello_fd">Hello <code>fd</code></a></h2>
-        <h4 id="weirdly_nested"><a href="/pages/ff/aa/index.html#weirdly_nested">weirdly nested</a></h4>
-        <h3 id="goodbye"><a href="/pages/ff/aa/index.html#goodbye">Goodbye&#33;</a></h3>
-        <h2 id="done"><a href="/pages/ff/aa/index.html#done">Done</a></h2>done.
+        <h2 id="hello_fd"><a href="#hello_fd">Hello <code>fd</code></a></h2>
+        <h4 id="weirdly_nested"><a href="#weirdly_nested">weirdly nested</a></h4>
+        <h3 id="goodbye"><a href="#goodbye">Goodbye&#33;</a></h3>
+        <h2 id="done"><a href="#done">Done</a></h2>done.
         """)
 end
 
@@ -147,23 +147,23 @@ end
     @test isapproxstr(s, raw"""
         <div class="franklin-toc">
             <ol>
-                <li><a href="/pages/ff/aa/index.html#b">B</a>
+                <li><a href="#b">B</a>
                     <ol>
-                        <li><a href="/pages/ff/aa/index.html#d">D</a></li>
+                        <li><a href="#d">D</a></li>
                     </ol>
                 </li>
-                <li><a href="/pages/ff/aa/index.html#e">E</a>
+                <li><a href="#e">E</a>
                     <ol>
-                        <li><a href="/pages/ff/aa/index.html#f">F</a></li>
+                        <li><a href="#f">F</a></li>
                     </ol>
                 </li>
             </ol>
         </div>
-        <h1 id="a"><a href="/pages/ff/aa/index.html#a">A</a></h1>
-        <h2 id="b"><a href="/pages/ff/aa/index.html#b">B</a></h2>
-        <h4 id="c"><a href="/pages/ff/aa/index.html#c">C</a></h4>
-        <h3 id="d"><a href="/pages/ff/aa/index.html#d">D</a></h3>
-        <h2 id="e"><a href="/pages/ff/aa/index.html#e">E</a></h2>
-        <h3 id="f"><a href="/pages/ff/aa/index.html#f">F</a></h3> done.
+        <h1 id="a"><a href="#a">A</a></h1>
+        <h2 id="b"><a href="#b">B</a></h2>
+        <h4 id="c"><a href="#c">C</a></h4>
+        <h3 id="d"><a href="#d">D</a></h3>
+        <h2 id="e"><a href="#e">E</a></h2>
+        <h3 id="f"><a href="#f">F</a></h3> done.
         """)
 end

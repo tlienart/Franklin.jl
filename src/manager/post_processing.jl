@@ -282,12 +282,16 @@ removed the local output directory. This will help avoid merge clashes.
 function cleanpull()::Nothing
     FOLDER_PATH[] = pwd()
     set_paths!()
-    if isdir(PATHS[:pub])
-        rmmsg = rpad("→ Removing local output dir...", 35)
-        print(rmmsg)
-        rm(PATHS[:pub], force=true, recursive=true)
-        println("\r" * rmmsg * " [done ✔ ]")
+
+    rmmsg = rpad("→ Removing local __site dir...", 35)
+    print(rmmsg)
+    if FD_ENV[:STRUCTURE] >= v"0.2"
+        isdir(path(:site)) && rm(path(:site), force=true, recursive=true)
+    else
+        isdir(path(:pub)) && rm(path(:pub), force=true, recursive=true)
     end
+    println("\r" * rmmsg * " [done ✔ ]")
+
     try
         pmsg = rpad("→ Retrieving updates from the repository...", 35)
         print(pmsg)

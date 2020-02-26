@@ -95,16 +95,22 @@ function parse_rpath(rpath::AS; canonical::Bool=false, code::Bool=false)::AS
             throw(RelativePathError("Relative path `$rpath` doesn't " *
                                     "look right."))
         end
+        # if the locvar ends with `index.md` but is not strictly
+        # index.md then remove it
+        loc_rpath = locvar("fd_rpath")
+        if endswith(loc_rpath, "index.md") && loc_rpath != "index.md"
+            loc_rpath = replace(loc_rpath, r"index\.md$" => "")
+        end
         if !canonical
             # here we want to remain unix-style, so we don't use joinpath
             # note that rpath never starts with "/" so there's
             # no doubling of "//"
-            rpath = unixify(splitext(locvar("fd_rpath"))[1]) * rpath[3:end]
+            rpath = unixify(splitext(loc_rpath)[1]) * rpath[3:end]
             return "/assets/" * rpath
         else
             if FS2
                 full_path = joinpath(PATHS[:site], "assets",
-                                     splitext(locvar("fd_rpath"))[1],
+                                     splitext(loc_rpath)[1],
                                      join_rpath(rpath[3:end]))
             else
                 full_path = joinpath(PATHS[:assets],

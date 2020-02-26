@@ -15,6 +15,8 @@ const GLOBAL_VARS_DEFAULT = [
     "author"           => Pair("THE AUTHOR",   (String, Nothing)),
     "date_format"      => Pair("U dd, yyyy",   (String,)),
     "prepath"          => Pair("",             (String,)),
+    # will be added to IGNORE_FILES
+    "ignore"           => Pair(String[],       (Vector{String},)),
     # RSS
     "website_title"    => Pair("",             (String,)),
     "website_descr"    => Pair("",             (String,)),
@@ -34,9 +36,6 @@ Re-initialise the global page vars dictionary. (This is done once).
     end
     return nothing
 end
-
-"""Convenience function to get the value associated with a global var."""
-globvar(name::String) = LOCAL_VARS[name].first
 
 """
 Dictionary of variables accessible to the current page. It's initialised with
@@ -115,6 +114,9 @@ end
 """Convenience function to get the value associated with a local var."""
 locvar(name::String) = LOCAL_VARS[name].first
 
+"""Convenience function to get the value associated with a global var."""
+globvar(name::String) = GLOBAL_VARS[name].first
+
 """
 Keep track of seen headers. The key is the refstring, the value contains the
 title, the occurence number for the first appearance of that title and the
@@ -183,8 +185,16 @@ $(SIGNATURES)
 
 Checks if a data type `t` is a subtype of a tuple of accepted types `tt`.
 """
-check_type(t::DataType, tt::NTuple{N,DataType} where N) =
-    any(<:(t, tᵢ) for tᵢ ∈ tt)
+function check_type(t::DataType, tt::NTuple{N,DataType} where N)::Bool
+    any(valid_subtype(t, tᵢ) for tᵢ ∈ tt) && return true
+    return false
+end
+
+valid_subtype(::Type{T1},
+              ::Type{T2}) where {T1,T2} = T1 <: T2
+valid_subtype(::Type{<:AbstractArray{T1,K}},
+              ::Type{<:AbstractArray{T2,K}}) where {T1,T2,K} = T1 <: T2
+
 
 
 """

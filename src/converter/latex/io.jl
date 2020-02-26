@@ -142,6 +142,7 @@ function lx_figalt(lxc::LxCom, _)
     alt   = strip(content(lxc.braces[1]))
     path  = parse_rpath(rpath; canonical=false, code=true)
     fdir, fext = splitext(path)
+    
     # there are several cases
     # A. a path with no extension --> guess extension
     # B. a path with extension --> use that
@@ -173,7 +174,7 @@ function lx_figalt(lxc::LxCom, _)
             isfile(syspath) && return html_img(candpath, alt)
         end
     end
-    return html_err("Image matching '$rpath' not found.")
+    return html_err("Image matching '$path' not found.")
 end
 
 """

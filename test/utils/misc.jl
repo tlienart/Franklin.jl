@@ -88,7 +88,7 @@ end
     set_curpath("pages/cpB/blah.md")
     @test F.html_ahref(λ, 1) == "<a href=\"$λ\">1</a>"
     @test F.html_ahref(λ, "bb") == "<a href=\"$λ\">bb</a>"
-    @test F.html_ahref_key("cc", "dd") == "<a href=\"/pub/cpB/blah.html#cc\">dd</a>"
+    @test F.html_ahref_key("cc", "dd") == "<a href=\"#cc\">dd</a>"
     @test F.html_div("dn","ct") == "<div class=\"dn\">ct</div>"
     @test F.html_img("src", "alt") == "<img src=\"src\" alt=\"alt\">"
     @test F.html_code("code") == "<pre><code class=\"plaintext\">code</code></pre>"
@@ -114,4 +114,14 @@ end
     @test F.match_url("menu1", "menu1/")
     @test F.match_url("menu1", "menu1")
     @test F.match_url("menu1", "/menu1/*")
+end
+
+@testset "check_type" begin
+    @test F.check_type(Float64, (Real,))
+    @test F.check_type(Float64, (Real, String))
+    @test F.check_type(Int,     (Any,))
+    @test !F.check_type(String, (Real,))
+    @test F.check_type(Vector{Float64}, (Vector{Real},))
+    @test F.check_type(Vector{String},  (Vector{Any},))
+    @test !F.check_type(Vector{String}, (Matrix{Any},))
 end

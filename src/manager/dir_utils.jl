@@ -102,10 +102,17 @@ Update the dictionaries referring to input files and their time of last change.
 The variable `verb` propagates verbosity.
 """
 function scan_input_dir!(args...; kw...)
+
+    to_ignore = vcat(IGNORE_FILES, globvar("ignore"))
+    # differentiate between files and dirs
+    dir_indicator = [endswith(c, "/") for c in to_ignore]
+    d2i = [d for d in to_ignore[dir_indicator] if length(d) > 1]
+    f2i = filter!((!) ∘ isempty, to_ignore[.!dir_indicator])
+
     if FD_ENV[:STRUCTURE] < v"0.2"
-        return _scan_input_dir!(args...)
+        return _scan_input_dir!(args...; files2ignore=f2i, dirs2ignore=d2i)
     end
-    return _scan_input_dir2!(args...; kw...)
+    return _scan_input_dir2!(args...; files2ignore=f2i, dirs2ignore=d2i, kw...)
 end
 
 function _scan_input_dir!(other_files::TrackedFiles,
@@ -113,12 +120,15 @@ function _scan_input_dir!(other_files::TrackedFiles,
                           md_files::TrackedFiles,
                           html_files::TrackedFiles,
                           literate_files::TrackedFiles,
-                          verb::Bool=false)::Nothing
+                          verb::Bool=false;
+                          files2ignore::Vector{String}=String[],
+                          dirs2ignore::Vector{String}=String[])::Nothing
     # top level files (src/*)
     for file ∈ readdir(PATHS[:src])
-        isfile(joinpath(PATHS[:src], file)) || continue
+        fpath = joinpath(PATHS[:src], file)
+        isfile(fpath) || continue
         # skip if it has to be ignored
-        file ∈ IGNORE_FILES && continue
+        should_ignore(fpath, files2ignore, dirs2ignore) && continue
         fname, fext = splitext(file)
         fpair = (PATHS[:src] => file)
         if file == "config.md"
@@ -132,9 +142,10 @@ function _scan_input_dir!(other_files::TrackedFiles,
     # pages files (src/pages/*)
     for (root, _, files) ∈ walkdir(PATHS[:src_pages])
         for file ∈ files
-            isfile(joinpath(root, file)) || continue
+            fpath = joinpath(root, file)
+            isfile(fpath) || continue
             # skip if it has to be ignored
-            file ∈ IGNORE_FILES && continue
+            should_ignore(fpath, files2ignore, dirs2ignore) && continue
             fname, fext = splitext(file)
             fpair = (root => file)
             if fext == ".md"
@@ -177,7 +188,9 @@ function _scan_input_dir2!(other_files::TrackedFiles,
                            html_pages::TrackedFiles,
                            literate_scripts::TrackedFiles,
                            verb::Bool=false;
-                           in_loop::Bool=false)::Nothing
+                           in_loop::Bool=false,
+                           files2ignore::Vector{String}=String[],
+                           dirs2ignore::Vector{String}=String[])::Nothing
     # go over all files in the website folder
     for (root, _, files) ∈ walkdir(path(:folder))
         for file in files
@@ -189,7 +202,9 @@ function _scan_input_dir2!(other_files::TrackedFiles,
             opts = (fpair, verb, in_loop)
 
             # early skips
-            (!isfile(fpath) || file ∈ IGNORE_FILES) && continue
+            !isfile(fpath) && continue
+            should_ignore(fpath, files2ignore, dirs2ignore) && continue
+
             # skip over `__site` folder, `.git` and `.github` folder
             startswith(fpath, path(:site)) && continue
             startswith(fpath, joinpath(path(:folder), ".git")) && continue
@@ -227,6 +242,8 @@ end
 
 
 """
+$SIGNATURES
+
 Helper function, if `fpair` is not referenced in the dictionary (new file) add
 the entry to the dictionary with the time of last modification as val.
 """
@@ -239,4 +256,32 @@ function add_if_new_file!(dict::TrackedFiles, fpair::Pair{String,String},
     # to force its processing in FS2
     dict[fpair] = ifelse(in_loop, 0, mtime(joinpath(fpair...)))
     return nothing
+end
+
+
+"""
+$SIGNATURES
+
+Check if a file path should be ignored. This is a helper function for the
+`scan_input_dir` functions. A bit of a similar principle to `match_url`. The
+file argument is an absolute path, the list would be a list of relative paths.
+Rules:
+
+* `''` or `'/'`  -> ignore
+* `'path/fname'` -> ignore exactly that
+* `'path/dir/'`  -> ignore everything starting with `path/dir/`
+"""
+function should_ignore(fpath::AS, files2ignore::Vector{String},
+                       dirs2ignore::Vector{String})::Bool
+    # fpath is necessarily an absolute path so can strip the folder part
+    if FD_ENV[:STRUCTURE] < v"0.2"
+        fpath = fpath[length(path(:src))+length(PATH_SEP)+1:end]
+    else
+        fpath = fpath[length(path(:folder))+length(PATH_SEP)+1:end]
+    end
+    flag  = findfirst(c -> c == fpath, files2ignore)
+    isnothing(flag) || return true
+    flag  = findfirst(c -> startswith(fpath, c), dirs2ignore)
+    isnothing(flag) || return true
+    return false
 end

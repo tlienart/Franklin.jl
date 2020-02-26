@@ -115,9 +115,9 @@ end
         done
         """ |> seval
     @test isapproxstr(h, """
-                        <h1 id="title"><a href="/index.html#title">Title</a></h1>
+                        <h1 id="title"><a href="#title">Title</a></h1>
                         and then
-                        <h2 id="subtitle_cool"><a href="/index.html#subtitle_cool">Subtitle cool&#33;</a></h2>
+                        <h2 id="subtitle_cool"><a href="#subtitle_cool">Subtitle cool&#33;</a></h2>
                         done
                         """)
 end

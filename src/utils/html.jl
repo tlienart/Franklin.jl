@@ -18,7 +18,7 @@ function html_ahref(link::AS, name::Union{Int,AS};
 end
 
 """Convenience function to introduce a hyper reference relative to a key."""
-html_ahref_key(k::AS, n::Union{Int,AS}) = html_ahref(url_curpage() * "#$k", n)
+html_ahref_key(k::AS, n::Union{Int,AS}) = html_ahref("#$k", n)
 
 """Convenience function to introduce a div block."""
 html_div(name::AS, in::AS) = "<div class=\"$name\">$in</div>"

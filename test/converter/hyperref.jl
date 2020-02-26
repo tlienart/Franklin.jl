@@ -35,9 +35,9 @@
         <p>
           Some string
           <a id="$h1"></a>\\[ x = x \\]
-          then as per <span class="bibref"><a href="/index.html#$h2">Amari and Douglas., 1998</a></span>  also this <span class="bibref">(<a href="/index.html#$h3">Bardenet et al., 2017</a>)</span>  and
-          <span class="bibref"><a href="/index.html#$h2">Amari and Douglas., 1998</a>, <a href="/index.html#$h3">Bardenet et al., 2017</a></span>
-          Reference to equation: <span class="eqref">(<a href="/index.html#$h1">1</a>)</span> .
+          then as per <span class="bibref"><a href="#$h2">Amari and Douglas., 1998</a></span>  also this <span class="bibref">(<a href="#$h3">Bardenet et al., 2017</a>)</span>  and
+          <span class="bibref"><a href="#$h2">Amari and Douglas., 1998</a>, <a href="#$h3">Bardenet et al., 2017</a></span>
+          Reference to equation: <span class="eqref">(<a href="#$h1">1</a>)</span> .
         </p>
         <p>
           Then maybe some text etc.
@@ -59,7 +59,7 @@ end
     """
     h = st |> seval
     @test occursin(raw"""<a id="eq_1"></a>\[ x = x \]""", h)
-    @test occursin(raw"""<span class="eqref">(<a href="/index.html#eq_1">1</a>)</span>.""", h)
+    @test occursin(raw"""<span class="eqref">(<a href="#eq_1">1</a>)</span>.""", h)
     @test occursin(raw"""<em>B \(E\)</em>.""", h)
 end
 
