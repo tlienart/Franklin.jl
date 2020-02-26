@@ -32,3 +32,20 @@ foofig(s) = (write(joinpath(td, "config.md"), s); F.process_config())
 
     @test fd2html(raw"""\helloc"""; dir=td, internal=true) == "goodbye"
 end
+
+@testset "i381" begin
+    foofig(raw"""
+        @def tags = []
+        """)
+
+    s = """
+        @def tags = ["tag1", "tag2"]
+
+        ~~~
+        {{for tag in tags}}
+        {{fill tag}}
+        {{end}}
+        ~~~
+        """ |> fd2html_td
+    @test isapproxstr(s, "tag1 tag2")
+end

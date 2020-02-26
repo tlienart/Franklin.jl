@@ -115,3 +115,13 @@ end
     @test F.match_url("menu1", "menu1")
     @test F.match_url("menu1", "/menu1/*")
 end
+
+@testset "check_type" begin
+    @test F.check_type(Float64, (Real,))
+    @test F.check_type(Float64, (Real, String))
+    @test F.check_type(Int,     (Any,))
+    @test !F.check_type(String, (Real,))
+    @test F.check_type(Vector{Float64}, (Vector{Real},))
+    @test F.check_type(Vector{String},  (Vector{Any},))
+    @test !F.check_type(Vector{String}, (Matrix{Any},))
+end

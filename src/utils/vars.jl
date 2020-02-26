@@ -185,8 +185,16 @@ $(SIGNATURES)
 
 Checks if a data type `t` is a subtype of a tuple of accepted types `tt`.
 """
-check_type(t::DataType, tt::NTuple{N,DataType} where N) =
-    any(<:(t, tᵢ) for tᵢ ∈ tt)
+function check_type(t::DataType, tt::NTuple{N,DataType} where N)::Bool
+    any(valid_subtype(t, tᵢ) for tᵢ ∈ tt) && return true
+    return false
+end
+
+valid_subtype(::Type{T1},
+              ::Type{T2}) where {T1,T2} = T1 <: T2
+valid_subtype(::Type{<:AbstractArray{T1,K}},
+              ::Type{<:AbstractArray{T2,K}}) where {T1,T2,K} = T1 <: T2
+
 
 
 """
