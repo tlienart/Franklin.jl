@@ -22,6 +22,7 @@ include("manager/utils_fs2.jl")
 include("manager/rss.jl")
 include("manager/config.jl")
 include("manager/config_fs2.jl")
+include("manager/dir_utils.jl")
 println("🍺")
 
 # PARSER folder
@@ -43,6 +44,7 @@ include("eval/codeblock.jl")
 include("eval/eval.jl")
 include("eval/eval_fs2.jl")
 include("eval/integration.jl")
+include("eval/extras.jl")
 
 # CONVERTER folder
 println("CONVERTER/MD")

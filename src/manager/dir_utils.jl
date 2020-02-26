@@ -275,9 +275,9 @@ function should_ignore(fpath::AS, files2ignore::Vector{String},
                        dirs2ignore::Vector{String})::Bool
     # fpath is necessarily an absolute path so can strip the folder part
     if FD_ENV[:STRUCTURE] < v"0.2"
-        fpath = fpath[length(path(:src))+2:end]
+        fpath = fpath[length(path(:src))+length(PATH_SEP)+1:end]
     else
-        fpath = fpath[length(path(:folder))+2:end]
+        fpath = fpath[length(path(:folder))+length(PATH_SEP)+1:end]
     end
     flag  = findfirst(c -> c == fpath, files2ignore)
     isnothing(flag) || return true
