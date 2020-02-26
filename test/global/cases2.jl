@@ -79,12 +79,12 @@ end
 
     if VERSION >= v"1.4.0-"
         @test isapproxstr(st |> seval, raw"""<p>A</p>
-<h3 id="title"><a href="/pub/pg1.html#title">Title</a></h3>
+<h3 id="title"><a href="#title">Title</a></h3>
 <table><tr><th align="center">No.</th><th align="center">Graph</th><th align="center">Vertices</th><th align="center">Edges</th></tr><tr><td align="center">1</td><td align="center">Twitter Social Circles</td><td align="center">81,306</td><td align="center">1,342,310</td></tr><tr><td align="center">2</td><td align="center">Astro-Physics Collaboration</td><td align="center">17,903</td><td align="center">197,031</td></tr><tr><td align="center">3</td><td align="center">Facebook Social Circles</td><td align="center">4,039</td><td align="center">88,234</td></tr></table>
 <p>C</p>""")
     else
         @test isapproxstr(st |> seval, raw""" <p>A</p>
-            <h3 id="title"><a href="/pub/pg1.html#title">Title</a></h3>
+            <h3 id="title"><a href="#title">Title</a></h3>
 
             <table>
               <tr>
@@ -125,12 +125,12 @@ end
 
     if VERSION >= v"1.4.0-"
         @test isapproxstr(st |> seval, raw"""<p>A</p>
-<h3 id="title"><a href="/pages/pg1/index.html#title">Title</a></h3>
+<h3 id="title"><a href="#title">Title</a></h3>
 <table><tr><th align="center">No.</th><th align="center">Graph</th><th align="center">Vertices</th><th align="center">Edges</th></tr><tr><td align="center">1</td><td align="center">Twitter Social Circles</td><td align="center">81,306</td><td align="center">1,342,310</td></tr><tr><td align="center">2</td><td align="center">Astro-Physics Collaboration</td><td align="center">17,903</td><td align="center">197,031</td></tr><tr><td align="center">3</td><td align="center">Facebook Social Circles</td><td align="center">4,039</td><td align="center">88,234</td></tr></table>
 <p>C</p>""")
     else
         @test isapproxstr(st |> seval, raw""" <p>A</p>
-            <h3 id="title"><a href="/pages/pg1/index.html#title">Title</a></h3>
+            <h3 id="title"><a href="#title">Title</a></h3>
 
             <table>
               <tr>
@@ -159,5 +159,5 @@ end
     etc
     ~~~{{fill title}}~~~
     """ |> fd2html_td
-    @test isapproxstr(s, raw"""<h1 id="aaa"><a href="/index.html#aaa">AAA</a></h1>  etc AAA""")
+    @test isapproxstr(s, raw"""<h1 id="aaa"><a href="#aaa">AAA</a></h1>  etc AAA""")
 end
