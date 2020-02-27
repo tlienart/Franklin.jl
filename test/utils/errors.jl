@@ -26,3 +26,11 @@ Corn amaranth salsify bunya nuts nori azuki bean chickweed potato bell pepper ar
     # println(mess)
     @test mess == "Context:\n\t... potato bell pepper artichoke. (near line 5)\n	                        ^---\n"
 end
+
+@testset "show" begin
+    ocbe = F.OCBlockError("foo", "bar")
+    io = IOBuffer()
+    Base.showerror(io, ocbe)
+    r = String(take!(io))
+    @test r == "foo\nbar"
+end
