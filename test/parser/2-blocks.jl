@@ -122,6 +122,11 @@ end
     @test b[1].name == :DIV
 end
 
+@testset "More ind" begin
+    b = "A\n\n\tB1\n\tB2\n\n\tB3\nC" |> blk3
+    @test isblk(b[1], :CODE_BLOCK_IND, "\n\tB1\n\tB2\n\n\tB3\n")
+end
+
 @testset "P:2:blk-{}" begin
     b = "{ABC}" |> blk3
     @test F.content(b[1]) == "ABC"

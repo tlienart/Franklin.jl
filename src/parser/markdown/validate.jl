@@ -60,7 +60,6 @@ function validate_headers!(tokens::Vector{Token})::Nothing
     return
 end
 
-postprocess_link(s::String) = replace(r"")
 
 """
 $(SIGNATURES)

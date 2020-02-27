@@ -33,4 +33,14 @@ end
     Base.showerror(io, ocbe)
     r = String(take!(io))
     @test r == "foo\nbar"
+
+    mcbe = F.MathBlockError("foo")
+    @test mcbe.m == "foo"
+end
+
+@testset "ocbe" begin
+    s = raw"""
+        Foo $$ end.
+        """
+    @test_throws F.OCBlockError s |> fd2html_td
 end
