@@ -4,8 +4,11 @@ This document keeps track of breaking changes and what you can do if you update 
 
 Notes are in reverse chronological order.
 
+You can also check out [this issue](https://github.com/tlienart/Franklin.jl/issues/323) with a more granular list of things that are being worked on / have been fixed / added.
+
 ### v0.6+ (new functionalities)
 
+* addition of an `ignore` global page variable to ignore files and directories, addition of a `div_content` page variable to change the name of the main container div.
 * Multiline markdown definitions are now allowed, the lines **must** be indented with four spaces e.g. this is ok:
 
 ```
