@@ -105,3 +105,8 @@ end
         """ |> fd2html_td
     @test isapproxstr(s, s2)
 end
+
+@testset "Unfound" begin
+    fs2();gotd()
+    @test_throws F.FileNotFoundError F.resolve_rpath("./foo")
+end
