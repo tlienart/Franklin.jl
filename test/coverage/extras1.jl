@@ -73,3 +73,17 @@ end
     @test F.from(s) == 1
     @test F.to(s) == lastindex(s)
 end
+
+
+@testset "{{toc}}" begin
+    s = """
+        ~~~
+        {{toc 1 2}}
+        ~~~
+        # Hello
+        ## Goodbye
+        """ |> fd2html_td
+    @test isapproxstr(s, raw"""
+<div class="franklin-toc"><ol><li><a href="#hello">Hello</a><ol><li><a href="#goodbye">Goodbye</a></li></ol></li></ol></div>
+ <h1 id="hello"><a href="#hello">Hello</a></h1>  <h2 id="goodbye"><a href="#goodbye">Goodbye</a></h2>""")
+end

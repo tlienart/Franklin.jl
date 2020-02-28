@@ -105,3 +105,57 @@ end
         """ |> fd2html_td
     @test isapproxstr(s, s2)
 end
+
+@testset "Unfound" begin
+    fs2();gotd()
+    @test_throws F.FileNotFoundError F.resolve_rpath("./foo")
+end
+
+@testset "H-For" begin
+    s = """
+        {{for x in blah}}
+        foo
+        """
+    @test_throws F.HTMLBlockError s |> F.convert_html
+    s = """
+        @def list = [1,2,3]
+        ~~~
+        {{for x in list}}
+        foo
+        ~~~
+        """
+    @test_throws F.HTMLBlockError s |> fd2html_td
+    s = """
+        @def list = [1,2,3]
+        ~~~
+        {{for x in list2}}
+        foo
+        {{end}}
+        ~~~
+        """
+    @test_throws F.HTMLBlockError s |> fd2html_td
+    s = """
+        @def list = [1,2,3]
+        ~~~
+        {{for x in list}}
+        {{if a}}
+        foo
+        {{end}}
+        ~~~
+        """
+    @test_throws F.HTMLBlockError s |> fd2html_td
+end
+
+@testset "HToc" begin
+    s = """
+        {{toc 1}}
+        """
+    @test_throws F.HTMLFunctionError s |> F.convert_html
+    s = """
+        ~~~
+        {{toc aa bb}}
+        ~~~
+        # Hello
+        """
+    @test_throws F.HTMLFunctionError s |> fd2html_td
+end
