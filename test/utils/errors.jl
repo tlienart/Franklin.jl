@@ -26,3 +26,82 @@ Corn amaranth salsify bunya nuts nori azuki bean chickweed potato bell pepper ar
     # println(mess)
     @test mess == "Context:\n\t... potato bell pepper artichoke. (near line 5)\n	                        ^---\n"
 end
+
+@testset "show" begin
+    ocbe = F.OCBlockError("foo", "bar")
+    io = IOBuffer()
+    Base.showerror(io, ocbe)
+    r = String(take!(io))
+    @test r == "foo\nbar"
+
+    mcbe = F.MathBlockError("foo")
+    @test mcbe.m == "foo"
+end
+
+@testset "ocbe" begin
+    s = raw"""
+        Foo $$ end.
+        """
+    @test_throws F.OCBlockError s |> fd2html_td
+end
+
+@testset "lxbe" begin
+    s = raw"""
+        Foo
+        \newcommand{\hello}
+        End
+        """
+    @test_throws F.LxDefError s |> fd2html_td
+
+    s = raw"""
+        Foo
+        \newcommand{\hello} {goodbye}
+        \hello
+        End
+        """ |> fd2html_td
+    @test isapproxstr(s, "<p>Foo</p> goodbye End</p>")
+
+    s2 = raw"""
+        Foo
+        \newcommand{\hello}[ ]{goodbye}
+        \hello
+        End
+        """ |> fd2html_td
+    @test isapproxstr(s, s2)
+
+    # should  fail XXX
+
+    s2 = raw"""
+        Foo
+        \newcommand{\hello}b{goodbye}
+        \hello
+        End
+        """
+    @test_throws F.LxDefError s2 |> fd2html_td
+
+    s2 = raw"""
+        Foo
+        \newcommand{\hello}b{goodbye #1}
+        \hello{ccc}
+        End
+        """
+    @test_throws F.LxDefError s2 |> fd2html_td
+
+    s2 = raw"""
+        Foo
+        \newcommand{\hello}[bb]{goodbye #1}
+        \hello{ccc}
+        End
+        """
+    @test_throws F.LxDefError s2 |> fd2html_td
+
+    # tolerated
+
+    s2 = raw"""
+        Foo
+        \newcommand{\hello}  {goodbye}
+        \hello
+        End
+        """ |> fd2html_td
+    @test isapproxstr(s, s2)
+end

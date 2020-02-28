@@ -104,6 +104,7 @@ cd(joinpath(dirname(dirname(pathof(Franklin)))))
 
 println("COVERAGE")
 include("coverage/extras1.jl")
+include("coverage/paths.jl")
 
 println("😅 😅 😅 😅")
 

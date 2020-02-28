@@ -44,10 +44,19 @@ function find_lxdefs(tokens::Vector{Token}, blocks::Vector{OCBlock})
         # check if it looks like [.d.] where d is a number and . are
         # optional spaces (specification of the number of arguments)
         if !isempty(rge)
-            lxnarg = match(LX_NARG_PAT, subs(str(braces[k]), rge))
-            if isnothing(lxnarg)
-                throw(LxDefError("Ill formed newcommand (where I expected " *
-                                 "the specification of the number of " * "arguments)."))
+            inter  = subs(str(braces[k]), rge)
+            lxnarg = match(LX_NARG_PAT, inter)
+            # see test/utils/errors for examples
+            if isnothing(lxnarg.captures[1])
+                sinner = strip(inter)
+                if !isempty(sinner)
+                    # corner case: {...}[ ]{...} (empty)
+                    if isnothing(match(r"\[\s*\]", sinner))
+                        throw(LxDefError(
+                            "Ill formed newcommand (where I expected the " *
+                            "specification of the number of arguments)."))
+                    end
+                end
             end
             matched = lxnarg.captures[2]
             lxnarg  = isnothing(matched) ? 0 : parse(Int, matched)
