@@ -145,3 +145,17 @@ end
         """
     @test_throws F.HTMLBlockError s |> fd2html_td
 end
+
+@testset "HToc" begin
+    s = """
+        {{toc 1}}
+        """
+    @test_throws F.HTMLFunctionError s |> F.convert_html
+    s = """
+        ~~~
+        {{toc aa bb}}
+        ~~~
+        # Hello
+        """
+    @test_throws F.HTMLFunctionError s |> fd2html_td
+end
