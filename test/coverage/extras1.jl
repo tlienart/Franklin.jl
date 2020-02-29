@@ -87,3 +87,11 @@ end
 <div class="franklin-toc"><ol><li><a href="#hello">Hello</a><ol><li><a href="#goodbye">Goodbye</a></li></ol></li></ol></div>
  <h1 id="hello"><a href="#hello">Hello</a></h1>  <h2 id="goodbye"><a href="#goodbye">Goodbye</a></h2>""")
 end
+
+
+@testset "franklin" begin
+    fs1()
+    gotd()
+    write(joinpath(td, "config.md"), "foo")
+    @test_throws ArgumentError serve(single=true)
+end
