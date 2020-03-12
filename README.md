@@ -16,9 +16,6 @@
     <img src="https://ci.appveyor.com/api/projects/status/github/tlienart/Franklin.jl?branch=master&svg=true"
          alt="Build Status (Windows)">
   </a>
-
-[![AppVeyor]()]()
-
   <a href="http://codecov.io/github/tlienart/Franklin.jl?branch=master">
     <img src="http://codecov.io/github/tlienart/Franklin.jl/coverage.svg?branch=master"
          alt="Coverage">
