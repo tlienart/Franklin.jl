@@ -82,8 +82,8 @@ function _out_path2(base::String)::String
        startswith(base, path(:literate))
 
        # add a closing separator to folder path
-       rbase   = joinpath(path(:folder), "")
-       outpath = replace(base, Regex("$(rbase)_([a-z]+)") => s"\1")
+       rbase   = joinpath(path(:folder), "") * "_"
+       outpath = base[nextind(base, length(rbase)):end]
        outpath = joinpath(path(:site), outpath)
    else
        # path is not a 'special folder'
