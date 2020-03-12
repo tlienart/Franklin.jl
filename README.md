@@ -10,8 +10,15 @@
        alt="Lifecycle">
   <a href="https://travis-ci.org/tlienart/Franklin.jl">
     <img src="https://travis-ci.org/tlienart/Franklin.jl.svg?branch=master"
-         alt="Build Status">
+         alt="Build Status (Linux)">
   </a>
+  <a href="https://ci.appveyor.com/project/tlienart/Franklin-jl">
+    <img src="https://ci.appveyor.com/api/projects/status/github/tlienart/Franklin.jl?branch=master&svg=true"
+         alt="Build Status (Windows)">
+  </a>
+
+[![AppVeyor]()]()
+
   <a href="http://codecov.io/github/tlienart/Franklin.jl?branch=master">
     <img src="http://codecov.io/github/tlienart/Franklin.jl/coverage.svg?branch=master"
          alt="Coverage">
