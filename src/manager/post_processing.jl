@@ -143,6 +143,8 @@ Does a full pass followed by a pre-rendering and minification step.
                      [`publish`](@ref))
 * `prepath=""`:     set this to something like "project-name" if it's a project
                      page
+* `clear=false`:    whether to clear the output dir and thereby regenerate
+                     everything
 * `no_fail_prerender=true`: whether to ignore errors during the pre-rendering
                              process
 * `suppress_errors=true`:   whether to suppress errors
@@ -154,7 +156,7 @@ pages).
 """
 function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
                     prepath::String="", no_fail_prerender::Bool=true,
-                    suppress_errors::Bool=true, cleanup::Bool=true)::Union{Nothing,Bool}
+                    suppress_errors::Bool=true, clear::Bool=false, cleanup::Bool=true)::Union{Nothing,Bool}
     suppress_errors && (FD_ENV[:SUPPRESS_ERR] = true)
     #
     # Prerendering
@@ -177,7 +179,7 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
     withpre = fmsg * ifelse(prerender,
                                 rpad(" (with pre-rendering)", 24),
                                 rpad(" (no pre-rendering)",   24))
-    succ = nothing === serve(single=true, prerender=prerender,
+    succ = nothing === serve(single=true, clear=clear, prerender=prerender,
                              nomess=true, isoptim=true,
                              no_fail_prerender=no_fail_prerender,
                              cleanup=cleanup)
