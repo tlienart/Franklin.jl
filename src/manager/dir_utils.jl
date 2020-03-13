@@ -42,10 +42,10 @@ function form_output_path(base::AS, file::AS, case::Symbol)
     else
         outbase = _out_path2(base)
         if case in (:md, :html)
-            # file is index.html --> keep the path
+            # file is index.html or 404.html --> keep the path
             # file is page.html  --> .../page/index.html
             fname = splitext(file)[1]
-            if fname != "index"
+            if fname ∉ ("index", "404")
                 file = joinpath(fname, "index.html")
             end
         end
