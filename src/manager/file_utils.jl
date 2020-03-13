@@ -52,18 +52,16 @@ function write_page(root::String, file::String, head::String,
     # to the dictionary.
     fpath = joinpath(root, file)
     # The curpath is the relative path starting after /src/ so for instance:
-    # f1/blah/page1.md or index.md etc... this is useful in the code evaluation and management
-    # of paths
-    root      = path(ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src, :folder))
-    cur_rpath = fpath[lastindex(root)+length(PATH_SEP)+1:end]
-    FD_ENV[:CUR_PATH] = cur_rpath
-
+    # f1/blah/page1.md or index.md etc... this is useful in the code evaluation
+    # and management of paths
+    set_cur_rpath(fpath)
+    # conversion
     content = convert_md(read(fpath, String))
 
     # Check if should add item
-    # should we generate ? otherwise no
-    # are we in the full pass ? otherwise no
-    # is there a `rss` or `rss_description` ? otherwise no
+    #   should we generate ? otherwise no
+    #   are we in the full pass ? otherwise no
+    #   is there a `rss` or `rss_description` ? otherwise no
     cond_add = GLOBAL_VARS["generate_rss"].first && # should we generate?
                 FD_ENV[:FULL_PASS] &&               # are we in the full pass?
                 !all(e -> isempty(locvar(e)), ("rss", "rss_description"))
@@ -156,6 +154,7 @@ function process_file_err(
         write_page(fpair..., head, pgfoot, foot, outp;
                    prerender=prerender, isoptim=isoptim, on_write=on_write)
     elseif case == :html
+        set_cur_rpath(joinpath(fpair...))
         raw_html  = read(inp, String)
         proc_html = convert_html(raw_html; isoptim=isoptim)
         write(outp, proc_html)
@@ -198,3 +197,11 @@ Convenience function to assemble the html out of its parts.
 """
 build_page(head::String, content::String, pgfoot::String, foot::String) =
     "$head\n<div class=\"$(locvar("div_content"))\">\n$content\n$pgfoot\n</div>\n$foot"
+
+function set_cur_rpath(fpath::String)
+    root = path(ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src, :folder))
+    cur_rpath = fpath[lastindex(root)+length(PATH_SEP)+1:end]
+    FD_ENV[:CUR_PATH] = cur_rpath
+    set_var!(LOCAL_VARS, "fd_rpath", FD_ENV[:CUR_PATH])
+    return nothing
+end
