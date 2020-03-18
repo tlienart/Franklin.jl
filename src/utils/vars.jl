@@ -261,3 +261,19 @@ function set_vars!(vars::PageVars, assignments::Vector{Pair{String,String}}
     end
     return vars
 end
+
+
+"""
+    set_page_env()
+
+Initialises all page dictionaries.
+"""
+function set_page_env()
+    def_LOCAL_VARS!()       # page-specific variables
+    def_PAGE_HEADERS!()     # all the headers
+    def_PAGE_EQREFS!()      # page-specific equation dict (hrefs)
+    def_PAGE_BIBREFS!()     # page-specific reference dict (hrefs)
+    def_PAGE_FNREFS!()      # page-specific footnote dict
+    def_PAGE_LINK_DEFS!()   # page-specific link definition candidates
+    return nothing
+end

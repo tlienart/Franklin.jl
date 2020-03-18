@@ -155,6 +155,7 @@ function process_file_err(
                    prerender=prerender, isoptim=isoptim, on_write=on_write)
     elseif case == :html
         set_cur_rpath(joinpath(fpair...))
+        set_page_env()
         raw_html  = read(inp, String)
         proc_html = convert_html(raw_html; isoptim=isoptim)
         write(outp, proc_html)

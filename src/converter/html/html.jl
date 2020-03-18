@@ -50,6 +50,8 @@ function fd2html_v(st::AS; internal::Bool=false,
         def_GLOBAL_VARS!()
         FD_ENV[:CUR_PATH] = "index.md"
     end
+    # corner case if `serve` is used and cleanup has emptied global vars
+    !(@isdefined GLOBAL_VARS) || isempty(GLOBAL_VARS) && def_GLOBAL_VARS!()
     m = convert_md(st; isinternal=internal)
     h = convert_html(m)
     return h, LOCAL_VARS

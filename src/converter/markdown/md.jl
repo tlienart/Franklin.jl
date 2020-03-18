@@ -27,14 +27,7 @@ function convert_md(mds::AS,
                     isconfig::Bool=false,
                     has_mddefs::Bool=true )::String
     # instantiate page dictionaries
-    if !(isrecursive || isinternal)
-        def_LOCAL_VARS!()       # page-specific variables
-        def_PAGE_HEADERS!()     # all the headers
-        def_PAGE_EQREFS!()      # page-specific equation dict (hrefs)
-        def_PAGE_BIBREFS!()     # page-specific reference dict (hrefs)
-        def_PAGE_FNREFS!()      # page-specific footnote dict
-        def_PAGE_LINK_DEFS!()   # page-specific link definition candidates
-    end
+    isrecursive || isinternal || set_page_env()
     # if we're given a substring, force it to a string
     mds = String(mds)
 
