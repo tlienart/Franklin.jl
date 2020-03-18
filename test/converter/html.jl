@@ -13,10 +13,10 @@
         """
     @test F.convert_html(hs) == "Some text then INPUT1 and\n\nother stuff\n\nfinal text\n"
 
-    hs = raw"""
-        abc {{isdef no}}yada{{end}} def
-        """
-    @test F.convert_html(hs) == "abc  def\n"
+    for expr in ("isdef", "ifdef")
+        hs = """abc {{$expr no}}yada{{end}} def"""
+        @test F.convert_html(hs) == "abc  def"
+    end
 
     hs = raw"""abc {{ fill nope }} ... """
     @test (@test_logs (:warn, "I found a '{{fill nope}}' but I do not know the variable 'nope'. Ignoring.") F.convert_html(hs))  == "abc  ... "
@@ -72,9 +72,11 @@ end
     hs = "foot {{isdef author}} {{fill author}}{{end}}"
     rhs = F.convert_html(hs)
     @test rhs == "foot  Stefan Zweig"
-    hs2 = "foot {{isnotdef blogname}}hello{{end}}"
-    rhs = F.convert_html(hs2)
-    @test rhs == "foot hello"
+    for expr in ("isnotdef", "ifnotdef", "isndef", "ifndef")
+        hs2 = "foot {{$expr blogname}}hello{{end}}"
+        rhs = F.convert_html(hs2)
+        @test rhs == "foot hello"
+    end
 end
 
 @testset "escape-coms" begin
