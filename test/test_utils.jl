@@ -14,8 +14,8 @@ set_curpath(path) =
 # convenience function that squeezes out all whitespaces and line returns out of a string
 # and checks if the resulting strings are equal. When expecting a specific string +- some
 # spaces, this is very convenient. Use == if want to check exact strings.
-isapproxstr(s1::String, s2::String) =
-    isequal(map(s->replace(s, r"\s|\n"=>""), (s1, s2))...)
+isapproxstr(s1::AbstractString, s2::AbstractString) =
+    isequal(map(s->replace(s, r"\s|\n"=>""), String.((s1, s2)))...)
 
 # this is a slightly ridiculous requirement but apparently the `eval` blocks
 # don't play well with Travis nor windows while testing, so you just need to forcibly

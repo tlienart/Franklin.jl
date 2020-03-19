@@ -49,29 +49,6 @@ at this point. This second point might fix the first one by making sure that
 =#
 
 """
-HBLOCK_IF_PAT           # {{if v1}}
-HBLOCK_ELSE_PAT         # {{else}}
-HBLOCK_ELSEIF_PAT       # {{elseif v1}}
-HBLOCK_END_PAT          # {{end}}
-HBLOCK_ISDEF_PAT        # {{isdef v1}}          alias: ifdef
-HBLOCK_ISNOTDEF_PAT     # {{isnotdef v1}}       alias: ifnotdef,isndef,ifndef
-HBLOCK_ISPAGE_PAT       # {{ispage p1 p2}}
-HBLOCK_ISNOTPAGE_PAT    # {{isnotpage p1 p2}}
-HBLOCK_FOR_PAT          # {{for x in iterable}}
-
-Regex for the different HTML tokens.
-"""
-const HBLOCK_IF_PAT        = r"{{\s*if\s+([a-zA-Z_]\S*)\s*}}"
-const HBLOCK_ELSE_PAT      = r"{{\s*else\s*}}"
-const HBLOCK_ELSEIF_PAT    = r"{{\s*else\s*if\s+([a-zA-Z_]\S*)\s*}}"
-const HBLOCK_END_PAT       = r"{{\s*end\s*}}"
-const HBLOCK_ISDEF_PAT     = r"{{\s*i(?:s|f)def\s+([a-zA-Z_]\S*)\s*}}"
-const HBLOCK_ISNOTDEF_PAT  = r"{{\s*i(?:s|f)n(?:ot)?def\s+([a-zA-Z_]\S*)\s*}}"
-const HBLOCK_ISPAGE_PAT    = r"{{\s*ispage\s+((.|\n)+?)}}"
-const HBLOCK_ISNOTPAGE_PAT = r"{{\s*isnotpage\s+((.|\n)+?)}}"
-const HBLOCK_FOR_PAT = r"{{\s*for\s+([a-zA-Z_]\S*)\s+in\s+([a-zA-Z_]\S*)\s*}}"
-
-"""
 $(TYPEDEF)
 
 HTML token corresponding to `{{if var}}`.
@@ -215,14 +192,6 @@ struct HFun <: AbstractBlock
     fname::String
     params::Vector{String}
 end
-
-
-"""
-HBLOCK_TOC_PAT
-
-Insertion for a table of contents.
-"""
-const HBLOCK_TOC_PAT = r"{{\s*toc\s*}}"
 
 
 """

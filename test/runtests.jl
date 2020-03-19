@@ -13,6 +13,7 @@ include("utils/paths_vars.jl"); include("test_utils.jl")
 include("utils/misc.jl")
 include("utils/errors.jl")
 include("utils/html.jl")
+include("regexes.jl")
 println("🍺")
 
 # MANAGER folder

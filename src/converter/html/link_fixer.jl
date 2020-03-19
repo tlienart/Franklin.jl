@@ -9,13 +9,7 @@ Direct inline-style links are properly processed by Julia's Markdown processor b
 """
 function find_and_fix_md_links(hs::String)::String
     # 1. find all occurences of -- [...]: link
-
-    # here we're looking for [id] or [id][] or [stuff][id] or ![stuff][id] but not [id]:
-    # 1 > (&#33;)? == either ! or nothing
-    # 2 > &#91;(.*?)&#93; == [...] inside of the brackets
-    # 3 > (?:&#91;(.*?)&#93;)? == [...] inside of second brackets if there is such
-    rx = r"(&#33;)?&#91;(.*?)&#93;(?!:)(?:&#91;(.*?)&#93;)?"
-    m_link_refs = collect(eachmatch(rx, hs))
+    m_link_refs = collect(eachmatch(ESC_LINK_PAT, hs))
 
     # recuperate the appropriate id which has a chance to match def_names
     ref_names = [
