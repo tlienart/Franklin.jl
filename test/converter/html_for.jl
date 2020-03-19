@@ -39,3 +39,46 @@ end
         path/to/badge2.png
         """)
 end
+
+@testset "h-for3" begin
+    F.def_LOCAL_VARS!()
+    s = """
+        @def iter = (("a", 1), ("b", 2), ("c", 3))
+        """ |> fd2html_td
+    h = raw"""
+        ABC
+        {{for (n, v) in iter}}
+            name:{{fill n}}
+            value:{{fill v}}
+        {{end}}
+        """ |> F.convert_html
+    @test isapproxstr(h, """
+        ABC
+        name:a
+        value:1
+        name:b
+        value:2
+        name:c
+        value:3
+        """)
+
+    s = """
+        @def iter2 = ("a"=>10, "b"=>7, "c"=>3)
+        """ |> fd2html_td
+    h = raw"""
+        ABC
+        {{for (n, v) in iter2}}
+            name:{{fill n}}
+            value:{{fill v}}
+        {{end}}
+        """ |> F.convert_html
+    @test isapproxstr(h, """
+        ABC
+        name:a
+        value:10
+        name:b
+        value:7
+        name:c
+        value:3
+        """)
+end

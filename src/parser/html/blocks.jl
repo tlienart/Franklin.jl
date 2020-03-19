@@ -39,7 +39,12 @@ function qualify_html_hblocks(blocks::Vector{OCBlock})::Vector{AbstractBlock}
         # ---
         # for block
         m = match(HBLOCK_FOR_PAT, β.ss)
-        isnothing(m) || (qb[i] = HFor(β.ss, m.captures[1], m.captures[2]); continue)
+        if !isnothing(m)
+            v, iter = m.captures
+            check_for_pat(v)
+            qb[i] = HFor(β.ss, v, iter);
+            continue
+        end
         # ---
         # function block {{ fname v1 v2 ... }}
         m = match(HBLOCK_FUN_PAT, β.ss)

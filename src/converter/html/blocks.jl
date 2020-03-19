@@ -167,11 +167,10 @@ function process_html_for(hs::AS, qblocks::Vector{AbstractBlock},
     iname  = β_open.iname
     if !haskey(LOCAL_VARS, iname)
         throw(HTMLBlockError("The iterable '$iname' is not recognised. " *
-                             "Make sure it's defined."))
+                             "Please make sure it's defined."))
     end
 
     # try to close the for loop
-
     if i == length(qblocks)
         throw(HTMLBlockError("Could not close the conditional block " *
                              "starting with '$(qblocks[i].ss)'."))
@@ -197,17 +196,48 @@ function process_html_for(hs::AS, qblocks::Vector{AbstractBlock},
     β_close = qblocks[i]
     i_close = i
 
+    isempty(locvar(iname)) && @goto final_step
+
+    # is vname a single variable or multiple variables?
+    # --> {{for v in iterate}}
+    # --> {{for (v1, v2) in iterate }}
+    vnames = [vname]
+    if startswith(vname, "(")
+        vnames = strip.(split(vname[2:end-1], ","))
+    end
+    # check that the first element of the iterate has the same length
+    el1 = first(locvar(iname))
+    length(vnames) in (1, length(el1)) ||
+        throw(HTMLBlockError("In a {{for ...}}, the first element of" *
+                "the iterate has length $(length(el1)) but tried to unpack" *
+                "it as $(length(vnames)) variables."))
+
     # so now basically we have to simply copy-paste the content replacing
     # variable `vname` when it appears in a html block {{...}}
     # users should try not to be dumb about this... if vname or iname
     # corresponds to something they shouldn't touch, they'll crash things.
+
+    # content of the for block
     inner = subs(hs, nextind(hs, to(β_open)), prevind(hs, from(β_close)))
+    isempty(strip(inner)) && @goto final_step
     content = ""
-    for value in locvar(iname)
-        # at the moment we only consider {{fill ...}}
-        content *= replace(inner,
-                    Regex("({{\\s*fill\\s+$vname\\s*}})") => "$value")
+    if length(vnames) == 1
+        for value in locvar(iname)
+            # at the moment we only consider {{fill ...}}
+            content *= replace(inner,
+                        Regex("({{\\s*fill\\s+$vname\\s*}})") => "$value")
+        end
+    else
+        for value in locvar(iname)
+            temp = inner
+            for (vname, value) in zip(vnames, value)
+                temp = replace(temp,
+                        Regex("({{\\s*fill\\s+$vname\\s*}})") => "$value")
+            end
+            content *= temp
+        end
     end
+    @label final_step
     head = nextind(hs, to(β_close))
     return convert_html(content), head, i_close
 end

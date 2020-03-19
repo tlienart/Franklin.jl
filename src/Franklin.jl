@@ -105,6 +105,8 @@ const MESSAGE_FILE_GEN_FMD = "# $MESSAGE_FILE_GEN # hide\n"
 
 include("build.jl") # check if user has Node/minify
 
+include("regexes.jl")
+
 # UTILS
 include("utils/paths.jl")
 include("utils/vars.jl")
