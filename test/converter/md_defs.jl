@@ -87,4 +87,6 @@ end
         """ |> fd2html_td
     @test isapproxstr(F.locvar("s"), "foo bar baz etc")
     @test isapproxstr(F.locvar("s2"), "nothing")
+    @test F.locvar("foobar") === nothing
+    @test F.globvar("foobar") === nothing
 end
