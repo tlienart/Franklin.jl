@@ -111,11 +111,17 @@ function def_LOCAL_VARS!()::Nothing
     return nothing
 end
 
-"""Convenience function to get the value associated with a local var."""
-locvar(name::String) = LOCAL_VARS[name].first
+"""
+Convenience function to get the value associated with a local var.
+Return `nothing` if the variable is not found.
+"""
+locvar(name::String) = haskey(LOCAL_VARS, name) ? LOCAL_VARS[name].first : nothing
 
-"""Convenience function to get the value associated with a global var."""
-globvar(name::String) = GLOBAL_VARS[name].first
+"""
+Convenience function to get the value associated with a global var.
+Return `nothing` if the variable is not found.
+"""
+globvar(name::String) = haskey(GLOBAL_VARS, name) ? GLOBAL_VARS[name].first : nothing
 
 """
 Keep track of seen headers. The key is the refstring, the value contains the
