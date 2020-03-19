@@ -168,3 +168,24 @@ end
         @test !isnothing(m)
     end
 end
+
+# ========
+# Checkers
+# ========
+@testset "ch-for" begin
+    s = "{{for v in iterate}}"
+    m = match(F.HBLOCK_FOR_PAT, s).captures[1]
+    @test isnothing(F.check_for_pat(m))
+    s = "{{for (v1,v2) in iterate}}"
+    m = match(F.HBLOCK_FOR_PAT, s).captures[1]
+    @test isnothing(F.check_for_pat(m))
+    s = "{{for (v in iterate}}"
+    m = match(F.HBLOCK_FOR_PAT, s).captures[1]
+    @test_throws F.HTMLBlockError F.check_for_pat(m)
+    s = "{{for v1,v2) in iterate}}"
+    m = match(F.HBLOCK_FOR_PAT, s).captures[1]
+    @test_throws F.HTMLBlockError F.check_for_pat(m)
+    s = "{{for v1,v2 in iterate}}"
+    m = match(F.HBLOCK_FOR_PAT, s).captures[1]
+    @test_throws F.HTMLBlockError F.check_for_pat(m)
+end

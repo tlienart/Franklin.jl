@@ -25,3 +25,23 @@ const HBLOCK_ISNOTPAGE_PAT = r"{{\s*isnotpage\s+((.|\n)+?)}}"
 const HBLOCK_FOR_PAT = r"{{\s*for\s+(\(?(?:\s*[a-zA-Z_][^\r\n\t\f\v,]*,\s*)*[a-zA-Z_]\S*\s*\)?)\s+in\s+([a-zA-Z_]\S*)\s*}}"
 
 const HBLOCK_TOC_PAT = r"{{\s*toc\s*}}"
+
+#= =====================================================
+Pattern checkers
+===================================================== =#
+
+"""
+    check_for_pat(v)
+
+Check that we have something like `{{for v in iterate}}` or
+`{for (v1,v2) in iterate}}` but not something with unmached parens.
+"""
+function check_for_pat(v)
+    op = startswith(v, "(")
+    cp = endswith(v, ")")
+    xor(op, cp) &&
+        throw(HTMLBlockError("Unbalanced expression in {{for ...}}"))
+    !op && occursin(",", v) &&
+        throw(HTMLBlockError("Missing parens in {{for ...}}"))
+    return nothing
+end
