@@ -38,7 +38,15 @@ function lunr()::Nothing
     return
 end
 
-function fdplotly(json; id="fdp"*Random.randstring('a':'z', 3),
+"""
+Display a Plotly plot given an exported JSON `String`.
+
+```
+using PlotlyJS
+fdplotly(json(plot([1, 2]))
+```
+"""
+function fdplotly(json::String; id="fdp"*Random.randstring('a':'z', 3),
 	 			  style="width:600px;height:350px")::Nothing
     println("""
 		~~~
