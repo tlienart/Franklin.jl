@@ -160,8 +160,10 @@ const MD_OCB = [
     OCProto(:H3,              :H3_OPEN,      L_RETURNS,     false),
     OCProto(:H4,              :H4_OPEN,      L_RETURNS,     false),
     OCProto(:H5,              :H5_OPEN,      L_RETURNS,     false),
-    OCProto(:H6,              :H6_OPEN,      L_RETURNS,     false),
-    # ------------------------------------------------------------------
+    OCProto(:H6,              :H6_OPEN,      L_RETURNS,     false)
+    ]
+# the split is due to double brace blocks being allowed in markdown
+const MD_OCB2 = [
     OCProto(:LXB,             :LXB_OPEN,     (:LXB_CLOSE,), true ),
     OCProto(:DIV,             :DIV_OPEN,     (:DIV_CLOSE,), true ),
     ]
@@ -223,7 +225,7 @@ MD_OCB_ALL
 
 Combination of all `MD_OCB` in order.
 """
-const MD_OCB_ALL = vcat(MD_OCB, MD_OCB_MATH) # order matters
+const MD_OCB_ALL = vcat(MD_OCB, MD_OCB2, MD_OCB_MATH) # order matters
 
 
 """

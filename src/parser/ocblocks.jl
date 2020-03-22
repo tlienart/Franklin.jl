@@ -11,7 +11,7 @@ function find_ocblocks(tokens::Vector{Token}, ocproto::OCProto;
 
     ntokens       = length(tokens)
     active_tokens = ones(Bool, length(tokens))
-    ocblocks      = Vector{OCBlock}()
+    ocblocks      = OCBlock[]
     nestable      = ocproto.nest
 
     # go over active tokens check if there's an opening token

@@ -125,3 +125,51 @@ function validate_and_store_link_defs!(blocks::Vector{OCBlock})::Nothing
     isempty(rm) || deleteat!(blocks, rm)
     return nothing
 end
+
+"""
+    find_double_brace_blocks(tokens)
+
+Find `{{` and `}}` then form double brace blocks `{{ ... }}` (in markdown).
+"""
+function find_double_brace_blocks(tokens)
+    # keep track of `{{` and `}}`
+    db_tokens = Token[]
+    # find `{` or `}` if next one exists and is the same
+    # then make the first one a double with an increased substring
+    # and remove the second one
+    head = 1
+    while head < length(tokens)
+        thead = tokens[head]
+        if thead.name in (:LXB_OPEN, :LXB_CLOSE)
+            tcand = tokens[head+1]
+            if tcand.name == thead.name
+                name = ifelse(thead.name == :LXB_OPEN, :DB_OPEN, :DB_CLOSE)
+                ss   = subs(str(thead), from(thead), to(tcand))
+                push!(db_tokens, Token(name, ss, 0))
+                head += 1
+            end
+        end
+        head += 1
+    end
+    # Now go back over the list of tokens and form blocks
+    # these are non-nestable so it's easy.
+    dbb = OCBlock[]
+    head = 1
+    while head < length(db_tokens)
+        thead = db_tokens[head]
+        if thead.name == :DB_OPEN
+            hnext = findfirst(h -> db_tokens[h].name == :DB_CLOSE,
+                              head+1:length(db_tokens))
+            if isnothing(hnext)
+                throw(OCBlockError("I found the opening token '{{' but not " *
+                                   "the corresponding closing token '}}'.",
+                                   context(thead)))
+            end
+            hnext += head
+            push!(dbb, OCBlock(:DOUBLE_BRACE, thead => db_tokens[hnext]))
+            head = hnext
+        end
+        head += 1
+    end
+    return dbb
+end

@@ -117,5 +117,11 @@ end
         @def title = "hello"
         {{title}}{{title}}
         """ |> fd2html_td
-    @test isapproxstr(s, "<p>hellohello</p>")
+    @test isapproxstr(s, "hellohello")
+    s = """
+        @def a_b = "hello"
+        @def c_d = "goodbye"
+        {{a_b}}{{c_d}}
+        """ |> fd2html_td
+    @test isapproxstr(s, "hellogoodbye")
 end
