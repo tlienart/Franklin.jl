@@ -60,9 +60,12 @@ function convert_md(mds::AS,
 
     # ------------------------------------------------------------------------
     #> 2. Open-Close blocks (OCBlocks)
-    #.> 0
     #>> a. find them
-    blocks, tokens = find_all_ocblocks(tokens, MD_OCB_ALL)
+    blocks, tokens  = find_all_ocblocks(tokens, MD_OCB)
+    toks_pre_ocb    = deepcopy(tokens) # see find_double_brace_blocks
+    #>> a'. find the rest
+    blocks2, tokens = find_all_ocblocks(tokens, vcat(MD_OCB2, MD_OCB_MATH))
+    append!(blocks, blocks2)
     #>> b. merge CODE_BLOCK_IND which are separated by emptyness
     merge_indented_blocks!(blocks, mds)
     #>> b'. only keep indented code blocks which are not contained in larger
@@ -83,6 +86,10 @@ function convert_md(mds::AS,
     (lprelx > 0) && (lxdefs = cat(pastdef.(pre_lxdefs), lxdefs, dims=1))
     #>> c. find latex commands
     lxcoms, _ = find_lxcoms(tokens, lxdefs, braces)
+
+    #> 3[ex]. find double brace blocks, note we do it on pre_ocb tokens
+    # as the step `find_all_ocblocks` possibly found and deactivated {...}.
+    dbb = find_double_brace_blocks(toks_pre_ocb)
 
     # ------------------------------------------------------------------------
     #> 4. Page variable definition (mddefs), also if in config, update lxdefs
@@ -113,7 +120,8 @@ function convert_md(mds::AS,
 
     #> 1. Merge all the blocks that will need further processing before
     # insertion
-    b2insert = merge_blocks(lxcoms, deactivate_divs(blocks), sp_chars, fnrefs)
+    b2insert = merge_blocks(lxcoms, deactivate_divs(blocks),
+                            sp_chars, fnrefs, dbb)
 
     #> 2. Form intermediate markdown + html
     inter_md, mblocks = form_inter_md(mds, b2insert, lxdefs)
