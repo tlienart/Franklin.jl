@@ -112,16 +112,48 @@ function def_LOCAL_VARS!()::Nothing
 end
 
 """
+    locvar(name)
+
 Convenience function to get the value associated with a local var.
 Return `nothing` if the variable is not found.
 """
-locvar(name::String) = haskey(LOCAL_VARS, name) ? LOCAL_VARS[name].first : nothing
+function locvar(name::Union{Symbol,String})
+    name = String(name)
+    return haskey(LOCAL_VARS, name) ? LOCAL_VARS[name].first : nothing
+end
 
 """
+    globvar(name)
+
 Convenience function to get the value associated with a global var.
 Return `nothing` if the variable is not found.
 """
-globvar(name::String) = haskey(GLOBAL_VARS, name) ? GLOBAL_VARS[name].first : nothing
+function globvar(name::Union{Symbol,String})
+    name = String(name)
+    return haskey(GLOBAL_VARS, name) ? GLOBAL_VARS[name].first : nothing
+end
+
+
+"""
+Dict to keep track of all pages and their vars. Each key is a relative path
+to a page, values are PageVars.
+"""
+const ALL_PAGE_VARS = Dict{String,PageVars}()
+
+"""
+    pagevar(name, rpath)
+
+Convenience function to get the value associated with a var available to a page
+corresponding to `rpath`. So for instance if `blog/index.md` has `@def var = 0`
+then this can be accessed with `pagevar("var", "blog/index")`.
+"""
+function pagevar(name::Union{Symbol,String}, rpath::AS)
+    haskey(ALL_PAGE_VARS, rpath) || return nothing
+    name = String(name)
+    haskey(ALL_PAGE_VARS[rpath], name) || return nothing
+    return ALL_PAGE_VARS[rpath][name]
+end
+
 
 """
 Keep track of seen headers. The key is the refstring, the value contains the

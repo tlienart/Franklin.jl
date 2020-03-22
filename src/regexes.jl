@@ -22,7 +22,7 @@ const HBLOCK_ISNOTDEF_PAT  = r"{{\s*i(?:s|f)n(?:ot)?def\s+([a-zA-Z_]\S*)\s*}}"
 const HBLOCK_ISPAGE_PAT    = r"{{\s*ispage\s+((.|\n)+?)}}"
 const HBLOCK_ISNOTPAGE_PAT = r"{{\s*isnotpage\s+((.|\n)+?)}}"
 
-const HBLOCK_FOR_PAT = r"{{\s*for\s+(\(?(?:\s*[a-zA-Z_][^\r\n\t\f\v,]*,\s*)*[a-zA-Z_]\S*\s*\)?)\s+in\s+([a-zA-Z_]\S*)\s*}}"
+const HBLOCK_FOR_PAT = r"{{\s*for\s+(\(?(?:\s*[a-zA-Z_][^\r\n\t\f\v,]*,\s*)*[a-zA-Z_]\S*\s*\)?)\s+in\s+([a-zA-Z_\/]\S*)\s*}}"
 
 const HBLOCK_TOC_PAT = r"{{\s*toc\s*}}"
 

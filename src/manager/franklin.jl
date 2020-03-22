@@ -14,18 +14,24 @@ Keyword arguments:
 
 * `clear=false`:     whether to remove any existing output directory
 * `verb=false`:      whether to display messages
-* `port=8000`:       the port to use for the local server (should pick a number between 8000 and 9000)
+* `port=8000`:       the port to use for the local server (should pick a number
+                      between 8000 and 9000)
 * `single=false`:    whether to run a single pass or run continuously
 * `prerender=false`: whether to pre-render javascript (KaTeX and highlight.js)
 * `nomess=false`:    suppresses all messages (internal use).
-* `isoptim=false`:   whether we're in an optimisation phase or not (if so, links are fixed in case
-                     of a project website, see [`write_page`](@ref).
-* `no_fail_prerender=true`: whether, in a prerendering phase, ignore errors and try to produce an output
+* `isoptim=false`:   whether we're in an optimisation phase or not (if so,
+                      links are fixed in case of a project website, see
+                      [`write_page`](@ref).
+* `no_fail_prerender=true`: whether, in a prerendering phase, ignore errors and
+                      try to produce an output
 * `eval_all=false`:  whether to force re-evaluation of all code blocks
-* `silent=false`:    switch this on to suppress all output (including eval statements).
-* `cleanup=true`:    whether to clear environment dictionaries, see [`cleanup`](@ref).
-* `on_write(pg, fd_vars)`: callback function after the page is rendered, passing as arguments
-                     the rendered page and the page variables
+* `silent=false`:    switch this on to suppress all output (including eval
+                      statements).
+* `cleanup=true`:    whether to clear environment dictionaries, see
+                      [`cleanup`](@ref).
+* `on_write(pg, fd_vars)`: callback function after the page is rendered,
+                      passing as arguments the rendered page and the page
+                      variables
 """
 function serve(; clear::Bool=false,
                  verb::Bool=false,
@@ -263,7 +269,12 @@ function fd_loop(cycle_counter::Int, ::LiveServer.FileWatcher,
         # anything, we just remove the file reference from the corresponding
         # dictionary.
         for d ∈ watched_files, (fpair, _) ∈ d
-            isfile(joinpath(fpair...)) || delete!(d, fpair)
+            fpath = joinpath(fpair...)
+            if !isfile(fpath)
+                delete!(d, fpair)
+                rp = get_rpath(fpath)
+                haskey(ALL_PAGE_VARS, rp) && delete!(ALL_PAGE_VARS, rp)
+            end
         end
         # 2) scan the input folder, if new files have been added then this will
         # update the dictionaries

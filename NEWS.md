@@ -1,6 +1,6 @@
 # NEWS
 
-This document keeps track of breaking changes and what you can do if you update and things don't work anymore.
+This document keeps track of breaking changes and key new features and what you can do if you update and things don't work anymore.
 
 Notes are in reverse chronological order.
 

@@ -157,7 +157,7 @@ end
 """
 $SIGNATURES
 
-Process a for block.
+Process a for block (for a variable iterate).
 """
 function process_html_for(hs::AS, qblocks::Vector{AbstractBlock},
                           i::Int)::Tuple{String,Int,Int}
@@ -165,36 +165,22 @@ function process_html_for(hs::AS, qblocks::Vector{AbstractBlock},
     β_open = qblocks[i]
     vname  = β_open.vname
     iname  = β_open.iname
+
+    # branch for the case `{{for p in /dir1/dir2}}`
+    if startswith(iname, "/") # dir
+        # check that vname does not have brackets
+        startswith(vname, "(") &&
+            throw(HTMLBlockError("Tried to unpack a directory in a "*
+                    "{{for ...}}. Use {{for p in /dir/}}."))
+        return process_html_for_dir(hs, qblocks, i, vname, iname)
+    end
+
     if !haskey(LOCAL_VARS, iname)
         throw(HTMLBlockError("The iterable '$iname' is not recognised. " *
                              "Please make sure it's defined."))
     end
 
-    # try to close the for loop
-    if i == length(qblocks)
-        throw(HTMLBlockError("Could not close the conditional block " *
-                             "starting with '$(qblocks[i].ss)'."))
-    end
-
-    init_idx = i
-    content  = ""
-
-    # inbalance keeps track of whether we've managed to find a
-    # matching {{end}}. It increases if it sees other opening {{if..}}
-    # and decreases if it sees a {{end}}
-    inbalance = 1
-    while i < length(qblocks) && inbalance > 0
-        i         += 1
-        inbalance += hbalance(qblocks[i])
-    end
-    # we've exhausted the candidate qblocks and not found an appropriate {{end}}
-    if inbalance > 0
-        throw(HTMLBlockError("Could not close the conditional block " *
-                             "starting with '$(qblocks[init_idx].ss)'."))
-    end
-    # we've found the closing {{end}} and index `i`
-    β_close = qblocks[i]
-    i_close = i
+    i_close, β_close = get_for_body(i, qblocks)
 
     isempty(locvar(iname)) && @goto final_step
 
@@ -240,4 +226,53 @@ function process_html_for(hs::AS, qblocks::Vector{AbstractBlock},
     @label final_step
     head = nextind(hs, to(β_close))
     return convert_html(content), head, i_close
+end
+
+"""
+$SIGNATURES
+
+Process a for block (for a directory) `{{for p in /dir/subdir}}`
+"""
+function process_html_for_dir(hs::AS, qblocks::Vector{AbstractBlock},
+                              i::Int, vname::String, dir::String
+                              )::Tuple{String,Int,Int}
+    # filter keys of ALL_PAGE_VARS that start with dir
+    # XXX XXX
+
+    # retrieve the body of the loop
+    i_close, β_close = get_for_body(i, qblocks)
+    # in the body, replace instances of `$vname.$var` by `pagevar($var, $fsdir)`
+    for
+
+    return convert_html(content), head, i_close
+end
+
+"""
+$SIGNATURES
+
+Extract the body of a for loop, keeping track of balancing.
+"""
+function get_for_body(i::Int, qblocks::Vector{AbstractBlock})
+    # try to close the for loop
+    if i == length(qblocks)
+        throw(HTMLBlockError("Could not close the block starting with" *
+                             "'$(qblocks[i].ss)'."))
+    end
+    init_idx = i
+    content  = ""
+    # inbalance keeps track of whether we've managed to find a
+    # matching {{end}}. It increases if it sees other opening {{if..}}
+    # and decreases if it sees a {{end}}
+    inb = 1
+    while i < length(qblocks) && inb > 0
+        i   += 1
+        inb += hbalance(qblocks[i])
+    end
+    # we've exhausted the candidate qblocks and not found a matching {{end}}
+    if inb > 0
+        throw(HTMLBlockError("Could not close the block starting with" *
+                             "'$(qblocks[init_idx].ss)'."))
+    end
+    # we've found the closing {{end}} and index `i`
+    return i, qblocks[i]
 end

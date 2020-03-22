@@ -199,10 +199,29 @@ Convenience function to assemble the html out of its parts.
 build_page(head::String, content::String, pgfoot::String, foot::String) =
     "$head\n<div class=\"$(locvar("div_content"))\">\n$content\n$pgfoot\n</div>\n$foot"
 
-function set_cur_rpath(fpath::String)
+
+"""
+    get_rpath(fpath)
+
+Extracts the relative file system path out of the full system path to a file
+currently being processed. Does not start with a path separator.
+So `[some_fs_path]/blog/page.md` --> `blog/page.md`.
+"""
+function get_rpath(fpath::String)
     root = path(ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src, :folder))
-    cur_rpath = fpath[lastindex(root)+length(PATH_SEP)+1:end]
-    FD_ENV[:CUR_PATH] = cur_rpath
-    set_var!(LOCAL_VARS, "fd_rpath", FD_ENV[:CUR_PATH])
+    return fpath[lastindex(root)+length(PATH_SEP)+1:end]
+end
+
+"""
+    set_cur_rpath(fpath)
+
+Takes the path to the current file and sets the `fd_rpath` local page variable
+as well as the `FD_ENV[:CUR_PATH]` variable (used for conditional blocks
+depending on URL for instance).
+"""
+function set_cur_rpath(fpath::String)
+    rpath = get_rpath(fpath)
+    FD_ENV[:CUR_PATH] = rpath
+    set_var!(LOCAL_VARS, "fd_rpath", rpath)
     return nothing
 end

@@ -391,7 +391,8 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool)::Nothing
     if isconfig
         set_vars!(GLOBAL_VARS, assignments)
     else
-        set_vars!(LOCAL_VARS, assignments)
+        set_vars!(LOCAL_VARS, assignments)        
+        ALL_PAGE_VARS[locvar("fd_rpath")] = deepcopy(LOCAL_VARS)
     end
     return nothing
 end
