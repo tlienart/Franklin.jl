@@ -3,6 +3,7 @@ vfn  = s -> (t = tok(s); F.validate_footnotes!(t); t)
 vh   = s -> (t = vfn(s); F.validate_headers!(t); t)
 fib  = s -> (t = vh(s); F.find_indented_blocks!(t, s); t)
 fib2 = s -> (t = fib(s); F.filter_lr_indent!(t, s); t)
+mdb  = s -> (t = tok(s); F.merge_double_braces!(t); t)
 
 islr(t) = t.name == :LINE_RETURN && t.ss == "\n"
 istok(t, n, s) = t.name == n && t.ss == s
@@ -152,4 +153,32 @@ end
 
     @test isind.([t[2], t[3], t[4]]) |> all
     @test islr.([t[8], t[10], t[11], t[16]]) |> all
+end
+
+##
+## MERGE_DOUBLE_BRACES!
+##
+
+@testset "P:1:mdb" begin
+    s = raw"""
+        A { B } C {{ D }} E {F} G {{ H }}.
+        """
+    t = s |> mdb
+    @test t[1].name == :LXB_OPEN
+    @test t[2].name == :LXB_CLOSE
+    @test t[3].name == :DB_OPEN
+    @test t[4].name == :DB_CLOSE
+    @test t[5].name == :LXB_OPEN
+    @test t[6].name == :LXB_CLOSE
+    @test t[7].name == :DB_OPEN
+    @test t[8].name == :DB_CLOSE
+    @test t[9].name == :LINE_RETURN
+    @test t[10].name == :EOS
+
+    s = raw"""{} {{}}"""
+    t = s |> mdb
+    @test t[1].name == :LXB_OPEN
+    @test t[2].name == :LXB_CLOSE
+    @test t[3].name == :DB_OPEN
+    @test t[4].name == :DB_CLOSE
 end

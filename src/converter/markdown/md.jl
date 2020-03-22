@@ -39,6 +39,8 @@ function convert_md(mds::AS,
     # ------------------------------------------------------------------------
     #> 1. Tokenize
     tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
+    # find {{ and }}
+    merge_double_braces!(tokens)
     # distinguish fnref/fndef
     validate_footnotes!(tokens)
     # ignore header tokens that are not at the start of a line

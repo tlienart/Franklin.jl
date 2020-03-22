@@ -125,3 +125,33 @@ function validate_and_store_link_defs!(blocks::Vector{OCBlock})::Nothing
     isempty(rm) || deleteat!(blocks, rm)
     return nothing
 end
+
+
+"""
+    merge_double_braces!(tokens)
+
+Find `{{` and `}}` and mark them as `DB_OPEN`, `DB_CLOSE`.
+"""
+function merge_double_braces!(tokens)
+    # find `{` or `}` if next one exists and is the same
+    # then make the first one a double with an increased substring
+    # and remove the second one
+    remove = Int[]
+    head = 1
+    while head < length(tokens)
+        thead = tokens[head]
+        if thead.name in (:LXB_OPEN, :LXB_CLOSE)
+            tcand = tokens[head+1]
+            if tcand.name == thead.name
+                name = ifelse(thead.name == :LXB_OPEN, :DB_OPEN, :DB_CLOSE)
+                ss   = subs(str(thead), from(thead), to(tcand))
+                tokens[head] = Token(name, ss, 0)
+                push!(remove, head+1)
+                head += 1
+            end
+        end
+        head += 1
+    end
+    deleteat!(tokens, remove)
+    return nothing
+end
