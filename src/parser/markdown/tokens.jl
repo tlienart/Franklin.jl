@@ -152,6 +152,7 @@ const MD_OCB = [
     OCProto(:MD_DEF,          :MD_DEF_OPEN,  L_RETURNS,         false), # [^4]
     OCProto(:CODE_BLOCK_IND,  :LR_INDENT,    (:LINE_RETURN,),   false),
     OCProto(:ESCAPE,          :ESCAPE,       (:ESCAPE,),        false),
+    OCProto(:DOUBLE_BRACE,    :DB_OPEN,      (:DB_CLOSE,),     false),
     OCProto(:FOOTNOTE_DEF,    :FOOTNOTE_DEF, L_RETURNS,         false),
     OCProto(:LINK_DEF,        :LINK_DEF,     L_RETURNS,         false),
     # ------------------------------------------------------------------
