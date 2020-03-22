@@ -111,3 +111,11 @@ end
     """ |> fd2html_td
     @test isapproxstr(h, "good lord")
 end
+
+@testset "Double brace" begin
+    s = """
+        @def title = "hello"
+        {{title}}{{title}}
+        """ |> fd2html_td
+    @test isapproxstr(s, "<p>hellohello</p>")
+end

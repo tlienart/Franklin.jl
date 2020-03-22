@@ -22,6 +22,8 @@ function convert_block(β::AbstractBlock, lxdefs::Vector{LxDef})::AS
     βn == :FOOTNOTE_DEF    && return convert_footnote_def(β, lxdefs)
     βn == :LINK_DEF        && return ""
 
+    βn == :DOUBLE_BRACE    && return β.ss # let HTML converter deal with it
+
     # Math block --> needs to call further processing to resolve possible latex
     βn ∈ MATH_BLOCKS_NAMES && return convert_math_block(β, lxdefs)
 

@@ -11,6 +11,9 @@ function md2html(ss::AS; stripp::Bool=false)::AS
     isempty(ss) && return ss
     # Use Julia's Markdown parser followed by Julia's MD->HTML conversion
     partial = ss |> fix_inserts |> Markdown.parse |> Markdown.html
+    # Markdown.html transforms {{ with HTML entities but we don't want that
+    partial = replace(partial, r"&#123;&#123;" => "{{")
+    partial = replace(partial, r"&#125;&#125;" => "}}")
     # In some cases, base converter adds <p>...</p>\n which we might not want
     stripp || return partial
     startswith(partial, "<p>")    && (partial = chop(partial, head=3))
