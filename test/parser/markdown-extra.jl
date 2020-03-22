@@ -117,5 +117,5 @@ end
         @def title = "hello"
         {{fill title}}
         """ |> fd2html_td
-    @test isapproxstr(s, "hello")
+    @test isapproxstr(s, "<p>hello</p>")
 end

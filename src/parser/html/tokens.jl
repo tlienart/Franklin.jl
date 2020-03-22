@@ -169,20 +169,6 @@ FUNCTION BLOCKS
 =============== =#
 
 """
-HBLOCK_FUN_PAT
-
-Regex to match `{{ fname param₁ param₂ }}` where `fname` is a html processing
-function and `paramᵢ` should refer to appropriate variables in the current
-scope.
-
-Available functions are:
-    * `{{ fill vname }}`: to plug a variable (e.g.: a date, author name)
-    * `{{ insert fpath }}`: to plug in a file referred to by the `fpath` (e.g.: a html header)
-"""
-const HBLOCK_FUN_PAT = r"{{\s*([a-z]\S+)\s+((.|\n)+?)}}"
-
-
-"""
 $(TYPEDEF)
 
 HTML function block corresponding to `{{ fname p1 p2 ...}}`.

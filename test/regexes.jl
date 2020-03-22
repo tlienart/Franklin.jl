@@ -31,6 +31,7 @@ end
             "{{if var1}}",
             "{{if  var1 }}",
             "{{ if  var1 }}",
+            "&#123;&#123; if var1 &#125;&#125;"
         )
         m = match(F.HBLOCK_IF_PAT, s)
         @test m.captures[1] == "var1"
@@ -48,6 +49,7 @@ end
             "{{else}}",
             "{{ else}}",
             "{{  else   }}",
+            "&#123;&#123; else &#125;&#125;"
         )
         m = match(F.HBLOCK_ELSE_PAT, s)
         @test !isnothing(m)
@@ -58,6 +60,7 @@ end
             "{{elseif var1}}",
             "{{else if  var1 }}",
             "{{ elseif  var1 }}",
+            "&#123;&#123; elseif var1 &#125;&#125;"
         )
         m = match(F.HBLOCK_ELSEIF_PAT, s)
         @test m.captures[1] == "var1"
@@ -75,6 +78,7 @@ end
             "{{end}}",
             "{{ end}}",
             "{{  end   }}",
+            "&#123;&#123; end &#125;&#125;"
         )
         m = match(F.HBLOCK_END_PAT, s)
         @test !isnothing(m)
@@ -86,6 +90,7 @@ end
             "{{ isdef  var1 }}",
             "{{ isdef  var1 }}",
             "{{ ifdef  var1 }}",
+            "&#123;&#123; ifdef var1 &#125;&#125;"
         )
         m = match(F.HBLOCK_ISDEF_PAT, s)
         @test m.captures[1] == "var1"
@@ -105,6 +110,7 @@ end
             "{{ isndef  var1 }}",
             "{{ ifndef  var1 }}",
             "{{ ifnotdef  var1 }}",
+            "&#123;&#123; ifndef var1 &#125;&#125;"
         )
         m = match(F.HBLOCK_ISNOTDEF_PAT, s)
         @test m.captures[1] == "var1"
@@ -121,6 +127,7 @@ end
 @testset "hb-ispage" begin
     for s in (
             "{{ispage var1 var2}}",
+            "&#123;&#123; ispage var1 var2 &#125;&#125;"
         )
         m = match(F.HBLOCK_ISPAGE_PAT, s)
         @test m.captures[1] == "var1 var2"
@@ -129,6 +136,7 @@ end
 @testset "hb-isnotpage" begin
     for s in (
             "{{isnotpage var1 var2}}",
+            "&#123;&#123; isnotpage var1 var2 &#125;&#125;"
         )
         m = match(F.HBLOCK_ISNOTPAGE_PAT, s)
         @test m.captures[1] == "var1 var2"
@@ -139,7 +147,8 @@ end
             "{{for (v1,v2,v3) in iterate}}",
             "{{for (v1, v2,v3) in iterate}}",
             "{{for ( v1, v2, v3) in iterate}}",
-            "{{for ( v1  , v2 , v3 ) in iterate}}"
+            "{{for ( v1  , v2 , v3 ) in iterate}}",
+            "&#123;&#123; for (v1, v2, v3) in iterate &#125;&#125;"
         )
         m = match(F.HBLOCK_FOR_PAT, s)
         @test isapproxstr(m.captures[1], "(v1, v2, v3)")
@@ -159,13 +168,36 @@ end
     m = match(F.HBLOCK_FOR_PAT, s)
     @test isapproxstr(m.captures[1], "v1,v2)")
 end
-@testset "hb-toc" begin
+@testset "hb-fun-0" begin
     for s in (
             "{{toc}}",
-            "{{ toc }}"
+            "{{ toc }}",
+            "&#123;&#123; toc &#125;&#125;"
             )
-        m = match(F.HBLOCK_TOC_PAT, s)
-        @test !isnothing(m)
+        m = match(F.HBLOCK_FUN_PAT, s)
+        @test m.captures[1] == "toc"
+        @test m.captures[2] === nothing || isempty(strip(m.captures[2]))
+    end
+end
+@testset "hb-fun-1" begin
+    for s in (
+            "{{fun p1}}",
+            "{{ fun  p1 }}",
+            "&#123;&#123; fun p1 &#125;&#125;"
+            )
+        m = match(F.HBLOCK_FUN_PAT, s)
+        @test m.captures[1] == "fun"
+        @test strip(m.captures[2]) == "p1"
+    end
+end
+@testset "hb-fun-2" begin
+    for s in (
+            "{{fun p1 p2}}",
+            "{{ fun  p1 p2 }}"
+            )
+        m = match(F.HBLOCK_FUN_PAT, s)
+        @test m.captures[1] == "fun"
+        @test strip(m.captures[2]) == "p1 p2"
     end
 end
 
