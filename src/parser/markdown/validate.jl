@@ -142,7 +142,8 @@ function find_double_brace_blocks(tokens)
         thead = tokens[head]
         if thead.name in (:LXB_OPEN, :LXB_CLOSE)
             tcand = tokens[head+1]
-            if tcand.name == thead.name
+            nhead = nextind(str(thead), to(thead))
+            if from(tcand) == nhead && tcand.name == thead.name
                 name = ifelse(thead.name == :LXB_OPEN, :DB_OPEN, :DB_CLOSE)
                 ss   = subs(str(thead), from(thead), to(tcand))
                 push!(db_tokens, Token(name, ss, 0))
