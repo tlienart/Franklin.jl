@@ -125,3 +125,14 @@ end
         """ |> fd2html_td
     @test isapproxstr(s, "hellogoodbye")
 end
+
+# issue 424 with double braces
+@testset "Double brace2" begin
+    s = raw"""
+        @def title = "hello"
+        {{title}}
+        $\rho=\frac{e^{-\beta \mathcal{E}_{s}}} {\mathcal{Z}} $
+        """ |> fd2html_td
+    @test isapproxstr(s, """
+        hello \\(\\rho=\\frac{e^{-\\beta \\mathcal{E}_{s}}} {\\mathcal{Z}} \\)""")
+end
