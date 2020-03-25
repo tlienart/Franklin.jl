@@ -161,3 +161,21 @@ end
     """ |> fd2html_td
     @test isapproxstr(s, raw"""<h1 id="aaa"><a href="#aaa">AAA</a></h1>  etc AAA""")
 end
+
+@testset "i 430" begin
+    s = raw"""
+        Hello[^ö]
+
+        [^ö]: world
+        """ |> fd2html_td
+    @test isapproxstr(s, """
+        <p>Hello<sup id="fnref:ö"><a href="#fndef:ö" class="fnref">[1]</a></sup>
+        <table class="fndef" id="fndef:ö">
+          <tr>
+            <td class="fndef-backref"><a href="#fnref:ö">[1]</a></td>
+            <td class="fndef-content">world</td>
+          </tr>
+        </table>
+        </p>
+        """)
+end

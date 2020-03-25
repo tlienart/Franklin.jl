@@ -2,8 +2,8 @@
 $SIGNATURES
 
 Find footnotes refs and defs and eliminate the ones that don't verify the
-appropriate regex. For a footnote ref: `\\[\\^[a-zA-Z0-0]+\\]` and
-`\\[\\^[a-zA-Z0-0]+\\]:` for the def.
+appropriate regex. For a footnote ref: `\\[\\^[\\p{L}0-0]+\\]` and
+`\\[\\^[\\p{L}0-0]+\\]:` for the def.
 """
 function validate_footnotes!(tokens::Vector{Token})
     fn_refs = Vector{Token}()
@@ -11,7 +11,7 @@ function validate_footnotes!(tokens::Vector{Token})
     for (i, τ) in enumerate(tokens)
         τ.name == :FOOTNOTE_REF || continue
         # footnote ref [^1]:
-        m = match(r"^\[\^[a-zA-Z0-9]+\](:)?$", τ.ss)
+        m = match(FN_DEF_PAT, τ.ss)
         if !isnothing(m)
             if !isnothing(m.captures[1])
                 # it's a def

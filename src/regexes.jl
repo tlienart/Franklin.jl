@@ -1,11 +1,54 @@
 #= =====================================================
-LINK patterns, see html link fixer
+LATEX patterns, see html link fixer, validate_footnotes
+===================================================== =#
+
+"""
+LX_NAME_PAT
+
+Regex to find the name in a new command within a brace block. For example:
+
+    \\newcommand{\\com}[2]{def}
+
+will give as first capture group `\\com`.
+"""
+const LX_NAME_PAT = r"^\s*(\\[\p{L}]+)\s*$"
+
+
+"""
+LX_NARG_PAT
+
+Regex to find the number of argument in a new command (if it is given). For
+example:
+
+    \\newcommand{\\com}[2]{def}
+
+will give as second capture group `2`. If there are no number of arguments, the
+second capturing group will be `nothing`.
+"""
+const LX_NARG_PAT = r"\s*(\[\s*(\d)\s*\])?\s*"
+
+#= =====================================================
+MDDEF patterns
+===================================================== =#
+"""
+    ASSIGN_PAT
+
+Regex to match 'var' in an assignment of the form
+
+    var = value
+"""
+const ASSIGN_PAT = r"^([\p{L}_]\S*)\s*?=((?:.|\n)*)"
+
+#= =====================================================
+LINK patterns, see html link fixer, validate_footnotes
 ===================================================== =#
 # here we're looking for [id] or [id][] or [stuff][id] or ![stuff][id] but not [id]:
 # 1 > (&#33;)? == either ! or nothing
 # 2 > &#91;(.*?)&#93; == [...] inside of the brackets
 # 3 > (?:&#91;(.*?)&#93;)? == [...] inside of second brackets if there is such
 const ESC_LINK_PAT = r"(&#33;)?&#91;(.*?)&#93;(?!:)(?:&#91;(.*?)&#93;)?"
+
+const FN_DEF_PAT = r"^\[\^[\p{L}0-9_]+\](:)?$"
 
 #= =====================================================
 HBLOCK patterns, see html blocks
@@ -17,7 +60,7 @@ NOTE: the for block needs verification (matching parens)
 ===================================================== =#
 const HBO = raw"(?:{{|&#123;&#123;)\s*"
 const HBC = raw"\s*(?:}}|&#125;&#125;)"
-const VAR = raw"([a-zA-Z_]\S*)"
+const VAR = raw"([\p{L}_]\S*)"
 const ANY = raw"((.|\n)+?)"
 
 const HBLOCK_IF_PAT     = Regex(HBO * raw"if\s+" * VAR * HBC)
@@ -39,7 +82,7 @@ where `iterate` is an iterator
 """
 const HBLOCK_FOR_PAT = Regex(
         HBO * raw"for\s+" *
-        raw"(\(?(?:\s*[a-zA-Z_][^\r\n\t\f\v,]*,\s*)*[a-zA-Z_]\S*\s*\)?)" *
+        raw"(\(?(?:\s*[\p{L}_][^\r\n\t\f\v,]*,\s*)*[\p{L}_]\S*\s*\)?)" *
         raw"\s+in\s+" * VAR * HBC)
 
 """

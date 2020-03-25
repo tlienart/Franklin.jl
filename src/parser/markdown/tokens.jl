@@ -108,15 +108,6 @@ const MD_TOKENS_LX = Dict{Char, Vector{TokenFinder}}(
         incrlook((_, c) -> α(c)) => :LX_COMMAND ]
     )
 
-"""
-    ASSIGN_PAT
-
-Regex to match 'var' in an assignment of the form
-
-    var = value
-"""
-const ASSIGN_PAT = r"^([a-zA-Z_]\S*)\s*?=((?:.|\n)*)"
-
 
 """
 L_RETURNS
