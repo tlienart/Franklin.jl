@@ -253,4 +253,22 @@ end
         <pre><code class="plaintext">hello
         10</code></pre>
         """)
+
+    # issue 427
+    h = raw"""
+        @def hascode = true
+        @def reeval = true
+        ```julia:ex
+        a = 5
+        a *= 2
+        # hello
+        ```
+        \show{ex}
+        """ |> fd2html_td
+    @test isapproxstr(h, """
+        <pre><code class="language-julia">a = 5
+        a *= 2
+        # hello</code></pre>
+        <pre><code class="plaintext">10</code></pre>
+        """)
 end
