@@ -1,4 +1,42 @@
-### ESC LINK
+### LX_PAT
+@testset "latex" begin
+    for s in (
+            raw"\com",
+            raw"  \com ",
+        )
+        m = match(F.LX_NAME_PAT, s)
+        @test m.captures[1] == raw"\com"
+    end
+    for s in (
+            raw"\cöm",
+            raw"  \cöm ",
+        )
+        m = match(F.LX_NAME_PAT, s)
+        @test m.captures[1] == raw"\cöm"
+    end
+    for s in (
+            raw"[2]",
+            raw" [2] ",
+            raw" [ 2]",
+            raw" [ 2 ] "
+        )
+        m = match(F.LX_NARG_PAT, s)
+        @test m.captures[2] == "2"
+    end
+end
+
+### Assign pat
+@testset "assign" begin
+    for s in (
+            raw"cöm_012 = blah",
+        )
+        m = match(F.ASSIGN_PAT, s)
+        @test m.captures[1] == raw"cöm_012"
+        @test strip(m.captures[2]) == raw"blah"
+    end
+end
+
+### LINK
 @testset "esclink" begin
     s = Markdown.htmlesc("[hello]")
     a,b,c = match(F.ESC_LINK_PAT, s).captures
@@ -22,6 +60,15 @@
     @test c == "id"
     s = Markdown.htmlesc("[hello]:")
     @test isnothing(match(F.ESC_LINK_PAT, s))
+end
+
+@testset "fndef" begin
+    for s in (
+            raw"[^örα_01]:",
+        )
+        m = match(F.FN_DEF_PAT, s)
+        @test !isnothing(m)
+    end
 end
 
 ### HBLOCK REGEXES

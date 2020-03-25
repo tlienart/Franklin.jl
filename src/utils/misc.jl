@@ -147,7 +147,7 @@ function refstring(s::AS)::String
     st = replace(s, r"<[a-z\/]+>"=>"")
     # remove non-word characters
     st = replace(st, r"&#[0-9]+;" => "")
-    st = replace(st, r"[^a-zA-Z0-9_\-\s]" => "")
+    st = replace(st, r"[^\p{L}0-9_\-\s]" => "")
     # replace spaces by dashes
     st = replace(lowercase(strip(st)), r"\s+" => "_")
     # to avoid clashes with numbering of repeated headers, replace

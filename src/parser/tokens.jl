@@ -276,7 +276,7 @@ is_html_entity(i::Int, c::Char) = αη(c, ('#',';'))
 """
 $(SIGNATURES)
 
-Check if it looks like `\\[\\^[a-zA-Z0-9]+\\]:`.
+Check if it looks like `\\[\\^[\\p{L}0-9]+\\]:`.
 """
 function is_footnote(i::Int, c::Char)
     i == 1 && return c == '^'
