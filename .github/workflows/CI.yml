@@ -19,6 +19,6 @@ jobs:
           version: ${{ matrix.julia-version }}
           arch: ${{ matrix.julia-arch }}
       - name: "Run tests"
-        run: julia -e '
-          using Pkg; ENV["NODE"]="NO_NODE"; Pkg.instantiate();
-          Pkg.test("Franklin");'
+        run: |
+          julia --project=@. -e "using Pkg; Pkg.instantiate();"
+          julia --project=@. -e "using Pkg; ENV[\"NODE\"] = -1; Pkg.test(\"Franklin\");"
