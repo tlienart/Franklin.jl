@@ -20,7 +20,8 @@ jobs:
           arch: ${{ matrix.julia-arch }}
       - name: "Run tests"
         run: julia -e '
-          using Pkg; Pkg.instantiate();
+          using Pkg;
           Pkg.add(["NodeJS", "Franklin"]);
+          Pkg.instantiate();
           using NodeJS; run(`$(npm_cmd()) install highlight.js`);
           Pkg.test("Franklin");'
