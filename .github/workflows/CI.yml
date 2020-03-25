@@ -7,18 +7,14 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        julia-version: [1.1, 1.4]
+        julia-version: [1.1, 1.4, nightly]
         julia-arch: [x64, x86]
-        os: [ubuntu-latest, windows-latest, macOS-latest]
-        # 32-bit Julia binaries are not available on macOS
-        exclude:
-          - os: macOS-latest
-            julia-arch: x86
+        os: [ubuntu-latest, windows-latest]
 
     steps:
       - uses: actions/checkout@v1.0.0
       - name: "Set up Julia"
-        uses: julia-actions/setup-julia@v0.2
+        uses: julia-actions/setup-julia@v1
         with:
           version: ${{ matrix.julia-version }}
           arch: ${{ matrix.julia-arch }}
