@@ -288,11 +288,24 @@ end
 """
 $SIGNATURES
 
-Check if it looks like `[-_*]{3}+`.
+Check if it looks like `---+`.
 """
-function is_hrule(::Int, c::Char)
-    return c in ('_', '-', '*')
-end
+is_hr1(::Int, c::Char) = c == '-'
+
+"""
+$SIGNATURES
+
+Check if it looks like `___+`.
+"""
+is_hr2(::Int, c::Char) = c == '_'
+
+"""
+$SIGNATURES
+
+Check if it looks like `***+`.
+"""
+is_hr3(::Int, c::Char) = c == '*'
+
 
 """
 TokenFinder

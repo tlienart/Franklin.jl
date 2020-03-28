@@ -44,7 +44,7 @@ function convert_md(mds::AS,
     # ignore header tokens that are not at the start of a line
     validate_headers!(tokens)
     # capture some hrule (see issue #432)
-    validate_hrule!(tokens)
+    hrules = find_hrules!(tokens)
     #> 1b. Find indented blocks (ONLY if not recursive to avoid ambiguities!)
     if !isrecursive
         find_indented_blocks!(tokens, mds)
@@ -92,7 +92,6 @@ function convert_md(mds::AS,
     #> 3[ex]. find double brace blocks, note we do it on pre_ocb tokens
     # as the step `find_all_ocblocks` possibly found and deactivated {...}.
     dbb     = find_double_brace_blocks(toks_pre_ocb)
-    hrules  = filter(τ -> τ.name == :HORIZONTAL_RULE, tokens)
 
     # ------------------------------------------------------------------------
     #> 4. Page variable definition (mddefs), also if in config, update lxdefs

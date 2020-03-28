@@ -33,7 +33,7 @@ const MD_TOKENS = LittleDict{Char, Vector{TokenFinder}}(
     '<'  => [ isexactly("<!--")  => :COMMENT_OPEN,     # <!-- ...
              ],
     '-'  => [ isexactly("-->")   => :COMMENT_CLOSE,    #  ... -->
-              incrlook(is_hrule) => :HORIZONTAL_RULE,  # ---+
+              incrlook(is_hr1)   => :HORIZONTAL_RULE,  # ---+
              ],
     '~'  => [ isexactly("~~~")   => :ESCAPE,           # ~~~  ... ~~~
              ],
@@ -82,7 +82,7 @@ const MD_TOKENS = LittleDict{Char, Vector{TokenFinder}}(
              ],
     '_'  => [ isexactly("_\$>_") => :MATH_I_OPEN,  # internal use when resolving a latex command
               isexactly("_\$<_") => :MATH_I_CLOSE, # within mathenv (e.g. \R <> \mathbb R)
-              incrlook(is_hrule) => :HORIZONTAL_RULE,
+              incrlook(is_hr2)   => :HORIZONTAL_RULE,
              ],
     '`'  => [ isexactly("`", ('`',), false)  => :CODE_SINGLE, # `⎵
               isexactly("``",('`',), false)  => :CODE_DOUBLE, # ``⎵*
@@ -91,7 +91,7 @@ const MD_TOKENS = LittleDict{Char, Vector{TokenFinder}}(
               is_language()                  => :CODE_LANG,   # ```lang*
               is_language2()                 => :CODE_LANG2,  # `````lang*
              ],
-    '*'  => [ incrlook(is_hrule) => :HORIZONTAL_RULE,
+    '*'  => [ incrlook(is_hr3)   => :HORIZONTAL_RULE,
              ]
     ) # end dict
 #= NOTE

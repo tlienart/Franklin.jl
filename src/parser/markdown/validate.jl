@@ -179,8 +179,9 @@ $SIGNATURES
 
 Check that a `---` or `***` or `___` starts at the beginning of a line and is preceded by an empty line, if that's not the case, discard it.
 """
-function validate_hrule!(tokens::Vector{Token})
-    rm = Int[]
+function find_hrules!(tokens::Vector{Token})
+    keep = Int[]
+    rm   = Int[]
     for (i, τ) in enumerate(tokens)
         τ.name == :HORIZONTAL_RULE || continue
         # check if it has the right format
@@ -197,8 +198,11 @@ function validate_hrule!(tokens::Vector{Token})
         s, k = str(τ), from(τ)
         if !(k == 1 || s[prevind(s, k, 2):prevind(s, k)] == "\n\n")
             push!(rm, i)
+            continue
         end
+        push!(keep, i)
     end
-    deleteat!(tokens, rm)
-    return nothing
+    hrules = tokens[keep]
+    deleteat!(tokens, sort(vcat(rm, keep)))
+    return hrules
 end
