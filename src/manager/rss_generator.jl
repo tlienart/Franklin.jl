@@ -100,9 +100,9 @@ function rss_generator()::Nothing
     isempty(RSS_DICT) && return nothing
 
     # are the basic defs there? otherwise warn and break
-    rss_title = GLOBAL_VARS["website_title"] |> first
-    rss_descr = GLOBAL_VARS["website_descr"] |> first
-    rss_link  = GLOBAL_VARS["website_url"]   |> first
+    rss_title = globvar("website_title")
+    rss_descr = globvar("website_descr")
+    rss_link  = globvar("website_url")
 
     if any(isempty, (rss_title, rss_descr, rss_link))
         @warn """I found RSS items but the RSS feed is not properly described:

@@ -82,7 +82,7 @@ function lx_biblabel(lxc::LxCom, _)::String
 end
 
 function lx_toc(::LxCom, _)
-    minlevel = LOCAL_VARS["mintoclevel"].first
-    maxlevel = LOCAL_VARS["maxtoclevel"].first
+    minlevel = locvar("mintoclevel")
+    maxlevel = locvar("maxtoclevel")
     return "{{toc $minlevel $maxlevel}}"
 end

@@ -71,6 +71,26 @@ end
     end
 end
 
+### HTML ENTITY
+@testset "html-ent" begin
+    for s in (
+        "&tab;",
+     	"&newline;",
+        "&excl;",
+        "&quot;",
+        "&#x00009;",
+        "&#x00027;",
+        "&#39;",
+        "&#58;",
+        "&#123;",
+        "&ccirc;",
+        "&#x00107;",
+        "&#263;"
+        )
+        @test !isnothing(match(F.HTML_ENT_PAT, s))
+    end
+end
+
 ### HBLOCK REGEXES
 
 @testset "hb-if" begin

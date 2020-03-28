@@ -136,3 +136,45 @@ end
     @test isapproxstr(s, """
         hello \\(\\rho=\\frac{e^{-\\beta \\mathcal{E}_{s}}} {\\mathcal{Z}} \\)""")
 end
+
+# issue 432 and consequences
+@testset "Hz rule" begin
+    # issue 432
+    s = raw"""
+        hello[^a]
+
+        [^a]: world
+
+        ---
+        """ |> fd2html_td
+    @test isapproxstr(s, """
+        <p>hello<sup id="fnref:a"><a href="#fndef:a" class="fnref">[1]</a></sup>
+        <table class="fndef" id="fndef:a">
+            <tr>
+                <td class="fndef-backref"><a href="#fnref:a">[1]</a></td>
+                <td class="fndef-content">world</td>
+            </tr>
+        </table>
+        <hr /></p>
+        """)
+    s = raw"""
+        A
+        ---
+        """ |> fd2html_td
+    @test isapproxstr(s, """
+        <h2>A</h2>""")
+    s = raw"""
+        A
+        ----
+        ****
+        """ |> fd2html_td
+    @test isapproxstr(s, "<h2>A</h2>\n<hr />")
+
+    # cases where nothing should happen
+    s = raw"""
+        A
+        ---*
+        ***_
+        """ |> fd2html_td
+    @test isapproxstr(s, "<p>A –-* ***_</p>") # note double -- is transformed -
+end

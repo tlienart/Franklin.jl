@@ -50,6 +50,7 @@ end
 HTML_SPCH(ss) = HTML_SPCH(ss, "")
 
 
+
 """
 $(TYPEDEF)
 
@@ -283,6 +284,28 @@ function is_footnote(i::Int, c::Char)
     i == 2 && return αη(c)
     i > 2  && return αη(c, (']', ':'))
 end
+
+"""
+$SIGNATURES
+
+Check if it looks like `---+`.
+"""
+is_hr1(::Int, c::Char) = c == '-'
+
+"""
+$SIGNATURES
+
+Check if it looks like `___+`.
+"""
+is_hr2(::Int, c::Char) = c == '_'
+
+"""
+$SIGNATURES
+
+Check if it looks like `***+`.
+"""
+is_hr3(::Int, c::Char) = c == '*'
+
 
 """
 TokenFinder

@@ -30,23 +30,24 @@ possibilities to consider in which case the order is important: the first case
 that works will be taken.
 """
 const MD_TOKENS = LittleDict{Char, Vector{TokenFinder}}(
-    '<'  => [ isexactly("<!--") => :COMMENT_OPEN,     # <!-- ...
+    '<'  => [ isexactly("<!--")  => :COMMENT_OPEN,     # <!-- ...
              ],
-    '-'  => [ isexactly("-->")  => :COMMENT_CLOSE,    #      ... -->
+    '-'  => [ isexactly("-->")   => :COMMENT_CLOSE,    #  ... -->
+              incrlook(is_hr1)   => :HORIZONTAL_RULE,  # ---+
              ],
-    '~'  => [ isexactly("~~~")  => :ESCAPE,           # ~~~  ... ~~~
+    '~'  => [ isexactly("~~~")   => :ESCAPE,           # ~~~  ... ~~~
              ],
-    '['  => [ incrlook(is_footnote) => :FOOTNOTE_REF,    # [^...](:)? defs will be separated after
+    '['  => [ incrlook(is_footnote) => :FOOTNOTE_REF, # [^...](:)? defs will be separated after
              ],
     ']'  => [ isexactly("]: ") => :LINK_DEF,
              ],
     '\\' => [ # -- special characters, see `find_special_chars` in ocblocks
-              isexactly("\\\\")       => :CHAR_LINEBREAK, # --> <br/>
-              isexactly("\\", (' ',)) => :CHAR_BACKSPACE, # --> &#92;
-              isexactly("\\*")        => :CHAR_ASTERISK,  # --> &#42;
-              isexactly("\\_")        => :CHAR_UNDERSCORE,# --> &#95;
-              isexactly("\\`")        => :CHAR_BACKTICK,  # --> &#96;
-              isexactly("\\@")        => :CHAR_ATSIGN,    # --> &#64;
+              isexactly("\\\\")       => :CHAR_LINEBREAK,   # --> <br/>
+              isexactly("\\", (' ',)) => :CHAR_BACKSPACE,   # --> &#92;
+              isexactly("\\*")        => :CHAR_ASTERISK,    # --> &#42;
+              isexactly("\\_")        => :CHAR_UNDERSCORE,  # --> &#95;
+              isexactly("\\`")        => :CHAR_BACKTICK,    # --> &#96;
+              isexactly("\\@")        => :CHAR_ATSIGN,      # --> &#64;
               # -- maths
               isexactly("\\{")        => :INACTIVE,         # See note [^1]
               isexactly("\\}")        => :INACTIVE,         # See note [^1]
@@ -61,11 +62,11 @@ const MD_TOKENS = LittleDict{Char, Vector{TokenFinder}}(
               isexactly("\\end{eqnarray}")   => :MATH_EQA_CLOSE,
               # -- latex
               isexactly("\\newcommand")      => :LX_NEWCOMMAND,
-              incrlook((_, c) -> α(c))       => :LX_COMMAND,     # \command⎵*
+              incrlook((_, c) -> α(c))       => :LX_COMMAND,  # \command⎵*
              ],
-    '@'  => [ isexactly("@def", (' ',))   => :MD_DEF_OPEN,  # @def var = ...
-              isexactly("@@", SPACE_CHAR) => :DIV_CLOSE,    # @@⎵*
-              incrlook(is_div_open)       => :DIV_OPEN,     # @@dname
+    '@'  => [ isexactly("@def", (' ',))   => :MD_DEF_OPEN,    # @def var = ...
+              isexactly("@@", SPACE_CHAR) => :DIV_CLOSE,      # @@⎵*
+              incrlook(is_div_open)       => :DIV_OPEN,       # @@dname
              ],
     '#'  => [ isexactly("#",      (' ',)) => :H1_OPEN, # see note [^2]
               isexactly("##",     (' ',)) => :H2_OPEN,
@@ -77,10 +78,11 @@ const MD_TOKENS = LittleDict{Char, Vector{TokenFinder}}(
     '&'  => [ incrlook(is_html_entity) => :CHAR_HTML_ENTITY,
              ],
     '$'  => [ isexactly("\$", ('$',), false) => :MATH_A,  # $⎵*
-              isexactly("\$\$") => :MATH_B,              # $$⎵*
+              isexactly("\$\$")              => :MATH_B,  # $$⎵*
              ],
-    '_'  => [ isexactly("_\$>_") => :MATH_I_OPEN,   # internal use when resolving a latex command
-              isexactly("_\$<_") => :MATH_I_CLOSE,  # within mathenv (e.g. \R <> \mathbb R)
+    '_'  => [ isexactly("_\$>_") => :MATH_I_OPEN,  # internal use when resolving a latex command
+              isexactly("_\$<_") => :MATH_I_CLOSE, # within mathenv (e.g. \R <> \mathbb R)
+              incrlook(is_hr2)   => :HORIZONTAL_RULE,
              ],
     '`'  => [ isexactly("`", ('`',), false)  => :CODE_SINGLE, # `⎵
               isexactly("``",('`',), false)  => :CODE_DOUBLE, # ``⎵*
@@ -89,6 +91,8 @@ const MD_TOKENS = LittleDict{Char, Vector{TokenFinder}}(
               is_language()                  => :CODE_LANG,   # ```lang*
               is_language2()                 => :CODE_LANG2,  # `````lang*
              ],
+    '*'  => [ incrlook(is_hr3)   => :HORIZONTAL_RULE,
+             ]
     ) # end dict
 #= NOTE
 [1] capturing \{ here will force the head to move after it thereby not

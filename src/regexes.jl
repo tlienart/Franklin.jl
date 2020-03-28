@@ -51,6 +51,11 @@ const ESC_LINK_PAT = r"(&#33;)?&#91;(.*?)&#93;(?!:)(?:&#91;(.*?)&#93;)?"
 const FN_DEF_PAT = r"^\[\^[\p{L}0-9_]+\](:)?$"
 
 #= =====================================================
+HTML entity pattern
+===================================================== =#
+const HTML_ENT_PAT = r"&(?:[a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});"
+
+#= =====================================================
 HBLOCK patterns, see html blocks
 NOTE: the &#123 is { and 125 is }, this is because
 Markdown.html converts { => html entity but we want to
