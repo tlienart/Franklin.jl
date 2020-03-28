@@ -30,13 +30,14 @@ possibilities to consider in which case the order is important: the first case
 that works will be taken.
 """
 const MD_TOKENS = LittleDict{Char, Vector{TokenFinder}}(
-    '<'  => [ isexactly("<!--") => :COMMENT_OPEN,     # <!-- ...
+    '<'  => [ isexactly("<!--")  => :COMMENT_OPEN,     # <!-- ...
              ],
-    '-'  => [ isexactly("-->")  => :COMMENT_CLOSE,    #      ... -->
+    '-'  => [ isexactly("-->")   => :COMMENT_CLOSE,    #  ... -->
+              incrlook(is_hrule) => :HORIZONTAL_RULE,  # ---+
              ],
-    '~'  => [ isexactly("~~~")  => :ESCAPE,           # ~~~  ... ~~~
+    '~'  => [ isexactly("~~~")   => :ESCAPE,           # ~~~  ... ~~~
              ],
-    '['  => [ incrlook(is_footnote) => :FOOTNOTE_REF,    # [^...](:)? defs will be separated after
+    '['  => [ incrlook(is_footnote) => :FOOTNOTE_REF, # [^...](:)? defs will be separated after
              ],
     ']'  => [ isexactly("]: ") => :LINK_DEF,
              ],
@@ -77,10 +78,11 @@ const MD_TOKENS = LittleDict{Char, Vector{TokenFinder}}(
     '&'  => [ incrlook(is_html_entity) => :CHAR_HTML_ENTITY,
              ],
     '$'  => [ isexactly("\$", ('$',), false) => :MATH_A,  # $⎵*
-              isexactly("\$\$") => :MATH_B,              # $$⎵*
+              isexactly("\$\$")              => :MATH_B,  # $$⎵*
              ],
-    '_'  => [ isexactly("_\$>_") => :MATH_I_OPEN,   # internal use when resolving a latex command
-              isexactly("_\$<_") => :MATH_I_CLOSE,  # within mathenv (e.g. \R <> \mathbb R)
+    '_'  => [ isexactly("_\$>_") => :MATH_I_OPEN,  # internal use when resolving a latex command
+              isexactly("_\$<_") => :MATH_I_CLOSE, # within mathenv (e.g. \R <> \mathbb R)
+              incrlook(is_hrule) => :HORIZONTAL_RULE,
              ],
     '`'  => [ isexactly("`", ('`',), false)  => :CODE_SINGLE, # `⎵
               isexactly("``",('`',), false)  => :CODE_DOUBLE, # ``⎵*
@@ -89,6 +91,8 @@ const MD_TOKENS = LittleDict{Char, Vector{TokenFinder}}(
               is_language()                  => :CODE_LANG,   # ```lang*
               is_language2()                 => :CODE_LANG2,  # `````lang*
              ],
+    '*'  => [ incrlook(is_hrule) => :HORIZONTAL_RULE,
+             ]
     ) # end dict
 #= NOTE
 [1] capturing \{ here will force the head to move after it thereby not

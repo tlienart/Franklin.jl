@@ -23,6 +23,7 @@ function convert_block(β::AbstractBlock, lxdefs::Vector{LxDef})::AS
     βn == :LINK_DEF        && return ""
 
     βn == :DOUBLE_BRACE    && return β.ss # let HTML converter deal with it
+    βn == :HORIZONTAL_RULE && return "<hr />"
 
     # Math block --> needs to call further processing to resolve possible latex
     βn ∈ MATH_BLOCKS_NAMES && return convert_math_block(β, lxdefs)

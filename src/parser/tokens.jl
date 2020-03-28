@@ -50,6 +50,7 @@ end
 HTML_SPCH(ss) = HTML_SPCH(ss, "")
 
 
+
 """
 $(TYPEDEF)
 
@@ -282,6 +283,15 @@ function is_footnote(i::Int, c::Char)
     i == 1 && return c == '^'
     i == 2 && return αη(c)
     i > 2  && return αη(c, (']', ':'))
+end
+
+"""
+$SIGNATURES
+
+Check if it looks like `[-_*]{3}+`.
+"""
+function is_hrule(::Int, c::Char)
+    return c in ('_', '-', '*')
 end
 
 """

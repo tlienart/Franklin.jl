@@ -33,7 +33,7 @@ $SIGNATURES
 Verify that a given string corresponds to a well formed html entity.
 """
 function validate_html_entity(ss::AS)
-    !isnothing(match(r"&(?:[a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});", ss))
+    !isnothing(match(HTML_ENT_PAT, ss))
 end
 
 """
@@ -59,7 +59,6 @@ function validate_headers!(tokens::Vector{Token})::Nothing
     deleteat!(tokens, rm)
     return
 end
-
 
 """
 $(SIGNATURES)
@@ -173,4 +172,33 @@ function find_double_brace_blocks(tokens)
         head += 1
     end
     return dbb
+end
+
+"""
+$SIGNATURES
+
+Check that a `---` or `***` or `___` starts at the beginning of a line and is preceded by an empty line, if that's not the case, discard it.
+"""
+function validate_hrule!(tokens::Vector{Token})
+    rm = Int[]
+    for (i, τ) in enumerate(tokens)
+        τ.name == :HORIZONTAL_RULE || continue
+        # check if it has the right format
+        if !(startswith(τ.ss, "---") ||
+             startswith(τ.ss, "___") ||
+             startswith(τ.ss, "***")) || length(unique(τ.ss)) > 1
+            push!(rm, i)
+            continue
+        end
+        # check if it's at the start of the string  or
+        # if it's preceded by an empty line, in which case mark it as
+        # horizontal rule, leave all other cases to be dealt with by Julia's
+        # Markdown parser.
+        s, k = str(τ), from(τ)
+        if !(k == 1 || s[prevind(s, k, 2):prevind(s, k)] == "\n\n")
+            push!(rm, i)
+        end
+    end
+    deleteat!(tokens, rm)
+    return nothing
 end
