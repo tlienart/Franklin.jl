@@ -14,6 +14,10 @@ const GLOBAL_VARS_DEFAULT = [
     # General
     "author"           => Pair("THE AUTHOR",   (String, Nothing)),
     "date_format"      => Pair("U dd, yyyy",   (String,)),
+    "date_months"      => Pair(String[],       (Vector{String},)),
+    "date_shortmonths" => Pair(String[],       (Vector{String},)),
+    "date_days"        => Pair(String[],       (Vector{String},)),
+    "date_shortdays"   => Pair(String[],       (Vector{String},)),
     "prepath"          => Pair("",             (String,)),
     # will be added to IGNORE_FILES
     "ignore"           => Pair(String[],       (Vector{String},)),
@@ -181,9 +185,37 @@ Convenience functions related to the page vars
 
 """
 Convenience function taking a `DateTime` object and returning the corresponding
-formatted string with the format contained in `LOCAL_VARS["date_format"]`.
+formatted string with the format contained in `LOCAL_VARS["date_format"]` and 
+with the locale data provided in `date_months`, `date_shortmonths`, `date_days`, 
+and `date_shortdays` local variables. If `short` variations are not provided,
+automatically construct them using the first three letters of the names in
+`date_months` and `date_days`.
 """
-fd_date(d::DateTime) = Dates.format(d, LOCAL_VARS["date_format"].first)
+function fd_date(d::DateTime)
+    # aliases for locale data and format from local variables
+    format      = LOCAL_VARS["date_format"].first
+    months      = LOCAL_VARS["date_months"].first
+    shortmonths = LOCAL_VARS["date_shortmonths"].first
+    days        = LOCAL_VARS["date_days"].first
+    shortdays   = LOCAL_VARS["date_shortdays"].first
+    # if vectors are empty, user has not defined custom locale,
+    # defaults to english
+    if all(isempty.((months, shortmonths, days, shortdays)))
+        return Dates.format(d, format, locale="english")
+    end
+    # if shortdays or shortmonths are undefined,
+    # automatically construct them from other lists
+    if !isempty(days) || isempty(shortdays)
+        shortdays = [length(d) >= 3 ? d[1:3] : d for d ∈ days]
+    end
+    if !isempty(months) || isempty(shortmonths)
+        shortmonths = [length(m) >= 3 ? m[1:3] : m for m ∈ months]
+    end
+    # set locale for this page
+    Dates.LOCALES["date_locale"] = Dates.DateLocale(months, shortmonths, 
+                                                    days, shortdays)
+    return Dates.format(d, format, locale="date_locale")
+end
 
 
 """
