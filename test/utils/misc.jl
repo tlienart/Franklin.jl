@@ -125,3 +125,86 @@ end
     @test F.check_type(Vector{String},  (Vector{Any},))
     @test !F.check_type(Vector{String}, (Matrix{Any},))
 end
+
+@testset "Date locales" begin
+    s = raw"""
+    @def date_format = "e, d u Y"
+    @def date_months = ["janvier", "février", "mars", "avril", "mai", "juin",
+                        "juillet", "août", "septembre", "octobre", "novembre", 
+                        "décembre"];
+    @def date_shortmonths = ["janv","févr","mars","avril","mai","juin",
+                                "juil","août","sept","oct","nov","déc"];
+    @def date_days = ["lundi","mardi","mercredi","jeudi",
+                        "vendredi","samedi","dimanche"];
+    ```julia:ex
+    #hideall
+    using Franklin, Dates
+    println(Franklin.fd_date(DateTime("1996-01-01T12:30:00")))
+    ```
+    \textoutput{ex}
+    """ |> fd2html_td
+    @test isapproxstr(s, "lun, 1 janv 1996") # auto short names
+
+    s = raw"""
+    @def date_format = "d u Y"
+    @def date_months = ["janvier", "février", "mars", "avril", "mai", "juin",
+                        "juillet", "août", "septembre", "octobre", "novembre", 
+                        "décembre"];
+    ```julia:ex
+    #hideall
+    using Franklin, Dates
+    println(Franklin.fd_date(DateTime("1996-12-01T12:30:00")))
+    ```
+    \textoutput{ex}
+    """ |> fd2html_td
+    println(s)
+    @test isapproxstr(s, "1 déc 1996") # accents in short names
+
+    s = raw"""
+    @def date_format = "d u Y"
+    @def date_shortmonths = ["janv","févr","mars","avril","mai","juin",
+                                "juil","août","sept","oct","nov","déc"];
+    ```julia:ex
+    #hideall
+    using Franklin, Dates
+    println(Franklin.fd_date(DateTime("1996-01-01T12:30:00")))
+    ```
+    \textoutput{ex}
+    """ |> fd2html_td
+    @test isapproxstr(s, "1 janv 1996") # only short names defined
+
+    s = raw"""
+    @def date_format = "Y年ud日　E"
+    @def date_months = ["1月", "2月", "3月", "4月", "5月", "6月",
+                        "7月", "8月", "9月", "10月", "11月", "12月"];
+
+    @def date_days = ["月曜日","火曜日","水曜日","木曜日",
+                        "金曜日","土曜日","日曜日"];
+    ```julia:ex
+    #hideall
+    using Franklin, Dates
+    println(Franklin.fd_date(DateTime("1996-01-01T12:30:00")))
+    ```
+    \textoutput{ex}
+    """ |> fd2html_td
+    println(s) # french result????
+    @test isapproxstr(s, "1996年1月1日　月曜日") # japanese and unicode
+
+    s = raw"""
+    @def date_format = "Y年ud日　E"
+    @def date_months = ["1月", "2月", "3月", "4月", "5月", "6月",
+                        "7月", "8月", "9月", "10月", "11月", "12月"];
+
+    @def date_days = ["月曜日","火曜日","水曜日","木曜日",
+                        "金曜日","土曜日","日曜日"];
+    ```julia:ex
+    #hideall
+    using Franklin, Dates
+    println(Franklin.fd_date(DateTime("1996-12-01T12:30:00")))
+    ```
+    \textoutput{ex}
+    """ |> fd2html_td
+    println(s) # if I change the date now it's proper japanese?
+    @test isapproxstr(s, "1996年12月1日　日曜日") # japanese and unicode
+
+end

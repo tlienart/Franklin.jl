@@ -184,6 +184,8 @@ Convenience functions related to the page vars
 ============================================= =#
 
 """
+$(SIGNATURES)
+
 Convenience function taking a `DateTime` object and returning the corresponding
 formatted string with the format contained in `LOCAL_VARS["date_format"]` and 
 with the locale data provided in `date_months`, `date_shortmonths`, `date_days`, 
@@ -193,11 +195,11 @@ automatically construct them using the first three letters of the names in
 """
 function fd_date(d::DateTime)
     # aliases for locale data and format from local variables
-    format      = LOCAL_VARS["date_format"].first
-    months      = LOCAL_VARS["date_months"].first
-    shortmonths = LOCAL_VARS["date_shortmonths"].first
-    days        = LOCAL_VARS["date_days"].first
-    shortdays   = LOCAL_VARS["date_shortdays"].first
+    format      = locvar("date_format")
+    months      = locvar("date_months")
+    shortmonths = locvar("date_shortmonths")
+    days        = locvar("date_days")
+    shortdays   = locvar("date_shortdays")
     # if vectors are empty, user has not defined custom locale,
     # defaults to english
     if all(isempty.((months, shortmonths, days, shortdays)))
@@ -205,11 +207,11 @@ function fd_date(d::DateTime)
     end
     # if shortdays or shortmonths are undefined,
     # automatically construct them from other lists
-    if !isempty(days) || isempty(shortdays)
-        shortdays = [length(d) >= 3 ? d[1:3] : d for d ∈ days]
+    if !isempty(days) && isempty(shortdays)
+        shortdays = first.(days, 3)
     end
-    if !isempty(months) || isempty(shortmonths)
-        shortmonths = [length(m) >= 3 ? m[1:3] : m for m ∈ months]
+    if !isempty(months) && isempty(shortmonths)
+        shortmonths = first.(months, 3)
     end
     # set locale for this page
     Dates.LOCALES["date_locale"] = Dates.DateLocale(months, shortmonths, 
