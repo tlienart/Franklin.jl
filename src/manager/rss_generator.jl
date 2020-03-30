@@ -147,7 +147,7 @@ function rss_generator()::Nothing
             <item>
               <title>$(v.title)</title>
               <link>$(full_link)</link>
-              <description><![CDATA[$(fix_relative_links(v.description, rss_link))</br><a href=\"$full_link\">Read more</a>]]></description>
+              <description><![CDATA[$(fix_relative_links(v.description, rss_link))<br><a href=\"$full_link\">Read more</a>]]></description>
           """)
         for elem in (:author, :category, :comments, :enclosure)
             e = getproperty(v, elem)
