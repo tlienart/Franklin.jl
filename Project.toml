@@ -1,7 +1,7 @@
 name = "Franklin"
 uuid = "713c75ef-9fc9-4b05-94a9-213340da978e"
 authors = ["Thibaut Lienart <tlienart@me.com>"]
-version = "0.6.16"
+version = "0.7.0"
 
 [deps]
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
@@ -19,14 +19,14 @@ Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [compat]
-DocStringExtensions = "^0.8"
-FranklinTemplates = "^0.5"
-HTTP = "^0.8"
-Literate = "^2.2"
-LiveServer = "^0.3"
-NodeJS = "^0.6, ^1"
-OrderedCollections = "^1.1"
-julia = "^1.1"
+DocStringExtensions = "0.8"
+FranklinTemplates = "0.6"
+HTTP = "0.8"
+Literate = "2.2"
+LiveServer = "0.3"
+NodeJS = "0.6,1"
+OrderedCollections = "1.1"
+julia = "1.1"
 
 [extras]
 DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
