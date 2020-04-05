@@ -200,7 +200,7 @@ function convert_md_math(ms::AS, lxdefs::Vector{LxDef}=Vector{LxDef}(),
         next_lxc = from_ifsmaller(lxcoms, lxc_idx, len_lxc)
     end
     # add anything after the last command
-    (head ≤ strlen) && write(htmls, chop(ms, head=prevind(ms, head), tail=0))
+    (head <= strlen) && write(htmls, subs(ms, head, strlen))
     return String(take!(htmls))
 end
 

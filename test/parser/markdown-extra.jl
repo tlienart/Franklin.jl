@@ -178,3 +178,12 @@ end
         """ |> fd2html_td
     @test isapproxstr(s, "<p>A –-* ***_</p>") # note double -- is transformed -
 end
+
+# issue 439 and consequences
+@testset "mathunicode" begin
+    s = raw"""
+        \newcommand{\u}{1}
+        $$ φφφ\u abcdef $$
+        """ |> fd2html_td
+    @test isapproxstr(s, raw"\[ φφφ1 abcdef \]")
+end
