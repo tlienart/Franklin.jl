@@ -1,6 +1,7 @@
 module Franklin
 
 using FranklinTemplates
+using FranklinTemplates: filecmp
 
 using Markdown
 using Markdown: htmlesc
