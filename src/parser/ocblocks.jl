@@ -75,7 +75,8 @@ $(SIGNATURES)
 Convenience function to find all ocblocks e.g. such as `MD_OCBLOCKS`. Returns a
 vector of vectors of ocblocks.
 """
-function find_all_ocblocks(tokens::Vector{Token}, ocplist::Vector{OCProto}; inmath=false)
+function find_all_ocblocks(tokens::Vector{Token}, ocplist::Vector{OCProto};
+                           inmath=false)
 
     ocbs_all = Vector{OCBlock}()
     for ocp ∈ ocplist
@@ -85,34 +86,47 @@ function find_all_ocblocks(tokens::Vector{Token}, ocplist::Vector{OCProto}; inma
         ocbs, tokens = find_ocblocks(tokens, ocp; inmath=inmath)
         append!(ocbs_all, ocbs)
     end
-    # it may happen that a block is contained in a larger block
-    # there are two situations where we want to do something about it:
-    # Case 1 (solved here) where a block is inside a larger escape block
-    # Case 2 (solved in check_and_merge_indented_blocks!) when an indented
-    #   code block is contained inside a larger block
-    #
+    return ocbs_all, tokens
+end
+
+"""
+$SIGNATURES
+
+Deactivate blocks inside other blocks when the outer block is bound to be
+reprocessed. There's effectively two cases:
+1. (solved here) when a block is inside a larger 'escape' block.
+2. (solved in `check_and_merge_indented_blocks!`) when an indented code block
+    is contained inside a larger block.
+"""
+function deactivate_inner_blocks!(blocks::Vector{OCBlock})
+    # see #444 it's important to ensure the blocks are sorted and they now
+    # may not be given that we're finding them in 2 passes.
+    sort!(blocks, by=(β->from(β)))
     # CASE 1: block inside a larger escape block.
     #   this can happen if there is a code block in an escape block
     #   (see e.g. #151) or if there's indentation in a math block.
-    #   To fix this, we browse the escape blocks in backwards order and check
-    #   if there is any other block within it.
-    i = length(ocbs_all)
-    active = ones(Bool, i)
-    all_heads = from.(ocbs_all)
-    while i > 1
-        cur_ocb = ocbs_all[i]
-        if active[i] && cur_ocb.name ∈ MD_OCB_NO_INNER
-            # find all blocks within the span of this block, deactivate all of them
-            cur_head = all_heads[i]
-            cur_tail = to(cur_ocb)
-            mask = filter(j -> active[j] && cur_head < all_heads[j] < cur_tail, 1:i-1)
+    i       = 1
+    nb      = length(blocks)
+    active  = ones(Bool, nb)
+    heads   = from.(blocks)
+    while i < nb
+        cblock = blocks[i]
+        if active[i] && cblock.name ∈ MD_OCB_NO_INNER
+            # find all blocks within the span of this block, deactivate them
+            chead = heads[i]
+            ctail = to(cblock)
+            # look at all blocks starting after the current one that may
+            # be within its span (note that, at worst, we have a few thousand
+            # blocks here so that it doesn't need to be super optimised...)
+            mask = filter(j -> active[j] && chead < heads[j] < ctail, i+1:nb)
             active[mask] .= false
         end
-        i -= 1
+        i += 1
     end
-    deleteat!(ocbs_all, map(!, active))
-    return ocbs_all, tokens
+    deleteat!(blocks, map(!, active))
+    return nothing
 end
+
 
 
 """

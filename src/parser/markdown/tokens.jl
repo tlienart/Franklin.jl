@@ -242,7 +242,8 @@ const MATH_BLOCKS_NAMES = [e.name for e ∈ MD_OCB_MATH]
 """
 MD_OCB_NO_INNER
 
-List of names of blocks which will deactivate any block contained within them.
+List of names of blocks which will deactivate any block contained within them
+as their content will be reprocessed later on.
 See [`find_all_ocblocks`](@ref).
 """
-const MD_OCB_NO_INNER = vcat(MD_OCB_ESC, MATH_BLOCKS_NAMES, :LXB)
+const MD_OCB_NO_INNER = vcat(MD_OCB_ESC, MATH_BLOCKS_NAMES, :LXB, MD_HEADER)

@@ -80,6 +80,16 @@ julia> serve()
 Modify the files in `MyNewSite/src` and see the changes being live-rendered in your browser.
 Head to [the docs](https://franklinjl.org) for more information.
 
+### Heads up!
+
+While Franklin broadly supports standard Markdown there are a few things that may trip you which are either due to Franklin or due to Julia's Markdown library, here are key ones you should keep in mind:
+
+* when writing a list, the content of the list item **must** be on a single line (no line break)
+* (as of `v0.6.15`) you can write comments with `<!-- comments -->` the comment markers `<!--` and `-->` **must** be separated by a character that is not a `-` to work properly so `<!--A-->` is ok but `<!---A--->` is not, best is to just systematically use a whitespace: `<!-- A -->`.
+* (as of `v0.7`) code blocks should be delimited with backticks `` ` `` you *can* also use indented blocks to delimit code blocks but you now have to **opt in** explicitly on pages that would use them by using `@def indented_code = true`, if you want to use that everywhere, write that in the `config.md`. Note that indented blocks are **ambiguous** with some of the other things that Franklin provides (div blocks, latex commands) and so if you use them, you are responsible for avoiding ambiguities (effectively that means _not using indentation for anything else than code_)
+
+
+
 ## Associated repositories
 
 * [LiveServer.jl](https://github.com/asprionj/LiveServer.jl) a package coded with [Jonas Asprion](https://github.com/asprionj) to render and watch the content of a local folder in the browser.

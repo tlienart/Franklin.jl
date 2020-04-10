@@ -34,6 +34,7 @@ include("parser/2-blocks.jl")
 include("parser/markdown+latex.jl")
 include("parser/markdown-extra.jl")
 include("parser/footnotes+links.jl")
+include("parser/latex++.jl")
 println("🍺")
 
 # EVAL
