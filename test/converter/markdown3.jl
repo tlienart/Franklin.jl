@@ -101,9 +101,9 @@ end
     steps = explore_md_steps(st)
     blocks, tokens = steps[:ocblocks]
     @test blocks[1].name == :CODE_INLINE
-    @test F.content(blocks[1]) == "double ` double"
+    @test F.content(blocks[1]) == "single"
+    @test F.content(blocks[2]) == "double ` double"
     @test blocks[2].name == :CODE_INLINE
-    @test F.content(blocks[2]) == "single"
 
     st = raw"""A `single` and ``double ` double`` and ``` triple ``` B"""
     steps = explore_md_steps(st)
@@ -116,23 +116,23 @@ end
     @test tokens[6].name == :CODE_TRIPLE
     @test tokens[7].name == :CODE_TRIPLE
     blocks, tokens = steps[:ocblocks]
-    @test blocks[1].name == :CODE_BLOCK
-    @test F.content(blocks[1]) == " triple "
+    @test blocks[3].name == :CODE_BLOCK
+    @test F.content(blocks[3]) == " triple "
     @test blocks[2].name == :CODE_INLINE
-    @test blocks[3].name == :CODE_INLINE
+    @test blocks[1].name == :CODE_INLINE
 
     st = raw"""A `single` and ``double ` double`` and ``` triple `` triple```
                and ```julia 1+1``` and `single again` done"""
     steps = explore_md_steps(st)
     blocks, _ = steps[:ocblocks]
-    @test blocks[1].name == :CODE_BLOCK_LANG
-    @test F.content(blocks[1]) == " 1+1"
-    @test blocks[2].name == :CODE_BLOCK
-    @test F.content(blocks[2]) == " triple `` triple"
-    @test blocks[3].name == :CODE_INLINE
-    @test F.content(blocks[3]) == "double ` double"
-    @test blocks[4].name == :CODE_INLINE
-    @test F.content(blocks[4]) == "single"
+    @test blocks[4].name == :CODE_BLOCK_LANG
+    @test F.content(blocks[4]) == " 1+1"
+    @test blocks[3].name == :CODE_BLOCK
+    @test F.content(blocks[3]) == " triple `` triple"
+    @test blocks[2].name == :CODE_INLINE
+    @test F.content(blocks[2]) == "double ` double"
+    @test blocks[1].name == :CODE_INLINE
+    @test F.content(blocks[1]) == "single"
 end
 
 @testset "\\ and \`" begin # see issue 203

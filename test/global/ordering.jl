@@ -60,8 +60,8 @@ end
     steps = st |> explore_md_steps
     blocks, = steps[:ocblocks]
     @test length(blocks) == 2
-    @test blocks[1].name == :COMMENT
-    @test blocks[2].name == :MATH_EQA
+    @test blocks[1].name == :MATH_EQA
+    @test blocks[2].name == :COMMENT
 
     @test isapproxstr(st |> seval, raw"""
             <p>A

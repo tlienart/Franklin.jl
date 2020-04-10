@@ -68,6 +68,7 @@ function convert_md(mds::AS,
     #>> a'. find the rest
     blocks2, tokens = find_all_ocblocks(tokens, vcat(MD_OCB2, MD_OCB_MATH))
     append!(blocks, blocks2)
+    deactivate_inner_blocks!(blocks)
     #>> b. merge CODE_BLOCK_IND which are separated by emptyness
     merge_indented_blocks!(blocks, mds)
     #>> b'. only keep indented code blocks which are not contained in larger
@@ -91,7 +92,7 @@ function convert_md(mds::AS,
 
     #> 3[ex]. find double brace blocks, note we do it on pre_ocb tokens
     # as the step `find_all_ocblocks` possibly found and deactivated {...}.
-    dbb     = find_double_brace_blocks(toks_pre_ocb)
+    dbb = find_double_brace_blocks(toks_pre_ocb)
 
     # ------------------------------------------------------------------------
     #> 4. Page variable definition (mddefs), also if in config, update lxdefs

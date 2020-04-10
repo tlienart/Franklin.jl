@@ -59,15 +59,21 @@ function explore_md_steps(mds)
     steps = OrderedDict{Symbol,NamedTuple}()
 
     # tokenize
-    tokens  = F.find_tokens(mds, F.MD_TOKENS, F.MD_1C_TOKENS)
-    fn_refs = F.validate_footnotes!(tokens)
+    tokens = F.find_tokens(mds, F.MD_TOKENS, F.MD_1C_TOKENS)
+    F.validate_footnotes!(tokens)
     F.validate_headers!(tokens)
+    hrules = F.find_hrules!(tokens)
     F.find_indented_blocks!(tokens, mds)
     steps[:tokenization] =  (tokens=tokens,)
-    steps[:fn_validation] = (fn_refs=fn_refs,)
 
     # ocblocks
-    blocks, tokens = F.find_all_ocblocks(tokens, F.MD_OCB_ALL)
+    blocks, tokens = F.find_all_ocblocks(tokens, F.MD_OCB)
+    toks_pre_ocb   = deepcopy(tokens)
+
+    blocks2, tokens = F.find_all_ocblocks(tokens, vcat(F.MD_OCB2, F.MD_OCB_MATH))
+    append!(blocks, blocks2)
+    F.deactivate_inner_blocks!(blocks)
+
     F.merge_indented_blocks!(blocks, mds)
     F.filter_indented_blocks!(blocks)
     steps[:ocblocks] = (blocks=blocks, tokens=tokens)
@@ -87,10 +93,16 @@ function explore_md_steps(mds)
     steps[:latex] = (lxdefs=lxdefs, tokens=tokens, braces=braces,
                      blocks=blocks, lxcoms=lxcoms)
 
+    dbb = F.find_double_brace_blocks(toks_pre_ocb)
+
     sp_chars = F.find_special_chars(tokens)
     steps[:spchars] = (spchars=sp_chars,)
 
-    b2insert = F.merge_blocks(lxcoms, F.deactivate_divs(blocks), sp_chars)
+    fnrefs = filter(τ -> τ.name == :FOOTNOTE_REF, tokens)
+    steps[:fnrefs] = (fnrefs=fnrefs,)
+
+    b2insert = F.merge_blocks(lxcoms, F.deactivate_divs(blocks),
+                              sp_chars, fnrefs, dbb, hrules)
     steps[:b2insert] = (b2insert=b2insert,)
 
     inter_md, mblocks = F.form_inter_md(mds, b2insert, lxdefs)
