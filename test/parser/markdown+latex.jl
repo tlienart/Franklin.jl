@@ -24,27 +24,26 @@ end
 
     steps = explore_md_steps(st)
     blocks, tokens = steps[:ocblocks]
-    braces = filter(β -> β.name == :LXB, blocks)
-
-    # escape block
-    β = blocks[2]
-    @test β.name == :ESCAPE
-    @test β.ss == "~~~\nescape block\n~~~"
 
     # inline code block
     β = blocks[1]
     @test β.name == :CODE_INLINE
     @test β.ss == "`code`"
 
-    # brace block
-    β = braces[1]
-    @test β.name == :LXB
-    @test β.ss == "{target}"
-
     # div block
-    β = blocks[4]
+    β = blocks[2]
     @test β.name == :DIV
     @test β.ss == "@@dname block @@"
+
+    # escape block
+    β = blocks[3]
+    @test β.name == :ESCAPE
+    @test β.ss == "~~~\nescape block\n~~~"
+
+    # escape block
+    β = blocks[4]
+    @test β.name == :LXB
+    @test β.ss == "{target}"
 end
 
 
@@ -96,8 +95,8 @@ end
     @test lxdefs[3].narg == 0
     @test lxdefs[3].def  == "\\mathbb R"
 
-    @test blocks[2].name == :ESCAPE
-    @test blocks[1].name == :CODE_BLOCK_LANG
+    @test blocks[1].name == :ESCAPE
+    @test blocks[2].name == :CODE_BLOCK_LANG
 
     lxcoms, tokens = F.find_lxcoms(tokens, lxdefs, braces)
 
@@ -215,12 +214,12 @@ end
 
     lxdefs, tokens, braces, blocks, lxcoms = explore_md_steps(st)[:latex]
 
-    @test blocks[1].name == :COMMENT
-    @test F.content(blocks[1]) == " comment "
+    @test blocks[1].name == :MD_DEF
+    @test F.content(blocks[1]) == " title = \"Convex Optimisation I\""
+    @test blocks[2].name == :COMMENT
+    @test F.content(blocks[2]) == " comment "
     @test blocks[3].name == :H2
     @test F.content(blocks[3]) == " blah <!-- ✅ 19/9/999 -->"
-    @test blocks[2].name == :MD_DEF
-    @test F.content(blocks[2]) == " title = \"Convex Optimisation I\""
 
     @test lxcoms[1].ss == "\\com{A}"
     @test lxcoms[2].ss == "\\com{B}"
