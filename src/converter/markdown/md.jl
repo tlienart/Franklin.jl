@@ -25,7 +25,7 @@ function convert_md(mds::AS,
                     isrecursive::Bool=false,
                     isinternal::Bool=false,
                     isconfig::Bool=false,
-                    has_mddefs::Bool=true )::String
+                    has_mddefs::Bool=true)::String
     # instantiate page dictionaries
     isrecursive || isinternal || set_page_env()
     # if we're given a substring, force it to a string
@@ -120,6 +120,11 @@ function convert_md(mds::AS,
     # filter out the fnrefs that are left (still active)
     # and add them to the blocks to insert
     fnrefs = filter(τ -> τ.name == :FOOTNOTE_REF, tokens)
+
+    # Discard indented blocks unless locvar("indented_code")
+    if !locvar("indented_code")
+        filter!(b -> b.name != :CODE_BLOCK_IND, blocks)
+    end
 
     #> 1. Merge all the blocks that will need further processing before
     # insertion

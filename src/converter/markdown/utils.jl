@@ -10,7 +10,14 @@ function md2html(ss::AS; stripp::Bool=false)::AS
     # if there's nothing, return that...
     isempty(ss) && return ss
     # Use Julia's Markdown parser followed by Julia's MD->HTML conversion
-    partial = ss |> fix_inserts |> Markdown.parse |> Markdown.html
+    partial = ss |> fix_inserts |> Markdown.parse
+    # take over from the parsing of indented blocks
+    for (i, c) in enumerate(partial.content)
+        c isa Markdown.Code || continue
+        partial.content[i] = Markdown.Paragraph(Any[c.code])
+    end
+    # Use Julia's MD->HTML conversion
+    partial = partial |> Markdown.html
     # Markdown.html transforms {{ with HTML entities but we don't want that
     partial = replace(partial, r"&#123;&#123;" => "{{")
     partial = replace(partial, r"&#125;&#125;" => "}}")

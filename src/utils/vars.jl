@@ -55,7 +55,7 @@ const LOCAL_VARS_DEFAULT = [
     "date"          => Pair(Date(1), (String, Date, Nothing)),
     "lang"          => Pair("julia", (String,)), # default lang indented code
     "reflinks"      => Pair(true,    (Bool,)),   # are there reflinks?
-    "indented_code" => Pair(true,    (Bool,)),   # support indented code?
+    "indented_code" => Pair(false,   (Bool,)),   # support indented code?
     # -----------------
     # TABLE OF CONTENTS
     "mintoclevel" => Pair(1,  (Int,)), # set to 2 to ignore h1
@@ -187,8 +187,8 @@ Convenience functions related to the page vars
 $(SIGNATURES)
 
 Convenience function taking a `DateTime` object and returning the corresponding
-formatted string with the format contained in `LOCAL_VARS["date_format"]` and 
-with the locale data provided in `date_months`, `date_shortmonths`, `date_days`, 
+formatted string with the format contained in `LOCAL_VARS["date_format"]` and
+with the locale data provided in `date_months`, `date_shortmonths`, `date_days`,
 and `date_shortdays` local variables. If `short` variations are not provided,
 automatically construct them using the first three letters of the names in
 `date_months` and `date_days`.
@@ -214,7 +214,7 @@ function fd_date(d::DateTime)
         shortmonths = first.(months, 3)
     end
     # set locale for this page
-    Dates.LOCALES["date_locale"] = Dates.DateLocale(months, shortmonths, 
+    Dates.LOCALES["date_locale"] = Dates.DateLocale(months, shortmonths,
                                                     days, shortdays)
     return Dates.format(d, format, locale="date_locale")
 end

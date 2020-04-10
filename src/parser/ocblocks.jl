@@ -77,12 +77,8 @@ vector of vectors of ocblocks.
 """
 function find_all_ocblocks(tokens::Vector{Token}, ocplist::Vector{OCProto};
                            inmath=false)
-
     ocbs_all = Vector{OCBlock}()
     for ocp ∈ ocplist
-        if ocp.name == :CODE_BLOCK_IND && !locvar("indented_code")
-           continue
-        end
         ocbs, tokens = find_ocblocks(tokens, ocp; inmath=inmath)
         append!(ocbs_all, ocbs)
     end

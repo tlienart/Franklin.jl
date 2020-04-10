@@ -100,10 +100,10 @@ end
     st = raw"""A `single` and ``double ` double`` B"""
     steps = explore_md_steps(st)
     blocks, tokens = steps[:ocblocks]
+    @test blocks[2].name == :CODE_INLINE
+    @test F.content(blocks[2]) == "double ` double"
     @test blocks[1].name == :CODE_INLINE
     @test F.content(blocks[1]) == "single"
-    @test F.content(blocks[2]) == "double ` double"
-    @test blocks[2].name == :CODE_INLINE
 
     st = raw"""A `single` and ``double ` double`` and ``` triple ``` B"""
     steps = explore_md_steps(st)
@@ -225,6 +225,7 @@ end
 
 @testset "IndCode" begin # issue 207
     st = raw"""
+        @def indented_code = true
         A
 
             a = 1+1
@@ -248,6 +249,7 @@ end
         </p>""")
 
     st = raw"""
+        @def indented_code = true
         A `single` and ```python blah``` and
 
             a = 1+1
@@ -276,6 +278,7 @@ end
                         """)
 
     st = raw"""
+        @def indented_code = true
         A
 
             function foo()
