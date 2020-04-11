@@ -80,6 +80,12 @@ julia> serve()
 Modify the files in `MyNewSite/src` and see the changes being live-rendered in your browser.
 Head to [the docs](https://franklinjl.org) for more information.
 
+You can also start from [one of the templates](https://tlienart.github.io/FranklinTemplates.jl/) by doing something like:
+
+```julia
+julia> newsite("MyNewSite", template="vela")
+```
+
 ### Heads up!
 
 While Franklin broadly supports standard Markdown there are a few things that may trip you which are either due to Franklin or due to Julia's Markdown library, here are key ones you should keep in mind:
