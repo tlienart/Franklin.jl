@@ -29,7 +29,7 @@ function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef};
     # non-empty case, take the definition and iteratively replace any `#...`
     partial = lxd
     for (i, brace) in enumerate(lxc.braces)
-        cont    = strip(content(brace))
+        cont    = stent(brace)
         # space-sensitive 'unsafe' one
         partial = replace(partial, "!#$i" => cont)
         # space-insensitive 'safe' one (e.g. `\mathbb#1`)

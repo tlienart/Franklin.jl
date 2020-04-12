@@ -392,7 +392,7 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool)::Nothing
     assignments = Vector{Pair{String, String}}()
     # go over the blocks, and extract the assignment
     for (i, mdd) ∈ enumerate(mddefs)
-        inner = strip(content(mdd))
+        inner = stent(mdd)
         m = match(ASSIGN_PAT, inner)
         if isnothing(m)
             @warn "Found delimiters for an @def environment but it didn't " *

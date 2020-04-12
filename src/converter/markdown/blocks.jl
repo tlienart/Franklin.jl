@@ -15,7 +15,7 @@ function convert_block(β::AbstractBlock, lxdefs::Vector{LxDef})::AS
     βn == :CODE_INLINE     && return html_code_inline(content(β) |> htmlesc)
     βn == :CODE_BLOCK_LANG && return resolve_code_block(β.ss)
     βn == :CODE_BLOCK_IND  && return convert_indented_code_block(β.ss)
-    βn == :CODE_BLOCK      && return html_code(strip(content(β)), "{{fill lang}}")
+    βn == :CODE_BLOCK      && return html_code(stent(β), "{{fill lang}}")
 
     βn == :ESCAPE          && return chop(β.ss, head=3, tail=3)
     βn == :FOOTNOTE_REF    && return convert_footnote_ref(β)
@@ -30,7 +30,7 @@ function convert_block(β::AbstractBlock, lxdefs::Vector{LxDef})::AS
 
     # Div block --> need to process the block as a sub-element
     if βn == :DIV
-        raw_cont = strip(content(β))
+        raw_cont = stent(β)
         cont     = convert_md(raw_cont, lxdefs;
                               isrecursive=true, has_mddefs=false)
         divname  = chop(otok(β).ss, head=2, tail=0)

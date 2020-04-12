@@ -76,7 +76,7 @@ function lx_label(lxc::LxCom, _)
 end
 
 function lx_biblabel(lxc::LxCom, _)::String
-    name = refstring(strip(content(lxc.braces[1])))
+    name = refstring(stent(lxc.braces[1]))
     PAGE_BIBREFS[name] = content(lxc.braces[2])
     return "<a id=\"$name\"></a>"
 end

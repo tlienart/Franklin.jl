@@ -124,6 +124,12 @@ function content(ocb::OCBlock)::SubString
     return subs(s, cfrom, cto)
 end
 
+"""
+$(SIGNATURES)
+
+Convenience function to strip the content of a block.
+"""
+stent = strip ∘ content
 
 #=
 FUNCTIONS / CONSTANTS THAT HELP DEFINE TOKENS
