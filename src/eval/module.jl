@@ -36,7 +36,11 @@ function newmodule(name::String)::Module
         redirect_stderr(outf) do
             mod = Core.eval(Main, Meta.parse("""
                 module $name
-                    import Franklin: @OUTPUT, fdplotly, locvar
+                    import Franklin
+                    import Franklin: @OUTPUT, fdplotly, locvar, pagevar
+                    if isdefined(Main, :Utils) && typeof(Main.Utils) == Module
+                        import ..Utils
+                    end
                 end
                 """))
         end

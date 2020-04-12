@@ -7,9 +7,11 @@ F.FD_ENV[:SILENT_MODE] = true
 F.FD_ENV[:STRUCTURE] = v"0.1" # legacy, it's switched up in the tests.
 
 # UTILS
-println("UTILS")
+println("UTILS-1")
 include("utils/folder_structure.jl")
 include("utils/paths_vars.jl"); include("test_utils.jl")
+
+println("UTILS-2")
 include("utils/misc.jl")
 include("utils/errors.jl")
 include("utils/html.jl")
@@ -97,6 +99,9 @@ begin
     rm(p; recursive=true, force=true)
 end
 cd(dirname(dirname(pathof(Franklin))))
+
+println("TEMPLATING")
+include("templating/for.jl")
 
 println("INTEGRATION")
 include("integration/literate.jl")

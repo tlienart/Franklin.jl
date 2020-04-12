@@ -19,9 +19,12 @@ function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef};
         # see if a function `lx_name` exists
         name = getname(lxc) # `\\cite` -> `cite`
         fun  = Symbol("lx_" * name)
-        if isdefined(Franklin, fun)
+        ex   = :($fun($lxc, $lxdefs))
+        if isdefined(Main, :Utils) && isdefined(Main.Utils, fun)
+            return Core.eval(Main.Utils, ex)
+        elseif isdefined(Franklin, fun)
             # apply that function
-            return eval(:($fun($lxc, $lxdefs)))
+            return eval(ex)
         else
             return ""
         end

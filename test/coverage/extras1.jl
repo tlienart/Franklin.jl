@@ -5,7 +5,6 @@
 end
 
 @testset "Conv-html" begin
-    @test_throws F.HTMLFunctionError F.convert_html("{{fill bb cc}}")
     @test_throws F.HTMLFunctionError F.convert_html("{{insert bb cc}}")
     @test_throws F.HTMLFunctionError F.convert_html("{{href aa}}")
     @test (@test_logs (:warn, "Unknown dictionary name aa in {{href ...}}. Ignoring") F.convert_html("{{href aa bb}}")) == "<b>??</b>"
