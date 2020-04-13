@@ -13,7 +13,6 @@ function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef};
     if lxd === nothing
         name = getname(lxc) # `\\cite` -> `cite`
         fun  = Symbol("lx_" * name)
-        @show fun
         if isdefined(Main, :Utils) && isdefined(Main.Utils, fun)
             return Core.eval(Main.Utils, :($fun($lxc, $lxdefs)))
         else
