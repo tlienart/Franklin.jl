@@ -10,7 +10,16 @@ function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef};
     # retrieve the definition the command points to
     lxd = getdef(lxc)
     # it will be `nothing` in math mode, let KaTeX have it
-    lxd === nothing && return lxc.ss
+    if lxd === nothing
+        name = getname(lxc) # `\\cite` -> `cite`
+        fun  = Symbol("lx_" * name)
+        @show fun
+        if isdefined(Main, :Utils) && isdefined(Main.Utils, fun)
+            return Core.eval(Main.Utils, :($fun($lxc, $lxdefs)))
+        else
+            return lxc.ss
+        end
+    end
     # otherwise it may be
     # -> empty, in which case try to find a specific internal definition or
     # return an empty string (see `commands.jl`)
@@ -29,7 +38,7 @@ function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef};
     # non-empty case, take the definition and iteratively replace any `#...`
     partial = lxd
     for (i, brace) in enumerate(lxc.braces)
-        cont    = strip(content(brace))
+        cont    = stent(brace)
         # space-sensitive 'unsafe' one
         partial = replace(partial, "!#$i" => cont)
         # space-insensitive 'safe' one (e.g. `\mathbb#1`)

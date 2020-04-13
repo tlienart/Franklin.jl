@@ -1,9 +1,9 @@
 """
 $(SIGNATURES)
 
-Checks for a `config.md` file in `PATHS[:src]` and uses it to set the global
-variables referenced in `GLOBAL_VARS` it also sets the global latex commands
-via `GLOBAL_LXDEFS`. If the configuration file is not found a warning is shown.
+Checks for a `config.md` file and uses it to set the global variables
+referenced in `GLOBAL_VARS` it also sets the global latex commands via
+`GLOBAL_LXDEFS`. If the configuration file is not found a warning is shown.
 The keyword `init` is used internally to distinguish between the first call
 where only structural variables are considered (e.g. controlling folder
 structure).
@@ -31,6 +31,36 @@ function process_config(; init::Bool=false)::Nothing
             @warn "I didn't find a config file. Ignoring."
         end
     end
+    return nothing
+end
+
+"""
+$(SIGNATURES)
+
+Checks for a `utils.jl` file and uses it to set global computed variables,
+functions and html functions. Whatever is defined in `utils.jl` takes
+precedence over things defined internally in Franklin or in the global vars;
+in particular users can redefine the behaviour of `hfuns` though that's not
+recommended.
+"""
+function process_utils()
+    utils_path_v1 = joinpath(FOLDER_PATH[], "src", "utils.jl")
+    utils_path_v2 = joinpath(FOLDER_PATH[], "utils.jl")
+    if isfile(utils_path_v2)
+        utils = utils_path_v2
+    elseif isfile(utils_path_v1)
+        utils = utils_path_v1
+    else
+        return nothing
+    end
+    # wipe / create module Utils
+    newmodule("Utils")
+    Core.eval(Main.Utils, :(include($utils)))
+    # # keep track of utils names
+    ns = String.(names(Main.Utils, all=true))
+    filter!(n -> n[1] != '#' && n ∉ ("eval", "include", "Utils"), ns)
+    empty!(UTILS_NAMES)
+    append!(UTILS_NAMES, ns)
     return nothing
 end
 
@@ -199,10 +229,33 @@ Convenience function to assemble the html out of its parts.
 build_page(head::String, content::String, pgfoot::String, foot::String) =
     "$head\n<div class=\"$(locvar("div_content"))\">\n$content\n$pgfoot\n</div>\n$foot"
 
-function set_cur_rpath(fpath::String)
+
+"""
+    get_rpath(fpath)
+
+Extracts the relative file system path out of the full system path to a file
+currently being processed. Does not start with a path separator.
+So `[some_fs_path]/blog/page.md` --> `blog/page.md`.
+"""
+function get_rpath(fpath::String)
     root = path(ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src, :folder))
-    cur_rpath = fpath[lastindex(root)+length(PATH_SEP)+1:end]
-    FD_ENV[:CUR_PATH] = cur_rpath
-    set_var!(LOCAL_VARS, "fd_rpath", FD_ENV[:CUR_PATH])
+    return fpath[lastindex(root)+length(PATH_SEP)+1:end]
+end
+
+"""
+    set_cur_rpath(fpath)
+
+Takes the path to the current file and sets the `fd_rpath` local page variable
+as well as the `FD_ENV[:CUR_PATH]` variable (used for conditional blocks
+depending on URL for instance).
+"""
+function set_cur_rpath(fpath::String; isrelative::Bool=false)
+    if isrelative
+        rpath = fpath
+    else
+        rpath = get_rpath(fpath)
+    end
+    FD_ENV[:CUR_PATH] = rpath
+    set_var!(LOCAL_VARS, "fd_rpath", rpath)
     return nothing
 end

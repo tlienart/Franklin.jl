@@ -25,7 +25,9 @@ function convert_md(mds::AS,
                     isrecursive::Bool=false,
                     isinternal::Bool=false,
                     isconfig::Bool=false,
-                    has_mddefs::Bool=true )::String
+                    has_mddefs::Bool=true,
+                    only_mddefs::Bool=false, # see pagevar
+                    )::String
     # instantiate page dictionaries
     isrecursive || isinternal || set_page_env()
     # if we're given a substring, force it to a string
@@ -99,6 +101,8 @@ function convert_md(mds::AS,
     if has_mddefs
         process_mddefs(blocks, isconfig)
     end
+    #> 4.0 if only_mddefs, terminate early, we don't care about the rest
+    only_mddefs && return ""
     #> 4.b if config, update global lxdefs as well
     if isconfig
         for lxd ∈ lxdefs
@@ -120,6 +124,11 @@ function convert_md(mds::AS,
     # filter out the fnrefs that are left (still active)
     # and add them to the blocks to insert
     fnrefs = filter(τ -> τ.name == :FOOTNOTE_REF, tokens)
+
+    # Discard indented blocks unless locvar("indented_code")
+    if !locvar("indented_code")
+        filter!(b -> b.name != :CODE_BLOCK_IND, blocks)
+    end
 
     #> 1. Merge all the blocks that will need further processing before
     # insertion
@@ -365,44 +374,4 @@ function convert_inter_html(ihtml::AS,
     (head ≤ strlen) && write(htmls, subs(ihtml, head:strlen))
     # return the full string
     return String(take!(htmls))
-end
-
-
-"""
-$(SIGNATURES)
-
-Convenience function to process markdown definitions `@def ...` as appropriate.
-Depending on `isconfig`, will update `GLOBAL_VARS` or `LOCAL_VARS`.
-
-**Arguments**
-
-* `blocks`:    vector of active docs
-* `isconfig`:  whether the file being processed is the config file
-                (--> global page variables)
-"""
-function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool)::Nothing
-    # Find all markdown definitions (MD_DEF) blocks
-    mddefs = filter(β -> (β.name == :MD_DEF), blocks)
-    # empty container for the assignments
-    assignments = Vector{Pair{String, String}}()
-    # go over the blocks, and extract the assignment
-    for (i, mdd) ∈ enumerate(mddefs)
-        inner = strip(content(mdd))
-        m = match(ASSIGN_PAT, inner)
-        if isnothing(m)
-            @warn "Found delimiters for an @def environment but it didn't " *
-                  "have the right @def var = ... format. Verify (ignoring " *
-                  "for now)."
-            continue
-        end
-        vname, vdef = m.captures[1:2]
-        push!(assignments, (String(vname) => String(vdef)))
-    end
-    # if in config file, update `GLOBAL_VARS` and `GLOBAL_LXDEFS`
-    if isconfig
-        set_vars!(GLOBAL_VARS, assignments)
-    else
-        set_vars!(LOCAL_VARS, assignments)
-    end
-    return nothing
 end

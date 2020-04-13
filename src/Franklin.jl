@@ -1,6 +1,7 @@
 module Franklin
 
 using FranklinTemplates
+using FranklinTemplates: filecmp
 
 using Markdown
 using Markdown: htmlesc
@@ -36,9 +37,10 @@ export jd2html # = fd2html
 # CONSTANTS
 #
 
-# Obtained via `dig www...`; may change over time; see check_ping
-# we check in sequence, one should work... this may need to be updated
-# over time.
+# These are common IP addresses that we can quickly ping to see if the
+# user seems online. This is used in `verify_links`. The IPs were
+# obtained via `dig www...`; they may change over time; see `check_ping`
+# we check in sequence, one should work if the user is online...
 const IP_CHECK = (
     "172.217.21.132" => "Google", # google
     "140.82.118.4"   => "GitHub",   # github
@@ -139,6 +141,7 @@ include("eval/literate.jl")
 # > markdown
 include("converter/markdown/blocks.jl")
 include("converter/markdown/utils.jl")
+include("converter/markdown/mddefs.jl")
 include("converter/markdown/md.jl")
 # > latex
 include("converter/latex/latex.jl")

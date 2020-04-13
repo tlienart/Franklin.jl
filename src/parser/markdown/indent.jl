@@ -1,49 +1,6 @@
 """
 $(SIGNATURES)
 
-In initial phase, discard all `:LR_INDENT` that don't meet the requirements for
-an indented code block. I.e.: where the first  line is not preceded by a blank
-line and then subsequently followed by indented lines.
-"""
-function filter_lr_indent!(vt::Vector{Token}, s::String)::Nothing
-    tind_idx = [i for i in eachindex(vt) if vt[i].name == :LR_INDENT]
-    isempty(tind_idx) && return nothing
-    disable = zeros(Bool, length(tind_idx))
-    open = false
-    i    = 1
-    while i <= length(tind_idx)
-        t = vt[tind_idx[i]]
-        if !open
-            # check if previous line is blank
-            prev_idx = prevind(s, from(t))
-            if prev_idx < 1 || s[prev_idx] != '\n'
-                disable[i] = true
-            else
-                open = true
-            end
-            i += 1
-        else
-            # if touching previous line, keep open and go to next
-            prev = vt[tind_idx[i-1]]
-            if prev.lno + 1 == t.lno
-                i += 1
-            else
-                # otherwise close, and continue (will go to !open)
-                open = false
-                continue
-            end
-        end
-    end
-    for i in eachindex(disable)
-        disable[i] || continue
-        vt[tind_idx[i]] = Token(:LINE_RETURN, subs(vt[tind_idx[i]].ss, 1))
-    end
-    return nothing
-end
-
-"""
-$(SIGNATURES)
-
 Find markers for indented lines (i.e. a line return followed by a tab or 4
 spaces).
 """
@@ -86,6 +43,48 @@ function find_indented_blocks!(tokens::Vector{Token}, st::String)::Nothing
     return nothing
 end
 
+"""
+$(SIGNATURES)
+
+In initial phase, discard all `:LR_INDENT` that don't meet the requirements for
+an indented code block. I.e.: where the first  line is not preceded by a blank
+line and then subsequently followed by indented lines.
+"""
+function filter_lr_indent!(vt::Vector{Token}, s::String)::Nothing
+    tind_idx = [i for i in eachindex(vt) if vt[i].name == :LR_INDENT]
+    isempty(tind_idx) && return nothing
+    disable = zeros(Bool, length(tind_idx))
+    open = false
+    i    = 1
+    while i <= length(tind_idx)
+        t = vt[tind_idx[i]]
+        if !open
+            # check if previous line is blank
+            prev_idx = prevind(s, from(t))
+            if prev_idx < 1 || s[prev_idx] != '\n'
+                disable[i] = true
+            else
+                open = true
+            end
+            i += 1
+        else
+            # if touching previous line, keep open and go to next
+            prev = vt[tind_idx[i-1]]
+            if prev.lno + 1 == t.lno
+                i += 1
+            else
+                # otherwise close, and continue (will go to !open)
+                open = false
+                continue
+            end
+        end
+    end
+    for i in eachindex(disable)
+        disable[i] || continue
+        vt[tind_idx[i]] = Token(:LINE_RETURN, subs(vt[tind_idx[i]].ss, 1))
+    end
+    return nothing
+end
 
 """
 $SIGNATURES
@@ -145,7 +144,7 @@ $SIGNATURES
 Discard any indented block that is within a larger block to avoid ambiguities
 (see #285).
 """
-function filter_indented_blocks!(blocks::Vector{OCBlock})::Nothing\
+function filter_indented_blocks!(blocks::Vector{OCBlock})::Nothing
     # retrieve the indices of the indented blocks
     idx = [i for i in eachindex(blocks) if blocks[i].name == :CODE_BLOCK_IND]
     isempty(idx) && return nothing

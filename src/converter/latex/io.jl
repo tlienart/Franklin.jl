@@ -20,8 +20,8 @@ Different actions can be taken based on the qualifier:
     e.g.: `\\input{plot:4}{ex2}`.
 """
 function lx_input(lxc::LxCom, _)
-    qualifier = lowercase(strip(content(lxc.braces[1])))
-    rpath     = strip(content(lxc.braces[2]))
+    qualifier = lowercase(stent(lxc.braces[1]))
+    rpath     = stent(lxc.braces[2])
     # check the qualifier
     if startswith(qualifier, "plot")
         # check if id is given e.g. \input{plot:5}{ex2}
@@ -82,7 +82,7 @@ At most one will be true. See [`lx_show`](@ref).
 """
 function lx_output(lxc::LxCom, lxd::Vector{LxDef};
                    reproc::Bool=false, res::Bool=false)
-    rpath   = strip(content(lxc.braces[1]))
+    rpath   = stent(lxc.braces[1])
     cpaths  = form_codepaths(rpath)
     outpath = cpaths.out_path
     respath = cpaths.res_path
@@ -123,7 +123,7 @@ If you just want to include text as a plaintext block use
 `\\input{plaintext}{rpath}` instead.
 """
 function lx_textinput(lxc::LxCom, lxd::Vector{LxDef})
-    rpath = strip(content(lxc.braces[1]))
+    rpath = stent(lxc.braces[1])
     input = ""
     try
         fp,   = resolve_rpath(rpath)
@@ -138,11 +138,11 @@ end
 Resolve a `\\figalt{alt}{rpath}` (find a fig and include it with alt).
 """
 function lx_figalt(lxc::LxCom, _)
-    rpath = strip(content(lxc.braces[2]))
-    alt   = strip(content(lxc.braces[1]))
+    rpath = stent(lxc.braces[2])
+    alt   = stent(lxc.braces[1])
     path  = parse_rpath(rpath; canonical=false, code=true)
     fdir, fext = splitext(path)
-    
+
     # there are several cases
     # A. a path with no extension --> guess extension
     # B. a path with extension --> use that
@@ -181,8 +181,8 @@ end
 Resolve a `\\tableinput{header}{rpath}` (find a table+header and include it).
 """
 function lx_tableinput(lxc::LxCom, _)
-    rpath  = strip(content(lxc.braces[2]))
-    header = strip(content(lxc.braces[1]))
+    rpath  = stent(lxc.braces[2])
+    header = stent(lxc.braces[1])
     path   = parse_rpath(rpath; canonical=false)
     fdir, fext = splitext(path)
     # copy-paste from resolve_lx_figalt()
@@ -215,7 +215,7 @@ end
 Resolve a `\\literate{rpath}` (find a literate script and insert it).
 """
 function lx_literate(lxc::LxCom, lxd::Vector{LxDef})
-    rpath = strip(content(lxc.braces[1]))
+    rpath = stent(lxc.braces[1])
     opath, haschanged = literate_to_franklin(rpath)
     # check file is there
     if isempty(opath)

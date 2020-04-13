@@ -3,7 +3,7 @@ $SIGNATURES
 
 Clear the environment dictionaries.
 """
-clear_dicts() = empty!.((GLOBAL_LXDEFS, GLOBAL_VARS, LOCAL_VARS))
+clear_dicts() = empty!.((GLOBAL_LXDEFS, GLOBAL_VARS, LOCAL_VARS, ALL_PAGE_VARS))
 
 """
 $(SIGNATURES)
@@ -14,18 +14,24 @@ Keyword arguments:
 
 * `clear=false`:     whether to remove any existing output directory
 * `verb=false`:      whether to display messages
-* `port=8000`:       the port to use for the local server (should pick a number between 8000 and 9000)
+* `port=8000`:       the port to use for the local server (should pick a number
+                      between 8000 and 9000)
 * `single=false`:    whether to run a single pass or run continuously
 * `prerender=false`: whether to pre-render javascript (KaTeX and highlight.js)
 * `nomess=false`:    suppresses all messages (internal use).
-* `isoptim=false`:   whether we're in an optimisation phase or not (if so, links are fixed in case
-                     of a project website, see [`write_page`](@ref).
-* `no_fail_prerender=true`: whether, in a prerendering phase, ignore errors and try to produce an output
+* `isoptim=false`:   whether we're in an optimisation phase or not (if so,
+                      links are fixed in case of a project website, see
+                      [`write_page`](@ref).
+* `no_fail_prerender=true`: whether, in a prerendering phase, ignore errors and
+                      try to produce an output
 * `eval_all=false`:  whether to force re-evaluation of all code blocks
-* `silent=false`:    switch this on to suppress all output (including eval statements).
-* `cleanup=true`:    whether to clear environment dictionaries, see [`cleanup`](@ref).
-* `on_write(pg, fd_vars)`: callback function after the page is rendered, passing as arguments
-                     the rendered page and the page variables
+* `silent=false`:    switch this on to suppress all output (including eval
+                      statements).
+* `cleanup=true`:    whether to clear environment dictionaries, see
+                      [`cleanup`](@ref).
+* `on_write(pg, fd_vars)`: callback function after the page is rendered,
+                      passing as arguments the rendered page and the page
+                      variables
 """
 function serve(; clear::Bool=false,
                  verb::Bool=false,
@@ -143,8 +149,8 @@ function fd_setup(; clear::Bool=true)::NamedTuple
     prepare_output_dir(clear)
 
     # . recovering the list of files in the input dir we care about
-    # -- these are stored in dictionaries, the key is the full path and the value is the time of
-    # last change (useful for continuous monitoring)
+    # -- these are stored in dictionaries, the key is the full path and the
+    # value is the time of last change (useful for continuous monitoring)
     md_pages         = TrackedFiles()
     html_pages       = TrackedFiles()
     other_files      = TrackedFiles()
@@ -195,6 +201,7 @@ function fd_fullpass(watched_files::NamedTuple; clear::Bool=false,
 
     # process configuration file (see also `process_mddefs!`)
     process_config()
+    process_utils()
 
     # form page segments
     root_key   = ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src, :folder)
@@ -263,7 +270,12 @@ function fd_loop(cycle_counter::Int, ::LiveServer.FileWatcher,
         # anything, we just remove the file reference from the corresponding
         # dictionary.
         for d ∈ watched_files, (fpair, _) ∈ d
-            isfile(joinpath(fpair...)) || delete!(d, fpair)
+            fpath = joinpath(fpair...)
+            if !isfile(fpath)
+                delete!(d, fpair)
+                rp = splitext(get_rpath(fpath))[1]
+                haskey(ALL_PAGE_VARS, rp) && delete!(ALL_PAGE_VARS, rp)
+            end
         end
         # 2) scan the input folder, if new files have been added then this will
         # update the dictionaries
@@ -280,9 +292,13 @@ function fd_loop(cycle_counter::Int, ::LiveServer.FileWatcher,
             cur_t <= t && continue
             # if there was then the file has been modified and should be
             # re-processed + copied
-            fmsg = rpad("→ file $(fpath[length(FOLDER_PATH[])+1:end]) was modified ", 30)
+            fmsg = rpad("→ file $(fpath[length(FOLDER_PATH[])+1:end]) was " *
+                        "modified ", 30)
             verb && print(fmsg)
             dict[fpair] = cur_t
+
+            # Reprocess utils.jl in Utils module
+            process_utils()
 
             # if it's an infra_file trigger a fullpass as potentially
             # the whole website depends upon it (e.g. CSS)

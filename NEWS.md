@@ -1,12 +1,67 @@
 # NEWS
 
-This document keeps track of breaking changes and what you can do if you update and things don't work anymore.
-
-Notes are in reverse chronological order.
+This document keeps track of **key new features**, **breaking changes** and what you can do if you update and things don't work anymore.
 
 You can also check out [this issue](https://github.com/tlienart/Franklin.jl/issues/323) with a more granular list of things that are being worked on / have been fixed / added.
 
-### v0.6+ (new functionalities)
+## v0.7
+
+### Breaking changes
+
+* indented code blocks are now opt-in, prefer fenced code blocks with backticks `` ` ``. This helps avoid ambiguities in parsing. If you do want indented code blocks on a page use `@def indented_code = true`, if you want them everywhere, put that definition in your `config.md`.
+* markers for comments now **must** be separated with a character distinct from `-` so `<!--_` is ok, `<!---` is not, `~-->` is ok, `--->` is not. Rule of thumb: use a whitespace.
+
+**Note**: supported Julia versions: 1.3, **1.4**, 1.5.
+
+### New stuff
+
+The main new stuff are:
+
+* you can unpack in template for loops `{{for (x, y, z) in iterator}}`,
+* you can use `{{var}}` as a short for `{{fill var}}`, you can use `{{...}}` blocks directly in markdown,
+* variable definitions (`@def`) can now be multi-line, the secondary lines **must** be indented,
+* you can access page variables from other pages using `{{fill var path}}` where `path` is the relative path to the other file so for instance `{{fill var index}}` or `{{fill var blog/page1}}`, this can be combined with a for loop for instance:
+
+```
+@def paths = ["index", "blog/page1"]
+{{for p in paths}}
+  {{fill var p}}
+{{end}}
+```
+
+And maybe most importantly, the addition of a `utils.jl` file to complement the `config.md`. In that file you can define variables and functions that can be used elsewhere on your site; they are evaluated in a `Utils` module which is imported in all evaluated code blocks.
+
+* if you define a variable `var = 5`, it will be accessible everywhere, taking priority over any other page variable (including global), you can call `{{fill var}}` or use it in an evaluated code block with `Utils.var`.
+* if you define a function `foo() = print("hello")`, you can use it in an evaluated code block with  `Utils.foo()`
+* if you define a function `hfun_foo() = return "blah"`, you can use it as a template function `{{foo}}`, they have access to page variable names so this would also be valid:
+
+```julia
+function hfun_bar(vname) # vname is a vector of string here
+    val = locvar(vname[1])
+    return round(sqrt(val), digits=2)
+end
+```
+
+which you can call with `{{bar var}}`.
+
+* if you define a function `lx_baz` you can use `\baz{...}` and have the function directly act on the input string, the syntax to use must conform to the following example:
+
+```julia
+function lx_baz(com, _)
+    # keep this first line
+    brace_content = Franklin.content(com.braces[1]) # input string
+    # Now do whatever you want with the content:
+    return uppercase(brace_content)
+end
+```
+
+which you can call with `\baz{some string}`.
+
+
+
+---
+
+## v0.6+
 
 * addition of an `ignore` global page variable to ignore files and directories, addition of a `div_content` page variable to change the name of the main container div.
 * Multiline markdown definitions are now allowed, the lines **must** be indented with four spaces e.g. this is ok:

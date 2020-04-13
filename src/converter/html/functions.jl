@@ -5,19 +5,20 @@ Helper function to process an individual block when it's a `HFun` such as
 `{{ fill author }}`. See also [`convert_html`](@ref).
 """
 function convert_html_fblock(β::HFun)::String
-    # try to find a function `hfun_...`
     fun = Symbol("hfun_" * lowercase(β.fname))
-    isdefined(Franklin, fun) && return eval(:($fun($β.params)))
-
-    # if zero parameters, see if can fill
-    if isempty(β.params) && !isnothing(locvar(β.fname))
+    ex  = isempty(β.params) ? :($fun()) : :($fun($β.params))
+    # see if a hfun was defined in utils
+    if isdefined(Main, :Utils) && isdefined(Main.Utils, fun)
+        res = Core.eval(Main.Utils, ex)
+        return string(res)
+    end
+    # see if a hfun was defined internally
+    isdefined(Franklin, fun) && return eval(ex)
+    # if zero parameters, see if can fill (case: {{vname}})
+    if isempty(β.params) &&
+        (!isnothing(locvar(β.fname)) || β.fname in UTILS_NAMES)
         return hfun_fill([β.fname])
     end
-
-    # XXX Future
-    # XXX see if there's an externally defined hfun
-    # XXX isdefined(Utils, fun) && Utils.eval(:($fun($β.params)))
-
     # if we get here, then the function name is unknown, warn and ignore
     @warn "I found a function block '{{$(β.fname) ...}}' but I don't " *
           "recognise the function name. Ignoring."
@@ -29,24 +30,40 @@ end
 """
 $(SIGNATURES)
 
-H-Function of the form `{{ fill vname }}` to plug in the content of a
-franklin-var `vname` (assuming it can be represented as a string).
+H-Function of the form `{{ fill vname }}` or `{{ fill vname rpath}}` to plug in
+the content of a franklin-var `vname` (assuming it can be represented as a
+string).
 """
 function hfun_fill(params::Vector{String})::String
     # check params
-    if length(params) != 1
-        throw(HTMLFunctionError("I found a {{fill ...}} with more than one parameter. Verify."))
+    if length(params) > 2 || isempty(params)
+        throw(HTMLFunctionError("{{fill ...}} should have one or two " *
+                                "($(length(params)) given). Verify."))
     end
     # form the fill
     repl  = ""
     vname = params[1]
-    if haskey(LOCAL_VARS, vname)
-        # retrieve the value stored
-        tmp_repl = locvar(vname)
-        isnothing(tmp_repl) || (repl = string(tmp_repl))
-    else
-        @warn "I found a '{{fill $vname}}' but I do not know the " *
-              "variable '$vname'. Ignoring."
+    if length(params) == 1
+        if vname in UTILS_NAMES
+            repl = string(getfield(Main.Utils, Symbol(vname)))
+        else
+            tmp_repl = locvar(vname)
+            if isnothing(tmp_repl)
+                @warn "I found a '{{fill $vname}}' but I do not know the " *
+                      "variable '$vname'. Ignoring."
+            else
+                repl = string(tmp_repl)
+            end
+        end
+    else # two parameters, look in a path
+        rpath = params[2]
+        tmp_repl = pagevar(rpath, vname)
+        if isnothing(tmp_repl)
+            @warn "I found a '{{fill $vname $rpath}}' but I do not know the " *
+                  "variable '$vname' or the path '$rpath'. Ignoring."
+        else
+            repl = string(tmp_repl)
+        end
     end
     return repl
 end

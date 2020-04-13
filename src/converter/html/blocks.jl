@@ -157,56 +157,37 @@ end
 """
 $SIGNATURES
 
-Process a for block.
+Process a for block (for a variable iterate).
 """
 function process_html_for(hs::AS, qblocks::Vector{AbstractBlock},
                           i::Int)::Tuple{String,Int,Int}
     # check that the iterable is known
     β_open = qblocks[i]
-    vname  = β_open.vname
-    iname  = β_open.iname
-    if !haskey(LOCAL_VARS, iname)
+    vname  = β_open.vname # x or (x, v)
+    iname  = β_open.iname # var
+
+    if iname ∉ UTILS_NAMES && !haskey(LOCAL_VARS, iname)
         throw(HTMLBlockError("The iterable '$iname' is not recognised. " *
                              "Please make sure it's defined."))
     end
-
-    # try to close the for loop
-    if i == length(qblocks)
-        throw(HTMLBlockError("Could not close the conditional block " *
-                             "starting with '$(qblocks[i].ss)'."))
+    if iname ∈ UTILS_NAMES # can only happen if Utils is defined.
+        iter = getfield(Main.Utils, Symbol(iname))
+    else
+        iter = locvar(iname)
     end
 
-    init_idx = i
-    content  = ""
-
-    # inbalance keeps track of whether we've managed to find a
-    # matching {{end}}. It increases if it sees other opening {{if..}}
-    # and decreases if it sees a {{end}}
-    inbalance = 1
-    while i < length(qblocks) && inbalance > 0
-        i         += 1
-        inbalance += hbalance(qblocks[i])
-    end
-    # we've exhausted the candidate qblocks and not found an appropriate {{end}}
-    if inbalance > 0
-        throw(HTMLBlockError("Could not close the conditional block " *
-                             "starting with '$(qblocks[init_idx].ss)'."))
-    end
-    # we've found the closing {{end}} and index `i`
-    β_close = qblocks[i]
-    i_close = i
-
-    isempty(locvar(iname)) && @goto final_step
+    i_close, β_close = get_for_body(i, qblocks)
+    isempty(iter) && @goto final_step
 
     # is vname a single variable or multiple variables?
     # --> {{for v in iterate}}
-    # --> {{for (v1, v2) in iterate }}
+    # --> {{for (v1, v2) in iterate }}   (unpacking)
     vnames = [vname]
     if startswith(vname, "(")
         vnames = strip.(split(vname[2:end-1], ","))
     end
     # check that the first element of the iterate has the same length
-    el1 = first(locvar(iname))
+    el1 = first(iter)
     length(vnames) in (1, length(el1)) ||
         throw(HTMLBlockError("In a {{for ...}}, the first element of" *
                 "the iterate has length $(length(el1)) but tried to unpack" *
@@ -222,22 +203,57 @@ function process_html_for(hs::AS, qblocks::Vector{AbstractBlock},
     isempty(strip(inner)) && @goto final_step
     content = ""
     if length(vnames) == 1
-        for value in locvar(iname)
+        rx1 = Regex("{{\\s*fill\\s+$vname\\s*}}")           # {{ fill v}}
+        rx2 = Regex("{{\\s*fill\\s+(\\S+)\\s+$vname\\s*}}") # {{ fill x v}}
+        for v in iter
             # at the moment we only consider {{fill ...}}
-            content *= replace(inner,
-                        Regex("({{\\s*fill\\s+$vname\\s*}})") => "$value")
+            tmp = replace(inner, rx1 => "$v")
+            tmp = replace(tmp, rx2 => SubstitutionString("{{fill \\1 $v}}"))
+            content *= tmp
         end
     else
-        for value in locvar(iname)
-            temp = inner
-            for (vname, value) in zip(vnames, value)
-                temp = replace(temp,
-                        Regex("({{\\s*fill\\s+$vname\\s*}})") => "$value")
+        for values in iter # each element of the iter can be unpacked
+            tmp = inner
+            for (vname, v) in zip(vnames, values)
+                rx1 = Regex("{{\\s*fill\\s+$vname\\s*}}")
+                rx2 = Regex("{{\\s*fill\\s+(\\S+)\\s+$vname\\s*}}")
+                tmp = replace(tmp, rx1 => "$v")
+                tmp = replace(tmp, rx2 => SubstitutionString("{{fill \\1 $v}}"))
             end
-            content *= temp
+            content *= tmp
         end
     end
     @label final_step
     head = nextind(hs, to(β_close))
     return convert_html(content), head, i_close
+end
+
+"""
+$SIGNATURES
+
+Extract the body of a for loop, keeping track of balancing.
+"""
+function get_for_body(i::Int, qblocks::Vector{AbstractBlock})
+    # try to close the for loop
+    if i == length(qblocks)
+        throw(HTMLBlockError("Could not close the block starting with" *
+                             "'$(qblocks[i].ss)'."))
+    end
+    init_idx = i
+    content  = ""
+    # inbalance keeps track of whether we've managed to find a
+    # matching {{end}}. It increases if it sees other opening {{if..}}
+    # and decreases if it sees a {{end}}
+    inb = 1
+    while i < length(qblocks) && inb > 0
+        i   += 1
+        inb += hbalance(qblocks[i])
+    end
+    # we've exhausted the candidate qblocks and not found a matching {{end}}
+    if inb > 0
+        throw(HTMLBlockError("Could not close the block starting with" *
+                             "'$(qblocks[init_idx].ss)'."))
+    end
+    # we've found the closing {{end}} and index `i`
+    return i, qblocks[i]
 end

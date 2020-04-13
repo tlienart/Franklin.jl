@@ -55,7 +55,7 @@ const LOCAL_VARS_DEFAULT = [
     "date"          => Pair(Date(1), (String, Date, Nothing)),
     "lang"          => Pair("julia", (String,)), # default lang indented code
     "reflinks"      => Pair(true,    (Bool,)),   # are there reflinks?
-    "indented_code" => Pair(true,    (Bool,)),   # support indented code?
+    "indented_code" => Pair(false,   (Bool,)),   # support indented code?
     # -----------------
     # TABLE OF CONTENTS
     "mintoclevel" => Pair(1,  (Int,)), # set to 2 to ignore h1
@@ -116,16 +116,72 @@ function def_LOCAL_VARS!()::Nothing
 end
 
 """
+    locvar(name)
+
 Convenience function to get the value associated with a local var.
 Return `nothing` if the variable is not found.
 """
-locvar(name::String) = haskey(LOCAL_VARS, name) ? LOCAL_VARS[name].first : nothing
+function locvar(name::Union{Symbol,String})
+    name = String(name)
+    return haskey(LOCAL_VARS, name) ? LOCAL_VARS[name].first : nothing
+end
 
 """
+    globvar(name)
+
 Convenience function to get the value associated with a global var.
 Return `nothing` if the variable is not found.
 """
-globvar(name::String) = haskey(GLOBAL_VARS, name) ? GLOBAL_VARS[name].first : nothing
+function globvar(name::Union{Symbol,String})
+    name = String(name)
+    return haskey(GLOBAL_VARS, name) ? GLOBAL_VARS[name].first : nothing
+end
+
+
+"""
+Dict to keep track of all pages and their vars. Each key is a relative path
+to a page, values are PageVars.
+"""
+const ALL_PAGE_VARS = Dict{String,PageVars}()
+
+"""
+    pagevar(rpath, name)
+
+Convenience function to get the value associated with a var available to a page
+corresponding to `rpath`. So for instance if `blog/index.md` has `@def var = 0`
+then this can be accessed with `pagevar("var", "blog/index")`.
+If `rpath` is not yet a key of `ALL_PAGE_VARS` then maybe the page hasn't been
+processed yet so force a pass over that page.
+"""
+function pagevar(rpath::AS, name::Union{Symbol,String})
+    rpath = splitext(rpath)[1]
+    if !haskey(ALL_PAGE_VARS, rpath)
+        # does there exist a file with a `.md` ? if so go over it
+        # otherwise return nothing
+        fpath = rpath * ".md"
+        candpath = FD_ENV[:STRUCTURE] < v"0.2" ?
+                     joinpath(path(:src), fpath) :
+                     joinpath(path(:folder), fpath)
+        isfile(candpath) || return nothing
+        # store curpath
+        bk_path = locvar("fd_rpath")
+        # set temporary cur path (so that defs go to the right place)
+        set_cur_rpath(rpath, isrelative=true)
+        # effectively we only care about the mddefs
+        convert_md(read(fpath, String), only_mddefs=true, isinternal=true)
+        # re-set the cur path to what it was before
+        set_cur_rpath(bk_path)
+    end
+    name = String(name)
+    haskey(ALL_PAGE_VARS[rpath], name) || return nothing
+    return ALL_PAGE_VARS[rpath][name].first
+end
+
+"""
+Keep track of the names declared in the Utils module.
+"""
+const UTILS_NAMES = Vector{String}()
+
 
 """
 Keep track of seen headers. The key is the refstring, the value contains the
@@ -187,8 +243,8 @@ Convenience functions related to the page vars
 $(SIGNATURES)
 
 Convenience function taking a `DateTime` object and returning the corresponding
-formatted string with the format contained in `LOCAL_VARS["date_format"]` and 
-with the locale data provided in `date_months`, `date_shortmonths`, `date_days`, 
+formatted string with the format contained in `LOCAL_VARS["date_format"]` and
+with the locale data provided in `date_months`, `date_shortmonths`, `date_days`,
 and `date_shortdays` local variables. If `short` variations are not provided,
 automatically construct them using the first three letters of the names in
 `date_months` and `date_days`.
@@ -214,7 +270,7 @@ function fd_date(d::DateTime)
         shortmonths = first.(months, 3)
     end
     # set locale for this page
-    Dates.LOCALES["date_locale"] = Dates.DateLocale(months, shortmonths, 
+    Dates.LOCALES["date_locale"] = Dates.DateLocale(months, shortmonths,
                                                     days, shortdays)
     return Dates.format(d, format, locale="date_locale")
 end
