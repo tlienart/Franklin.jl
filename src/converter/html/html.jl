@@ -44,6 +44,7 @@ function fd2html_v(st::AS; internal::Bool=false,
                    dir::String="")::Tuple{String,Dict}
     isempty(st) && return st
     if !internal
+        empty!(ALL_PAGE_VARS)
         FOLDER_PATH[] = isempty(dir) ? mktempdir() : dir
         set_paths!()
         def_GLOBAL_LXDEFS!()

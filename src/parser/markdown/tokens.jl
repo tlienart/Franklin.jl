@@ -21,7 +21,6 @@ const MD_1C_TOKENS_LX = LittleDict{Char, Symbol}(
     '}'  => :LXB_CLOSE
     )
 
-
 """
 MD_TOKENS
 

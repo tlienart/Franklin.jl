@@ -119,7 +119,9 @@ function get_lxdef_ref(lxname::SubString, lxdefs::Vector{LxDef},
     fromlx = from(lxname) + offset
     filter!(k -> (fromlx > from(lxdefs[k])), ks)
     if isempty(ks)
-        if !inmath
+        if isdefined(Main, :Utils) && isdefined(Main.Utils, Symbol("lx_$(lxname[2:end])"))
+            return Ref(nothing)
+        elseif !inmath
             throw(LxComError("Command '$lxname' was used before it was defined."))
         end
         # not found but inmath --> let KaTex deal with it
@@ -149,11 +151,22 @@ function find_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
         # 1. look for the definition given the command name
         lxname   = τ.ss
         lxdefref = get_lxdef_ref(lxname, lxdefs, inmath, offset)
+        derived  = false
         # will only be nothing in a 'inmath' --> no failure, just ignore token
-        isnothing(lxdefref[]) && continue
-
-        # 2. retrieve number of arguments
-        lxnarg = getindex(lxdefref).narg
+        if isnothing(lxdefref[])
+            lxn = lxname[2:end]
+            fun = Symbol("lx_" * lxn)
+            if isdefined(Main, :Utils) && isdefined(Main.Utils, fun)
+                # take a single bracket
+                lxnarg  = 1
+                derived = true
+            else
+                continue
+            end
+        else
+            lxnarg = getindex(lxdefref).narg
+        end
+        # 2. explore with # arguments
         # 2.a there are none
         if lxnarg == 0
             push!(lxcoms, LxCom(lxname, lxdefref))
@@ -188,7 +201,11 @@ function find_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
             from_c = from(τ)
             to_c   = to(cand_braces[end])
             str_c  = subs(str(τ), from_c, to_c)
-            push!(lxcoms, LxCom(str_c, lxdefref, cand_braces))
+            if derived
+                push!(lxcoms, LxCom(str_c, nothing, cand_braces))
+            else
+                push!(lxcoms, LxCom(str_c, lxdefref, cand_braces))
+            end
 
             # deactivate tokens in the span of the command (will be
             # reparsed later)

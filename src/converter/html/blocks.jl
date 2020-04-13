@@ -208,7 +208,7 @@ function process_html_for(hs::AS, qblocks::Vector{AbstractBlock},
         for v in iter
             # at the moment we only consider {{fill ...}}
             tmp = replace(inner, rx1 => "$v")
-            tmp = replace(tmp, rx2 => SubstitutionString("{{fill \1 $v}}"))
+            tmp = replace(tmp, rx2 => SubstitutionString("{{fill \\1 $v}}"))
             content *= tmp
         end
     else
@@ -218,7 +218,7 @@ function process_html_for(hs::AS, qblocks::Vector{AbstractBlock},
                 rx1 = Regex("{{\\s*fill\\s+$vname\\s*}}")
                 rx2 = Regex("{{\\s*fill\\s+(\\S+)\\s+$vname\\s*}}")
                 tmp = replace(tmp, rx1 => "$v")
-                tmp = replace(tmp, rx2 => SubstitutionString("{{fill \1 $v}}"))
+                tmp = replace(tmp, rx2 => SubstitutionString("{{fill \\1 $v}}"))
             end
             content *= tmp
         end

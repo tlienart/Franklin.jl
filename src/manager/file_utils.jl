@@ -249,8 +249,12 @@ Takes the path to the current file and sets the `fd_rpath` local page variable
 as well as the `FD_ENV[:CUR_PATH]` variable (used for conditional blocks
 depending on URL for instance).
 """
-function set_cur_rpath(fpath::String)
-    rpath = get_rpath(fpath)
+function set_cur_rpath(fpath::String; isrelative::Bool=false)
+    if isrelative
+        rpath = fpath
+    else
+        rpath = get_rpath(fpath)
+    end
     FD_ENV[:CUR_PATH] = rpath
     set_var!(LOCAL_VARS, "fd_rpath", rpath)
     return nothing

@@ -10,7 +10,7 @@ F.FD_ENV[:STRUCTURE] = v"0.1" # legacy, it's switched up in the tests.
 println("UTILS-1")
 include("utils/folder_structure.jl")
 include("utils/paths_vars.jl"); include("test_utils.jl")
-
+# ---
 println("UTILS-2")
 include("utils/misc.jl")
 include("utils/errors.jl")
@@ -102,6 +102,11 @@ cd(dirname(dirname(pathof(Franklin))))
 
 println("TEMPLATING")
 include("templating/for.jl")
+# XXX XXX 
+include("templating/fill.jl")
+
+println("UTILS FILE")
+include("utils_file/basic.jl")
 
 println("INTEGRATION")
 include("integration/literate.jl")

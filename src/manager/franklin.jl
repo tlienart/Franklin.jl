@@ -3,7 +3,7 @@ $SIGNATURES
 
 Clear the environment dictionaries.
 """
-clear_dicts() = empty!.((GLOBAL_LXDEFS, GLOBAL_VARS, LOCAL_VARS))
+clear_dicts() = empty!.((GLOBAL_LXDEFS, GLOBAL_VARS, LOCAL_VARS, ALL_PAGE_VARS))
 
 """
 $(SIGNATURES)
@@ -149,8 +149,8 @@ function fd_setup(; clear::Bool=true)::NamedTuple
     prepare_output_dir(clear)
 
     # . recovering the list of files in the input dir we care about
-    # -- these are stored in dictionaries, the key is the full path and the value is the time of
-    # last change (useful for continuous monitoring)
+    # -- these are stored in dictionaries, the key is the full path and the
+    # value is the time of last change (useful for continuous monitoring)
     md_pages         = TrackedFiles()
     html_pages       = TrackedFiles()
     other_files      = TrackedFiles()
@@ -273,7 +273,7 @@ function fd_loop(cycle_counter::Int, ::LiveServer.FileWatcher,
             fpath = joinpath(fpair...)
             if !isfile(fpath)
                 delete!(d, fpair)
-                rp = get_rpath(fpath)
+                rp = splitext(get_rpath(fpath))[1]
                 haskey(ALL_PAGE_VARS, rp) && delete!(ALL_PAGE_VARS, rp)
             end
         end

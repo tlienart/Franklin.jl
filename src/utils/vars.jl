@@ -150,12 +150,31 @@ const ALL_PAGE_VARS = Dict{String,PageVars}()
 Convenience function to get the value associated with a var available to a page
 corresponding to `rpath`. So for instance if `blog/index.md` has `@def var = 0`
 then this can be accessed with `pagevar("var", "blog/index")`.
+If `rpath` is not yet a key of `ALL_PAGE_VARS` then maybe the page hasn't been
+processed yet so force a pass over that page.
 """
 function pagevar(rpath::AS, name::Union{Symbol,String})
-    haskey(ALL_PAGE_VARS, rpath) || return nothing
+    rpath = splitext(rpath)[1]
+    if !haskey(ALL_PAGE_VARS, rpath)
+        # does there exist a file with a `.md` ? if so go over it
+        # otherwise return nothing
+        fpath = rpath * ".md"
+        candpath = FD_ENV[:STRUCTURE] < v"0.2" ?
+                     joinpath(path(:src), fpath) :
+                     joinpath(path(:folder), fpath)
+        isfile(candpath) || return nothing
+        # store curpath
+        bk_path = locvar("fd_rpath")
+        # set temporary cur path (so that defs go to the right place)
+        set_cur_rpath(rpath, isrelative=true)
+        # effectively we only care about the mddefs
+        convert_md(read(fpath, String), only_mddefs=true, isinternal=true)
+        # re-set the cur path to what it was before
+        set_cur_rpath(bk_path)
+    end
     name = String(name)
     haskey(ALL_PAGE_VARS[rpath], name) || return nothing
-    return ALL_PAGE_VARS[rpath][name]
+    return ALL_PAGE_VARS[rpath][name].first
 end
 
 """

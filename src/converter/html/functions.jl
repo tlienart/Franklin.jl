@@ -6,7 +6,7 @@ Helper function to process an individual block when it's a `HFun` such as
 """
 function convert_html_fblock(β::HFun)::String
     fun = Symbol("hfun_" * lowercase(β.fname))
-    ex  = :($fun($β.params))
+    ex  = isempty(β.params) ? :($fun()) : :($fun($β.params))
     # see if a hfun was defined in utils
     if isdefined(Main, :Utils) && isdefined(Main.Utils, fun)
         return Core.eval(Main.Utils, ex)
@@ -14,7 +14,8 @@ function convert_html_fblock(β::HFun)::String
     # see if a hfun was defined internally
     isdefined(Franklin, fun) && return eval(ex)
     # if zero parameters, see if can fill (case: {{vname}})
-    if isempty(β.params) && !isnothing(locvar(β.fname))
+    if isempty(β.params) &&
+        (!isnothing(locvar(β.fname)) || β.fname in UTILS_NAMES)
         return hfun_fill([β.fname])
     end
     # if we get here, then the function name is unknown, warn and ignore

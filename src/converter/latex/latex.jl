@@ -10,7 +10,16 @@ function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef};
     # retrieve the definition the command points to
     lxd = getdef(lxc)
     # it will be `nothing` in math mode, let KaTeX have it
-    lxd === nothing && return lxc.ss
+    if lxd === nothing
+        name = getname(lxc) # `\\cite` -> `cite`
+        fun  = Symbol("lx_" * name)
+        @show fun
+        if isdefined(Main, :Utils) && isdefined(Main.Utils, fun)
+            return Core.eval(Main.Utils, :($fun($lxc, $lxdefs)))
+        else
+            return lxc.ss
+        end
+    end
     # otherwise it may be
     # -> empty, in which case try to find a specific internal definition or
     # return an empty string (see `commands.jl`)
@@ -19,12 +28,9 @@ function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef};
         # see if a function `lx_name` exists
         name = getname(lxc) # `\\cite` -> `cite`
         fun  = Symbol("lx_" * name)
-        ex   = :($fun($lxc, $lxdefs))
-        if isdefined(Main, :Utils) && isdefined(Main.Utils, fun)
-            return Core.eval(Main.Utils, ex)
-        elseif isdefined(Franklin, fun)
+        if isdefined(Franklin, fun)
             # apply that function
-            return eval(ex)
+            return eval(:($fun($lxc, $lxdefs)))
         else
             return ""
         end
