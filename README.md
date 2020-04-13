@@ -55,7 +55,7 @@ See [the docs](https://franklinjl.org) for more information and examples.
 
 ## Getting started
 
-With Julia ≥ 1.1:
+With Julia ≥ 1.3:
 
 ```julia
 pkg> add Franklin
