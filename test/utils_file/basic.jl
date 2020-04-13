@@ -31,6 +31,19 @@ end
         {{foo}}
         """ |> fdi
     @test isapproxstr(s, "blah")
+
+    write("utils.jl", """
+        function hfun_bar(vname)
+            val = locvar(vname[1])
+            return round(sqrt(val), digits=2)
+        end
+        """)
+    F.process_utils()
+    s = """
+        @def xx = 25
+        {{bar xx}}
+        """ |> fdi
+    @test isapproxstr(s, "5.0")
 end
 
 @testset "utils:lxfun" begin
@@ -42,6 +55,18 @@ end
     F.process_utils()
     s = raw"""
         \foo{bar}
+        """ |> fdi
+    @test isapproxstr(s, "BAR")
+
+    write("utils.jl", """
+        function lx_baz(com, _)
+            brace_content = Franklin.content(com.braces[1])
+            return uppercase(brace_content)
+        end
+        """)
+    F.process_utils()
+    s = raw"""
+        \baz{bar}
         """ |> fdi
     @test isapproxstr(s, "BAR")
 end
