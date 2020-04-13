@@ -11,6 +11,8 @@ You can also check out [this issue](https://github.com/tlienart/Franklin.jl/issu
 * indented code blocks are now opt-in, prefer fenced code blocks with backticks `` ` ``. This helps avoid ambiguities in parsing. If you do want indented code blocks on a page use `@def indented_code = true`, if you want them everywhere, put that definition in your `config.md`.
 * markers for comments now **must** be separated with a character distinct from `-` so `<!--_` is ok, `<!---` is not, `~-->` is ok, `--->` is not. Rule of thumb: use a whitespace.
 
+**Note**: supported Julia versions: 1.3, **1.4**, 1.5.
+
 ### New stuff
 
 The main new stuff are:
