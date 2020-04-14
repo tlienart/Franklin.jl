@@ -26,7 +26,6 @@ function convert_md(mds::AS,
                     isinternal::Bool=false,
                     isconfig::Bool=false,
                     has_mddefs::Bool=true,
-                    only_mddefs::Bool=false, # see pagevar
                     )::String
     # instantiate page dictionaries
     isrecursive || isinternal || set_page_env()
@@ -101,8 +100,7 @@ function convert_md(mds::AS,
     if has_mddefs
         process_mddefs(blocks, isconfig)
     end
-    #> 4.0 if only_mddefs, terminate early, we don't care about the rest
-    only_mddefs && return ""
+
     #> 4.b if config, update global lxdefs as well
     if isconfig
         for lxd ∈ lxdefs
@@ -144,7 +142,10 @@ function convert_md(mds::AS,
 
     # final var adjustment, infer title if not given
     if isnothing(locvar("title")) && !isempty(PAGE_HEADERS)
-        set_var!(LOCAL_VARS, "title", first(values(PAGE_HEADERS))[1])
+        title = first(values(PAGE_HEADERS))[1]
+        set_var!(LOCAL_VARS, "title", title)
+        ALL_PAGE_VARS[splitext(locvar("fd_rpath"))[1]]["title"] =
+            deepcopy(LOCAL_VARS["title"])
     end
 
     # Return the string

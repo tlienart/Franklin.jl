@@ -80,6 +80,7 @@ const LOCAL_VARS_DEFAULT = [
     "fd_ctime"  => Pair(Date(1),    (Date,)),   # time of creation
     "fd_mtime"  => Pair(Date(1),    (Date,)),   # time of last modification
     "fd_rpath"  => Pair("",         (String,)), # rpath to current page
+    "fd_url"    => Pair("",         (String,)),
     ]
 #=
 NOTE:
@@ -112,6 +113,7 @@ function def_LOCAL_VARS!()::Nothing
     merge!(LOCAL_VARS, GLOBAL_VARS)
     # which page we're on, see write_page which sets :CUR_PATH
     set_var!(LOCAL_VARS, "fd_rpath", FD_ENV[:CUR_PATH])
+    set_var!(LOCAL_VARS, "fd_url", url_curpage())
     return nothing
 end
 
@@ -163,14 +165,22 @@ function pagevar(rpath::AS, name::Union{Symbol,String})
                      joinpath(path(:src), fpath) :
                      joinpath(path(:folder), fpath)
         isfile(candpath) || return nothing
+        # store current locvar
+        if @isdefined LOCAL_VARS
+            bk_LOCAL_VARS = deepcopy(LOCAL_VARS)
+        else
+            bk_LOCAL_VARS = nothing
+        end
         # store curpath
         bk_path = locvar("fd_rpath")
         # set temporary cur path (so that defs go to the right place)
-        set_cur_rpath(rpath, isrelative=true)
+        set_cur_rpath(fpath, isrelative=true)
         # effectively we only care about the mddefs
-        convert_md(read(fpath, String), only_mddefs=true, isinternal=true)
+        convert_md(read(fpath, String))
         # re-set the cur path to what it was before
-        set_cur_rpath(bk_path)
+        set_cur_rpath(bk_path, isrelative=true)
+        # re-set local vars
+        isnothing(bk_LOCAL_VARS) || (LOCAL_VARS = bk_LOCAL_VARS)
     end
     name = String(name)
     haskey(ALL_PAGE_VARS[rpath], name) || return nothing
