@@ -73,10 +73,10 @@ end
 
 # 452
 @testset "utils:lxfun2" begin
-    write("utils.jl", """
+    write("utils.jl", raw"""
         function lx_bold(com, _)
             text = Franklin.content(com.braces[1])
-            return "**" * text * "**"
+            return "**$text**"
         end
         """)
     F.process_utils()
