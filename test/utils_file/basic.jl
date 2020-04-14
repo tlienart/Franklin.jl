@@ -70,3 +70,18 @@ end
         """ |> fdi
     @test isapproxstr(s, "BAR")
 end
+
+# 452
+@testset "utils:lxfun2" begin
+    write("utils.jl", raw"""
+        function lx_bold(com, _)
+            text = Franklin.content(com.braces[1])
+            return "**$text**"
+        end
+        """)
+    F.process_utils()
+    s = raw"""
+        \bold{bar}
+        """ |> fdi
+    @test isapproxstr(s, "<strong>bar</strong>")
+end

@@ -14,7 +14,8 @@ function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef};
         name = getname(lxc) # `\\cite` -> `cite`
         fun  = Symbol("lx_" * name)
         if isdefined(Main, :Utils) && isdefined(Main.Utils, fun)
-            return Core.eval(Main.Utils, :($fun($lxc, $lxdefs)))
+            raw = Core.eval(Main.Utils, :($fun($lxc, $lxdefs)))
+            return reprocess(raw, lxdefs)
         else
             return lxc.ss
         end

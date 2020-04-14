@@ -55,7 +55,7 @@ function process_utils()
     end
     # wipe / create module Utils
     newmodule("Utils")
-    Core.eval(Main.Utils, :(include($utils)))
+    Base.include(Main.Utils, utils)
     # # keep track of utils names
     ns = String.(names(Main.Utils, all=true))
     filter!(n -> n[1] != '#' && n ∉ ("eval", "include", "Utils"), ns)
