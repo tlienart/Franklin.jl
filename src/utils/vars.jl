@@ -8,6 +8,10 @@ for that value. (e.g.: "THE AUTHOR" => (String, Nothing))
 """
 const GLOBAL_VARS = PageVars()
 
+# rpath => tags
+# UPPERCASE EVEN IF NOT CONST?
+TAGS = Dict{String, Vector{String}}()
+
 const GLOBAL_VARS_DEFAULT = [
     # Folder org
     "folder_structure" => Pair(FD_ENV[:STRUCTURE], (VersionNumber,)),
@@ -52,13 +56,14 @@ const LOCAL_VARS = PageVars()
 
 const LOCAL_VARS_DEFAULT = [
     # General
-    "title"         => Pair(nothing, (String, Nothing)),
-    "hasmath"       => Pair(true,    (Bool,)),
-    "hascode"       => Pair(false,   (Bool,)),
-    "date"          => Pair(Date(1), (String, Date, Nothing)),
-    "lang"          => Pair("julia", (String,)), # default lang indented code
-    "reflinks"      => Pair(true,    (Bool,)),   # are there reflinks?
-    "indented_code" => Pair(false,   (Bool,)),   # support indented code?
+    "title"         => Pair(nothing,    (String, Nothing)),
+    "hasmath"       => Pair(true,       (Bool,)),
+    "hascode"       => Pair(false,      (Bool,)),
+    "date"          => Pair(Date(1),    (String, Date, Nothing)),
+    "lang"          => Pair("julia",    (String,)), # default lang indented code
+    "reflinks"      => Pair(true,       (Bool,)),   # are there reflinks?
+    "indented_code" => Pair(false,      (Bool,)),   # support indented code?
+    "tags"          => Pair(String[],   (Vector{String},)),
     # -----------------
     # TABLE OF CONTENTS
     "mintoclevel" => Pair(1,  (Int,)), # set to 2 to ignore h1

@@ -106,6 +106,7 @@ function serve(; clear::Bool=false,
                       on_write=on_write)
     FD_ENV[:FORCE_REEVAL] = false
     sig < 0 && return sig
+    generate_tag_pages()
     fmsg = rpad("✔ full pass...", 40)
     verb && (println(""); print(fmsg); print_final(fmsg, start); println(""))
 
