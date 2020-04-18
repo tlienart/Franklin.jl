@@ -98,7 +98,7 @@ While Franklin broadly supports standard Markdown there are a few things that ma
 
 * when writing a list, the content of the list item **must** be on a single line (no line break)
 * you can write comments with `<!-- comments -->` the comment markers `<!--` and `-->` **must** be separated by a character that is not a `-` to work properly so `<!--A-->` is ok but `<!---A--->` is not, best is to just systematically use a whitespace: `<!-- A -->`.
-* be careful writing double braces, `{{...}}` has a *meaning* (html functions) this can cause issues in latex commands, if you have double braces in a latex command, **make sure to add whitespaces** for instance write `\dbrace{ {101}_{2} }` instead of `\dbrace{{101}_{2}}`. In general use whitespaces liberally to help the parser in math and latex commands.
+* be careful writing double braces, `{{...}}` has a *meaning* (html functions) this can cause issues in latex commands, if you have double braces in a latex command, **make sure to add whitespaces** for instance write `\dfrac{1}{ {101}_{2} }` instead of `\dfrac{1}{{101}_{2}}`. In general use whitespaces liberally to help the parser in math and latex commands.
 * (as of `v0.7`) code blocks should be delimited with backticks `` ` `` you *can* also use indented blocks to delimit code blocks but you now have to **opt in** explicitly on pages that would use them by using `@def indented_code = true`, if you want to use that everywhere, write that in the `config.md`. Note that indented blocks are **ambiguous** with some of the other things that Franklin provides (div blocks, latex commands) and so if you use them, you are responsible for avoiding ambiguities (effectively that means _not using indentation for anything else than code_)
 
 
