@@ -5,7 +5,6 @@ write(joinpath("_layout", "head.html"), "")
 write(joinpath("_layout", "foot.html"), "")
 write(joinpath("_layout", "page_foot.html"), "")
 write("config.md", "")
-fdi(s) = fd2html(s; internal=true)
 
 @testset "utils1" begin
     write("utils.jl", """

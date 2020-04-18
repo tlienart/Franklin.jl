@@ -1,7 +1,11 @@
 fs2()
 
 temp_config = joinpath(F.PATHS[:folder], "config.md")
-write(temp_config, "@def author = \"Stefan Zweig\"\n")
+write(temp_config, raw"""
+    @def author = "Stefan Zweig"
+    @def automath = false
+    @def autocode = false
+    """)
 temp_index = joinpath(F.PATHS[:folder], "index.md")
 write(temp_index, "blah blah")
 temp_index2 = joinpath(F.PATHS[:folder], "index.html")

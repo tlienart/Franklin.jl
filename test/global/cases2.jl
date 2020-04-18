@@ -179,3 +179,21 @@ end
         </p>
         """)
 end
+
+@testset "i 419" begin
+    s = raw"""
+        {{hasmath}} {{hascode}}
+        $x = 5$
+        """ |> fdi
+    @test isapproxstr(s, "true false \\(x = 5\\)")
+    s = raw"""
+        {{hasmath}} {{hascode}}
+        ```r
+        blah
+        ```
+        """ |> fdi
+    @test isapproxstr(s, """
+        false true
+        <pre><code class=\"language-r\">blah</code></pre>
+        """)
+end
