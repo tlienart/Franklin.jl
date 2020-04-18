@@ -168,3 +168,5 @@ function fs2()
     mkdir(F.PATHS[:libs])
     mkdir(F.PATHS[:literate])
 end
+
+fdi(s) = fd2html(s; internal=true)

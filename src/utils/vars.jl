@@ -12,22 +12,25 @@ const GLOBAL_VARS_DEFAULT = [
     # Folder org
     "folder_structure" => Pair(FD_ENV[:STRUCTURE], (VersionNumber,)),
     # General
-    "author"           => Pair("THE AUTHOR",   (String, Nothing)),
-    "date_format"      => Pair("U dd, yyyy",   (String,)),
-    "date_months"      => Pair(String[],       (Vector{String},)),
-    "date_shortmonths" => Pair(String[],       (Vector{String},)),
-    "date_days"        => Pair(String[],       (Vector{String},)),
-    "date_shortdays"   => Pair(String[],       (Vector{String},)),
-    "prepath"          => Pair("",             (String,)),
+    "author"           => Pair("THE AUTHOR", (String, Nothing)),
+    "date_format"      => Pair("U dd, yyyy", (String,)),
+    "date_months"      => Pair(String[],     (Vector{String},)),
+    "date_shortmonths" => Pair(String[],     (Vector{String},)),
+    "date_days"        => Pair(String[],     (Vector{String},)),
+    "date_shortdays"   => Pair(String[],     (Vector{String},)),
+    "prepath"          => Pair("",           (String,)),
     # will be added to IGNORE_FILES
-    "ignore"           => Pair(String[],       (Vector{String},)),
+    "ignore"           => Pair(String[], (Vector{String},)),
     # RSS
-    "website_title"    => Pair("",             (String,)),
-    "website_descr"    => Pair("",             (String,)),
-    "website_url"      => Pair("",             (String,)),
-    "generate_rss"     => Pair(true,           (Bool,)),
+    "website_title"    => Pair("",   (String,)),
+    "website_descr"    => Pair("",   (String,)),
+    "website_url"      => Pair("",   (String,)),
+    "generate_rss"     => Pair(true, (Bool,)),
     # div names
-    "div_content"      => Pair("franklin-content", (String,))
+    "div_content"      => Pair("franklin-content", (String,)),
+    # auto detection of code / math (see hasmath/hascode)
+    "autocode"         => Pair(true, (Bool,)),
+    "automath"         => Pair(true, (Bool,)),
     ]
 
 """
