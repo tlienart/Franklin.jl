@@ -29,6 +29,7 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool)::Nothing
         push!(assignments, (String(vname) => String(vdef)))
     end
     # if in config file, update `GLOBAL_VARS` and `GLOBAL_LXDEFS`
+    rpath = splitext(locvar("fd_rpath"))[1]
     if isconfig
         set_vars!(GLOBAL_VARS, assignments)
     else
@@ -53,7 +54,78 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool)::Nothing
 
         # copy the page vars to ALL_PAGE_VARS so that they can be accessed
         # by other pages via `pagevar`.
-        ALL_PAGE_VARS[splitext(locvar("fd_rpath"))[1]] = deepcopy(LOCAL_VARS)
+        ALL_PAGE_VARS[rpath] = deepcopy(LOCAL_VARS)
     end
+    update_tags(rpath, LOCAL_VARS["tags"][1])
     return nothing
 end
+
+"""
+$(SIGNATURES)
+
+SHOULD BE PROBABLY IN A DIFFERENT FILE
+Check if tags differ from TAGS[rpath]. If yes update and call `generate_tag_pages`.
+
+**Arguments**
+
+* `rpath`:     The relative path (can also be fetched with `splitext(locvar("fd_rpath"))[1]`)
+* `tags`:      List of tags
+"""
+function update_tags(rpath::String, tags::Vector{String})
+    # if the path had tags before
+    if haskey(TAGS, rpath)
+        if TAGS[rpath] != tags
+            union_tags = union(TAGS[rpath], tags)
+            TAGS[rpath] = tags
+            generate_tag_pages(;tags=union_tags)
+        end
+    else
+        TAGS[rpath] = tags
+        generate_tag_pages(;tags=tags)
+    end
+end
+
+tag_line(url, title) = "<li><a href='$url'>$title</li>"
+
+"""
+$(SIGNATURES)
+
+SHOULD BE PROBABLY IN A DIFFERENT FILE
+Create and/or update `__site/tag` folders/files
+
+**Optional Arguments**
+
+* `tags`:      List of changed tags. If `nothing` all tags will be updated
+"""
+function generate_tag_pages(;tags=nothing)
+    isempty(TAGS) && return
+    tags == String[] && return 
+    !isdir(joinpath(path(:site), "tag")) && mkdir(joinpath(path(:site), "tag"))
+    # tag => [rpath]
+    inv_tags_dict = invert_dict(TAGS)
+    tags === nothing && (tags = keys(inv_tags_dict))
+    
+    layout_key  = ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src_html, :layout)
+    layout      = path(layout_key)
+    head        = read(joinpath(layout, "head.html"),      String)
+    pg_foot     = read(joinpath(layout, "page_foot.html"), String)
+    foot        = read(joinpath(layout, "foot.html"),      String)
+    
+    for tag in tags
+        dir = joinpath(path(:site), "tag", tag)
+        !isdir(dir) && mkdir(dir)
+        fpath = joinpath(dir, "index.html")
+        if !haskey(inv_tags_dict, tag)
+            rm(fpath)
+            rm(dir)
+        else
+            tag_content = "<h1>Tag: $tag</h1>\n"
+            for rpath in inv_tags_dict[tag] 
+                tag_content *= tag_line(rpath, pagevar(rpath, "title"))*"\n"
+            end
+            content = build_page(head, tag_content, pg_foot, foot)
+            write(fpath, convert_html(content))
+        end
+    end
+end
+

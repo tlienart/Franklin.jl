@@ -232,3 +232,23 @@ function check_ping(ipaddr)
     opt = ifelse(Sys.iswindows(), "-n", "-c")
     return success(`ping $opt 1 -t 1 $ipaddr`)
 end
+
+"""
+    invert_dict(dict::Dict)
+
+Invert a dictionary i.e transform a=>[1,2],b=>[1] to 1=>[a,b], 2=>[a] 
+"""
+function invert_dict(dict::Dict)
+    dkeys = collect(keys(dict))
+    inv_dict = Dict{eltype(dict[dkeys[1]]), Vector{eltype(dict).types[1]}}()
+    for (key, val) in dict
+        for nkey in val
+            if haskey(inv_dict, nkey) 
+                push!(inv_dict[nkey], key)
+            else
+                inv_dict[nkey] = [key]
+            end
+        end
+    end
+    return inv_dict
+end
