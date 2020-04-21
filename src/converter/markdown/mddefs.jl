@@ -56,35 +56,31 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool)::Nothing
         # by other pages via `pagevar`.
         ALL_PAGE_VARS[rpath] = deepcopy(LOCAL_VARS)
     end
-    update_tags(rpath, LOCAL_VARS["tags"][1])
+    tags = Set(unique(locvar("tags")))
+    # Cases:
+    # 1. that page did not have tags
+    #   a. tags is empty --> do nothing
+    #   b. tags is not empty register them and update all
+    # 2. that page did have tags
+    #   a. tags are unchanged --> do nothing
+    #   b. check which ones change and update those
+    refresh_tags = tags
+    if !haskey(PAGE_TAGS, rpath)
+        isempty(tags) && return nothing
+        PAGE_TAGS[rpath] = tags
+    else
+        old_tags = PAGE_TAGS[rpath]
+        refresh_tags = setdiff(old_tags, tags)
+        isempty(refresh_tags) && return nothing
+        PAGE_TAGS[rpath] = tags
+    end
+    generate_tag_pages(refresh_tags)
     return nothing
 end
 
-"""
-$(SIGNATURES)
-
-SHOULD BE PROBABLY IN A DIFFERENT FILE
-Check if tags differ from TAGS[rpath]. If yes update and call `generate_tag_pages`.
-
-**Arguments**
-
-* `rpath`:     The relative path (can also be fetched with `splitext(locvar("fd_rpath"))[1]`)
-* `tags`:      List of tags
-"""
-function update_tags(rpath::String, tags::Vector{String})
-    # if the path had tags before
-    if haskey(TAGS, rpath)
-        if TAGS[rpath] != tags
-            union_tags = union(TAGS[rpath], tags)
-            TAGS[rpath] = tags
-            generate_tag_pages(;tags=union_tags)
-        end
-    else
-        TAGS[rpath] = tags
-        generate_tag_pages(;tags=tags)
-    end
-end
-
+# TODO: this should be a hfun {{tagline}} which accesses pagevars, that way
+# it can be over-written by the user and for instance they could add a
+# short_descr page var which they would fill or put stuff in a div etc...
 tag_line(url, title) = "<li><a href='$url'>$title</li>"
 
 """
@@ -97,20 +93,22 @@ Create and/or update `__site/tag` folders/files
 
 * `tags`:      List of changed tags. If `nothing` all tags will be updated
 """
-function generate_tag_pages(;tags=nothing)
+function generate_tag_pages(refresh_tags::Set{String})::Nothing
+    TAG_PAGES = invert_dict(PAGE_TAGS)
+
     isempty(TAGS) && return
-    tags == String[] && return 
+    tags == String[] && return
     !isdir(joinpath(path(:site), "tag")) && mkdir(joinpath(path(:site), "tag"))
     # tag => [rpath]
     inv_tags_dict = invert_dict(TAGS)
     tags === nothing && (tags = keys(inv_tags_dict))
-    
+
     layout_key  = ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src_html, :layout)
     layout      = path(layout_key)
     head        = read(joinpath(layout, "head.html"),      String)
     pg_foot     = read(joinpath(layout, "page_foot.html"), String)
     foot        = read(joinpath(layout, "foot.html"),      String)
-    
+
     for tag in tags
         dir = joinpath(path(:site), "tag", tag)
         !isdir(dir) && mkdir(dir)
@@ -120,7 +118,7 @@ function generate_tag_pages(;tags=nothing)
             rm(dir)
         else
             tag_content = "<h1>Tag: $tag</h1>\n"
-            for rpath in inv_tags_dict[tag] 
+            for rpath in inv_tags_dict[tag]
                 tag_content *= tag_line(rpath, pagevar(rpath, "title"))*"\n"
             end
             content = build_page(head, tag_content, pg_foot, foot)
@@ -128,4 +126,3 @@ function generate_tag_pages(;tags=nothing)
         end
     end
 end
-

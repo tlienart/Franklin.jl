@@ -8,10 +8,6 @@ for that value. (e.g.: "THE AUTHOR" => (String, Nothing))
 """
 const GLOBAL_VARS = PageVars()
 
-# rpath => tags
-# UPPERCASE EVEN IF NOT CONST?
-TAGS = Dict{String, Vector{String}}()
-
 const GLOBAL_VARS_DEFAULT = [
     # Folder org
     "folder_structure" => Pair(FD_ENV[:STRUCTURE], (VersionNumber,)),
@@ -200,6 +196,10 @@ Keep track of the names declared in the Utils module.
 """
 const UTILS_NAMES = Vector{String}()
 
+"""
+Keep track of the (unique) tags associated with a page (via its relative path).
+"""
+const PAGE_TAGS = LittleDict{String,Set{String}}()
 
 """
 Keep track of seen headers. The key is the refstring, the value contains the
@@ -217,7 +217,6 @@ Empties `PAGE_HEADERS`.
     empty!(PAGE_HEADERS)
     return nothing
 end
-
 
 """
 PAGE_FNREFS
