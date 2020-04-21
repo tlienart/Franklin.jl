@@ -80,6 +80,13 @@ function convert_md(mds::AS,
     #>> e. keep track of literal content of possible link definitions to use
     validate_and_store_link_defs!(blocks)
 
+    if globvar("autocode") && any(b -> b.name in CODE_BLOCKS_NAMES, blocks)
+        set_var!(LOCAL_VARS, "hascode", true)
+    end
+    if globvar("automath") && any(b -> b.name in MATH_BLOCKS_NAMES, blocks)
+        set_var!(LOCAL_VARS, "hasmath", true)
+    end
+
     # ------------------------------------------------------------------------
     #> 3. LaTeX commands
     #>> a. find "newcommands", update active blocks/braces
