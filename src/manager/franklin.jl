@@ -3,7 +3,8 @@ $SIGNATURES
 
 Clear the environment dictionaries.
 """
-clear_dicts() = empty!.((GLOBAL_LXDEFS, GLOBAL_VARS, LOCAL_VARS, ALL_PAGE_VARS))
+clear_dicts() = empty!.((GLOBAL_LXDEFS, GLOBAL_VARS, LOCAL_VARS, ALL_PAGE_VARS,
+                         PAGE_TAGS))
 
 """
 $(SIGNATURES)

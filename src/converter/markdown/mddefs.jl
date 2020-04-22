@@ -72,9 +72,13 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool)::Nothing
         old_tags = PAGE_TAGS[rpath]
         refresh_tags = setdiff(old_tags, tags)
         isempty(refresh_tags) && return nothing
-        PAGE_TAGS[rpath] = tags
+        if isempty(tags)
+            delete!(PAGE_TAGS, rpath)
+        else
+            PAGE_TAGS[rpath] = tags
+        end
     end
-    generate_tag_pages(refresh_tags)
+    FD_ENV[:FULL_PASS] || generate_tag_pages(refresh_tags)
     return nothing
 end
 
@@ -93,15 +97,23 @@ Create and/or update `__site/tag` folders/files
 
 * `tags`:      List of changed tags. If `nothing` all tags will be updated
 """
-function generate_tag_pages(refresh_tags::Set{String})::Nothing
-    TAG_PAGES = invert_dict(PAGE_TAGS)
+function generate_tag_pages(refresh_tags=Set{String}())::Nothing
+    # filter out pages that may not exist anymore
+    for rpath in keys(PAGE_TAGS)
+        isfile(rpath * ".md") || delete!(PAGE_TAGS, rpath)
+    end
+    isempty(PAGE_TAGS) && return nothing
 
-    isempty(TAGS) && return
-    tags == String[] && return
-    !isdir(joinpath(path(:site), "tag")) && mkdir(joinpath(path(:site), "tag"))
-    # tag => [rpath]
-    inv_tags_dict = invert_dict(TAGS)
-    tags === nothing && (tags = keys(inv_tags_dict))
+    # Get the dictionary tag -> [rp1, rp2...]
+    TAG_PAGES = invert_dict(PAGE_TAGS)
+    all_tags  = collect(keys(TAG_PAGES))
+
+    # check if the tag dir is there
+    isdir(path(:tag)) || mkdir(path(:tag))
+    # cleanup any page that may still be there but shouldn't
+    for dname in readdir(path(:tag))
+        dname in all_tags || rm(joinpath(path(:tag), f), recursive=true)
+    end
 
     layout_key  = ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src_html, :layout)
     layout      = path(layout_key)
@@ -109,20 +121,18 @@ function generate_tag_pages(refresh_tags::Set{String})::Nothing
     pg_foot     = read(joinpath(layout, "page_foot.html"), String)
     foot        = read(joinpath(layout, "foot.html"),      String)
 
-    for tag in tags
+    for tag in (isempty(refresh_tags) ? all_tags : refresh_tags)
         dir = joinpath(path(:site), "tag", tag)
-        !isdir(dir) && mkdir(dir)
+        isdir(dir) || mkdir(dir)
         fpath = joinpath(dir, "index.html")
-        if !haskey(inv_tags_dict, tag)
-            rm(fpath)
-            rm(dir)
-        else
-            tag_content = "<h1>Tag: $tag</h1>\n"
-            for rpath in inv_tags_dict[tag]
-                tag_content *= tag_line(rpath, pagevar(rpath, "title"))*"\n"
-            end
-            content = build_page(head, tag_content, pg_foot, foot)
-            write(fpath, convert_html(content))
+        content = IOBuffer()
+        write(content, "<h1>Tag: $tag</h1>")
+        write(content, "<ul>")
+        for rpath in TAG_PAGES[tag]
+            write(content, tag_line("/$rpath/", pagevar(rpath, "title")))
         end
+        write(content, "</ul>")
+        page = build_page(head, String(take!(content)), pg_foot, foot)
+        write(fpath, convert_html(page))
     end
 end
