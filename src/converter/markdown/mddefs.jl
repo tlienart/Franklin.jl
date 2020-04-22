@@ -112,7 +112,7 @@ function generate_tag_pages(refresh_tags=Set{String}())::Nothing
     isdir(path(:tag)) || mkdir(path(:tag))
     # cleanup any page that may still be there but shouldn't
     for dname in readdir(path(:tag))
-        dname in all_tags || rm(joinpath(path(:tag), f), recursive=true)
+        dname in all_tags || rm(joinpath(path(:tag), dname), recursive=true)
     end
 
     layout_key  = ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src_html, :layout)
@@ -122,7 +122,7 @@ function generate_tag_pages(refresh_tags=Set{String}())::Nothing
     foot        = read(joinpath(layout, "foot.html"),      String)
 
     for tag in (isempty(refresh_tags) ? all_tags : refresh_tags)
-        dir = joinpath(path(:site), "tag", tag)
+        dir = joinpath(path(:tag), tag)
         isdir(dir) || mkdir(dir)
         fpath = joinpath(dir, "index.html")
         content = IOBuffer()
