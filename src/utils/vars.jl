@@ -1,3 +1,6 @@
+const DTAG  = LittleDict{String,Set{String}}
+const DTAGI = LittleDict{String,Vector{String}}
+
 """
 Dictionary of variables accessible to all pages. Used as an initialiser for
 `LOCAL_VARS` and modified by `config.md`.
@@ -31,6 +34,9 @@ const GLOBAL_VARS_DEFAULT = [
     # auto detection of code / math (see hasmath/hascode)
     "autocode"         => Pair(true, (Bool,)),
     "automath"         => Pair(true, (Bool,)),
+    # keep track page=>tags and tag=>pages
+    "fd_page_tags"     => Pair(DTAG(),  (DTAG,)),
+    "fd_tag_pages"     => Pair(DTAGI(), (DTAGI,)),
     ]
 
 """
@@ -147,6 +153,7 @@ end
 """
 Dict to keep track of all pages and their vars. Each key is a relative path
 to a page, values are PageVars.
+The keys don't have the file extension so `"blog/pg1 => PageVars"`.
 """
 const ALL_PAGE_VARS = Dict{String,PageVars}()
 
@@ -195,11 +202,6 @@ end
 Keep track of the names declared in the Utils module.
 """
 const UTILS_NAMES = Vector{String}()
-
-"""
-Keep track of the (unique) tags associated with a page (via its relative path).
-"""
-const PAGE_TAGS = LittleDict{String,Set{String}}()
 
 """
 Keep track of seen headers. The key is the refstring, the value contains the

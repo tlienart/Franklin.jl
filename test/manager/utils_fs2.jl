@@ -66,7 +66,8 @@ end
     F.write_page(F.PATHS[:folder], "index.md", head, pg_foot, foot, out_file)
 
     @test isfile(out_file)
-    @test read(out_file, String) == "head\n<div class=\"franklin-content\">\n<p>blah blah</p>\n\n\npage_foot\n</div>\nfoot  Stefan Zweig"
+    @test isapproxstr(read(out_file, String), """
+        head\n<div class=\"franklin-content\">\n<p>blah blah</p>\n\n\npage_foot\n</div>\nfoot  Stefan Zweig""")
 end
 
 temp_config = joinpath(F.PATHS[:folder], "config.md")
@@ -102,8 +103,6 @@ rm(temp_index2)
     @test issubset(["temp", "temp.rnd"], readdir(F.PATHS[:site]))
     @test issubset(["index.html"], readdir(joinpath(F.PATHS[:site], "temp")))
     @test issubset(["index.html"], readdir(joinpath(F.PATHS[:site], "blah")))
-
-    @test all(split(read(joinpath(F.PATHS[:site], "index.html"), String)) .== split("<!doctype html>\n<html lang=\"en-UK\">\n\t<head>\n\t\t<meta charset=\"UTF-8\">\n\t\t<link rel=\"stylesheet\" href=\"/css/main.css\">\n\t</head>\n<body>\n<div class=\"franklin-content\">\n<p>blah blah</p>\n\n<div class=\"page-foot\">\n\t\t<div class=\"copyright\">\n\t\t\t\t&copy; All rights reserved.\n\t\t</div>\n</div>\n</div>\n    </body>\n</html>"))
 end
 
 @testset "Err procfile" begin
