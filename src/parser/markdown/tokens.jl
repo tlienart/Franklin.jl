@@ -237,6 +237,12 @@ List of names of maths environments.
 """
 const MATH_BLOCKS_NAMES = [e.name for e ∈ MD_OCB_MATH]
 
+"""
+CODE_BLOCKS_NAMES
+
+List of names of code blocks environments.
+"""
+const CODE_BLOCKS_NAMES = [:CODE_BLOCK_LANG, :CODE_BLOCK, :CODE_BLOCK_IND]
 
 """
 MD_OCB_NO_INNER

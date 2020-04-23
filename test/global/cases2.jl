@@ -181,11 +181,15 @@ end
 end
 
 @testset "i 419" begin
+    F.set_var!(F.LOCAL_VARS, "hascode", false)
+    F.set_var!(F.LOCAL_VARS, "hasmath", false)
     s = raw"""
         {{hasmath}} {{hascode}}
         $x = 5$
         """ |> fdi
     @test isapproxstr(s, "true false \\(x = 5\\)")
+    F.set_var!(F.LOCAL_VARS, "hascode", false)
+    F.set_var!(F.LOCAL_VARS, "hasmath", false)
     s = raw"""
         {{hasmath}} {{hascode}}
         ```r
