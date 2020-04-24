@@ -205,7 +205,9 @@ function hfun_list(params::Vector{String})::String
     rpaths = TAG_PAGES[tag]
     sorter(p) = begin
         pvd = pagevar(p, "date")
-        isnothing(pvd) && return stat(p * ".md").ctime
+        if isnothing(pvd)
+            return Date(Dates.unix2datetime(stat(p * ".md").ctime))
+        end
         return pvd
     end
     sort!(rpaths, by=sorter, rev=true)

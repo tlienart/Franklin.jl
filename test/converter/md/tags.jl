@@ -7,6 +7,25 @@ write("index.md", """
     Hello
     """)
 
+@testset "tagpages" begin
+    F.def_GLOBAL_VARS!()
+    write("pg1.md", "")
+    write("pg2.md", "")
+    F.globvar("fd_page_tags")["pg1"] = Set(["aa", "bb"])
+    F.globvar("fd_page_tags")["pg2"] = Set(["bb", "cc"])
+    F.generate_tag_pages()
+    @test F.globvar("fd_tag_pages")["aa"] == ["pg1"]
+    @test F.globvar("fd_tag_pages")["bb"] == ["pg1","pg2"]
+    @test F.globvar("fd_tag_pages")["cc"] == ["pg2"]
+
+    @test isdir(F.path(:tag))
+    @test isfile(joinpath(F.path(:tag), "aa", "index.html"))
+    @test isfile(joinpath(F.path(:tag), "bb", "index.html"))
+    @test isfile(joinpath(F.path(:tag), "cc", "index.html"))
+end
+
+# ======= INTEGRATION ============
+
 @testset "tags" begin
     isdir("blog") && rm("blog", recursive=true)
     mkdir("blog")

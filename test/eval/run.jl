@@ -76,3 +76,26 @@ end
             """
     end
 end
+
+@testset "i462" begin
+    s = raw"""
+       A
+       ```julia:ex
+       1 # hide
+       ```
+       \show{ex}
+       B""" |> fd2html_td
+    @test isapproxstr(s, """
+        <p>A <pre><code class="plaintext">1</code></pre> B</p>
+        """)
+    s = raw"""
+       A
+       ```julia:ex
+       "hello" # hide
+       ```
+       \show{ex}
+       B""" |> fd2html_td
+    @test isapproxstr(s, """
+        <p>A <pre><code class="plaintext">"hello"</code></pre> B</p>
+        """)
+end

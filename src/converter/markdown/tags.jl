@@ -28,14 +28,18 @@ function generate_tag_pages(refresh_tags=Set{String}())::Nothing
     for dirname in setdiff(readdir(path(:tag)), all_tags)
         rm(joinpath(path(:tag), dirname), recursive=true)
     end
+    update_tags = isempty(refresh_tags) ? all_tags : refresh_tags
+    write_tag_pages(update_tags)
+    return nothing
+end
 
+function write_tag_pages(update_tags)::Nothing
     layout_key  = ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src_html, :layout)
     layout      = path(layout_key)
     head        = read(joinpath(layout, "head.html"),      String)
     pg_foot     = read(joinpath(layout, "page_foot.html"), String)
     foot        = read(joinpath(layout, "foot.html"),      String)
-
-    for tag in (isempty(refresh_tags) ? all_tags : refresh_tags)
+    for tag in update_tags
         # check if `tag/$tag` exists otherwise create it
         dir = joinpath(path(:tag), tag)
         isdir(dir) || mkdir(dir)
