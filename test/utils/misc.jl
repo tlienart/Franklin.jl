@@ -130,7 +130,7 @@ end
     s = raw"""
     @def date_format = "e, d u Y"
     @def date_months = ["janvier", "février", "mars", "avril", "mai", "juin",
-                        "juillet", "août", "septembre", "octobre", "novembre", 
+                        "juillet", "août", "septembre", "octobre", "novembre",
                         "décembre"];
     @def date_shortmonths = ["janv","févr","mars","avril","mai","juin",
                                 "juil","août","sept","oct","nov","déc"];
@@ -148,7 +148,7 @@ end
     s = raw"""
     @def date_format = "d u Y"
     @def date_months = ["janvier", "février", "mars", "avril", "mai", "juin",
-                        "juillet", "août", "septembre", "octobre", "novembre", 
+                        "juillet", "août", "septembre", "octobre", "novembre",
                         "décembre"];
     ```julia:ex2
     #hideall
@@ -187,4 +187,18 @@ end
     \textoutput{ex4}
     """ |> fd2html_td
     @test isapproxstr(s, "1996年1月1日　月曜日") # japanese and unicode
+end
+
+@testset "dict-inv" begin
+    d = F.LittleDict(
+        "blog/pg1" => ["aa", "bb", "cc"],
+        "blog/pg2" => ["cc", "bb"],
+        "blog/pg3" => ["aa", "ee"],
+        )
+    id = F.invert_dict(d)
+    @test id isa F.LittleDict{String,Vector{String}}
+    @test Set(collect(keys(id))) == Set(collect(vcat(values(d)...)))
+    @test Set(collect(keys(d))) == Set(collect(vcat(values(id)...)))
+    @test Set(id["aa"]) == Set(["blog/pg1", "blog/pg3"])
+    @test Set(id["ee"]) == Set(["blog/pg3"])
 end

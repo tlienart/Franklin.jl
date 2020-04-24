@@ -28,7 +28,7 @@ function convert_html(hs::AS; isoptim::Bool=false)::String
 
     isempty(fhs) && return ""
 
-    if !isempty(GLOBAL_VARS["prepath"].first) && isoptim
+    if !isempty(globvar("prepath")) && isoptim
         fhs = fix_links(fhs)
     end
 

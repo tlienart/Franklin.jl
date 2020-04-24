@@ -12,7 +12,7 @@ Consumes a string with Julia code, returns a vector of expression(s).
 Note: this function was adapted from the `parse_input` function from Weave.jl.
 """
 function parse_code(code::AS)
-    exs = Expr[]
+    exs = Any[] # Expr, Symbol or Any Julia core value
     n   = sizeof(code)
     pos = 1
     while pos ≤ n
@@ -83,6 +83,8 @@ function run_code(mod::Module, code::AS, out_path::AS;
     end
     # if last bit ends with `;` return nothing (no display)
     code[end] == ';' && return nothing
+    # if last line is a Julia value return
+    isa(exs[end], Expr) || return res
     # if last line of the code is a `show`
     if length(exs[end].args) > 1 && exs[end].args[1] == Symbol("@show")
         return nothing

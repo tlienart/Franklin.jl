@@ -186,15 +186,38 @@ end
 
 
 """
-HTML_FUNCTIONS
+$(SIGNATURES)
 
-Dictionary for special html functions. They can take two variables, the first
-one `π` refers to the arguments passed to the function, the second one `ν`
-refers to the page variables (i.e. the context) available to the function.
+H-Function of the form `{{list tag}}`.
 """
-const HTML_FUNCTIONS = LittleDict{String, Function}(
-    "fill"   => hfun_fill,
-    "insert" => hfun_insert,
-    "href"   => hfun_href,
-    "toc"    => hfun_toc,
-    )
+function hfun_list(params::Vector{String})::String
+    if length(params) != 1
+        throw(HTMLFunctionError("I found a {{list ...}} block and expected 1 " *
+                                "parameter but got $(length(params)). Verify."))
+    end
+    tag = params[1]
+    TAG_PAGES = globvar("fd_tag_pages")
+
+    c = IOBuffer()
+    write(c, "<h1>Tag: $tag</h1>")
+    write(c, "<ul>")
+
+    rpaths = TAG_PAGES[tag]
+    sorter(p) = begin
+        pvd = pagevar(p, "date")
+        if isnothing(pvd)
+            return Date(Dates.unix2datetime(stat(p * ".md").ctime))
+        end
+        return pvd
+    end
+    sort!(rpaths, by=sorter, rev=true)
+    for rpath in rpaths
+        title = pagevar(rpath, "title")
+        if isnothing(title)
+            title = "/$rpath/"
+        end
+        write(c, "<li><a href=\"/$rpath/\">$title</a></li>")
+    end
+    write(c, "</ul>")
+    return String(take!(c))
+end

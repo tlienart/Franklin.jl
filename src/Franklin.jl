@@ -142,6 +142,7 @@ include("eval/literate.jl")
 include("converter/markdown/blocks.jl")
 include("converter/markdown/utils.jl")
 include("converter/markdown/mddefs.jl")
+include("converter/markdown/tags.jl")
 include("converter/markdown/md.jl")
 # > latex
 include("converter/latex/latex.jl")

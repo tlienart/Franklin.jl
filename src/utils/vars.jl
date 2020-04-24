@@ -1,3 +1,6 @@
+const DTAG  = LittleDict{String,Set{String}}
+const DTAGI = LittleDict{String,Vector{String}}
+
 """
 Dictionary of variables accessible to all pages. Used as an initialiser for
 `LOCAL_VARS` and modified by `config.md`.
@@ -31,6 +34,9 @@ const GLOBAL_VARS_DEFAULT = [
     # auto detection of code / math (see hasmath/hascode)
     "autocode"         => Pair(true, (Bool,)),
     "automath"         => Pair(true, (Bool,)),
+    # keep track page=>tags and tag=>pages
+    "fd_page_tags"     => Pair(nothing, (DTAG,  Nothing)),
+    "fd_tag_pages"     => Pair(nothing, (DTAGI, Nothing)),
     ]
 
 """
@@ -52,13 +58,14 @@ const LOCAL_VARS = PageVars()
 
 const LOCAL_VARS_DEFAULT = [
     # General
-    "title"         => Pair(nothing, (String, Nothing)),
-    "hasmath"       => Pair(true,    (Bool,)),
-    "hascode"       => Pair(false,   (Bool,)),
-    "date"          => Pair(Date(1), (String, Date, Nothing)),
-    "lang"          => Pair("julia", (String,)), # default lang indented code
-    "reflinks"      => Pair(true,    (Bool,)),   # are there reflinks?
-    "indented_code" => Pair(false,   (Bool,)),   # support indented code?
+    "title"         => Pair(nothing,    (String, Nothing)),
+    "hasmath"       => Pair(true,       (Bool,)),
+    "hascode"       => Pair(false,      (Bool,)),
+    "date"          => Pair(Date(1),    (String, Date, Nothing)),
+    "lang"          => Pair("julia",    (String,)), # default lang indented code
+    "reflinks"      => Pair(true,       (Bool,)),   # are there reflinks?
+    "indented_code" => Pair(false,      (Bool,)),   # support indented code?
+    "tags"          => Pair(String[],   (Vector{String},)),
     # -----------------
     # TABLE OF CONTENTS
     "mintoclevel" => Pair(1,  (Int,)), # set to 2 to ignore h1
@@ -146,6 +153,7 @@ end
 """
 Dict to keep track of all pages and their vars. Each key is a relative path
 to a page, values are PageVars.
+The keys don't have the file extension so `"blog/pg1 => PageVars"`.
 """
 const ALL_PAGE_VARS = Dict{String,PageVars}()
 
@@ -179,7 +187,7 @@ function pagevar(rpath::AS, name::Union{Symbol,String})
         # set temporary cur path (so that defs go to the right place)
         set_cur_rpath(fpath, isrelative=true)
         # effectively we only care about the mddefs
-        convert_md(read(fpath, String))
+        convert_md(read(fpath, String), pagevar=true)
         # re-set the cur path to what it was before
         set_cur_rpath(bk_path, isrelative=true)
         # re-set local vars
@@ -194,7 +202,6 @@ end
 Keep track of the names declared in the Utils module.
 """
 const UTILS_NAMES = Vector{String}()
-
 
 """
 Keep track of seen headers. The key is the refstring, the value contains the
@@ -212,7 +219,6 @@ Empties `PAGE_HEADERS`.
     empty!(PAGE_HEADERS)
     return nothing
 end
-
 
 """
 PAGE_FNREFS

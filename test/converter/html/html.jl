@@ -1,4 +1,6 @@
 @testset "Cblock+h-fill" begin
+    F.def_GLOBAL_VARS!()
+    F.def_LOCAL_VARS!()
     F.set_vars!(F.LOCAL_VARS, ["v1"=>"\"INPUT1\"", "b1"=>"false", "b2"=>"true"])
     hs = raw"""
         Some text then {{ fill v1 }} and

@@ -10,7 +10,8 @@ Depending on `isconfig`, will update `GLOBAL_VARS` or `LOCAL_VARS`.
 * `isconfig`:  whether the file being processed is the config file
                 (--> global page variables)
 """
-function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool)::Nothing
+function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool,
+                        pagevar::Bool=false)::Nothing
     # Find all markdown definitions (MD_DEF) blocks
     mddefs = filter(β -> (β.name == :MD_DEF), blocks)
     # empty container for the assignments
@@ -29,13 +30,66 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool)::Nothing
         push!(assignments, (String(vname) => String(vdef)))
     end
     # if in config file, update `GLOBAL_VARS` and `GLOBAL_LXDEFS`
+    rpath = splitext(locvar("fd_rpath"))[1]
     if isconfig
         set_vars!(GLOBAL_VARS, assignments)
-    else
-        set_vars!(LOCAL_VARS, assignments)
-        # copy the page vars to ALL_PAGE_VARS so that they can be accessed
-        # by other pages via `pagevar`.
-        ALL_PAGE_VARS[splitext(locvar("fd_rpath"))[1]] = deepcopy(LOCAL_VARS)
+        return nothing
     end
+    set_vars!(LOCAL_VARS, assignments)
+    rpath = splitext(locvar("fd_rpath"))[1]
+
+    # is hascode or hasmath set explicitly? if not and if the global
+    # autocode and/or automath are left to true, then check here to see
+    # if there are any blocks and set the variable automatically (#419)
+    acm = filter(p -> p.first in ("hascode", "hasmath"), assignments)
+    if globvar("autocode") &&
+            (isempty(acm) || !any(p -> p.first == "hascode", acm))
+        # check and set hascode automatically
+        code = any(b -> startswith(string(b.name), "CODE_BLOCK"), blocks)
+        set_var!(LOCAL_VARS, "hascode", code)
+    end
+    if globvar("automath") &&
+            (isempty(acm) || !any(p -> p.first == "hasmath", acm))
+        # check and set hasmath automatically
+        math = any(b -> b.name in MATH_BLOCKS_NAMES, blocks)
+        set_var!(LOCAL_VARS, "hasmath", math)
+    end
+
+    # copy the page vars to ALL_PAGE_VARS so that they can be accessed
+    # by other pages via `pagevar`.
+    ALL_PAGE_VARS[rpath] = deepcopy(LOCAL_VARS)
+
+    # TAGS
+    tags = Set(unique(locvar("tags")))
+    # Cases:
+    # 1. that page did not have tags
+    #   a. tags is empty --> do nothing
+    #   b. tags is not empty register them and update all
+    # 2. that page did have tags
+    #   a. tags are unchanged --> do nothing
+    #   b. check which ones change and update those
+    refresh_tags = tags
+    PAGE_TAGS    = globvar("fd_page_tags")
+    if isnothing(PAGE_TAGS)
+        isempty(tags) && return nothing
+        set_var!(GLOBAL_VARS, "fd_page_tags", DTAG((rpath => tags,)))
+    elseif !haskey(PAGE_TAGS, rpath)
+        isempty(tags) && return nothing
+        PAGE_TAGS[rpath] = tags
+    else
+        old_tags = PAGE_TAGS[rpath]
+        refresh_tags = setdiff(old_tags, tags)
+        isempty(refresh_tags) && return nothing
+        if isempty(tags)
+            delete!(PAGE_TAGS, rpath)
+        else
+            PAGE_TAGS[rpath] = tags
+        end
+    end
+    # In the full pass each page is processed first (without generating tag
+    # pages) and then, when all tags have been gathered, generate_tag_pages
+    # is called (see `fd_fullpass`).
+    # During the serve loop, we want to trigger on page change.
+    pagevar || FD_ENV[:FULL_PASS] || generate_tag_pages(refresh_tags)
     return nothing
 end

@@ -3,7 +3,17 @@ $SIGNATURES
 
 Clear the environment dictionaries.
 """
-clear_dicts() = empty!.((GLOBAL_LXDEFS, GLOBAL_VARS, LOCAL_VARS, ALL_PAGE_VARS))
+function clear_dicts()
+    recursive_empty!.((GLOBAL_LXDEFS, GLOBAL_VARS, LOCAL_VARS, ALL_PAGE_VARS))
+end
+
+function recursive_empty!(d::AbstractDict)
+    for (k, v) in d
+        v isa AbstractDict && recursive_empty!(d[k])
+    end
+    empty!(d)
+end
+
 
 """
 $(SIGNATURES)
@@ -242,6 +252,9 @@ function fd_fullpass(watched_files::NamedTuple; clear::Bool=false,
 
     # generate RSS if appropriate
     globvar("generate_rss") && rss_generator()
+    # generate tags if appropriate
+    generate_tag_pages()
+    # done
     FD_ENV[:FULL_PASS] = false
     # return -1 if any page
     return ifelse(s<0, -1, 0)
