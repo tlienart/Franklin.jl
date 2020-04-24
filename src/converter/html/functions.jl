@@ -201,12 +201,20 @@ function hfun_list(params::Vector{String})::String
     c = IOBuffer()
     write(c, "<h1>Tag: $tag</h1>")
     write(c, "<ul>")
-    for rpath in TAG_PAGES[tag]
+
+    rpaths = TAG_PAGES[tag]
+    sorter(p) = begin
+        pvd = pagevar(p, "date")
+        isnothing(pvd) && return stat(p * ".md").ctime
+        return pvd
+    end
+    sort!(rpaths, by=sorter, rev=true)
+    for rpath in rpaths
         title = pagevar(rpath, "title")
         if isnothing(title)
             title = "/$rpath/"
         end
-        write(c, "<li><a href=\"/$rpath/\">$title</li>")
+        write(c, "<li><a href=\"/$rpath/\">$title</a></li>")
     end
     write(c, "</ul>")
     return String(take!(c))

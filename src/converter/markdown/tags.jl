@@ -23,7 +23,7 @@ function generate_tag_pages(refresh_tags=Set{String}())::Nothing
     all_tags  = collect(keys(TAG_PAGES))
 
     # check if the tag dir is there
-    isdir(path(:tag)) || mkdir(path(:tag))
+    isdir(path(:tag)) || mkpath(path(:tag))
     # cleanup any page that may still be there but shouldn't
     for dirname in setdiff(readdir(path(:tag)), all_tags)
         rm(joinpath(path(:tag), dirname), recursive=true)

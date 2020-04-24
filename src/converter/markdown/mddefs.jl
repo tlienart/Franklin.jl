@@ -86,6 +86,6 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool)::Nothing
     # pages) and then, when all tags have been gathered, generate_tag_pages
     # is called (see `fd_fullpass`).
     # During the serve loop, we want to trigger on page change.
-    FD_ENV[:FULL_PASS] || generate_tag_pages(refresh_tags)
+    FD_ENV[:FULL_PASS] || isconfig || generate_tag_pages(refresh_tags)
     return nothing
 end

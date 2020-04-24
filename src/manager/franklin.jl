@@ -106,7 +106,6 @@ function serve(; clear::Bool=false,
                       on_write=on_write)
     FD_ENV[:FORCE_REEVAL] = false
     sig < 0 && return sig
-    generate_tag_pages()
     fmsg = rpad("✔ full pass...", 40)
     verb && (println(""); print(fmsg); print_final(fmsg, start); println(""))
 
@@ -243,6 +242,9 @@ function fd_fullpass(watched_files::NamedTuple; clear::Bool=false,
 
     # generate RSS if appropriate
     globvar("generate_rss") && rss_generator()
+    # generate tags if appropriate
+    generate_tag_pages()
+    # done
     FD_ENV[:FULL_PASS] = false
     # return -1 if any page
     return ifelse(s<0, -1, 0)
