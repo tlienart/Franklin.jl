@@ -35,8 +35,8 @@ const GLOBAL_VARS_DEFAULT = [
     "autocode"         => Pair(true, (Bool,)),
     "automath"         => Pair(true, (Bool,)),
     # keep track page=>tags and tag=>pages
-    "fd_page_tags"     => Pair(DTAG(),  (DTAG,)),
-    "fd_tag_pages"     => Pair(DTAGI(), (DTAGI,)),
+    "fd_page_tags"     => Pair(nothing, (DTAG,  Nothing)),
+    "fd_tag_pages"     => Pair(nothing, (DTAGI, Nothing)),
     ]
 
 """
@@ -187,7 +187,7 @@ function pagevar(rpath::AS, name::Union{Symbol,String})
         # set temporary cur path (so that defs go to the right place)
         set_cur_rpath(fpath, isrelative=true)
         # effectively we only care about the mddefs
-        convert_md(read(fpath, String))
+        convert_md(read(fpath, String), pagevar=true)
         # re-set the cur path to what it was before
         set_cur_rpath(bk_path, isrelative=true)
         # re-set local vars

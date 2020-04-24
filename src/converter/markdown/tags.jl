@@ -8,6 +8,7 @@ refreshed) or an empty set in which case all tags will be (re)-generated.
 function generate_tag_pages(refresh_tags=Set{String}())::Nothing
     # filter out pages that may not exist anymore
     PAGE_TAGS = globvar("fd_page_tags")
+    isnothing(PAGE_TAGS) && return nothing
     for rpath in keys(PAGE_TAGS)
         isfile(rpath * ".md") || delete!(PAGE_TAGS, rpath)
     end
@@ -16,11 +17,8 @@ function generate_tag_pages(refresh_tags=Set{String}())::Nothing
     # Get the dictionary tag -> [rp1, rp2...]
     TAG_PAGES = invert_dict(PAGE_TAGS)
     # store it in globvar
-    empty!(globvar("fd_tag_pages"))
-    merge!(globvar("fd_tag_pages"), TAG_PAGES)
-
-    #
-    all_tags  = collect(keys(TAG_PAGES))
+    set_var!(GLOBAL_VARS, "fd_tag_pages", TAG_PAGES)
+    all_tags = collect(keys(TAG_PAGES))
 
     # check if the tag dir is there
     isdir(path(:tag)) || mkpath(path(:tag))

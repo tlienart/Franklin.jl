@@ -26,6 +26,7 @@ function convert_md(mds::AS,
                     isinternal::Bool=false,
                     isconfig::Bool=false,
                     has_mddefs::Bool=true,
+                    pagevar::Bool=false, # whether it's called from pagevar
                     )::String
     # instantiate page dictionaries
     isrecursive || isinternal || set_page_env()
@@ -105,7 +106,7 @@ function convert_md(mds::AS,
     # ------------------------------------------------------------------------
     #> 4. Page variable definition (mddefs), also if in config, update lxdefs
     if has_mddefs
-        process_mddefs(blocks, isconfig)
+        process_mddefs(blocks, isconfig, pagevar)
     end
 
     #> 4.b if config, update global lxdefs as well

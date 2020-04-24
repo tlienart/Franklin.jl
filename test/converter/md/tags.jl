@@ -1,19 +1,24 @@
-fs2()
-write(joinpath("_layout", "head.html"), "")
-write(joinpath("_layout", "foot.html"), "")
-write(joinpath("_layout", "page_foot.html"), "")
-write("config.md", "")
-write("index.md", """
-    Hello
-    """)
-
 @testset "tagpages" begin
+    fs2()
+    write(joinpath("_layout", "head.html"), "")
+    write(joinpath("_layout", "foot.html"), "")
+    write(joinpath("_layout", "page_foot.html"), "")
+    write("config.md", "")
+    write("index.md", """
+        Hello
+        """)
     F.def_GLOBAL_VARS!()
+    F.def_LOCAL_VARS!()
     write("pg1.md", "")
     write("pg2.md", "")
-    F.globvar("fd_page_tags")["pg1"] = Set(["aa", "bb"])
+    F.set_var!(F.GLOBAL_VARS, "fd_page_tags", F.DTAG(("pg1" => Set(["aa", "bb"]),)))
     F.globvar("fd_page_tags")["pg2"] = Set(["bb", "cc"])
+
+    @test Set(keys(F.globvar("fd_page_tags"))) == Set(["pg1", "pg2"])
+    @test Set(union(values(F.globvar("fd_page_tags"))...)) == Set(["aa", "bb", "cc"])
+
     F.generate_tag_pages()
+
     @test F.globvar("fd_tag_pages")["aa"] == ["pg1"]
     @test F.globvar("fd_tag_pages")["bb"] == ["pg1","pg2"]
     @test F.globvar("fd_tag_pages")["cc"] == ["pg2"]
@@ -22,11 +27,23 @@ write("index.md", """
     @test isfile(joinpath(F.path(:tag), "aa", "index.html"))
     @test isfile(joinpath(F.path(:tag), "bb", "index.html"))
     @test isfile(joinpath(F.path(:tag), "cc", "index.html"))
+
+    F.clear_dicts()
 end
 
 # ======= INTEGRATION ============
 
 @testset "tags" begin
+    fs2()
+    write(joinpath("_layout", "head.html"), "")
+    write(joinpath("_layout", "foot.html"), "")
+    write(joinpath("_layout", "page_foot.html"), "")
+    write("config.md", "")
+    write("index.md", """
+        Hello
+        """)
+    F.def_GLOBAL_VARS!()
+    F.def_LOCAL_VARS!()
     isdir("blog") && rm("blog", recursive=true)
     mkdir("blog")
     write(joinpath("blog", "pg1.md"), """
@@ -49,13 +66,14 @@ end
         @def date = Date(2003, 01, 01)
         @def title = "Page 4"
         """)
-    serve(clear=true, single=true, nomess=true)
+    serve(clear=true, single=true, cleanup=false, nomess=true)
     @test isdir(joinpath("__site", "tag"))
     for tag in ("aa", "bb", "cc", "dd", "ee")
         local p
         p = joinpath("__site", "tag", tag, "index.html")
         @test isfile(p)
     end
+
     p = joinpath("__site", "tag", "aa", "index.html")
     c = read(p, String)
     @test isapproxstr(c, """
@@ -72,7 +90,7 @@ end
     success(`rm $(joinpath("blog", "pg4.md"))`)
     success(`rm $(joinpath("blog", "pg3.md"))`)
 
-    serve(clear=true, cleanup=false, single=true, nomess=true)
+    serve(clear=true, single=true, nomess=true)
     c = read(p, String)
     @test isapproxstr(c, """
         <div class="franklin-content">
@@ -82,15 +100,6 @@ end
         </ul>
         </div>
         """)
-    @test Set(collect(keys(F.globvar("fd_page_tags")))) ==
-            Set(["blog/pg1", "blog/pg2"])
-    @test Set(union(collect(values(F.globvar("fd_page_tags")))...)) ==
-            Set(["aa", "bb", "cc"])
-    @test Set(collect(keys(F.globvar("fd_tag_pages")))) ==
-            Set(["aa", "bb", "cc"])
-    @test Set(union(collect(values(F.globvar("fd_tag_pages")))...)) ==
-            Set(["blog/pg1", "blog/pg2"])
 
-    # cleanup
     F.clear_dicts()
 end
