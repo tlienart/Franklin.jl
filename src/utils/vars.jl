@@ -59,7 +59,7 @@ const LOCAL_VARS = PageVars()
 const LOCAL_VARS_DEFAULT = [
     # General
     "title"         => Pair(nothing,    (String, Nothing)),
-    "hasmath"       => Pair(true,       (Bool,)),
+    "hasmath"       => Pair(false,      (Bool,)),
     "hascode"       => Pair(false,      (Bool,)),
     "date"          => Pair(Date(1),    (String, Date, Nothing)),
     "lang"          => Pair("julia",    (String,)), # default lang indented code
