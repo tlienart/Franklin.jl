@@ -10,6 +10,7 @@ using DelimitedFiles: readdlm
 using OrderedCollections
 using Pkg
 using DocStringExtensions: SIGNATURES, TYPEDEF
+using Crayons
 
 import Logging
 import LiveServer
@@ -102,6 +103,18 @@ const AS = Union{String,SubString{String}}
 const MESSAGE_FILE_GEN     = "This file was generated, do not modify it."
 const MESSAGE_FILE_GEN_LIT = "# $MESSAGE_FILE_GEN\n\n"
 const MESSAGE_FILE_GEN_FMD = "# $MESSAGE_FILE_GEN # hide\n"
+
+# -----------------------------------------------------------------------------
+
+"""Debugging mode"""
+const LOGGING = Ref(false)
+
+function logger(s)
+    LOGGING[] || return nothing
+    print(Crayon(bold=true, foreground=:yellow), "LOG: ")
+    println(Crayon(reset=true), s)
+    return nothing
+end
 
 # -----------------------------------------------------------------------------
 

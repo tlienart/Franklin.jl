@@ -60,7 +60,7 @@ end
     # testing write
     head = "head"
     pg_foot = "\npage_foot"
-    foot = "foot {{if hasmath}} {{fill author}}{{end}}"
+    foot = "foot {{fill author}}"
 
     out_file = F.form_output_path(F.PATHS[:site], "index.html", :html)
     F.write_page(F.PATHS[:folder], "index.md", head, pg_foot, foot, out_file)

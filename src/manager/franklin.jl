@@ -54,7 +54,10 @@ function serve(; clear::Bool=false,
                  eval_all::Bool=false,
                  silent::Bool=false,
                  cleanup::Bool=true,
-                 on_write::Function=(_, _) -> nothing)::Union{Nothing,Int}
+                 on_write::Function=(_, _) -> nothing,
+                 log::Bool=false
+                 )::Union{Nothing,Int}
+    LOGGING[] = log
     # set the global path
     FOLDER_PATH[] = pwd()
     # silent mode?
@@ -237,6 +240,9 @@ function fd_fullpass(watched_files::NamedTuple; clear::Bool=false,
     # with otherwise the same path, it's the latter that will be considered.
     s = 0
     for (case, dict) ∈ pairs(watched_files), (fpair, t) ∈ dict
+
+        "fd_fullpass -- $(joinpath(fpair...))" |> logger
+
         a = process_file(case, fpair, head, pg_foot, foot, t;
                          clear=clear, prerender=prerender,
                          isoptim=isoptim, on_write=on_write)

@@ -59,7 +59,7 @@ const LOCAL_VARS = PageVars()
 const LOCAL_VARS_DEFAULT = [
     # General
     "title"         => Pair(nothing,    (String, Nothing)),
-    "hasmath"       => Pair(true,       (Bool,)),
+    "hasmath"       => Pair(false,      (Bool,)),
     "hascode"       => Pair(false,      (Bool,)),
     "date"          => Pair(Date(1),    (String, Date, Nothing)),
     "lang"          => Pair("julia",    (String,)), # default lang indented code
@@ -168,6 +168,9 @@ processed yet so force a pass over that page.
 """
 function pagevar(rpath::AS, name::Union{Symbol,String})
     rpath = splitext(rpath)[1]
+
+    "pagevar -- $rpath, $name (key: $(haskey(ALL_PAGE_VARS, rpath)))" |> logger
+
     if !haskey(ALL_PAGE_VARS, rpath)
         # does there exist a file with a `.md` ? if so go over it
         # otherwise return nothing
