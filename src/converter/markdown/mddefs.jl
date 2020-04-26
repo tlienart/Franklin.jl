@@ -38,23 +38,19 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool,
     set_vars!(LOCAL_VARS, assignments)
     rpath = splitext(locvar("fd_rpath"))[1]
 
-    # is hascode or hasmath set explicitly? if not and if the global
-    # autocode and/or automath are left to true, then check here to see
-    # if there are any blocks and set the variable automatically (#419)
-    acm = filter(p -> p.first in ("hascode", "hasmath"), assignments)
-    if globvar("autocode") &&
-            (isempty(acm) || !any(p -> p.first == "hascode", acm))
+    hasmath = locvar(:hasmath)
+    hascode = locvar(:hascode)
+    if !hascode && globvar("autocode")
         # check and set hascode automatically
         code = any(b -> startswith(string(b.name), "CODE_BLOCK"), blocks)
         set_var!(LOCAL_VARS, "hascode", code)
     end
-    if globvar("automath") &&
-            (isempty(acm) || !any(p -> p.first == "hasmath", acm))
+    if !hasmath && globvar("automath")
         # check and set hasmath automatically
         math = any(b -> b.name in MATH_BLOCKS_NAMES, blocks)
         set_var!(LOCAL_VARS, "hasmath", math)
     end
-
+    
     # copy the page vars to ALL_PAGE_VARS so that they can be accessed
     # by other pages via `pagevar`.
     ALL_PAGE_VARS[rpath] = deepcopy(LOCAL_VARS)
