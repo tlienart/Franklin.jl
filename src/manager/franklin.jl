@@ -241,7 +241,7 @@ function fd_fullpass(watched_files::NamedTuple; clear::Bool=false,
     s = 0
     for (case, dict) ∈ pairs(watched_files), (fpair, t) ∈ dict
 
-        "fd_fullpass -- $(joinpath(fpair...))" |> logger
+        (:fd_fullpass, joinpath(fpair...)) |> logger
 
         a = process_file(case, fpair, head, pg_foot, foot, t;
                          clear=clear, prerender=prerender,

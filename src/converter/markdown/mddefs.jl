@@ -12,7 +12,9 @@ Depending on `isconfig`, will update `GLOBAL_VARS` or `LOCAL_VARS`.
 """
 function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool,
                         pagevar::Bool=false)::Nothing
-    "process_mddefs -- config: $isconfig, pagevar: $pagevar" |> logger
+
+    (:process_mddefs, "config: $isconfig, pagevar: $pagevar") |> logger
+
     # Find all markdown definitions (MD_DEF) blocks
     mddefs = filter(β -> (β.name == :MD_DEF), blocks)
     # empty container for the assignments
@@ -59,7 +61,7 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool,
     # by other pages via `pagevar`.
     ALL_PAGE_VARS[rpath] = deepcopy(LOCAL_VARS)
 
-    "process_mddefs - assignments done & copy to ALL_PAGE_VARS" |> logger
+    (:process_mddefs, "assignments done & copy to ALL_PAGE_VARS") |> logger
 
     # # TAGS
     # tags = Set(unique(locvar("tags")))

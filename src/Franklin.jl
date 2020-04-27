@@ -109,10 +109,11 @@ const MESSAGE_FILE_GEN_FMD = "# $MESSAGE_FILE_GEN # hide\n"
 """Debugging mode"""
 const LOGGING = Ref(false)
 
-function logger(s)
+function logger(t)
     LOGGING[] || return nothing
     print(Crayon(bold=true, foreground=:yellow), "LOG: ")
-    println(Crayon(reset=true), s)
+    print(Crayon(bold=false, foreground=:blue), rpad(t[1], 20))
+    println(Crayon(reset=true), t[2])
     return nothing
 end
 
