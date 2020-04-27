@@ -258,8 +258,10 @@ function fd_fullpass(watched_files::NamedTuple; clear::Bool=false,
 
     # generate RSS if appropriate
     globvar("generate_rss") && rss_generator()
-    # generate tags if appropriate
-    generate_tag_pages()
+
+    # XXX # generate tags if appropriate
+    # XXX generate_tag_pages()
+
     # done
     FD_ENV[:FULL_PASS] = false
     # return -1 if any page
