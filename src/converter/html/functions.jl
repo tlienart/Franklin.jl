@@ -211,11 +211,17 @@ function hfun_list(params::Vector{String})::String
         return pvd
     end
     sort!(rpaths, by=sorter, rev=true)
+
+    (:hfun_list, "tag: $tag, loop over $rpaths") |> logger
+
     for rpath in rpaths
         title = pagevar(rpath, "title")
         if isnothing(title)
             title = "/$rpath/"
         end
+
+        (:hfun_list, "(in loop) $rpath - $title") |> logger
+
         write(c, "<li><a href=\"/$rpath/\">$title</a></li>")
     end
     write(c, "</ul>")

@@ -146,6 +146,7 @@ gotd() = (flush_td(); cd(td); F.FOLDER_PATH[] = td)
 function fs1()
     F.FD_ENV[:STRUCTURE] = v"0.1"
     gotd()
+    F.clear_dicts()
     empty!(F.PATHS)
     F.set_paths!()
     mkdir(F.PATHS[:src])
@@ -154,11 +155,15 @@ function fs1()
     mkdir(F.PATHS[:src_css])
     mkdir(F.PATHS[:src_html])
     mkdir(F.PATHS[:assets])
+    F.def_GLOBAL_VARS!()
+    F.def_LOCAL_VARS!()
+    F.set_var!(F.LOCAL_VARS, "fd_rpath", "index.md")
 end
 
 function fs2()
     F.FD_ENV[:STRUCTURE] = v"0.2"
     gotd()
+    F.clear_dicts()
     empty!(F.PATHS)
     F.set_paths!()
     mkdir(F.PATHS[:site])
@@ -167,6 +172,9 @@ function fs2()
     mkdir(F.PATHS[:layout])
     mkdir(F.PATHS[:libs])
     mkdir(F.PATHS[:literate])
+    F.def_GLOBAL_VARS!()
+    F.def_LOCAL_VARS!()
+    F.set_var!(F.LOCAL_VARS, "fd_rpath", "index.md")
 end
 
 fdi(s) = fd2html(s; internal=true)

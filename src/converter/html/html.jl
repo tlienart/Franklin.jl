@@ -4,6 +4,9 @@ blocks).
 """
 function convert_html(hs::AS; isoptim::Bool=false)::String
     isempty(hs) && return hs
+
+    (:convert_html, "hasmath/code: $(locvar.((:hasmath, :hascode)))") |> logger
+
     # Tokenize
     tokens = find_tokens(hs, HTML_TOKENS, HTML_1C_TOKENS)
 

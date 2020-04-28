@@ -4,6 +4,7 @@ const R = @__DIR__
 const D = joinpath(dirname(dirname(pathof(Franklin))), "test", "_dummies")
 
 F.FD_ENV[:SILENT_MODE] = true
+# F.FD_ENV[:DEBUG_MODE] = true
 F.FD_ENV[:STRUCTURE] = v"0.1" # legacy, it's switched up in the tests.
 
 # UTILS
@@ -60,7 +61,7 @@ include("converter/md/markdown3.jl")
 include("converter/md/markdown4.jl")
 include("converter/md/hyperref.jl")
 include("converter/md/md_defs.jl")
-include("converter/md/tags.jl")
+# include("converter/md/tags.jl")
 println("🍺")
 println("CONVERTER/HTML")
 include("converter/html/html.jl")
@@ -103,7 +104,7 @@ cd(dirname(dirname(pathof(Franklin))))
 
 println("TEMPLATING")
 include("templating/for.jl")
-include("templating/fill.jl")
+include("templating/fill.jl") # XXX --> (path issue)
 
 println("UTILS FILE")
 include("utils_file/basic.jl")

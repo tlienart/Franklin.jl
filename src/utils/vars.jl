@@ -162,12 +162,15 @@ const ALL_PAGE_VARS = Dict{String,PageVars}()
 
 Convenience function to get the value associated with a var available to a page
 corresponding to `rpath`. So for instance if `blog/index.md` has `@def var = 0`
-then this can be accessed with `pagevar("var", "blog/index")`.
+then this can be accessed with `pagevar("blog/index", "var")`.
 If `rpath` is not yet a key of `ALL_PAGE_VARS` then maybe the page hasn't been
 processed yet so force a pass over that page.
 """
 function pagevar(rpath::AS, name::Union{Symbol,String})
     rpath = splitext(rpath)[1]
+
+    (:pagevar, "$rpath, $name (key: $(haskey(ALL_PAGE_VARS, rpath)))") |> logger
+
     if !haskey(ALL_PAGE_VARS, rpath)
         # does there exist a file with a `.md` ? if so go over it
         # otherwise return nothing
@@ -176,22 +179,22 @@ function pagevar(rpath::AS, name::Union{Symbol,String})
                      joinpath(path(:src), fpath) :
                      joinpath(path(:folder), fpath)
         isfile(candpath) || return nothing
-        # store current locvar
-        if @isdefined LOCAL_VARS
-            bk_LOCAL_VARS = deepcopy(LOCAL_VARS)
-        else
-            bk_LOCAL_VARS = nothing
-        end
         # store curpath
         bk_path = locvar("fd_rpath")
+        bk_path_ = splitext(bk_path)[1]
+
+        (:pagevar, "!haskey, bkpath: $bk_path, rpath: $rpath") |> logger
+
         # set temporary cur path (so that defs go to the right place)
         set_cur_rpath(fpath, isrelative=true)
         # effectively we only care about the mddefs
         convert_md(read(fpath, String), pagevar=true)
         # re-set the cur path to what it was before
         set_cur_rpath(bk_path, isrelative=true)
-        # re-set local vars
-        isnothing(bk_LOCAL_VARS) || (LOCAL_VARS = bk_LOCAL_VARS)
+        # re-set local vars using ALL_PAGE_VARS
+        # NOTE: we must do this in place to messing things up.
+        empty!(LOCAL_VARS)
+        merge!(LOCAL_VARS, ALL_PAGE_VARS[bk_path_])
     end
     name = String(name)
     haskey(ALL_PAGE_VARS[rpath], name) || return nothing
