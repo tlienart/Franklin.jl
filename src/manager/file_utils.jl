@@ -85,7 +85,7 @@ function write_page(root::String, file::String, head::String,
     # f1/blah/page1.md or index.md etc... this is useful in the code evaluation
     # and management of paths
     set_cur_rpath(fpath)
-    # conversion
+    # conversion    
     content = convert_md(read(fpath, String))
 
     # Check if should add item
@@ -147,10 +147,14 @@ See [`process_file_err`](@ref).
 """
 function process_file(case::Symbol, fpair::Pair{String,String}, args...;
                       kwargs...)::Int
+    if FD_ENV[:DEBUG_MODE]
+        process_file_err(case, fpair, args...; kwargs...)
+        return 0
+    end
+
     try
         process_file_err(case, fpair, args...; kwargs...)
     catch err
-        FD_ENV[:DEBUG_MODE] && throw(err)
         rp = fpair.first
         rp = rp[end-min(20, length(rp))+1 : end]
         println("\n... encountered an issue processing '$(fpair.second)' " *

@@ -181,6 +181,10 @@ function pagevar(rpath::AS, name::Union{Symbol,String})
         isfile(candpath) || return nothing
         # store curpath
         bk_path = locvar("fd_rpath")
+        bk_path_ = splitext(bk_path)[1]
+
+        (:pagevar, "!haskey, bkpath: $bk_path, rpath: $rpath") |> logger
+
         # set temporary cur path (so that defs go to the right place)
         set_cur_rpath(fpath, isrelative=true)
         # effectively we only care about the mddefs
@@ -190,7 +194,7 @@ function pagevar(rpath::AS, name::Union{Symbol,String})
         # re-set local vars using ALL_PAGE_VARS
         # NOTE: we must do this in place to messing things up.
         empty!(LOCAL_VARS)
-        merge!(LOCAL_VARS, ALL_PAGE_VARS[bk_path])
+        merge!(LOCAL_VARS, ALL_PAGE_VARS[bk_path_])
     end
     name = String(name)
     haskey(ALL_PAGE_VARS[rpath], name) || return nothing

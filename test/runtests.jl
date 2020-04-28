@@ -4,6 +4,7 @@ const R = @__DIR__
 const D = joinpath(dirname(dirname(pathof(Franklin))), "test", "_dummies")
 
 F.FD_ENV[:SILENT_MODE] = true
+# F.FD_ENV[:DEBUG_MODE] = true
 F.FD_ENV[:STRUCTURE] = v"0.1" # legacy, it's switched up in the tests.
 
 # UTILS
