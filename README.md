@@ -39,6 +39,7 @@ Some examples of websites using Franklin
 * [@cormullion's website](https://cormullion.github.io), the author of [Luxor.jl](https://github.com/JuliaGraphics/Luxor.jl),
 * MLJ's [tutorial website](https://alan-turing-institute.github.io/MLJTutorials/) which shows how Franklin can interact nicely with [Literate.jl](https://github.com/fredrikekre/Literate.jl)
 * [Tom Kwong's website](https://ahsmart.com/) author of [_Hands-on Design Patterns and Best Practices with  Julia_](https://www.amazon.com/gp/product/183864881X).
+* [SymbolicUtils.jl's manual](https://juliasymbolics.github.io/SymbolicUtils.jl/) using the Tufte template
 * [My website](https://tlienart.github.io).
 
 ## Key features
