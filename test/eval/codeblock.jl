@@ -35,8 +35,8 @@
         a = randn()"""
 
     # more cases to test REGEX_CODE
-    rx3 = Regex(F.REGEX_CODE_RP3)
-    rx5 = Regex(F.REGEX_CODE_RP5)
+    rx3 = F.CODE_3_PAT
+    rx5 = F.CODE_5_PAT
 
     s = "```julia:ex1 A```"
     m = match(rx3, s)

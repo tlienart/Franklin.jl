@@ -1,7 +1,7 @@
 name = "Franklin"
 uuid = "713c75ef-9fc9-4b05-94a9-213340da978e"
 authors = ["Thibaut Lienart <tlienart@me.com>"]
-version = "0.7.8"
+version = "0.7.9"
 
 [deps]
 Crayons = "a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f"
