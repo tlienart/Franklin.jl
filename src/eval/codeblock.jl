@@ -3,9 +3,6 @@ Functionalities to take a code block and process it.
 These functionalities are called from `convert/md_blocks`.
 =#
 
-const REGEX_CODE_RP3 = "```([a-zA-Z][a-zA-Z-]*)(\\:[a-zA-Z\\\\\\/_\\.][a-zA-Z_0-9-\\\\\\/]+(?:\\.[a-zA-Z0-9]+)?)?\\s*\\n?((?:.|\\n)*)```"
-const REGEX_CODE_RP5 = "``" * REGEX_CODE_RP3 * "``"
-
 """
 $SIGNATURES
 
@@ -17,8 +14,8 @@ function parse_fenced_block(ss::SubString)::Tuple
     # * ```lang ... ``` where lang can be something like julia-repl
     # * ```lang:path ... ``` where path is a relative path like "this/path"
     # group 1 => lang; group 2 => path; group 3 => code
-    reg   = ifelse(startswith(ss, "`````"), REGEX_CODE_RP5, REGEX_CODE_RP3)
-    m     = match(Regex(reg), ss)
+    reg   = ifelse(startswith(ss, "`````"), CODE_5_PAT, CODE_3_PAT)
+    m     = match(reg, ss)
     lang  = m.captures[1]
     rpath = m.captures[2]
     code  = strip(m.captures[3])

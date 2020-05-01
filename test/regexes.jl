@@ -91,6 +91,30 @@ end
     end
 end
 
+### Code blocks
+@testset "code" begin
+    list = (
+        "```julia:ex some code```",
+        "```cpp:πγ some code```",
+        "```julia:πγ.jl some code```",
+        "```julia:./πγ.jl some code```",
+        "```julia:./πγ/λη.jl some code```",
+        )
+    for s in list
+        @test !isnothing(match(F.CODE_3_PAT, s))
+    end
+    for s in list
+        @test !isnothing(match(F.CODE_5_PAT, "``$s``"))
+    end
+    noklist = (
+        "```γulia some code```",
+        "```julia:0ex some code```",
+        )
+    for s in noklist
+        @test isnothing(match(F.CODE_3_PAT, s))
+    end
+end
+
 ### HBLOCK REGEXES
 
 @testset "hb-if" begin
