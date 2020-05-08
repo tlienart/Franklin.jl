@@ -83,7 +83,9 @@ end
     p = joinpath("__site", "tag", "aa", "index.html")
     c = read(p, String)
     @test occursin("""Tag: aa""", c)
-    @test occursin("""<div class=\"franklin-content tagpage\">\n    <ul><li><a href="/blog/pg4/">Page 4</a></li><li><a href="/blog/pg1/">Page 1</a></li></ul>\n  </div>""", c)
+    @test occursin("""<div class=\"franklin-content tagpage\">""", c)
+    @test occursin("""<ul><li><a href="/blog/pg4/">Page 4</a></li>""", c)
+    @test occursin("""<li><a href="/blog/pg1/">Page 1</a></li></ul>""", c)
 
     # Now remove some pages; we use bash commands so that they're blocking
     success(`rm $(joinpath("blog", "pg4.md"))`)
@@ -91,7 +93,8 @@ end
 
     serve(clear=true, single=true, nomess=true)
     c = read(p, String)
-    @test occursin("""<div class=\"franklin-content tagpage\">\n    <ul><li><a href=\"/blog/pg1/\">Page 1</a></li></ul>\n  </div>""", c)
+    @test occursin("""<div class=\"franklin-content tagpage\">""", c)
+    @test occursin("""<ul><li><a href=\"/blog/pg1/\">Page 1</a></li></ul>""", c)
 
     F.clear_dicts()
 end
