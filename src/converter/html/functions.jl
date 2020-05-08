@@ -188,21 +188,15 @@ end
 """
 $(SIGNATURES)
 
-H-Function of the form `{{taglist fd_tag}}`.
+H-Function of the form `{{taglist}}`.
 """
-function hfun_list(params::Vector{String})::String
-    if length(params) != 1
-        throw(HTMLFunctionError("I found a {{list ...}} block and expected 1 " *
-                                "parameter but got $(length(params)). Verify."))
-    end
-    tag = params[1]
-    TAG_PAGES = globvar("fd_tag_pages")
+function hfun_taglist()::String
+    tag = locvar(:fd_tag)
 
     c = IOBuffer()
-    write(c, "<h1>Tag: $tag</h1>")
     write(c, "<ul>")
 
-    rpaths = TAG_PAGES[tag]
+    rpaths = globvar("fd_tag_pages")[tag]
     sorter(p) = begin
         pvd = pagevar(p, "date")
         if isnothing(pvd)
@@ -219,11 +213,9 @@ function hfun_list(params::Vector{String})::String
         if isnothing(title)
             title = "/$rpath/"
         end
-
-        (:hfun_list, "(in loop) $rpath - $title") |> logger
-
         write(c, "<li><a href=\"/$rpath/\">$title</a></li>")
     end
     write(c, "</ul>")
+
     return String(take!(c))
 end

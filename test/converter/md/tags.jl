@@ -9,8 +9,8 @@
         """)
     F.def_GLOBAL_VARS!()
     F.def_LOCAL_VARS!()
-    write("pg1.md", "")
-    write("pg2.md", "")
+    write("pg1.md", "@def title = \"Page1\"")
+    write("pg2.md", "@def title = \"Page2\"")
     F.set_var!(F.GLOBAL_VARS, "fd_page_tags", F.DTAG(("pg1" => Set(["aa", "bb"]),)))
     F.globvar("fd_page_tags")["pg2"] = Set(["bb", "cc"])
 
@@ -27,6 +27,12 @@
     @test isfile(joinpath(F.path(:tag), "aa", "index.html"))
     @test isfile(joinpath(F.path(:tag), "bb", "index.html"))
     @test isfile(joinpath(F.path(:tag), "cc", "index.html"))
+
+    tagbb = read(joinpath(F.path(:tag), "bb", "index.html"), String)
+    tagcc = read(joinpath(F.path(:tag), "cc", "index.html"), String)
+
+    @test occursin("""<ul><li><a href="/pg1/">Page1</a></li><li><a href="/pg2/">Page2</a></li></ul>""", tagbb)
+    @test occursin("""<ul><li><a href="/pg2/">Page2</a></li></ul>""", tagcc)
 
     F.clear_dicts()
 end
@@ -76,15 +82,8 @@ end
 
     p = joinpath("__site", "tag", "aa", "index.html")
     c = read(p, String)
-    @test isapproxstr(c, """
-        <div class="franklin-content">
-        <h1>Tag: aa</h1>
-        <ul>
-          <li><a href="/blog/pg4/">Page 4</a></li>
-          <li><a href="/blog/pg1/">Page 1</a></li>
-        </ul>
-        </div>
-        """)
+    @test occursin("""Tag: aa""", c)
+    @test occursin("""<div class=\"franklin-content tagpage\">\n    <ul><li><a href="/blog/pg4/">Page 4</a></li><li><a href="/blog/pg1/">Page 1</a></li></ul>\n  </div>""", c)
 
     # Now remove some pages; we use bash commands so that they're blocking
     success(`rm $(joinpath("blog", "pg4.md"))`)
@@ -92,14 +91,7 @@ end
 
     serve(clear=true, single=true, nomess=true)
     c = read(p, String)
-    @test isapproxstr(c, """
-        <div class="franklin-content">
-        <h1>Tag: aa</h1>
-        <ul>
-          <li><a href="/blog/pg1/">Page 1</a></li>
-        </ul>
-        </div>
-        """)
+    @test occursin("""<div class=\"franklin-content tagpage\">\n    <ul><li><a href=\"/blog/pg1/\">Page 1</a></li></ul>\n  </div>""", c)
 
     F.clear_dicts()
 end

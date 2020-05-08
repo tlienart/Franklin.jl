@@ -41,8 +41,8 @@ function generate_tag_pages(refresh_tags=Set{String}())::Nothing
     # Generate the tag folder if it doesn't exist already
     isdir(path(:tag)) || mkpath(path(:tag))
     # Generate the tag layout page if it doesn't exist (it should...)
-    isfile(joinpath(:layout, "tag.html")) || write_default_tag_layout()
-    # write each tag
+    isfile(joinpath(path(:layout), "tag.html")) || write_default_tag_layout()
+    # write each tag, note that they are necessarily in TAG_PAGES
     for tag in update_tags
         write_tag_page(tag)
     end
@@ -57,7 +57,11 @@ Check the content of the tag folder and remove orphan pages.
 function clean_tags(rm_tags=nothing)::Nothing
     isdir(path(:tag)) || return nothing
     PAGE_TAGS = globvar("fd_page_tags")
-    all_tags = isnothing(PAGE_TAGS) ? [] : unique(vcat(values(PAGE_TAGS)...))
+    if isempty(PAGE_TAGS) || isnothing(PAGE_TAGS)
+        all_tags = []
+    else
+        all_tags = union(values(PAGE_TAGS)...)
+    end
     # check what folders are present
     all_tag_folders = readdir(path(:tag))
     # check what folders shouldn't be present
@@ -67,8 +71,8 @@ function clean_tags(rm_tags=nothing)::Nothing
     end
     # clean up
     for dirname in orphans
-        path = joinpath(path(:tag), dirname)
-        isdir(path) && rm(path, recursive=true)
+        dirpath = joinpath(path(:tag), dirname)
+        isdir(dirpath) && rm(dirpath, recursive=true)
     end
     return nothing
 end
@@ -113,7 +117,7 @@ function write_default_tag_layout()::Nothing
         </head>
         <body>
           <div class="{{div_content}} tagpage">
-            {{taglist fd_tag}}
+            {{taglist}}
           </div>
         </body>
         </html>

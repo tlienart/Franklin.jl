@@ -195,12 +195,17 @@ function pagevar(rpath::AS, name::Union{Symbol,String})
         set_cur_rpath(fpath, isrelative=true)
         # effectively we only care about the mddefs
         convert_md(read(fpath, String), pagevar=true)
-        # re-set the cur path to what it was before
-        set_cur_rpath(bk_path, isrelative=true)
-        # re-set local vars using ALL_PAGE_VARS
-        # NOTE: we must do this in place to messing things up.
-        empty!(LOCAL_VARS)
-        merge!(LOCAL_VARS, ALL_PAGE_VARS[bk_path_])
+
+        if !haskey(ALL_PAGE_VARS, bk_path_) # empty corner case in tests
+            def_LOCAL_VARS!()
+        else
+            # re-set the cur path to what it was before
+            set_cur_rpath(bk_path, isrelative=true)
+            # re-set local vars using ALL_PAGE_VARS
+            # NOTE: we must do this in place to messing things up.
+            empty!(LOCAL_VARS)
+            merge!(LOCAL_VARS, ALL_PAGE_VARS[bk_path_])
+        end
     end
     name = String(name)
     haskey(ALL_PAGE_VARS[rpath], name) || return nothing
