@@ -104,7 +104,7 @@ cd(dirname(dirname(pathof(Franklin))))
 
 println("TEMPLATING")
 include("templating/for.jl")
-include("templating/fill.jl") # XXX --> (path issue)
+include("templating/fill.jl")
 
 println("UTILS FILE")
 include("utils_file/basic.jl")

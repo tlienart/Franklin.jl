@@ -188,7 +188,7 @@ end
 """
 $(SIGNATURES)
 
-H-Function of the form `{{list tag}}`.
+H-Function of the form `{{taglist fd_tag}}`.
 """
 function hfun_list(params::Vector{String})::String
     if length(params) != 1

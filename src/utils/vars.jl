@@ -90,7 +90,8 @@ const LOCAL_VARS_DEFAULT = [
     "fd_ctime"  => Pair(Date(1),    (Date,)),   # time of creation
     "fd_mtime"  => Pair(Date(1),    (Date,)),   # time of last modification
     "fd_rpath"  => Pair("",         (String,)), # rpath to current page
-    "fd_url"    => Pair("",         (String,)),
+    "fd_url"    => Pair("",         (String,)), # url to current page
+    "fd_tag"    => Pair("",         (String,)), # (generated) current tag
     ]
 #=
 NOTE:
