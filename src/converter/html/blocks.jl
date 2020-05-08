@@ -76,6 +76,16 @@ function process_html_cond(hs::AS, qblocks::Vector{AbstractBlock},
                 # pages/blah => pub/blah
                 rpath = replace(rpath, Regex("^pages") => "pub")
             end
+            # are we currently on a tag page?
+            if !isempty(locvar("fd_tag"))
+                tag = locvar("fd_tag")
+                if FD_ENV[:STRUCTURE] < v"0.2"
+                    rpath = "/pub/tag/$tag/"
+                else
+                    rpath = "/tag/$tag/"
+                end
+            end
+
             # compare with β.pages
             inpage = any(p -> match_url(rpath, p), βi.pages)
 

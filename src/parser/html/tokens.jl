@@ -142,7 +142,6 @@ struct HIsPage <: AbstractBlock
     pages::Vector{<:AS} # one or several pages
 end
 
-
 """
 $(TYPEDEF)
 
