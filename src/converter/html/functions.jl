@@ -213,7 +213,8 @@ function hfun_taglist()::String
         if isnothing(title)
             title = "/$rpath/"
         end
-        write(c, "<li><a href=\"/$rpath/\">$title</a></li>")
+        surl = ifelse(rpath=="index", "/", "/$rpath/")
+        write(c, "<li><a href=\"$surl\">$title</a></li>")
     end
     write(c, "</ul>")
 
