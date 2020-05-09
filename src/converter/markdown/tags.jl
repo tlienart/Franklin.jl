@@ -57,7 +57,7 @@ Check the content of the tag folder and remove orphan pages.
 function clean_tags(rm_tags=nothing)::Nothing
     isdir(path(:tag)) || return nothing
     PAGE_TAGS = globvar("fd_page_tags")
-    if isempty(PAGE_TAGS) || isnothing(PAGE_TAGS)
+    if isnothing(PAGE_TAGS) || isempty(PAGE_TAGS)
         all_tags = []
     else
         all_tags = union(values(PAGE_TAGS)...)
