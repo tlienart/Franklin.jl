@@ -141,7 +141,7 @@ function get_url(rpath)
         url = rpath
     end
     if endswith(url, "index")
-        url = url[1:length(url)-length(url)]
+        url = url[1:length(url)-length("index")]
     end
     url = strip(url, '/')
     if isempty(url)
