@@ -125,6 +125,33 @@ function _url_curpage2()
     return fn
 end
 
+"""
+    get_url
+
+Take a `rpath` and return the corresponding valid url
+"""
+function get_url(rpath)
+    if FD_ENV[:STRUCTURE] < v"0.2"
+        error("`get_url` undefined for older file specs, open an issue on Github.")
+    end
+    rpc, ext = splitext(rpath)
+    if ext in (".md", ".html")
+        url = rpc
+    else
+        url = rpath
+    end
+    if endswith(url, "index")
+        url = url[1:length(url)-length(url)]
+    end
+    url = strip(url, '/')
+    if isempty(url)
+        url = "/"
+    else
+        url = "/$url/"
+    end
+    return url
+end
+
 # Copied from https://github.com/JuliaLang/julia/blob/acb7bd93fb2d5adbbabeaed9f39ab3c85495b02f/stdlib/Markdown/src/render/html.jl#L25-L31
 const _htmlescape_chars = LittleDict(
             '<' => "&lt;",
