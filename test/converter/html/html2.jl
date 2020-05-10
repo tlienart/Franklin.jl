@@ -71,3 +71,19 @@ end
     s = """A {{if a}} A {{elseif c}} B {{end}}"""
     @test_throws F.HTMLBlockError F.convert_html(s)
 end
+
+
+@testset "Script" begin
+    F.def_LOCAL_VARS!()
+    F.set_var!(F.LOCAL_VARS, "hasmath", true)
+    s = """
+        Hasmath: {{hasmath}}
+        <script>{{hasmath}}</script>
+        <script src="...">{{hasmath}}</script>
+        """
+    @test isapproxstr(F.convert_html(s), """
+        Hasmath: true
+        <script>{{hasmath}}</script>
+        <script src="...">{{hasmath}}</script>
+        """)
+end

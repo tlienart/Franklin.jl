@@ -12,7 +12,8 @@ function convert_html(hs::AS; isoptim::Bool=false)::String
 
     # Find hblocks ({{ ... }})
     hblocks, tokens = find_all_ocblocks(tokens, HTML_OCB)
-    filter!(hb -> hb.name != :COMMENT, hblocks)
+    deactivate_inner_blocks!(hblocks, (:COMMENT, :SCRIPT))
+    filter!(hb -> hb.name ∉ (:COMMENT, :SCRIPT), hblocks)
 
     # Find qblocks (qualify the hblocks)
     qblocks = qualify_html_hblocks(hblocks)

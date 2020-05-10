@@ -94,7 +94,7 @@ reprocessed. There's effectively two cases:
 2. (solved in `check_and_merge_indented_blocks!`) when an indented code block
     is contained inside a larger block.
 """
-function deactivate_inner_blocks!(blocks::Vector{OCBlock})
+function deactivate_inner_blocks!(blocks::Vector{OCBlock}, nin=MD_OCB_NO_INNER)
     # see #444 it's important to ensure the blocks are sorted and they now
     # may not be given that we're finding them in 2 passes.
     sort!(blocks, by=(β->from(β)))
@@ -107,7 +107,7 @@ function deactivate_inner_blocks!(blocks::Vector{OCBlock})
     heads   = from.(blocks)
     while i < nb
         cblock = blocks[i]
-        if active[i] && cblock.name ∈ MD_OCB_NO_INNER
+        if active[i] && cblock.name ∈ nin
             # find all blocks within the span of this block, deactivate them
             chead = heads[i]
             ctail = to(cblock)
