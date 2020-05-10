@@ -39,6 +39,7 @@ include("parser/markdown-extra.jl")
 include("parser/footnotes+links.jl")
 include("parser/latex++.jl")
 include("parser/indentation++.jl")
+include("parser/md-dbb.jl")
 println("🍺")
 
 # EVAL

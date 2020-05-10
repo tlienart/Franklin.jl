@@ -51,39 +51,3 @@ end
     fhs = F.process_html_qblocks(hs, qblocks)
     @test isapproxstr(fhs, "AEF")
 end
-
-
-@testset "Bad cases" begin
-    F.def_LOCAL_VARS!()
-    # Lonely End block
-    s = """A {{end}}"""
-    @test_throws F.HTMLBlockError F.convert_html(s)
-
-    # Inbalanced
-    s = """A {{if a}} B {{if b}} C {{else}} {{end}}"""
-    @test_throws F.HTMLBlockError F.convert_html(s)
-
-    # Some of the conditions are not bools
-    F.set_vars!(F.LOCAL_VARS, [
-        "a" => "false",
-        "b" => "false",
-        "c" => "\"Hello\""])
-    s = """A {{if a}} A {{elseif c}} B {{end}}"""
-    @test_throws F.HTMLBlockError F.convert_html(s)
-end
-
-
-@testset "Script" begin
-    F.def_LOCAL_VARS!()
-    F.set_var!(F.LOCAL_VARS, "hasmath", true)
-    s = """
-        Hasmath: {{hasmath}}
-        <script>{{hasmath}}</script>
-        <script src="...">{{hasmath}}</script>
-        """
-    @test isapproxstr(F.convert_html(s), """
-        Hasmath: true
-        <script>{{hasmath}}</script>
-        <script src="...">{{hasmath}}</script>
-        """)
-end

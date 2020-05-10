@@ -166,7 +166,8 @@ function find_double_brace_blocks(tokens)
                                    context(thead)))
             end
             hnext += head
-            push!(dbb, OCBlock(:DOUBLE_BRACE, thead => db_tokens[hnext]))
+            ocb = OCBlock(:DOUBLE_BRACE, thead => db_tokens[hnext])
+            push!(dbb, ocb)
             head = hnext
         end
         head += 1
