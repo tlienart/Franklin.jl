@@ -6,42 +6,74 @@ refresh (in which case only the pages associated to those tags will be
 refreshed) or an empty set in which case all tags will be (re)-generated.
 Note that if a tag is removed from a page, it may be that `refresh_tags`
 contains a tag which should effectively be removed because no page have it.
-(This only matters at the end in the call to `write_tag_pages`).
+(This only matters at the end in the call to `write_tag_page`).
+Note: the `clean_tags` cleans up orphan tags (tags that wouldn't be pointing
+to any page anymore).
 """
 function generate_tag_pages(refresh_tags=Set{String}())::Nothing
-    # filter out pages that may not exist anymore
+    # if there are no page tags, cleanup and finish
     PAGE_TAGS = globvar("fd_page_tags")
-    isnothing(PAGE_TAGS) && return nothing
+    isnothing(PAGE_TAGS) && return clean_tags()
+    # if there are page tags, eliminiate the pages that don't exist anymore
     for rpath in keys(PAGE_TAGS)
         isfile(rpath * ".md") || delete!(PAGE_TAGS, rpath)
     end
-    isempty(PAGE_TAGS) && return nothing
+    # if there's nothing left, clean up and finish
+    isempty(PAGE_TAGS) && return clean_tags()
 
-    # Get the dictionary tag -> [rp1, rp2...]
+    # Here we have a non-empty PAGE_TAGS dictionary where the keys are
+    # paths of existing files, and values are the tags associated with
+    # these files.
+    # Get the inverse dictionary {tag -> [rp1, rp2...]}
     TAG_PAGES = invert_dict(PAGE_TAGS)
     # store it in globvar
     set_var!(GLOBAL_VARS, "fd_tag_pages", TAG_PAGES)
     all_tags = collect(keys(TAG_PAGES))
 
-    if !isdir(path(:tag))
-        mkpath(path(:tag))
-    else
-        # there may be tags in `refresh_tags` that are not in all_tags
-        # -> in that case delete those pages
-        rm_tags = filter(t -> t ∉ all_tags, refresh_tags)
-        # there may also be existing dirs which shouldn't be there anymore
-        # because the tags have been deleted, these two things combine but
-        # can independently happen (e.g. on the main generate_tag_pages)
-        for dirname in union(setdiff(readdir(path(:tag)), all_tags), rm_tags)
-            rm(joinpath(path(:tag), dirname), recursive=true)
-        end
-    end
+    # some tags may have been given to refresh which don't have any
+    # pages linking to them anymore, these tags will have to be cleaned up
+    rm_tags = filter(t -> t ∉ all_tags, refresh_tags)
 
-    # check which tags should be refreshed, note that
-    update_tags = isempty(refresh_tags) ?
-                    all_tags :
+    # check which tags should be refreshed
+    update_tags = isempty(refresh_tags) ? all_tags :
                     filter(t -> t ∈ all_tags, refresh_tags)
-    write_tag_pages(update_tags)
+
+    # Generate the tag folder if it doesn't exist already
+    isdir(path(:tag)) || mkpath(path(:tag))
+    # Generate the tag layout page if it doesn't exist (it should...)
+    isfile(joinpath(path(:layout), "tag.html")) || write_default_tag_layout()
+    # write each tag, note that they are necessarily in TAG_PAGES
+    for tag in update_tags
+        write_tag_page(tag)
+    end
+    return clean_tags(rm_tags)
+end
+
+"""
+    clean_tags(rm_tags=nothing)
+
+Check the content of the tag folder and remove orphan pages.
+"""
+function clean_tags(rm_tags=nothing)::Nothing
+    isdir(path(:tag)) || return nothing
+    PAGE_TAGS = globvar("fd_page_tags")
+    if isnothing(PAGE_TAGS) || isempty(PAGE_TAGS)
+        all_tags = []
+    else
+        all_tags = union(values(PAGE_TAGS)...)
+    end
+    # check what folders are present
+    all_tag_folders = readdir(path(:tag))
+    # check what folders shouldn't be present
+    orphans = setdiff(all_tags, all_tag_folders)
+    if !isnothing(rm_tags)
+        orphans = union(orphans, rm_tags)
+    end
+    # clean up
+    for dirname in orphans
+        dirpath = joinpath(path(:tag), dirname)
+        isdir(dirpath) && rm(dirpath, recursive=true)
+    end
     return nothing
 end
 
@@ -50,27 +82,49 @@ $SIGNATURES
 
 Internal function to (re)write the tag pages corresponding to `update_tags`.
 """
-function write_tag_pages(update_tags)::Nothing
+function write_tag_page(tag)::Nothing
+    # make `fd_tag` available to that page generation
+    # also allows {{istag tagname}} ... {{end}}
+    set_var!(LOCAL_VARS, "fd_tag", tag)
+
     layout_key  = ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src_html, :layout)
     layout      = path(layout_key)
-    head        = read(joinpath(layout, "head.html"),      String)
-    pg_foot     = read(joinpath(layout, "page_foot.html"), String)
-    foot        = read(joinpath(layout, "foot.html"),      String)
+    content     = read(joinpath(layout, "tag.html"), String)
 
-    # XXX this needs to be fixed, basically tag pages should have some
-    # form of page variable scope as they use the `head` and `foot` which
-    # may use some `{{ ...  }}`. At the moment the tag page uses the scope
-    # of the last-processed page (ambient LOCAL_VARS) which is not good.
+    dir = joinpath(path(:tag), tag)
+    isdir(dir) || mkdir(dir)
 
-    for tag in update_tags
-        # check if `tag/$tag` exists otherwise create it
-        dir = joinpath(path(:tag), tag)
-        isdir(dir) || mkdir(dir)
-        # assemble the page using the hfun list (which can be overwritten
-        # by the user)
-        page = build_page(head, "{{list $tag}}", pg_foot, foot)
-        # write the processed page.
-        write(joinpath(dir, "index.html"), convert_html(page))
-    end
+    write(joinpath(dir, "index.html"), convert_html(content))
+
+    # reset `fd_tag`
+    set_var!(LOCAL_VARS, "fd_tag", "")
+    return nothing
+end
+
+
+"""
+    write_default_tag_layout()
+
+If `_layout/tag.html` is not defined, input a basic default one indicating
+that the user has to modify it. This will help users transition when they may
+have used a template that did not define `_layout/tag.html`.
+"""
+function write_default_tag_layout()::Nothing
+    html = """
+        <!doctype html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <title>Tag: {{fill fd_tag}}</title>
+        </head>
+        <body>
+          <div class="{{div_content}} tagpage">
+            {{taglist}}
+          </div>
+        </body>
+        </html>
+        """
+    write(joinpath(path(:layout), "tag.html"), html)
     return nothing
 end

@@ -15,12 +15,15 @@ possibilities to consider in which case the order is important: the first case
 that works will be taken.
 """
 const HTML_TOKENS = LittleDict{Char, Vector{TokenFinder}}(
-    '<' => [ isexactly("<!--") => :COMMENT_OPEN  ],  # <!-- ...
+    '<' => [ isexactly("<!--")      => :COMMENT_OPEN, # <!-- ...
+             isexactly("<script>")  => :SCRIPT_OPEN,
+             isexactly("<script ")  => :SCRIPT_OPEN,
+             isexactly("</script>") => :SCRIPT_CLOSE,
+            ],
     '-' => [ isexactly("-->")  => :COMMENT_CLOSE ],  #      ... -->
     '{' => [ isexactly("{{")   => :H_BLOCK_OPEN  ],  # {{
     '}' => [ isexactly("}}")   => :H_BLOCK_CLOSE ],  # }}
     ) # end dict
-
 
 """
 HTML_OCB
@@ -31,6 +34,7 @@ const HTML_OCB = [
     # name        opening token    closing token(s)     nestable
     # ----------------------------------------------------------
     OCProto(:COMMENT, :COMMENT_OPEN, (:COMMENT_CLOSE,), false),
+    OCProto(:SCRIPT,  :SCRIPT_OPEN,  (:SCRIPT_CLOSE,),  false),
     OCProto(:H_BLOCK, :H_BLOCK_OPEN, (:H_BLOCK_CLOSE,), true)
     ]
 
@@ -141,7 +145,6 @@ struct HIsPage <: AbstractBlock
     ss::SubString
     pages::Vector{<:AS} # one or several pages
 end
-
 
 """
 $(TYPEDEF)

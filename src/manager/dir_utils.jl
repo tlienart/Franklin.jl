@@ -102,7 +102,7 @@ Update the dictionaries referring to input files and their time of last change.
 The variable `verb` propagates verbosity.
 """
 function scan_input_dir!(args...; kw...)
-    to_ignore = vcat(IGNORE_FILES, globvar("ignore"))
+    to_ignore = union(IGNORE_FILES, globvar("ignore"))
     # differentiate between files and dirs
     dir_indicator = [endswith(c, "/") for c in to_ignore]
     d2i = [d for d in to_ignore[dir_indicator] if length(d) > 1]

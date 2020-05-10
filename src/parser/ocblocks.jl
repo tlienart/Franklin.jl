@@ -94,7 +94,9 @@ reprocessed. There's effectively two cases:
 2. (solved in `check_and_merge_indented_blocks!`) when an indented code block
     is contained inside a larger block.
 """
-function deactivate_inner_blocks!(blocks::Vector{OCBlock})
+function deactivate_inner_blocks!(blocks::Vector{OCBlock}, nin=MD_OCB_NO_INNER)
+    ranges  = Vector{Pair{Int,Int}}()
+    isempty(blocks) && return ranges
     # see #444 it's important to ensure the blocks are sorted and they now
     # may not be given that we're finding them in 2 passes.
     sort!(blocks, by=(β->from(β)))
@@ -107,10 +109,11 @@ function deactivate_inner_blocks!(blocks::Vector{OCBlock})
     heads   = from.(blocks)
     while i < nb
         cblock = blocks[i]
-        if active[i] && cblock.name ∈ MD_OCB_NO_INNER
+        if active[i] && cblock.name ∈ nin
             # find all blocks within the span of this block, deactivate them
             chead = heads[i]
             ctail = to(cblock)
+            push!(ranges, (chead => ctail))
             # look at all blocks starting after the current one that may
             # be within its span (note that, at worst, we have a few thousand
             # blocks here so that it doesn't need to be super optimised...)
@@ -120,9 +123,28 @@ function deactivate_inner_blocks!(blocks::Vector{OCBlock})
         i += 1
     end
     deleteat!(blocks, map(!, active))
-    return nothing
+    return ranges
 end
 
+
+"""
+$SIGNATURES
+
+Given ranges found by `deactivate_inner_blocks!` deactivate double brace blocks
+that are within those ranges (they will be reprocessed later).
+"""
+function deactivate_inner_dbb!(dbb, ranges)
+    isempty(dbb) && return nothing
+    isempty(ranges) && return nothing
+    active = ones(Bool, length(dbb))
+    for (i, d) in enumerate(dbb)
+        hd, td = from(d), to(d)
+        r = findfirst(r -> r.first <= hd && td <= r.second, ranges)
+        isnothing(r) || (active[i] = false)
+    end
+    deleteat!(dbb, map(!, active))
+    return nothing
+end
 
 
 """

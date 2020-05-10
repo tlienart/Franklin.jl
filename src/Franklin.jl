@@ -21,7 +21,7 @@ import HTTP
 import Random
 
 export serve, publish, cleanpull, newsite, optimize, fd2html,
-       literate_folder, verify_links, @OUTPUT
+       literate_folder, verify_links, @OUTPUT, get_url
 
 # Extra functions
 export lunr

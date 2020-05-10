@@ -1,5 +1,5 @@
 """
-MD_1C_TOKENS
+    MD_1C_TOKENS
 
 Dictionary of single-char tokens for Markdown. Note that these characters are
 exclusive, they cannot appear again in a larger token.
@@ -12,7 +12,7 @@ const MD_1C_TOKENS = LittleDict{Char, Symbol}(
 
 
 """
-MD_TOKENS_LX
+    MD_TOKENS_LX
 
 Subset of `MD_1C_TOKENS` with only the latex tokens (for parsing what's in a math environment).
 """
@@ -22,7 +22,7 @@ const MD_1C_TOKENS_LX = LittleDict{Char, Symbol}(
     )
 
 """
-MD_TOKENS
+    MD_TOKENS
 
 Dictionary of tokens for Markdown. Note that for each, there may be several
 possibilities to consider in which case the order is important: the first case
@@ -100,7 +100,7 @@ marking it as a potential open brace, same for the close brace.
 
 
 """
-MD_TOKENS_LX
+    MD_TOKENS_LX
 
 Subset of `MD_TOKENS` with only the latex tokens (for parsing what's in a math environment).
 """
@@ -113,7 +113,7 @@ const MD_TOKENS_LX = Dict{Char, Vector{TokenFinder}}(
 
 
 """
-L_RETURNS
+    L_RETURNS
 
 Convenience tuple containing the name for standard line returns and line
 returns followed by an indentation (either a quadruple space or a tab).
@@ -122,7 +122,7 @@ const L_RETURNS = (:LINE_RETURN, :LR_INDENT, :EOS)
 
 
 """
-MD_OCB
+    MD_OCB
 
 List of Open-Close Blocks whose content should be deactivated (any token within
 their span should be marked as inactive) until further processing.
@@ -172,7 +172,7 @@ instance in the case where a user defines a latex command like so:
 
 
 """
-MD_HEADER
+    MD_HEADER
 
 All header symbols.
 """
@@ -180,7 +180,7 @@ const MD_HEADER = (:H1, :H2, :H3, :H4, :H5, :H6)
 
 
 """
-MD_HEADER_OPEN
+    MD_HEADER_OPEN
 
 All header symbols (opening).
 """
@@ -188,7 +188,7 @@ const MD_HEADER_OPEN = (:H1_OPEN, :H2_OPEN, :H3_OPEN, :H4_OPEN, :H5_OPEN, :H6_OP
 
 
 """
-MD_OCB_ESC
+    MD_OCB_ESC
 
 Blocks that will be escaped (their content will not be further processed).
 Corresponds to the "non-reprocess" elements of `MD_OCB`.
@@ -197,7 +197,7 @@ const MD_OCB_ESC = [e.name for e ∈ MD_OCB if !e.nest]
 
 
 """
-MD_OCB_MATH
+    MD_OCB_MATH
 
 Same concept as `MD_OCB` but for math blocks, they can't be nested. Separating
 them from the other dictionary makes their processing easier.
@@ -215,7 +215,7 @@ const MD_OCB_MATH = [
 
 
 """
-MD_OCB_ALL
+    MD_OCB_ALL
 
 Combination of all `MD_OCB` in order.
 """
@@ -223,15 +223,15 @@ const MD_OCB_ALL = vcat(MD_OCB, MD_OCB2, MD_OCB_MATH) # order matters
 
 
 """
-MD_OCB_IGNORE
+    MD_OCB_IGNORE
 
 List of names of blocks that will need to be dropped at compile time.
 """
-const MD_OCB_IGNORE = [:COMMENT, :MD_DEF]
+const MD_OCB_IGNORE = (:COMMENT, :MD_DEF)
 
 
 """
-MATH_BLOCKS_NAMES
+    MATH_BLOCKS_NAMES
 
 List of names of maths environments.
 """
@@ -242,10 +242,10 @@ CODE_BLOCKS_NAMES
 
 List of names of code blocks environments.
 """
-const CODE_BLOCKS_NAMES = [:CODE_BLOCK_LANG, :CODE_BLOCK, :CODE_BLOCK_IND]
+const CODE_BLOCKS_NAMES = (:CODE_BLOCK_LANG, :CODE_BLOCK, :CODE_BLOCK_IND)
 
 """
-MD_OCB_NO_INNER
+    MD_OCB_NO_INNER
 
 List of names of blocks which will deactivate any block contained within them
 as their content will be reprocessed later on.

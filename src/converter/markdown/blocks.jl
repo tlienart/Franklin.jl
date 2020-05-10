@@ -34,7 +34,7 @@ function convert_block(β::AbstractBlock, lxdefs::Vector{LxDef})::AS
         cont     = convert_md(raw_cont, lxdefs;
                               isrecursive=true, has_mddefs=false)
         divname  = chop(otok(β).ss, head=2, tail=0)
-        return html_div(divname, cont)
+        return html_div(replace(divname, ","=>" "), cont)
     end
 
     # default case, ignore block (should not happen)
