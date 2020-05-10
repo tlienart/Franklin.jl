@@ -202,3 +202,14 @@ end
     @test Set(id["aa"]) == Set(["blog/pg1", "blog/pg3"])
     @test Set(id["ee"]) == Set(["blog/pg3"])
 end
+
+@testset "get_url" begin
+    fs2()
+
+    @test get_url("foo") == "/foo/"
+    @test get_url("foo/bar") == "/foo/bar/"
+    @test get_url("index") == "/"
+    @test get_url("foo/index") == "/foo/"
+    @test get_url("foo.md") == "/foo/"
+    @test get_url("foo/index.md") == "/foo/"
+end
