@@ -4,6 +4,31 @@ This document keeps track of **key new features**, **breaking changes** and what
 
 You can also check out [this issue](https://github.com/tlienart/Franklin.jl/issues/323) with a more granular list of things that are being worked on / have been fixed / added.
 
+## v0.8
+
+This minor releases should have no breaking changes compared to 0.7 apart from a slew of bug fixes.
+More people are using Franklin, which is great, that also means more bugs are being found (and eventually fixed), thanks all for your support and patience.
+
+### New stuff
+
+The main new stuff is support for taxonomy. The FranklinTemplates have been updated to reflect this so if you do `newsite("testTaxonomy", template="basic")` you will see that the third menu is now `Tags` and gives some more information on how to  use tags.
+
+At the core you can:
+
+* add tags to pages with `@def tags = ["tag1", "tag2"]`
+* if there are any tags present, tag pages will be generated at `/tag/tag1/`, `/tag/tag2/` etc, the layout of tag pages is dictated by `_layout/tag.html` and will essentially contain a list of pages with that tag,
+* you can easily customise how that list works by writing your own `hfun_` for the tag-list, check out the templates as suggested above to get an idea for how to do this.
+
+**Important note**: the `_layout/tag.html` **cannot** use local page variables, i.e. things like `{{if hasmath}}` or `{{fill title}}`, that's because it's ambiguous which page would have defined these variables. So you can only use:
+
+* global page variables (defined in `config.md`)
+* qualified page variables (`{{fill varname path/to/page/}}`)
+* `fd_tag` a special page variable containing the tag string (e.g.: `"tag1"`)
+
+Finally  you can also use `{{ispage /tag/tag1/}}` etc in the `_layout/tag.html` in order to specify a layout that would be dependent upon the tag name.
+
+As usual, your feedback and suggestions are welcome, kindly open issues on GitHub. _Please make it easy for me to help you by giving me as much concise information as possible_. 
+
 ## v0.7
 
 ### Breaking changes
