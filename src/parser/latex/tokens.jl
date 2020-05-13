@@ -72,7 +72,7 @@ Example: `\\cite` --> `cite`.
 function getname(lxc::LxCom)::String
     if isnothing(lxc.lxdef)
         s = String(lxc.ss)
-        j = findfirst('{', s)
+        j = findfirst("{", s)
         return lxc.ss[2:prevind(s, j)]
     end
     return String(getindex(lxc.lxdef).name)[2:end]
