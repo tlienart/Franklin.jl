@@ -23,9 +23,9 @@ function md2html(ss::AS; stripp::Bool=false)::AS
     partial = replace(partial, r"&#125;&#125;" => "}}")
     # In some cases, base converter adds <p>...</p>\n which we might not want
     stripp || return partial
-    startswith(partial, "<p>")    && (partial = chop(partial, head=3))
-    endswith(partial,   "</p>")   && return chop(partial, tail=4)
-    endswith(partial,   "</p>\n") && return chop(partial, tail=5)
+    if startswith(partial, "<p>") && endswith(partial, "</p>\n")
+        partial = chop(partial, head=3, tail=5)
+    end
     return partial
 end
 
