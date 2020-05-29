@@ -139,8 +139,8 @@ function convert_md(mds::AbstractString,
 
     #> 1. Merge all the blocks that will need further processing before
     # insertion
-    b2insert = merge_blocks(lxcoms, deactivate_divs(blocks),
-                            sp_chars, fnrefs, dbb, hrules)
+    b2insert = merge_blocks(lxcoms, deactivate_divs(vcat(blocks, dbb)),
+                            sp_chars, fnrefs, hrules)
 
     #> 2. Form intermediate markdown + html
     inter_md, mblocks = form_inter_md(mds, b2insert, lxdefs)

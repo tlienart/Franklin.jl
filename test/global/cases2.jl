@@ -187,7 +187,7 @@ end
         {{hasmath}} {{hascode}}
         $x = 5$
         """ |> fdi
-    @test isapproxstr(s, "<p>true false \\(x = 5\\)</p>")
+    @test isapproxstr(s, "true false \\(x = 5\\)")
     F.set_var!(F.LOCAL_VARS, "hascode", false)
     F.set_var!(F.LOCAL_VARS, "hasmath", false)
     s = raw"""
@@ -196,8 +196,8 @@ end
         blah
         ```
         """ |> fdi
-    @test isapproxstr(s, """<p>
+    @test isapproxstr(s, """
         false true
-        <pre><code class=\"language-r\">blah</code></pre></p>
+        <pre><code class=\"language-r\">blah</code></pre>
         """)
 end

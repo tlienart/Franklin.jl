@@ -72,13 +72,3 @@ end
         Blah <pre><code class="language-html">&lt;div class&#61;&quot;foo&quot;&gt;Blah&lt;/div&gt;</code></pre>
         End</p>""")
 end
-
-@testset "iss#502" begin
-    s = """
-       @def upcoming_release_short = "1.5"
-       @def upcoming_release_date = "May 28, 2020"
-
-       Blah v{{upcoming_release_short}} and {{upcoming_release_date}}.
-       """ |> fd2html
-    @test isapproxstr(s, "<p>Blah May 28, 2020 v 1.5 and May 28, 2020</p>")
-end

@@ -41,8 +41,9 @@ from_ifsmaller(v::Vector, idx::Int, len::Int)::Int = (idx > len) ? BIG_INT : fro
 """
 $(SIGNATURES)
 
-Since divs are recursively processed, once they've been found, everything inside them needs to be
-deactivated and left for further re-processing to avoid double inclusion.
+Since divs are recursively processed, once they've been found, everything
+inside them needs to be deactivated and left for further re-processing to
+avoid double inclusion.
 """
 function deactivate_divs(blocks::Vector{OCBlock})::Vector{OCBlock}
     active_blocks = ones(Bool, length(blocks))
