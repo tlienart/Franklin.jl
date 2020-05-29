@@ -25,9 +25,9 @@ const GLOBAL_VARS_DEFAULT = [
     # will be added to IGNORE_FILES
     "ignore"           => Pair(String[], (Vector{String},)),
     # RSS
-    "website_title"    => Pair("",   (String,)),
-    "website_descr"    => Pair("",   (String,)),
-    "website_url"      => Pair("",   (String,)),
+    "site_title"       => Pair("",   (String,)),
+    "site_description" => Pair("",   (String,)),
+    "site_url"         => Pair("",   (String,)),
     "generate_rss"     => Pair(true, (Bool,)),
     # div names
     "div_content"      => Pair("franklin-content", (String,)),

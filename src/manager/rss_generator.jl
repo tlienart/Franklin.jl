@@ -100,14 +100,14 @@ function rss_generator()::Nothing
     isempty(RSS_DICT) && return nothing
 
     # are the basic defs there? otherwise warn and break
-    rss_title = globvar("website_title")
-    rss_descr = globvar("website_descr")
-    rss_link  = globvar("website_url")
+    rss_title = globvar("site_title")
+    rss_descr = globvar("site_description")
+    rss_link  = globvar("site_url")
 
     if any(isempty, (rss_title, rss_descr, rss_link))
         @warn """I found RSS items but the RSS feed is not properly described:
               at least one of the following variables has not been defined in
-              your config.md: `website_title`, `website_descr`, `website_url`.
+              your config.md: `site_title`, `site_description`, `site_url`.
               The feed will not be (re)generated."""
         return nothing
     end

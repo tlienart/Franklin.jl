@@ -34,12 +34,12 @@ end
 end
 
 @testset "RSS" begin
-    F.set_var!(F.GLOBAL_VARS, "website_descr", "")
+    F.set_var!(F.GLOBAL_VARS, "site_description", "")
     F.RSS_DICT["hello"] = F.RSSItem("","","","","","","",Date(1))
     @test (@test_logs (:warn, """
               I found RSS items but the RSS feed is not properly described:
               at least one of the following variables has not been defined in
-              your config.md: `website_title`, `website_descr`, `website_url`.
+              your config.md: `site_title`, `site_description`, `site_url`.
               The feed will not be (re)generated.""") F.rss_generator()) === nothing
 end
 
