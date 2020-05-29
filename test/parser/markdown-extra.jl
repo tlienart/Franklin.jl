@@ -117,13 +117,13 @@ end
         @def title = "hello"
         {{title}}{{title}}
         """ |> fd2html_td
-    @test isapproxstr(s, "<p>hellohello</p>")
+    @test isapproxstr(s, "hellohello")
     s = """
         @def a_b = "hello"
         @def c_d = "goodbye"
         {{a_b}}{{c_d}}
         """ |> fd2html_td
-    @test isapproxstr(s, "<p>hellogoodbye</p>")
+    @test isapproxstr(s, "hellogoodbye")
 end
 
 # issue 424 with double braces
@@ -134,7 +134,7 @@ end
         $\rho=\frac{e^{-\beta \mathcal{E}_{s}}} {\mathcal{Z}} $
         """ |> fd2html_td
     @test isapproxstr(s, """
-        <p>hello \\(\\rho=\\frac{e^{-\\beta \\mathcal{E}_{s}}} {\\mathcal{Z}} \\)</p>""")
+        hello \\(\\rho=\\frac{e^{-\\beta \\mathcal{E}_{s}}} {\\mathcal{Z}} \\)""")
 end
 
 # issue 432 and consequences

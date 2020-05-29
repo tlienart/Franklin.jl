@@ -51,3 +51,13 @@ end
         <div class="bold">2.0</div>
         """)
 end
+
+@testset "iss#502" begin
+    s = """
+       @def upcoming_release_short = "1.5"
+       @def upcoming_release_date = "May 28, 2020"
+
+       Blah v{{upcoming_release_short}} and {{upcoming_release_date}}.
+       """ |> fd2html
+    @test isapproxstr(s, "<p>Blah v1.5 and May 28, 2020.</p>")
+end

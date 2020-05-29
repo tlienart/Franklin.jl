@@ -95,7 +95,7 @@ reprocessed. There's effectively two cases:
     is contained inside a larger block.
 """
 function deactivate_inner_blocks!(blocks::Vector{OCBlock}, nin=MD_OCB_NO_INNER)
-    ranges  = Vector{Pair{Int,Int}}()
+    ranges = Vector{Pair{Int,Int}}()
     isempty(blocks) && return ranges
     # see #444 it's important to ensure the blocks are sorted and they now
     # may not be given that we're finding them in 2 passes.
@@ -107,12 +107,14 @@ function deactivate_inner_blocks!(blocks::Vector{OCBlock}, nin=MD_OCB_NO_INNER)
     nb      = length(blocks)
     active  = ones(Bool, nb)
     heads   = from.(blocks)
-    while i < nb
+    while i <= nb
         cblock = blocks[i]
+        # is the block active and is it a "no-inner"?
         if active[i] && cblock.name ∈ nin
             # find all blocks within the span of this block, deactivate them
             chead = heads[i]
             ctail = to(cblock)
+            # keep track of the range
             push!(ranges, (chead => ctail))
             # look at all blocks starting after the current one that may
             # be within its span (note that, at worst, we have a few thousand
@@ -139,7 +141,7 @@ function deactivate_inner_dbb!(dbb, ranges)
     active = ones(Bool, length(dbb))
     for (i, d) in enumerate(dbb)
         hd, td = from(d), to(d)
-        r = findfirst(r -> r.first <= hd && td <= r.second, ranges)
+        r = findfirst(r -> r.first < hd && td < r.second, ranges)
         isnothing(r) || (active[i] = false)
     end
     deleteat!(dbb, map(!, active))

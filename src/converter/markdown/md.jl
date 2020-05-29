@@ -20,8 +20,8 @@ Returns the html string as well as a dictionary of page variables.
 * `has_mddefs=true`:   a bool indicating whether to look for definitions of
                         page variables
 """
-function convert_md(mds::AS,
-                    pre_lxdefs::Vector{LxDef}=collect(values(GLOBAL_LXDEFS));
+function convert_md(mds::AbstractString,
+                    pre_lxdefs=collect(values(GLOBAL_LXDEFS));
                     isrecursive::Bool=false,
                     isinternal::Bool=false,
                     isconfig::Bool=false,
@@ -103,6 +103,7 @@ function convert_md(mds::AS,
     # as the step `find_all_ocblocks` possibly found and deactivated {...}.
     dbb = find_double_brace_blocks(toks_pre_ocb)
     deactivate_inner_dbb!(dbb, ranges)
+
     # ------------------------------------------------------------------------
     #> 4. Page variable definition (mddefs), also if in config, update lxdefs
     if has_mddefs
@@ -138,8 +139,8 @@ function convert_md(mds::AS,
 
     #> 1. Merge all the blocks that will need further processing before
     # insertion
-    b2insert = merge_blocks(lxcoms, deactivate_divs(blocks),
-                            sp_chars, fnrefs, dbb, hrules)
+    b2insert = merge_blocks(lxcoms, deactivate_divs(vcat(blocks, dbb)),
+                            sp_chars, fnrefs, hrules)
 
     #> 2. Form intermediate markdown + html
     inter_md, mblocks = form_inter_md(mds, b2insert, lxdefs)
