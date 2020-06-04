@@ -278,8 +278,19 @@ function should_ignore(fpath::AS, files2ignore::Vector{String},
     else
         fpath = fpath[length(path(:folder))+length(PATH_SEP)+1:end]
     end
-    flag  = findfirst(c -> c == fpath, files2ignore)
-    isnothing(flag) || return true
+    files2ignore_regex = []
+    for ignore in files2ignore
+        if occursin("*", ignore)
+            ignore_str = replace(ignore, "." => "\\.")
+            ignore_str = replace(ignore_str, "*" => ".*?")
+            ignore_regex = Regex("^"*ignore_str*"\$")
+            push!(files2ignore_regex, ignore_regex)
+        else
+            push!(files2ignore_regex, ignore)
+        end
+    end
+    flag  = any(r->findfirst(r, fpath) !== nothing, files2ignore_regex)
+    flag && return true
     flag  = findfirst(c -> startswith(fpath, c), dirs2ignore)
     isnothing(flag) || return true
     return false
