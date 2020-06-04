@@ -3,11 +3,11 @@ fs2()
 @testset "ignore/fs2" begin
     gotd()
     s = """
-        @def ignore = ["foo.md", "path/foo.md", "dir/", "path/dir/", "index2*"]
+        @def ignore = ["foo.md", "path/foo.md", "dir/", "path/dir/", r"index2.*"]
         """
     write(joinpath(td, "config.md"), s);
     F.process_config()
-    @test F.globvar("ignore") == ["foo.md", "path/foo.md", "dir/", "path/dir/", "index2*"]
+    @test F.globvar("ignore") == ["foo.md", "path/foo.md", "dir/", "path/dir/", r"index2.*"]
 
     write(joinpath(td, "foo.md"), "anything")
     mkpath(joinpath(td, "path"))
