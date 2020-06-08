@@ -109,11 +109,11 @@ function resolve_code_block(ss::SubString)::String
         # >> eval the code in the relevant module (this creates output/)
         res = run_code(mod, code, cp.out_path; strip_code=false)
         # >> write res to file
-        open(cp.res_path, "w") do resf
-            redirect_stdout(resf) do
-                show(stdout, "text/plain", res)
-            end
-        end
+        # >> this weird thing is to make sure that the proper "show"
+        #    is called...
+        io = IOBuffer()
+        Core.eval(mod, quote show($io, "text/plain", $res) end)
+        write(cp.res_path, take!(io))
         # >> since we've evaluated a code block, toggle scope as stale
         set_var!(LOCAL_VARS, "fd_eval", true)
     end
