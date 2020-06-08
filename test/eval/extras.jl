@@ -45,3 +45,31 @@ fs2()
         <p>ABC <p><span style="color:red;">// Image matching '/assets/blog/kaggle/baz.png' not found. //</span></p></p>
         """)
 end
+
+
+@testset "show" begin
+    s = """
+    @def showall=true
+    ```julia:ex
+    using DataFrames
+    df = DataFrame(A = 1:4, B = ["M", "F", "F", "M"])
+    first(df, 3)
+    ```
+    """ |> fd2html_td
+    @test isapproxstr(s, """
+        <pre><code class="language-julia">
+        using DataFrames
+        df = DataFrame(A = 1:4, B = ["M", "F", "F", "M"])
+        first(df, 3)
+        </code></pre>
+        <pre><code class="plaintext">
+        3×2 DataFrames.DataFrame
+        │ Row │ A     │ B      │
+        │     │ Int64 │ String │
+        ├─────┼───────┼────────┤
+        │ 1   │ 1     │ M      │
+        │ 2   │ 2     │ F      │
+        │ 3   │ 3     │ F      │
+        </code></pre>
+        """)
+end
