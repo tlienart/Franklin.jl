@@ -84,7 +84,6 @@ Internal function to (re)write the tag pages corresponding to `update_tags`.
 """
 function write_tag_page(tag)::Nothing
     # make `fd_tag` available to that page generation
-    # also allows {{istag tagname}} ... {{end}}
     set_var!(LOCAL_VARS, "fd_tag", tag)
 
     layout_key  = ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src_html, :layout)
