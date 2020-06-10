@@ -5,7 +5,7 @@ attr(name::Symbol, val::AS) = ifelse(isempty(val), "", " $name=\"$val\"")
 html_sup(id::String, in::AS) =  "<sup id=\"$id\">$in</sup>"
 
 """Convenience function for a header."""
-html_hk(hk::String, t::AS; id::String="") = "<$hk$(attr(:id, id))>$t</$hk>"
+html_hk(hk::String, t::AS; id::String="", class::String="") = "<$hk$(attr(:id, id))$(attr(:class, class))>$t</$hk>"
 
 """Convenience function to introduce a hyper reference."""
 function html_ahref(link::AS, name::Union{Int,AS};

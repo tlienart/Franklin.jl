@@ -231,7 +231,7 @@ $(SIGNATURES)
 Convenience function to assemble the html out of its parts.
 """
 build_page(head::String, content::String, pgfoot::String, foot::String) =
-    head * html_div(locvar("div_content"), content * pgfoot) * foot
+    head * html_hk(locvar("tag_content"), content * pgfoot;class=locvar("div_content")) * foot
 
 
 """
