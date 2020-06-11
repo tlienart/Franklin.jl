@@ -30,14 +30,17 @@ const GLOBAL_VARS_DEFAULT = [
     "website_url"      => Pair("",   (String,)),
     "generate_rss"     => Pair(true, (Bool,)),
     # div names
-    "tag_content"      => Pair("div",              (String,)),
-    "div_content"      => Pair("franklin-content", (String,)),
+    "content_tag"      => Pair("div",              (String,)),
+    "content_class"    => Pair("franklin-content", (String,)),
+    "content_id"       => Pair("",                 (String,)),
     # auto detection of code / math (see hasmath/hascode)
     "autocode"         => Pair(true, (Bool,)),
     "automath"         => Pair(true, (Bool,)),
     # keep track page=>tags and tag=>pages
     "fd_page_tags"     => Pair(nothing, (DTAG,  Nothing)),
     "fd_tag_pages"     => Pair(nothing, (DTAGI, Nothing)),
+    # LEGACY
+    "div_content" => Pair("", (String,)), # see build_page
     ]
 
 """

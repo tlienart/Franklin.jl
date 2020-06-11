@@ -61,3 +61,6 @@ end
         a = randn()
         b = a + 5</code></pre>"""
 end
+
+@testset "html_content" begin
+end
