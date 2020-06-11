@@ -109,6 +109,8 @@ that the user has to modify it. This will help users transition when they may
 have used a template that did not define `_layout/tag.html`.
 """
 function write_default_tag_layout()::Nothing
+    dc = globvar("div_content")
+    dc = ifelse(isempty(dc), globvar("content_class"), dc)
     html = """
         <!doctype html>
         <html lang="en">
@@ -118,7 +120,7 @@ function write_default_tag_layout()::Nothing
           <title>Tag: {{fill fd_tag}}</title>
         </head>
         <body>
-          <div class="{{div_content}} tagpage">
+          <div class="$dc tagpage">
             {{taglist}}
           </div>
         </body>

@@ -85,7 +85,7 @@ function write_page(root::String, file::String, head::String,
     # f1/blah/page1.md or index.md etc... this is useful in the code evaluation
     # and management of paths
     set_cur_rpath(fpath)
-    # conversion    
+    # conversion
     content = convert_md(read(fpath, String))
 
     # Check if should add item
@@ -230,8 +230,22 @@ $(SIGNATURES)
 
 Convenience function to assemble the html out of its parts.
 """
-build_page(head::String, content::String, pgfoot::String, foot::String) =
-    head * html_div(locvar("div_content"), content * pgfoot) * foot
+function build_page(head, content, pgfoot, foot)
+    # (legacy support) if div_content is offered explicitly, it takes
+    # precedence
+    dc = globvar("div_content")
+    if isempty(dc)
+        content_tag   = globvar("content_tag")
+        content_class = globvar("content_class")
+        content_id    = globvar("content_id")
+    else
+        content_tag   = "div"
+        content_class = dc
+        content_id    = ""
+    end
+    return head * html_content(content_tag, content * pgfoot;
+                               class=content_class, id=content_id) * foot
+end
 
 
 """
