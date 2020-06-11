@@ -63,4 +63,6 @@ end
 end
 
 @testset "html_content" begin
+    h = F.html_content("div", "foo bar"; class="container", id="body")
+    @test h == "<div class=\"container\" id=\"body\">foo bar</div>"
 end
