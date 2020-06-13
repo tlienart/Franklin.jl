@@ -103,10 +103,11 @@ The variable `verb` propagates verbosity.
 """
 function scan_input_dir!(args...; kw...)
     to_ignore = union(IGNORE_FILES, globvar("ignore"))
+    to_ignore = filter!(c-> c isa Regex ? !isempty(c.pattern) : !isempty(c), to_ignore)
     # differentiate between files and dirs
-    dir_indicator = [endswith(c, "/") for c in to_ignore]
+    dir_indicator = [c isa Regex ? endswith(c.pattern, "/") : endswith(c, "/") for c in to_ignore]
     d2i = [d for d in to_ignore[dir_indicator] if length(d) > 1]
-    f2i = filter!((!) ∘ isempty, to_ignore[.!dir_indicator])
+    f2i = to_ignore[.!dir_indicator]
 
     if FD_ENV[:STRUCTURE] < v"0.2"
         return _scan_input_dir!(args...; files2ignore=f2i, dirs2ignore=d2i)
@@ -120,8 +121,8 @@ function _scan_input_dir!(other_files::TrackedFiles,
                           html_files::TrackedFiles,
                           literate_files::TrackedFiles,
                           verb::Bool=false;
-                          files2ignore::Vector{String}=String[],
-                          dirs2ignore::Vector{String}=String[])::Nothing
+                          files2ignore::Vector=String[],
+                          dirs2ignore::Vector=String[])::Nothing
     # top level files (src/*)
     for file ∈ readdir(PATHS[:src])
         fpath = joinpath(PATHS[:src], file)
@@ -188,8 +189,8 @@ function _scan_input_dir2!(other_files::TrackedFiles,
                            literate_scripts::TrackedFiles,
                            verb::Bool=false;
                            in_loop::Bool=false,
-                           files2ignore::Vector{String}=String[],
-                           dirs2ignore::Vector{String}=String[])::Nothing
+                           files2ignore::Vector=String[],
+                           dirs2ignore::Vector=String[])::Nothing
     # go over all files in the website folder
     for (root, _, files) ∈ walkdir(path(:folder))
         for file in files
@@ -270,16 +271,16 @@ Rules:
 * `'path/fname'` -> ignore exactly that
 * `'path/dir/'`  -> ignore everything starting with `path/dir/`
 """
-function should_ignore(fpath::AS, files2ignore::Vector{String},
-                       dirs2ignore::Vector{String})::Bool
+function should_ignore(fpath::AS, files2ignore::Vector,
+                       dirs2ignore::Vector)::Bool
     # fpath is necessarily an absolute path so can strip the folder part
     if FD_ENV[:STRUCTURE] < v"0.2"
         fpath = fpath[length(path(:src))+length(PATH_SEP)+1:end]
     else
         fpath = fpath[length(path(:folder))+length(PATH_SEP)+1:end]
     end
-    flag  = findfirst(c -> c == fpath, files2ignore)
-    isnothing(flag) || return true
+    flag  = any(c->c isa Regex ? match(c, fpath) !== nothing : c == fpath, files2ignore)
+    flag && return true
     flag  = findfirst(c -> startswith(fpath, c), dirs2ignore)
     isnothing(flag) || return true
     return false

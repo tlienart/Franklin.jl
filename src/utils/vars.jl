@@ -23,7 +23,7 @@ const GLOBAL_VARS_DEFAULT = [
     "date_shortdays"   => Pair(String[],     (Vector{String},)),
     "prepath"          => Pair("",           (String,)),
     # will be added to IGNORE_FILES
-    "ignore"           => Pair(String[], (Vector{String},)),
+    "ignore"           => Pair(String[], (Vector{Any},)),
     # RSS
     "website_title"    => Pair("",   (String,)),
     "website_descr"    => Pair("",   (String,)),
