@@ -72,13 +72,13 @@ lx_citep(lxc::LxCom, _) = form_href(lxc, "BIBR"; class="bibref")
 
 function lx_label(lxc::LxCom, _)
     refs = content(lxc.braces[1]) |> strip |> refstring
-    return "<a id=\"$refs\"></a>"
+    return "<a id=\"$refs\" class=\"anchor\"></a>"
 end
 
 function lx_biblabel(lxc::LxCom, _)::String
     name = refstring(stent(lxc.braces[1]))
     PAGE_BIBREFS[name] = content(lxc.braces[2])
-    return "<a id=\"$name\"></a>"
+    return "<a id=\"$name\" class=\"anchor\"></a>"
 end
 
 function lx_toc(::LxCom, _)

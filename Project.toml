@@ -1,7 +1,7 @@
 name = "Franklin"
 uuid = "713c75ef-9fc9-4b05-94a9-213340da978e"
 authors = ["Thibaut Lienart <tlienart@me.com>"]
-version = "0.8.3"
+version = "0.8.4"
 
 [deps]
 Crayons = "a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f"
@@ -25,7 +25,7 @@ DocStringExtensions = "0.8"
 FranklinTemplates = "0.6,0.7"
 HTTP = "0.8"
 Literate = "2.2"
-LiveServer = "0.3"
+LiveServer = "0.4,0.5"
 NodeJS = "0.6,1"
 OrderedCollections = "1.1"
 julia = "1.1"
