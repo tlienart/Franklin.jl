@@ -41,6 +41,7 @@ Some examples of websites using Franklin
 * [Tom Kwong's website](https://ahsmart.com/) author of [_Hands-on Design Patterns and Best Practices with  Julia_](https://www.amazon.com/gp/product/183864881X).
 * [SymbolicUtils.jl's manual](https://juliasymbolics.github.io/SymbolicUtils.jl/) using the Tufte template
 * [@terasakisatoshi's website](https://terasakisatoshi.github.io/MathSeminar.jl/) using the vela template, [source](https://github.com/terasakisatoshi/MathSeminar.jl)
+* [@Wikunia's blog](https://opensourc.es) using the vela template
 * [My website](https://tlienart.github.io).
 
 ## Key features
