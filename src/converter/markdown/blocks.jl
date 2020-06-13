@@ -92,7 +92,7 @@ function convert_math_block(β::OCBlock, lxdefs::Vector{LxDef})::String
 
         if !isnothing(matched)
             name   = refstring(matched.captures[1])
-            write(htmls, "<a id=\"$name\"></a>")
+            write(htmls, "<a id=\"$name\" class=\"anchor\"></a>")
             inner  = replace(inner, r"\\label{.*?}" => "")
             # store the label name and associated number
             PAGE_EQREFS[name] = PAGE_EQREFS[PAGE_EQREFS_COUNTER]

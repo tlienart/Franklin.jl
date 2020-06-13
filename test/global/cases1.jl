@@ -203,5 +203,5 @@ end
         """
     F.def_GLOBAL_LXDEFS!()
     r = st |> conv
-    @test occursin("here <a id=\"anchor\"></a> done.", r)
+    @test occursin("here <a id=\"anchor\" class=\"anchor\"></a> done.", r)
 end

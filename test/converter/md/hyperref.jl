@@ -34,7 +34,7 @@
     @test isapproxstr(h, """
         <p>
           Some string
-          <a id="$h1"></a>\\[ x = x \\]
+          <a id="$h1" class=\"anchor\"></a>\\[ x = x \\]
           then as per <span class="bibref"><a href="#$h2">Amari and Douglas., 1998</a></span>  also this <span class="bibref">(<a href="#$h3">Bardenet et al., 2017</a>)</span>  and
           <span class="bibref"><a href="#$h2">Amari and Douglas., 1998</a>, <a href="#$h3">Bardenet et al., 2017</a></span>
           Reference to equation: <span class="eqref">(<a href="#$h1">1</a>)</span> .
@@ -43,8 +43,8 @@
           Then maybe some text etc.
         </p>
         <ul>
-          <li><p><a id="$h2"></a>  <strong>Amari</strong> and <strong>Douglas</strong>: <em>Why Natural Gradient</em>, 1998.</p></li>
-          <li><p><a id="$h3"></a>  <strong>Bardenet</strong>, <strong>Doucet</strong> and <strong>Holmes</strong>: <em>On Markov Chain Monte Carlo Methods for Tall Data</em>, 2017.</p></li>
+          <li><p><a id="$h2" class=\"anchor\"></a>  <strong>Amari</strong> and <strong>Douglas</strong>: <em>Why Natural Gradient</em>, 1998.</p></li>
+          <li><p><a id="$h3" class=\"anchor\"></a>  <strong>Bardenet</strong>, <strong>Doucet</strong> and <strong>Holmes</strong>: <em>On Markov Chain Monte Carlo Methods for Tall Data</em>, 2017.</p></li>
         </ul>
         """)
 end
@@ -58,7 +58,7 @@ end
        and *B $E$*.
     """
     h = st |> seval
-    @test occursin(raw"""<a id="eq_1"></a>\[ x = x \]""", h)
+    @test occursin(raw"""<a id="eq_1" class=\"anchor\"></a>\[ x = x \]""", h)
     @test occursin(raw"""<span class="eqref">(<a href="#eq_1">1</a>)</span>.""", h)
     @test occursin(raw"""<em>B \(E\)</em>.""", h)
 end
@@ -85,5 +85,5 @@ end
     h1 = F.refstring("eq:a trivial one")
     h2 = F.refstring("beyond hope")
 
-    m == "<p>Then something like  \$\$\\begin{array}{c}  \\mathbb E\\left[ f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R\\end{array}\$\$ and then  <a id=\"$h1\"></a>\$\$\\begin{array}{c}  1+1 &=&2 \\end{array}\$\$ but further  <a id=\"$h2\"></a>\$\$\\begin{array}{c}  1 &=& 1 \\end{array}\$\$ and finally a  <span class=\"eqref)\">({{href EQR $h1}})</span> and maybe  <span class=\"eqref)\">({{href EQR $h2}})</span>.</p>\n"
+    m == "<p>Then something like  \$\$\\begin{array}{c}  \\mathbb E\\left[ f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R\\end{array}\$\$ and then  <a id=\"$h1\" class=\"anchor\"></a>\$\$\\begin{array}{c}  1+1 &=&2 \\end{array}\$\$ but further  <a id=\"$h2\" class=\"anchor\"></a>\$\$\\begin{array}{c}  1 &=& 1 \\end{array}\$\$ and finally a  <span class=\"eqref)\">({{href EQR $h1}})</span> and maybe  <span class=\"eqref)\">({{href EQR $h2}})</span>.</p>\n"
 end
