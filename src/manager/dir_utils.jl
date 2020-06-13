@@ -94,6 +94,10 @@ function _out_path2(base::String)::String
     return outpath
 end
 
+_access(p)   = isa(p, Regex) ? p.pattern : p
+_isempty(p)  = isempty(_access(p))
+_endswith(p) = endswith(_access(p), '/')
+
 
 """
 $(SIGNATURES)
@@ -103,10 +107,12 @@ The variable `verb` propagates verbosity.
 """
 function scan_input_dir!(args...; kw...)
     to_ignore = union(IGNORE_FILES, globvar("ignore"))
-    to_ignore = filter!(c-> c isa Regex ? !isempty(c.pattern) : !isempty(c), to_ignore)
-    # differentiate between files and dirs
-    dir_indicator = [c isa Regex ? endswith(c.pattern, "/") : endswith(c, "/") for c in to_ignore]
-    d2i = [d for d in to_ignore[dir_indicator] if length(d) > 1]
+    # remove empty patterns or strings
+    filter!(!_isempty, to_ignore)
+    # differentiate between files and dirs pattern
+    dir_indicator = [_endswith(c) for c in to_ignore]
+    # ignore "/"
+    d2i = filter!(d -> length(d) > 1, to_ignore[dir_indicator])
     f2i = to_ignore[.!dir_indicator]
 
     if FD_ENV[:STRUCTURE] < v"0.2"
@@ -121,8 +127,8 @@ function _scan_input_dir!(other_files::TrackedFiles,
                           html_files::TrackedFiles,
                           literate_files::TrackedFiles,
                           verb::Bool=false;
-                          files2ignore::Vector=String[],
-                          dirs2ignore::Vector=String[])::Nothing
+                          files2ignore=String[],
+                          dirs2ignore=String[])::Nothing
     # top level files (src/*)
     for file ∈ readdir(PATHS[:src])
         fpath = joinpath(PATHS[:src], file)
@@ -279,9 +285,11 @@ function should_ignore(fpath::AS, files2ignore::Vector,
     else
         fpath = fpath[length(path(:folder))+length(PATH_SEP)+1:end]
     end
-    flag  = any(c->c isa Regex ? match(c, fpath) !== nothing : c == fpath, files2ignore)
-    flag && return true
-    flag  = findfirst(c -> startswith(fpath, c), dirs2ignore)
+    if any(c -> c isa Regex ? match(c, fpath) !== nothing : c == fpath,
+               files2ignore)
+        return true
+    end
+    flag = findfirst(c -> startswith(fpath, c), dirs2ignore)
     isnothing(flag) || return true
     return false
 end
