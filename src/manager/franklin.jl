@@ -42,6 +42,7 @@ Keyword arguments:
 * `on_write(pg, fd_vars)`: callback function after the page is rendered,
                       passing as arguments the rendered page and the page
                       variables
+* `host="127.0.0.1"`: the host to use for the local server
 """
 function serve(; clear::Bool=false,
                  verb::Bool=false,
@@ -55,7 +56,8 @@ function serve(; clear::Bool=false,
                  silent::Bool=false,
                  cleanup::Bool=true,
                  on_write::Function=(_, _) -> nothing,
-                 log::Bool=false
+                 log::Bool=false,
+                 host::String="127.0.0.1"
                  )::Union{Nothing,Int}
     LOGGING[] = log
     # set the global path
@@ -132,7 +134,7 @@ function serve(; clear::Bool=false,
         live_server_dir = ifelse(FD_ENV[:STRUCTURE] < v"0.2", "", "__site")
         LiveServer.setverbose(verb)
         LiveServer.serve(port=port, coreloopfun=coreloopfun,
-                         dir=live_server_dir)
+                         dir=live_server_dir, host=host)
     end
     flag_env &&
         rprint("→ Use Pkg.activate() to go back to your main environment.")
