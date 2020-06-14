@@ -42,6 +42,7 @@ Some examples of websites using Franklin
 * [SymbolicUtils.jl's manual](https://juliasymbolics.github.io/SymbolicUtils.jl/) using the Tufte template
 * [@terasakisatoshi's website](https://terasakisatoshi.github.io/MathSeminar.jl/) using the vela template, [source](https://github.com/terasakisatoshi/MathSeminar.jl)
 * [@Wikunia's blog](https://opensourc.es) using the vela template
+- [@zdroid's blog and website](https://zdroid.github.io) using Bootstrap 4.5
 * [My website](https://tlienart.github.io).
 
 ## Key features
