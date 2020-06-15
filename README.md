@@ -34,7 +34,7 @@ Go to [Franklin's main website](https://franklinjl.org).
 
 Some examples of websites using Franklin
 
-* Franklin's own website is written in Franklin, [source](https://github.com/tlienart/franklindocs),
+* Franklin's own website is written in Franklin, [source](https://github.com/tlienart/franklindocs)
 * The [Julia website](https://julialang.org), including the blog, are deployed in Franklin.
 * [@cormullion's website](https://cormullion.github.io), the author of [Luxor.jl](https://github.com/JuliaGraphics/Luxor.jl),
 * MLJ's [tutorial website](https://alan-turing-institute.github.io/MLJTutorials/) which shows how Franklin can interact nicely with [Literate.jl](https://github.com/fredrikekre/Literate.jl)
@@ -43,6 +43,7 @@ Some examples of websites using Franklin
 * [@terasakisatoshi's website](https://terasakisatoshi.github.io/MathSeminar.jl/) using the vela template, [source](https://github.com/terasakisatoshi/MathSeminar.jl)
 * [@Wikunia's blog](https://opensourc.es) using the vela template
 * [@zdroid's blog and website](https://zdroid.github.io) using Bootstrap 4.5
+* [PkgPage.jl](https://tlienart.github.io/PkgPage.jl/), front-page generator based on Franklin
 * [My website](https://tlienart.github.io).
 
 ## Key features
