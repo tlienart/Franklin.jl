@@ -62,7 +62,7 @@ function process_html_cond(hs::AS, qblocks::Vector{AbstractBlock},
     βi = qblocks[init_idx]
     if βi isa HTML_OPEN_COND_SP
         lag = 1
-        if βi ∉ (HIsPage, HIsNotPage)
+        if !(βi isa (HIsPage, HIsNotPage))
             k = haskey(LOCAL_VARS, βi.vname)
             if !k
                 k = βi isa HIsNotDef
