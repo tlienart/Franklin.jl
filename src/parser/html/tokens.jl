@@ -131,6 +131,31 @@ struct HIsNotDef <: AbstractBlock
     vname::String
 end
 
+# ----------------------------------------------------------
+# Specific conditional block based on whether a var is empty
+# ----------------------------------------------------------
+
+"""
+$(TYPEDEF)
+
+HTML token corresponding to `{{isempty var}}`.
+"""
+struct HIsEmpty <: AbstractBlock
+    ss::SubString
+    vname::String
+end
+
+
+"""
+$(TYPEDEF)
+
+HTML token corresponding to `{{isnotempty var}}`.
+"""
+struct HIsNotEmpty <: AbstractBlock
+    ss::SubString
+    vname::String
+end
+
 # ------------------------------------------------------------
 # Specific conditional block based on whether the current page
 # is or isn't in a group of given pages
@@ -155,6 +180,7 @@ struct HIsNotPage <: AbstractBlock
     ss::SubString
     pages::Vector{<:AS}
 end
+
 
 """
 $(TYPEDEF)

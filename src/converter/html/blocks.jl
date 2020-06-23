@@ -10,11 +10,13 @@ function process_html_cond(hs::AS, qblocks::Vector{AbstractBlock},
         throw(HTMLBlockError("Could not close the conditional block " *
                              "starting with '$(qblocks[i].ss)'."))
     end
+
     init_idx      = i
     else_idx      = 0
     elseif_idx    = Vector{Int}()
     accept_elseif = true # false as soon as we see an else block
     content       = ""
+
     # inbalance keeps track of whether we've managed to find a
     # matching {{end}}. It increases if it sees other opening {{if..}}
     # and decreases if it sees a {{end}}
@@ -60,10 +62,15 @@ function process_html_cond(hs::AS, qblocks::Vector{AbstractBlock},
     βi = qblocks[init_idx]
     if βi isa Union{HIsDef,HIsNotDef,HIsPage,HIsNotPage}
         lag = 1
-        if βi isa HIsDef
-            k = Int(haskey(LOCAL_VARS, βi.vname))
-        elseif βi isa HIsNotDef
-            k = Int(!haskey(LOCAL_VARS, βi.vname))
+        if βi in (HIsDef, HIsNotDef, HIsEmpty, HIsNotEmpty)
+            k = haskey(LOCAL_VARS, βi.vname)
+            if !k
+                k = βi isa HIsNotDef
+            else
+                v = locvar(βi.vname)
+                e = isempty(v)
+                k = ifelse(βi isa HIsEmpty, e, !e)
+            end
         else
             # HIsPage//HIsNotPage
             rpath = splitext(unixify(locvar("fd_rpath")))[1]
@@ -86,13 +93,9 @@ function process_html_cond(hs::AS, qblocks::Vector{AbstractBlock},
 
             # compare with β.pages
             inpage = any(p -> match_url(rpath, p), βi.pages)
-
-            if βi isa HIsPage
-                k = Int(inpage)
-            else
-                k = Int(!inpage)
-            end
+            k = ifelse(βi isa HIsPage, inpage, !inpage)
         end
+        k = Int(k) # either 0 (not found) or 1 (found and first)
     end
 
     # If we've not yet found a verified condition, keep looking

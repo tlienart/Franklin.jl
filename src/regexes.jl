@@ -91,6 +91,9 @@ const HBLOCK_END_PAT    = Regex(HBO * "end" * HBC)
 const HBLOCK_ISDEF_PAT    = Regex(HBO * raw"i(?:s|f)def\s+" * VAR * HBC)
 const HBLOCK_ISNOTDEF_PAT = Regex(HBO * raw"i(?:s|f)n(?:ot)?def\s+" * VAR * HBC)
 
+const HBLOCK_ISEMPTY_PAT    = Regex(HBO * raw"i(?:s|f)empty\s+" * VAR * HBC)
+const HBLOCK_ISNOTEMPTY_PAT = Regex(HBO * raw"i(?:s|f)n(?:ot)?empty\s+" * VAR * HBC)
+
 const HBLOCK_ISPAGE_PAT    = Regex(HBO * raw"ispage\s+" * ANY * HBC)
 const HBLOCK_ISNOTPAGE_PAT = Regex(HBO * raw"isnotpage\s+" * ANY * HBC)
 
