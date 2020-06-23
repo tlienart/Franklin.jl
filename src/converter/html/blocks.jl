@@ -10,13 +10,11 @@ function process_html_cond(hs::AS, qblocks::Vector{AbstractBlock},
         throw(HTMLBlockError("Could not close the conditional block " *
                              "starting with '$(qblocks[i].ss)'."))
     end
-
     init_idx      = i
     else_idx      = 0
     elseif_idx    = Vector{Int}()
     accept_elseif = true # false as soon as we see an else block
     content       = ""
-
     # inbalance keeps track of whether we've managed to find a
     # matching {{end}}. It increases if it sees other opening {{if..}}
     # and decreases if it sees a {{end}}
