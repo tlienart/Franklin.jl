@@ -60,12 +60,17 @@ function process_html_cond(hs::AS, qblocks::Vector{AbstractBlock},
     # if its not just a {{if...}}, need to act appropriately
     # and if the condition is verified then k=1
     βi = qblocks[init_idx]
-    if βi isa Union{HIsDef,HIsNotDef,HIsPage,HIsNotPage}
+    if βi isa HTML_OPEN_COND_SP
         lag = 1
-        if βi isa HIsDef
-            k = Int(haskey(LOCAL_VARS, βi.vname))
-        elseif βi isa HIsNotDef
-            k = Int(!haskey(LOCAL_VARS, βi.vname))
+        if !(βi isa Union{HIsPage, HIsNotPage})
+            k = haskey(LOCAL_VARS, βi.vname)
+            if !k
+                k = βi isa HIsNotDef
+            elseif βi isa Union{HIsEmpty, HIsNotEmpty}
+                v = locvar(βi.vname)
+                e = isempty(v)
+                k = ifelse(βi isa HIsEmpty, e, !e)
+            end
         else
             # HIsPage//HIsNotPage
             rpath = splitext(unixify(locvar("fd_rpath")))[1]
@@ -88,13 +93,9 @@ function process_html_cond(hs::AS, qblocks::Vector{AbstractBlock},
 
             # compare with β.pages
             inpage = any(p -> match_url(rpath, p), βi.pages)
-
-            if βi isa HIsPage
-                k = Int(inpage)
-            else
-                k = Int(!inpage)
-            end
+            k = ifelse(βi isa HIsPage, inpage, !inpage)
         end
+        k = Int(k) # either 0 (not found) or 1 (found and first)
     end
 
     # If we've not yet found a verified condition, keep looking

@@ -132,3 +132,16 @@ end
 
     set_curpath("index.md")
 end
+
+@testset "Cond isempty" begin
+    F.def_LOCAL_VARS!()
+    F.set_vars!(F.LOCAL_VARS, [
+        "b1" => "\"\"",
+        "b2" => "\"hello\""])
+    fdc = x->F.convert_html(x)
+
+    @test "{{isempty b1}}blah{{else}}blih{{end}}" |> fdc == "blah"
+    @test "{{isnotempty b2}}blah{{else}}blih{{end}}" |> fdc == "blah"
+    @test "{{isempty b2}}blah{{else}}blih{{end}}" |> fdc == "blih"
+    @test "{{isnotempty b1}}blah{{else}}blih{{end}}" |> fdc == "blih"
+end

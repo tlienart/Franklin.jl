@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://franklinjl.org">
-    <img src="https://franklinjl.org/assets/infra/logoF2.svg" alt="Franklin" width="150">
+    <img src="https://franklinjl.org/assets/infra/logoF2.svg" alt="Franklin" width="100">
   </a>
 </div>
 
@@ -26,13 +26,14 @@
 Franklin is a simple **static site generator** (SSG) oriented towards technical blogging (code, maths, ...) and light, fast-loading pages.
 The base syntax is plain markdown with a few extensions such as the ability to define and use LaTeX-like commands in or outside of maths environments and the possibility to evaluate code  blocks on the fly.
 
-Franklin now has a channel/stream **#franklin** on both the Julia slack and Zulip.
+Franklin now has a channel/stream **#franklin** on the Julia slack, this is the best place to ask usage question.
+For anything that looks suspicious, feel free to open an issue here directly.
 
 ## Docs
 
 Go to [Franklin's main website](https://franklinjl.org).
 
-Some examples of websites using Franklin
+Some examples of websites using Franklin (_if you're using Franklin with a public repo, consider adding the "franklin" tag to the repo to help others find examples, thanks!_)
 
 * Franklin's own website is written in Franklin, [source](https://github.com/tlienart/franklindocs)
 * The [Julia website](https://julialang.org), including the blog, are deployed in Franklin.
@@ -44,7 +45,7 @@ Some examples of websites using Franklin
 * [@Wikunia's blog](https://opensourc.es) using the vela template
 * [@zdroid's blog and website](https://zdroid.github.io) using Bootstrap 4.5
 * [PkgPage.jl](https://tlienart.github.io/PkgPage.jl/), front-page generator based on Franklin
-* [My website](https://tlienart.github.io).
+* [My website](https://tlienart.github.io) (_by now a bit outdated... there's only so much one can do in a day_)
 
 ## Key features
 

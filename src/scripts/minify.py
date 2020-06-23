@@ -1,5 +1,6 @@
-# This is a simple script using `css_html_js_minify` (available via pip) to compress html and css
-# files (the js that we use is already compressed). This script takes negligible time to run.
+# This is a simple script using `css_html_js_minify` (available via pip)
+# to compress html and css files (the js that we use is already compressed).
+# This script takes negligible time to run.
 
 import os
 from css_html_js_minify import process_single_html_file as min_html
@@ -17,7 +18,6 @@ if old_folder_structure:
                 html_files.append(os.path.join(root, fname))
 
     css_files = []
-
     for root, dirs, files in os.walk(CSS):
         for fname in files:
             if fname.endswith(".css"):
@@ -31,6 +31,10 @@ else:
                 html_files.append(os.path.join(root, fname))
             if fname.endswith(".css"):
                 css_files.append(os.path.join(root, fname))
+
+
+css_files = [cf for cf in css_files if not cf.endswith(".min.css")]
+
 
 if os.name == 'nt':
     # multiprocessing doesn't seem to go well with windows...

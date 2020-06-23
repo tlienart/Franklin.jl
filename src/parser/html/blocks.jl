@@ -26,9 +26,16 @@ function qualify_html_hblocks(blocks::Vector{OCBlock})::Vector{AbstractBlock}
         # isdef block
         m = match(HBLOCK_ISDEF_PAT, β.ss)
         isnothing(m) || (qb[i] = HIsDef(β.ss, m.captures[1]); continue)
-        # ifndef block
+        # isnotdef block
         m = match(HBLOCK_ISNOTDEF_PAT, β.ss)
         isnothing(m) || (qb[i] = HIsNotDef(β.ss, m.captures[1]); continue)
+        # ---
+        # isempty block
+        m = match(HBLOCK_ISEMPTY_PAT, β.ss)
+        isnothing(m) || (qb[i] = HIsEmpty(β.ss, m.captures[1]); continue)
+        # isnotempty block
+        m = match(HBLOCK_ISNOTEMPTY_PAT, β.ss)
+        isnothing(m) || (qb[i] = HIsNotEmpty(β.ss, m.captures[1]); continue)
         # ---
         # ispage block
         m = match(HBLOCK_ISPAGE_PAT, β.ss)
@@ -64,10 +71,12 @@ function qualify_html_hblocks(blocks::Vector{OCBlock})::Vector{AbstractBlock}
     return qb
 end
 
+"""Blocks that can open a conditional block which are special."""
+const HTML_OPEN_COND_SP =
+    Union{HIsDef, HIsNotDef, HIsEmpty, HIsNotEmpty, HIsPage, HIsNotPage}
 
 """Blocks that can open a conditional block."""
-const HTML_OPEN_COND = Union{HIf,HIsDef,HIsNotDef,HIsPage,HIsNotPage}
-
+const HTML_OPEN_COND = Union{HIf, HTML_OPEN_COND_SP}
 
 """
 $SIGNATURES
