@@ -4,6 +4,10 @@ This document keeps track of **key new features**, **breaking changes** and what
 
 You can also check out [this issue](https://github.com/tlienart/Franklin.jl/issues/323) with a more granular list of things that are being worked on / have been fixed / added.
 
+## 0.8+ (ongoing)
+
+* `\underline` is not a thing anymore (I don't think anyone was using it) so that it doesn't clash with KaTeX's underline ([#512](https://github.com/tlienart/Franklin.jl/issues/512)); prefer `\style` for such things.
+
 ## v0.8
 
 This minor releases should have no breaking changes compared to 0.7 apart from a slew of bug fixes.
@@ -27,7 +31,7 @@ At the core you can:
 
 Finally  you can also use `{{ispage /tag/tag1/}}` etc in the `_layout/tag.html` in order to specify a layout that would be dependent upon the tag name.
 
-As usual, your feedback and suggestions are welcome, kindly open issues on GitHub. _Please make it easy for me to help you by giving me as much concise information as possible_. 
+As usual, your feedback and suggestions are welcome, kindly open issues on GitHub. _Please make it easy for me to help you by giving me as much concise information as possible_.
 
 ## v0.7
 
