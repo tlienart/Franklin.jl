@@ -71,10 +71,11 @@ function qualify_html_hblocks(blocks::Vector{OCBlock})::Vector{AbstractBlock}
     return qb
 end
 
+"""Blocks that can open a conditional block which are special."""
+const HTML_OPEN_COND_SP = Union{HIf}
 
 """Blocks that can open a conditional block."""
-const HTML_OPEN_COND = Union{HIf,HIsDef,HIsNotDef,HIsEmpty,HIsNotEmpty,HIsPage,HIsNotPage}
-
+const HTML_OPEN_COND = Union{HIf, HTML_OPEN_COND_SP...}
 
 """
 $SIGNATURES

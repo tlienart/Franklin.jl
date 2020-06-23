@@ -60,9 +60,9 @@ function process_html_cond(hs::AS, qblocks::Vector{AbstractBlock},
     # if its not just a {{if...}}, need to act appropriately
     # and if the condition is verified then k=1
     βi = qblocks[init_idx]
-    if βi isa Union{HIsDef,HIsNotDef,HIsPage,HIsNotPage}
+    if βi isa HTML_OPEN_COND_SP
         lag = 1
-        if βi in (HIsDef, HIsNotDef, HIsEmpty, HIsNotEmpty)
+        if βi ∉ (HIsPage, HIsNotPage)
             k = haskey(LOCAL_VARS, βi.vname)
             if !k
                 k = βi isa HIsNotDef
