@@ -75,7 +75,7 @@ end
 const HTML_OPEN_COND_SP = Union{HIf}
 
 """Blocks that can open a conditional block."""
-const HTML_OPEN_COND = Union{HIf, HTML_OPEN_COND_SP...}
+const HTML_OPEN_COND = Union{HIf, HTML_OPEN_COND_SP}
 
 """
 $SIGNATURES
