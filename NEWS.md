@@ -7,6 +7,7 @@ You can also check out [this issue](https://github.com/tlienart/Franklin.jl/issu
 ## 0.8+ (ongoing)
 
 * `\underline` is not a thing anymore (I don't think anyone was using it) so that it doesn't clash with KaTeX's underline ([#512](https://github.com/tlienart/Franklin.jl/issues/512)); prefer `\style` for such things.
+* files ending with `.min.css` are now **not** minified to avoid rare problems where the minifier would actually break an already minified file ([#494](https://github.com/tlienart/Franklin.jl/issues/494))
 
 ## v0.8
 
