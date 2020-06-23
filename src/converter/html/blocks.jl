@@ -62,11 +62,11 @@ function process_html_cond(hs::AS, qblocks::Vector{AbstractBlock},
     βi = qblocks[init_idx]
     if βi isa HTML_OPEN_COND_SP
         lag = 1
-        if !(βi isa (HIsPage, HIsNotPage))
+        if !(βi isa Union{HIsPage, HIsNotPage})
             k = haskey(LOCAL_VARS, βi.vname)
             if !k
                 k = βi isa HIsNotDef
-            else
+            elseif βi isa Union{HIsEmpty, HIsNotEmpty}
                 v = locvar(βi.vname)
                 e = isempty(v)
                 k = ifelse(βi isa HIsEmpty, e, !e)

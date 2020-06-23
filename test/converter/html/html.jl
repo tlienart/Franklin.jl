@@ -136,7 +136,7 @@ end
 @testset "Cond isempty" begin
     F.def_LOCAL_VARS!()
     F.set_vars!(F.LOCAL_VARS, [
-        "b1" => "",
+        "b1" => "\"\"",
         "b2" => "\"hello\""])
     fdc = x->F.convert_html(x)
 

@@ -10,7 +10,7 @@ from functools import partial
 
 # modify those if you're not using the standard output paths.
 if old_folder_structure:
-    CSS, PUB = "css", "pub"
+    CSS, PUB   = "css", "pub"
     html_files = ["index.html"]
     for root, dirs, files in os.walk(PUB):
         for fname in files:
@@ -20,21 +20,21 @@ if old_folder_structure:
     css_files = []
     for root, dirs, files in os.walk(CSS):
         for fname in files:
-            if fname.endswith(".min.css"):
-                continue
             if fname.endswith(".css"):
                 css_files.append(os.path.join(root, fname))
 else:
     html_files = []
-    css_files = []
+    css_files  = []
     for root, dirs, files in os.walk("__site"):
         for fname in files:
             if fname.endswith(".html"):
                 html_files.append(os.path.join(root, fname))
-            if fname.endswith(".min.css"):
-                continue
             if fname.endswith(".css"):
                 css_files.append(os.path.join(root, fname))
+
+
+css_files = [cf for cf in css_files if not cf.endswith(".min.css")]
+
 
 if os.name == 'nt':
     # multiprocessing doesn't seem to go well with windows...
