@@ -33,7 +33,7 @@ For anything that looks suspicious, feel free to open an issue here directly.
 
 Go to [Franklin's main website](https://franklinjl.org).
 
-Some examples of websites using Franklin
+Some examples of websites using Franklin (_if you're using Franklin with a public repo, consider adding the "franklin" tag to the repo to help others find examples, thanks!_)
 
 * Franklin's own website is written in Franklin, [source](https://github.com/tlienart/franklindocs)
 * The [Julia website](https://julialang.org), including the blog, are deployed in Franklin.
