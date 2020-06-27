@@ -217,6 +217,5 @@ function hfun_taglist()::String
         write(c, "<li><a href=\"$url\">$title</a></li>")
     end
     write(c, "</ul>")
-
     return String(take!(c))
 end
