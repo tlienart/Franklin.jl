@@ -63,7 +63,7 @@ end
         first(df, 3)
         </code></pre>
         <pre><code class="plaintext">
-        3×2 DataFrames.DataFrame
+        3×2 DataFrame
         │ Row │ A     │ B      │
         │     │ Int64 │ String │
         ├─────┼───────┼────────┤
