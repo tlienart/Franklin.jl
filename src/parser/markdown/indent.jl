@@ -27,17 +27,10 @@ function find_indented_blocks!(tokens::Vector{Token}, st::String)::Nothing
         end
         # is there something on that line? if so, does it start with a list indicator
         # like `*`, `-`, `+` or [0-9](.|\)) ? in which case this takes precedence (commonmark)
-        # TODO: document clearly that with fenced code blocks there are far fewer cases for issues
         code_line = subs(st, nextind(st, start+length(indent)), prevind(st, finish))
         scl       = strip(code_line)
         isempty(scl) && continue
-        # list takes precedence (this may cause clash but then just use fenced code blocks...)
-        looks_like_a_list = scl[1] ∈ ('*', '-', '+') ||
-                            (length(scl) ≥ 2 &&
-                                scl[1] ∈ ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9') &&
-                                scl[2] ∈ ('.', ')'))
-        looks_like_a_list && continue
-        # if here, it looks like a code line (and will be considered as such)
+        # if here, it looks like an indented block
         tokens[lr_idx[i]] = Token(:LR_INDENT, subs(st, start, start+length(indent)), i+1)
     end
     return nothing
@@ -47,7 +40,7 @@ end
 $(SIGNATURES)
 
 In initial phase, discard all `:LR_INDENT` that don't meet the requirements for
-an indented code block. I.e.: where the first  line is not preceded by a blank
+an indented code block. I.e.: where the first line is not preceded by a blank
 line and then subsequently followed by indented lines.
 """
 function filter_lr_indent!(vt::Vector{Token}, s::String)::Nothing
