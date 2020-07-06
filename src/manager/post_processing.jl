@@ -155,7 +155,7 @@ as the HTML files will be larger (especially if you have lots of maths on
 pages).
 """
 function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
-                    prepath::String="", no_fail_prerender::Bool=true,
+                    prepath::String="", no_fail_prerender::Bool=true, on_write::Function=(_,_)->nothing,
                     suppress_errors::Bool=true, clear::Bool=false, cleanup::Bool=true)::Union{Nothing,Bool}
     suppress_errors && (FD_ENV[:SUPPRESS_ERR] = true)
     #
@@ -182,7 +182,7 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
     succ = nothing === serve(single=true, clear=clear, prerender=prerender,
                              nomess=true, isoptim=true,
                              no_fail_prerender=no_fail_prerender,
-                             cleanup=cleanup)
+                             cleanup=cleanup, on_write=on_write)
     print_final(withpre, start)
 
     #
