@@ -149,6 +149,9 @@ Does a full pass followed by a pre-rendering and minification step.
                              process
 * `suppress_errors=true`:   whether to suppress errors
 * `cleanup=true`:   whether to empty environment dictionaries
+* `on_write(pg, fd_vars)`: callback function after the page is rendered,
+                      passing as arguments the rendered page and the page
+                      variables
 
 Note: if the prerendering is set to `true`, the minification will take longer
 as the HTML files will be larger (especially if you have lots of maths on
