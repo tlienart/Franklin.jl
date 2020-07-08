@@ -1,12 +1,11 @@
-fs1()
+fs2()
 
-scripts = joinpath(F.PATHS[:folder], "literate-scripts")
-mkpath(scripts)
+mkpath(F.path(:literate))
 
 @testset "Literate-0" begin
     @test_throws ErrorException literate_folder("foo/")
-    litpath = literate_folder("literate-scripts/")
-    @test litpath == joinpath(F.PATHS[:folder], "literate-scripts/")
+    litpath = literate_folder("_literate/")
+    @test litpath == literate_folder(F.path(:literate))
 end
 
 @testset "Literate-a" begin
@@ -56,10 +55,10 @@ end
 
         z = x + y
         """
-    path = joinpath(scripts, "tutorial.jl")
+    path = joinpath(F.path(:literate), "tutorial.jl")
     write(path, s)
-    opath, = F.literate_to_franklin("/literate-scripts/tutorial")
-    @test endswith(opath, joinpath(F.PATHS[:assets], "literate", "tutorial.md"))
+    opath, = F.literate_to_franklin("/_literate/tutorial")
+    @test endswith(opath, joinpath(F.PATHS[:site], "assets", "literate", "tutorial.md"))
     out = read(opath, String)
     @test out == """
         <!--This file was generated, do not modify it.-->
@@ -88,18 +87,16 @@ end
         @def showall = true
         @def reeval = true
 
-        \literate{/literate-scripts/tutorial.jl}
+        \literate{/_literate/tutorial.jl}
         """ |> fd2html_td
     @test isapproxstr(h, """
         <h1 id="rational_numbers"><a href="#rational_numbers">Rational numbers</a></h1>
         <p>In julia rational numbers can be constructed with the <code>//</code> operator. Lets define two rational numbers, <code>x</code> and <code>y</code>:</p>
         <pre><code class="language-julia"># Define variable x and y
         x = 1//3
-        y = 2//5</code></pre>
-        <pre><code class=\"plaintext\">2//5</code></pre>
+        y = 2//5</code></pre><pre><code class="plaintext">2//5</code></pre>
         <p>When adding <code>x</code> and <code>y</code> together we obtain a new rational number:</p>
-        <pre><code class="language-julia">z = x + y</code></pre>
-        <pre><code class=\"plaintext\">11//15</code></pre>
+        <pre><code class="language-julia">z = x + y</code></pre><pre><code class="plaintext">11//15</code></pre>
         """)
 end
 
@@ -111,5 +108,5 @@ end
     s = raw"""
         \literate{/foo}
         """
-    @test @test_logs (:warn, "File not found when trying to convert a literate file ($(joinpath(F.PATHS[:folder], "foo.jl"))).") (s |> fd2html_td) == """<p><span style="color:red;">// Literate file matching '/foo' not found. //</span></p></p>\n"""
+    @test @test_logs (:warn, "File not found when trying to convert a literate file ($(joinpath(F.PATHS[:folder], "foo.jl"))).") (s |> fd2html_td) == """<p><span style="color:red;">// Literate file matching '/foo' not found. //</span></p>\n"""
 end

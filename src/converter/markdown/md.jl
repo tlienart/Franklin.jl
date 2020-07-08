@@ -27,6 +27,7 @@ function convert_md(mds::AbstractString,
                     isconfig::Bool=false,
                     has_mddefs::Bool=true,
                     pagevar::Bool=false, # whether it's called from pagevar
+                    nostripp::Bool=false
                     )::String
     # instantiate page dictionaries
     isrecursive || isinternal || set_page_env()
@@ -41,6 +42,7 @@ function convert_md(mds::AbstractString,
     # ------------------------------------------------------------------------
     #> 1. Tokenize
     tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
+    (:convert_md, "convert_md: '$([t.name for t in tokens])'") |> logger
     # distinguish fnref/fndef
     validate_footnotes!(tokens)
     # ignore header tokens that are not at the start of a line
@@ -144,10 +146,15 @@ function convert_md(mds::AbstractString,
 
     #> 2. Form intermediate markdown + html
     inter_md, mblocks = form_inter_md(mds, b2insert, lxdefs)
-    inter_html = md2html(inter_md; stripp=isrecursive)
+    inter_html = md2html(inter_md; stripp=isrecursive && !nostripp)
+
+    (:convert_md, "inter_md: '$inter_md'") |> logger
+    (:convert_md, "inter_html: '$inter_html'") |> logger
 
     #> 3. Plug resolved blocks in partial html to form the final html
     hstring = convert_inter_html(inter_html, mblocks, lxdefs)
+
+    (:convert_md, "hstring: '$hstring'") |> logger
 
     # final var adjustment, infer title if not given
     if isnothing(locvar("title")) && !isempty(PAGE_HEADERS)
@@ -229,13 +236,20 @@ end
 INSERT
 
 String that is plugged as a placeholder of blocks that need further processing.
-The spaces allow to handle overzealous inclusion of `<p>...</p>` from the base
-Markdown to HTML conversion.
+Note: left space in the pattern is to preserve lists.
 """
-const INSERT     = " ##FDINSERT## "
-const INSERT_    = strip(INSERT)
-const INSERT_PAT = Regex(INSERT_)
-const INSERT_LEN = length(INSERT_)
+const INSERT     = " ##FDINSERT##"
+const INSERT_PAT = Regex("((?<!<li>)<p>)?(\\s*)$(strip(INSERT))(</p>)?")
+
+
+"""
+CLOSE_INSERT
+
+String that is plugged as a placeholder of blocks that need further processing in a place
+where any open paragraph must be closed first. For instance this will be the replacement
+for a header.
+"""
+const CLOSEP_INSERT = "\n\n##FDINSERT##\n\n"
 
 
 """
@@ -287,12 +301,8 @@ function form_inter_md(mds::AS, blocks::Vector{<:AbstractBlock},
             if isa(β, OCBlock) && β.name ∈ MD_OCB_IGNORE
                 head = nextind(mds, to(β))
             else
-                if isa(β, OCBlock) && β.name ∈ MD_HEADER
-                    # this is a trick to allow whatever follows the title to be
-                    # properly parsed by Markdown.parse; it could otherwise
-                    # cause issues for instance if a table starts immediately
-                    # after the title
-                    write(intermd, INSERT * "\n ")
+                if isa(β, OCBlock) && β.name ∈ MD_CLOSEP
+                    write(intermd, CLOSEP_INSERT)
                 else
                     write(intermd, INSERT)
                 end
@@ -322,66 +332,47 @@ end
 """
 $(SIGNATURES)
 
-Take a partial markdown string with the `INSERT` marker and plug in the
-appropriately processed block.
+Take a partial markdown string with the `INSERT` markers and
+plug in the appropriately processed block.
 
 **Arguments**
 
-* `ihtml`:  the intermediary html string (with `INSERT`)
+* `ihtml`:  the intermediary html string (with `INSERT` markers)
 * `blocks`: vector of blocks
 * `lxdefs`: latex context
 """
 function convert_inter_html(ihtml::AS,
                             blocks::Vector{<:AbstractBlock},
                             lxdefs::Vector{LxDef})::String
+
+    (:convert_inter_html, "ihtml: '$ihtml'") |> logger
+
     # Find the INSERT indicators
     allmatches = collect(eachmatch(INSERT_PAT, ihtml))
-    strlen = lastindex(ihtml)
+    isempty(allmatches) && return ihtml
 
+    strlen = lastindex(ihtml)
     # write the pieces of the final html in order, gradually processing the
     # blocks to insert
     htmls = IOBuffer()
     head  = 1
     for (i, m) ∈ enumerate(allmatches)
-        # two cases can happen based on whitespaces around an insertion that
-        # we want to get rid of, potentially both happen simultaneously.
-        # 1. <p>##FDINSERT##...
-        # 2. ...##FDINSERT##</p>
-        # exceptions,
-        # - list items introduce <li><p> and </p>\n</li> which shouldn't remove
-        # - end of doc introduces </p>(\n?) which should not be removed
-        δ1, δ2 = 0, 0 # keep track of the offset at the front / back
-        # => case 1
-        c10 = prevind(ihtml, m.offset, 7) # *li><p>
-        c1a = prevind(ihtml, m.offset, 3) # *p>
-        c1b = prevind(ihtml, m.offset)    # <p*
-
-        hasli1 = (c10 > 0) && ihtml[c10:c1b] == "<li><p>"
-        !(hasli1) && (c1a > 0) && ihtml[c1a:c1b] == "<p>" && (δ1 = 3)
-
-        # => case 2
-        iend = m.offset + INSERT_LEN
-        c2a  = nextind(ihtml, iend)
-        c2b  = nextind(ihtml, iend, 4)  # </p*
-        c20  = nextind(ihtml, iend, 10) # </p>\n</li*
-
-        hasli2 = (c20 ≤ strlen) && ihtml[c2a:c20] == "</p>\n</li>"
-        !(hasli2) && (c2b ≤ strlen - 4) && ihtml[c2a:c2b] == "</p>" && (δ2 = 4)
-
-        # write whatever is at the front, skip the extra space if still present
-        prev = prevind(ihtml, m.offset - δ1)
-        if prev > 0 && ihtml[prev] == ' '
-            prev = prevind(ihtml, prev)
+        # check whether there's <p> or </p> around the insert
+        leftp  = !isnothing(m.captures[1])
+        lefts  = ifelse(length(m.captures[2])>1, " ", "")
+        rightp = !isnothing(m.captures[3])
+        prev   = prevind(ihtml, m.offset)
+        write(htmls, subs(ihtml, head:prev))
+        if leftp && !rightp
+            write(htmls, "<p>")
         end
-        (head ≤ prev) && write(htmls, subs(ihtml, head:prev))
-        # move head appropriately
-        head = iend + δ2
-        if head ≤ strlen
-            head = ifelse(ihtml[head] in (' ', '>'), nextind(ihtml, head), head)
-        end
-        # store the resolved block
+        write(htmls, lefts)
         resolved = convert_block(blocks[i], lxdefs)
         write(htmls, resolved)
+        if rightp && !leftp
+            write(htmls, "</p>")
+        end
+        head = nextind(ihtml, m.offset, length(m.match))
     end
     # store whatever is after the last INSERT if anything
     (head ≤ strlen) && write(htmls, subs(ihtml, head:strlen))

@@ -51,9 +51,9 @@ end
         """ |> fd2html_td
 
     @test isapproxstr(h, raw"""
-            <p>A
-            <pre><code class="language-markdown">B
-            </code></pre> C</p>
+            <p>A</p>
+            <pre><code class="language-markdown">B</code></pre>
+            <p>C</p>
             """)
 
     h = raw"""
@@ -67,11 +67,12 @@ end
         """ |> fd2html_td
 
     @test isapproxstr(h, raw"""
-            <p>A
+            <p>A</p>
             <pre><code class="language-markdown">```julia
             B
             ```
-            </code></pre> C</p>
+            </code></pre>
+            <p>C</p>
             """)
 end
 
@@ -117,13 +118,13 @@ end
         @def title = "hello"
         {{title}}{{title}}
         """ |> fd2html_td
-    @test isapproxstr(s, "hellohello")
+    @test isapproxstr(s, "<p>hellohello</p>")
     s = """
         @def a_b = "hello"
         @def c_d = "goodbye"
         {{a_b}}{{c_d}}
         """ |> fd2html_td
-    @test isapproxstr(s, "hellogoodbye")
+    @test isapproxstr(s, "<p>hellogoodbye</p>")
 end
 
 # issue 424 with double braces
@@ -133,8 +134,8 @@ end
         {{title}}
         $\rho=\frac{e^{-\beta \mathcal{E}_{s}}} {\mathcal{Z}} $
         """ |> fd2html_td
-    @test isapproxstr(s, """
-        hello \\(\\rho=\\frac{e^{-\\beta \\mathcal{E}_{s}}} {\\mathcal{Z}} \\)""")
+    @test s // raw"""
+                <p>hello \(\rho=\frac{e^{-\beta \mathcal{E}_{s}}} {\mathcal{Z}} \)</p>"""
 end
 
 # issue 432 and consequences
@@ -148,8 +149,8 @@ end
         ---
         """ |> fd2html_td
     @test isapproxstr(s, """
-        <p>hello<sup id="fnref:a"><a href="#fndef:a" class="fnref">[1]</a></sup>
-        <table class="fndef" id="fndef:a">
+        <p>hello<sup id="fnref:a"><a href="#fndef:a" class="fnref">[1]</a></sup></p>
+        <p><table class="fndef" id="fndef:a">
             <tr>
                 <td class="fndef-backref"><a href="#fnref:a">[1]</a></td>
                 <td class="fndef-content">world</td>

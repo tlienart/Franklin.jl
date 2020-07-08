@@ -113,7 +113,7 @@ function logger(t)
     LOGGING[] || return nothing
     print(Crayon(bold=true, foreground=:yellow), "LOG: ")
     print(Crayon(bold=false, foreground=:blue), rpad(t[1], 20))
-    println(Crayon(reset=true), t[2])
+    println(Crayon(reset=true), escape_string(t[2]))
     return nothing
 end
 

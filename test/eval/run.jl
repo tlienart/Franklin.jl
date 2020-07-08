@@ -84,9 +84,12 @@ end
        1 # hide
        ```
        \show{ex}
+
        B""" |> fd2html_td
     @test isapproxstr(s, """
-        <p>A <pre><code class="plaintext">1</code></pre> B</p>
+        <p>A</p>
+        <pre><code class="plaintext">1</code></pre>
+        <p>B</p>
         """)
     s = raw"""
        A
@@ -94,8 +97,11 @@ end
        "hello" # hide
        ```
        \show{ex}
+
        B""" |> fd2html_td
     @test isapproxstr(s, """
-        <p>A <pre><code class="plaintext">"hello"</code></pre> B</p>
+        <p>A</p>
+        <pre><code class="plaintext">"hello"</code></pre>
+        <p>B</p>
         """)
 end

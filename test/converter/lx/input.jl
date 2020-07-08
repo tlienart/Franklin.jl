@@ -89,9 +89,16 @@ end
         """ |> fd2html_td
     @test isapproxstr(s, """
         <p>AA
-        <p><span style="color:red;">// Couldn't find a file when trying to resolve an input request with relative path: `foo/baz`. //</span></p>
-        <p><span style="color:red;">// Couldn't find an output directory associated with 'foo/baz' when trying to input a plot. //</span></p>
-        <p><span style="color:red;">// Couldn't find a file when trying to resolve an input request with relative path: `foo/bar`. //</span></p></p>
+          <p>
+            <span style="color:red;">// Couldn't find a file when trying to resolve an input request with relative path: `foo/baz`. //</span>
+          </p>
+          <p>
+            <span style="color:red;">// Couldn't find an output directory associated with 'foo/baz' when trying to input a plot. //</span>
+          </p>
+          <p>
+            <span style="color:red;">// Couldn't find a file when trying to resolve an input request with relative path: `foo/bar`. //</span>
+          </p>
+        </p>
         """)
 
     fs2()
@@ -104,6 +111,6 @@ end
         \tableinput{}{./foo.csv}
         """ |> fd2html_td
     @test isapproxstr(s, """
-        <p><span style="color:red;">// Table matching '/assets/index/foo.csv' not found. //</span></p></p>
+        <p><span style="color:red;">// Table matching '/assets/index/foo.csv' not found. //</span></p>
         """)
 end

@@ -10,7 +10,9 @@ set_curpath("index.md")
         print(a^2)
         ```
         then:
+
         \output{./code/exca1}
+
         done.
         """ |> seval
 
@@ -21,7 +23,9 @@ set_curpath("index.md")
         print(a^2)
         ```
         then:
+
         \output{excb1}
+
         done.
         """ |> seval
 
@@ -40,12 +44,12 @@ set_curpath("index.md")
     @test read(opath, String) == "25"
 
     @test isapproxstr(h, raw"""
-            <p>Simple code:
-            <pre><code class="language-julia">a = 5
-            print(a^2)</code></pre>
-            then:
-            <pre><code class="plaintext">25</code></pre>
-            done.</p>""")
+                <p>Simple code:</p>
+                <pre><code class="language-julia">a = 5
+                print(a^2)</code></pre>
+                <p>then:</p>
+                <pre><code class="plaintext">25</code></pre>
+                <p>done.</p>""")
 end
 
 @testset "Eval (errs)" begin
@@ -61,10 +65,10 @@ end
     @test_logs (:warn, "Evaluation of non-Julia code blocks is not yet supported.") (h = s |> seval)
 
     @test isapproxstr(h, raw"""
-            <p>Simple code:
+            <p>Simple code:</p>
             <pre><code class="language-python">a = 5
             print(a**2)</code></pre>
-            done.</p>""")
+            <p>done.</p>""")
 end
 
 @testset "Eval (rinput)" begin
@@ -75,7 +79,9 @@ end
         print(a^2)
         ```
         then:
+
         \output{/assets/scripts/test2}
+
         done.
         """ |> seval
 
@@ -88,12 +94,12 @@ end
     @test read(opath, String) == "25"
 
     @test isapproxstr(h, """
-            <p>Simple code:
+            <p>Simple code:</p>
             <pre><code class="language-julia">a = 5
             print(a^2)</code></pre>
-            then:
+            <p>then:</p>
             <pre><code class="plaintext">25</code></pre>
-            done.</p>""")
+            <p>done.</p>""")
 
     # ------------
 
@@ -105,7 +111,9 @@ end
         print(a^2)
         ```
         then:
+
         \output{./code/abc2}
+
         done.
         """ |> seval
 
@@ -118,11 +126,12 @@ end
     @test read(opath, String) == "25"
 
     @test isapproxstr(h, """
-            <p>Simple code:
+            <p>Simple code:</p>
             <pre><code class="language-julia">a = 5
             print(a^2)</code></pre>
-            then:
-            <pre><code class="plaintext">25</code></pre>  done.</p>""")
+            <p>then:</p>
+            <pre><code class="plaintext">25</code></pre>
+            <p>done.</p>""")
 end
 
 @testset "Eval (module)" begin
@@ -134,11 +143,20 @@ end
         print(dot(a, a))
         ```
         then:
+
         \output{scripts/test1}
+
         done.
         """ |> seval
     # dot(a, a) == 54
-    @test occursin("""then: <pre><code class="plaintext">54</code></pre> done.""", h)
+    @test h // raw"""
+                <p>Simple code:</p>
+                <pre><code class="language-julia">using LinearAlgebra
+                a = [5, 2, 3, 4]
+                print(dot(a, a))</code></pre>
+                <p>then:</p>
+                <pre><code class="plaintext">54</code></pre>
+                <p>done.</p>"""
 end
 
 @testset "Eval (img)" begin
@@ -150,10 +168,18 @@ end
         write(joinpath(@OUTPUT, "tv2.png"), "blah")
         ```
         then:
+
         \input{plot}{tv2}
+
         done.
         """ |> seval
-    @test occursin("then: <img src=\"/assets/index/code/output/tv2.png\" alt=\"\"> done.", h)
+    @test h // raw"""
+                <p>Simple code:</p>
+
+                <p>then:</p>
+                <img src="/assets/index/code/output/tv2.png" alt="">
+                <p>done.</p>
+                """
 end
 
 @testset "Eval (throw)" begin
@@ -164,7 +190,9 @@ end
         sqrt(-1)
         ```
         then:
+
         \output{scripts/test1}
+
         done.
         """
     global h
@@ -172,10 +200,15 @@ end
     @test_logs (:warn, "There was an error of type DomainError running the code.") (global h; h = s |> seval)
     # errors silently
     if VERSION >= v"1.2"
-        @test occursin("""<p>Simple code: <pre><code class="language-julia">sqrt(-1)</code></pre> then: <pre><code class="plaintext">DomainError with -1.0:
-    sqrt will only return a complex result if called with a complex argument. Try sqrt(Complex(x)).
-    </code></pre> done.</p>
-    """, h)
+        @test h // raw"""
+                    <p>Simple code:</p>
+                    <pre><code class="language-julia">sqrt(-1)</code></pre>
+                    <p>then:</p>
+                    <pre><code class="plaintext">DomainError with -1.0:
+                    sqrt will only return a complex result if called with a complex argument. Try sqrt(Complex(x)).
+                    </code></pre>
+                    <p>done.</p>
+                    """
     end
 end
 
@@ -188,7 +221,10 @@ end
         done.
         """
 
-    @test (@test_logs (:warn, "Evaluation of non-Julia code blocks is not yet supported.") h |> seval) == "<p>Simple code: <pre><code class=\"language-python\">sqrt(-1)</code></pre> done.</p>\n"
+    @test (@test_logs (:warn, "Evaluation of non-Julia code blocks is not yet supported.") h |> seval) // raw"""
+            <p>Simple code:</p>
+            <pre><code class="language-python">sqrt(-1)</code></pre>
+            <p>done.</p>"""
 end
 
 # temporary fix for 186: make error appear and also use `abspath` in internal include
@@ -204,17 +240,21 @@ end
         rm(fn)
         ```
         done.
+
         \output{scripts/test186}
         """ |> seval
     @test isapproxstr(h, raw"""
-            <p>Simple code: <pre><code class="language-julia">fn = "tempf.jl"
+            <p>Simple code:</p>
+            <pre><code class="language-julia">fn = "tempf.jl"
             write(fn, "a = 1+1")
             println("Is this a file? $(isfile(fn))")
             include(abspath(fn))
             println("Now: $a")
-            rm(fn)</code></pre> done. <pre><code class="plaintext">Is this a file? true
+            rm(fn)</code></pre>
+            <p>done.</p>
+            <pre><code class="plaintext">Is this a file? true
             Now: 2
-            </code></pre></p>
+            </code></pre>
             """)
 end
 
@@ -227,13 +267,13 @@ end
         a = 5
         a *= 2
         ```
+
         \show{ex}
         """ |> fd2html_td
-    @test isapproxstr(h, """
-        <pre><code class="language-julia">a = 5
-        a *= 2</code></pre>
-        <pre><code class="plaintext">10</code></pre>
-        """)
+    @test h // raw"""
+               <pre><code class="language-julia">a = 5
+               a *= 2</code></pre>
+               <pre><code class="plaintext">10</code></pre>"""
 
     # Show with stdout
     h = raw"""
@@ -244,13 +284,14 @@ end
         println("hello")
         a *= 2
         ```
+
         \show{ex}
         """ |> fd2html_td
-    @test isapproxstr(h, """
-        <pre><code class="language-julia">a = 5
-        println("hello")
-        a *= 2</code></pre>
-        <pre><code class="plaintext">hello
-        10</code></pre>
-        """)
+    @test h // raw"""
+                <pre><code class="language-julia">a = 5
+                println("hello")
+                a *= 2</code></pre>
+                <pre><code class="plaintext">hello
+                10</code></pre>
+                """
 end

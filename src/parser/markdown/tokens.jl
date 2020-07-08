@@ -221,7 +221,6 @@ Combination of all `MD_OCB` in order.
 """
 const MD_OCB_ALL = vcat(MD_OCB, MD_OCB2, MD_OCB_MATH) # order matters
 
-
 """
     MD_OCB_IGNORE
 
@@ -229,13 +228,19 @@ List of names of blocks that will need to be dropped at compile time.
 """
 const MD_OCB_IGNORE = (:COMMENT, :MD_DEF)
 
+"""
+    MATH_DISPLAY_BLOCKS_NAMES
+
+List of names of maths environments (display mode).
+"""
+const MATH_DISPLAY_BLOCKS_NAMES = collect(e.name for e ∈ MD_OCB_MATH if e.name != :MATH_A)
 
 """
     MATH_BLOCKS_NAMES
 
-List of names of maths environments.
+List of names of all maths environments.
 """
-const MATH_BLOCKS_NAMES = [e.name for e ∈ MD_OCB_MATH]
+const MATH_BLOCKS_NAMES = tuple(:MATH_A, MATH_DISPLAY_BLOCKS_NAMES...)
 
 """
 CODE_BLOCKS_NAMES
@@ -243,6 +248,14 @@ CODE_BLOCKS_NAMES
 List of names of code blocks environments.
 """
 const CODE_BLOCKS_NAMES = (:CODE_BLOCK_LANG, :CODE_BLOCK, :CODE_BLOCK_IND)
+
+"""
+    MD_CLOSEP
+
+Blocks which, upon insertion, should close any open paragraph.
+Order doesn't matter.
+"""
+const MD_CLOSEP = [MD_HEADER..., :DIV, CODE_BLOCKS_NAMES..., MATH_DISPLAY_BLOCKS_NAMES...]
 
 """
     MD_OCB_NO_INNER

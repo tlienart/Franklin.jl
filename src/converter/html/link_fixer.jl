@@ -8,7 +8,7 @@ Direct inline-style links are properly processed by Julia's Markdown processor b
 * (we don't either) `[link title](https://www.google.com "Google's Homepage")`
 """
 function find_and_fix_md_links(hs::String)::String
-    # 1. find all occurences of -- [...]: link
+    # 1. find all occurences of things that look like links
     m_link_refs = collect(eachmatch(ESC_LINK_PAT, hs))
 
     # recuperate the appropriate id which has a chance to match def_names
@@ -16,10 +16,14 @@ function find_and_fix_md_links(hs::String)::String
         # no second bracket or empty second bracket ?
         # >> true then the id is in the first bracket   A --> [id] or [id][]
         # >> false then the id is in the second bracket B --> [...][id]
-        ifelse(isnothing(ref.captures[3]) || isempty(ref.captures[3]),
-                    ref.captures[2],    # A. first bracket
-                    ref.captures[3])    # B. second bracket
-                    for ref in m_link_refs]
+        ifelse(isnothing(ref.captures[3]) ||
+               isempty(ref.captures[3]),
+                         ref.captures[2], # A. first bracket
+                         ref.captures[3]) # B. second bracket
+                #
+                for ref in m_link_refs]
+
+    isempty(ref_names) || (ref_names = strip.(ref_names))
 
     # reconstruct the text
     h = IOBuffer()

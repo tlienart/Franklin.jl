@@ -59,7 +59,7 @@ end
         \hello
         End
         """ |> fd2html_td
-    @test isapproxstr(s, "<p>Foo</p> goodbye End</p>")
+    @test isapproxstr(s, "<p>Foo</p><p>goodbye End</p>")
 
     s2 = raw"""
         Foo
