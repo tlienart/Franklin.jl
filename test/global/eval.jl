@@ -34,7 +34,7 @@
     h = foo |> fd2html_td
 
     @test isapproxstr(h, """
-                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$a</code></pre> etc
+                <pre><code class="language-julia">println(randn())</code></pre> <p><pre><code class=\"plaintext\">$a</code></pre> etc</p>
                 """)
 
     # XXX CODE ADDITION --> NO REEVAL OF FIRST BLOCK
@@ -53,9 +53,9 @@
     h = foo |> fd2html_td
 
     @test isapproxstr(h, """
-                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$a</code></pre> etc
-                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$b</code></pre>
-                <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$c</code></pre>
+        <pre><code class="language-julia">println(randn())</code></pre> <p><pre><code class=\"plaintext\">$a</code></pre> etc</p>
+        <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$b</code></pre>
+        <pre><code class="language-julia">println(randn())</code></pre> <pre><code class=\"plaintext\">$c</code></pre>
                 """)
 
     # XXX CODE MODIFICATION --> REEVAL OF BLOCK AND AFTER
