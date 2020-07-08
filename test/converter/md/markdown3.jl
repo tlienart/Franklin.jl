@@ -331,7 +331,7 @@ end
     s = """Blah [`hello`] and later
        [`hello`]: https://github.com/cormullion/
        """ |> fd2html_td
-    @test_broken isapproxstr(s, """
+    @test isapproxstr(s, """
         <p>Blah
         <a href="https://github.com/cormullion/"><code>hello</code></a>
         and later </p>

@@ -89,8 +89,7 @@ function validate_and_store_link_defs!(blocks::Vector{OCBlock})::Nothing
                 id = subs(parent, nextind(parent, k), ini)
                 # issue #266 in case there's formatting in the link
                 id = fd2html(id, internal=true)
-                id = replace(id, r"^<p>"=>"")
-                id = replace(id, r"<\/p>\n$"=>"")
+                id = replace(id, r"^\s*(?:<p>)?(.*?)(?:<\/p>)?\s*$" => s"\1")
                 lk = β |> content |> strip |> string
                 PAGE_LINK_DEFS[id] = lk
                 # replace the block by a full one so that it can be fully
