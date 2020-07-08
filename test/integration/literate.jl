@@ -1,11 +1,12 @@
-fs2()
+fs1()
 
-mkpath(F.path(:literate))
+scripts = joinpath(F.PATHS[:folder], "literate-scripts")
+mkpath(scripts)
 
 @testset "Literate-0" begin
     @test_throws ErrorException literate_folder("foo/")
-    litpath = literate_folder("_literate/")
-    @test litpath == literate_folder(F.path(:literate))
+    litpath = literate_folder("literate-scripts/")
+    @test litpath == joinpath(F.PATHS[:folder], "literate-scripts/")
 end
 
 @testset "Literate-a" begin
@@ -55,10 +56,10 @@ end
 
         z = x + y
         """
-    path = joinpath(F.path(:literate), "tutorial.jl")
+    path = joinpath(scripts, "tutorial.jl")
     write(path, s)
-    opath, = F.literate_to_franklin("/_literate/tutorial")
-    @test endswith(opath, joinpath(F.PATHS[:site], "assets", "literate", "tutorial.md"))
+    opath, = F.literate_to_franklin("/literate-scripts/tutorial")
+    @test endswith(opath, joinpath(F.PATHS[:assets], "literate", "tutorial.md"))
     out = read(opath, String)
     @test out == """
         <!--This file was generated, do not modify it.-->
@@ -87,7 +88,7 @@ end
         @def showall = true
         @def reeval = true
 
-        \literate{/_literate/tutorial.jl}
+        \literate{/literate-scripts/tutorial.jl}
         """ |> fd2html_td
     @test isapproxstr(h, """
         <h1 id="rational_numbers"><a href="#rational_numbers">Rational numbers</a></h1>
@@ -110,5 +111,5 @@ end
     s = raw"""
         \literate{/foo}
         """
-    @test @test_logs (:warn, "File not found when trying to convert a literate file ($(joinpath(F.PATHS[:folder], "foo.jl"))).") (s |> fd2html_td) == """<p><span style="color:red;">// Literate file matching '/foo' not found. //</span></p></p>\n"""
+    @test @test_logs (:warn, "File not found when trying to convert a literate file ($(joinpath(F.PATHS[:folder], "foo.jl"))).") (s |> fd2html_td) == """<p><span style="color:red;">// Literate file matching '/foo' not found. //</span></p>\n"""
 end

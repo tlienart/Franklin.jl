@@ -225,7 +225,7 @@ function lx_literate(lxc::LxCom, lxd::Vector{LxDef})
         set_var!(LOCAL_VARS, "reeval", true)
     end
     # then reprocess
-    return reprocess(read(opath, String), lxd)
+    return reprocess(read(opath, String), lxd, nostripp=true)
 end
 
 #

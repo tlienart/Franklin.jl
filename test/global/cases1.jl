@@ -34,9 +34,7 @@ end
         \newcommand{\com}[1]{◲!#1◲}
         \com{A}
         """
-    steps = st |> explore_md_steps
-    @test steps[:inter_md].inter_md == "\n ##FDINSERT## \n\n ##FDINSERT## \n"
-    @test st |> conv == "⭒A⭒\n◲A◲"
+    @test st |> conv == "⭒A⭒\n◲A◲\n"
 end
 
 
@@ -47,11 +45,11 @@ end
         done
         """
     @test isapproxstr(st |> conv,
-            """<p>
-            Etc and <code>~~~</code> but hey.
-            <div class=\"dd\">but <code>x</code> and <code>y</code>? </div>
-            done
-            </p>""")
+            """
+            <p>Etc and <code>~~~</code> but hey.</p>
+            <div class="dd">but <code>x</code> and <code>y</code>?</div>
+            <p>done</p>
+            """)
 end
 
 
@@ -66,14 +64,13 @@ end
         done
         """
     @test isapproxstr(st |> conv,
-            """<p>
-            Some code
-            <pre><code class=\"language-julia\">
-            struct P
+            """
+            <p>Some code</p>
+            <pre><code class="language-julia">struct P
                 x::Real
-            end
-            </code></pre>
-            done</p>""")
+            end</code></pre>
+            <p>done</p>
+            """)
 end
 
 
@@ -104,7 +101,7 @@ end
 
         def.
         """
-    @test st |> conv == "<p>abc</p>\n⭒A⭒⭒B⭒\n<p>def.</p>\n"
+    @test st |> conv == "<p>abc</p>\n<p>⭒A⭒⭒B⭒</p>\n<p>def.</p>\n"
 
     st = raw"""
         \newcommand{\com}[1]{⭒!#1⭒}
@@ -114,7 +111,12 @@ end
 
         def.
         """
-    @test st |> conv == "<p>abc</p>\n⭒A⭒\n<p>def.</p>\n"
+    @test (st |> conv) //
+            """
+            <p>abc</p>
+            ⭒A⭒
+            <p>def.</p>
+            """
 
     st = raw"""
         \newcommand{\com}[1]{†!#1†}
@@ -123,7 +125,7 @@ end
         * ss \com{bbb}
         """
     @test isapproxstr(st |> conv,
-            """<p>blah †a†
+            """<p>blah †a†</p>
             <ul>
                <li><p>†aaa† tt</p></li>
                <li><p>ss †bbb†</p></li>

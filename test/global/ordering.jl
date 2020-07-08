@@ -34,11 +34,11 @@ end
     @test blocks[1].name == :MATH_EQA
 
     @test isapproxstr(st |> seval, raw"""
-            <p>A
+            <p>A</p>
             \[\begin{array}{c}
                 1 + 1 &=& 2
             \end{array}\]
-            B</p>""")
+            <p>B</p>""")
 end
 
 @testset "Ordering-3" begin
@@ -64,11 +64,11 @@ end
     @test blocks[2].name == :COMMENT
 
     @test isapproxstr(st |> seval, raw"""
-            <p>A
+            <p>A</p>
             \[\begin{array}{c}
                 1 + 1 &=& 2
             \end{array}\]
-            B</p>
+            <p>B</p>
             <p>C</p>""")
 end
 

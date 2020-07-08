@@ -27,6 +27,7 @@ function convert_md(mds::AbstractString,
                     isconfig::Bool=false,
                     has_mddefs::Bool=true,
                     pagevar::Bool=false, # whether it's called from pagevar
+                    nostripp::Bool=false
                     )::String
     # instantiate page dictionaries
     isrecursive || isinternal || set_page_env()
@@ -145,7 +146,7 @@ function convert_md(mds::AbstractString,
 
     #> 2. Form intermediate markdown + html
     inter_md, mblocks = form_inter_md(mds, b2insert, lxdefs)
-    inter_html = md2html(inter_md; stripp=isrecursive)
+    inter_html = md2html(inter_md; stripp=isrecursive && !nostripp)
 
     (:convert_md, "inter_md: '$inter_md'") |> logger
     (:convert_md, "inter_html: '$inter_html'") |> logger

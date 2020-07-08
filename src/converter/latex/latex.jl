@@ -51,8 +51,9 @@ function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef};
 end
 
 """Convenience function to take a string and re-parse it."""
-function reprocess(s::AS, lxdefs::Vector{LxDef})
+function reprocess(s::AS, lxdefs::Vector{LxDef}; nostripp=false)
     r = convert_md(s, lxdefs;
-                   isrecursive=true, isconfig=false, has_mddefs=false)
+                   isrecursive=true, isconfig=false, has_mddefs=false,
+                   nostripp=nostripp)
     return r
 end

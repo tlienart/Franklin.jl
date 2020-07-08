@@ -22,12 +22,14 @@ fs2()
     s = raw"""
         @def showall = true
         INI
+
         \literate{/_literate/ex1}
         """
 
     h = s |> fd2html_td
     @test isapproxstr(h, """
-        <p>INI A</p>
+        <p>INI</p>
+        <p>A</p>
         <pre><code class="language-julia">1 + 1</code></pre><pre><code class="plaintext">2</code></pre>
         <p>B</p>
         <pre><code class="language-julia">2^2;</code></pre>
