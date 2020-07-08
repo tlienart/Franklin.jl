@@ -21,9 +21,23 @@
     b2insert, = steps[:b2insert]
 
     inter_md, mblocks = F.form_inter_md(st, b2insert, lxdefs)
-    @test inter_md == "\n\nA list\n*  ##FDINSERT##  and  ##FDINSERT## \n*  ##FDINSERT##  is a function\n* a last element\n"
+    @test inter_md // """
+            A list
+            *  ##FDINSERT## and  ##FDINSERT##
+            *  ##FDINSERT## is a function
+            * a last element"""
     inter_html = F.md2html(inter_md)
-    @test inter_html == "<p>A list</p>\n<ul>\n<li><p>##FDINSERT##  and  ##FDINSERT## </p>\n</li>\n<li><p>##FDINSERT##  is a function</p>\n</li>\n<li><p>a last element</p>\n</li>\n</ul>\n"
+    @test inter_html // """
+        <p>A list</p>
+        <ul>
+        <li><p>##FDINSERT## and  ##FDINSERT##</p>
+        </li>
+        <li><p>##FDINSERT## is a function</p>
+        </li>
+        <li><p>a last element</p>
+        </li>
+        </ul>
+        """
 end
 
 
@@ -42,7 +56,12 @@ end
         """
 
     inter_md, = explore_md_steps(st)[:inter_md]
-    @test inter_md == " ##FDINSERT## \nfinally ⊙⊙𝛴⊙ and\n ##FDINSERT## \ndone\n"
+    @test inter_md // """
+                     ##FDINSERT##
+                    finally ⊙⊙𝛴⊙ and
+                     ##FDINSERT##
+                    done
+                    """
 end
 
 
@@ -56,7 +75,14 @@ end
     lxdefs, tokens, braces, blocks, lxcoms = steps[:latex]
     b2insert, = steps[:b2insert]
     inter_md, mblocks = steps[:inter_md]
-    @test inter_md == "ab ##FDINSERT## \n ##FDINSERT## \n"
+    @test inter_md // """
+                ab
+
+                ##FDINSERT##
+
+
+                 ##FDINSERT##
+                """
 
     inter_html, = steps[:inter_html]
 
@@ -64,12 +90,9 @@ end
     @test isapproxstr(F.convert_block(b2insert[2], lxdefs), "\\[\\begin{array}{c} \\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\\]")
     hstring = F.convert_inter_html(inter_html, b2insert, lxdefs)
     @test isapproxstr(hstring, raw"""
-                        <p>
-                          ab<div class="d">.</div>
-                          \[\begin{array}{c}
-                            \sin^2(x)+\cos^2(x) &=& 1
-                          \end{array}\]
-                        </p>""")
+                    <p>ab</p>
+                    <div class="d">.</div>
+                    \[\begin{array}{c} \sin^2(x)+\cos^2(x) &=& 1\end{array}\]""")
 end
 
 
@@ -90,19 +113,18 @@ end
     inter_html, = steps[:inter_html]
 
     @test isapproxstr(inter_md, """
-                                text A1 text A2  ##FDINSERT##  and
-                                ##FDINSERT##
-                                text C1  ##FDINSERT##  text C2
-                                then  ##FDINSERT## .""")
+            text A1 text A2  ##FDINSERT## and
+             ##FDINSERT##
+             text C1  ##FDINSERT## text C2
+             then  ##FDINSERT##.""")
 
-    @test isapproxstr(inter_html, """<p>text A1 text A2  ##FDINSERT##  and  ##FDINSERT##   text C1  ##FDINSERT##  text C2  then  ##FDINSERT## .</p>""")
+    @test isapproxstr(inter_html, """<p>text A1 text A2  ##FDINSERT## and  ##FDINSERT##  text C1  ##FDINSERT## text C2  then  ##FDINSERT##.</p>""")
 
     hstring = F.convert_inter_html(inter_html, b2insert, lxdefs)
-    @test isapproxstr(hstring, """
-                                <p>text A1 text A2 blah and
-                                escape B1
-                                text C1 \\(\\mathrm{ b}\\) text C2
-                                then part1: AA and part2: BB.</p>""")
+    @test isapproxstr(hstring, raw"""
+                    <p>text A1 text A2 blah and
+                    escape B1
+                    text C1 \(\mathrm{ b}\) text C2  then part1: AA and part2: BB.</p>""")
 end
 
 
@@ -114,10 +136,9 @@ end
         ## Subtitle cool!
         done
         """ |> seval
-    @test isapproxstr(h, """
-                        <h1 id="title"><a href="#title">Title</a></h1>
-                        and then
-                        <h2 id="subtitle_cool"><a href="#subtitle_cool">Subtitle cool&#33;</a></h2>
-                        done
-                        """)
+    @test h // """
+        <h1 id="title"><a href="#title">Title</a></h1>
+        <p>and then</p>
+        <h2 id="subtitle_cool"><a href="#subtitle_cool">Subtitle cool&#33;</a></h2>
+        <p>done</p>"""
 end

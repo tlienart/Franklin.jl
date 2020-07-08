@@ -17,6 +17,9 @@ set_curpath(path) =
 isapproxstr(s1::AbstractString, s2::AbstractString) =
     isequal(map(s->replace(s, r"\s|\n"=>""), String.((s1, s2)))...)
 
+# stricter than isapproxstr, just strips the outside.
+(//)(s1::String, s2::String) = strip(s1) == strip(s2)
+
 # this is a slightly ridiculous requirement but apparently the `eval` blocks
 # don't play well with Travis nor windows while testing, so you just need to forcibly
 # specify that LinearAlgebra and Random are used (even though the included block says

@@ -5,6 +5,7 @@ blocks).
 function convert_html(hs::AS; isoptim::Bool=false)::String
     isempty(hs) && return hs
 
+    (:convert_html, "input hs: '$hs'") |> logger
     (:convert_html, "hasmath/code: $(locvar.((:hasmath, :hascode)))") |> logger
 
     # Tokenize
@@ -20,23 +21,21 @@ function convert_html(hs::AS; isoptim::Bool=false)::String
 
     fhs = process_html_qblocks(hs, qblocks)
 
+    (:convert_html, "fhs (pre fix): '$fhs'") |> logger
+
     # See issue #204, basically not all markdown links are processed  as
     # per common mark with the JuliaMarkdown, so this is a patch that kind
     # of does
     if locvar("reflinks")
         fhs = find_and_fix_md_links(fhs)
     end
-    # if it ends with </p>\n but doesn't start with <p>, chop it off
-    # this may happen if the first element parsed is an ocblock (not text)
-    δ = ifelse(endswith(fhs, "</p>\n") && !startswith(fhs, "<p>"), 5, 0)
-
     isempty(fhs) && return ""
 
     if !isempty(globvar("prepath")) && isoptim
         fhs = fix_links(fhs)
     end
 
-    return String(chop(fhs, tail=δ))
+    return String(fhs)
 end
 
 

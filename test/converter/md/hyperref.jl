@@ -34,17 +34,29 @@
     @test isapproxstr(h, """
         <p>
           Some string
-          <a id="$h1" class=\"anchor\"></a>\\[ x = x \\]
-          then as per <span class="bibref"><a href="#$h2">Amari and Douglas., 1998</a></span>  also this <span class="bibref">(<a href="#$h3">Bardenet et al., 2017</a>)</span>  and
-          <span class="bibref"><a href="#$h2">Amari and Douglas., 1998</a>, <a href="#$h3">Bardenet et al., 2017</a></span>
-          Reference to equation: <span class="eqref">(<a href="#$h1">1</a>)</span> .
+        </p>
+        <a id="$h1" class=\"anchor\"></a>
+        \\[ x = x \\]
+        <p>
+          then as per
+            <span class="bibref"><a href="#$h2">Amari and Douglas., 1998</a></span>
+          also this
+            <span class="bibref">(<a href="#$h3">Bardenet et al., 2017</a>)</span>
+          and
+            <span class="bibref"><a href="#$h2">Amari and Douglas., 1998</a>, <a href="#$h3">Bardenet et al., 2017</a></span>
+          Reference to equation:
+            <span class="eqref">(<a href="#$h1">1</a>)</span>.
         </p>
         <p>
           Then maybe some text etc.
         </p>
         <ul>
-          <li><p><a id="$h2" class=\"anchor\"></a>  <strong>Amari</strong> and <strong>Douglas</strong>: <em>Why Natural Gradient</em>, 1998.</p></li>
-          <li><p><a id="$h3" class=\"anchor\"></a>  <strong>Bardenet</strong>, <strong>Doucet</strong> and <strong>Holmes</strong>: <em>On Markov Chain Monte Carlo Methods for Tall Data</em>, 2017.</p></li>
+          <li><p><a id="$h2" class=\"anchor\"></a>
+            <strong>Amari</strong> and <strong>Douglas</strong>: <em>Why Natural Gradient</em>, 1998.</p>
+          </li>
+          <li><p><a id="$h3" class=\"anchor\"></a>
+            <strong>Bardenet</strong>, <strong>Doucet</strong> and <strong>Holmes</strong>: <em>On Markov Chain Monte Carlo Methods for Tall Data</em>, 2017.</p>
+          </li>
         </ul>
         """)
 end

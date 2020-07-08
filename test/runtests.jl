@@ -119,6 +119,10 @@ include("integration/literate_extras.jl")
 flush_td()
 cd(joinpath(dirname(dirname(pathof(Franklin)))))
 
+println("HTML validation")
+include("html/closep.jl")
+include("html/closep_lx.jl")
+
 println("COVERAGE")
 include("coverage/extras1.jl")
 include("coverage/paths.jl")

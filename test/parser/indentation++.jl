@@ -40,8 +40,10 @@
     b2i = steps[:b2insert].b2insert
     @test b2i[2].name == :CODE_BLOCK_IND
     @test isapproxstr(mds |> fd2html_td, """
-        <p>A <pre><code class="language-julia">B
-        C</code></pre>D</p>
+        <p>A</p>
+        <pre><code class="language-julia">B
+        C</code></pre>
+        <p>D</p>
         """)
 end
 

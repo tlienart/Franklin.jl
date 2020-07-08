@@ -47,6 +47,7 @@ end
        """
     @test isapproxstr(s |> fd2html_td, """
         <pre><code class="language-markdown">this has[^1]
+
         [^1]: def
-        </code></pre> blah""")
+        </code></pre> <p>blah</p>""")
 end

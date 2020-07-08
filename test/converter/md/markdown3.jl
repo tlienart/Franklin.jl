@@ -5,9 +5,11 @@
     st = raw"""
         Hello \ blah \ end
         and `B \ c` end and
+
         ```
         A \ b
         ```
+
         done
         """
 
@@ -32,13 +34,12 @@
 
     inter_html, = steps[:inter_html]
 
-    @test isapproxstr(inter_html, "<p>Hello  ##FDINSERT##  blah  ##FDINSERT##  end and  ##FDINSERT##  end and  ##FDINSERT##  done</p>")
+    @test isapproxstr(inter_html, "<p>Hello  ##FDINSERT##  blah  ##FDINSERT##  end and  ##FDINSERT##  end and </p><p> ##FDINSERT##</p> <p>done</p>")
 
     @test isapproxstr(st |> seval, raw"""
-                <p>Hello &#92; blah &#92; end
-                and <code>B \ c</code> end and
+                <p>Hello &#92; blah &#92; end and <code>B \ c</code> end and</p>
                 <pre><code class="language-julia">A \ b</code></pre>
-                done</p>
+                <p>done</p>
                 """)
 end
 
@@ -46,9 +47,11 @@ end
     st = raw"""
         Hello \ blah \ end
         and `B \ c` end \\ and
+
         ```
         A \ b
         ```
+
         done
         """
     steps = explore_md_steps(st)
@@ -57,9 +60,9 @@ end
     h = st |> seval
     @test isapproxstr(st |> seval, raw"""
                         <p>Hello &#92; blah &#92; end
-                        and <code>B \ c</code> end <br/> and
+                        and <code>B \ c</code> end <br/> and</p>
                         <pre><code class="language-julia">A \ b</code></pre>
-                        done</p>
+                        <p>done</p>
                         """)
 end
 
@@ -237,16 +240,14 @@ end
         end
         """
     @test isapproxstr(st |> seval, raw"""
-        <p>
-            A
+        <p>A</p>
             <pre><code class="language-julia">a = 1+1
             if a > 1
                 @show a
             end
             b = 2
             @show a+b</code></pre>
-            end
-        </p>""")
+        <p>end</p>""")
 
     st = raw"""
         @def indented_code = true
@@ -260,62 +261,63 @@ end
         end
         """
     @test isapproxstr(st |> seval, raw"""
-                        <p>
-                        A <code>single</code> and
+                        <p>A <code>single</code> and </p>
                         <pre><code class="language-python">blah</code></pre>
-                        and<pre><code class="language-julia">a = 1+1</code></pre>
-                        then
-                        </p>
+                        <p>and</p>
+                        <pre><code class="language-julia">a = 1+1</code></pre>
+                        <p>then</p>
                         <ul>
-                          <li><p>blah</p>
-                            <ul>
-                              <li><p>blih</p></li>
-                              <li><p>bloh</p></li>
-                            </ul>
-                          </li>
+                        <li><p>blah</p>
+                        <ul>
+                        <li><p>blih</p>
+                        </li>
+                        <li><p>bloh</p>
+                        </li>
+                        </ul>
+                        </li>
                         </ul>
                         <p>end</p>
                         """)
 
-    st = raw"""
-        @def indented_code = true
-        A
-
-            function foo()
-
-                return 2
-
-            end
-
-            function bar()
-                return 3
-            end
-
-        B
-
-            function baz()
-                return 5
-
-            end
-
-        C
-        """
-    isapproxstr(st |> seval, raw"""
-                            <p>A <pre><code class="language-julia">function foo()
-
-                                return 2
-
-                            end
-
-                            function bar()
-                                return 3
-                            end</code></pre>
-                            B <pre><code class="language-julia">function baz()
-                                return 5
-
-                            end</code></pre>
-                            C</p>
-                            """)
+    # st = raw"""
+    #     @def indented_code = true
+    #     A
+    #
+    #         function foo()
+    #
+    #             return 2
+    #
+    #         end
+    #
+    #         function bar()
+    #             return 3
+    #         end
+    #
+    #     B
+    #
+    #         function baz()
+    #             return 5
+    #
+    #         end
+    #
+    #     C
+    #     """
+    # isapproxstr(st |> seval, raw"""
+    #                         <p>A</p> <pre><code class="language-julia">function foo()
+    #
+    #                             return 2
+    #
+    #                         end
+    #
+    #                         function bar()
+    #                             return 3
+    #                         end</code></pre>
+    #                         B <pre><code class="language-julia">function baz()
+    #                             return 5
+    #
+    #                         end</code></pre>
+    #                         C</p>
+    #                         """)
 end
 
 @testset "More ``" begin
@@ -329,7 +331,7 @@ end
     s = """Blah [`hello`] and later
        [`hello`]: https://github.com/cormullion/
        """ |> fd2html_td
-    @test isapproxstr(s, """
+    @test_broken isapproxstr(s, """
         <p>Blah
         <a href="https://github.com/cormullion/"><code>hello</code></a>
         and later </p>
@@ -345,9 +347,9 @@ end
        end
        """
     @test isapproxstr(s |> fd2html_td, """
-        <p>blah
+        <p>blah</p>
         <pre><code class=\"language-TOML\">socrates</code></pre>
-    end</p>""")
+        <p>end</p>""")
     s = raw"""
        blah
        ```julia-repl
@@ -356,7 +358,7 @@ end
        end
        """
     @test isapproxstr(s |> fd2html_td, """
-        <p>blah
+        <p>blah</p>
         <pre><code class=\"language-julia-repl\">socrates</code></pre>
-    end</p>""")
+        <p>end</p>""")
 end

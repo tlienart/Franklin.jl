@@ -148,8 +148,12 @@ SPACE_CHARS
 
 Convenience list of characters that would correspond to a `\\s` regex. see also
 https://github.com/JuliaLang/julia/blob/master/base/strings/unicode.jl.
+To this are added things that would definitely switch token:
+* EOS (end of string)
+* '}' (if in command)
 """
-const SPACE_CHAR = (' ', '\n', '\t', '\v', '\f', '\r', '\u85', '\ua0', EOS)
+const SPACE_CHAR = (' ', '\n', '\t', '\v', '\f', '\r', '\u85', '\ua0',
+                    EOS, '}')
 
 """
 SPACER
