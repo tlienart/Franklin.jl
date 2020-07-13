@@ -116,15 +116,15 @@ end
     @test isapproxstr(s, """
         <div class="note">A</div>
         <div class="note">A <code>B</code> C</div>
-        <div class="note">A
-                </p>
-            <div class="cc">B</div>
-                <p>D
+        <div class="note">
+          <p>A </p>
+          <div class="cc">B</div>
+          <p>D</p>
         </div>
-        <div class="note">A
-                </p>
-            <div class="cc">B <code>D</code> E</div>
-                <p>F
+        <div class="note">
+          <p>A </p>
+          <div class="cc">B <code>D</code> E</div>
+          <p>F</p>
         </div>
         """)
 end

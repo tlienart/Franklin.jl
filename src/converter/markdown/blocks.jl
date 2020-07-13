@@ -32,11 +32,12 @@ function convert_block(β::AbstractBlock, lxdefs::Vector{LxDef})::AS
     if βn == :DIV
         raw_cont = stent(β)
         cont     = convert_md(raw_cont, lxdefs;
-                              isrecursive=true, has_mddefs=false)
+                              isrecursive=true, has_mddefs=false,
+                              nostripp=true) |> simplify_ps 
         divname  = chop(otok(β).ss, head=2, tail=0)
+        # parse @@c1,c2,c3 as class="c1 c2 c3"
         return html_div(replace(divname, ","=>" "), cont)
     end
-
     # default case, ignore block (should not happen)
     return ""
 end
@@ -108,6 +109,9 @@ end
 $(SIGNATURES)
 
 Helper function for the case of a header block (H1, ..., H6).
+- gets a short string for the header anchor
+- processes the actual header string as standard markdown (e.g. if has code)
+- return the html.
 """
 function convert_header(β::OCBlock, lxdefs::Vector{LxDef})::String
     hk    = lowercase(string(β.name)) # h1, h2, ...

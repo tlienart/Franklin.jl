@@ -148,7 +148,7 @@ function convert_md(mds::AbstractString,
     inter_md, mblocks = form_inter_md(mds, b2insert, lxdefs)
     inter_html = md2html(inter_md; stripp=isrecursive && !nostripp)
 
-    (:convert_md, "inter_md: '$inter_md'") |> logger
+    (:convert_md, "inter_md: '$inter_md'")     |> logger
     (:convert_md, "inter_html: '$inter_html'") |> logger
 
     #> 3. Plug resolved blocks in partial html to form the final html

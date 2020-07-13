@@ -136,30 +136,30 @@ not deactivate its content which is needed to find latex definitions
 const MD_OCB = [
     # name                    opening token   closing token(s)  nestable
     # ---------------------------------------------------------------------
-    OCProto(:COMMENT,         :COMMENT_OPEN, (:COMMENT_CLOSE,), false),
-    OCProto(:CODE_BLOCK_LANG, :CODE_LANG,    (:CODE_TRIPLE,),   false),
-    OCProto(:CODE_BLOCK_LANG, :CODE_LANG2,   (:CODE_PENTA,),    false),
-    OCProto(:CODE_BLOCK,      :CODE_TRIPLE,  (:CODE_TRIPLE,),   false),
-    OCProto(:CODE_BLOCK,      :CODE_PENTA,   (:CODE_PENTA,),    false),
-    OCProto(:CODE_INLINE,     :CODE_DOUBLE,  (:CODE_DOUBLE,),   false),
-    OCProto(:CODE_INLINE,     :CODE_SINGLE,  (:CODE_SINGLE,),   false),
-    OCProto(:MD_DEF,          :MD_DEF_OPEN,  L_RETURNS,         false), # [^4]
-    OCProto(:CODE_BLOCK_IND,  :LR_INDENT,    (:LINE_RETURN,),   false),
-    OCProto(:ESCAPE,          :ESCAPE,       (:ESCAPE,),        false),
-    OCProto(:FOOTNOTE_DEF,    :FOOTNOTE_DEF, L_RETURNS,         false),
-    OCProto(:LINK_DEF,        :LINK_DEF,     L_RETURNS,         false),
+    OCProto(:COMMENT,         :COMMENT_OPEN, (:COMMENT_CLOSE,)),
+    OCProto(:CODE_BLOCK_LANG, :CODE_LANG,    (:CODE_TRIPLE,)  ),
+    OCProto(:CODE_BLOCK_LANG, :CODE_LANG2,   (:CODE_PENTA,)   ),
+    OCProto(:CODE_BLOCK,      :CODE_TRIPLE,  (:CODE_TRIPLE,)  ),
+    OCProto(:CODE_BLOCK,      :CODE_PENTA,   (:CODE_PENTA,)   ),
+    OCProto(:CODE_INLINE,     :CODE_DOUBLE,  (:CODE_DOUBLE,)  ),
+    OCProto(:CODE_INLINE,     :CODE_SINGLE,  (:CODE_SINGLE,)  ),
+    OCProto(:MD_DEF,          :MD_DEF_OPEN,  L_RETURNS        ), # [^4]
+    OCProto(:CODE_BLOCK_IND,  :LR_INDENT,    (:LINE_RETURN,)  ),
+    OCProto(:ESCAPE,          :ESCAPE,       (:ESCAPE,)       ),
+    OCProto(:FOOTNOTE_DEF,    :FOOTNOTE_DEF, L_RETURNS        ),
+    OCProto(:LINK_DEF,        :LINK_DEF,     L_RETURNS        ),
     # ------------------------------------------------------------------
-    OCProto(:H1,              :H1_OPEN,      L_RETURNS,     false), # see [^3]
-    OCProto(:H2,              :H2_OPEN,      L_RETURNS,     false),
-    OCProto(:H3,              :H3_OPEN,      L_RETURNS,     false),
-    OCProto(:H4,              :H4_OPEN,      L_RETURNS,     false),
-    OCProto(:H5,              :H5_OPEN,      L_RETURNS,     false),
-    OCProto(:H6,              :H6_OPEN,      L_RETURNS,     false)
+    OCProto(:H1,              :H1_OPEN,      L_RETURNS), # see [^3]
+    OCProto(:H2,              :H2_OPEN,      L_RETURNS),
+    OCProto(:H3,              :H3_OPEN,      L_RETURNS),
+    OCProto(:H4,              :H4_OPEN,      L_RETURNS),
+    OCProto(:H5,              :H5_OPEN,      L_RETURNS),
+    OCProto(:H6,              :H6_OPEN,      L_RETURNS)
     ]
 # the split is due to double brace blocks being allowed in markdown
 const MD_OCB2 = [
-    OCProto(:LXB,             :LXB_OPEN,     (:LXB_CLOSE,), true ),
-    OCProto(:DIV,             :DIV_OPEN,     (:DIV_CLOSE,), true ),
+    OCProto(:LXB,             :LXB_OPEN,     (:LXB_CLOSE,), nestable=true),
+    OCProto(:DIV,             :DIV_OPEN,     (:DIV_CLOSE,), nestable=true),
     ]
 #= NOTE:
 * [3] a header can be closed by either a line return or an end of string (for
@@ -190,8 +190,8 @@ const MD_HEADER_OPEN = (:H1_OPEN, :H2_OPEN, :H3_OPEN, :H4_OPEN, :H5_OPEN, :H6_OP
 """
     MD_OCB_ESC
 
-Blocks that will be escaped (their content will not be further processed).
-Corresponds to the "non-reprocess" elements of `MD_OCB`.
+Blocks that will be escaped (tokens in their span will be ignored on the
+current parsing round).
 """
 const MD_OCB_ESC = [e.name for e ∈ MD_OCB if !e.nest]
 
@@ -204,13 +204,13 @@ them from the other dictionary makes their processing easier.
 Dev note: order does not matter.
 """
 const MD_OCB_MATH = [
-    OCProto(:MATH_A,     :MATH_A,          (:MATH_A,),           false),
-    OCProto(:MATH_B,     :MATH_B,          (:MATH_B,),           false),
-    OCProto(:MATH_C,     :MATH_C_OPEN,     (:MATH_C_CLOSE,),     false),
-    OCProto(:MATH_C,     :MATH_D_OPEN,     (:MATH_D_CLOSE,),     false),
-    OCProto(:MATH_I,     :MATH_I_OPEN,     (:MATH_I_CLOSE,),     false),
-    OCProto(:MATH_ALIGN, :MATH_ALIGN_OPEN, (:MATH_ALIGN_CLOSE,), false),
-    OCProto(:MATH_EQA,   :MATH_EQA_OPEN,   (:MATH_EQA_CLOSE,),   false),
+    OCProto(:MATH_A,     :MATH_A,          (:MATH_A,)          ),
+    OCProto(:MATH_B,     :MATH_B,          (:MATH_B,)          ),
+    OCProto(:MATH_C,     :MATH_C_OPEN,     (:MATH_C_CLOSE,)    ),
+    OCProto(:MATH_C,     :MATH_D_OPEN,     (:MATH_D_CLOSE,)    ),
+    OCProto(:MATH_I,     :MATH_I_OPEN,     (:MATH_I_CLOSE,)    ),
+    OCProto(:MATH_ALIGN, :MATH_ALIGN_OPEN, (:MATH_ALIGN_CLOSE,)),
+    OCProto(:MATH_EQA,   :MATH_EQA_OPEN,   (:MATH_EQA_CLOSE,)  ),
     ]
 
 

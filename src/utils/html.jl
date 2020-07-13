@@ -22,22 +22,38 @@ function html_ahref(link::AS, name::Union{Int,AS};
     return a
 end
 
-"""Convenience function to introduce a hyper reference relative to a key."""
+"""
+    html_ahref_key
+
+Convenience function to introduce a hyper reference relative to a key.
+"""
 html_ahref_key(k::AS, n::Union{Int,AS}) = html_ahref("#$k", n)
 
-"""Convenience function to introduce a div block."""
+"""
+    html_div
+
+Convenience function to introduce a div block.
+"""
 html_div(name::AS, in::AS) = "<div class=\"$name\">$in</div>"
 
-"""Convenience function to introduce a named span block."""
+"""
+    html_span
+
+Convenience function to introduce a named span block.
+"""
 html_span(name::AS, in::AS) = "<span class=\"$name\">$in</span>"
 
 """
+    html_img
+
 Convenience function to introduce an image. The alt is escaped just in case the
 user adds quotation marks in the alt string.
 """
 html_img(src::AS, alt::AS="") = "<img src=\"$src\" alt=\"$(htmlesc(alt))\">"
 
 """
+    html_code
+
 Convenience function to introduce a code block. With indented blocks, the
 language will be resolved at build time; as a result no lines will be hidden
 for such blocks.
@@ -59,7 +75,11 @@ end
 const REGEX_CODE_HIDE = Regex(raw"(?:^|[^\S\r\n]*?)#(\s)*?(?i)hide(all)?")
 const REGEX_LIT_HIDE  = Regex(raw"(?:^|[^\S\r\n]*?)#src")
 
-"""Convenience function to process a code string and hide some lines."""
+"""
+    html_skip_hidden
+
+Convenience function to process a code string and hide some lines.
+"""
 function html_skip_hidden(c::AS, lang::AS)::String
     # if the language is not one of CODE_LANG, just return
     # without hiding anything
@@ -86,16 +106,28 @@ function html_skip_hidden(c::AS, lang::AS)::String
 end
 
 
-"""Convenience function to introduce inline code."""
+"""
+    html_code_inline
+
+Convenience function to introduce inline code.
+"""
 html_code_inline(c::AS) = "<code>$c</code>"
 
 
-"""Insertion of a visible red message in HTML to show there was a problem."""
+"""
+    html_err
+
+Insertion of a visible red message in HTML to show there was a problem.
+"""
 html_err(mess::String="") =
     "<p><span style=\"color:red;\">// $mess //</span></p>"
 
 
-"""Helper function to get the relative url of the current page."""
+"""
+    url_curpage
+
+Helper function to get the relative url of the current page.
+"""
 function url_curpage()
     if FD_ENV[:STRUCTURE] < v"0.2"
         return _url_curpage()
@@ -170,11 +202,17 @@ end
 
 const _htmlesc_to = values(_htmlescape_chars) |> collect
 
-"""Internal function to check if some html code has been escaped."""
+"""
+    is_html_escaped
+
+Internal function to check if some html code has been escaped.
+"""
 is_html_escaped(cs::AS) =
     !isnothing(findfirst(ss -> occursin(ss, cs), _htmlesc_to))
 
 """
+    html_unescape
+
 Internal function to reverse the escaping of some html code (in order to avoid
 double escaping when pre-rendering with highlight, see issue 326).
 """
@@ -184,4 +222,27 @@ function html_unescape(cs::String)
         cs = replace(cs, ssto => ssfrom)
     end
     return cs
+end
+
+
+"""
+    simplify_ps(s)
+
+In some cases, an insertion might look like `<p>INS</p>` and the ps could be
+dropped. This is a helper function to check that (1) there is only one opening
+and closing `p` tag and (2) that they're at the beginning and end of the
+string in which case they're removed.
+"""
+function simplify_ps(s::AbstractString)
+    # 1. check whether the string starts and ends with the tag
+    s = strip(s)
+    left = startswith(s, "<p>")
+    right = endswith(s, "</p>")
+    (left && right) || return s
+    from = nextind(s, 0, 4)
+    to   = prevind(s, lastindex(s), 4)
+    ss   = subs(s, from:to)
+    k    = findfirst(r"<\/?p>", ss)
+    isnothing(k) || return s
+    return ss
 end
