@@ -122,6 +122,7 @@ cd(joinpath(dirname(dirname(pathof(Franklin)))))
 println("HTML validation")
 include("html/closep.jl")
 include("html/closep_lx.jl")
+include("html/pdiv.jl")
 
 println("COVERAGE")
 include("coverage/extras1.jl")

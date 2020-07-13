@@ -64,7 +64,7 @@ struct OCProto
     ctok::NTuple{N, Symbol} where N
     nest::Bool
 end
-
+OCProto(a...; nestable=false) = OCProto(a..., nestable)
 
 """
 $(TYPEDEF)
