@@ -219,3 +219,39 @@ function hfun_taglist()::String
     write(c, "</ul>")
     return String(take!(c))
 end
+
+
+"""
+$(SIGNATURES)
+
+H-Function of the form `{{redirect /addr/blah.html}}`.
+"""
+function hfun_redirect(params::Vector{String})::String
+    if length(params) != 1
+        throw(HTMLFunctionError("I found an {{redirect ...}} block and expected a single " *
+                                "address but got $(length(params)). Verify."))
+    end
+    addr = params[1]
+    if !endswith(addr, ".html")
+        throw(HTMLFunctionError("In a {{redirect address}} block the address must be " *
+                                "complete up to the `.html` extension (got '$addr')."))
+    end
+    startswith(addr, '/') && (addr = addr[nextind(addr, 1):end])
+    if FD_ENV[:STRUCTURE] < v"0.2"
+        dst = joinpath(path(:pub), addr)
+    else
+        dst = joinpath(path(:site), addr)
+    end
+    isfile(dst) && return ""
+    mkpath(splitdir(dst)[1])
+    write(dst, """
+    <!-- Generated Redirect -->
+    <!doctype html>
+    <html>
+    <head>
+      <meta http-equiv="refresh" content="0; url=$(locvar(:fd_url))">
+    </head>
+    </html>
+    """)
+    return ""
+end
