@@ -80,6 +80,10 @@ function serve(; clear::Bool=false,
     FD_ENV[:STRUCTURE] = fsv
 
     if FD_ENV[:STRUCTURE] < v"0.2"
+        @warn "You seem to be using Franklin's old file structure which is now " *
+              "deprecated, please consider upgrading to the new file structure, " *
+              "see https://github.com/tlienart/Franklin.jl/blob/master/NEWS.md#v06-1 " *
+              "for details."
         # check to see if we're in a folder that has the right structure,
         # otherwise stop and tell the user to check (#155)
         if !isdir(joinpath(FOLDER_PATH[], "src"))

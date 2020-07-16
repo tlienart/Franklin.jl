@@ -93,8 +93,8 @@ const LOCAL_VARS_DEFAULT = [
     # MISCELLANEOUS (should not be modified)
     "fd_ctime"  => Pair(Date(1),    (Date,)),   # time of creation
     "fd_mtime"  => Pair(Date(1),    (Date,)),   # time of last modification
-    "fd_rpath"  => Pair("",         (String,)), # rpath to current page
-    "fd_url"    => Pair("",         (String,)), # url to current page
+    "fd_rpath"  => Pair("",         (String,)), # rpath to current page [1]
+    "fd_url"    => Pair("",         (String,)), # url to current page [2]
     "fd_tag"    => Pair("",         (String,)), # (generated) current tag
     ]
 #=
@@ -110,6 +110,9 @@ NOTE:
     (*) guid        -- [automatically generated from link]
         pubDate     -- rss_pubdate // fallback date // fallback fd_ctime
     (*) source      -- [unsupported assumes for now there's only one channel]
+
+[1] e.g.: blog/kaggle.md
+[2] e.g.: blog/kaggle/index.html
 =#
 
 """
