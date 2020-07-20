@@ -45,7 +45,7 @@ Some examples of websites using Franklin (_if you're using Franklin with a publi
 * [@Wikunia's blog](https://opensourc.es) using the vela template
 * [@zdroid's blog and website](https://zdroid.github.io) using Bootstrap 4.5
 * [PkgPage.jl](https://tlienart.github.io/PkgPage.jl/), front-page generator based on Franklin
-* [SciMl.ai](https://github.com/SciML/sciml.ai), Julia SciML's org website
+* [SciML.ai](https://github.com/SciML/sciml.ai), Julia's SciML Scientific Machine Learning organization website
 * [My website](https://tlienart.github.io) (_by now a bit outdated... there's only so much one can do in a day_)
 
 ## Key features
