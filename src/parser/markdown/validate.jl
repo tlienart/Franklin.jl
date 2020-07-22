@@ -60,6 +60,11 @@ function validate_headers!(tokens::Vector{Token})::Nothing
     return
 end
 
+
+function validate_emoji!()
+end
+
+
 """
 $(SIGNATURES)
 

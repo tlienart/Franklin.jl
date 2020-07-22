@@ -287,6 +287,13 @@ is_html_entity(i::Int, c::Char) = αη(c, ('#',';'))
 """
 $(SIGNATURES)
 
+Check if it looks like an emoji indicator
+"""
+is_emoji(i::Int, c::Char) = αη(c, ('+','_','-'))
+
+"""
+$(SIGNATURES)
+
 Check if it looks like `\\[\\^[\\p{L}0-9]+\\]:`.
 """
 function is_footnote(i::Int, c::Char)
