@@ -265,7 +265,7 @@ function publish(; prerender::Bool=true, minify::Bool=true, nopass::Bool=false,
         print(pubmsg)
         try
             run(`git add -A `)
-            run(`git commit -m "$message" --quiet`)
+            wait(run(`git commit -m "$message" --quiet`; wait=false))
             if do_push
                 run(`git push --quiet`)
             end
