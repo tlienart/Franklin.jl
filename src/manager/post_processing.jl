@@ -247,7 +247,8 @@ It also fixes all links if you specify `prepath` (or if it's set in
 """
 function publish(; prerender::Bool=true, minify::Bool=true, nopass::Bool=false,
                    prepath::String="", message::String="franklin-update",
-                   cleanup::Bool=true, final::Union{Nothing,Function}=nothing)::Nothing
+                   cleanup::Bool=true, final::Union{Nothing,Function}=nothing,
+                   do_push::Bool=true)::Nothing
     succ = true
     if !isempty(prepath) || !nopass
         # no cleanup so that can access global page variables in final step
@@ -265,7 +266,9 @@ function publish(; prerender::Bool=true, minify::Bool=true, nopass::Bool=false,
         try
             run(`git add -A `)
             run(`git commit -m "$message" --quiet`)
-            run(`git push --quiet`)
+            if do_push
+                run(`git push --quiet`)
+            end
             print_final(pubmsg, start)
         catch e
             println("✘ Could not push updates, verify your connection " *
