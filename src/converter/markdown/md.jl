@@ -43,12 +43,15 @@ function convert_md(mds::AbstractString,
     #> 1. Tokenize
     tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
     (:convert_md, "convert_md: '$([t.name for t in tokens])'") |> logger
+
     # distinguish fnref/fndef
     validate_footnotes!(tokens)
     # ignore header tokens that are not at the start of a line
     validate_headers!(tokens)
     # capture some hrule (see issue #432)
     hrules = find_hrules!(tokens)
+    # find emojis
+
     #> 1b. Find indented blocks (ONLY if not recursive to avoid ambiguities!)
     if !isrecursive
         find_indented_blocks!(tokens, mds)

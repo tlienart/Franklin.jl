@@ -61,7 +61,7 @@ function validate_headers!(tokens::Vector{Token})::Nothing
 end
 
 
-function validate_emoji!()
+function validate_emoji!(tokens::Vector{Token})::Nothing
 end
 
 
