@@ -64,8 +64,8 @@ function process_html_cond(hs::AS, qblocks::Vector{AbstractBlock},
         lag = 1
         if !(βi isa Union{HIsPage, HIsNotPage})
             k = haskey(LOCAL_VARS, βi.vname)
-            if !k
-                k = βi isa HIsNotDef
+            if βi isa Union{HIsDef, HIsNotDef}
+                k ⊻= βi isa HIsNotDef
             elseif βi isa Union{HIsEmpty, HIsNotEmpty}
                 v = locvar(βi.vname)
                 e = isempty(v)
