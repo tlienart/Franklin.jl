@@ -177,6 +177,7 @@ function find_special_chars(tokens::Vector{Token})
         τ.name == :CHAR_BACKSPACE   && push!(spch, HTML_SPCH(τ.ss, "&#92;"))
         τ.name == :CHAR_BACKTICK    && push!(spch, HTML_SPCH(τ.ss, "&#96;"))
         τ.name == :CHAR_LINEBREAK   && push!(spch, HTML_SPCH(τ.ss, "<br/>"))
+        τ.name == :EMOJI            && push!(spch, HTML_SPCH(τ.ss, emoji(τ)))
         τ.name == :CHAR_HTML_ENTITY &&
             validate_html_entity(τ.ss) && push!(spch, HTML_SPCH(τ.ss))
     end

@@ -27,6 +27,10 @@ else:
     css_files  = []
     for root, dirs, files in os.walk("__site"):
         for fname in files:
+            path = os.path.join(root, fname)
+            # skip the assets folder which should be left untouched (#568)
+            if path.startswith(os.path.join("__site", "assets")):
+                continue
             if fname.endswith(".html"):
                 html_files.append(os.path.join(root, fname))
             if fname.endswith(".css"):

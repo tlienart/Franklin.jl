@@ -287,7 +287,8 @@ is_html_entity(i::Int, c::Char) = αη(c, ('#',';'))
 """
 $(SIGNATURES)
 
-Check if it looks like an emoji indicator
+Check if it looks like an emoji indicator `:...` note that it does
+not take the final `:` this is checked and added in `validate_emoji!`.
 """
 is_emoji(i::Int, c::Char) = αη(c, ('+','_','-'))
 

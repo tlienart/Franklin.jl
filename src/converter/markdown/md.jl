@@ -48,9 +48,10 @@ function convert_md(mds::AbstractString,
     validate_footnotes!(tokens)
     # ignore header tokens that are not at the start of a line
     validate_headers!(tokens)
+    # validate emojis
+    validate_emojis!(tokens)
     # capture some hrule (see issue #432)
     hrules = find_hrules!(tokens)
-    # find emojis
 
     #> 1b. Find indented blocks (ONLY if not recursive to avoid ambiguities!)
     if !isrecursive
@@ -125,8 +126,8 @@ function convert_md(mds::AbstractString,
     end
 
     # ------------------------------------------------------------------------
-    #> 5. Process special characters and html entities so that they can be
-    # injected as they are in the HTML later
+    #> 5. Process special characters, emojis and html entities so that they
+    # can be injected as they are in the HTML later
     sp_chars = find_special_chars(tokens)
 
     # ========================================================================
