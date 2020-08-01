@@ -74,11 +74,22 @@ end
     hs = "foot {{isdef author}} {{fill author}}{{end}}"
     rhs = F.convert_html(hs)
     @test rhs == "foot  Stefan Zweig"
-    for expr in ("isnotdef", "ifnotdef", "isndef", "ifndef")
-        hs2 = "foot {{$expr blogname}}hello{{end}}"
-        rhs = F.convert_html(hs2)
-        @test rhs == "foot hello"
-    end
+    hs2 = """
+          {{isnotdef undefined}}undefined{{end}}
+          {{ifnotdef undefined}}undefined{{end}}
+          {{isndef undefined}}undefined{{end}}
+          {{ifndef undefined}}undefined{{end}}
+          {{isdef undefined}}undefined{{end}}
+          {{ifdef undefined}}undefined{{end}}
+          {{isnotdef author}}author{{end}}
+          {{ifnotdef author}}author{{end}}
+          {{isndef author}}author{{end}}
+          {{ifndef author}}author{{end}}
+          {{isdef author}}author{{end}}
+          {{ifdef author}}author{{end}}
+          """
+    rhs = F.convert_html(hs2)
+    @test rhs == "undefined\nundefined\nundefined\nundefined\n\n\n\n\n\n\nauthor\nauthor\n"
 end
 
 @testset "escape-coms" begin
