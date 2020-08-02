@@ -188,3 +188,18 @@ end
         """ |> fd2html_td
     @test isapproxstr(s, raw"\[ φφφ1 abcdef \]")
 end
+
+@testset "emoji-basics" begin
+    s = "abc :+1: def" |> fd2html
+    @test s // "<p>abc 👍 def</p>"
+    s = "abc :+10: def" |> fd2html
+    @test s // "<p>abc :&#43;10: def</p>"
+    s = "abc :joy: def" |> fd2html
+    @test s // "<p>abc 😂 def</p>"
+    s = "abc :joy def:" |> fd2html
+    @test s // "<p>abc :joy def:</p>"
+    s = "abc : joy: def" |> fd2html
+    @test s // "<p>abc : joy: def</p>"
+    s = "abc :joi: def" |> fd2html
+    @test s // "<p>abc :joi: def</p>"
+end

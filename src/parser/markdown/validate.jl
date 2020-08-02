@@ -90,7 +90,7 @@ end
 Return the emoji corresponding to an Emoji token by querying `emoji_symbols`.
 This assumes that the token has name `:EMOJI` and so we know it's in the dict.
 """
-emoji(τ::Token) = emoji_symbols["\\$(τ.ss):"]
+emoji(τ::Token) = emoji_symbols["\\$(τ.ss)"]
 
 
 """
