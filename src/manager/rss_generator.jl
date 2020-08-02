@@ -66,16 +66,16 @@ function add_rss_item()::RSSItem
 
     descr = fd2html(descr; internal=true) |> remove_html_ps
 
-    author    = locvar("rss_author")
-    category  = locvar("rss_category")
-    comments  = locvar("rss_comments")
-    enclosure = locvar("rss_enclosure")
+    author    = locvar(:rss_author)
+    category  = locvar(:rss_category)
+    comments  = locvar(:rss_comments)
+    enclosure = locvar(:rss_enclosure)
 
-    pubDate = locvar("rss_pubdate")
+    pubDate = locvar(:rss_pubdate)
     if pubDate == Date(1)
-        pubDate = locvar("date")
+        pubDate = locvar(:date)
         if !isa(pubDate, Date) || pubDate == Date(1)
-            pubDate = locvar("fd_mtime")
+            pubDate = locvar(:fd_mtime)
         end
     end
 

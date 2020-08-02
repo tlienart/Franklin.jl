@@ -39,6 +39,7 @@ const GLOBAL_VARS_DEFAULT = [
     # keep track page=>tags and tag=>pages
     "fd_page_tags"     => Pair(nothing, (DTAG,  Nothing)),
     "fd_tag_pages"     => Pair(nothing, (DTAGI, Nothing)),
+    # -----------------------------------------------------
     # LEGACY
     "div_content" => Pair("", (String,)), # see build_page
     ]
@@ -70,6 +71,7 @@ const LOCAL_VARS_DEFAULT = [
     "reflinks"      => Pair(true,       (Bool,)),   # are there reflinks?
     "indented_code" => Pair(false,      (Bool,)),   # support indented code?
     "tags"          => Pair(String[],   (Vector{String},)),
+    "prerender"     => Pair(true,       (Bool,)),   # allow specific switch
     # -----------------
     # TABLE OF CONTENTS
     "mintoclevel" => Pair(1,  (Int,)), # set to 2 to ignore h1
@@ -193,7 +195,7 @@ function pagevar(rpath::AS, name::Union{Symbol,String})
                      joinpath(path(:folder), fpath)
         isfile(candpath) || return nothing
         # store curpath
-        bk_path = locvar("fd_rpath")
+        bk_path = locvar(:fd_rpath)
         bk_path_ = splitext(bk_path)[1]
 
         (:pagevar, "!haskey, bkpath: $bk_path, rpath: $rpath") |> logger
@@ -291,11 +293,11 @@ automatically construct them using the first three letters of the names in
 """
 function fd_date(d::DateTime)
     # aliases for locale data and format from local variables
-    format      = locvar("date_format")
-    months      = locvar("date_months")
-    shortmonths = locvar("date_shortmonths")
-    days        = locvar("date_days")
-    shortdays   = locvar("date_shortdays")
+    format      = locvar(:date_format)
+    months      = locvar(:date_months)
+    shortmonths = locvar(:date_shortmonths)
+    days        = locvar(:date_days)
+    shortdays   = locvar(:date_shortdays)
     # if vectors are empty, user has not defined custom locale,
     # defaults to english
     if all(isempty.((months, shortmonths, days, shortdays)))

@@ -138,8 +138,8 @@ function convert_md(mds::AbstractString,
     # and add them to the blocks to insert
     fnrefs = filter(τ -> τ.name == :FOOTNOTE_REF, tokens)
 
-    # Discard indented blocks unless locvar("indented_code")
-    if !locvar("indented_code")
+    # Discard indented blocks unless locvar(:indented_code)
+    if !locvar(:indented_code)
         filter!(b -> b.name != :CODE_BLOCK_IND, blocks)
     end
 
@@ -161,10 +161,10 @@ function convert_md(mds::AbstractString,
     (:convert_md, "hstring: '$hstring'") |> logger
 
     # final var adjustment, infer title if not given
-    if isnothing(locvar("title")) && !isempty(PAGE_HEADERS)
+    if isnothing(locvar(:title)) && !isempty(PAGE_HEADERS)
         title = first(values(PAGE_HEADERS))[1]
         set_var!(LOCAL_VARS, "title", title)
-        ALL_PAGE_VARS[splitext(locvar("fd_rpath"))[1]]["title"] =
+        ALL_PAGE_VARS[splitext(locvar(:fd_rpath))[1]]["title"] =
             deepcopy(LOCAL_VARS["title"])
     end
 
