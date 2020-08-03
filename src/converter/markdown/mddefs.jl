@@ -34,7 +34,7 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool,
     end
 
     # if in config file, update `GLOBAL_VARS` and return
-    rpath = splitext(locvar("fd_rpath"))[1]
+    rpath = splitext(locvar(:fd_rpath))[1]
     if isconfig
         set_vars!(GLOBAL_VARS, assignments)
         return nothing
@@ -42,7 +42,7 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool,
 
     # otherwise set local vars
     set_vars!(LOCAL_VARS, assignments)
-    rpath = splitext(locvar("fd_rpath"))[1]
+    rpath = splitext(locvar(:fd_rpath))[1]
 
     hasmath = locvar(:hasmath)
     hascode = locvar(:hascode)
@@ -64,7 +64,7 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool,
     (:process_mddefs, "assignments done & copy to ALL_PAGE_VARS") |> logger
 
     # TAGS
-    tags = Set(unique(locvar("tags")))
+    tags = Set(unique(locvar(:tags)))
     # Cases:
     # 0. there was no page tags before
     #   a. tags is empty --> do nothing

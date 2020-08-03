@@ -97,7 +97,7 @@ function parse_rpath(rpath::AS; canonical::Bool=false, code::Bool=false)::AS
         end
         # if the locvar ends with `index.md` but is not strictly
         # index.md then remove it
-        loc_rpath = locvar("fd_rpath")
+        loc_rpath = locvar(:fd_rpath)
         if endswith(loc_rpath, "index.md") && loc_rpath != "index.md"
             loc_rpath = replace(loc_rpath, r"index\.md$" => "")
         end
@@ -114,7 +114,7 @@ function parse_rpath(rpath::AS; canonical::Bool=false, code::Bool=false)::AS
                                      join_rpath(rpath[3:end]))
             else
                 full_path = joinpath(PATHS[:assets],
-                                     splitext(locvar("fd_rpath"))[1],
+                                     splitext(locvar(:fd_rpath))[1],
                                      join_rpath(rpath[3:end]))
             end
             return normpath(full_path)

@@ -9,7 +9,7 @@ chtml = t -> F.convert_html(t)
 conv  = st -> st |> cmd |> chtml
 
 set_curpath(path) =
-    (F.set_var!(F.LOCAL_VARS, "fd_rpath", path); F.locvar("fd_rpath"))
+    (F.set_var!(F.LOCAL_VARS, "fd_rpath", path); F.locvar(:fd_rpath))
 
 # convenience function that squeezes out all whitespaces and line returns out of a string
 # and checks if the resulting strings are equal. When expecting a specific string +- some
@@ -105,7 +105,7 @@ function explore_md_steps(mds)
     fnrefs = filter(τ -> τ.name == :FOOTNOTE_REF, tokens)
     steps[:fnrefs] = (fnrefs=fnrefs,)
 
-    if !F.locvar("indented_code")
+    if !F.locvar(:indented_code)
         filter!(b -> b.name != :CODE_BLOCK_IND, blocks)
     end
 

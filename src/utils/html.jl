@@ -138,7 +138,7 @@ end
 function _url_curpage()
     # go from /pages/.../something.md to /pub/.../something.html note that if
     # on windows then it would be \\ whence the PATH_SEP
-    rp = replace(locvar("fd_rpath"),
+    rp = replace(locvar(:fd_rpath),
             Regex("^pages$(escape_string(PATH_SEP))") => "pub$(PATH_SEP)")
     rp = unixify(rp)
     rp = splitext(rp)[1] * ".html"
@@ -148,7 +148,7 @@ end
 
 function _url_curpage2()
     # get the relative path to current page and split extension (.md)
-    fn = splitext(locvar("fd_rpath"))[1]
+    fn = splitext(locvar(:fd_rpath))[1]
     # if it's not `index` then add `index`:
     if splitdir(fn)[2] != "index"
         fn = joinpath(fn, "index")

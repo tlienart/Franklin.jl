@@ -40,6 +40,8 @@ const MD_TOKENS = LittleDict{Char, Vector{TokenFinder}}(
              ],
     ']'  => [ isexactly("]: ") => :LINK_DEF,
              ],
+    ':'  => [ incrlook(is_emoji) => :CAND_EMOJI,
+             ],
     '\\' => [ # -- special characters, see `find_special_chars` in ocblocks
               isexactly("\\\\")       => :CHAR_LINEBREAK,   # --> <br/>
               isexactly("\\", (' ',)) => :CHAR_BACKSPACE,   # --> &#92;

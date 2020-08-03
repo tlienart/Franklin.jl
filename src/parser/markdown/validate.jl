@@ -32,9 +32,7 @@ $SIGNATURES
 
 Verify that a given string corresponds to a well formed html entity.
 """
-function validate_html_entity(ss::AS)
-    !isnothing(match(HTML_ENT_PAT, ss))
-end
+validate_html_entity(ss::AS) = !isnothing(match(HTML_ENT_PAT, ss))
 
 """
 $(SIGNATURES)
@@ -59,6 +57,41 @@ function validate_headers!(tokens::Vector{Token})::Nothing
     deleteat!(tokens, rm)
     return
 end
+
+
+function validate_emojis!(tokens::Vector{Token})::Nothing
+    isempty(tokens) && return
+    s = str(tokens[1].ss) # doesn't allocate
+    rm = Int[]
+    for (i, τ) in enumerate(tokens)
+        τ.name == :CAND_EMOJI || continue
+        # check if the immediate next character is `:`
+        nextidx = nextind(s, to(τ))
+        if s[nextidx] == ':'
+            # check if the string describes a known emoji if not, remove,
+            # otherwise re-form the emoji to add the closing ':'.
+            key = "\\$(τ.ss):"
+            if key in keys(emoji_symbols)
+                tokens[i] = Token(:EMOJI, subs(s, from(τ), nextidx))
+            else
+                push!(rm, i)
+            end
+        else
+            push!(rm, i)
+        end
+    end
+    deleteat!(tokens, rm)
+    return
+end
+
+"""
+    emoji(token)
+
+Return the emoji corresponding to an Emoji token by querying `emoji_symbols`.
+This assumes that the token has name `:EMOJI` and so we know it's in the dict.
+"""
+emoji(τ::Token) = emoji_symbols["\\$(τ.ss)"]
+
 
 """
 $(SIGNATURES)

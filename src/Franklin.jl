@@ -19,6 +19,7 @@ import NodeJS
 import Literate
 import HTTP
 import Random
+import REPL.REPLCompletions: emoji_symbols
 
 export serve, publish, cleanpull, newsite, optimize, fd2html,
        literate_folder, verify_links, @OUTPUT, get_url

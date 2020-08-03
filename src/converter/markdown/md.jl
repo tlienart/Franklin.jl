@@ -43,12 +43,16 @@ function convert_md(mds::AbstractString,
     #> 1. Tokenize
     tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
     (:convert_md, "convert_md: '$([t.name for t in tokens])'") |> logger
+
     # distinguish fnref/fndef
     validate_footnotes!(tokens)
     # ignore header tokens that are not at the start of a line
     validate_headers!(tokens)
+    # validate emojis
+    validate_emojis!(tokens)
     # capture some hrule (see issue #432)
     hrules = find_hrules!(tokens)
+
     #> 1b. Find indented blocks (ONLY if not recursive to avoid ambiguities!)
     if !isrecursive
         find_indented_blocks!(tokens, mds)
@@ -122,8 +126,8 @@ function convert_md(mds::AbstractString,
     end
 
     # ------------------------------------------------------------------------
-    #> 5. Process special characters and html entities so that they can be
-    # injected as they are in the HTML later
+    #> 5. Process special characters, emojis and html entities so that they
+    # can be injected as they are in the HTML later
     sp_chars = find_special_chars(tokens)
 
     # ========================================================================
@@ -134,8 +138,8 @@ function convert_md(mds::AbstractString,
     # and add them to the blocks to insert
     fnrefs = filter(τ -> τ.name == :FOOTNOTE_REF, tokens)
 
-    # Discard indented blocks unless locvar("indented_code")
-    if !locvar("indented_code")
+    # Discard indented blocks unless locvar(:indented_code)
+    if !locvar(:indented_code)
         filter!(b -> b.name != :CODE_BLOCK_IND, blocks)
     end
 
@@ -157,10 +161,10 @@ function convert_md(mds::AbstractString,
     (:convert_md, "hstring: '$hstring'") |> logger
 
     # final var adjustment, infer title if not given
-    if isnothing(locvar("title")) && !isempty(PAGE_HEADERS)
+    if isnothing(locvar(:title)) && !isempty(PAGE_HEADERS)
         title = first(values(PAGE_HEADERS))[1]
         set_var!(LOCAL_VARS, "title", title)
-        ALL_PAGE_VARS[splitext(locvar("fd_rpath"))[1]]["title"] =
+        ALL_PAGE_VARS[splitext(locvar(:fd_rpath))[1]]["title"] =
             deepcopy(LOCAL_VARS["title"])
     end
 
