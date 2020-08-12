@@ -55,7 +55,7 @@ function run_code(mod::Module, code::AS, out_path::AS;
     ispath(out_path) || mkpath(dirname(out_path))
     open(out_path, "w") do outf
         if !FD_ENV[:SILENT_MODE]
-            rprint("→ evaluating code [...] ($(locvar("fd_rpath")))")
+            rprint("→ evaluating code [$(out_path |> basename |> splitext |> first)] in ($(locvar("fd_rpath")))")
         end
         redirect_stdout(outf) do
             e = 1
