@@ -173,6 +173,7 @@ include("converter/html/prerender.jl")
 
 # FILE AND DIR MANAGEMENT
 include("manager/rss_generator.jl")
+include("manager/write_page.jl")
 include("manager/dir_utils.jl")
 include("manager/file_utils.jl")
 include("manager/franklin.jl")

@@ -131,7 +131,7 @@ function def_LOCAL_VARS!()::Nothing
     # Merge global page vars, if it defines anything that local defines, then
     # global takes precedence.
     merge!(LOCAL_VARS, GLOBAL_VARS)
-    # which page we're on, see write_page which sets :CUR_PATH
+    # which page we're on, see convert_and_write which sets :CUR_PATH
     set_var!(LOCAL_VARS, "fd_rpath", FD_ENV[:CUR_PATH])
     set_var!(LOCAL_VARS, "fd_url", url_curpage())
     return nothing
@@ -340,7 +340,7 @@ $(SIGNATURES)
 
 Take a var dictionary `dict` and update the corresponding pair. This should
 only be used internally as it does not check the validity of `val`. See
-[`write_page`](@ref) where it is used to store a file's creation and last
+[`convert_and_write`](@ref) where it is used to store a file's creation and last
 modification time.
 """
 set_var!(d::PageVars, k::K, v) where K = (d[k] = Pair(v, d[k].second); nothing)

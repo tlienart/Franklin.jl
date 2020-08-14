@@ -31,7 +31,7 @@ Keyword arguments:
 * `nomess=false`:    suppresses all messages (internal use).
 * `isoptim=false`:   whether we're in an optimisation phase or not (if so,
                       links are fixed in case of a project website, see
-                      [`write_page`](@ref).
+                      [`convert_and_write`](@ref).
 * `no_fail_prerender=true`: whether, in a prerendering phase, ignore errors and
                       try to produce an output
 * `eval_all=false`:  whether to force re-evaluation of all code blocks
