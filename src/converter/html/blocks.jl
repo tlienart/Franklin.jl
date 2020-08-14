@@ -200,8 +200,8 @@ function process_html_for(hs::AS, qblocks::Vector{AbstractBlock},
     # check that the first element of the iterate has the same length
     el1 = first(iter)
     length(vnames) in (1, length(el1)) ||
-        throw(HTMLBlockError("In a {{for ...}}, the first element of" *
-                "the iterate has length $(length(el1)) but tried to unpack" *
+        throw(HTMLBlockError("In a {{for ...}}, the first element of " *
+                "the iterate has length $(length(el1)) but tried to unpack " *
                 "it as $(length(vnames)) variables."))
 
     # so now basically we have to simply copy-paste the content replacing
@@ -214,8 +214,8 @@ function process_html_for(hs::AS, qblocks::Vector{AbstractBlock},
     isempty(strip(inner)) && @goto final_step
     content = ""
     if length(vnames) == 1
-        rx1 = Regex("{{\\s*fill\\s+$vname\\s*}}")           # {{ fill v}}
-        rx2 = Regex("{{\\s*fill\\s+(\\S+)\\s+$vname\\s*}}") # {{ fill x v}}
+        rx1 = Regex("{{\\s*(?:fill\\s)?\\s*$vname\\s*}}")           # {{ fill v}} or {{v}}
+        rx2 = Regex("{{\\s*(?:fill\\s)?\\s*(\\S+)\\s+$vname\\s*}}") # {{ fill x v}}
         for v in iter
             # at the moment we only consider {{fill ...}}
             tmp = replace(inner, rx1 => "$v")
@@ -226,8 +226,8 @@ function process_html_for(hs::AS, qblocks::Vector{AbstractBlock},
         for values in iter # each element of the iter can be unpacked
             tmp = inner
             for (vname, v) in zip(vnames, values)
-                rx1 = Regex("{{\\s*fill\\s+$vname\\s*}}")
-                rx2 = Regex("{{\\s*fill\\s+(\\S+)\\s+$vname\\s*}}")
+                rx1 = Regex("{{\\s*(?:fill\\s)?\\s*$vname\\s*}}")
+                rx2 = Regex("{{\\s*(?:fill\\s)\\s*(\\S+)\\s+$vname\\s*}}")
                 tmp = replace(tmp, rx1 => "$v")
                 tmp = replace(tmp, rx2 => SubstitutionString("{{fill \\1 $v}}"))
             end
