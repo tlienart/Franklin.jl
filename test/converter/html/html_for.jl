@@ -82,3 +82,39 @@ end
         value:3
         """)
 end
+
+
+# read from file, see FranklinFAQ-001
+@testset "for-file" begin
+    gotd()
+    write("members.csv", """
+    name,github
+    Eric Mill,konklone
+    Parker Moore,parkr
+    Liu Fengyun,liufengyun
+    """)
+    s = """
+        @def members = eachrow(readdlm("members.csv", ',', skipstart=1))
+        ~~~
+        <ul>
+        {{for (name, alias) in members}}
+          <li>
+            <a href="https://github.com/{{alias}}">{{name}}</a>
+          </li>
+        {{end}}
+        </ul>
+        ~~~
+        """ |> fd2html
+    @test isapproxstr(s, """
+                <ul>
+                  <li>
+                    <a href="https://github.com/konklone">Eric Mill</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/parkr">Parker Moore</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/liufengyun">Liu Fengyun</a>
+                  </li>
+                </ul>""")
+end
