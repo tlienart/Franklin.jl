@@ -95,3 +95,5 @@ with something like `savefig(joinpath(@OUTPUT, "ex1.png"))`.
 macro OUTPUT()
     return OUT_PATH[]
 end
+
+layout_key() = ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src_html, :layout)

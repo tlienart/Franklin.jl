@@ -84,7 +84,7 @@ function hfun_insert(params::Vector{String})::String
     end
     # apply
     repl   = ""
-    layout = path(ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src_html, :layout))
+    layout = path(layout_key())
     fpath  = joinpath(layout, split(params[1], "/")...)
     if isfile(fpath)
         repl = convert_html(read(fpath, String))

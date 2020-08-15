@@ -130,7 +130,7 @@ include("coverage/extras1.jl")
 include("coverage/paths.jl")
 
 println("😅 😅 😅 😅")
-
+s
 # check quickly if the IPs in IP_CHECK are still ok
 println("Verifying ip addresses, if online these should succeed.")
 for (addr, name) in F.IP_CHECK

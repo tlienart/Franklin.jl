@@ -86,9 +86,8 @@ function write_tag_page(tag)::Nothing
     # make `fd_tag` available to that page generation
     set_var!(LOCAL_VARS, "fd_tag", tag)
 
-    layout_key  = ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src_html, :layout)
-    layout      = path(layout_key)
-    content     = read(joinpath(layout, "tag.html"), String)
+    layout  = path(layout_key())
+    content = read(joinpath(layout, "tag.html"), String)
 
     dir = joinpath(path(:tag), tag)
     isdir(dir) || mkdir(dir)
