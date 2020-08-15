@@ -78,7 +78,6 @@ function write_page(output_path::AS, content::AS;
 end
 
 
-
 """
 $(SIGNATURES)
 
