@@ -62,7 +62,7 @@ end
     foot = "foot {{fill author}}"
 
     out_file = F.form_output_path(F.PATHS[:folder], "index.html", :html)
-    F.write_page(F.PATHS[:src], "index.md", head, pg_foot, foot, out_file)
+    F.convert_and_write(F.PATHS[:src], "index.md", head, pg_foot, foot, out_file)
 
     @test isfile(out_file)
     @test isapproxstr(read(out_file, String), """

@@ -74,7 +74,9 @@ should eventually be pre-prended with `/project/`. This would happen just
 before you publish the website.
 """
 function fix_links(pg::String)::String
-    pp = strip(GLOBAL_VARS["prepath"].first, '/')
+    prepath = globvar(:prepath)
+    isempty(prepath) && return pg
+    pp = strip(prepath, '/')
     ss = SubstitutionString("\\1=\"/$(pp)/")
     return replace(pg, r"(src|href|formaction)\s*?=\s*?\"\/" => ss)
 end

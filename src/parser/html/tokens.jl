@@ -20,9 +20,9 @@ const HTML_TOKENS = LittleDict{Char, Vector{TokenFinder}}(
              isexactly("<script ")  => :SCRIPT_OPEN,
              isexactly("</script>") => :SCRIPT_CLOSE,
             ],
-    '-' => [ isexactly("-->")  => :COMMENT_CLOSE ],  #      ... -->
-    '{' => [ isexactly("{{")   => :H_BLOCK_OPEN  ],  # {{
-    '}' => [ isexactly("}}")   => :H_BLOCK_CLOSE ],  # }}
+    '-' => [ isexactly("-->")    => :COMMENT_CLOSE ],  #      ... -->
+    '{' => [ isexactly("{{")     => :H_BLOCK_OPEN  ],  # {{
+    '}' => [ isexactly("}}")     => :H_BLOCK_CLOSE ],  # }}
     ) # end dict
 
 """

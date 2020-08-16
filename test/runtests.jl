@@ -7,6 +7,8 @@ F.FD_ENV[:SILENT_MODE] = true
 # F.FD_ENV[:DEBUG_MODE] = true
 F.FD_ENV[:STRUCTURE] = v"0.1" # legacy, it's switched up in the tests.
 
+Franklin.FD_ENV[:QUIET_TEST] = true
+
 # UTILS
 println("UTILS-1")
 include("utils/folder_structure.jl")
@@ -28,6 +30,7 @@ include("manager/config.jl")
 include("manager/config_fs2.jl")
 include("manager/dir_utils.jl")
 include("manager/page_vars_html.jl")
+include("manager/paginate.jl")
 println("🍺")
 
 # PARSER folder
@@ -130,7 +133,7 @@ include("coverage/extras1.jl")
 include("coverage/paths.jl")
 
 println("😅 😅 😅 😅")
-
+s
 # check quickly if the IPs in IP_CHECK are still ok
 println("Verifying ip addresses, if online these should succeed.")
 for (addr, name) in F.IP_CHECK
