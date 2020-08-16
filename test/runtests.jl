@@ -7,6 +7,8 @@ F.FD_ENV[:SILENT_MODE] = true
 # F.FD_ENV[:DEBUG_MODE] = true
 F.FD_ENV[:STRUCTURE] = v"0.1" # legacy, it's switched up in the tests.
 
+Franklin.FD_ENV[:QUIET_TEST] = true
+
 # UTILS
 println("UTILS-1")
 include("utils/folder_structure.jl")

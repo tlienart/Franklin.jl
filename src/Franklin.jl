@@ -60,7 +60,8 @@ const FD_ENV = LittleDict(
     :SILENT_MODE   => false,
     :OFFSET_LXDEFS => -BIG_INT,
     :CUR_PATH      => "",
-    :STRUCTURE     => v"0.2")
+    :STRUCTURE     => v"0.2",
+    :QUIET_TEST    => false,)
 
 """Dict to keep track of languages and how comments are indicated and their extensions. This is relevant to allow hiding lines of code. """
 const CODE_LANG = LittleDict{String,NTuple{2,String}}(
