@@ -80,6 +80,16 @@ function write_page(output_path::AS, content::AS;
     end
     # convert the pieces
     head, ctt, pgfoot, foot = map(convert_html, (head, content, pgfoot, foot))
+
+    # remove spurious dirs from past pagination attempts
+    outdir = dirname(output_path)
+    for elem in readdir(outdir)
+        if all(isnumeric, elem) && first(elem) != '0'
+            dpath = joinpath(outdir, elem)
+            isdir(dpath) && rm(joinpath(outdir, elem), recursive=true)
+        end
+    end
+
     # the previous call possibly resolved a {{paginate}} which will have
     # stored a :paginate_itr var, so we must branch on that
     if !isnothing(locvar(:paginate_itr))
@@ -88,7 +98,6 @@ function write_page(output_path::AS, content::AS;
         npp     = locvar(:paginate_npp)
         niter   = length(iter)
         n_pages = ceil(Int, niter / npp)
-        outdir  = dirname(output_path)
         for pgi = 1:n_pages
             # form the content multiple times
             sta_i = (pgi - 1) * npp + 1
