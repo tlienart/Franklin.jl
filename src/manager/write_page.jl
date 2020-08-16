@@ -30,6 +30,33 @@ end
 """
 $(SIGNATURES)
 
+Take a HTML page and apply prerendering and link fixing as appropriate.
+"""
+function optim_page(pg; prerender=false, isoptim=false)
+    # Prerender if required (using JS tools)
+    if prerender
+        # Maths (KATEX)
+        pg = js_prerender_katex(pg)
+        # Code (HIGHLIGHT.JS)
+        if FD_CAN_HIGHLIGHT
+            pg = js_prerender_highlight(pg)
+            # remove script
+            pg = replace(pg, r"<script.*?(?:highlight\.pack\.js|initHighlightingOnLoad).*?<\/script>"=>"")
+        end
+        # remove katex scripts
+        pg = replace(pg, r"<script.*?(?:katex\.min\.js|auto-render\.min\.js|renderMathInElement).*?<\/script>" => "")
+    end
+    # append pre-path to links if required (see optimize)
+    if isoptim
+        pg = fix_links(pg)
+    end
+    return pg
+end
+
+
+"""
+$(SIGNATURES)
+
 Write a html page at the appropriate location and with the appropriate
 structure. This is usually called specifying the scaffolding but can be done
 without in which case the scaffolding is read from `layout`.
@@ -51,29 +78,38 @@ function write_page(output_path::AS, content::AS;
     if isnothing(foot)
         foot = read(joinpath(layout, "foot.html"), String)
     end
-    # convert any `{{...}}` that may be left and form the full page string
-    pg = build_page(map(convert_html, (head, content, pgfoot, foot))...)
-
-    # Prerender if required (using JS tools)
-    if prerender
-        # Maths (KATEX)
-        pg = js_prerender_katex(pg)
-        # Code (HIGHLIGHT.JS)
-        if FD_CAN_HIGHLIGHT
-            pg = js_prerender_highlight(pg)
-            # remove script
-            pg = replace(pg, r"<script.*?(?:highlight\.pack\.js|initHighlightingOnLoad).*?<\/script>"=>"")
+    # convert the pieces
+    head, ctt, pgfoot, foot = map(convert_html, (head, content, pgfoot, foot))
+    # the previous call possibly resolved a {{paginate}} which will have
+    # stored a :paginate_itr var, so we must branch on that
+    if !isnothing(locvar(:paginate_itr))
+        name    = locvar(:paginate_itr)
+        iter    = locvar(name)
+        npp     = locvar(:paginate_npp)
+        niter   = length(iter)
+        n_pages = ceil(Int, niter / npp)
+        outdir  = dirname(output_path)
+        for pgi = 1:n_pages
+            # form the content multiple times
+            sta_i = (pgi - 1) * npp + 1
+            end_i = min(sta_i + npp - 1, niter)
+            rge_i = sta_i:end_i
+            ins_i = prod(String(e) for e in iter[rge_i])
+            ctt_i = replace(ctt, PAGINATE => ins_i)
+            # assemble, optimize and write
+            pg = build_page(head, ctt_i, pgfoot, foot)
+            pg = optim_page(pg, prerender=prerender, isoptim=isoptim)
+            pgi == 1 && write(output_path, pg)
+            dst = mkpath(joinpath(outdir, "$pgi"))
+            write(joinpath(dst, "index.html"), pg)
         end
-        # remove katex scripts
-        pg = replace(pg, r"<script.*?(?:katex\.min\.js|auto-render\.min\.js|renderMathInElement).*?<\/script>" => "")
+    else
+        # convert any `{{...}}` that may be left and form the full page string
+        pg = build_page(head, ctt, pgfoot, foot)
+        pg = optim_page(pg, prerender=prerender, isoptim=isoptim)
+        # write the html file where appropriate
+        write(output_path, pg)
     end
-    # append pre-path to links if required (see optimize)
-    if !isempty(GLOBAL_VARS["prepath"].first) && isoptim
-        pg = fix_links(pg)
-    end
-
-    # 5. write the html file where appropriate
-    write(output_path, pg)
     return pg
 end
 

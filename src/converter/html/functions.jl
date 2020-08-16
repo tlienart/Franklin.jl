@@ -228,8 +228,9 @@ H-Function of the form `{{redirect /addr/blah.html}}`.
 """
 function hfun_redirect(params::Vector{String})::String
     if length(params) != 1
-        throw(HTMLFunctionError("I found an {{redirect ...}} block and expected a single " *
-                                "address but got $(length(params)). Verify."))
+        throw(HTMLFunctionError(
+                "I found an {{redirect ...}} block and expected a single " *
+                "address but got $(length(params)). Verify."))
     end
     addr = params[1]
     if !endswith(addr, ".html")
@@ -254,4 +255,63 @@ function hfun_redirect(params::Vector{String})::String
     </html>
     """)
     return ""
+end
+
+
+const PAGINATE = "%##PAGINATE##%"
+
+
+"""
+    hfun_paginate
+
+Called with `{{paginate iterable n_per_page}}`. It is assumed there is only
+one such call per page.
+Evaluation is actually delayed.
+"""
+function hfun_paginate(params::Vector{String})::String
+    # params[1] --> the iterable to paginate (locvar)
+    # params[2] --> a positive integer of items per page
+
+    # Check arguments
+    if length(params) != 2
+        throw(HTMLFunctionError(
+                "I found an {{paginate ...}} block and expected two args: " *
+                "the name of the iterable and the number of item per page. " *
+                "I see $(length(params)) arguments instead. Verify."))
+    end
+    iter = locvar(params[1])
+    if isnothing(iter)
+        @warn "In a {{paginate ...}} block, I couldn't recognise the " *
+              "name of the iterable. Nothing will get printed as a result."
+        return ""
+    end
+    npp = locvar(params[2])
+    if isnothing(npp)
+        try
+            npp = parse(Int, params[2])
+        catch
+            @warn "In a {{paginate ...}} block, I couldn't parse the number " *
+                  "of items per page. Defaulting to 10."
+            npp = 10
+        end
+    end
+    if npp <= 0
+        @warn "In a {{paginate ...}} block, the number of items per page is " *
+              "non-positive, defaulting to 10."
+        npp = 10
+    end
+
+    # Was there already a pagination element on this page?
+    # if so warn and ignore
+    if !isnothing(locvar(:paginate_itr))
+        @warn "It looks like you have multiple calls to {{paginate ...}} on " *
+              "the page; only one is supported. Verify."
+        return ""
+    end
+    # we're just storing the name here, so we'll have to locvar(locvar(.))
+    set_var!(LOCAL_VARS, "paginate_itr", params[1])
+    set_var!(LOCAL_VARS, "paginate_npp", npp)
+
+    # return a token which will be processed at the convert_and_write stage.
+    return PAGINATE
 end

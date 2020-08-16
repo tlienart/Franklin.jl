@@ -28,6 +28,7 @@ include("manager/config.jl")
 include("manager/config_fs2.jl")
 include("manager/dir_utils.jl")
 include("manager/page_vars_html.jl")
+include("manager/paginate.jl")
 println("🍺")
 
 # PARSER folder
