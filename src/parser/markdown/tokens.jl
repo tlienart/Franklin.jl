@@ -21,6 +21,7 @@ const MD_1C_TOKENS_LX = LittleDict{Char, Symbol}(
     '}'  => :LXB_CLOSE
     )
 
+
 """
     MD_TOKENS
 
@@ -30,6 +31,8 @@ that works will be taken.
 """
 const MD_TOKENS = LittleDict{Char, Vector{TokenFinder}}(
     '<'  => [ isexactly("<!--")  => :COMMENT_OPEN,     # <!-- ...
+             ],
+    '+'  => [ isexactly("+++")   => :MD_DEF_TOML,
              ],
     '-'  => [ isexactly("-->")   => :COMMENT_CLOSE,    #  ... -->
               incrlook(is_hr1)   => :HORIZONTAL_RULE,  # ---+
@@ -136,9 +139,10 @@ not deactivate its content which is needed to find latex definitions
 (see parser/markdown/find_blocks/find_lxdefs).
 """
 const MD_OCB = [
-    # name                    opening token   closing token(s)  nestable
+    # name                    opening token   closing token(s)
     # ---------------------------------------------------------------------
     OCProto(:COMMENT,         :COMMENT_OPEN, (:COMMENT_CLOSE,)),
+    OCProto(:MD_DEF_BLOCK,    :MD_DEF_TOML,  (:MD_DEF_TOML,)  ),
     OCProto(:CODE_BLOCK_LANG, :CODE_LANG,    (:CODE_TRIPLE,)  ),
     OCProto(:CODE_BLOCK_LANG, :CODE_LANG2,   (:CODE_PENTA,)   ),
     OCProto(:CODE_BLOCK,      :CODE_TRIPLE,  (:CODE_TRIPLE,)  ),

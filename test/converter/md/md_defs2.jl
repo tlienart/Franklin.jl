@@ -42,3 +42,36 @@
     @test occursin(
         "<code class=\"plaintext\">2</code>", h)
 end
+
+# Blocks of definitions
+@testset "mddefblock" begin
+    s = """
+        +++
+        a = 5
+        b = "hello"
+        +++
+        {{b}} {{a}}
+        """ |> fd2html
+    # danger of the stuff
+    @test isapproxstr(s, "<p>hello 5</p>")
+    s = """
+        +++
+        a = 5
+        b = "hello"
+        +++
+        {{b}} {{a}}
+        +++
+        a = 7
+        +++
+        {{a}}
+        """ |> fd2html
+    @test isapproxstr(s, "<p>hello 7 7</p>")
+    # errors
+    s = """
+        +++
+        s = sqrt(-1)
+        +++
+        {{s}}
+        """
+    @test_throws ErrorException s |> fd2html
+end

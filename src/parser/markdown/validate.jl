@@ -1,4 +1,29 @@
 """
+$(SIGNATURES)
+
+Given a candidate header block, check that the opening `#` is at the start of a
+line, otherwise ignore the block.
+"""
+function validate_start_of_line!(tokens::Vector{Token}, names)::Nothing
+    isempty(tokens) && return
+    s = str(tokens[1].ss) # does not allocate
+    rm = Int[]
+    for (i, τ) in enumerate(tokens)
+        τ.name in names || continue
+        # check if it overlaps with the first character
+        fromτ = from(τ)
+        fromτ == 1 && continue
+        # otherwise check if the previous character is a linereturn
+        prevc = s[prevind(s, fromτ)]
+        prevc == '\n' && continue
+        push!(rm, i)
+    end
+    deleteat!(tokens, rm)
+    return
+end
+
+
+"""
 $SIGNATURES
 
 Find footnotes refs and defs and eliminate the ones that don't verify the
@@ -33,30 +58,6 @@ $SIGNATURES
 Verify that a given string corresponds to a well formed html entity.
 """
 validate_html_entity(ss::AS) = !isnothing(match(HTML_ENT_PAT, ss))
-
-"""
-$(SIGNATURES)
-
-Given a candidate header block, check that the opening `#` is at the start of a
-line, otherwise ignore the block.
-"""
-function validate_headers!(tokens::Vector{Token})::Nothing
-    isempty(tokens) && return
-    s = str(tokens[1].ss) # does not allocate
-    rm = Int[]
-    for (i, τ) in enumerate(tokens)
-        τ.name in MD_HEADER_OPEN || continue
-        # check if it overlaps with the first character
-        fromτ = from(τ)
-        fromτ == 1 && continue
-        # otherwise check if the previous character is a linereturn
-        prevc = s[prevind(s, fromτ)]
-        prevc == '\n' && continue
-        push!(rm, i)
-    end
-    deleteat!(tokens, rm)
-    return
-end
 
 
 function validate_emojis!(tokens::Vector{Token})::Nothing

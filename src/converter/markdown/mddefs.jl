@@ -15,6 +15,38 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool,
 
     (:process_mddefs, "config: $isconfig, pagevar: $pagevar") |> logger
 
+    # Blocks of definitions just get evaluated in an anonymous Module
+    curdict = ifelse(isconfig, GLOBAL_VARS, LOCAL_VARS)
+    for mdb in filter(β -> (β.name == :MD_DEF_BLOCK), blocks)
+        inner = stent(mdb)
+        exs = parse_code(inner)
+        mdl = Module()
+        try
+            foreach(ex -> Core.eval(mdl, ex), exs)
+        catch
+            error("Encountered an error on $(locvar(:fd_rpath)) while trying to " *
+                  "evaluate a block of definitions (`+++...+++`).")
+        end
+        # get the variable names (from all assignments)
+        vnames = [ex.args[1] for ex in exs if ex.head == :(=)]
+        for vname in vnames
+            key    = String(vname)
+            value  = getproperty(mdl, vname)
+            # is it already in curdict? if so check type
+            if haskey(curdict, key)
+                acc_types = curdict[key].second
+                if check_type(typeof(value), acc_types)
+                    curdict[key] = Pair(value, acc_types)
+                else
+                    @warn "Page var '$key' (type(s): $acc_types) can't be set " *
+                          "to value '$value' (type: $(typeof(value))). Assignment ignored."
+                end
+            else
+                set_var!(curdict, key, value)
+            end
+        end
+    end
+
     # Find all markdown definitions (MD_DEF) blocks
     mddefs = filter(β -> (β.name == :MD_DEF), blocks)
     # empty container for the assignments

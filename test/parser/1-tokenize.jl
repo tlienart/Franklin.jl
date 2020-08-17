@@ -1,6 +1,6 @@
 tok  = s -> F.find_tokens(s, F.MD_TOKENS, F.MD_1C_TOKENS)
 vfn  = s -> (t = tok(s); F.validate_footnotes!(t); t)
-vh   = s -> (t = vfn(s); F.validate_headers!(t); t)
+vh   = s -> (t = vfn(s); F.validate_start_of_line!(t, Franklin.MD_HEADER_OPEN); t)
 fib  = s -> (t = vh(s); F.find_indented_blocks!(t, s); t)
 fib2 = s -> (t = fib(s); F.filter_lr_indent!(t, s); t)
 

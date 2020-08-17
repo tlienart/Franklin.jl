@@ -64,7 +64,7 @@ function explore_md_steps(mds)
     # tokenize
     tokens = F.find_tokens(mds, F.MD_TOKENS, F.MD_1C_TOKENS)
     F.validate_footnotes!(tokens)
-    F.validate_headers!(tokens)
+    F.validate_start_of_line!(tokens, F.MD_HEADER_OPEN)
     hrules = F.find_hrules!(tokens)
     F.find_indented_blocks!(tokens, mds)
     steps[:tokenization] = (tokens=tokens,)
