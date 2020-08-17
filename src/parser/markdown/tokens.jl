@@ -32,7 +32,7 @@ that works will be taken.
 const MD_TOKENS = LittleDict{Char, Vector{TokenFinder}}(
     '<'  => [ isexactly("<!--")  => :COMMENT_OPEN,     # <!-- ...
              ],
-    '+'  => [ isexactly("+++")   => :MD_DEF_TOML,
+    '+'  => [ isexactly("+++", ('\n',)) => :MD_DEF_TOML,
              ],
     '-'  => [ isexactly("-->")   => :COMMENT_CLOSE,    #  ... -->
               incrlook(is_hr1)   => :HORIZONTAL_RULE,  # ---+

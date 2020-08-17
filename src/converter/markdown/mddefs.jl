@@ -29,6 +29,7 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool,
         end
         # get the variable names (from all assignments)
         vnames = [ex.args[1] for ex in exs if ex.head == :(=)]
+        filter!(v -> v isa Symbol, vnames)
         for vname in vnames
             key    = String(vname)
             value  = getproperty(mdl, vname)
