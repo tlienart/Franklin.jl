@@ -44,10 +44,10 @@ function convert_md(mds::AbstractString,
     tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
     (:convert_md, "convert_md: '$([t.name for t in tokens])'") |> logger
 
+    # validate toml open/close
+    validate_start_of_line!(tokens, (:MD_DEF_TOML, MD_HEADER_OPEN...))
     # distinguish fnref/fndef
     validate_footnotes!(tokens)
-    # ignore header tokens that are not at the start of a line
-    validate_headers!(tokens)
     # validate emojis
     validate_emojis!(tokens)
     # capture some hrule (see issue #432)
