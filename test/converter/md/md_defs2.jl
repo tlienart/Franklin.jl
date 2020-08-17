@@ -65,6 +65,7 @@ end
         +++
         {{a}}
         """ |> fd2html
+    @test isapproxstr(s, "<p>hello 7 7</p>")
     # more things
     s = """
        +++
@@ -74,7 +75,6 @@ end
        {{out}}
        """ |> fd2html
     @test isapproxstr(s, "<p>14</p>")
-    @test isapproxstr(s, "<p>hello 7 7</p>")
     # errors
     s = """
         +++
