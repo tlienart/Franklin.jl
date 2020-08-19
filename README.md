@@ -113,9 +113,9 @@ While Franklin broadly supports standard Markdown there are a few things that ma
 
 ## Associated repositories
 
+* [FranklinFAQ](https://github.com/tlienart/FranklinFAQ) a repo with basic demos following questions "_how do you do X with Franklin_"
 * [LiveServer.jl](https://github.com/asprionj/LiveServer.jl) a package coded with [Jonas Asprion](https://github.com/asprionj) to render and watch the content of a local folder in the browser.
 * [FranklinTemplates.jl](https://github.com/tlienart/FranklinTemplates.jl) the repositories where Franklin themes/templates are developed.
-* [franklindocs](https://franklinjl.org) the repository for Franklin's website.  
 
 ## Licenses
 
