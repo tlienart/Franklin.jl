@@ -6,3 +6,4 @@ Manifest.toml
 sandbox/
 docs/build/
 test/__tmp/
+docs/__site

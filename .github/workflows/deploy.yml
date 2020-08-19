@@ -1,0 +1,42 @@
+name: Build and Deploy
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        persist-credentials: false
+    - name: Install SSH Client
+      uses: webfactory/ssh-agent@v0.2.0
+      with:
+        ssh-private-key: ${{ secrets.FRANKLIN_PRIV }}
+    # Python is necessary for pre-rendering steps as well as to install
+    # matplotlib which is necessary if you intend to use PyPlot. If you do
+    # not, then you can remove the `run: pip install matplotlib` line.
+    - name: Install python
+      uses: actions/setup-python@v1
+      with:
+        python-version: '3.x'
+    - run: pip install matplotlib # if you use PyPlot this is needed
+    - name: Install Julia
+      uses: julia-actions/setup-julia@v1
+      with:
+        version: 1.5
+    - run: julia -e '
+            cd("docs");
+            using Pkg; Pkg.add(["NodeJS", "Franklin"]);
+            using NodeJS; run(`$(npm_cmd()) install highlight.js`);
+            using Franklin;
+            Pkg.activate("."); Pkg.instantiate();
+            optimize(minify=false, prerender=false)'
+    - name: Build and Deploy
+      uses: JamesIves/github-pages-deploy-action@releases/v3
+      with:
+        SSH: true
+        BRANCH: gh-pages
+        FOLDER: __site

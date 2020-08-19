@@ -1,0 +1,10 @@
+~~~
+<div id="fdpdhq" style="width:600px;height:350px"></div>
+
+<script>
+	var fig = {"layout":{"margin":{"l":50,"b":50,"r":50,"t":60},"title":"Basic Contour Plot"},"data":[{"type":"contour","z":[[10.0,5.625,2.5,0.625,0.0],[10.625,6.25,3.125,1.25,0.625],[12.5,8.125,5.0,3.125,2.5],[15.625,11.25,8.125,6.25,5.625],[20.0,15.625,12.5,10.625,10.0]]}]};
+	CONTAINER = document.getElementById('fdpdhq');
+	Plotly.newPlot(CONTAINER, fig.data, fig.layout)
+</script>
+~~~
+
