@@ -9,36 +9,36 @@ mkpath(scripts)
     @test litpath == joinpath(F.PATHS[:folder], "literate-scripts/")
 end
 
-@testset "Literate-a" begin
-    # Post processing: numbering of julia blocks
-    s = raw"""
-        A
-
-        ```julia
-        B
-        ```
-
-        C
-
-        ```julia
-        D
-        ```
-        """
-    @test F.literate_post_process(s) == """
-        <!--This file was generated, do not modify it.-->
-        A
-
-        ```julia:ex1
-        B
-        ```
-
-        C
-
-        ```julia:ex2
-        D
-        ```
-        """
-end
+# @testset "Literate-a" begin
+#     # Post processing: numbering of julia blocks
+#     s = raw"""
+#         A
+#
+#         ```julia
+#         B
+#         ```
+#
+#         C
+#
+#         ```julia
+#         D
+#         ```
+#         """
+#     @test F.literate_post_process(s) == """
+#         <!--This file was generated, do not modify it.-->
+#         A
+#
+#         ```julia:ex1
+#         B
+#         ```
+#
+#         C
+#
+#         ```julia:ex2
+#         D
+#         ```
+#         """
+# end
 
 @testset "Literate-b" begin
     # Literate to Franklin
