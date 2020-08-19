@@ -8,36 +8,36 @@ mkpath(F.path(:literate))
     @test litpath == literate_folder(F.path(:literate))
 end
 
-@testset "Literate-a" begin
-    # Post processing: numbering of julia blocks
-    s = raw"""
-        A
-
-        ```julia
-        B
-        ```
-
-        C
-
-        ```julia
-        D
-        ```
-        """
-    @test F.literate_post_process(s) == """
-        <!--This file was generated, do not modify it.-->
-        A
-
-        ```julia:ex1
-        B
-        ```
-
-        C
-
-        ```julia:ex2
-        D
-        ```
-        """
-end
+# @testset "Literate-a" begin
+#     # Post processing: numbering of julia blocks
+#     s = raw"""
+#         A
+#
+#         ```julia
+#         B
+#         ```
+#
+#         C
+#
+#         ```julia
+#         D
+#         ```
+#         """
+#     @test F.literate_post_process(s) == """
+#         <!--This file was generated, do not modify it.-->
+#         A
+#
+#         ```julia:ex1
+#         B
+#         ```
+#
+#         C
+#
+#         ```julia:ex2
+#         D
+#         ```
+#         """
+# end
 
 @testset "Literate-b" begin
     # Literate to Franklin
@@ -98,6 +98,46 @@ end
         <p>When adding <code>x</code> and <code>y</code> together we obtain a new rational number:</p>
         <pre><code class="language-julia">z = x + y</code></pre><pre><code class="plaintext">11//15</code></pre>
         """)
+
+    # issue 592
+    # Literate to Franklin
+    s = raw"""
+        # # Rational numbers
+        # ```julia
+        # const a = 1
+        # ```
+        a = 5
+        """
+    path = joinpath(F.path(:literate), "tutorial.jl")
+    write(path, s)
+    opath, = F.literate_to_franklin("/_literate/tutorial")
+    @test endswith(opath, joinpath(F.PATHS[:site], "assets", "literate", "tutorial.md"))
+    out = read(opath, String)
+    @test out // """
+        <!--This file was generated, do not modify it.-->
+        # Rational numbers
+        ```julia
+        const a = 1
+        ```
+
+        ```julia:ex1
+        a = 5
+        ```
+        """
+
+    # Use of `\literate` command
+    h = raw"""
+        @def hascode = true
+        @def showall = true
+        @def reeval = true
+
+        \literate{/_literate/tutorial.jl}
+        """ |> fd2html_td
+    @test h // """
+        <h1 id="rational_numbers"><a href="#rational_numbers">Rational numbers</a></h1>
+        <pre><code class="language-julia">const a = 1</code></pre>
+        <pre><code class="language-julia">a = 5</code></pre><pre><code class="plaintext">5</code></pre>
+        """
 end
 
 @testset "Literate-c" begin
