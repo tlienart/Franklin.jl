@@ -1,0 +1,7 @@
+[deps]
+Franklin = "713c75ef-9fc9-4b05-94a9-213340da978e"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+PlotlyJS = "f0f68f2c-4968-5e81-91da-67840de0976a"
+PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
+PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
