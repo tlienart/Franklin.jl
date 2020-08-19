@@ -5,16 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   
    <!-- Syntax highlighting via Prism, note: restricted langs -->
-<link rel="stylesheet" href="/Franklin.jl/libs/highlight/github.min.css">
+<link rel="stylesheet" href="/libs/highlight/github.min.css">
    
-  <link rel="stylesheet" href="/Franklin.jl/css/jtd.css">
-  <link rel="icon" href="/Franklin.jl/assets/infra/logoF_square.gif">
+  <link rel="stylesheet" href="/css/jtd.css">
+  <link rel="icon" href="/assets/infra/logoF_square.gif">
    <title>FAQ - Technical</title>  
 
   <!-- LUNR -->
-  <script src="/Franklin.jl/libs/lunr/lunr.min.js"></script>
-  <script src="/Franklin.jl/libs/lunr/lunr_index.js"></script>
-  <script src="/Franklin.jl/libs/lunr/lunrclient.min.js"></script>
+  <script src="/libs/lunr/lunr.min.js"></script>
+  <script src="/libs/lunr/lunr_index.js"></script>
+  <script src="/libs/lunr/lunrclient.min.js"></script>
 
   <!-- PLOTLY -->
   
@@ -25,8 +25,8 @@
     <!-- SIDE BAR -->
     <div class="side-bar">
       <div class="header">
-        <a href="/Franklin.jl/" class="title">
-          <img style="height:60px;" src="/Franklin.jl/assets/infra/franklin.svg" alt="franklin" />
+        <a href="/" class="title">
+          <img style="height:60px;" src="/assets/infra/franklin.svg" alt="franklin" />
           <style>
           @media (max-width: 31.25rem){
             .side-bar .show-menu {height:30px;}
@@ -46,58 +46,58 @@
       <div class="menu" id="side-menu">
         <ul class="menu-list">
           <!-- HOME -->
-          <li class="menu-list-item "><a href="/Franklin.jl/" class="menu-list-link">• Home</a>
+          <li class="menu-list-item "><a href="/" class="menu-list-link">• Home</a>
           <!-- WORKFLOW -->
-		  <li class="menu-list-parent "><a href="/Franklin.jl/workflow/" class="menu-list-link">• Workflow</a>
+		  <li class="menu-list-parent "><a href="/workflow/" class="menu-list-link">• Workflow</a>
 			  <ul class="menu-list-child-list ">
-				<li class="menu-list-item "><a href="/Franklin.jl/workflow/" class="menu-list-link">Create and edit</a>
-				<li class="menu-list-item "><a href="/Franklin.jl/workflow/structure/" class="menu-list-link">Page structure</a>
-				<li class="menu-list-item "><a href="/Franklin.jl/workflow/deploy/" class="menu-list-link">Deploy</a>
+				<li class="menu-list-item "><a href="/workflow/" class="menu-list-link">Create and edit</a>
+				<li class="menu-list-item "><a href="/workflow/structure/" class="menu-list-link">Page structure</a>
+				<li class="menu-list-item "><a href="/workflow/deploy/" class="menu-list-link">Deploy</a>
 			  </ul>
           <!-- SYNTAX -->
           <!-- NOTE: if adding a menu item, add ref to first item! -->
-          <li class="menu-list-parent "><a href="/Franklin.jl/syntax/markdown/" class="menu-list-link">• Syntax</a>
+          <li class="menu-list-parent "><a href="/syntax/markdown/" class="menu-list-link">• Syntax</a>
             <ul class="menu-list-child-list ">
-              <li class="menu-list-item "><a href="/Franklin.jl/syntax/markdown/" class="menu-list-link">Markdown</a>
-              <li class="menu-list-item "><a href="/Franklin.jl/syntax/divs-commands/" class="menu-list-link">Divs and Commands</a>
-              <li class="menu-list-item "><a href="/Franklin.jl/syntax/page-variables/" class="menu-list-link">Page Variables</a>
-			  <li class="menu-list-item "><a href="/Franklin.jl/syntax/utils/" class="menu-list-link">Utils</a>
+              <li class="menu-list-item "><a href="/syntax/markdown/" class="menu-list-link">Markdown</a>
+              <li class="menu-list-item "><a href="/syntax/divs-commands/" class="menu-list-link">Divs and Commands</a>
+              <li class="menu-list-item "><a href="/syntax/page-variables/" class="menu-list-link">Page Variables</a>
+			  <li class="menu-list-item "><a href="/syntax/utils/" class="menu-list-link">Utils</a>
             </ul>
 		  <!-- STYLING -->
-          <li class="menu-list-parent "><a href="/Franklin.jl/styling/templates/" class="menu-list-link">• Styling</a>
+          <li class="menu-list-parent "><a href="/styling/templates/" class="menu-list-link">• Styling</a>
             <ul class="menu-list-child-list ">
-              <li class="menu-list-item "><a href="/Franklin.jl/styling/templates/" class="menu-list-link">Templates</a>
-              <li class="menu-list-item "><a href="/Franklin.jl/styling/classes/" class="menu-list-link">Classes</a>
+              <li class="menu-list-item "><a href="/styling/templates/" class="menu-list-link">Templates</a>
+              <li class="menu-list-item "><a href="/styling/classes/" class="menu-list-link">Classes</a>
             </ul>
           <!-- CODE -->
-          <li class="menu-list-parent "><a href="/Franklin.jl/code/" class="menu-list-link">• Code</a>
+          <li class="menu-list-parent "><a href="/code/" class="menu-list-link">• Code</a>
             <ul class="menu-list-child-list ">
-              <li class="menu-list-item "><a href="/Franklin.jl/code/" class="menu-list-link">Inserting code</a>
-              <li class="menu-list-item "><a href="/Franklin.jl/code/eval-tricks/" class="menu-list-link">Code tricks</a>
-              <li class="menu-list-item "><a href="/Franklin.jl/code/literate/" class="menu-list-link">Literate.jl</a>
+              <li class="menu-list-item "><a href="/code/" class="menu-list-link">Inserting code</a>
+              <li class="menu-list-item "><a href="/code/eval-tricks/" class="menu-list-link">Code tricks</a>
+              <li class="menu-list-item "><a href="/code/literate/" class="menu-list-link">Literate.jl</a>
             </ul>
 		  <!-- EXTRAs -->
-		  <li class="menu-list-parent "><a href="/Franklin.jl/extras/" class="menu-list-link">• Extras</a>
+		  <li class="menu-list-parent "><a href="/extras/" class="menu-list-link">• Extras</a>
 			  <ul class="menu-list-child-list ">
-				<li class="menu-list-item "><a href="/Franklin.jl/extras/" class="menu-list-link">Overview</a>
-				<li class="menu-list-item "><a href="/Franklin.jl/extras/lunr/" class="menu-list-link">Lunr search</a>
-				<li class="menu-list-item "><a href="/Franklin.jl/extras/literate/" class="menu-list-link">Literate</a>
-				<li class="menu-list-item "><a href="/Franklin.jl/extras/plotly/" class="menu-list-link">Plotly</a>
+				<li class="menu-list-item "><a href="/extras/" class="menu-list-link">Overview</a>
+				<li class="menu-list-item "><a href="/extras/lunr/" class="menu-list-link">Lunr search</a>
+				<li class="menu-list-item "><a href="/extras/literate/" class="menu-list-link">Literate</a>
+				<li class="menu-list-item "><a href="/extras/plotly/" class="menu-list-link">Plotly</a>
 			  </ul>
           <!-- FAQ -->
-          <li class="menu-list-parent active"><a href="/Franklin.jl/faq/technical/" class="menu-list-link">• FAQ</a>
+          <li class="menu-list-parent active"><a href="/faq/technical/" class="menu-list-link">• FAQ</a>
             <ul class="menu-list-child-list ">
-              <li class="menu-list-item active"><a href="/Franklin.jl/faq/technical/" class="menu-list-link">Technical</a>
-			  <li class="menu-list-item "><a href="/Franklin.jl/faq/troubleshooting/" class="menu-list-link">Troubleshooting</a>
-              <li class="menu-list-item "><a href="/Franklin.jl/faq/why-o-why/" class="menu-list-link">Meta</a>
+              <li class="menu-list-item active"><a href="/faq/technical/" class="menu-list-link">Technical</a>
+			  <li class="menu-list-item "><a href="/faq/troubleshooting/" class="menu-list-link">Troubleshooting</a>
+              <li class="menu-list-item "><a href="/faq/why-o-why/" class="menu-list-link">Meta</a>
             </ul>
         </ul>
 			<form id="lunrSearchForm" name="lunrSearchForm">
-				<input class="search-input" name="q" placeholder="Enter search term" type="text"> <input type="submit" value="Search" formaction="/Franklin.jl/search/index.html">
+				<input class="search-input" name="q" placeholder="Enter search term" type="text"> <input type="submit" value="Search" formaction="/search/index.html">
 			</form>
       </div>
       <div class="footer">
-        <a href="/Franklin.jl/faq/why-o-why/"><img style="width:40%;padding-left:10px;margin-bottom:15px;" src="/Franklin.jl/assets/infra/logoF2.svg" alt="Franklin Logo" /></a>
+        <a href="/faq/why-o-why/"><img style="width:40%;padding-left:10px;margin-bottom:15px;" src="/assets/infra/logoF2.svg" alt="Franklin Logo" /></a>
       </div>
     </div>
     <!-- CONTENT -->
@@ -117,7 +117,7 @@
 <div class="franklin-toc"><ol><li><a href="#styling">Styling</a><ol><li><a href="#can_you_style_footnote_text">Can you style footnote text?</a></li><li><a href="#how_to_disable_numbering_of_math_in_display_mode">How to disable numbering of math in display mode?</a></li></ol></li><li><a href="#code">Code</a><ol><li><a href="#how_to_use_loops_for_templating">How to use loops for templating?</a></li><li><a href="#how_to_insert_plotly_plots">How to insert Plotly plots?</a></li></ol></li></ol></div>
 <h2 id="styling"><a href="#styling">Styling</a></h2>
 <h3 id="can_you_style_footnote_text"><a href="#can_you_style_footnote_text">Can you style footnote text?</a></h3>
-<p><strong>Reference</strong>: <a href="https://github.com/tlienart/Franklin.jl/issues/243">issue 243</a>, <strong>more on this</strong>: <a href="/Franklin.jl/styling/classes/">styling</a>.</p>
+<p><strong>Reference</strong>: <a href="https://github.com/tlienart/Franklin.jl/issues/243">issue 243</a>, <strong>more on this</strong>: <a href="/styling/classes/">styling</a>.</p>
 <p>For the reference basically a footnote is inserted as</p>
 <pre><code class="language-html">&lt;sup id&#61;&quot;fnref:1&quot;&gt;&lt;a href&#61;&quot;/menu1/#fndef:1&quot; class&#61;&quot;fnref&quot;&gt;&#91;1&#93;&lt;/a&gt;&lt;/sup&gt;</code></pre>
 <p>So you can style that with the class <code>.franklin-content sup a.fnref</code>.</p>
@@ -147,7 +147,7 @@
     font-size: 80%;
     padding-left: 10px;}</code></pre>
 <h3 id="how_to_disable_numbering_of_math_in_display_mode"><a href="#how_to_disable_numbering_of_math_in_display_mode">How to disable numbering of math in display mode?</a></h3>
-<p>It is possible to specify in the CSS which Katex equations will be numbered or not by adjusting the <code>.katex-display::after</code> class. If you want to disable numbering in the entire site, just head to <code>_css/franklin.css</code> and remove the <code>.katex-display::after</code> block. You can also build a simple way to disable all numbering inside a specified <code>@@</code> div  &#40;see <a href="/Franklin.jl/syntax/divs-commands/#div_blocks">div blocks</a>&#41;</p>
+<p>It is possible to specify in the CSS which Katex equations will be numbered or not by adjusting the <code>.katex-display::after</code> class. If you want to disable numbering in the entire site, just head to <code>_css/franklin.css</code> and remove the <code>.katex-display::after</code> block. You can also build a simple way to disable all numbering inside a specified <code>@@</code> div  &#40;see <a href="/syntax/divs-commands/#div_blocks">div blocks</a>&#41;</p>
 <pre><code class="language-markdown">This is numbered:
 $$ 1+1 = 2 $$
 
@@ -166,12 +166,12 @@ $$ 7 + 1 = 8 $$</code></pre>
   counter-increment: nothing;
   content: "";
 }</code></pre>
-<p>And possibly <a href="/Franklin.jl/syntax/divs-commands/#latex-like_commands">define a command</a> in <code>config.md</code>:<br /></p>
+<p>And possibly <a href="/syntax/divs-commands/#latex-like_commands">define a command</a> in <code>config.md</code>:<br /></p>
 <pre><code class="language-markdown">\newcommand{\nalign}[1]{@@no-number \begin{align}#1\end{align}@@}</code></pre>
 <p>if you feel it is more convenient to write <code>\nalign&#123;3&#43;3 &#61; 6&#125;</code>.</p>
 <h2 id="code"><a href="#code">Code</a></h2>
 <h3 id="how_to_use_loops_for_templating"><a href="#how_to_use_loops_for_templating">How to use loops for templating?</a></h3>
-<p><strong>Reference</strong>: <a href="https://github.com/tlienart/Franklin.jl/issues/251">issue 251</a>, <strong>more on this</strong>: <a href="/Franklin.jl/code/eval-tricks/">code tricks</a>.</p>
+<p><strong>Reference</strong>: <a href="https://github.com/tlienart/Franklin.jl/issues/251">issue 251</a>, <strong>more on this</strong>: <a href="/code/eval-tricks/">code tricks</a>.</p>
 <p>Since you can show the output of any Julia code block &#40;and interpret that output as Franklin markdown&#41;, you can use this to help with templating. For instance:</p>
 <pre><code class="language-md">```julia:./ex
 #hideall
@@ -192,7 +192,7 @@ end
 &lt;div class&#61;&quot;card&quot;&gt;&lt;h3 id&#61;&quot;christine&quot;&gt;&lt;a href&#61;&quot;/index.html#christine&quot;&gt;Christine&lt;/a&gt;&lt;/h3&gt;  &lt;img src&#61;&quot;christine.jpg&quot; alt&#61;&quot;&quot; /&gt;&lt;/div&gt;</code></pre>
 <h3 id="how_to_insert_plotly_plots"><a href="#how_to_insert_plotly_plots">How to insert Plotly plots?</a></h3>
 <p><strong>Reference</strong>: <a href="https://github.com/tlienart/Franklin.jl/issues/322">issue 322</a>.</p>
-<p>See <a href="/Franklin.jl/extras/plotly/">this tutorial</a> for a way to do this.</p>
+<p>See <a href="/extras/plotly/">this tutorial</a> for a way to do this.</p>
 <div class="page-foot">
   <div class="copyright">
     &copy; Thibaut Lienart. Last modified: August 19, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
@@ -204,7 +204,7 @@ end
     </div> <!-- end of class page-wrap-->
     
     
-      <script src="/Franklin.jl/libs/highlight/highlight.pack.js"></script>
+      <script src="/libs/highlight/highlight.pack.js"></script>
 <script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
 
     
