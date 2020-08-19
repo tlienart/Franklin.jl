@@ -7,8 +7,6 @@
 
 @def hasplotly = false
 
-@def prepath = "Franklin.jl"
-
 <!--
 Useful HTML snippets
 * \blurb{...} for a blurb at the top of a page
