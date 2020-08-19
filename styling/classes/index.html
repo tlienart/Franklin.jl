@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+   <!-- Syntax highlighting via Prism, note: restricted langs -->
+<link rel="stylesheet" href="/Franklin.jl/libs/highlight/github.min.css">
+   
+  <link rel="stylesheet" href="/Franklin.jl/css/jtd.css">
+  <link rel="icon" href="/Franklin.jl/assets/infra/logoF_square.gif">
+   <title>Classes</title>  
+
+  <!-- LUNR -->
+  <script src="/Franklin.jl/libs/lunr/lunr.min.js"></script>
+  <script src="/Franklin.jl/libs/lunr/lunr_index.js"></script>
+  <script src="/Franklin.jl/libs/lunr/lunrclient.min.js"></script>
+
+  <!-- PLOTLY -->
+  
+
+</head>
+<body>                      <!-- closed in foot.html -->
+  <div class="page-wrap">   <!-- closed in foot.html -->
+    <!-- SIDE BAR -->
+    <div class="side-bar">
+      <div class="header">
+        <a href="/Franklin.jl/" class="title">
+          <img style="height:60px;" src="/Franklin.jl/assets/infra/franklin.svg" alt="franklin" />
+          <style>
+          @media (max-width: 31.25rem){
+            .side-bar .show-menu {height:30px;}
+          }
+          @media (max-width: 50rem) {
+            .side-bar .header .title {padding-top:0; padding-bottom: 0;}
+            .header .title img {height:60px; max-width: 100px !important;}
+          }
+          @media (min-width: 66.5rem){
+            .header .title img {max-width: 140px !important;}
+          }
+          </style>
+        </a>
+      </div>
+      <label for="show-menu" class="show-menu">MENU</label>
+      <input type="checkbox" id="show-menu" role="button">
+      <div class="menu" id="side-menu">
+        <ul class="menu-list">
+          <!-- HOME -->
+          <li class="menu-list-item "><a href="/Franklin.jl/" class="menu-list-link">• Home</a>
+          <!-- WORKFLOW -->
+		  <li class="menu-list-parent "><a href="/Franklin.jl/workflow/" class="menu-list-link">• Workflow</a>
+			  <ul class="menu-list-child-list ">
+				<li class="menu-list-item "><a href="/Franklin.jl/workflow/" class="menu-list-link">Create and edit</a>
+				<li class="menu-list-item "><a href="/Franklin.jl/workflow/structure/" class="menu-list-link">Page structure</a>
+				<li class="menu-list-item "><a href="/Franklin.jl/workflow/deploy/" class="menu-list-link">Deploy</a>
+			  </ul>
+          <!-- SYNTAX -->
+          <!-- NOTE: if adding a menu item, add ref to first item! -->
+          <li class="menu-list-parent "><a href="/Franklin.jl/syntax/markdown/" class="menu-list-link">• Syntax</a>
+            <ul class="menu-list-child-list ">
+              <li class="menu-list-item "><a href="/Franklin.jl/syntax/markdown/" class="menu-list-link">Markdown</a>
+              <li class="menu-list-item "><a href="/Franklin.jl/syntax/divs-commands/" class="menu-list-link">Divs and Commands</a>
+              <li class="menu-list-item "><a href="/Franklin.jl/syntax/page-variables/" class="menu-list-link">Page Variables</a>
+			  <li class="menu-list-item "><a href="/Franklin.jl/syntax/utils/" class="menu-list-link">Utils</a>
+            </ul>
+		  <!-- STYLING -->
+          <li class="menu-list-parent active"><a href="/Franklin.jl/styling/templates/" class="menu-list-link">• Styling</a>
+            <ul class="menu-list-child-list ">
+              <li class="menu-list-item "><a href="/Franklin.jl/styling/templates/" class="menu-list-link">Templates</a>
+              <li class="menu-list-item active"><a href="/Franklin.jl/styling/classes/" class="menu-list-link">Classes</a>
+            </ul>
+          <!-- CODE -->
+          <li class="menu-list-parent "><a href="/Franklin.jl/code/" class="menu-list-link">• Code</a>
+            <ul class="menu-list-child-list ">
+              <li class="menu-list-item "><a href="/Franklin.jl/code/" class="menu-list-link">Inserting code</a>
+              <li class="menu-list-item "><a href="/Franklin.jl/code/eval-tricks/" class="menu-list-link">Code tricks</a>
+              <li class="menu-list-item "><a href="/Franklin.jl/code/literate/" class="menu-list-link">Literate.jl</a>
+            </ul>
+		  <!-- EXTRAs -->
+		  <li class="menu-list-parent "><a href="/Franklin.jl/extras/" class="menu-list-link">• Extras</a>
+			  <ul class="menu-list-child-list ">
+				<li class="menu-list-item "><a href="/Franklin.jl/extras/" class="menu-list-link">Overview</a>
+				<li class="menu-list-item "><a href="/Franklin.jl/extras/lunr/" class="menu-list-link">Lunr search</a>
+				<li class="menu-list-item "><a href="/Franklin.jl/extras/literate/" class="menu-list-link">Literate</a>
+				<li class="menu-list-item "><a href="/Franklin.jl/extras/plotly/" class="menu-list-link">Plotly</a>
+			  </ul>
+          <!-- FAQ -->
+          <li class="menu-list-parent "><a href="/Franklin.jl/faq/technical/" class="menu-list-link">• FAQ</a>
+            <ul class="menu-list-child-list ">
+              <li class="menu-list-item "><a href="/Franklin.jl/faq/technical/" class="menu-list-link">Technical</a>
+			  <li class="menu-list-item "><a href="/Franklin.jl/faq/troubleshooting/" class="menu-list-link">Troubleshooting</a>
+              <li class="menu-list-item "><a href="/Franklin.jl/faq/why-o-why/" class="menu-list-link">Meta</a>
+            </ul>
+        </ul>
+			<form id="lunrSearchForm" name="lunrSearchForm">
+				<input class="search-input" name="q" placeholder="Enter search term" type="text"> <input type="submit" value="Search" formaction="/Franklin.jl/search/index.html">
+			</form>
+      </div>
+      <div class="footer">
+        <a href="/Franklin.jl/faq/why-o-why/"><img style="width:40%;padding-left:10px;margin-bottom:15px;" src="/Franklin.jl/assets/infra/logoF2.svg" alt="Franklin Logo" /></a>
+      </div>
+    </div>
+    <!-- CONTENT -->
+    <div class="main-content-wrap"> <!-- closed in foot.html -->
+      <div class="main-content" id="focus" tabindex="-1" style="outline:0;">    <!-- closed in foot.html -->
+        <div class="main-header">
+          <a name="pagetop"></a>
+
+          <a id="github" href="https://github.com/tlienart/franklindocs/blob/master/styling/classes.md">Page source</a>
+		  <span style="width:30px; text-align: center;color:lightgray;">|</span>
+		  <a id="github" href="https://github.com/tlienart/Franklin.jl">GitHub Repository</a>
+        </div>
+
+<!-- Content appended here (in class franklin-content) -->
+<div class="franklin-content"><h1 id="classes"><a href="#classes">Classes</a></h1>
+
+    <span style="font-size:24px;font-weight:300;">Use Franklin's classes or add your own.</span>
+    
+<div class="blank"></div>
+<p>By now you know that you can add <code>@@divname ... @@</code> anywhere you want in your content in order to define an environment and style it. Below we detail the default classes as well as some tricks that can be useful to style  your content.</p>
+<h2 id="franklins_classes"><a href="#franklins_classes">Franklin&#39;s classes</a></h2>
+<div class="lalignb"><table><tr><th align="right">Name</th><th align="right">Function</th></tr><tr><td align="right"><code>franklin-content</code></td><td align="right">wraps around the content of a page, so when a <code>mypage.md</code> is converted to some html, it gets inserted in the scaffolding as <code>&lt;div class&#61;&quot;franklin-content&quot;&gt; some html &lt;/div&gt;</code> &#40;&#42;&#41;</td></tr><tr><td align="right"><code>franklin-toc</code></td><td align="right">wraps around the inserted table of contents</td></tr><tr><td align="right"><code>fnref</code></td><td align="right">wraps around a footnote reference</td></tr><tr><td align="right"><code>fndef</code></td><td align="right">wraps around footnote definitions</td></tr><tr><td align="right"><code>fndef-content</code></td><td align="right">wraps around the content of footnote definitions</td></tr><tr><td align="right"><code>fndef-backref</code></td><td align="right">wraps around the back-reference of a footnote definition</td></tr></table></div>
+<p><strong>Notes</strong>:<br/> <span style="display:inline-block;width:45px;text-align:right;color:slategray;">&#40;&#42;&#41;</span> <span style="font-size:85%;line-height:0em;">you can change this name setting the global page variable <code>div_content</code> in your <code>config.md</code></span>.<br/></p>
+<h2 id="simple_tricks"><a href="#simple_tricks">Simple tricks</a></h2>
+<p>As soon as you&#39;re using a style more than once, it makes sense to create it as a command. This makes it much easier to maintain and re-use. For instance, consider the following simple examples:</p>
+<pre><code class="language-html">\newcommand&#123;\blurb&#125;&#91;1&#93;&#123;
+    ~~~
+    &lt;span style&#61;&quot;font-size:24px;font-weight:300;&quot;&gt;&#33;#1&lt;/span&gt;
+    ~~~
+&#125;</code></pre>
+<pre><code class="language-html">\newcommand&#123;\note&#125;&#91;1&#93;&#123;@@note @@title ⚠ Note@@ @@content #1 @@ @@&#125;</code></pre>
+<p>Further, you can pass the style as an argument:</p>
+<pre><code class="language-html">\newcommand&#123;\spstyle&#125;&#91;2&#93;&#123;~~~&lt;span style&#61;&quot;#1&quot;&gt;#2&lt;/span&gt;~~~&#125;</code></pre>
+<p>and for instance:</p>
+<pre><code class="language-plaintext">\spstyle{font-variant:small-caps;font-size:15px;color:cornflowerblue}{formatted text}</code></pre>
+<p>gives you: <span style=" font-variant:small-caps;font-size:15px;color:cornflowerblue"> formatted text</span>.</p>
+<p>In fact, that one is pre-defined in Franklin, <code>\style&#123;style&#125;&#123;text&#125;</code> does precisely that.</p>
+<div class="page-foot">
+  <div class="copyright">
+    &copy; Thibaut Lienart. Last modified: August 19, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
+  </div>
+</div>
+</div><!-- CONTENT ENDS HERE -->
+    </div> <!-- end of class main-content -->
+    </div> <!-- end of class main-content-wrap -->
+    </div> <!-- end of class page-wrap-->
+    
+    
+      <script src="/Franklin.jl/libs/highlight/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
+
+    
+  </body>
+</html>

@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+   <!-- Syntax highlighting via Prism, note: restricted langs -->
+<link rel="stylesheet" href="/Franklin.jl/libs/highlight/github.min.css">
+   
+  <link rel="stylesheet" href="/Franklin.jl/css/jtd.css">
+  <link rel="icon" href="/Franklin.jl/assets/infra/logoF_square.gif">
+   <title>Inserting and evaluating code</title>  
+
+  <!-- LUNR -->
+  <script src="/Franklin.jl/libs/lunr/lunr.min.js"></script>
+  <script src="/Franklin.jl/libs/lunr/lunr_index.js"></script>
+  <script src="/Franklin.jl/libs/lunr/lunrclient.min.js"></script>
+
+  <!-- PLOTLY -->
+  
+
+</head>
+<body>                      <!-- closed in foot.html -->
+  <div class="page-wrap">   <!-- closed in foot.html -->
+    <!-- SIDE BAR -->
+    <div class="side-bar">
+      <div class="header">
+        <a href="/Franklin.jl/" class="title">
+          <img style="height:60px;" src="/Franklin.jl/assets/infra/franklin.svg" alt="franklin" />
+          <style>
+          @media (max-width: 31.25rem){
+            .side-bar .show-menu {height:30px;}
+          }
+          @media (max-width: 50rem) {
+            .side-bar .header .title {padding-top:0; padding-bottom: 0;}
+            .header .title img {height:60px; max-width: 100px !important;}
+          }
+          @media (min-width: 66.5rem){
+            .header .title img {max-width: 140px !important;}
+          }
+          </style>
+        </a>
+      </div>
+      <label for="show-menu" class="show-menu">MENU</label>
+      <input type="checkbox" id="show-menu" role="button">
+      <div class="menu" id="side-menu">
+        <ul class="menu-list">
+          <!-- HOME -->
+          <li class="menu-list-item "><a href="/Franklin.jl/" class="menu-list-link">• Home</a>
+          <!-- WORKFLOW -->
+		  <li class="menu-list-parent "><a href="/Franklin.jl/workflow/" class="menu-list-link">• Workflow</a>
+			  <ul class="menu-list-child-list ">
+				<li class="menu-list-item "><a href="/Franklin.jl/workflow/" class="menu-list-link">Create and edit</a>
+				<li class="menu-list-item "><a href="/Franklin.jl/workflow/structure/" class="menu-list-link">Page structure</a>
+				<li class="menu-list-item "><a href="/Franklin.jl/workflow/deploy/" class="menu-list-link">Deploy</a>
+			  </ul>
+          <!-- SYNTAX -->
+          <!-- NOTE: if adding a menu item, add ref to first item! -->
+          <li class="menu-list-parent "><a href="/Franklin.jl/syntax/markdown/" class="menu-list-link">• Syntax</a>
+            <ul class="menu-list-child-list ">
+              <li class="menu-list-item "><a href="/Franklin.jl/syntax/markdown/" class="menu-list-link">Markdown</a>
+              <li class="menu-list-item "><a href="/Franklin.jl/syntax/divs-commands/" class="menu-list-link">Divs and Commands</a>
+              <li class="menu-list-item "><a href="/Franklin.jl/syntax/page-variables/" class="menu-list-link">Page Variables</a>
+			  <li class="menu-list-item "><a href="/Franklin.jl/syntax/utils/" class="menu-list-link">Utils</a>
+            </ul>
+		  <!-- STYLING -->
+          <li class="menu-list-parent "><a href="/Franklin.jl/styling/templates/" class="menu-list-link">• Styling</a>
+            <ul class="menu-list-child-list ">
+              <li class="menu-list-item "><a href="/Franklin.jl/styling/templates/" class="menu-list-link">Templates</a>
+              <li class="menu-list-item "><a href="/Franklin.jl/styling/classes/" class="menu-list-link">Classes</a>
+            </ul>
+          <!-- CODE -->
+          <li class="menu-list-parent active"><a href="/Franklin.jl/code/" class="menu-list-link">• Code</a>
+            <ul class="menu-list-child-list ">
+              <li class="menu-list-item active"><a href="/Franklin.jl/code/" class="menu-list-link">Inserting code</a>
+              <li class="menu-list-item "><a href="/Franklin.jl/code/eval-tricks/" class="menu-list-link">Code tricks</a>
+              <li class="menu-list-item "><a href="/Franklin.jl/code/literate/" class="menu-list-link">Literate.jl</a>
+            </ul>
+		  <!-- EXTRAs -->
+		  <li class="menu-list-parent "><a href="/Franklin.jl/extras/" class="menu-list-link">• Extras</a>
+			  <ul class="menu-list-child-list ">
+				<li class="menu-list-item "><a href="/Franklin.jl/extras/" class="menu-list-link">Overview</a>
+				<li class="menu-list-item "><a href="/Franklin.jl/extras/lunr/" class="menu-list-link">Lunr search</a>
+				<li class="menu-list-item "><a href="/Franklin.jl/extras/literate/" class="menu-list-link">Literate</a>
+				<li class="menu-list-item "><a href="/Franklin.jl/extras/plotly/" class="menu-list-link">Plotly</a>
+			  </ul>
+          <!-- FAQ -->
+          <li class="menu-list-parent "><a href="/Franklin.jl/faq/technical/" class="menu-list-link">• FAQ</a>
+            <ul class="menu-list-child-list ">
+              <li class="menu-list-item "><a href="/Franklin.jl/faq/technical/" class="menu-list-link">Technical</a>
+			  <li class="menu-list-item "><a href="/Franklin.jl/faq/troubleshooting/" class="menu-list-link">Troubleshooting</a>
+              <li class="menu-list-item "><a href="/Franklin.jl/faq/why-o-why/" class="menu-list-link">Meta</a>
+            </ul>
+        </ul>
+			<form id="lunrSearchForm" name="lunrSearchForm">
+				<input class="search-input" name="q" placeholder="Enter search term" type="text"> <input type="submit" value="Search" formaction="/Franklin.jl/search/index.html">
+			</form>
+      </div>
+      <div class="footer">
+        <a href="/Franklin.jl/faq/why-o-why/"><img style="width:40%;padding-left:10px;margin-bottom:15px;" src="/Franklin.jl/assets/infra/logoF2.svg" alt="Franklin Logo" /></a>
+      </div>
+    </div>
+    <!-- CONTENT -->
+    <div class="main-content-wrap"> <!-- closed in foot.html -->
+      <div class="main-content" id="focus" tabindex="-1" style="outline:0;">    <!-- closed in foot.html -->
+        <div class="main-header">
+          <a name="pagetop"></a>
+
+          <a id="github" href="https://github.com/tlienart/franklindocs/blob/master/code/index.md">Page source</a>
+		  <span style="width:30px; text-align: center;color:lightgray;">|</span>
+		  <a id="github" href="https://github.com/tlienart/Franklin.jl">GitHub Repository</a>
+        </div>
+
+<!-- Content appended here (in class franklin-content) -->
+<div class="franklin-content"><h1 id="inserting_and_evaluating_code"><a href="#inserting_and_evaluating_code">Inserting and evaluating code</a></h1>
+
+    <span style="font-size:24px;font-weight:300;">Franklin makes it easy to insert code and the result of running the code; Julia code can be evaluated on the fly.</span>
+    
+<div class="blank"></div>
+<div class="franklin-toc"><ol><li><a href="#overview">Overview</a><ol><li><a href="#inserting_code">Inserting code</a></li><li><a href="#evaluating_code">Evaluating code</a></li></ol></li><li><a href="#live_evaluation_julia">Live evaluation &#40;Julia&#41;</a><ol><li><a href="#more_on_paths">More on paths</a></li><li><a href="#inserting_the_output">Inserting the output</a></li><li><a href="#hiding_lines">Hiding lines</a></li><li><a href="#projecttoml">Project.toml</a></li><li><a href="#plots">Plots</a></li><li><a href="#troubleshooting">Troubleshooting</a></li></ol></li><li><a href="#offline_evaluation_any_language">Offline evaluation &#40;any language&#41;</a><ol><li><a href="#inserting_code__2">Inserting code</a></li><li><a href="#plain-text_output">Plain-text output</a></li><li><a href="#plot_output">Plot output</a></li><li><a href="#slicing_up">Slicing up</a></li></ol></li></ol></div>
+<h2 id="overview"><a href="#overview">Overview</a></h2>
+<h3 id="inserting_code"><a href="#inserting_code">Inserting code</a></h3>
+<p>As per Common Mark specifications, you have multiple ways of inserting code:</p>
+<ul>
+<li><p><strong>inline code</strong>: you can use single backticks &#40;&#96;&#41; or double backticks &#40;&#96;&#96;&#41; &#40;if the code contains single ticks&#41; like so:</p>
+</li>
+</ul>
+<pre><code class="language-plaintext">This is some `inline code` or ``inline ` code with a tick``.</code></pre>
+<ul>
+<li><p><strong>code blocks</strong>: it is recommended to use triple backticks &#40;&#96;&#96;&#96;&#41; optionally followed by a language name for highlighting like so:</p>
+</li>
+</ul>
+<pre><code class="language-julia">This is some julia code:
+```julia
+a = 2
+@show a
+```</code></pre>
+<ul>
+<li><p><strong>code blocks 2</strong>: you can also use indented code blocks &#40;lines starting with four spaces or a tab&#41; but <em>fenced code blocks should be preferred</em> and you now have to opt-in to use them by setting <code>@def indented_code &#61; true</code></p>
+</li>
+</ul>
+<pre><code class="language-julia">This is some code:
+
+    a = 2
+    @show a</code></pre>
+<p><strong>Note</strong>: when either using indented code blocks or using fenced code blocks with no language name, then the code language for highlighting can be specified with the local page variable <code>lang</code> i.e. <code>@def lang &#61; &quot;julia&quot;</code> &#40;which is the default&#41; or <code>@def lang &#61; &quot;&quot;</code> if you don&#39;t want the code to be highlighted.</p>
+<h3 id="evaluating_code"><a href="#evaluating_code">Evaluating code</a></h3>
+<p>When presenting code in a post, it&#39;s often convenient to have a way to check the code works and the output shown corresponds to the code. In Franklin there are two approaches that help you for this:</p>
+<div class="tlist"><ol>
+<li><p>For Julia code, a <strong>live-evaluation</strong> of code blocks is supported,</p>
+</li>
+<li><p>For all languages, you can run the script separately and use Franklin to insert the code file and/or the output generated by the code.</p>
+</li>
+</ol></div>
+<h2 id="live_evaluation_julia"><a href="#live_evaluation_julia">Live evaluation &#40;Julia&#41;</a></h2>
+<p>Julia code blocks can be evaluated on the fly and their output either displayed as code or re-interpreted as Markdown.</p>
+<div class="note"><div class="title">⚠ Note</div>
+<div class="content"><strong>Evaluation time</strong>: when a code block is created or modified and the page is saved, it will trigger a page build that will <em>wait</em> for the evaluation of the code block to complete. So if your code block takes a long time to execute, the page will not be updated before that&#39;s done.     That being said, if you don&#39;t modify the code block, it will only be executed <strong>once</strong> as the output is saved to file.</div></div>
+<p>Code blocks that <em>should not</em> be evaluated should be added as per standard markdown, so for instance:</p>
+<pre><code class="language-julia">```julia
+a = 10
+```</code></pre>
+<p>Code blocks that <em>should</em> be evaluated should be added with <code>julia:path/to/script</code> where <code>path/to/script</code> indicates <em>where</em> the script corresponding to the code block will be saved &#40;<strong>note</strong>: the given path <em>must</em> be in UNIX format even if you&#39;re on Windows&#41;</p>
+<pre><code class="language-julia">```julia:./code/ex1
+a = 10
+@show a
+```</code></pre>
+<p>What this will do is:</p>
+<div class="tlist"><ol>
+<li><p>write the code to the file <code>/assets/&#91;subpath&#93;/code/ex1.jl</code></p>
+</li>
+<li><p>run the code and capture its output &#40;<code>STDOUT</code>&#41; and write it to <code>/assets/&#91;subpath&#93;/code/output/ex1.out</code></p>
+</li>
+</ol></div>
+<p>The <code>&#91;subpath&#93;</code> here is the <em>exact same sub-path structure</em> than to the page where the code block is inserted. To clarify, let&#39;s say you wrote the above code-block in</p>
+<pre><code class="language-julia">/folder1/page1.md</code></pre>
+<p>then with the syntax above, the script will be saved in</p>
+<pre><code class="language-julia">/__site/assets/folder1/code/ex1.jl</code></pre>
+<h3 id="more_on_paths"><a href="#more_on_paths">More on paths</a></h3>
+<p>There are three ways you can specify where the script corresponding to a code-block should be saved.</p>
+<div class="tlist"><ol>
+<li><p><em>relative to the page</em>: <code>./&#91;p&#93;/script</code> is as above, it will write the code block to <code>/assets/&#91;subpath&#93;/p/script.jl</code> where <code>subpath</code> corresponds to the sub-path of the page where the code block is inserted &#40;path below <code>/src/</code>&#41;</p>
+</li>
+<li><p><em>relative to the assets dir</em>: <code>p/script</code> will write the code block to <code>/assets/p/script.jl</code></p>
+</li>
+<li><p><em>full path</em>: <code>/p/script</code> will write the code block to <code>/p/script.jl</code></p>
+</li>
+</ol></div>
+<p><strong>Note</strong>: when code blocks are evaluated, their output &#40;<code>STDOUT</code>&#41; is captured and saved at <code>&#91;path&#93;/output/script.out</code> where <code>&#91;path&#93;</code> is what precedes <code>script.jl</code> in the cases above.</p>
+<h3 id="inserting_the_output"><a href="#inserting_the_output">Inserting the output</a></h3>
+<p>Let&#39;s say you&#39;ve added the following code block:</p>
+<pre><code class="language-julia">```julia:./code_pg1/ex1
+using LinearAlgebra
+a = [1, 2, 3]
+@show dot(a, a)
+```</code></pre>
+<p>In order to show the raw output &#40;whatever was captured in STDOUT&#41; as a code block, write</p>
+<pre><code class="language-julia">\output{./code_pg1/ex1}</code></pre>
+<p>which in the present example will introduce exactly the following HTML</p>
+<pre><code class="language-html">&lt;pre&gt;&lt;code class&#61;&quot;language-julia&quot;&gt;dot&#40;a, a&#41; &#61; 14&lt;/code&gt;&lt;/pre&gt;</code></pre>
+<p>and will look like</p>
+<pre><code class="language-julia">dot(a, a) = 14</code></pre>
+<p>If you now change the vector <code>a</code> in the code block, the page will be re-compiled with the code-block re-evaluated and the new output will be shown.</p>
+<p>If you would like the output to be re-interpeted by Franklin as text, you can use <code>\textoutput</code> instead. Here&#39;s an example:</p>
+<pre><code class="language-julia">```julia:./code_pg1/ex2
+using Statistics
+temps = (15, 15, 14, 16, 18, 19, 20, 12, 10, 24)
+println("The _average_ temperature is **$(mean(temps))°C**.")
+```
+\textoutput{./code_pg1/ex2}</code></pre>
+<p>That code block and the <code>\textoutput</code> command will appear as:</p>
+<pre><code class="language-julia">using Statistics
+temps = (15, 15, 14, 16, 18, 19, 20, 12, 10, 24)
+println("The _average_ temperature is **$(mean(temps))°C**.")</code></pre>
+<p>The <em>average</em> temperature is <strong>16.3°C</strong>.</p>
+<p>Finally if you want to show your code &quot;notebook-style&quot;, i.e. both STDOUT and the result  of the last line, use <code>\show</code>:</p>
+<pre><code class="language-julia">```julia:ex_show
+x = 5
+println("hello")
+x^2
+```
+\show{ex_show}</code></pre>
+<p>resulting in:</p>
+<pre><code class="language-julia">x = 5
+println("hello")
+x^2</code></pre>
+<pre><code class="plaintext">hello
+25</code></pre>
+<h3 id="hiding_lines"><a href="#hiding_lines">Hiding lines</a></h3>
+<p>Sometimes you may want to run some lines but hide them from the presentation, for this just use <code># hide</code> at the end of the line &#40;<code>hide</code> is not case sensitive so <code># HiDe</code> would be fine too&#41;:</p>
+<pre><code class="language-julia">```julia:./code_pg1/ex1
+using LinearAlgebra # hide
+a = [1, 2, 3]
+@show dot(a, a)
+```</code></pre>
+<p>You could also hide the entire code block if you only care about the output, for this put a <code># hideall</code> on any line:</p>
+<pre><code class="language-julia">```julia:./code_pg1/ex2
+#hideall
+using Statistics
+temps = (15, 15, 14, 16, 18, 19, 20, 12, 10, 24)
+println("The _average_ temperature is **$(mean(temps))°C**.")
+```
+\textoutput{./code_pg1/ex2}</code></pre>
+<p>Which will appear as just:</p>
+<p>The <em>average</em> temperature is <strong>16.3°C</strong>.</p>
+<h3 id="projecttoml"><a href="#projecttoml">Project.toml</a></h3>
+<p>It can be convenient to set up your website as you would a Julia environment: <em>activating</em> it and <em>adding</em> the packages that you will use in code blocks. In order to do this, just activate the environment as you would otherwise, this will generate a <code>Project.toml</code> which will subsequently  be used by Franklin without  you having to worry about it.</p>
+<p>For instance, let&#39;s say that you want to use <code>PyCall</code> in some code blocks, then before starting the Franklin server do</p>
+<pre><code class="language-julia-repl">(1.x) pkg> activate .
+(myWebsite) pkg> add PyCall</code></pre>
+<p>once that&#39;s done, if you now start the server, Franklin will write</p>
+<pre><code class="language-julia-repl">julia> serve()
+Activating environment at `~/Desktop/myWebsite/Project.toml`</code></pre>
+<p>In other words, whenever you start the server, Franklin will now activate the environment with that <code>Project.toml</code>. This is particularly useful if you intend to write a tutorial website &#40;for a live example of this, see the <a href="https://alan-turing-institute.github.io/MLJTutorials/">MLJ Tutorials</a>&#41;.</p>
+<h3 id="plots"><a href="#plots">Plots</a></h3>
+<p>Using the machinery introduced above, you can also evaluate  code that generates a  plot which you can then include on the page. In the example below, <code>PyPlot</code> is  used but you could do something  similar with  other frameworks.</p>
+<p>Assuming you&#39;ve added <code>PyPlot</code> to your environment, this markdown</p>
+<pre><code class="language-markdown">```julia:pyplot1
+using PyPlot
+figure(figsize=(8, 6))
+x = range(-2, 2, length=500)
+for α in 1:5
+    plot(x, sinc.(α .* x))
+end
+savefig(joinpath(@OUTPUT, "sinc.svg")) # hide
+```
+
+\fig{sinc}</code></pre>
+<p>will give:</p>
+<pre><code class="language-julia">using PyPlot
+figure(figsize=(8, 6))
+x = range(-2, 2, length=500)
+for α in 1:5
+    plot(x, sinc.(α .* x))
+end</code></pre>
+<img src="/Franklin.jl/assets/code/code/output/sinc.svg" alt="">
+<p><strong>Note</strong>: observe that here everything is done with relative paths, <code>pyplot1</code> is placed in the <code>/assets/</code> folder relatively to the path of the current page and the <code>\fig</code> since it&#39;s given a path that doesn&#39;t start with <code>/</code> or <code>./</code> will also  look in  that folder to try to find a figure which starts with the name <code>sinc</code>. See also <a href="#more_on_paths">more about paths</a>.</p>
+<h3 id="troubleshooting"><a href="#troubleshooting">Troubleshooting</a></h3>
+<p>A few  things can go  wrong when attempting to use and evaluate code blocks. The first thing to do  if no output is shown or an error appears is to  make sure that:</p>
+<div class="tlist"><ol>
+<li><p>if the code uses packages, these packages are available in the local environment,</p>
+</li>
+<li><p>the code &quot;just works&quot; in the REPL.</p>
+</li>
+</ol></div>
+<p>If this is the case and you  still have issues, then  you may want to force re-evaluation of the code on the page. In such a case, try adding <code>@def reeval &#61; true</code> on the page which will cause <strong>all</strong> code blocks on the page to be completely re-evaluated and their output re-generated. Assuming that helped, you will then want to remove that line as  otherwise that page will be fully  re-evaluated <em>every single time the page is modified</em> which will cause  an unnecessary overhead.</p>
+<p><strong>Important note</strong>: unless you explicitly use <code>@def reeval &#61; true</code>, code blocks are evaluated <em>only</em> if:</p>
+<div class="tlist"><ul>
+<li><p>an earlier code block has been evaluated &#40;in which case, since their results may depend on  it, all subsequent blocks  are  re-evaluated&#41;,</p>
+</li>
+<li><p>the content of the code block has changed.</p>
+</li>
+</ul></div>
+<p>An example where this can be a bit tricky is if your code block calls a function on a file, for instance <code>read&#40;file, String&#41;</code>; if the underlying <em>file</em> is changed, the code block will <strong>not</strong> be re-evaluated &#40;since the code doesn&#39;t change&#41;, so in such cases you will want to use a <code>@def reeval &#61; true</code>.</p>
+<h2 id="offline_evaluation_any_language"><a href="#offline_evaluation_any_language">Offline evaluation &#40;any language&#41;</a></h2>
+<p>The philosophy here is:</p>
+<div class="tlist"><ul>
+<li><p>keep your code snippets in appropriate subfolders of <code>/assets/</code> where they can be run and their output can be saved, this can be compared to a <code>test/</code> folder in a Julia package,</p>
+</li>
+<li><p>run some or all of the snippets &#40;before running Franklin&#41;,</p>
+</li>
+<li><p>use <code>\input&#123;...&#125;&#123;...&#125;</code> in your markdown &#40;see below&#41; and when the website is updated, it will plug-in the most recent parts that have been generated.</p>
+</li>
+</ul></div>
+<p>That way, if you modify the code, everything will be updated on the website too while ensuring that the code actually runs and generates the output you&#39;re displaying.</p>
+<p>Again, the script files can contain <code># hide</code> at the end of lines you do not want to show &#40;<code>#</code> to be replaced by whatever symbol indicates comments in that language&#41;.</p>
+<p>The <code>generate_results.jl</code> file should run the scripts and redirect outputs to the <code>assets/&#91;path&#93;/output</code> directory. You can use something like the script below &#40;if you generate an example website with <code>newsite</code>, it&#39;s already in there&#41; though you can of course modify it as you wish.</p>
+<pre><code class="language-julia">dir = @__DIR__
+"""
+genplain(s)
+
+Small helper function to run some code and redirect the output (stdout) to a file.
+"""
+function genplain(s::String)
+    open(joinpath(dir, "output", "$(splitext(s)[1]).out"), "w") do outf
+        redirect_stdout(outf) do
+            include(joinpath(dir, s))
+        end
+    end
+end
+# run `script1.jl` and redirect what it prints to `output/script1.out`
+genplain("script1.jl")
+# run `script2.jl` which has a savefig(joinpath(@__DIR__, "output", "script2.png"))
+include("script2.jl")</code></pre>
+<p>The function <code>genplain&#40;&quot;scriptname.jl&quot;&#41;</code> just redirects the output of the script to <code>output/scriptname.out</code>. So for instance if you have in <code>assets/scripts/script1.jl</code></p>
+<pre><code class="language-julia">print("hello")</code></pre>
+<p>Then <code>genplain&#40;&quot;script1.jl&quot;&#41;</code> will generate <code>/assets/scripts/output/script1.out</code> with content</p>
+<pre><code class="language-julia">hello</code></pre>
+<div class="note"><div class="title">⚠ Note</div>
+<div class="content">You could have scripts in any language here &#40;<code>R</code>, <code>Python</code>, ...&#41; as long as the folder structure is the same.</div></div>
+<h3 id="inserting_code__2"><a href="#inserting_code__2">Inserting code</a></h3>
+<p>In order to insert the code of a script and have it highlighted you can use</p>
+<pre><code class="language-julia">\input{julia}{scripts/script1.jl}</code></pre>
+<p>This will insert the content of the file <code>/assets/scripts/script1.jl</code> &#40;see also the section earlier on paths&#41; into a block that will be highlighted as julia code.</p>
+<h3 id="plain-text_output"><a href="#plain-text_output">Plain-text output</a></h3>
+<p>In order to insert the plain-text output of a script, you can use</p>
+<pre><code class="language-julia">\output{scripts/script1.jl}</code></pre>
+<p>This will insert the content of the file <code>/assets/scripts/script1.out</code> into a non-highlighted code-block.</p>
+<h3 id="plot_output"><a href="#plot_output">Plot output</a></h3>
+<p>In order to insert a plot generated by a script, you can use <code>\fig</code> as indicated earlier or</p>
+<pre><code class="language-julia">\input{plot}{scripts/script1.jl}</code></pre>
+<p>or <code>\input&#123;plot:id&#125;&#123;scripts/script1.jl&#125;</code>. This will look for an image file with root name <code>/assets/scripts/script1.ext</code> where <code>ext</code> is <code>gif, png, jp&#40;e&#41;g, svg</code>. If you use <code>plot:id</code> then it will look for an image file with root name <code>/assets/scripts/script1id.ext</code>.</p>
+<p>The <code>plot:id</code> option is useful if you have a script that generates several plots for instance.</p>
+<h3 id="slicing_up"><a href="#slicing_up">Slicing up</a></h3>
+<p>The structure in the <code>generate_results.jl</code> effectively means that all your code is run as one big script. This also means that if you want to slice some of your code in several parts and show intermediate outputs &#40;e.g. plots&#41;, you can just do that by having a <code>script_1_p1.jl</code>, <code>script_1_p2.jl</code> etc. and then just use <code>\input</code> multiple times.</p>
+<div class="page-foot">
+  <div class="copyright">
+    &copy; Thibaut Lienart. Last modified: August 19, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
+  </div>
+</div>
+</div><!-- CONTENT ENDS HERE -->
+    </div> <!-- end of class main-content -->
+    </div> <!-- end of class main-content-wrap -->
+    </div> <!-- end of class page-wrap-->
+    
+    
+      <script src="/Franklin.jl/libs/highlight/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
+
+    
+  </body>
+</html>

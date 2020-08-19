@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+   <!-- Syntax highlighting via Prism, note: restricted langs -->
+<link rel="stylesheet" href="/Franklin.jl/libs/highlight/github.min.css">
+   
+  <link rel="stylesheet" href="/Franklin.jl/css/jtd.css">
+  <link rel="icon" href="/Franklin.jl/assets/infra/logoF_square.gif">
+   <title>Add search with Lunr</title>  
+
+  <!-- LUNR -->
+  <script src="/Franklin.jl/libs/lunr/lunr.min.js"></script>
+  <script src="/Franklin.jl/libs/lunr/lunr_index.js"></script>
+  <script src="/Franklin.jl/libs/lunr/lunrclient.min.js"></script>
+
+  <!-- PLOTLY -->
+  
+
+</head>
+<body>                      <!-- closed in foot.html -->
+  <div class="page-wrap">   <!-- closed in foot.html -->
+    <!-- SIDE BAR -->
+    <div class="side-bar">
+      <div class="header">
+        <a href="/Franklin.jl/" class="title">
+          <img style="height:60px;" src="/Franklin.jl/assets/infra/franklin.svg" alt="franklin" />
+          <style>
+          @media (max-width: 31.25rem){
+            .side-bar .show-menu {height:30px;}
+          }
+          @media (max-width: 50rem) {
+            .side-bar .header .title {padding-top:0; padding-bottom: 0;}
+            .header .title img {height:60px; max-width: 100px !important;}
+          }
+          @media (min-width: 66.5rem){
+            .header .title img {max-width: 140px !important;}
+          }
+          </style>
+        </a>
+      </div>
+      <label for="show-menu" class="show-menu">MENU</label>
+      <input type="checkbox" id="show-menu" role="button">
+      <div class="menu" id="side-menu">
+        <ul class="menu-list">
+          <!-- HOME -->
+          <li class="menu-list-item "><a href="/Franklin.jl/" class="menu-list-link">• Home</a>
+          <!-- WORKFLOW -->
+		  <li class="menu-list-parent "><a href="/Franklin.jl/workflow/" class="menu-list-link">• Workflow</a>
+			  <ul class="menu-list-child-list ">
+				<li class="menu-list-item "><a href="/Franklin.jl/workflow/" class="menu-list-link">Create and edit</a>
+				<li class="menu-list-item "><a href="/Franklin.jl/workflow/structure/" class="menu-list-link">Page structure</a>
+				<li class="menu-list-item "><a href="/Franklin.jl/workflow/deploy/" class="menu-list-link">Deploy</a>
+			  </ul>
+          <!-- SYNTAX -->
+          <!-- NOTE: if adding a menu item, add ref to first item! -->
+          <li class="menu-list-parent "><a href="/Franklin.jl/syntax/markdown/" class="menu-list-link">• Syntax</a>
+            <ul class="menu-list-child-list ">
+              <li class="menu-list-item "><a href="/Franklin.jl/syntax/markdown/" class="menu-list-link">Markdown</a>
+              <li class="menu-list-item "><a href="/Franklin.jl/syntax/divs-commands/" class="menu-list-link">Divs and Commands</a>
+              <li class="menu-list-item "><a href="/Franklin.jl/syntax/page-variables/" class="menu-list-link">Page Variables</a>
+			  <li class="menu-list-item "><a href="/Franklin.jl/syntax/utils/" class="menu-list-link">Utils</a>
+            </ul>
+		  <!-- STYLING -->
+          <li class="menu-list-parent "><a href="/Franklin.jl/styling/templates/" class="menu-list-link">• Styling</a>
+            <ul class="menu-list-child-list ">
+              <li class="menu-list-item "><a href="/Franklin.jl/styling/templates/" class="menu-list-link">Templates</a>
+              <li class="menu-list-item "><a href="/Franklin.jl/styling/classes/" class="menu-list-link">Classes</a>
+            </ul>
+          <!-- CODE -->
+          <li class="menu-list-parent "><a href="/Franklin.jl/code/" class="menu-list-link">• Code</a>
+            <ul class="menu-list-child-list ">
+              <li class="menu-list-item "><a href="/Franklin.jl/code/" class="menu-list-link">Inserting code</a>
+              <li class="menu-list-item "><a href="/Franklin.jl/code/eval-tricks/" class="menu-list-link">Code tricks</a>
+              <li class="menu-list-item "><a href="/Franklin.jl/code/literate/" class="menu-list-link">Literate.jl</a>
+            </ul>
+		  <!-- EXTRAs -->
+		  <li class="menu-list-parent active"><a href="/Franklin.jl/extras/" class="menu-list-link">• Extras</a>
+			  <ul class="menu-list-child-list ">
+				<li class="menu-list-item "><a href="/Franklin.jl/extras/" class="menu-list-link">Overview</a>
+				<li class="menu-list-item active"><a href="/Franklin.jl/extras/lunr/" class="menu-list-link">Lunr search</a>
+				<li class="menu-list-item "><a href="/Franklin.jl/extras/literate/" class="menu-list-link">Literate</a>
+				<li class="menu-list-item "><a href="/Franklin.jl/extras/plotly/" class="menu-list-link">Plotly</a>
+			  </ul>
+          <!-- FAQ -->
+          <li class="menu-list-parent "><a href="/Franklin.jl/faq/technical/" class="menu-list-link">• FAQ</a>
+            <ul class="menu-list-child-list ">
+              <li class="menu-list-item "><a href="/Franklin.jl/faq/technical/" class="menu-list-link">Technical</a>
+			  <li class="menu-list-item "><a href="/Franklin.jl/faq/troubleshooting/" class="menu-list-link">Troubleshooting</a>
+              <li class="menu-list-item "><a href="/Franklin.jl/faq/why-o-why/" class="menu-list-link">Meta</a>
+            </ul>
+        </ul>
+			<form id="lunrSearchForm" name="lunrSearchForm">
+				<input class="search-input" name="q" placeholder="Enter search term" type="text"> <input type="submit" value="Search" formaction="/Franklin.jl/search/index.html">
+			</form>
+      </div>
+      <div class="footer">
+        <a href="/Franklin.jl/faq/why-o-why/"><img style="width:40%;padding-left:10px;margin-bottom:15px;" src="/Franklin.jl/assets/infra/logoF2.svg" alt="Franklin Logo" /></a>
+      </div>
+    </div>
+    <!-- CONTENT -->
+    <div class="main-content-wrap"> <!-- closed in foot.html -->
+      <div class="main-content" id="focus" tabindex="-1" style="outline:0;">    <!-- closed in foot.html -->
+        <div class="main-header">
+          <a name="pagetop"></a>
+
+          <a id="github" href="https://github.com/tlienart/franklindocs/blob/master/extras/lunr.md">Page source</a>
+		  <span style="width:30px; text-align: center;color:lightgray;">|</span>
+		  <a id="github" href="https://github.com/tlienart/Franklin.jl">GitHub Repository</a>
+        </div>
+
+<!-- Content appended here (in class franklin-content) -->
+<div class="franklin-content"><h1 id="add_search_with_lunr"><a href="#add_search_with_lunr">Add search with Lunr</a></h1>
+<p><div class="franklin-toc"><ol><li><a href="#pre-requisites">Pre-requisites</a><ol><li><a href="#libraries">Libraries</a></li><li><a href="#files">Files</a></li><li><a href="#index_builder">Index builder</a></li><li><a href="#client">Client</a></li></ol></li><li><a href="#adding_a_search_box">Adding a search box</a><ol><li><a href="#adding_a_form_in_headhtml">Adding a form in <code>head.html</code></a></li><li><a href="#target_search_page">Target search page</a></li></ol></li><li><a href="#buildingupdating_the_index">Building/updating the index</a></li></ol></div><div class="blank"></div></p>
+<p><a href="https://lunrjs.com/"><code>lunr.js</code></a> is a neat little Javascript library that allows to equip your website with a search functionality fairly easily.</p>
+<p>The steps below show a simple way of doing this matching what is done on this website. Once it&#39;s working, you might want to adjust  the <code>build_index.js</code> and/or the <code>lunrclient.js</code> to match your needs.</p>
+<h2 id="pre-requisites"><a href="#pre-requisites">Pre-requisites</a></h2>
+<h3 id="libraries"><a href="#libraries">Libraries</a></h3>
+<p>Install <code>lunr</code> and <code>cheerio</code> &#40;a HTML parser&#41; with <code>node</code>:</p>
+<pre><code class="language-bash">$> npm install lunr
+$> npm install cheerio</code></pre>
+<p>&#40;you might have to add <code>sudo</code> before <code>npm</code>&#41;.</p>
+<h3 id="files"><a href="#files">Files</a></h3>
+<p>Copy <a href="https://github.com/tlienart/franklindocs/tree/master/_libs/lunr">this folder</a> to a <code>/_libs/lunr/</code> directory. Discard the <code>lunr_index.js</code> which is the index of this website, you will rebuild your own of course&#33;</p>
+<p>The important files are <code>build_index.js</code> and <code>lunrclient.js</code> &#40;of  which a minified version is provided which you will want to re-generate if you modify the base file&#41;. These files are adapted from <a href="https://github.com/BLE-LTER/Lunr-Index-and-Search-for-Static-Sites">this repository</a> which shows how to use Lunr on a static website.</p>
+<p>You can choose whether to serve your own copy of <code>lunr.min.js</code> &#40;done here&#41; or to use an online version via</p>
+<pre><code class="language-html">&lt;script src&#61;&quot;https://unpkg.com/lunr/lunr.js&quot;&gt;&lt;/script&gt;</code></pre>
+<h3 id="index_builder"><a href="#index_builder">Index builder</a></h3>
+<p>The file <code>build_index.js</code> does the following:</p>
+<div class="tlist"><ul>
+<li><p>it goes over all files in a <code>HTML_FOLDER</code> &#40;by default: <code>/__site/</code>&#41;,</p>
+</li>
+<li><p>it builds an index <code>lunr_index.js</code> which can subsequently be queried  upon the user entering search terms.</p>
+</li>
+</ul></div>
+<p>By default, the index built is fairly barebone to reduce the size of the generated index. If you want fancier search, you might want to modify this a bit to add a preview of the page, boost results depending on where there are &#40;title, keyword, ...&#41;, add stop words, etc. &#40;Refer to the <a href="https://lunrjs.com/docs/index.html">Lunr docs</a> for this as well as <a href="https://github.com/BLE-LTER/Lunr-Index-and-Search-for-Static-Sites">the example repo</a> mentioned earlier or <a href="https://github.com/JuliaDocs/Documenter.jl/blob/master/assets/html/search.js">Documenter.jl</a>&#39;s version&#41;.</p>
+<div class="note"><div class="title">⚠ Note</div>
+<div class="content">Modify this file at will but be careful with the lines with <code>PATH_PREPEND</code> if your website is a project website &#40;i.e. the root URL is something like <code>username.github.io/project/</code>&#41;. These lines help ensure that the generated links are valid. See also the section on <a href="#buildingupdating_the_index">updating the index</a>.</div></div>
+<h3 id="client"><a href="#client">Client</a></h3>
+<p>The file <code>lunrclient.js</code> &#40;and its minified version&#41; does the following:</p>
+<div class="tlist"><ul>
+<li><p>query the index</p>
+</li>
+<li><p>display the results</p>
+</li>
+</ul></div>
+<p>You might want to modify the <code>parseLunrResults</code> if you want the results to be  displayed differently.</p>
+<div class="note"><div class="title">⚠ Note</div>
+<div class="content">If you modify this file, make sure it&#39;s called properly in the <code>src/_html_parts/index.html</code> and, eventually, <a href="https://jscompress.com/">minify it</a>.</div></div>
+<h2 id="adding_a_search_box"><a href="#adding_a_search_box">Adding a search box</a></h2>
+<h3 id="adding_a_form_in_headhtml"><a href="#adding_a_form_in_headhtml">Adding a form in <code>head.html</code></a></h3>
+<p>The search box on this website is added with the following HTML in <code>_layout/head.html</code>:</p>
+<pre><code class="language-html">&lt;&#33;doctype html&gt;
+&lt;&#33;-- first few lines ... --&gt;
+  &lt;script src&#61;&quot;/libs/lunr/lunr.min.js&quot;&gt;&lt;/script&gt;
+  &lt;script src&#61;&quot;/libs/lunr/lunr_index.js&quot;&gt;&lt;/script&gt;
+  &lt;script src&#61;&quot;/libs/lunr/lunrclient.min.js&quot;&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;&#33;-- ... --&gt;
+&lt;form id&#61;&quot;lunrSearchForm&quot; name&#61;&quot;lunrSearchForm&quot;&gt;
+  &lt;input class&#61;&quot;search-input&quot; name&#61;&quot;q&quot; placeholder&#61;&quot;Enter search term&quot; type&#61;&quot;text&quot;&gt;
+  &lt;input type&#61;&quot;submit&quot; value&#61;&quot;Search&quot; formaction&#61;&quot;/search/index.html&quot;&gt;
+&lt;/form&gt;
+&lt;-- ... --&gt;</code></pre>
+<p>You may want to style it a bit like so:</p>
+<pre><code class="language-css">.result-title a { text-decoration: none; }
+.result-title a:hover { text-decoration: underline; }
+.result-preview { color: #808080; }
+.resultCount { color: #808080; }
+.result-query { font-weight: bold; }
+#lunrSearchForm { margin-top: 1em; }</code></pre>
+<h3 id="target_search_page"><a href="#target_search_page">Target search page</a></h3>
+<p>You also need to add a <code>src/search.md</code> to display the results with the appropriate divs:</p>
+<pre><code class="language-html">@def title &#61; &quot;Search ⋅ YourWebsite&quot;
+
+## Search
+
+Number of results found: ~~~&lt;span id&#61;&quot;resultCount&quot;&gt;&lt;/span&gt;~~~
+
+~~~
+&lt;div id&#61;&quot;searchResults&quot;&gt;&lt;/div&gt;
+~~~</code></pre>
+<p>Note that if you modify the <code>id</code> of these elements, you  will need to adapt the <code>lunrclient</code> file&#40;s&#41; accordingly.</p>
+<h2 id="buildingupdating_the_index"><a href="#buildingupdating_the_index">Building/updating the index</a></h2>
+<p>Franklin exports a <code>lunr&#40;&#41;</code> function which</p>
+<div class="tlist"><ul>
+<li><p>checks that you have the right files at the right place,</p>
+</li>
+<li><p>&#40;re&#41;builds the index, prepending a path to links if required.</p>
+</li>
+</ul></div>
+<p>If you are experimenting locally, just call <code>lunr&#40;&#41;</code> then <code>serve&#40;&#41;</code> and test that searching works as expected.</p>
+<p>When you are ready to update your website you  can either:</p>
+<div class="tlist"><ol>
+<li><p>&#40;recommended&#41; Call <code>publish&#40;final&#61;lunr&#41;</code>,</p>
+</li>
+<li><p>Call <code>lunr&#40;&#41;</code> or <code>lunr&#40;prepath&#41;</code> if there is a prepath and then publish your updates manually.</p>
+</li>
+</ol></div>
+<p>The <code>publish&#40;final&#61;lunr&#41;</code> calls the <code>lunr</code> function as a last step prior to doing a <code>git push</code>. An advantage of using this is that Franklin will properly handle the <code>prepath</code> if there is one defined in  your <code>config.md</code>.</p>
+<div class="note"><div class="title">⚠ Note</div>
+<div class="content">This <code>final&#61;</code> keyword can be used with your own functions <code>&#40;&#41;-&gt;nothing</code> if you need to do some post-processing with the generated files before pushing.</div></div>
+<div class="page-foot">
+  <div class="copyright">
+    &copy; Thibaut Lienart. Last modified: August 19, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
+  </div>
+</div>
+</div><!-- CONTENT ENDS HERE -->
+    </div> <!-- end of class main-content -->
+    </div> <!-- end of class main-content-wrap -->
+    </div> <!-- end of class page-wrap-->
+    
+    
+      <script src="/Franklin.jl/libs/highlight/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
+
+    
+  </body>
+</html>

@@ -1,0 +1,19 @@
+@@simple-table
+Name | Number
+:--- | :---
+Taimur | 1525
+Catherine | 5134
+Maria | 4214
+Arvind | 9019
+Jose | 8918
+Minjie | 5757
+@@
+~~~
+<style>
+.simple-table tr {
+  padding:0;
+  line-height:1em;
+}
+</style>
+~~~
+
