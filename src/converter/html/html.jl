@@ -40,11 +40,13 @@ end
 
 
 """
+$SIGNATURES
+
 Return the HTML corresponding to a Franklin-Markdown string as well as all the
 page variables. See also [`fd2html`](@ref) which only returns the html.
 """
 function fd2html_v(st::AS; internal::Bool=false,
-                   dir::String="")::Tuple{String,Dict}
+                   dir::String="", nop::Bool=false)::Tuple{String,Dict}
     isempty(st) && return st
     if !internal
         empty!(ALL_PAGE_VARS)
@@ -58,9 +60,32 @@ function fd2html_v(st::AS; internal::Bool=false,
     !(@isdefined GLOBAL_VARS) || isempty(GLOBAL_VARS) && def_GLOBAL_VARS!()
     m = convert_md(st; isinternal=internal)
     h = convert_html(m)
+    if nop && startswith(h, "<p>") && endswith(h, r"</p>\n?")
+        # remove initial <p> and final </p>\n
+        # note that this is unsafe in that these may not be related.
+        h = replace(h, r"(^<p>|</p>\n?$)" => "")
+    end
     return h, LOCAL_VARS
 end
-fd2html(a...; k...)::String = fd2html_v(a...; k...)[1]
+
+"""
+    fd2html(s; kw)
+
+Take a Markdown string and return the HTML that Franklin would produce for it.
+
+# Keywords
+
+* `internal=false`: if set to true, the current scope (in terms of page variables) will
+                    be passed to process the String, otherwise the string will be processed
+                    in an isolated scope.
+* `dir=""`: if given and if `internal=false`, sets up a temporary dir for Franklin
+            processing.
+* `nop=false`: if set to true, check if the returned HTML string has a starting `<p>` and
+               ending `</p>` and, if so, strips them off. This should be used with care:
+               for simple strings this is likely to be ok but for strings which would
+               contain multiple paragraphs (e.g. with headers) this may not work well.
+"""
+fd2html(s; kw...)::String = fd2html_v(s; kw...)[1]
 
 # legacy JuDoc
 jd2html = fd2html

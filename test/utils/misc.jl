@@ -212,3 +212,11 @@ end
     @test get_url("foo.md") == "/foo/"
     @test get_url("foo/index.md") == "/foo/"
 end
+
+@testset "fd2html#489" begin
+    s = """
+        ABC
+        DEF"""
+    h = fd2html(s, nop=true)
+    @test h == "ABC DEF"
+end
