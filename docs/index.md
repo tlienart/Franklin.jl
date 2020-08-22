@@ -10,8 +10,10 @@ reviewed: 23/11/19
 
 ## Key features
 
+_click on the '&check;' sign to know more_
+
 @@flist
-* \goto{/syntax/markdown/} Augmented markdown allowing definition of LaTeX-like commands,
+* \goto{/syntax/markdown/}Augmented markdown allowing definition of LaTeX-like commands,
 * \goto{/syntax/divs-commands/} Easy inclusion of user-defined div-blocks,
 * \goto{/syntax/divs-commands/} Maths rendered via [KaTeX](https://katex.org/), code via [highlight.js](https://highlightjs.org) both can be pre-rendered,
 * \goto{/code/} Can live-evaluate Julia code blocks,

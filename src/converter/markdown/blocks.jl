@@ -33,7 +33,7 @@ function convert_block(β::AbstractBlock, lxdefs::Vector{LxDef})::AS
         raw_cont = stent(β)
         cont     = convert_md(raw_cont, lxdefs;
                               isrecursive=true, has_mddefs=false,
-                              nostripp=true) |> simplify_ps 
+                              nostripp=true) |> simplify_ps
         divname  = chop(otok(β).ss, head=2, tail=0)
         # parse @@c1,c2,c3 as class="c1 c2 c3"
         return html_div(replace(divname, ","=>" "), cont)
@@ -58,6 +58,7 @@ const MATH_BLOCKS_PARENS = LittleDict{Symbol, Tuple{Int,Int,String,String}}(
     :MATH_A     => ( 1,  1, "\\(", "\\)"),
     :MATH_B     => ( 2,  2, "\\[", "\\]"),
     :MATH_C     => ( 2,  2, "\\[", "\\]"),
+    :MATH_D     => (16, 14, "\\[", "\\]"),
     :MATH_ALIGN => (13, 11, "\\[\\begin{aligned}", "\\end{aligned}\\]"),
     :MATH_EQA   => (16, 14, "\\[\\begin{array}{c}", "\\end{array}\\]"),
     :MATH_I     => ( 4,  4, "", "")

@@ -213,7 +213,7 @@ const MD_OCB_MATH = [
     OCProto(:MATH_A,     :MATH_A,          (:MATH_A,)          ),
     OCProto(:MATH_B,     :MATH_B,          (:MATH_B,)          ),
     OCProto(:MATH_C,     :MATH_C_OPEN,     (:MATH_C_CLOSE,)    ),
-    OCProto(:MATH_C,     :MATH_D_OPEN,     (:MATH_D_CLOSE,)    ),
+    OCProto(:MATH_D,     :MATH_D_OPEN,     (:MATH_D_CLOSE,)    ),
     OCProto(:MATH_I,     :MATH_I_OPEN,     (:MATH_I_CLOSE,)    ),
     OCProto(:MATH_ALIGN, :MATH_ALIGN_OPEN, (:MATH_ALIGN_CLOSE,)),
     OCProto(:MATH_EQA,   :MATH_EQA_OPEN,   (:MATH_EQA_CLOSE,)  ),
