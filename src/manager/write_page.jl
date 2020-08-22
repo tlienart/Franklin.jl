@@ -36,15 +36,19 @@ function optim_page(pg; prerender=false, isoptim=false)
     # Prerender if required (using JS tools)
     if prerender
         # Maths (KATEX)
-        pg = js_prerender_katex(pg)
+        if locvar(:hasmath) == true
+            pg = js_prerender_katex(pg)
+        end
         # Code (HIGHLIGHT.JS)
-        if FD_CAN_HIGHLIGHT
+        if locvar(:hascode) == true && FD_CAN_HIGHLIGHT
             pg = js_prerender_highlight(pg)
             # remove script
             pg = replace(pg, r"<script.*?(?:highlight\.pack\.js|initHighlightingOnLoad).*?<\/script>"=>"")
         end
-        # remove katex scripts
-        pg = replace(pg, r"<script.*?(?:katex\.min\.js|auto-render\.min\.js|renderMathInElement).*?<\/script>" => "")
+        if locvar(:hasmath) == true
+            # remove katex scripts
+            pg = replace(pg, r"<script.*?(?:katex\.min\.js|auto-render\.min\.js|renderMathInElement).*?<\/script>" => "")
+        end
     end
     # append pre-path to links if required (see optimize)
     if isoptim
