@@ -154,6 +154,7 @@ function hfun_toc(params::Vector{String})::String
 
     inner   = ""
     headers = filter(p -> min ≤ p.second[3] ≤ max, PAGE_HEADERS)
+    isempty(headers) && return ""
     baselvl = minimum(h[3] for h in values(headers)) - 1
     curlvl  = baselvl
     for (rs, h) ∈ headers
