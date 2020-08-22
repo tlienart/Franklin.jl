@@ -50,6 +50,5 @@ Useful HTML snippets
 
 \newcommand{\goto}[1]{~~~<a href="!#1" id="goto"><span id="check">&check;</span><span id="arrow"><b>&rarr;</b></span></a>~~~}
 
-
 \newcommand{\smindent}[1]{\span{width:45px;text-align:right;color:slategray;}{#1}}
 \newcommand{\smnote}[1]{\style{font-size:85%;line-height:0em;}{#1}}
