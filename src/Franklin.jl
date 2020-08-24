@@ -10,7 +10,6 @@ using DelimitedFiles: readdlm
 using OrderedCollections
 using Pkg
 using DocStringExtensions: SIGNATURES, TYPEDEF
-using Crayons
 
 import Logging
 import LiveServer
@@ -39,6 +38,15 @@ export jd2html # = fd2html
 # CONSTANTS
 #
 
+const HOME =
+    "https://franklinjl.org"
+const POINTER_PV =
+    "- page variables and {{...}} blocks: $HOME/syntax/page-variables/"
+const POINTER_HFUN =
+    "- h-functions (hfun) and lx-functions: $HOME/syntax/utils/"
+const POINTER_EVAL =
+    "- evaluation of Julia code blocks: $HOME/code/"
+
 # These are common IP addresses that we can quickly ping to see if the
 # user seems online. This is used in `verify_links`. The IPs were
 # obtained via `dig www...`; they may change over time; see `check_ping`
@@ -59,9 +67,12 @@ const FD_ENV = LittleDict(
     :SUPPRESS_ERR  => false,
     :SILENT_MODE   => false,
     :OFFSET_LXDEFS => -BIG_INT,
-    :CUR_PATH      => "",
+    :CUR_PATH      => "",       # complements fd-rpath
+    :SOURCE        => "",       # keeps track of the origin of a HTML string
     :STRUCTURE     => v"0.2",
-    :QUIET_TEST    => false,)
+    :QUIET_TEST    => false,
+    :SHOW_WARNINGS => true,
+    )
 
 """Dict to keep track of languages and how comments are indicated and their extensions. This is relevant to allow hiding lines of code. """
 const CODE_LANG = LittleDict{String,NTuple{2,String}}(
@@ -113,9 +124,9 @@ const LOGGING = Ref(false)
 
 function logger(t)
     LOGGING[] || return nothing
-    print(Crayon(bold=true, foreground=:yellow), "LOG: ")
-    print(Crayon(bold=false, foreground=:blue), rpad(t[1], 20))
-    println(Crayon(reset=true), escape_string(t[2]))
+    printstyled("LOG: ", color=:yellow, bold=true)
+    printstyled(rpad(t[1], 20), color=:blue)
+    println(escape_string(t[2]))
     return nothing
 end
 
@@ -126,11 +137,13 @@ include("build.jl") # check if user has Node/minify
 include("regexes.jl")
 
 # UTILS
+include("utils/warnings.jl")
+include("utils/errors.jl")
 include("utils/paths.jl")
 include("utils/vars.jl")
 include("utils/misc.jl")
 include("utils/html.jl")
-include("utils/errors.jl")
+
 
 # PARSING
 include("parser/tokens.jl")

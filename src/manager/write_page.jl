@@ -85,7 +85,7 @@ function write_page(output_path::AS, content::AS;
     # convert the pieces
     head, ctt, pgfoot, foot = map(convert_html, (head, content, pgfoot, foot))
 
-    # remove spurious dirs from past pagination attempts
+    # remove spurious dirs from past pagination attempts if any
     outdir = dirname(output_path)
     for elem in readdir(outdir)
         if all(isnumeric, elem) && first(elem) != '0'
@@ -94,8 +94,8 @@ function write_page(output_path::AS, content::AS;
         end
     end
 
-    # the previous call possibly resolved a {{paginate}} which will have
-    # stored a :paginate_itr var, so we must branch on that
+    # the previous convert call possibly resolved a {{paginate}} which will
+    # have stored a :paginate_itr var, so we must branch on that
     if !isnothing(locvar(:paginate_itr))
         name    = locvar(:paginate_itr)
         iter    = locvar(name)

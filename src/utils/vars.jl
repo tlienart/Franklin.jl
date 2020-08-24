@@ -395,8 +395,7 @@ function set_vars!(vars::PageVars, assignments::Vector{Pair{String,String}}
             if check_type(type_tmp, acc_types)
                 vars[key] = Pair(tmp, acc_types)
             else
-                @warn "Page var '$key' (type(s): $acc_types) can't be set " *
-                      "to value '$tmp' (type: $type_tmp). Assignment ignored."
+                mddef_warn(key, tmp, acc_types)
             end
         else
             # there is no key, so directly assign, the type is not checked

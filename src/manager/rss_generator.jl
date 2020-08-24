@@ -81,8 +81,9 @@ function add_rss_item()::RSSItem
 
     # warning for title which should really be defined
     isnothing(title) && (title = "")
-    isempty(title)   && @warn "Found an RSS description but no " *
-                              "title for page $link."
+    isempty(title)   && print_warning("""
+        An RSS description was found but no title for page '$link'.
+        """)
 
     RSS_DICT[link] = RSSItem(title, link, descr, author,
                              category, comments, enclosure, pubDate)
@@ -105,10 +106,14 @@ function rss_generator()::Nothing
     rss_link  = globvar("website_url")
 
     if any(isempty, (rss_title, rss_descr, rss_link))
-        @warn """I found RSS items but the RSS feed is not properly described:
-              at least one of the following variables has not been defined in
-              your config.md: `website_title`, `website_descr`, `website_url`.
-              The feed will not be (re)generated."""
+        print_warning("""
+            RSS items were found but the RSS feed is improperly described:
+            at least one of the following variables have not been defined in
+            your 'config.md': 'website_title', 'website_descr', 'website_url'.
+            The feed will not be (re)generated.
+            \nRelevant pointer:
+            $POINTER_PV
+            """)
         return nothing
     end
 
