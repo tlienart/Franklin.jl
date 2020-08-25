@@ -115,7 +115,7 @@
 <div class="franklin-content"><h1 id="generating_auxiliary_files_with_literate"><a href="#generating_auxiliary_files_with_literate">Generating auxiliary files with Literate</a></h1>
 <p>See also <a href="/code/literate/">how to interact with literate scripts</a>.</p>
 <p><a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a> allows to pre and post-process a script in order, for instance, to generate a notebook out  of a script. This can be convenient if you want to have a tutorial be downloadable as a standalone notebook or as a scrubbed script.</p>
-<p>This page presents one way  of doing this which is used in <a href="https://github.com/alan-turing-institute/MLJTutorials">MLJTutorials</a> and which  might inspire your own approach.</p>
+<p>This page presents one way  of doing this which is used in <a href="https://github.com/alan-turing-institute/DataScienceTutorials.jl">DataScienceTutorials</a> and which  might inspire your own approach.</p>
 <p>The key ingredients are:</p>
 <div class="tlist"><ol>
 <li><p>use Literate to generate derived files,</p>
@@ -150,10 +150,10 @@ JS_GHP = """
     """
 
 run(`$(nodejs_cmd()) -e $JS_GHP`)</code></pre>
-<p>Now these generated files are available on that branch without polluting your <code>master</code> branch. You can see this live on the <a href="https://github.com/alan-turing-institute/MLJTutorials/tree/gh-pages">MLJTutorials repo</a>.</p>
+<p>Now these generated files are available on that branch without polluting your <code>master</code> branch. You can see this live on the <a href="https://github.com/alan-turing-institute/DataScienceTutorials.jl/tree/gh-pages">DataScienceTutorials repo</a>.</p>
 <p>You can link to these generated notebooks with links adapted from:</p>
 <pre><code class="language-plaintext">https://raw.githubusercontent.com/username/project/gh-pages/notebooks/theNotebook.ipynb</code></pre>
-<p>See <a href="https://alan-turing-institute.github.io/MLJTutorials/pub/isl/lab-2.html">this page</a> for example.</p>
+<p>See <a href="https://alan-turing-institute.github.io/DataScienceTutorials.jl/isl/lab-2/">this page</a> for example.</p>
 <h2 id="add_the_whole_process_to_publish"><a href="#add_the_whole_process_to_publish">Add the whole process to <code>publish</code></a></h2>
 <p>You may want to re-generate all notebooks prior to pushing updates to GitHub. For this, use the <code>final</code> keyword of <code>publish</code> to which you can pass a function to use before publishing updates. For instance:</p>
 <pre><code class="language-julia">function gen_literate()
