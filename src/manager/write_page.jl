@@ -57,6 +57,7 @@ function optim_page(pg; prerender=false, isoptim=false)
     return pg
 end
 
+const PAGINATED = Set{String}()
 
 """
 $(SIGNATURES)
@@ -85,18 +86,23 @@ function write_page(output_path::AS, content::AS;
     # convert the pieces
     head, ctt, pgfoot, foot = map(convert_html, (head, content, pgfoot, foot))
 
-    # remove spurious dirs from past pagination attempts
+    # remove dirs from past pagination attempts (so we limit risk of stale
+    # pagination folder with stale files)
     outdir = dirname(output_path)
-    for elem in readdir(outdir)
-        if all(isnumeric, elem) && first(elem) != '0'
-            dpath = joinpath(outdir, elem)
-            isdir(dpath) && rm(joinpath(outdir, elem), recursive=true)
+    ispaginated = outdir in PAGINATED
+    if ispaginated
+        for elem in readdir(outdir)
+            if all(isnumeric, elem) && first(elem) != '0'
+                dpath = joinpath(outdir, elem)
+                isdir(dpath) && rm(dpath, recursive=true)
+            end
         end
     end
 
     # the previous call possibly resolved a {{paginate}} which will have
     # stored a :paginate_itr var, so we must branch on that
     if !isnothing(locvar(:paginate_itr))
+        union!(PAGINATED, (outdir,))
         name    = locvar(:paginate_itr)
         iter    = locvar(name)
         npp     = locvar(:paginate_npp)
@@ -117,6 +123,8 @@ function write_page(output_path::AS, content::AS;
             write(joinpath(dst, "index.html"), pg)
         end
     else
+        # maybe it was paginated but isn't anymore
+        ispaginated && setdiff(PAGINATED, outdir)
         # convert any `{{...}}` that may be left and form the full page string
         pg = build_page(head, ctt, pgfoot, foot)
         pg = optim_page(pg, prerender=prerender, isoptim=isoptim)
