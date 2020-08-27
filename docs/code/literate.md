@@ -29,7 +29,7 @@ it does what you expect:
 
 If you want the script to be shown like a notebook where the output of every code block is shown, use  `@def showall = true`.
 
-Combining Franklin with Literate offers a very convenient way to write and maintain tutorial websites (see for instance the [MLJ Tutorials](https://alan-turing-institute.github.io/MLJTutorials/)).
+Combining Franklin with Literate offers a very convenient way to write and maintain tutorial websites (see for instance the [DataScienceTutorials](https://github.com/alan-turing-institute/DataScienceTutorials.jl)).
 
 ### File organisation
 
