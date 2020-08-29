@@ -232,7 +232,7 @@ Activating environment at `~/Desktop/myWebsite/Project.toml`
 ```
 
 In other words, whenever you start the server, Franklin will now activate the environment with that `Project.toml`.
-This is particularly useful if you intend to write a tutorial website (for a live example of this, see the [MLJ Tutorials](https://alan-turing-institute.github.io/MLJTutorials/)).
+This is particularly useful if you intend to write a tutorial website (for a live example of this, see the [DataScienceTutorials](https://github.com/alan-turing-institute/DataScienceTutorials.jl)).
 
 ### Plots
 

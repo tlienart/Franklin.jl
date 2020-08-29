@@ -7,7 +7,7 @@ See also [how to interact with literate scripts](/code/literate/).
 [Literate.jl](https://github.com/fredrikekre/Literate.jl) allows to pre and post-process a script in order, for instance, to generate a notebook out  of a script.
 This can be convenient if you want to have a tutorial be downloadable as a standalone notebook or as a scrubbed script.
 
-This page presents one way  of doing this which is used in [MLJTutorials](https://github.com/alan-turing-institute/MLJTutorials) and which  might inspire your own approach.
+This page presents one way  of doing this which is used in [DataScienceTutorials](https://github.com/alan-turing-institute/DataScienceTutorials.jl) and which  might inspire your own approach.
 
 The key ingredients are:
 
@@ -61,7 +61,7 @@ run(`$(nodejs_cmd()) -e $JS_GHP`)
 ```
 
 Now these generated files are available on that branch without polluting your `master` branch.
-You can see this live on the [MLJTutorials repo](https://github.com/alan-turing-institute/MLJTutorials/tree/gh-pages).
+You can see this live on the [DataScienceTutorials repo](https://github.com/alan-turing-institute/DataScienceTutorials.jl/tree/gh-pages).
 
 You can link to these generated notebooks with links adapted from:
 
@@ -69,7 +69,7 @@ You can link to these generated notebooks with links adapted from:
 https://raw.githubusercontent.com/username/project/gh-pages/notebooks/theNotebook.ipynb
 ```
 
-See [this page](https://alan-turing-institute.github.io/MLJTutorials/pub/isl/lab-2.html) for example.
+See [this page](https://alan-turing-institute.github.io/DataScienceTutorials.jl/isl/lab-2/) for example.
 
 ## Add the whole process to `publish`
 
