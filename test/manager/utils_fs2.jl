@@ -56,7 +56,7 @@ end
     F.process_config()
     @test F.GLOBAL_VARS["author"].first == "Stefan Zweig"
     rm(temp_config)
-    @test_logs (:warn, "I didn't find a config file. Ignoring.") F.process_config()
+
     # testing write
     head = "head"
     pg_foot = "\npage_foot"

@@ -68,7 +68,7 @@ function hfun_fill(params::Vector{String})::String
                 The arguments '$vname' and '$rpath' cannot be resolved. It may
                 be that the path doesn't exist or that the variable '$vname'
                 is not defined on the page at that path.
-                Relevant pointers:
+                \nRelevant pointers:
                 $POINTER_PV
                 """)
         else
@@ -296,7 +296,10 @@ function hfun_paginate(params::Vector{String})::String
     end
     iter = locvar(params[1])
     if isnothing(iter)
-        hfun_unknown_arg1_warn(:paginate, params[1])
+        hfun_misc_warn(:paginate, """
+            The page variable '$(params[1])' does not match the name of a page
+            variable. The call will be ignored.            
+            """)
         return ""
     end
     npp = locvar(params[2])

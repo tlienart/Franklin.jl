@@ -1,4 +1,5 @@
-using Franklin, Test, Markdown, Dates, Random, Literate, DelimitedFiles
+using Franklin, Test, Markdown, Dates, Random
+using Literate, DelimitedFiles, Suppressor
 const F = Franklin
 const R = @__DIR__
 const D = joinpath(dirname(dirname(pathof(Franklin))), "test", "_dummies")
@@ -17,6 +18,7 @@ include("utils/paths_vars.jl"); include("test_utils.jl")
 println("UTILS-2")
 include("utils/misc.jl")
 include("utils/errors.jl")
+include("utils/warnings.jl")
 include("utils/html.jl")
 include("regexes.jl")
 println("🍺")

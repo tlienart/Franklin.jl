@@ -33,7 +33,6 @@ end
     @test item.pubDate == Date(1)
 
     F.set_var!(F.LOCAL_VARS, "rss_title", "")
-    @test @test_logs (:warn, "Found an RSS description but no title for page /hey/ho.html.") F.add_rss_item().title == ""
 
     @test F.RSS_DICT["/hey/ho.html"].description == item.description
 
@@ -67,7 +66,6 @@ end
     @test item.pubDate == Date(1)
 
     F.set_var!(F.LOCAL_VARS, "rss_title", "")
-    @test @test_logs (:warn, "Found an RSS description but no title for page /hey/ho/index.html.") F.add_rss_item().title == ""
 
     @test F.RSS_DICT["/hey/ho/index.html"].description == item.description
 

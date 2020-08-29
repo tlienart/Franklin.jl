@@ -24,13 +24,19 @@ mddef_warn(key, value, acc) = """
     $POINTER_PV
     """ |> print_warning
 
+config_warn() = """
+    No 'config.md' file found. It is recommended to keep one.
+    \nRelevant pointers:
+    $POINTER_WORKFLOW
+    """ |> print_warning
+
 # --- utils ---
 
 function get_source()
     # context
     source = FD_ENV[:SOURCE]
     isempty(source) || return source
-    return "unknown"  # unlikely
+    return "unknown"  # unlikely outside of testing
 end
 
 printyb(msg) = printstyled(msg, color=:yellow, bold=true)

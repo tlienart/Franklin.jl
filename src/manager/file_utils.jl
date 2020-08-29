@@ -20,7 +20,7 @@ function process_config(; init::Bool=false)::Nothing
         elseif isfile(config_path_v1)
             convert_md(read(config_path_v1, String); isconfig=true)
         else
-            @warn "I didn't find a 'config.md' file. Ignoring."
+            config_warn()
         end
     else
         key = ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src, :folder)
@@ -29,7 +29,7 @@ function process_config(; init::Bool=false)::Nothing
         if isfile(config_path)
             convert_md(read(config_path, String); isconfig=true)
         else
-            @warn "I didn't find a 'config.md' file. Ignoring."
+            config_warn()
         end
     end
     return nothing

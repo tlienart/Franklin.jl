@@ -46,6 +46,8 @@ const POINTER_HFUN =
     "- h-functions (hfun) and lx-functions: $HOME/syntax/utils/"
 const POINTER_EVAL =
     "- evaluation of Julia code blocks: $HOME/code/"
+const POINTER_WORKFLOW =
+    "- workflow and folder structure: $HOME/workflow/"
 
 # These are common IP addresses that we can quickly ping to see if the
 # user seems online. This is used in `verify_links`. The IPs were

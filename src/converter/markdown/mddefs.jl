@@ -60,7 +60,7 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool,
                 Delimiters for an '@def ...' environement were found but at
                 least one assignment does not have the proper syntax. That
                 assignment will be ignored.
-                Relevant pointers:
+                \nRelevant pointers:
                 $POINTER_PV
                 """)
             continue

@@ -80,7 +80,7 @@ function resolve_code_block(ss::SubString)::String
     if lang != "julia"
         print_warning("""
             Evaluation of non-Julia code blocks is not yet supported.
-            Relevant pointers:
+            \nRelevant pointers:
             $POINTER_EVAL
             """)
         return html_code(code, lang)

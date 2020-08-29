@@ -82,7 +82,7 @@ function add_rss_item()::RSSItem
     # warning for title which should really be defined
     isnothing(title) && (title = "")
     isempty(title)   && print_warning("""
-        An RSS description was found but no title for page '$link'.
+        An RSS description was found but without title for page '$link'.
         """)
 
     RSS_DICT[link] = RSSItem(title, link, descr, author,
