@@ -80,8 +80,8 @@ function run_code(mod::Module, code::AS, out_path::AS;
         FD_ENV[:SILENT_MODE] || print("\n")
         warn_err && print_warning("""
             There was an error of type '$err' when running a code block.
-            Checking the output files '$(splitext(outf)[1]).(out|res)' might be
-            helpful to understand and solve the issue.
+            Checking the output files '$(splitext(out_path)[1]).(out|res)'
+            might be helpful to understand and solve the issue.
             \nRelevant pointers:
             $POINTER_EVAL
             """)
