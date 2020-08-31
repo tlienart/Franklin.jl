@@ -42,8 +42,6 @@ cp(joinpath(dirname(dirname(pathof(Franklin))), "test", "_libs", "katex"), joinp
     @test d["a"].first == 5
     @test d["b"].first === nothing
 
-    @test_logs (:warn, "Page var 'a' (type(s): (Real,)) can't be set to value 'blah' (type: String). Assignment ignored.") F.set_vars!(d, ["a"=>"\"blah\""])
-
     @test_throws F.PageVariableError F.set_vars!(d, ["a"=> "sqrt(-1)"])
 
     # assigning new variables

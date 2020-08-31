@@ -60,35 +60,7 @@
         FOOT"""
 
     # WARNINGS
-    write(joinpath(td, "foo.md"), raw"""
-        @def a = ["<li>Item $i</li>" for i in 1:10]
-        Some content
-        {{paginate abc 4}}
-        """)
-    @test_logs (:warn, "In a {{paginate ...}} block, I couldn't recognise the name of the iterable. Nothing will get printed as a result.") serve(single=true)
-    write(joinpath(td, "foo.md"), raw"""
-        @def a = ["<li>Item $i</li>" for i in 1:10]
-        Some content
-        {{paginate a iehva}}
-        """)
-    @test_logs (:warn, "In a {{paginate ...}} block, I couldn't parse the number of items per page. Defaulting to 10.") serve(single=true)
-    write(joinpath(td, "foo.md"), raw"""
-        @def a = ["<li>Item $i</li>" for i in 1:10]
-        Some content
-        {{paginate a -5}}
-        """)
-    @test_logs (:warn, "In a {{paginate ...}} block, the number of items per page is non-positive, defaulting to 10.") serve(single=true)
-    write(joinpath(td, "foo.md"), raw"""
-        @def a = ["<li>Item $i</li>" for i in 1:10]
-        Some content
-        ~~~<ul>~~~
-        {{paginate a 4}}
-        ~~~</ul>~~~
-        ~~~<ul>~~~
-        {{paginate a 4}}
-        ~~~</ul>~~~
-        """)
-    @test_logs (:warn, "It looks like you have multiple calls to {{paginate ...}} on the page; only one is supported. Verify.") serve(single=true)
+    # (see warnings)
 
     # ERRORS
     write(joinpath(td, "foo.md"), raw"""

@@ -148,5 +148,11 @@ end
     s = raw"""
         \literate{/foo}
         """
-    @test @test_logs (:warn, "File not found when trying to convert a literate file ($(joinpath(F.PATHS[:folder], "foo.jl"))).") (s |> fd2html_td) == """<p><span style="color:red;">// Literate file matching '/foo' not found. //</span></p>\n"""
+
+    global r = ""; s = @capture_out begin
+        global r
+        r = s |> fd2html_td
+    end
+    @test r == """<p><span style="color:red;">// Literate file matching '/foo' not found. //</span></p>\n"""
+    @test occursin("File not found when", s)
 end

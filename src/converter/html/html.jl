@@ -47,7 +47,8 @@ page variables. See also [`fd2html`](@ref) which only returns the html.
 """
 function fd2html_v(st::AS; internal::Bool=false,
                    dir::String="", nop::Bool=false)::Tuple{String,Dict}
-    isempty(st) && return st
+    FD_ENV[:SOURCE] = "input string"
+    isempty(st) && return (st, LittleDict())
     if !internal
         empty!(ALL_PAGE_VARS)
         FOLDER_PATH[] = isempty(dir) ? mktempdir() : dir

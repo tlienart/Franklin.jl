@@ -39,8 +39,7 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool,
                 if check_type(typeof(value), acc_types)
                     curdict[key] = Pair(value, acc_types)
                 else
-                    @warn "Page var '$key' (type(s): $acc_types) can't be set " *
-                          "to value '$value' (type: $(typeof(value))). Assignment ignored."
+                    mddef_warn(key, value, acc_types)
                 end
             else
                 set_var!(curdict, key, value)
@@ -57,9 +56,13 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool,
         inner = stent(mdd)
         m = match(ASSIGN_PAT, inner)
         if isnothing(m)
-            @warn "Found delimiters for an @def environment but it didn't " *
-                  "have the right @def var = ... format. Verify (ignoring " *
-                  "for now)."
+            print_warning("""
+                Delimiters for an '@def ...' environement were found but at
+                least one assignment does not have the proper syntax. That
+                assignment will be ignored.
+                \nRelevant pointers:
+                $POINTER_PV
+                """)
             continue
         end
         vname, vdef = m.captures[1:2]

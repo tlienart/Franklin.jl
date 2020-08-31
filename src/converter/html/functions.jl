@@ -20,8 +20,14 @@ function convert_html_fblock(β::HFun)::String
         return hfun_fill([β.fname])
     end
     # if we get here, then the function name is unknown, warn and ignore
-    @warn "I found a function block '{{$(β.fname) ...}}' but I don't " *
-          "recognise the function name. Ignoring."
+    print_warning("""
+        A block '{{$(β.fname) ...}}' was found but the name '$(β.fname)' does
+        not correspond to a built-in block or hfun nor does it match anything
+        defined in 'utils.jl'. It might have been misspelled.
+        \nRelevant pointers:
+        $POINTER_PV
+        $POINTER_HFUN
+        """)
     # returning empty
     return ""
 end
@@ -49,8 +55,7 @@ function hfun_fill(params::Vector{String})::String
         else
             tmp_repl = locvar(vname)
             if isnothing(tmp_repl)
-                @warn "I found a '{{fill $vname}}' but I do not know the " *
-                      "variable '$vname'. Ignoring."
+                hfun_unknown_arg1_warn(:fill, vname)
             else
                 repl = string(tmp_repl)
             end
@@ -59,8 +64,13 @@ function hfun_fill(params::Vector{String})::String
         rpath = params[2]
         tmp_repl = pagevar(rpath, vname)
         if isnothing(tmp_repl)
-            @warn "I found a '{{fill $vname $rpath}}' but I do not know the " *
-                  "variable '$vname' or the path '$rpath'. Ignoring."
+            hfun_misc_warn(:fill, """
+                The arguments '$vname' and '$rpath' cannot be resolved. It may
+                be that the path doesn't exist or that the variable '$vname'
+                is not defined on the page at that path.
+                \nRelevant pointers:
+                $POINTER_PV
+                """)
         else
             repl = string(tmp_repl)
         end
@@ -89,7 +99,9 @@ function hfun_insert(params::Vector{String})::String
     if isfile(fpath)
         repl = convert_html(read(fpath, String))
     else
-        @warn "I found an {{insert ...}} block and tried to insert '$fpath' but I couldn't find the file. Ignoring."
+        hfun_misc_warn(:insert, """
+            Couldn't find the file '$fpath' to resolve the insertion.
+            """)
     end
     return repl
 end
@@ -116,7 +128,9 @@ function hfun_href(params::Vector{String})::String
         haskey(PAGE_BIBREFS, hkey) || return repl
         repl = html_ahref_key(hkey, PAGE_BIBREFS[hkey])
     else
-        @warn "Unknown dictionary name $dname in {{href ...}}. Ignoring"
+        hfun_misc_warn(:href, """
+            Unknown reference dictionary '$dname'.
+            """)
     end
     return repl
 end
@@ -282,8 +296,10 @@ function hfun_paginate(params::Vector{String})::String
     end
     iter = locvar(params[1])
     if isnothing(iter)
-        @warn "In a {{paginate ...}} block, I couldn't recognise the " *
-              "name of the iterable. Nothing will get printed as a result."
+        hfun_misc_warn(:paginate, """
+            The page variable '$(params[1])' does not match the name of a page
+            variable. The call will be ignored.            
+            """)
         return ""
     end
     npp = locvar(params[2])
@@ -291,22 +307,26 @@ function hfun_paginate(params::Vector{String})::String
         try
             npp = parse(Int, params[2])
         catch
-            @warn "In a {{paginate ...}} block, I couldn't parse the number " *
-                  "of items per page. Defaulting to 10."
+            hfun_misc_warn(:paginate, """
+                Failed to parse the number of items per page (given: '$(params[2])'). Setting to 10.
+                """)
             npp = 10
         end
     end
     if npp <= 0
-        @warn "In a {{paginate ...}} block, the number of items per page is " *
-              "non-positive, defaulting to 10."
+        hfun_misc_warn(:paginate, """
+            Non-positive number of items per page ('$npp' read from $(params[2])). Setting to 10.
+            """)
         npp = 10
     end
 
     # Was there already a pagination element on this page?
     # if so warn and ignore
     if !isnothing(locvar(:paginate_itr))
-        @warn "It looks like you have multiple calls to {{paginate ...}} on " *
-              "the page; only one is supported. Verify."
+        hfun_misc_warn(:paginate, """
+            Multiple calls to '{{paginate ...}}' on the page but at most one is
+            expected.
+            """)
         return ""
     end
     # we're just storing the name here, so we'll have to locvar(locvar(.))

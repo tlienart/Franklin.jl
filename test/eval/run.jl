@@ -69,12 +69,11 @@ end
         a = sqrt(-1)
         b = 7
         """
-    @test (@test_logs (:warn, "There was an error of type DomainError running the code.") F.run_code(mod, c, junk)) === nothing
-    if VERSION >= v"1.2"
-        @test read(junk, String) == """DomainError with -1.0:
-            sqrt will only return a complex result if called with a complex argument. Try sqrt(Complex(x)).
-            """
-    end
+
+    s = @capture_out F.run_code(mod, c, junk)
+    @test occursin("Warning: in <input string>", s)
+    @test occursin("error of type 'DomainError'", s)
+    @test occursin("Checking the output files", s)
 end
 
 @testset "i462" begin

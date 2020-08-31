@@ -99,8 +99,8 @@ function write_page(output_path::AS, content::AS;
         end
     end
 
-    # the previous call possibly resolved a {{paginate}} which will have
-    # stored a :paginate_itr var, so we must branch on that
+    # the previous convert call possibly resolved a {{paginate}} which will
+    # have stored a :paginate_itr var, so we must branch on that
     if !isnothing(locvar(:paginate_itr))
         union!(PAGINATED, (outdir,))
         name    = locvar(:paginate_itr)

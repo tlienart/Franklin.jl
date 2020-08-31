@@ -43,6 +43,7 @@ Keyword arguments:
                       passing as arguments the rendered page and the page
                       variables
 * `host="127.0.0.1"`: the host to use for the local server
+* `show_warnings`:    whether to show franklin  warnings
 """
 function serve(; clear::Bool=false,
                  verb::Bool=false,
@@ -57,13 +58,18 @@ function serve(; clear::Bool=false,
                  cleanup::Bool=true,
                  on_write::Function=(_, _) -> nothing,
                  log::Bool=false,
-                 host::String="127.0.0.1"
+                 host::String="127.0.0.1",
+                 show_warnings::Bool=true
                  )::Union{Nothing,Int}
     LOGGING[] = log
     # set the global path
     FOLDER_PATH[] = pwd()
     # silent mode?
     silent && (FD_ENV[:SILENT_MODE] = true; verb = false)
+
+    if silent || !show_warnings
+        FD_ENV[:SHOW_WARNINGS] = false
+    end
 
     # in case of optim, there may be a prepath given which should be
     # kept
@@ -236,8 +242,8 @@ function fd_fullpass(watched_files::NamedTuple; clear::Bool=false,
     hasindexhtml = isfile(joinpath(root, "index.html"))
 
     if !hasindexmd && !hasindexhtml
-        @warn "No /index.md or /index.html found, there should be one. " *
-              "Ignoring..."
+        @warn "No 'index.md' or 'index.html' found in the root directory, " *
+              "there should be one. Ignoring..."
     end
 
     # go over all pages note that the html files are processed AFTER the

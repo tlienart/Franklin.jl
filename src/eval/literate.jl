@@ -19,7 +19,9 @@ function literate_to_franklin(rpath::AS)::Tuple{String,Bool}
     # append `.jl` if required
     endswith(fpath, ".jl") || (fpath *= ".jl")
     if !isfile(fpath)
-        @warn "File not found when trying to convert a literate file ($fpath)."
+        print_warning("""
+            File not found when trying to  convert a literate file at '$fpath'.
+            """)
         return "", true
     end
     if FD_ENV[:STRUCTURE] < v"0.2"

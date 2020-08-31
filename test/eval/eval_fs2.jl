@@ -61,8 +61,13 @@ end
         ```
         done.
         """
+    global h
     h = ""
-    @test_logs (:warn, "Evaluation of non-Julia code blocks is not yet supported.") (h = s |> seval)
+    s = @capture_out begin
+        global h
+        h = s |> seval
+    end
+    @test occursin("non-Julia code blocks", s)
 
     @test isapproxstr(h, raw"""
                         <p>Simple code:</p>
@@ -197,18 +202,19 @@ end
         """
     global h
     h = ""
-    @test_logs (:warn, "There was an error of type DomainError running the code.") (global h; h = s |> seval)
-    # errors silently
-    if VERSION >= v"1.2"
-        @test h // raw"""
-                    <p>Simple code:</p>
-                    <pre><code class="language-julia">sqrt(-1)</code></pre>
-                    <p>then:</p>
-                    <pre><code class="plaintext">DomainError with -1.0:
-                    sqrt will only return a complex result if called with a complex argument. Try sqrt(Complex(x)).
-                    </code></pre>
-                    <p>done.</p>"""
+    s = @capture_out begin
+        global h
+        h = s |> seval
     end
+    @test h // raw"""
+                <p>Simple code:</p>
+                <pre><code class="language-julia">sqrt(-1)</code></pre>
+                <p>then:</p>
+                <pre><code class="plaintext">DomainError with -1.0:
+                sqrt will only return a complex result if called with a complex argument. Try sqrt(Complex(x)).
+                </code></pre>
+                <p>done.</p>"""
+    @test occursin("'DomainError' when", s)
 end
 
 @testset "Eval (nojl)" begin
@@ -219,8 +225,14 @@ end
         ```
         done.
         """
-
-    @test (@test_logs (:warn, "Evaluation of non-Julia code blocks is not yet supported.") h |> seval) // raw"""
+    global r
+    r = ""
+    s = @capture_out begin
+        global r
+        r = h |> seval
+    end
+    @test occursin("non-Julia", s)
+    @test r// raw"""
         <p>Simple code:</p>
         <pre><code class="language-python">sqrt(-1)</code></pre>
         <p>done.</p>

@@ -75,9 +75,9 @@ end
         a = 5
         b = 7
         ```""")
-    @test @test_logs (:warn, "Evaluation of non-Julia code blocks is not yet supported.") F.resolve_code_block(c) ==
-        """<pre><code class="language-python">a = 5
-        b = 7</code></pre>"""
+
+    s = @capture_out F.resolve_code_block(c)
+    @test occursin("Evaluation of non-Julia code", s)
 
     # should eval
     bak = pwd()

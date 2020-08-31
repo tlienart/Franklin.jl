@@ -144,7 +144,7 @@ function explore_h_steps(hs, allvars=F.PageVars())
     return steps
 end
 
-gotd() = (flush_td(); cd(td); F.FOLDER_PATH[] = td)
+gotd() = (flush_td(); cd(td); F.FOLDER_PATH[] = td; set_globals())
 
 function fs1()
     F.FD_ENV[:STRUCTURE] = v"0.1"
@@ -181,3 +181,5 @@ function fs2()
 end
 
 fdi(s) = fd2html(s; internal=true)
+
+resource() = (F.FD_ENV[:SOURCE] = ""; set_globals())

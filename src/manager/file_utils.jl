@@ -9,6 +9,7 @@ where only structural variables are considered (e.g. controlling folder
 structure).
 """
 function process_config(; init::Bool=false)::Nothing
+    FD_ENV[:SOURCE] = "config.md"
     if init
         # initially the paths variable aren't set, try to find a config.md
         # and read definitions in it; in particular folder_structure.
@@ -19,7 +20,7 @@ function process_config(; init::Bool=false)::Nothing
         elseif isfile(config_path_v1)
             convert_md(read(config_path_v1, String); isconfig=true)
         else
-            @warn "I didn't find a config file. Ignoring."
+            config_warn()
         end
     else
         key = ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src, :folder)
@@ -28,7 +29,7 @@ function process_config(; init::Bool=false)::Nothing
         if isfile(config_path)
             convert_md(read(config_path, String); isconfig=true)
         else
-            @warn "I didn't find a config file. Ignoring."
+            config_warn()
         end
     end
     return nothing
@@ -44,6 +45,7 @@ in particular users can redefine the behaviour of `hfuns` though that's not
 recommended.
 """
 function process_utils()
+    FD_ENV[:SOURCE] = "utils.jl"
     utils_path_v1 = joinpath(FOLDER_PATH[], "src", "utils.jl")
     utils_path_v2 = joinpath(FOLDER_PATH[], "utils.jl")
     if isfile(utils_path_v2)
@@ -109,9 +111,11 @@ function process_file_err(
     inp  = joinpath(fpair...)
     outp = form_output_path(fpair.first, fpair.second, case)
     if case == :md
+        FD_ENV[:SOURCE] = get_rpath(inp)
         convert_and_write(fpair..., head, pgfoot, foot, outp;
                    prerender=prerender, isoptim=isoptim, on_write=on_write)
     elseif case == :html
+        FD_ENV[:SOURCE] = get_rpath(inp)
         set_cur_rpath(joinpath(fpair...))
         set_page_env()
         raw_html  = read(inp, String)
@@ -136,6 +140,7 @@ function process_file_err(
         end
         @label end_copyblock
     end
+    FD_ENV[:SOURCE] = ""
     FD_ENV[:FULL_PASS] || FD_ENV[:SILENT_MODE] || rprint("→ page updated [✓]")
     return nothing
 end
@@ -154,7 +159,7 @@ change_ext(fname::AS, ext=".html")::String = splitext(fname)[1] * ext
 
 Extracts the relative file system path out of the full system path to a file
 currently being processed. Does not start with a path separator.
-So `[some_fs_path]/blog/page.md` --> `blog/page.md`.
+So `[some_fs_path]/blog/page.md` --> `blog/page.md` (keeps the extension).
 """
 function get_rpath(fpath::String)
     root = path(ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src, :folder))

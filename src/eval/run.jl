@@ -78,7 +78,13 @@ function run_code(mod::Module, code::AS, out_path::AS;
         # TODO: add more informative message, maybe show type of error
         # + parent path
         FD_ENV[:SILENT_MODE] || print("\n")
-        warn_err && @warn "There was an error of type $err running the code."
+        warn_err && print_warning("""
+            There was an error of type '$err' when running a code block.
+            Checking the output files '$(splitext(out_path)[1]).(out|res)'
+            might be helpful to understand and solve the issue.
+            \nRelevant pointers:
+            $POINTER_EVAL
+            """)
         res = nothing
     end
     # if last bit ends with `;` return nothing (no display)

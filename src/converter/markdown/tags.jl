@@ -83,6 +83,7 @@ $SIGNATURES
 Internal function to (re)write the tag pages corresponding to `update_tags`.
 """
 function write_tag_page(tag)::Nothing
+    FD_ENV[:SOURCE] = "generated - tag"
     # make `fd_tag` available to that page generation
     set_var!(LOCAL_VARS, "fd_tag", tag)
 
