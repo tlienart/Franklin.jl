@@ -7,7 +7,14 @@ end
 @testset "Conv-html" begin
     @test_throws F.HTMLFunctionError F.convert_html("{{insert bb cc}}")
     @test_throws F.HTMLFunctionError F.convert_html("{{href aa}}")
-    @test (@test_logs (:warn, "Unknown dictionary name aa in {{href ...}}. Ignoring") F.convert_html("{{href aa bb}}")) == "<b>??</b>"
+
+    global r = ""; s = @capture_out begin
+        global r
+        r = F.convert_html("{{href aa bb}}")
+    end
+    @test r == "<b>??</b>"
+    @test occursin("Unknown reference dictionary 'aa'", s)
+
     @test_throws F.HTMLBlockError F.convert_html("{{if asdf}}{{end}}")
     @test_throws F.HTMLBlockError F.convert_html("{{if asdf}}")
     @test_throws F.HTMLBlockError F.convert_html("{{isdef asdf}}")
@@ -18,7 +25,12 @@ end
     s = """
         @def blah
         """
-    @test (@test_logs (:warn, "Found delimiters for an @def environment but it didn't have the right @def var = ... format. Verify (ignoring for now).") (s |> fd2html_td)) == ""
+    global r = ""; s = @capture_out begin
+        global r
+        r = s |> fd2html_td
+    end
+    @test r == ""
+    @test occursin("Delimiters for an '@def ...'", s)
 
     s = """
         Blah
@@ -36,11 +48,12 @@ end
 @testset "RSS" begin
     F.set_var!(F.GLOBAL_VARS, "website_descr", "")
     F.RSS_DICT["hello"] = F.RSSItem("","","","","","","",Date(1))
-    @test (@test_logs (:warn, """
-              I found RSS items but the RSS feed is not properly described:
-              at least one of the following variables has not been defined in
-              your config.md: `website_title`, `website_descr`, `website_url`.
-              The feed will not be (re)generated.""") F.rss_generator()) === nothing
+    global r = ""; s = @capture_out begin
+        global r
+        r = F.rss_generator()
+    end
+    @test r === nothing
+    @test occursin("RSS items were found but", s)
 end
 
 

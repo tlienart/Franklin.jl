@@ -4,7 +4,7 @@
 
 hfun_unknown_arg1_warn(name, argname) = """
     A h-function call '{{$name $argname}}'$(ifelse(String(name)=="fill",
-    " (or '{{...}}')", "")) has argument '$argname' which
+    " (or '{{$argname}}')", "")) has argument '$argname' which
     doesn't match a page variable available in the current scope. It might have
     been misspelled or should be defined via a '@def $argname = ...' either
     locally on the page or globally in 'config.md'.

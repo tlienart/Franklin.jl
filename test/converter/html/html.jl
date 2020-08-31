@@ -16,15 +16,28 @@
     @test F.convert_html(hs) == "Some text then INPUT1 and\n\nother stuff\n\nfinal text\n"
 
     for expr in ("isdef", "ifdef")
+        local  hs
         hs = """abc {{$expr no}}yada{{end}} def"""
         @test F.convert_html(hs) == "abc  def"
     end
 
     hs = raw"""abc {{ fill nope }} ... """
-    @test (@test_logs (:warn, "I found a '{{fill nope}}' but I do not know the variable 'nope'. Ignoring.") F.convert_html(hs))  == "abc  ... "
+    global r; r=""; s = @capture_out begin
+        global r
+        r = F.convert_html(hs)
+    end
+    @test r == "abc  ... "
+    @test occursin("h-function call '{{fill nope}}'", s)
+    @test occursin("should be defined via a '@def nope = ...'", s)
 
     hs = raw"""unknown fun {{ unknown fun }} and see."""
-    @test (@test_logs (:warn, "I found a function block '{{unknown ...}}' but I don't recognise the function name. Ignoring.") F.convert_html(hs)) == "unknown fun  and see."
+     global r; r=""; s = @capture_out begin
+         global r
+         r = F.convert_html(hs)
+     end
+     @test r ==  "unknown fun  and see."
+     @test occursin("A block '{{unknown ...}}' was found but", s)
+     @test occursin("defined in 'utils.jl'.", s)
 end
 
 
@@ -38,7 +51,14 @@ end
     @test F.convert_html(hs) == "Trying to insert: some random text to insert and see.\n"
 
     hs = raw"""Trying to insert: {{ insert nope.rnd }} and see."""
-    @test (@test_logs (:warn, "I found an {{insert ...}} block and tried to insert '$(joinpath(F.PATHS[:src_html], "nope.rnd"))' but I couldn't find the file. Ignoring.") F.convert_html(hs)) == "Trying to insert:  and see."
+
+    global r = ""; s = @capture_out begin
+        global r
+        r = F.convert_html(hs)
+    end
+    @test occursin("h-function call '{{insert ...}}'", s)
+    @test occursin("Couldn't find the file", s)
+    @test r == "Trying to insert:  and see."
 end
 
 @testset "h-insert-fs2" begin
@@ -51,7 +71,13 @@ end
     @test F.convert_html(hs) == "Trying to insert: some random text to insert and see.\n"
 
     hs = raw"""Trying to insert: {{ insert nope.rnd }} and see."""
-    @test (@test_logs (:warn, "I found an {{insert ...}} block and tried to insert '$(joinpath(F.PATHS[:layout], "nope.rnd"))' but I couldn't find the file. Ignoring.") F.convert_html(hs)) == "Trying to insert:  and see."
+    global r = ""; s = @capture_out begin
+        global r
+        r = F.convert_html(hs)
+    end
+    @test occursin("h-function call '{{insert ...}}'", s)
+    @test occursin("Couldn't find the file", s)
+    @test r == "Trying to insert:  and see."
 end
 
 
