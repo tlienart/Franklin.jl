@@ -69,9 +69,9 @@ end
 """
 $(SIGNATURES)
 
-for a project website, for instance `username.github.io/project/` all paths
-should eventually be pre-prended with `/project/`. This would happen just
-before you publish the website.
+For a project website, for instance `username.github.io/project/` all paths
+should eventually be pre-pended with `/project/`. This would happen just
+before you publish the website (see `optimize` or `publish`).
 """
 function fix_links(pg::String)::String
     prepath = globvar(:prepath)
