@@ -62,18 +62,28 @@ const IP_CHECK = (
 """Big number when we want things to be far."""
 const BIG_INT = typemax(Int)
 
+# This dictionary keeps track of a few useful flags that help keept track
+# of the context in which particular functions are called. This is not great
+# but works fine for what we do here and limits the necessity of passing lots
+# of arguments to lots of functions.
 const FD_ENV = LittleDict(
-    :DEBUG_MODE    => false,
     :FULL_PASS     => true,
+    :CLEAR         => false,
+    :VERB          => false,
+    :FINAL_PASS    => false,
+    :PRERENDER     => false,
+    :NO_FAIL_PRERENDER => true,  # skip prerendering if fails on a page
+    :ON_WRITE      => (_, _) -> nothing,
     :FORCE_REEVAL  => false,
+    :CUR_PATH      => "",        # complements fd-rpath
+    :SOURCE        => "",        # keeps track of the origin of a HTML string
+    :OFFSET_LXDEFS => -BIG_INT,  # helps keep track of order in lxcoms
+    :DEBUG_MODE    => false,
     :SUPPRESS_ERR  => false,
     :SILENT_MODE   => false,
-    :OFFSET_LXDEFS => -BIG_INT,
-    :CUR_PATH      => "",       # complements fd-rpath
-    :SOURCE        => "",       # keeps track of the origin of a HTML string
     :STRUCTURE     => v"0.2",
     :QUIET_TEST    => false,
-    :SHOW_WARNINGS => true,
+    :SHOW_WARNINGS => true,     # franklin-specific warnings
     )
 
 """Dict to keep track of languages and how comments are indicated and their extensions. This is relevant to allow hiding lines of code. """

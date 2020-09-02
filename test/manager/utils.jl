@@ -28,10 +28,12 @@ F.process_config()
     temp_out = joinpath(F.PATHS[:pub], "tmp.html")
     write(temp_out, "This is a test page.\n")
     # clear is false => file should remain
-    F.prepare_output_dir(false)
+    F.FD_ENV[:CLEAR] = false
+    F.prepare_output_dir()
     @test isfile(temp_out)
     # clear is true => file should go
-    F.prepare_output_dir(true)
+    F.FD_ENV[:CLEAR] = true
+    F.prepare_output_dir()
     @test !isfile(temp_out)
 end
 
@@ -97,11 +99,9 @@ rm(temp_index2)
             </body>
         </html>""")
 
-    clear = true
-
-    watched_files = F.fd_setup(; clear=clear)
-
-    F.fd_fullpass(watched_files; clear=clear)
+    F.FD_ENV[:CLEAR] = true
+    watched_files = F.fd_setup()
+    F.fd_fullpass(watched_files)
 
     @test issubset(["css", "libs", "index.html"], readdir(F.PATHS[:folder]))
     @test issubset(["temp.html", "temp.rnd"], readdir(F.PATHS[:pub]))
@@ -110,5 +110,6 @@ end
 @testset "Err procfile" begin
     write(temp_index, "blah blah { blih etc")
     println("🐝 Testing error message...:")
-    @test_throws F.OCBlockError F.process_file_err(:md, F.PATHS[:src] => "index.md"; clear=false)
+    F.FD_ENV[:CLEAR] = false
+    @test_throws F.OCBlockError F.process_file_err(:md, F.PATHS[:src] => "index.md")
 end

@@ -2,7 +2,7 @@
 Convert a Franklin html string into a html string (i.e. replace `{{ ... }}`
 blocks).
 """
-function convert_html(hs::AS; isoptim::Bool=false)::String
+function convert_html(hs::AS)::String
     isempty(hs) && return hs
 
     (:convert_html, "input hs: '$hs'") |> logger
@@ -31,9 +31,9 @@ function convert_html(hs::AS; isoptim::Bool=false)::String
     end
     isempty(fhs) && return ""
 
-    if !isempty(globvar("prepath")) && isoptim
-        fhs = fix_links(fhs)
-    end
+    # if FD_ENV[:FINAL_PASS] && !isempty(globvar("prepath"))
+    #     fhs = fix_links(fhs)
+    # end
 
     return String(fhs)
 end
