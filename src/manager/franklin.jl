@@ -289,6 +289,7 @@ was added or deleted and consequently updates the `watched_files`.
 function fd_loop(cycle_counter::Int, ::LiveServer.FileWatcher,
                  watched_files::NamedTuple
                  )::Nothing
+    verb = FD_ENV[:VERB]
     # every 30 cycles (3 seconds), scan directory to check for new or deleted
     # files and update dicts accordingly
     if mod(cycle_counter, 30) == 0
