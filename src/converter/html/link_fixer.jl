@@ -5,7 +5,7 @@ Direct inline-style links are properly processed by Julia's Markdown processor b
 
 * `[link title][some reference]` and later `[some reference]: http://www.reddit.com`
 * `[link title]` and later `[link title]: https://www.mozilla.org`
-* (we don't either) `[link title](https://www.google.com "Google's Homepage")`
+* `[link title](https://www.google.com "Google's Homepage")` (we don't either)
 """
 function find_and_fix_md_links(hs::String)::String
     # 1. find all occurences of things that look like links
@@ -69,8 +69,8 @@ end
 """
 $(SIGNATURES)
 
-For a project website, for instance `username.github.io/project/` all paths
-should eventually be pre-pended with `/project/`. This would happen just
+For a project website, for instance `username.github.io/project/` all relative
+paths should eventually be pre-pended with `/project/`. This would happen just
 before you publish the website (see `optimize` or `publish`).
 """
 function fix_links(pg::String)::String
@@ -78,5 +78,6 @@ function fix_links(pg::String)::String
     isempty(prepath) && return pg
     pp = strip(prepath, '/')
     ss = SubstitutionString("\\1=\"/$(pp)/")
+    # replace things that look like href="/..." with href="/$prepath/..."
     return replace(pg, r"(src|href|formaction)\s*?=\s*?\"\/" => ss)
 end

@@ -27,11 +27,11 @@ Keyword arguments:
 * `port=8000`:       the port to use for the local server (should pick a number
                       between 8000 and 9000)
 * `single=false`:    whether to run a single pass or run continuously
-* `prerender=false`: whether to pre-render javascript (KaTeX and highlight.js)
 * `nomess=false`:    suppresses all messages (internal use).
-* `isoptim=false`:   whether we're in an optimisation phase or not (if so,
-                      links are fixed in case of a project website, see
+* `is_final_pass=false`: whether we're in a "final pass" (if so, links are
+                      fixed in case of a project website, see
                       [`convert_and_write`](@ref).
+* `prerender=false`: whether to pre-render javascript (KaTeX and highlight.js)
 * `no_fail_prerender=true`: whether, in a prerendering phase, ignore errors and
                       try to produce an output
 * `eval_all=false`:  whether to force re-evaluation of all code blocks
@@ -51,7 +51,7 @@ function serve(; clear::Bool=false,
                  single::Bool=false,
                  prerender::Bool=false,
                  nomess::Bool=false,
-                 isoptim::Bool=false,
+                 is_final_pass::Bool=false,
                  no_fail_prerender::Bool=true,
                  eval_all::Bool=false,
                  silent::Bool=false,
@@ -77,6 +77,14 @@ function serve(; clear::Bool=false,
     def_GLOBAL_VARS!()
     isnothing(prepath) || set_var!(GLOBAL_VARS, "prepath", prepath.first)
 
+    # Set context out of kwargs vars
+    FD_ENV[:CLEAR]      = clear
+    FD_ENV[:VERB]       = verb
+    FD_ENV[:FINAL_PASS] = is_final_pass
+    FD_ENV[:PRERENDER]  = prerender
+    FD_ENV[:NO_FAIL_PRERENDER] = no_fail_prerender
+    FD_ENV[:ON_WRITE]   = on_write
+
     # check if there's a config file, if there is, check the variable
     # definitions looking at the ones that would affect overall structure etc.
     process_config(init=true)
@@ -86,10 +94,13 @@ function serve(; clear::Bool=false,
     FD_ENV[:STRUCTURE] = fsv
 
     if FD_ENV[:STRUCTURE] < v"0.2"
-        @warn "You seem to be using Franklin's old file structure which is now " *
-              "deprecated, please consider upgrading to the new file structure, " *
-              "see https://github.com/tlienart/Franklin.jl/blob/master/NEWS.md#v06-1 " *
-              "for details."
+        FD_ENV[:SOURCE] = "first pass"
+        print_warning("""
+            You seem to be using Franklin's old file structure which is now
+            deprecated,  please consider upgrading to the new file structure.
+            See https://github.com/tlienart/Franklin.jl/blob/master/NEWS.md#v06-1
+            for more details.
+            """)
         # check to see if we're in a folder that has the right structure,
         # otherwise stop and tell the user to check (#155)
         if !isdir(joinpath(FOLDER_PATH[], "src"))
@@ -116,7 +127,7 @@ function serve(; clear::Bool=false,
     end
 
     # construct the set of files to watch
-    watched_files = fd_setup(clear=clear)
+    watched_files = fd_setup()
 
     # set a verbosity var that we'll use in the rest of the function
     nomess && (verb = false)
@@ -125,10 +136,7 @@ function serve(; clear::Bool=false,
     nomess || println("→ Initial full pass...")
     start = time()
     FD_ENV[:FORCE_REEVAL] = eval_all
-    sig = fd_fullpass(watched_files; clear=clear, verb=verb,
-                      prerender=prerender, isoptim=isoptim,
-                      no_fail_prerender=no_fail_prerender,
-                      on_write=on_write)
+    sig = fd_fullpass(watched_files)
     FD_ENV[:FORCE_REEVAL] = false
     sig < 0 && return sig
     fmsg = rpad("✔ full pass...", 40)
@@ -136,10 +144,9 @@ function serve(; clear::Bool=false,
 
     # start the continuous loop
     if !single
+        FD_ENV[:CLEAR] = false
         nomess || println("→ Starting the server...")
-        coreloopfun = (cntr, fw) -> fd_loop(cntr, fw, watched_files;
-                                            clear=clear, verb=verb,
-                                            on_write=on_write)
+        coreloopfun = (cntr, fw) -> fd_loop(cntr, fw, watched_files)
         # start the liveserver in the current directory
         live_server_dir = ifelse(FD_ENV[:STRUCTURE] < v"0.2", "", "__site")
         LiveServer.setverbose(verb)
@@ -160,18 +167,14 @@ $(SIGNATURES)
 Sets up the collection of watched files by doing an initial scan of the input
 directory. It also sets the paths variables and prepares the output directory.
 
-**Keyword argument**
-
-* `clear=false`: whether to remove any existing output directory
-
 See also [`serve`](@ref).
 """
-function fd_setup(; clear::Bool=true)::NamedTuple
+function fd_setup()::NamedTuple
     # . setting up:
     # -- reading and storing the path variables
     # -- setting up the output directory (see `clear`)
     set_paths!()
-    prepare_output_dir(clear)
+    prepare_output_dir()
 
     # . recovering the list of files in the input dir we care about
     # -- these are stored in dictionaries, the key is the full path and the
@@ -183,10 +186,10 @@ function fd_setup(; clear::Bool=true)::NamedTuple
     literate_scripts = TrackedFiles()
     # named tuples of all the watched files
     # NOTE: with FS2 the ordering now matters, i.p. other should be first
-    watched_files = (other = other_files,
-                     infra = infra_files,
-                     md    = md_pages,
-                     html  = html_pages,
+    watched_files = (other    = other_files,
+                     infra    = infra_files,
+                     md       = md_pages,
+                     html     = html_pages,
                      literate = literate_scripts)
     # fill the dictionaries
     scan_input_dir!(watched_files...)
@@ -203,17 +206,16 @@ as appropriate.
 
 * `clear=false`:     whether to remove any existing output directory
 * `verb=false`:      whether to display messages
+* `is_final_pass=false` : whether it's the final pass before deployment
 * `prerender=false`: whether to prerender katex and code blocks
-* `isoptim=false`  : whether it's an optimization pass
 * `no_fail_prerender=true`: whether to skip if a prerendering goes wrong in which case don't prerender
 
 See also [`fd_loop`](@ref), [`serve`](@ref) and [`publish`](@ref).
 """
-function fd_fullpass(watched_files::NamedTuple; clear::Bool=false,
-                     verb::Bool=false, prerender::Bool=false, isoptim::Bool=false,
-                     no_fail_prerender::Bool=true,
-                     on_write::Function=(_, _) -> nothing)::Int
-    FD_ENV[:FULL_PASS] = true
+function fd_fullpass(watched_files::NamedTuple)::Int
+    # keep track of context (some things either will or won't be done on
+    # the full pass, e.g. see tag generation)
+    FD_ENV[:FULL_PASS]  = true
 
     # reset global page variables and latex definitions
     # NOTE: need to keep track of pre-path if specified, see optimize
@@ -241,9 +243,12 @@ function fd_fullpass(watched_files::NamedTuple; clear::Bool=false,
     hasindexmd   = isfile(joinpath(root, "index.md"))
     hasindexhtml = isfile(joinpath(root, "index.html"))
 
-    if !hasindexmd && !hasindexhtml
-        @warn "No 'index.md' or 'index.html' found in the root directory, " *
-              "there should be one. Ignoring..."
+    if !(hasindexmd || hasindexhtml)
+        FD_ENV[:SOURCE] = "full pass"
+        print_warning("""
+            No 'index.md' or 'index.html' found in the root directory. There
+            should be one. Ignoring.
+            """)
     end
 
     # go over all pages note that the html files are processed AFTER the
@@ -251,32 +256,27 @@ function fd_fullpass(watched_files::NamedTuple; clear::Bool=false,
     # with otherwise the same path, it's the latter that will be considered.
     s = 0
     for (case, dict) ∈ pairs(watched_files), (fpair, t) ∈ dict
-
+        # help keep track of what we're doing for debugging
         (:fd_fullpass, joinpath(fpair...)) |> logger
-
-        a = process_file(case, fpair, head, pg_foot, foot, t;
-                         clear=clear, prerender=prerender,
-                         isoptim=isoptim, on_write=on_write)
+        # process
+        a = process_file(case, fpair, head, pg_foot, foot, t)
         # in case of failure of prerendering, if no_fail_prerender, we force
         # prerender=false
-        if a < 0 && prerender && no_fail_prerender
-            process_file(case, fpair, head, pg_foot, foot, t;
-                         clear=clear, prerender=false,
-                         isoptim=isoptim, on_write=on_write)
+        if a < 0 && FD_ENV[:PRERENDER] && FD_ENV[:NO_FAIL_PRERENDER]
+            FD_ENV[:PRERENDER] = false
+            process_file(case, fpair, head, pg_foot, foot, t)
+            FD_ENV[:PRERENDER]  = true
         end
         s += a
     end
-
     # generate RSS if appropriate
     globvar("generate_rss") && rss_generator()
-
     # generate tags if appropriate
     generate_tag_pages()
-
     # done
     FD_ENV[:FULL_PASS] = false
-    # return -1 if any page
-    return ifelse(s<0, -1, 0)
+    # return -1 if any page failed to build, 0 otherwise
+    return ifelse(s < 0, -1, 0)
 end
 
 """
@@ -285,16 +285,11 @@ $(SIGNATURES)
 This is the function that is continuously run, checks if files have been
 modified and if so, processes them. Every 30 cycles, it checks whether any file
 was added or deleted and consequently updates the `watched_files`.
-
-**Keyword arguments**
-
-* `clear=false`: whether to remove any existing output directory
-* `verb=false`:  whether to display messages
 """
 function fd_loop(cycle_counter::Int, ::LiveServer.FileWatcher,
-                 watched_files::NamedTuple;
-                 clear::Bool=false, verb::Bool=false,
-                 on_write::Function=(_, _) -> nothing)::Nothing
+                 watched_files::NamedTuple
+                 )::Nothing
+    verb = FD_ENV[:VERB]
     # every 30 cycles (3 seconds), scan directory to check for new or deleted
     # files and update dicts accordingly
     if mod(cycle_counter, 30) == 0
@@ -336,9 +331,7 @@ function fd_loop(cycle_counter::Int, ::LiveServer.FileWatcher,
             if haskey(watched_files[:infra], fpair)
                 verb && println("→ full pass...")
                 start = time()
-                fd_fullpass(watched_files;
-                            clear=false, verb=false, prerender=false,
-                            on_write=on_write)
+                fd_fullpass(watched_files)
                 if verb
                     print_final(rpad("✔ full pass...", 15), start)
                     println("")
@@ -365,8 +358,7 @@ function fd_loop(cycle_counter::Int, ::LiveServer.FileWatcher,
                     for m in eachmatch(r"\{(.*?)(\.jl)?\}", content)
                         if endswith(literate_path, m.captures[1])
                             process_file(:md, mdfpair, head, pgfoot, foot,
-                                         cur_t; clear=false, prerender=false,
-                                         on_write=on_write)
+                                         cur_t)
                             # no need to look at further matches on that page
                             # since we've already triggered the page build
                             break
@@ -385,8 +377,7 @@ function fd_loop(cycle_counter::Int, ::LiveServer.FileWatcher,
                 pgfoot = read(joinpath(layout, "page_foot.html"), String)
                 foot   = read(joinpath(layout, "foot.html"),      String)
                 # then process
-                process_file(case, fpair, head, pgfoot, foot, cur_t;
-                             clear=false, prerender=false, on_write=on_write)
+                process_file(case, fpair, head, pgfoot, foot, cur_t)
                 verb && print_final(fmsg, start)
             end
         end

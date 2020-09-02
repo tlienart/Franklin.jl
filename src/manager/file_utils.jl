@@ -58,7 +58,7 @@ function process_utils()
     # wipe / create module Utils
     newmodule("Utils")
     Base.include(Main.Utils, utils)
-    # # keep track of utils names
+    # keep track of utils names
     ns = String.(names(Main.Utils, all=true))
     filter!(n -> n[1] != '#' && n ∉ ("eval", "include", "Utils"), ns)
     empty!(UTILS_NAMES)
@@ -72,19 +72,26 @@ $(SIGNATURES)
 
 See [`process_file_err`](@ref).
 """
-function process_file(case::Symbol, fpair::Pair{String,String}, args...;
-                      kwargs...)::Int
+function process_file(case::Symbol, fpair::Pair{String,String}, args...)::Int
     if FD_ENV[:DEBUG_MODE]
-        process_file_err(case, fpair, args...; kwargs...)
+        process_file_err(case, fpair, args...)
         return 0
     end
 
     try
-        process_file_err(case, fpair, args...; kwargs...)
+        process_file_err(case, fpair, args...)
     catch err
         rp = fpair.first
         rp = rp[end-min(20, length(rp))+1 : end]
-        FD_ENV[:QUIET_TEST] || println("\n... encountered an issue processing '$(fpair.second)' in ...$rp. Verify, then start franklin again...\n")
+        if !FD_ENV[:QUIET_TEST]
+            FD_ENV[:SOURCE] = fpair.second
+            print_warning("""
+                Encountered an issue processing '$(fpair.second)' in $rp.
+                Verify, then re-start the Franklin server.
+                The error is displayed below:
+                $err
+                """)
+        end
         FD_ENV[:SUPPRESS_ERR] || throw(err)
         return -1
     end
@@ -101,25 +108,22 @@ processes it by converting it and adding appropriate header and footer and
 writes it to the appropriate place. It can throw an error which will be
 caught in `process_file(args...)`.
 """
-function process_file_err(
-            case::Symbol, fpair::Pair{String, String},
-            head::AS="", pgfoot::AS="", foot::AS="", t::Float64=0.;
-            clear::Bool=false, prerender::Bool=false, isoptim::Bool=false,
-            on_write::Function=(_,_)->nothing)::Nothing
+function process_file_err(case::Symbol, fpair::Pair{String, String},
+                          head::AS="", pgfoot::AS="", foot::AS="",
+                          t::Float64=0.0)::Nothing
     # depending on the file extension, either full process (.md), partial
     # process (.html) or no process (everything else)
     inp  = joinpath(fpair...)
     outp = form_output_path(fpair.first, fpair.second, case)
     if case == :md
         FD_ENV[:SOURCE] = get_rpath(inp)
-        convert_and_write(fpair..., head, pgfoot, foot, outp;
-                   prerender=prerender, isoptim=isoptim, on_write=on_write)
+        convert_and_write(fpair..., head, pgfoot, foot, outp)
     elseif case == :html
         FD_ENV[:SOURCE] = get_rpath(inp)
         set_cur_rpath(joinpath(fpair...))
         set_page_env()
         raw_html  = read(inp, String)
-        proc_html = convert_html(raw_html; isoptim=isoptim)
+        proc_html = convert_html(raw_html) |> postprocess_page
         write(outp, proc_html)
     else # case in (:other, :infra)
         if FD_ENV[:STRUCTURE] >= v"0.2"
@@ -132,9 +136,9 @@ function process_file_err(
                 @goto end_copyblock
             end
         end
-        # NOTE: some processing may be further added here later on (e.g.
-        # parsing) of CSS files)
-        # only copy again if necessary (file is not there or has changed)
+        # NOTE: some processing may be added here later on (e.g. parsing of
+        # CSS files). Only copy again if necessary (file is not there or
+        # has changed)
         if !isfile(outp) || (mtime(outp) < t && !filecmp(inp, outp))
             cp(inp, outp, force=true)
         end

@@ -93,7 +93,9 @@ function write_tag_page(tag)::Nothing
     dir = joinpath(path(:tag), tag)
     isdir(dir) || mkdir(dir)
 
-    write(joinpath(dir, "index.html"), convert_html(content))
+    h = convert_html(content) |> postprocess_page
+
+    write(joinpath(dir, "index.html"), h)
 
     # reset `fd_tag`
     set_var!(LOCAL_VARS, "fd_tag", "")

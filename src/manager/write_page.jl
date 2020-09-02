@@ -30,11 +30,13 @@ end
 """
 $(SIGNATURES)
 
-Take a HTML page and apply prerendering and link fixing as appropriate.
+Take a generated HTML string and apply prerendering and link fixing as
+appropriate.
 """
-function optim_page(pg; prerender=false, isoptim=false)
+function postprocess_page(pg)
     # Prerender if required (using JS tools)
-    if prerender
+    # order in which things are done matter a bit.
+    if FD_ENV[:PRERENDER]
         # Maths (KATEX)
         if locvar(:hasmath) == true
             pg = js_prerender_katex(pg)
@@ -51,7 +53,7 @@ function optim_page(pg; prerender=false, isoptim=false)
         end
     end
     # append pre-path to links if required (see optimize)
-    if isoptim
+    if FD_ENV[:FINAL_PASS]
         pg = fix_links(pg)
     end
     return pg
@@ -68,7 +70,6 @@ without in which case the scaffolding is read from `layout`.
 """
 function write_page(output_path::AS, content::AS;
                     head::T=nothing, pgfoot::T=nothing, foot::T=nothing,
-                    prerender::Bool=false, isoptim::Bool=false
                     )::String where T <: Union{Nothing,AS}
     # NOTE
     #   - output_path is assumed to exist // see form_output_path
@@ -117,7 +118,7 @@ function write_page(output_path::AS, content::AS;
             ctt_i = replace(ctt, PAGINATE => ins_i)
             # assemble, optimize and write
             pg = build_page(head, ctt_i, pgfoot, foot)
-            pg = optim_page(pg, prerender=prerender, isoptim=isoptim)
+            pg = postprocess_page(pg)
             pgi == 1 && write(output_path, pg)
             dst = mkpath(joinpath(outdir, "$pgi"))
             write(joinpath(dst, "index.html"), pg)
@@ -127,7 +128,7 @@ function write_page(output_path::AS, content::AS;
         ispaginated && setdiff(PAGINATED, outdir)
         # convert any `{{...}}` that may be left and form the full page string
         pg = build_page(head, ctt, pgfoot, foot)
-        pg = optim_page(pg, prerender=prerender, isoptim=isoptim)
+        pg = postprocess_page(pg)
         # write the html file where appropriate
         write(output_path, pg)
     end
@@ -143,9 +144,8 @@ the appropriate HTML page (inserting `head`, `pgfoot` and `foot`) and finally
 write it at the appropriate place.
 """
 function convert_and_write(root::String, file::String, head::String,
-                    pgfoot::String, foot::String, output_path::String;
-                    prerender::Bool=false, isoptim::Bool=false,
-                    on_write::Function=(_,_)->nothing)::Nothing
+                           pgfoot::String, foot::String, output_path::String
+                           )::Nothing
     # 1. read the markdown into string, convert it and extract definitions
     # 2. eval the definitions and update the variable dictionary, also retrieve
     # document variables (time of creation, time of last modif) and add those
@@ -162,8 +162,8 @@ function convert_and_write(root::String, file::String, head::String,
     #   should we generate ? otherwise no
     #   are we in the full pass ? otherwise no
     #   is there a `rss` or `rss_description` ? otherwise no
-    cond_add = GLOBAL_VARS["generate_rss"].first &&     # should we generate?
-                    FD_ENV[:FULL_PASS] &&               # are we in the full pass?
+    cond_add = GLOBAL_VARS["generate_rss"].first &&  # should we generate?
+                    FD_ENV[:FULL_PASS] &&            # are we in the full pass?
                     !all(e -> isempty(locvar(e)), ("rss", "rss_description"))
     # otherwise yes
     cond_add && add_rss_item()
@@ -177,10 +177,9 @@ function convert_and_write(root::String, file::String, head::String,
     set_var!(LOCAL_VARS, "fd_ctime", fd_date(unix2datetime(s.ctime)))
     set_var!(LOCAL_VARS, "fd_mtime", fd_date(unix2datetime(s.mtime)))
 
-    pg = write_page(output_path, content; head=head, pgfoot=pgfoot, foot=foot,
-                    prerender=prerender, isoptim=isoptim)
+    pg = write_page(output_path, content; head=head, pgfoot=pgfoot, foot=foot)
 
     # 6. possible post-processing via the "on-write" function.
-    on_write(pg, LOCAL_VARS)
+    FD_ENV[:ON_WRITE](pg, LOCAL_VARS)
     return nothing
 end

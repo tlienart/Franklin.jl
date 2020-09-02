@@ -7,14 +7,14 @@ const TrackedFiles = Dict{Pair{String, String}, Float64}
 
 
 """
-Prepare the output directory `PATHS[:pub]`.
+$SIGNATURES
 
-## Argument
-
-* `clear=true`: removes the content of the output directory if it exists to
-                start from a blank slate
+Prepare the output directory `PATHS[:pub]`. If the environment variable CLEAR
+is true then the output folder is erased first (can be helpful to clean things
+and truly start from scratch).
 """
-function prepare_output_dir(clear::Bool=true)::Nothing
+function prepare_output_dir()::Nothing
+    clear = FD_ENV[:CLEAR]
     if FD_ENV[:STRUCTURE] < v"0.2"
         # if required to start from a blank slate -> remove the output dir
         (clear & isdir(PATHS[:pub])) && rm(PATHS[:pub], recursive=true)
