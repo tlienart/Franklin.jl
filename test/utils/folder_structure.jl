@@ -1,4 +1,5 @@
 @testset "set_paths!" begin
+    F.def_GLOBAL_VARS!()
     root = F.FOLDER_PATH[] = mktempdir()
     empty!(F.PATHS); F.FD_ENV[:STRUCTURE] = v"0.1"; F.set_paths!()
     @test Set(keys(F.PATHS)) == Set([:folder, :src, :src_pages, :src_css, :src_html, :pub, :css, :libs, :assets, :literate, :tag])
