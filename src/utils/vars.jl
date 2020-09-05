@@ -22,6 +22,7 @@ const GLOBAL_VARS_DEFAULT = [
     "date_days"        => Pair(String[],     (Vector{String},)),
     "date_shortdays"   => Pair(String[],     (Vector{String},)),
     "prepath"          => Pair("",           (String,)),
+    "tag_page_path"         => Pair("tag", (String,)),
     # will be added to IGNORE_FILES
     "ignore"           => Pair(String[], (Vector{Any},)),
     # RSS
