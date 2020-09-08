@@ -1,8 +1,3 @@
-
-
-
-
-
 # environments
 # ------------
 # - images
@@ -27,8 +22,9 @@
 # - footnotes
 # - citations
 
+F.def_GLOBAL_VARS!()
+
 @testset "close:headers" begin
-    F.def_GLOBAL_VARS!()
     h = """
     A
     # H
@@ -56,7 +52,6 @@
 end
 
 @testset "close:div" begin
-    F.def_GLOBAL_VARS!()
     h = """
     A
     @@b,c D @@
@@ -70,7 +65,6 @@ end
 
 # NOTE: will fail upon use of CommonMark (list)
 @testset "close:list+i" begin
-    F.def_GLOBAL_VARS!()
     h = """
     A
     * B
@@ -90,7 +84,6 @@ end
 
 
 @testset "ending p" begin
-    F.def_GLOBAL_VARS!()
     # Franklin.LOGGING[] = true
     h = raw"""
     @def date_format = "e, d u Y"
