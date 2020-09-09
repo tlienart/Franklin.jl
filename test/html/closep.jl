@@ -1,8 +1,3 @@
-
-
-
-
-
 # environments
 # ------------
 # - images
@@ -26,6 +21,8 @@
 # - raw html block with separating line
 # - footnotes
 # - citations
+
+F.def_GLOBAL_VARS!()
 
 @testset "close:headers" begin
     h = """

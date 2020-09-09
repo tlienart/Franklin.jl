@@ -58,7 +58,7 @@ function set_paths!()::LittleDict{Symbol,String}
         PATHS[:libs]      = joinpath(PATHS[:folder], "libs")
         PATHS[:assets]    = joinpath(PATHS[:folder], "assets")
         PATHS[:literate]  = joinpath(PATHS[:folder], "scripts")
-        PATHS[:tag]       = joinpath(PATHS[:pub],    "tag")
+        PATHS[:tag]       = joinpath(PATHS[:pub],    GLOBAL_VARS["tag_page_path"].first)
     else
         PATHS[:folder]   = normpath(FOLDER_PATH[])
         PATHS[:site]     = joinpath(PATHS[:folder], "__site")    # mandatory
@@ -67,7 +67,7 @@ function set_paths!()::LittleDict{Symbol,String}
         PATHS[:layout]   = joinpath(PATHS[:folder], "_layout")   # mandatory
         PATHS[:libs]     = joinpath(PATHS[:folder], "_libs")     # mandatory
         PATHS[:literate] = joinpath(PATHS[:folder], "_literate") # optional
-        PATHS[:tag]      = joinpath(PATHS[:site],   "tag")
+        PATHS[:tag]      = joinpath(PATHS[:site],   GLOBAL_VARS["tag_page_path"].first)
     end
 
     return PATHS
