@@ -120,11 +120,11 @@
 <div class="franklin-toc"><ol><li><a href="#overview">Overview</a><ol><li><a href="#using_page_variables">Using page variables</a></li></ol></li><li><a href="#html_functions">HTML functions</a><ol><li><a href="#basic_functions">Basic functions</a></li><li><a href="#conditional_blocks">Conditional blocks</a></li><li><a href="#for_loops">For loops</a></li></ol></li><li><a href="#global_page_variables">Global page variables</a></li><li><a href="#local_page_variables">Local page variables</a><ol><li><a href="#basic_settings">Basic settings</a></li><li><a href="#code_evaluation">Code evaluation</a></li><li><a href="#rss">RSS</a></li></ol></li></ol></div>
 <h2 id="overview"><a href="#overview">Overview</a></h2>
 <p>The general syntax to define a page variable is to write <code>@def varname &#61; value</code> on a new line e.g.:</p>
-<pre><code class="language-julia">@def author = "Septimia Zenobia"</code></pre>
+<pre><code class="language-julia">@def author &#61; &quot;Septimia Zenobia&quot;</code></pre>
 <p>where you could set the variable to a string, a number, a date,... anything. Definitions can span multiple lines but if they do, the subsequent lines <strong>must</strong> be indented e.g.:</p>
-<pre><code class="language-julia">@def some_str = """A string
+<pre><code class="language-julia">@def some_str &#61; &quot;&quot;&quot;A string
     on several lines is ok
-    but lines must be indented"""</code></pre>
+    but lines must be indented&quot;&quot;&quot;</code></pre>
 <p>These variables can serve multiple purposes but, primarily, they can be accessed from the HTML template blocks e.g.:</p>
 <pre><code class="language-html">&lt;footer&gt;
   This is the footer. &amp;copy; &#123;&#123;fill author&#125;&#125;.
@@ -142,7 +142,7 @@
 </li>
 </ol></div>
 <p>The second one is a bit less prevalent but, for instance, you can specify the default programming language for all code blocks so that code blocks that don&#39;t specify a language would use the default language for highlighting:</p>
-<pre><code class="language-julia">@def lang = "julia"</code></pre>
+<pre><code class="language-julia">@def lang &#61; &quot;julia&quot;</code></pre>
 <p>In the first case, you can access variables in your HTML template via one of the HTML functions such as the <code>fill</code> function shown above.</p>
 <h2 id="html_functions"><a href="#html_functions">HTML functions</a></h2>
 <p>HTML functions can be used in any one of your <code>*.html</code> file and in particular in any of the <code>_layout/*.html</code> files such as <code>head.html</code>. They are always called with the syntax <code>&#123;&#123;fname pv1 pv2 ...&#125;&#125;</code> where <code>pv1 pv2 ...</code> are page variable names.</p>
@@ -223,7 +223,7 @@
 </ul></div>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: September 10, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
+    &copy; Thibaut Lienart. Last modified: September 12, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

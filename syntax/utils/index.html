@@ -127,8 +127,8 @@
 <p>A <code>hfun_*</code> function is a simple way to generate custom and plug custom HTML somewhere.</p>
 <h3 id="without_parameters"><a href="#without_parameters">Without parameters</a></h3>
 <p>A parameter-free HTML function <code>hfun_foo</code> will have a definition in <code>utils.jl</code> like</p>
-<pre><code class="language-julia">function hfun_foo()
-    # some code here which defines "generated_html"
+<pre><code class="language-julia">function hfun_foo&#40;&#41;
+    # some code here which defines &quot;generated_html&quot;
     # as a String containing valid HTML
     return generated_html
 end</code></pre>
@@ -136,20 +136,20 @@ end</code></pre>
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">As you can see the way the function is called depends on the name of the function definition <code>hfun_foo</code> ⟶ <code>foo</code>. Make sure that the name does not clash with one of the <a href="/syntax/page-variables/">base HTML function</a> &#40;<code>fill</code>, <code>insert</code>, ...&#41; or one of the local or global variables.</div></div>
 <p><strong>Working example</strong>: here&#39;s an example where the function would list the last 3 files in a folder and display them as a list; you can see also see a similar full example used on the JuliaLang website <a href="https://github.com/JuliaLang/www.julialang.org/blob/54a7f5e1e62204302be37e632a47d85a60728ece/utils.jl#L70-L123">here</a>.</p>
-<pre><code class="language-julia">function hfun_recentblogposts()
-    list = readdir("blog")
-    filter!(f -> endswith(f, ".md"), list)
-    dates = [stat(joinpath("blog", f)).mtime for f in list]
-    perm = sortperm(dates, rev=true)
-    idxs = perm[1:min(3, length(perm))]
-    io = IOBuffer()
-    write(io, "<ul>")
-    for (k, i) in enumerate(idxs)
-        fi = "/blog/" * splitext(list[i])[1] * "/"
-        write(io, """<li><a href="$fi">Post $k</a></li>\n""")
+<pre><code class="language-julia">function hfun_recentblogposts&#40;&#41;
+    list &#61; readdir&#40;&quot;blog&quot;&#41;
+    filter&#33;&#40;f -&gt; endswith&#40;f, &quot;.md&quot;&#41;, list&#41;
+    dates &#61; &#91;stat&#40;joinpath&#40;&quot;blog&quot;, f&#41;&#41;.mtime for f in list&#93;
+    perm &#61; sortperm&#40;dates, rev&#61;true&#41;
+    idxs &#61; perm&#91;1:min&#40;3, length&#40;perm&#41;&#41;&#93;
+    io &#61; IOBuffer&#40;&#41;
+    write&#40;io, &quot;&lt;ul&gt;&quot;&#41;
+    for &#40;k, i&#41; in enumerate&#40;idxs&#41;
+        fi &#61; &quot;/blog/&quot; * splitext&#40;list&#91;i&#93;&#41;&#91;1&#93; * &quot;/&quot;
+        write&#40;io, &quot;&quot;&quot;&lt;li&gt;&lt;a href&#61;&quot;&#36;fi&quot;&gt;Post &#36;k&lt;/a&gt;&lt;/li&gt;\n&quot;&quot;&quot;&#41;
     end
-    write(io, "</ul>")
-    return String(take!(io))
+    write&#40;io, &quot;&lt;/ul&gt;&quot;&#41;
+    return String&#40;take&#33;&#40;io&#41;&#41;
 end</code></pre>
 <p>that function can then be called as <code>&#123;&#123;recentblogposts&#125;&#125;</code>.</p>
 <h3 id="with_parameters"><a href="#with_parameters">With parameters</a></h3>
@@ -157,8 +157,8 @@ end</code></pre>
 <pre><code class="language-html">&#123;&#123;fname arg1 arg2&#125;&#125;</code></pre>
 <p>the parameters are passed as a <strong>vector of strings</strong> i.e.: in the case above, the function will receive <code>&#91;&quot;arg1&quot;, &quot;arg2&quot;&#93;</code> and these strings will need to be further processed by the function.</p>
 <p>The procedure is otherwise the same than at the previous point, you just need to define the function like this:</p>
-<pre><code class="language-julia">function hfun_bar(params)
-    # params is a Vector{String}, do what you need to
+<pre><code class="language-julia">function hfun_bar&#40;params&#41;
+    # params is a Vector&#123;String&#125;, do what you need to
     # with the individual strings then form some HTML
     return generated_html
 end</code></pre>
@@ -168,7 +168,7 @@ end</code></pre>
 <p>This is a more advanced command and you should probably double check before making use of it as, usually, there will be a simpler way of achieving what you want. Also if you intend to use it, you will want to check out <a href="http://github.com/tlienart/FranklinUtils.jl">FranklinUtils</a> which provides helper functions for it.</p>
 <p>It&#39;s harder to come up with meaningful examples as most simple examples will be achievable another way so here we proceed with a dumb example &#40;and will show why it&#39;s dumb later&#41;.</p>
 <p>Let&#39;s imagine you want to bypass the way Franklin deals with headers, that you would like to be able to write</p>
-<pre><code class="language-julia">\h2{id="foo" title="Bar"}</code></pre>
+<pre><code class="language-julia">\h2&#123;id&#61;&quot;foo&quot; title&#61;&quot;Bar&quot;&#125;</code></pre>
 <p>in order to get</p>
 <pre><code class="language-html">&lt;h2 id&#61;&quot;foo&quot;&gt;Bar&lt;/h2&gt;</code></pre>
 <p>You can do this via a <code>lx_*</code> function:</p>
@@ -190,7 +190,7 @@ end</code></pre> </p>
 <p>which you would have called <code>\h2&#123;foo&#125;&#123;Bar&#125;</code>.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: September 10, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
+    &copy; Thibaut Lienart. Last modified: September 12, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

@@ -121,16 +121,16 @@
 <p>Juno &#40;very rarely&#41; crashes if you coincidentally press <code>&lt;CTRL&gt;&#43;C</code> while Juno is doing something in the background &#40;Juno issue <a href="https://github.com/JunoLab/Juno.jl/issues/309">#309</a>&#41;.</p>
 <p>The stacktrace you will see will seem particularly obscure, for instance:</p>
 <pre><code class="language-julia">InterruptException:
-_string_n at string.jl:60 [inlined]
-StringVector at iobuffer.jl:31 [inlined]
-#IOBuffer#320(::Bool, ::Bool, ::Nothing, ::Bool, ::Int64, ::Int64, ::Type{Base.GenericIOBuffer{Array{UInt8,1}}}) at iobuffer.jl:114
-(...)</code></pre>
+_string_n at string.jl:60 &#91;inlined&#93;
+StringVector at iobuffer.jl:31 &#91;inlined&#93;
+#IOBuffer#320&#40;::Bool, ::Bool, ::Nothing, ::Bool, ::Int64, ::Int64, ::Type&#123;Base.GenericIOBuffer&#123;Array&#123;UInt8,1&#125;&#125;&#125;&#41; at iobuffer.jl:114
+&#40;...&#41;</code></pre>
 <p>or</p>
-<pre><code class="language-julia">julia> "miniERROR: InterruptException:
+<pre><code class="language-julia">julia&gt; &quot;miniERROR: InterruptException:
 Stacktrace:
- [1] poptaskref(::Base.InvasiveLinkedListSynchronized{Task}) at ./task.jl:564
- [2] wait() at ./task.jl:591
-(...)</code></pre>
+ &#91;1&#93; poptaskref&#40;::Base.InvasiveLinkedListSynchronized&#123;Task&#125;&#41; at ./task.jl:564
+ &#91;2&#93; wait&#40;&#41; at ./task.jl:591
+&#40;...&#41;</code></pre>
 <p><strong>Solution</strong>: ignore the error, kill then restart the server or, failing that, kill and restart Julia.</p>
 <h3 id="not-juno"><a href="#not-juno">Not-Juno</a></h3>
 <p>The <a href="https://github.com/asprionj/LiveServer.jl"><code>LiveServer.jl</code></a> package, which handles the live-serving of the files, is based upon <a href="https://github.com/asprionj/LiveServer.jl"><code>HTTP.jl</code></a>. The latter has a fairly complex codebase with a number of asynchronous tasks and is known to sometimes crash in &#40;somewhat&#41; mysterious ways.</p>
@@ -141,7 +141,7 @@ Stacktrace:
 <p>See the comment about HTTP.jl in the <a href="#Not-Juno-1">subsection above</a>.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: September 10, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
+    &copy; Thibaut Lienart. Last modified: September 12, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

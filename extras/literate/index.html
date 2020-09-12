@@ -128,56 +128,56 @@
 <p>In what follows, it is assumed you have your Literate scripts  in a folder <code>/scripts/</code> and that you&#39;re using GitHub. It shouldn&#39;t be hard  to modify that to suit your own case.</p>
 <h2 id="using_literate_to_generate_auxiliary_files"><a href="#using_literate_to_generate_auxiliary_files">Using Literate to generate auxiliary files</a></h2>
 <p>Literate can manipulate scripts fairly easily, for instance to  generate notebooks:</p>
-<pre><code class="language-julia">scripts = joinpath.("scripts", readdir("scripts"))
-nbpath = joinpath("generated", "notebooks")
-isdir(nbpath) || mkpath(nbpath)
+<pre><code class="language-julia">scripts &#61; joinpath.&#40;&quot;scripts&quot;, readdir&#40;&quot;scripts&quot;&#41;&#41;
+nbpath &#61; joinpath&#40;&quot;generated&quot;, &quot;notebooks&quot;&#41;
+isdir&#40;nbpath&#41; || mkpath&#40;nbpath&#41;
 
 for script in scripts
    # Generate annotated notebooks
-   Literate.notebook(script, nbpath,
-                     execute=false, documenter=false)
+   Literate.notebook&#40;script, nbpath,
+                     execute&#61;false, documenter&#61;false&#41;
 end</code></pre>
 <p>This will go over all scripts in <code>/scripts/</code> and call <code>Literate.notebook</code> to generate a derived notebook in a <code>/generated/</code> folder &#40;which you will want to add to your <code>.gitignore</code>&#41;.</p>
 <h2 id="push_the_generated_files_to_a_page_branch"><a href="#push_the_generated_files_to_a_page_branch">Push the generated files to a page branch</a></h2>
 <p>Start by installing <code>gh-pages</code> with <code>npm</code>:</p>
-<pre><code class="language-bash">$> npm install gh-pages</code></pre>
+<pre><code class="language-bash">&#36;&gt; npm install gh-pages</code></pre>
 <p>Using the package <a href="https://github.com/davidanthoff/NodeJS.jl">NodeJS.jl</a> it is then easy to use <code>gh-pages</code> to push the generated notebooks to a folder on the <code>gh-pages</code> branch:</p>
 <pre><code class="language-julia">using NodeJS
 
-JS_GHP = """
-    var ghpages = require('gh-pages');
-    ghpages.publish('generated/', function(err) {});
-    """
+JS_GHP &#61; &quot;&quot;&quot;
+    var ghpages &#61; require&#40;&#39;gh-pages&#39;&#41;;
+    ghpages.publish&#40;&#39;generated/&#39;, function&#40;err&#41; &#123;&#125;&#41;;
+    &quot;&quot;&quot;
 
-run(`$(nodejs_cmd()) -e $JS_GHP`)</code></pre>
+run&#40;&#96;&#36;&#40;nodejs_cmd&#40;&#41;&#41; -e &#36;JS_GHP&#96;&#41;</code></pre>
 <p>Now these generated files are available on that branch without polluting your <code>master</code> branch. You can see this live on the <a href="https://github.com/alan-turing-institute/DataScienceTutorials.jl/tree/gh-pages">DataScienceTutorials repo</a>.</p>
 <p>You can link to these generated notebooks with links adapted from:</p>
 <pre><code class="language-plaintext">https://raw.githubusercontent.com/username/project/gh-pages/notebooks/theNotebook.ipynb</code></pre>
 <p>See <a href="https://alan-turing-institute.github.io/DataScienceTutorials.jl/isl/lab-2/">this page</a> for example.</p>
 <h2 id="add_the_whole_process_to_publish"><a href="#add_the_whole_process_to_publish">Add the whole process to <code>publish</code></a></h2>
 <p>You may want to re-generate all notebooks prior to pushing updates to GitHub. For this, use the <code>final</code> keyword of <code>publish</code> to which you can pass a function to use before publishing updates. For instance:</p>
-<pre><code class="language-julia">function gen_literate()
-    scripts = joinpath.("scripts", readdir("scripts"))
-    nbpath  = joinpath("generated", "notebooks")
-    isdir(nbpath) || mkpath(nbpath)
+<pre><code class="language-julia">function gen_literate&#40;&#41;
+    scripts &#61; joinpath.&#40;&quot;scripts&quot;, readdir&#40;&quot;scripts&quot;&#41;&#41;
+    nbpath  &#61; joinpath&#40;&quot;generated&quot;, &quot;notebooks&quot;&#41;
+    isdir&#40;nbpath&#41; || mkpath&#40;nbpath&#41;
 
     for script in scripts
        # Generate annotated notebooks
-       Literate.notebook(script, nbpath,
-                         execute=false, documenter=false)
+       Literate.notebook&#40;script, nbpath,
+                         execute&#61;false, documenter&#61;false&#41;
     end
-    JS_GHP = """
-        var ghpages = require('gh-pages');
-        ghpages.publish('generated/', function(err) {});
-        """
-    run(`$(nodejs_cmd()) -e $JS_GHP`)
+    JS_GHP &#61; &quot;&quot;&quot;
+        var ghpages &#61; require&#40;&#39;gh-pages&#39;&#41;;
+        ghpages.publish&#40;&#39;generated/&#39;, function&#40;err&#41; &#123;&#125;&#41;;
+        &quot;&quot;&quot;
+    run&#40;&#96;&#36;&#40;nodejs_cmd&#40;&#41;&#41; -e &#36;JS_GHP&#96;&#41;
 end
 # ... serve etc ...
 # ... then finally ...
-publish(final=gen_literate)</code></pre>
+publish&#40;final&#61;gen_literate&#41;</code></pre>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: September 10, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
+    &copy; Thibaut Lienart. Last modified: September 12, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

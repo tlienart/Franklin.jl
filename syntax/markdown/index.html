@@ -135,28 +135,28 @@
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">Franklin makes headers into links to help with internal links and automatic table of contents generation &#40;which you can include anywhere using <code>\toc</code>&#41;.</div></div>
 <h3 id="text_styling"><a href="#text_styling">Text styling</a></h3>
-<pre><code class="language-plaintext">**Bold text**, *italic* or _italic_, **_bold italic_**, `inline code`.</code></pre>
+<pre><code class="language-plaintext">**Bold text**, *italic* or _italic_, **_bold italic_**, &#96;inline code&#96;.</code></pre>
 <p>Inserting a horizontal rule can be done with</p>
 <pre><code class="language-markdown">---</code></pre>
 <p>For a blockquote, start the line with <code>&gt;</code>:</p>
-<pre><code class="language-markdown">> This is a blockquote</code></pre>
+<pre><code class="language-markdown">&gt; This is a blockquote</code></pre>
 <h3 id="links"><a href="#links">Links</a></h3>
-<pre><code class="language-markdown">inline links: [plain link](https:://www.wikipedia.org)
+<pre><code class="language-markdown">inline links: &#91;plain link&#93;&#40;https:://www.wikipedia.org&#41;
 
-reference links: ["reference" link][reflink] and ["reference" link][]
+reference links: &#91;&quot;reference&quot; link&#93;&#91;reflink&#93; and &#91;&quot;reference&quot; link&#93;&#91;&#93;
 
-[reflink]: https://www.wikipedia.org
-["reference" link]: https://www.wikipedia.org</code></pre>
+&#91;reflink&#93;: https://www.wikipedia.org
+&#91;&quot;reference&quot; link&#93;: https://www.wikipedia.org</code></pre>
 <p>Footnotes follow a similar syntax</p>
-<pre><code class="language-markdown">This has a footnote[^1]
+<pre><code class="language-markdown">This has a footnote&#91;^1&#93;
 
-[^1]: footnote definition</code></pre>
+&#91;^1&#93;: footnote definition</code></pre>
 <p>For images, just add an exclamation mark <code>&#33;</code>:</p>
-<pre><code class="language-markdown">inline: ![alt text](https://juliacon.org/2018/assets/img/julia-logo-dots.png)
+<pre><code class="language-markdown">inline: &#33;&#91;alt text&#93;&#40;https://juliacon.org/2018/assets/img/julia-logo-dots.png&#41;
 
-reference: ![alt text][ref]
+reference: &#33;&#91;alt text&#93;&#91;ref&#93;
 
-[ref]: https://juliacon.org/2018/assets/img/julia-logo-dots.png</code></pre>
+&#91;ref&#93;: https://juliacon.org/2018/assets/img/julia-logo-dots.png</code></pre>
 <p><strong>Notes</strong>:</p>
 <div class="tlist"><ul>
 <li><p>&#40;<strong>link reference</strong>&#41; when using &quot;indirect links&quot; i.e. in the text you use something like <code>&#91;link name&#93;&#91;link A&#93;</code> and then somewhere else you define <code>&#91;link A&#93;: some/url/</code>, we recommend you use unambiguous link identifiers &#40;here <code>&#91;link A&#93;</code>&#41;. We recommend you to not use numbers like <code>&#91;link name&#93;&#91;1&#93;</code>, indeed if on the page you have some code where <code>&#91;1&#93;</code> appears, there is an ambiguity for the parser,</p>
@@ -194,27 +194,27 @@ reference: ![alt text][ref]
 <p>You can specify the minimum and maximum header level to control the table of contents nesting using <code>@def mintoclevel&#61;2</code> and <code>@def maxtoclevel&#61;3</code> where, here, it would build a table of contents with the <code>h2</code> and <code>h3</code> headers only &#40;this is the setting used here for instance&#41;.</p>
 <h2 id="code"><a href="#code">Code</a></h2>
 <p>Inline code with single and double back-ticks</p>
-<pre><code class="language-markdown">Single back-ticks: `var = 5`, and
-double back-ticks if the code includes ticks: ``var = "`"``.</code></pre>
+<pre><code class="language-markdown">Single back-ticks: &#96;var &#61; 5&#96;, and
+double back-ticks if the code includes ticks: &#96;&#96;var &#61; &quot;&#96;&quot;&#96;&#96;.</code></pre>
 <p>Blocks of code with triple back-ticks and the language specifier</p>
-<pre><code class="language-markdown">```julia
-a = 5
-println(a)
-```</code></pre>
+<pre><code class="language-markdown">&#96;&#96;&#96;julia
+a &#61; 5
+println&#40;a&#41;
+&#96;&#96;&#96;</code></pre>
 <p>You&#39;re not obliged to specify the language, if you don&#39;t it will assume the language corresponds to the <a href="/syntax/page-variables/">page variable</a> <code>lang</code> &#40;set to <code>julia</code> by default&#41;. If you want the block to be considered as plaintext, use <code>plaintext</code> as the language specifier.</p>
 <p>Finally you can also use indented code blocks &#40;which will also take its highlighting hint from <code>lang</code>&#41; but this is <strong>not recommended</strong> and you have to explicitly opt-in by setting <code>indented_code</code> on a page that would use them:</p>
-<pre><code class="language-markdown">@def indented_code = true
+<pre><code class="language-markdown">@def indented_code &#61; true
 Code block:
 
-    a = 5
-    println(a)</code></pre>
+    a &#61; 5
+    println&#40;a&#41;</code></pre>
 <p>Indented code blocks are <em>ambiguous</em> with how other Franklin blocks can be defined such as div blocks and latex blocks. If you really want to use them, you will have to ensure that your div blocks and latex commands on that page do <strong>not use</strong> indentation as it might cause problems.</p>
 <h3 id="highlighting"><a href="#highlighting">Highlighting</a></h3>
 <p>Syntax highlighting is done via <a href="https://highlightjs.org/">highlight.js</a> and you can find the relevant script in the <code>/_libs/highlight/</code> folder. The default one supports highlighting for Bash, CSS, Ini, Julia, Julia-repl, Markdown, plaintext, Python, R, Ruby, Xml and Yaml. Note that if you use pre-rendering, then the full <code>highlight.js</code> is used with support for over 100 languages.</p>
 <p>By default unfenced code blocks &#40;e.g. indented code blocks&#41; will be highlighted as Julia code blocks; to change this, set <code>@def lang &#61; &quot;python&quot;</code>. If you want a code block to <em>not</em> be highlighted, we recommend you use <code>plaintext</code> to guarantee this:</p>
-<pre><code class="language-markdown">```plaintext
+<pre><code class="language-markdown">&#96;&#96;&#96;plaintext
 this will not be highlighted
-```</code></pre>
+&#96;&#96;&#96;</code></pre>
 <p>If you wish to have higlighting for more languages outside of the pre-rendering mode, head to <a href="https://highlightjs.org/">highlight.js</a>, make a selection of languages and place the resulting <code>higlight.pack.js</code> in the <code>/_libs/highlight/</code> folder. If you do this, you might want to slightly modify it to ensure that the Julia-repl mode is properly highlighted &#40;e.g. <code>shell&gt;</code>&#41;:</p>
 <div class="tlist"><ul>
 <li><p>open the <code>highlight.pack.js</code> in an editor of your choice</p>
@@ -222,48 +222,48 @@ this will not be highlighted
 <li><p>look for <code>hljs.registerLanguage&#40;&quot;julia-repl&quot;</code> and modify the entry to:</p>
 </li>
 </ul></div>
-<pre><code class="language-javascript">hljs.registerLanguage("julia-repl",function(a){return{c:[{cN:"meta",b:/^julia>/,r:10,starts:{e:/^(?![ ]{6})/,sL:"julia"}},{cN:"metas",b:/^shell>/,r:10,starts:{e:/^(?![ ]{6})/,sL:"bash"}},{cN:"metap",b:/^\(.*\)\spkg>/,r:10,starts:{e:/^(?![ ]{6})/,sL:"julia"}}]}});</code></pre>
+<pre><code class="language-javascript">hljs.registerLanguage&#40;&quot;julia-repl&quot;,function&#40;a&#41;&#123;return&#123;c:&#91;&#123;cN:&quot;meta&quot;,b:/^julia&gt;/,r:10,starts:&#123;e:/^&#40;?&#33;&#91; &#93;&#123;6&#125;&#41;/,sL:&quot;julia&quot;&#125;&#125;,&#123;cN:&quot;metas&quot;,b:/^shell&gt;/,r:10,starts:&#123;e:/^&#40;?&#33;&#91; &#93;&#123;6&#125;&#41;/,sL:&quot;bash&quot;&#125;&#125;,&#123;cN:&quot;metap&quot;,b:/^\&#40;.*\&#41;\spkg&gt;/,r:10,starts:&#123;e:/^&#40;?&#33;&#91; &#93;&#123;6&#125;&#41;/,sL:&quot;julia&quot;&#125;&#125;&#93;&#125;&#125;&#41;;</code></pre>
 <p>&#40;see also <a href="https://github.com/tlienart/FranklinTemplates.jl#notes">the README</a> of FranklinTemplates&#41;.</p>
 <h3 id="evaluated_code_blocks"><a href="#evaluated_code_blocks">Evaluated code blocks</a></h3>
 <p>Julia code blocks can be evaluated and the result of the code either shown or rendered. To declare a code block for evaluation, use the fenced code block syntax with a name for the code block:</p>
-<pre><code class="language-markdown">```julia:snippet1
+<pre><code class="language-markdown">&#96;&#96;&#96;julia:snippet1
 using LinearAlgebra, Random
-Random.seed!(555)
-a = randn(5)
-round(norm(a), sigdigits=4)
-```
+Random.seed&#33;&#40;555&#41;
+a &#61; randn&#40;5&#41;
+round&#40;norm&#40;a&#41;, sigdigits&#61;4&#41;
+&#96;&#96;&#96;
 
-\show{snippet1}</code></pre>
+\show&#123;snippet1&#125;</code></pre>
 <p>This will look like</p>
 <pre><code class="language-julia">using LinearAlgebra, Random
-Random.seed!(555)
-a = randn(5)
-round(norm(a), sigdigits=4)</code></pre>
+Random.seed&#33;&#40;555&#41;
+a &#61; randn&#40;5&#41;
+round&#40;norm&#40;a&#41;, sigdigits&#61;4&#41;</code></pre>
 <pre><code class="plaintext">3.173</code></pre>
 <p>For more information on using evaluated code blocks, please head to the <a href="/code/">section on code insertion</a>.</p>
 <h2 id="maths"><a href="#maths">Maths</a></h2>
 <h3 id="inline_and_display_maths"><a href="#inline_and_display_maths">Inline and display maths</a></h3>
 <p>Inserting maths is done pretty much like in LaTeX:</p>
-<pre><code class="language-plaintext">Inline: $x=5$ or display:
+<pre><code class="language-plaintext">Inline: &#36;x&#61;5&#36; or display:
 
-$$ \mathcal W_\psi[f] = \int_{\mathbb R} f(s)\psi(s)\mathrm{d}s $$</code></pre>
+&#36;&#36; \mathcal W_\psi&#91;f&#93; &#61; \int_&#123;\mathbb R&#125; f&#40;s&#41;\psi&#40;s&#41;\mathrm&#123;d&#125;s &#36;&#36;</code></pre>
 <p>Inline: \(x=5\) or display:</p>
 \[ \mathcal W_\psi[f] = \int_{\mathbb R} f(s)\psi(s)\mathrm{d}s \]
 <p>You can  also use <code>\&#91;...\&#93;</code> for display maths.</p>
 <p>One thing to keep in mind when adding maths on your page is that you should be generous in your use of whitespace, particularly  around inequality  operators to avoid ambiguity that could confuse KaTeX. So for instance prefer: <code>&#36;0 &lt; C&#36;</code> to <code>&#36;0&lt;C&#36;</code> &#40;the latter will not render properly&#41;. Also if you have to write double braces, make sure to add a space in between so <code>&#123; &#123;</code> or <code>&#125; &#125;</code> and not <code>&#123;&#123;</code> or <code>&#125;&#125;</code> since that has a specific meaning in Franklin:</p>
-<pre><code class="language-plaintext">$$ \dfrac{ {101}_{2} } $$</code></pre>
+<pre><code class="language-plaintext">&#36;&#36; \dfrac&#123; &#123;101&#125;_&#123;2&#125; &#125; &#36;&#36;</code></pre>
 \[\dfrac{1}{ {101}_{2} }\]
 <h3 id="aligned_maths"><a href="#aligned_maths">Aligned maths</a></h3>
 <p>For aligned environment you can use <code>\begin&#123;eqnarray&#125;...\end&#123;eqnarray&#125;</code> or <code>\begin&#123;align&#125;...\end&#123;align&#125;</code></p>
-<pre><code class="language-markdown">\begin{eqnarray}
-  \exp(i\pi)+1 &=& 0\\
-  1+1 &=& 2
-\end{eqnarray}
+<pre><code class="language-markdown">\begin&#123;eqnarray&#125;
+  \exp&#40;i\pi&#41;&#43;1 &amp;&#61;&amp; 0\\
+  1&#43;1 &amp;&#61;&amp; 2
+\end&#123;eqnarray&#125;
 
-\begin{align}
-  \exp(i\pi)+1 &= 0\\
-  1+1 &= 2
-\end{align}</code></pre>
+\begin&#123;align&#125;
+  \exp&#40;i\pi&#41;&#43;1 &amp;&#61; 0\\
+  1&#43;1 &amp;&#61; 2
+\end&#123;align&#125;</code></pre>
 \[\begin{array}{c}
   \exp(i\pi)+1 &=& 0\\
   1+1 &=& 2
@@ -296,18 +296,18 @@ $$ \mathcal W_\psi[f] = \int_{\mathbb R} f(s)\psi(s)\mathrm{d}s $$</code></pre>
 </ul></div>
 <p>are convenient commands to insert figures. Of course you&#39;re free to use the default markdown way <code>&#33;&#91;alt&#93;&#40;full_path&#41;</code> instead. One difference with these commands though is that they allow the use of relative paths; this can be convenient in order to organise your assets as you organise your pages.</p>
 <p><strong>Note</strong>: to help with the organisation of assets, Franklin will assume by default that figures are placed in a folder <code>/output/</code> relative to where the script is, i.e. if the script is in <code>&#91;script_dir&#93;</code>, the figures will be in <code>&#91;script_dir&#93;/output/</code>. To help with this, the macro <code>@OUTPUT</code> can be used which specifies the path to this relative output dir:</p>
-<pre><code class="language-julia">```julia:./ex1
+<pre><code class="language-julia">&#96;&#96;&#96;julia:./ex1
 using PyPlot
-figure()
-plot([0, 1], [0, 1])
-savefig(joinpath(@OUTPUT, "test.png"))
-```
-\fig{./output/test}</code></pre>
+figure&#40;&#41;
+plot&#40;&#91;0, 1&#93;, &#91;0, 1&#93;&#41;
+savefig&#40;joinpath&#40;@OUTPUT, &quot;test.png&quot;&#41;&#41;
+&#96;&#96;&#96;
+\fig&#123;./output/test&#125;</code></pre>
 <p>This gives:</p>
 <pre><code class="language-julia">using PyPlot
-figure()
-plot([0, 1], [0, 1])
-savefig(joinpath(@OUTPUT, "test.png"))</code></pre>
+figure&#40;&#41;
+plot&#40;&#91;0, 1&#93;, &#91;0, 1&#93;&#41;
+savefig&#40;joinpath&#40;@OUTPUT, &quot;test.png&quot;&#41;&#41;</code></pre>
 <div class="small-img"><img src="/assets/syntax/markdown/output/test.png" alt=""></div>
 <p>In fact the syntax <code>\fig&#123;./test&#125;</code> is also allowed, Franklin will then first look in the <code>&#91;script_dir&#93;</code> for a <code>test.*</code> figure and, if it doesn&#39;t find one, will try to  look in <code>&#91;script_dir&#93;/output/</code> for a <code>test.*</code> figure:</p>
 <div class="small-img"><img src="/assets/syntax/markdown/output/test.png" alt=""></div>
@@ -318,30 +318,30 @@ savefig(joinpath(@OUTPUT, "test.png"))</code></pre>
 <p>As an example you could have in <code>/assets/ccc/sidefile.md</code>:</p>
 <pre><code class="language-markdown">some **markdown** in a side file.</code></pre>
 <p>whereas in <code>index.md</code>:</p>
-<pre><code class="language-markdown">This is the index then \textinput{ccc/sidefile}</code></pre>
+<pre><code class="language-markdown">This is the index then \textinput&#123;ccc/sidefile&#125;</code></pre>
 <p>and this will be equivalent to just having in <code>index.md</code>:</p>
 <pre><code class="language-markdown">This is the index then some **markdown** in a side file.</code></pre>
 <p><strong>Note</strong>: if you don&#39;t specify a file extension, <code>.md</code> is appended to the specified path.</p>
 <h3 id="inserting_a_table"><a href="#inserting_a_table">Inserting a table</a></h3>
 <p>You can insert tables directly from CSV files with the <code>\tableinput&#123;header&#125;&#123;path&#125;</code> command. If you generate the file on-the-fly, you should follow this example:</p>
-<pre><code class="language-julia">```julia:./tableinput/gen
-testcsv = "h1,h2,h3
+<pre><code class="language-julia">&#96;&#96;&#96;julia:./tableinput/gen
+testcsv &#61; &quot;h1,h2,h3
 152,some string, 1.5f0
-0,another string,2.87"
-write("assets/pages/tableinput/testcsv.csv", testcsv)
-```</code></pre>
+0,another string,2.87&quot;
+write&#40;&quot;assets/pages/tableinput/testcsv.csv&quot;, testcsv&#41;
+&#96;&#96;&#96;</code></pre>
 <p>Then you can insert the table with:</p>
-<pre><code class="language-julia">\tableinput{}{./tableinput/testcsv.csv}</code></pre>
+<pre><code class="language-julia">\tableinput&#123;&#125;&#123;./tableinput/testcsv.csv&#125;</code></pre>
 <p>Which will result in:</p>
 <table><tr><th align="right">h1</th><th align="right">h2</th><th align="right">h3</th></tr><tr><td align="right">152</td><td align="right">some string</td><td align="right">1.5f0</td></tr><tr><td align="right">0</td><td align="right">another string</td><td align="right">2.87</td></tr></table>
 <p>In this case, given no header was specified in the call, a header was generated from the first line in the CSV &#40;here: <code>h1, h2, h3</code>&#41;.</p>
 <p>If your file doesn&#39;t have a header, you can specify it in the call:</p>
-<pre><code class="language-julia">```julia:./tableinput/gen
-testcsv = "152,some string, 1.5f0
-0,another string,2.87"
-write("assets/pages/tableinput/testcsv2.csv", testcsv)
-```
-\tableinput{custom h1,custom h2,custom h3}{./tableinput/testcsv2.csv}</code></pre>
+<pre><code class="language-julia">&#96;&#96;&#96;julia:./tableinput/gen
+testcsv &#61; &quot;152,some string, 1.5f0
+0,another string,2.87&quot;
+write&#40;&quot;assets/pages/tableinput/testcsv2.csv&quot;, testcsv&#41;
+&#96;&#96;&#96;
+\tableinput&#123;custom h1,custom h2,custom h3&#125;&#123;./tableinput/testcsv2.csv&#125;</code></pre>
 <table><tr><th align="right">custom h1</th><th align="right">custom h2</th><th align="right">custom h3</th></tr><tr><td align="right">152</td><td align="right">some string</td><td align="right">1.5f0</td></tr><tr><td align="right">0</td><td align="right">another string</td><td align="right">2.87</td></tr></table>
 <p>With the above in mind, you can also include existing CSV files.</p>
 <div class="note"><div class="title">⚠ Note</div>
@@ -360,7 +360,7 @@ write("assets/pages/tableinput/testcsv2.csv", testcsv)
 <p>can also be used. It is also possible to use HTML to create a table with the HTML fenced between <code>~~~</code>. </p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: September 10, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
+    &copy; Thibaut Lienart. Last modified: September 12, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

@@ -125,23 +125,23 @@
 <li><p><strong>inline code</strong>: you can use single backticks &#40;&#96;&#41; or double backticks &#40;&#96;&#96;&#41; &#40;if the code contains single ticks&#41; like so:</p>
 </li>
 </ul>
-<pre><code class="language-plaintext">This is some `inline code` or ``inline ` code with a tick``.</code></pre>
+<pre><code class="language-plaintext">This is some &#96;inline code&#96; or &#96;&#96;inline &#96; code with a tick&#96;&#96;.</code></pre>
 <ul>
 <li><p><strong>code blocks</strong>: it is recommended to use triple backticks &#40;&#96;&#96;&#96;&#41; optionally followed by a language name for highlighting like so:</p>
 </li>
 </ul>
 <pre><code class="language-julia">This is some julia code:
-```julia
-a = 2
+&#96;&#96;&#96;julia
+a &#61; 2
 @show a
-```</code></pre>
+&#96;&#96;&#96;</code></pre>
 <ul>
 <li><p><strong>code blocks 2</strong>: you can also use indented code blocks &#40;lines starting with four spaces or a tab&#41; but <em>fenced code blocks should be preferred</em> and you now have to opt-in to use them by setting <code>@def indented_code &#61; true</code></p>
 </li>
 </ul>
 <pre><code class="language-julia">This is some code:
 
-    a = 2
+    a &#61; 2
     @show a</code></pre>
 <p><strong>Note</strong>: when either using indented code blocks or using fenced code blocks with no language name, then the code language for highlighting can be specified with the local page variable <code>lang</code> i.e. <code>@def lang &#61; &quot;julia&quot;</code> &#40;which is the default&#41; or <code>@def lang &#61; &quot;&quot;</code> if you don&#39;t want the code to be highlighted.</p>
 <h3 id="evaluating_code"><a href="#evaluating_code">Evaluating code</a></h3>
@@ -157,14 +157,14 @@ a = 2
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content"><strong>Evaluation time</strong>: when a code block is created or modified and the page is saved, it will trigger a page build that will <em>wait</em> for the evaluation of the code block to complete. So if your code block takes a long time to execute, the page will not be updated before that&#39;s done.     That being said, if you don&#39;t modify the code block, it will only be executed <strong>once</strong> as the output is saved to file.</div></div>
 <p>Code blocks that <em>should not</em> be evaluated should be added as per standard markdown, so for instance:</p>
-<pre><code class="language-julia">```julia
-a = 10
-```</code></pre>
+<pre><code class="language-julia">&#96;&#96;&#96;julia
+a &#61; 10
+&#96;&#96;&#96;</code></pre>
 <p>Code blocks that <em>should</em> be evaluated should be added with <code>julia:path/to/script</code> where <code>path/to/script</code> indicates <em>where</em> the script corresponding to the code block will be saved &#40;<strong>note</strong>: the given path <em>must</em> be in UNIX format even if you&#39;re on Windows&#41;</p>
-<pre><code class="language-julia">```julia:./code/ex1
-a = 10
+<pre><code class="language-julia">&#96;&#96;&#96;julia:./code/ex1
+a &#61; 10
 @show a
-```</code></pre>
+&#96;&#96;&#96;</code></pre>
 <p>What this will do is:</p>
 <div class="tlist"><ol>
 <li><p>write the code to the file <code>/assets/&#91;subpath&#93;/code/ex1.jl</code></p>
@@ -189,89 +189,89 @@ a = 10
 <p><strong>Note</strong>: when code blocks are evaluated, their output &#40;<code>STDOUT</code>&#41; is captured and saved at <code>&#91;path&#93;/output/script.out</code> where <code>&#91;path&#93;</code> is what precedes <code>script.jl</code> in the cases above.</p>
 <h3 id="inserting_the_output"><a href="#inserting_the_output">Inserting the output</a></h3>
 <p>Let&#39;s say you&#39;ve added the following code block:</p>
-<pre><code class="language-julia">```julia:./code_pg1/ex1
+<pre><code class="language-julia">&#96;&#96;&#96;julia:./code_pg1/ex1
 using LinearAlgebra
-a = [1, 2, 3]
-@show dot(a, a)
-```</code></pre>
+a &#61; &#91;1, 2, 3&#93;
+@show dot&#40;a, a&#41;
+&#96;&#96;&#96;</code></pre>
 <p>In order to show the raw output &#40;whatever was captured in STDOUT&#41; as a code block, write</p>
-<pre><code class="language-julia">\output{./code_pg1/ex1}</code></pre>
+<pre><code class="language-julia">\output&#123;./code_pg1/ex1&#125;</code></pre>
 <p>which in the present example will introduce exactly the following HTML</p>
 <pre><code class="language-html">&lt;pre&gt;&lt;code class&#61;&quot;language-julia&quot;&gt;dot&#40;a, a&#41; &#61; 14&lt;/code&gt;&lt;/pre&gt;</code></pre>
 <p>and will look like</p>
-<pre><code class="language-julia">dot(a, a) = 14</code></pre>
+<pre><code class="language-julia">dot&#40;a, a&#41; &#61; 14</code></pre>
 <p>If you now change the vector <code>a</code> in the code block, the page will be re-compiled with the code-block re-evaluated and the new output will be shown.</p>
 <p>If you would like the output to be re-interpeted by Franklin as text, you can use <code>\textoutput</code> instead. Here&#39;s an example:</p>
-<pre><code class="language-julia">```julia:./code_pg1/ex2
+<pre><code class="language-julia">&#96;&#96;&#96;julia:./code_pg1/ex2
 using Statistics
-temps = (15, 15, 14, 16, 18, 19, 20, 12, 10, 24)
-println("The _average_ temperature is **$(mean(temps))°C**.")
-```
-\textoutput{./code_pg1/ex2}</code></pre>
+temps &#61; &#40;15, 15, 14, 16, 18, 19, 20, 12, 10, 24&#41;
+println&#40;&quot;The _average_ temperature is **&#36;&#40;mean&#40;temps&#41;&#41;°C**.&quot;&#41;
+&#96;&#96;&#96;
+\textoutput&#123;./code_pg1/ex2&#125;</code></pre>
 <p>That code block and the <code>\textoutput</code> command will appear as:</p>
 <pre><code class="language-julia">using Statistics
-temps = (15, 15, 14, 16, 18, 19, 20, 12, 10, 24)
-println("The _average_ temperature is **$(mean(temps))°C**.")</code></pre>
+temps &#61; &#40;15, 15, 14, 16, 18, 19, 20, 12, 10, 24&#41;
+println&#40;&quot;The _average_ temperature is **&#36;&#40;mean&#40;temps&#41;&#41;°C**.&quot;&#41;</code></pre>
 <p>The <em>average</em> temperature is <strong>16.3°C</strong>.</p>
 <p>Finally if you want to show your code &quot;notebook-style&quot;, i.e. both STDOUT and the result  of the last line, use <code>\show</code>:</p>
-<pre><code class="language-julia">```julia:ex_show
-x = 5
-println("hello")
+<pre><code class="language-julia">&#96;&#96;&#96;julia:ex_show
+x &#61; 5
+println&#40;&quot;hello&quot;&#41;
 x^2
-```
-\show{ex_show}</code></pre>
+&#96;&#96;&#96;
+\show&#123;ex_show&#125;</code></pre>
 <p>resulting in:</p>
-<pre><code class="language-julia">x = 5
-println("hello")
+<pre><code class="language-julia">x &#61; 5
+println&#40;&quot;hello&quot;&#41;
 x^2</code></pre>
 <pre><code class="plaintext">hello
 25</code></pre>
 <h3 id="hiding_lines"><a href="#hiding_lines">Hiding lines</a></h3>
 <p>Sometimes you may want to run some lines but hide them from the presentation, for this just use <code># hide</code> at the end of the line &#40;<code>hide</code> is not case sensitive so <code># HiDe</code> would be fine too&#41;:</p>
-<pre><code class="language-julia">```julia:./code_pg1/ex1
+<pre><code class="language-julia">&#96;&#96;&#96;julia:./code_pg1/ex1
 using LinearAlgebra # hide
-a = [1, 2, 3]
-@show dot(a, a)
-```</code></pre>
+a &#61; &#91;1, 2, 3&#93;
+@show dot&#40;a, a&#41;
+&#96;&#96;&#96;</code></pre>
 <p>You could also hide the entire code block if you only care about the output, for this put a <code># hideall</code> on any line:</p>
-<pre><code class="language-julia">```julia:./code_pg1/ex2
+<pre><code class="language-julia">&#96;&#96;&#96;julia:./code_pg1/ex2
 #hideall
 using Statistics
-temps = (15, 15, 14, 16, 18, 19, 20, 12, 10, 24)
-println("The _average_ temperature is **$(mean(temps))°C**.")
-```
-\textoutput{./code_pg1/ex2}</code></pre>
+temps &#61; &#40;15, 15, 14, 16, 18, 19, 20, 12, 10, 24&#41;
+println&#40;&quot;The _average_ temperature is **&#36;&#40;mean&#40;temps&#41;&#41;°C**.&quot;&#41;
+&#96;&#96;&#96;
+\textoutput&#123;./code_pg1/ex2&#125;</code></pre>
 <p>Which will appear as just:</p>
 <p>The <em>average</em> temperature is <strong>16.3°C</strong>.</p>
 <h3 id="projecttoml"><a href="#projecttoml">Project.toml</a></h3>
 <p>It can be convenient to set up your website as you would a Julia environment: <em>activating</em> it and <em>adding</em> the packages that you will use in code blocks. In order to do this, just activate the environment as you would otherwise, this will generate a <code>Project.toml</code> which will subsequently  be used by Franklin without  you having to worry about it.</p>
 <p>For instance, let&#39;s say that you want to use <code>PyCall</code> in some code blocks, then before starting the Franklin server do</p>
-<pre><code class="language-julia-repl">(1.x) pkg> activate .
-(myWebsite) pkg> add PyCall</code></pre>
+<pre><code class="language-julia-repl">&#40;1.x&#41; pkg&gt; activate .
+&#40;myWebsite&#41; pkg&gt; add PyCall</code></pre>
 <p>once that&#39;s done, if you now start the server, Franklin will write</p>
-<pre><code class="language-julia-repl">julia> serve()
-Activating environment at `~/Desktop/myWebsite/Project.toml`</code></pre>
+<pre><code class="language-julia-repl">julia&gt; serve&#40;&#41;
+Activating environment at &#96;~/Desktop/myWebsite/Project.toml&#96;</code></pre>
 <p>In other words, whenever you start the server, Franklin will now activate the environment with that <code>Project.toml</code>. This is particularly useful if you intend to write a tutorial website &#40;for a live example of this, see the <a href="https://github.com/alan-turing-institute/DataScienceTutorials.jl">DataScienceTutorials</a>&#41;.</p>
 <h3 id="plots"><a href="#plots">Plots</a></h3>
 <p>Using the machinery introduced above, you can also evaluate  code that generates a  plot which you can then include on the page. In the example below, <code>PyPlot</code> is  used but you could do something  similar with  other frameworks.</p>
 <p>Assuming you&#39;ve added <code>PyPlot</code> to your environment, this markdown</p>
-<pre><code class="language-markdown">```julia:pyplot1
+<pre><code class="language-markdown">&#96;&#96;&#96;julia:pyplot1
 using PyPlot
-figure(figsize=(8, 6))
-x = range(-2, 2, length=500)
+figure&#40;figsize&#61;&#40;8, 6&#41;&#41;
+x &#61; range&#40;-2, 2, length&#61;500&#41;
 for α in 1:5
-    plot(x, sinc.(α .* x))
+    plot&#40;x, sinc.&#40;α .* x&#41;&#41;
 end
-savefig(joinpath(@OUTPUT, "sinc.svg")) # hide
-```
+savefig&#40;joinpath&#40;@OUTPUT, &quot;sinc.svg&quot;&#41;&#41; # hide
+&#96;&#96;&#96;
 
-\fig{sinc}</code></pre>
+\fig&#123;sinc&#125;</code></pre>
 <p>will give:</p>
 <pre><code class="language-julia">using PyPlot
-figure(figsize=(8, 6))
-x = range(-2, 2, length=500)
+figure&#40;figsize&#61;&#40;8, 6&#41;&#41;
+x &#61; range&#40;-2, 2, length&#61;500&#41;
 for α in 1:5
-    plot(x, sinc.(α .* x))
+    plot&#40;x, sinc.&#40;α .* x&#41;&#41;
 end</code></pre>
 <img src="/assets/code/code/output/sinc.svg" alt="">
 <p><strong>Note</strong>: observe that here everything is done with relative paths, <code>pyplot1</code> is placed in the <code>/assets/</code> folder relatively to the path of the current page and the <code>\fig</code> since it&#39;s given a path that doesn&#39;t start with <code>/</code> or <code>./</code> will also  look in  that folder to try to find a figure which starts with the name <code>sinc</code>. See also <a href="#more_on_paths">more about paths</a>.</p>
@@ -305,47 +305,47 @@ end</code></pre>
 <p>That way, if you modify the code, everything will be updated on the website too while ensuring that the code actually runs and generates the output you&#39;re displaying.</p>
 <p>Again, the script files can contain <code># hide</code> at the end of lines you do not want to show &#40;<code>#</code> to be replaced by whatever symbol indicates comments in that language&#41;.</p>
 <p>The <code>generate_results.jl</code> file should run the scripts and redirect outputs to the <code>assets/&#91;path&#93;/output</code> directory. You can use something like the script below &#40;if you generate an example website with <code>newsite</code>, it&#39;s already in there&#41; though you can of course modify it as you wish.</p>
-<pre><code class="language-julia">dir = @__DIR__
-"""
-genplain(s)
+<pre><code class="language-julia">dir &#61; @__DIR__
+&quot;&quot;&quot;
+genplain&#40;s&#41;
 
-Small helper function to run some code and redirect the output (stdout) to a file.
-"""
-function genplain(s::String)
-    open(joinpath(dir, "output", "$(splitext(s)[1]).out"), "w") do outf
-        redirect_stdout(outf) do
-            include(joinpath(dir, s))
+Small helper function to run some code and redirect the output &#40;stdout&#41; to a file.
+&quot;&quot;&quot;
+function genplain&#40;s::String&#41;
+    open&#40;joinpath&#40;dir, &quot;output&quot;, &quot;&#36;&#40;splitext&#40;s&#41;&#91;1&#93;&#41;.out&quot;&#41;, &quot;w&quot;&#41; do outf
+        redirect_stdout&#40;outf&#41; do
+            include&#40;joinpath&#40;dir, s&#41;&#41;
         end
     end
 end
-# run `script1.jl` and redirect what it prints to `output/script1.out`
-genplain("script1.jl")
-# run `script2.jl` which has a savefig(joinpath(@__DIR__, "output", "script2.png"))
-include("script2.jl")</code></pre>
+# run &#96;script1.jl&#96; and redirect what it prints to &#96;output/script1.out&#96;
+genplain&#40;&quot;script1.jl&quot;&#41;
+# run &#96;script2.jl&#96; which has a savefig&#40;joinpath&#40;@__DIR__, &quot;output&quot;, &quot;script2.png&quot;&#41;&#41;
+include&#40;&quot;script2.jl&quot;&#41;</code></pre>
 <p>The function <code>genplain&#40;&quot;scriptname.jl&quot;&#41;</code> just redirects the output of the script to <code>output/scriptname.out</code>. So for instance if you have in <code>assets/scripts/script1.jl</code></p>
-<pre><code class="language-julia">print("hello")</code></pre>
+<pre><code class="language-julia">print&#40;&quot;hello&quot;&#41;</code></pre>
 <p>Then <code>genplain&#40;&quot;script1.jl&quot;&#41;</code> will generate <code>/assets/scripts/output/script1.out</code> with content</p>
 <pre><code class="language-julia">hello</code></pre>
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">You could have scripts in any language here &#40;<code>R</code>, <code>Python</code>, ...&#41; as long as the folder structure is the same.</div></div>
 <h3 id="inserting_code__2"><a href="#inserting_code__2">Inserting code</a></h3>
 <p>In order to insert the code of a script and have it highlighted you can use</p>
-<pre><code class="language-julia">\input{julia}{scripts/script1.jl}</code></pre>
+<pre><code class="language-julia">\input&#123;julia&#125;&#123;scripts/script1.jl&#125;</code></pre>
 <p>This will insert the content of the file <code>/assets/scripts/script1.jl</code> &#40;see also the section earlier on paths&#41; into a block that will be highlighted as julia code.</p>
 <h3 id="plain-text_output"><a href="#plain-text_output">Plain-text output</a></h3>
 <p>In order to insert the plain-text output of a script, you can use</p>
-<pre><code class="language-julia">\output{scripts/script1.jl}</code></pre>
+<pre><code class="language-julia">\output&#123;scripts/script1.jl&#125;</code></pre>
 <p>This will insert the content of the file <code>/assets/scripts/script1.out</code> into a non-highlighted code-block.</p>
 <h3 id="plot_output"><a href="#plot_output">Plot output</a></h3>
 <p>In order to insert a plot generated by a script, you can use <code>\fig</code> as indicated earlier or</p>
-<pre><code class="language-julia">\input{plot}{scripts/script1.jl}</code></pre>
+<pre><code class="language-julia">\input&#123;plot&#125;&#123;scripts/script1.jl&#125;</code></pre>
 <p>or <code>\input&#123;plot:id&#125;&#123;scripts/script1.jl&#125;</code>. This will look for an image file with root name <code>/assets/scripts/script1.ext</code> where <code>ext</code> is <code>gif, png, jp&#40;e&#41;g, svg</code>. If you use <code>plot:id</code> then it will look for an image file with root name <code>/assets/scripts/script1id.ext</code>.</p>
 <p>The <code>plot:id</code> option is useful if you have a script that generates several plots for instance.</p>
 <h3 id="slicing_up"><a href="#slicing_up">Slicing up</a></h3>
 <p>The structure in the <code>generate_results.jl</code> effectively means that all your code is run as one big script. This also means that if you want to slice some of your code in several parts and show intermediate outputs &#40;e.g. plots&#41;, you can just do that by having a <code>script_1_p1.jl</code>, <code>script_1_p2.jl</code> etc. and then just use <code>\input</code> multiple times.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: September 10, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
+    &copy; Thibaut Lienart. Last modified: September 12, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

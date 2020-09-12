@@ -120,18 +120,18 @@
 <div class="franklin-toc"><ol><li><a href="#creating_your_website">Creating your website</a><ol><li><a href="#folder_structure">Folder structure</a></li><li><a href="#top_folder">Top folder</a></li><li><a href="#reserved_names">Reserved names</a></li><li><a href="#editing_and_testing_your_website">Editing and testing your website</a></li></ol></li><li><a href="#post-processing">Post-processing</a><ol><li><a href="#verify_links">Verify links</a></li><li><a href="#pre-rendering_and_compression">Pre-rendering and compression</a></li><li><a href="#publish">Publish</a></li></ol></li></ol></div>
 <h2 id="creating_your_website"><a href="#creating_your_website">Creating your website</a></h2>
 <p>To get started, the easiest is to use the <code>newsite</code> function to generate a website folder which you can then modify to your heart&#39;s content. The command takes one mandatory argument: the <em>name</em> of the folder &#40;which can be <code>&quot;.&quot;</code> if you want to set things up in your current directory&#41;. You can optionally specify a template:</p>
-<pre><code class="language-julia-repl">julia> newsite("TestWebsite"; template="vela")
-✓ Website folder generated at "TestWebsite" (now the current directory).
-→ Use serve() from Franklin to see the website in your browser.</code></pre>
+<pre><code class="language-julia-repl">julia&gt; newsite&#40;&quot;TestWebsite&quot;; template&#61;&quot;vela&quot;&#41;
+✓ Website folder generated at &quot;TestWebsite&quot; &#40;now the current directory&#41;.
+→ Use serve&#40;&#41; from Franklin to see the website in your browser.</code></pre>
 <p>There are a number of <a href="https://tlienart.github.io/FranklinTemplates.jl/">simple templates</a> you can choose from and tweak.</p>
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">The templates are meant to be used as <em>starting points</em> and will likely require some fixes to match what you want. Your help to make them better is very welcome.</div></div>
 <p>Once you have created a new website folder, you can start the live-rendering of your website with</p>
-<pre><code class="language-julia-repl">julia> serve()
+<pre><code class="language-julia-repl">julia&gt; serve&#40;&#41;
 → Initial full pass...
 → Starting the server...
 ✓ LiveServer listening on http://localhost:8000/ ...
-  (use CTRL+C to shut down)</code></pre>
+  &#40;use CTRL&#43;C to shut down&#41;</code></pre>
 <p>and navigate in a browser to the corresponding address to preview the website.</p>
 <h3 id="folder_structure"><a href="#folder_structure">Folder structure</a></h3>
 <p>The initial call to <code>newsite</code> generates a folder with the following structure:</p>
@@ -232,11 +232,11 @@
 <h2 id="post-processing"><a href="#post-processing">Post-processing</a></h2>
 <h3 id="verify_links"><a href="#verify_links">Verify links</a></h3>
 <p>Before deploying you may want to verify that links on your website lead somewhere, to do so use the <code>verify_links&#40;&#41;</code>. It will take a few second to verify all links on every generated pages but can be quite helpful to identify dead links or links with typos:</p>
-<pre><code class="language-julia-repl">julia> verify_links()
-Verifying links... [you seem online ✓]
+<pre><code class="language-julia-repl">julia&gt; verify_links&#40;&#41;
+Verifying links... &#91;you seem online ✓&#93;
 - internal link issue on page index.md: /menu3/.</code></pre>
 <p>then after fixing and re-generating pages:</p>
-<pre><code class="language-julia-repl">julia> verify_links()
+<pre><code class="language-julia-repl">julia&gt; verify_links&#40;&#41;
 All internal and external links verified ✓.</code></pre>
 <h3 id="pre-rendering_and_compression"><a href="#pre-rendering_and_compression">Pre-rendering and compression</a></h3>
 <p>The <code>optimize</code> function can</p>
@@ -261,12 +261,12 @@ All internal and external links verified ✓.</code></pre>
 </ul></div>
 <p>See <code>?publish</code> for more information.</p>
 <p>In any case, before deploying, if you&#39;re working on a <em>project website</em> i.e. a website whose root URL will look like <code>username.gitlab.io/project/</code> then you should add the following line in your <code>config.md</code> file:</p>
-<pre><code class="language-markdown">@def prepath = "project"</code></pre>
+<pre><code class="language-markdown">@def prepath &#61; &quot;project&quot;</code></pre>
 <p>the <code>publish</code> function will then ensure that all links are fixed before deploying your website.</p>
 <p>Note also that the <code>publish</code> function accepts a <code>final&#61;</code> keyword to which you can pass any function <code>&#40;&#41; -&gt; nothing</code> to do some final post-processing before pushing updates online. For instance, you can use <code>final&#61;lunr</code> where <code>lunr</code> is a function exported by Franklin which generates a Lunr search index &#40;see <a href="/extras/lunr/">this tutorial</a> for more details&#41;.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: September 10, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
+    &copy; Thibaut Lienart. Last modified: September 12, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

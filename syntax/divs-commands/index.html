@@ -127,11 +127,11 @@
   Some important content
 @@</code></pre>
 <p>and then, in your CSS, you could use</p>
-<pre><code class="language-css">.important {
+<pre><code class="language-css">.important &#123;
   background-color: lemonchiffon;
   padding: 0.5em;
   margin-bottom: 1em;
-}</code></pre>
+&#125;</code></pre>
 <p>which will look like</p>
 <div class="important">Some important content</div>
 <h3 id="nesting"><a href="#nesting">Nesting</a></h3>
@@ -139,7 +139,7 @@
 <pre><code class="language-plaintext">@@important
   Some text;
   @@silly-formatting
-    some **silly** text with $2x+4=y$.
+    some **silly** text with &#36;2x&#43;4&#61;y&#36;.
   @@
   and more text.
 @@</code></pre>
@@ -149,7 +149,7 @@
 <h2 id="latex-like_commands"><a href="#latex-like_commands">LaTeX-like commands</a></h2>
 <p>Franklin allows the definition of commands using a LaTeX-like syntax. This can be particularly useful for repeating elements or styling inside or outside of maths environment.</p>
 <p>To define a command, you <strong>must</strong> use the following syntax:</p>
-<pre><code class="language-plaintext">\newcommand{\name}[...]{...}
+<pre><code class="language-plaintext">\newcommand&#123;\name&#125;&#91;...&#93;&#123;...&#125;
              -1-   -2-  -3-</code></pre>
 <p>where:</p>
 <div class="flist"><ol>
@@ -165,13 +165,13 @@
 <div class="content">Franklin currently cannot just take the content of a <code>.tex</code> document and convert it, this may be &#40;partially&#41; supported in the future if it is deemed useful. Mainly it would require pre-defining all standard commands such as <code>\textbf</code>, <code>\section</code>, etc.</div></div>
 <h3 id="math_examples"><a href="#math_examples">Math examples</a></h3>
 <p>If you end up writing a lot of equations on your site, defining commands can become rather useful:</p>
-<pre><code class="language-plaintext">\newcommand{\R}{\mathbb R}
+<pre><code class="language-plaintext">\newcommand&#123;\R&#125;&#123;\mathbb R&#125;
 
-Let $f:\R\to\R$ a function...</code></pre>
+Let &#36;f:\R\to\R&#36; a function...</code></pre>
 <p>Let \(f:\mathbb R\to\mathbb R\) a function...</p>
-<pre><code class="language-plaintext">\newcommand{\scal}[1]{\left\langle #1 \right\rangle}
+<pre><code class="language-plaintext">\newcommand&#123;\scal&#125;&#91;1&#93;&#123;\left\langle #1 \right\rangle&#125;
 
-$$ \mathcal W_\psi[f] = \int_\R f(s)\psi(s)\mathrm{d}s = \scal{f,\psi} $$</code></pre>
+&#36;&#36; \mathcal W_\psi&#91;f&#93; &#61; \int_\R f&#40;s&#41;\psi&#40;s&#41;\mathrm&#123;d&#125;s &#61; \scal&#123;f,\psi&#125; &#36;&#36;</code></pre>
 \[ \mathcal W_\psi[f] = \int_\mathbb R f(s)\psi(s)\mathrm{d}s = \left\langle  f,\psi \right\rangle \]
 <h3 id="text_examples"><a href="#text_examples">Text examples</a></h3>
 <p>Commands can also be useful outside of maths environment. For instance, you could define a command to quickly set the style of some text:</p>
@@ -182,22 +182,22 @@ Here is \styletext&#123;color:magenta;font-size:14px;&#125;&#123;formatted text&
 <h3 id="nesting_examples"><a href="#nesting_examples">Nesting examples</a></h3>
 <p>Commands are resolved recursively which means that they can be nested and their definition can contain further Franklin markdown &#40;again this is similar to how LaTeX works&#41;.</p>
 <p>Consider for instance:</p>
-<pre><code class="language-plaintext">\newcommand{\norm}[2]{\left\|#1\right\|_{#2}}
-\newcommand{\anorm}[1]{\norm{#1}{1}}
-\newcommand{\bnorm}[1]{\norm{#1}{2}}
+<pre><code class="language-plaintext">\newcommand&#123;\norm&#125;&#91;2&#93;&#123;\left\|#1\right\|_&#123;#2&#125;&#125;
+\newcommand&#123;\anorm&#125;&#91;1&#93;&#123;\norm&#123;#1&#125;&#123;1&#125;&#125;
+\newcommand&#123;\bnorm&#125;&#91;1&#93;&#123;\norm&#123;#1&#125;&#123;2&#125;&#125;
 
-Let $x\in\R^n$, there exists $0 < C_1 \le C_2$ such that
+Let &#36;x\in\R^n&#36;, there exists &#36;0 &lt; C_1 \le C_2&#36; such that
 
-$$ C_1 \anorm{x} \le \bnorm{x} \le C_2\anorm{x}. $$</code></pre>
+&#36;&#36; C_1 \anorm&#123;x&#125; \le \bnorm&#123;x&#125; \le C_2\anorm&#123;x&#125;. &#36;&#36;</code></pre>
 <p>Let \(x\in\mathbb R^n\), there exists \(0 < C_1 \le C_2\) such that</p>
 \[ C_1 \left\| x\right\|_{ 1} \le \left\| x\right\|_{ 2} \le C_2\left\| x\right\|_{ 1}. \]
 <p>As indicated earlier, commands can contain further Franklin markdown that is processed recursively. For example, here is a more sophisticated example of a &quot;definition&quot; command such that this:</p>
-<pre><code class="language-plaintext">\definition{angle between vectors}{
-  Let $x, y \in \R^n$ and let $\scal{\cdot, \cdot}$ denote
-  the usual inner product. Then, the angle $\theta$ between
-  $x$ and $y$ is given by
-  $$ \cos(\theta) = {\scal{x,y}\over \scal{x,x} \scal{y,y}}. $$
-}</code></pre>
+<pre><code class="language-plaintext">\definition&#123;angle between vectors&#125;&#123;
+  Let &#36;x, y \in \R^n&#36; and let &#36;\scal&#123;\cdot, \cdot&#125;&#36; denote
+  the usual inner product. Then, the angle &#36;\theta&#36; between
+  &#36;x&#36; and &#36;y&#36; is given by
+  &#36;&#36; \cos&#40;\theta&#41; &#61; &#123;\scal&#123;x,y&#125;\over \scal&#123;x,x&#125; \scal&#123;y,y&#125;&#125;. &#36;&#36;
+&#125;</code></pre>
 <p>leads to this:</p>
 <div class="definition"><p><strong>Definition</strong>: &#40;<em>angle between vectors</em>&#41;  Let \(x, y \in \mathbb R^n\) and let \(\left\langle  \cdot, \cdot \right\rangle\) denote   the usual inner product. Then, the angle \(\theta\) between \(x\) and \(y\) is   given by </p>
 \[ \cos(\theta) = {\left\langle  x,y \right\rangle\over \left\langle  x,x \right\rangle \left\langle  y,y \right\rangle}. \]</div>
@@ -209,22 +209,22 @@ $$ C_1 \anorm{x} \le \bnorm{x} \le C_2\anorm{x}. $$</code></pre>
   @@
 &#125;</code></pre>
 <p>and specify the styling of the <code>definition</code> div in your CSS:</p>
-<pre><code class="language-css">.definition {
+<pre><code class="language-css">.definition &#123;
   background-color: aliceblue;
   border-left: 5px solid cornflowerblue;
   border-radius: 10px;
   padding: 10px;
   margin-bottom: 1em;
-}</code></pre>
+&#125;</code></pre>
 <h3 id="whitespaces"><a href="#whitespaces">Whitespaces</a></h3>
 <p>In a Franklin <code>newcommand</code>, to refer to an argument you can use <code>#k</code> or <code>&#33;#k</code>. There is a small difference: the first one <em>introduces a space</em> left of the argument while the second one does not.</p>
 <p>In general whitespaces are irrelevant and will not show up on the rendered webpage so that the usual <code>#k</code> is the recommended usage. This helps avoid some ambiguities when resolving a chain of nested commands.</p>
 <p>There are however cases where you do not want this because the whitespace does, in fact, show up. In such cases use <code>&#33;#k</code> &#40;assuming it&#39;s not ambiguous&#41;.</p>
 <p>Consider for instance:</p>
-<pre><code class="language-plaintext">\newcommand{\pathwith}[1]{`/usr/local/bin/#1`}
-\newcommand{\pathwithout}[1]{`/usr/local/bin/!#1`}
+<pre><code class="language-plaintext">\newcommand&#123;\pathwith&#125;&#91;1&#93;&#123;&#96;/usr/local/bin/#1&#96;&#125;
+\newcommand&#123;\pathwithout&#125;&#91;1&#93;&#123;&#96;/usr/local/bin/&#33;#1&#96;&#125;
 
-Here \pathwith{hello} is no good whereas \pathwithout{hello} is.</code></pre>
+Here \pathwith&#123;hello&#125; is no good whereas \pathwithout&#123;hello&#125; is.</code></pre>
 <p>Here <code>/usr/local/bin/ hello</code> is no good whereas <code>/usr/local/bin/hello</code> is.</p>
 <h3 id="defining_commands_globally"><a href="#defining_commands_globally">Defining commands globally</a></h3>
 <p>If you define commands on a page, the command will be available only on that page; if you wish to define a command that is available on all pages, you should  put the definition of the command in your <code>config.md</code> file.</p>
@@ -240,24 +240,24 @@ Here \pathwith{hello} is no good whereas \pathwithout{hello} is.</code></pre>
 </ol></div>
 <p>The syntax for all three is close to that of standard LaTeX.</p>
 <p>To style the appearance of the maths or bib links in CSS, use <code>.franklin-content.eqref a</code> and <code>.franklin-content.bibref a</code> classes; for instance:</p>
-<pre><code class="language-css">.franklin-content .eqref a  {color: blue;}
-.franklin-content .bibref a {color: green;}</code></pre>
+<pre><code class="language-css">.franklin-content .eqref a  &#123;color: blue;&#125;
+.franklin-content .bibref a &#123;color: green;&#125;</code></pre>
 <h3 id="equations"><a href="#equations">Equations</a></h3>
 <p>To label an equation, just use <code>\label&#123;some label&#125;</code> in the math environment and, to refer to it, use <code>\eqref&#123;some label&#125;</code>:</p>
 <pre><code class="language-plaintext">Some equation:
 
-$$\exp(i\pi) + 1 = 0 \label{a cool equation}$$
+&#36;&#36;\exp&#40;i\pi&#41; &#43; 1 &#61; 0 \label&#123;a cool equation&#125;&#36;&#36;
 
-and you can refer to it in the text: equation \eqref{a cool equation}.</code></pre>
+and you can refer to it in the text: equation \eqref&#123;a cool equation&#125;.</code></pre>
 <p>As in LaTeX, you can refer to several equations in one shot by separating names with commas: <code>\eqref&#123;some label, some other&#125;</code> &#40;that also means you cannot use commas in labels&#41;.</p>
 <h3 id="references"><a href="#references">References</a></h3>
 <p>For references, you can use <code>\biblabel&#123;short&#125;&#123;name&#125;</code> to declare a reference which will appear as a clickable link <code>&#40;name&#41;</code> or <code>name</code> and can be referred to with <code>short</code>:</p>
-<pre><code class="language-plaintext">In the text you may refer to \citep{noether15, bezanson17} while in a bibliography section you would have
+<pre><code class="language-plaintext">In the text you may refer to \citep&#123;noether15, bezanson17&#125; while in a bibliography section you would have
 
-* \biblabel{noether15}{Noether (1915)} **Noether**, Korper und Systeme rationaler Funktionen, 1915.
-* \biblabel{bezanson17}{Bezanson et al. (2017)} **Bezanson**, **Edelman**, **Karpinski** and **Shah**, [Julia: a fresh approach to numerical computing](https://julialang.org/publications/julia-fresh-approach-BEKS.pdf), SIAM review 2017.</code></pre>
+* \biblabel&#123;noether15&#125;&#123;Noether &#40;1915&#41;&#125; **Noether**, Korper und Systeme rationaler Funktionen, 1915.
+* \biblabel&#123;bezanson17&#125;&#123;Bezanson et al. &#40;2017&#41;&#125; **Bezanson**, **Edelman**, **Karpinski** and **Shah**, &#91;Julia: a fresh approach to numerical computing&#93;&#40;https://julialang.org/publications/julia-fresh-approach-BEKS.pdf&#41;, SIAM review 2017.</code></pre>
 <p>The <code>name</code> argument therefore corresponds to how the bibliography reference will appear in the text. In the case above, the text will lead to</p>
-<pre><code class="language-plaintext">... refer to (Noether (1915), Bezanson et al. (2017)) while ...</code></pre>
+<pre><code class="language-plaintext">... refer to &#40;Noether &#40;1915&#41;, Bezanson et al. &#40;2017&#41;&#41; while ...</code></pre>
 <p>You can use either</p>
 <div class="tlist"><ul>
 <li><p><code>\cite&#123;short1, short2&#125;</code> or <code>\citet&#123;short3&#125;</code>: which will not add parentheses around the link&#40;s&#41;,</p>
@@ -270,15 +270,15 @@ and you can refer to it in the text: equation \eqref{a cool equation}.</code></p
 <p>You can specify anchor points on the page using <code>\label&#123;name of the anchor&#125;</code> anywhere on the page <em>outside</em> of maths environment. This will insert an anchor:</p>
 <pre><code class="language-html">&lt;a id&#61;&quot;name-of-the-anchor&quot;&gt;&lt;/a&gt;</code></pre>
 <p>You can subsequently link to it on the same page:</p>
-<pre><code class="language-plaintext">[link to it](#name-of-the-anchor)</code></pre>
+<pre><code class="language-plaintext">&#91;link to it&#93;&#40;#name-of-the-anchor&#41;</code></pre>
 <p>or from another page by prepending it with the path to the page, for instance:</p>
-<pre><code class="language-plaintext">[link to it](/index.html#name-of-the-anchor)</code></pre>
+<pre><code class="language-plaintext">&#91;link to it&#93;&#40;/index.html#name-of-the-anchor&#41;</code></pre>
 <p>Note also that all section headers are anchor points for instance</p>
 <pre><code class="language-plaintext">### Some subtitle</code></pre>
 <p>can be linked to with <code>#some-subtitle</code>. If there are multiple headers with the same name, the second and subsequent ones can be referred to with <code>#some-subtitle__2</code>, <code>#some-subtitle__3</code> etc. &#40;note the double underscore&#41;.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: September 10, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
+    &copy; Thibaut Lienart. Last modified: September 12, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

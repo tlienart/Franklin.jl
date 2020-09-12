@@ -128,7 +128,7 @@
 <p><img src="/assets/jemdoc/jemdoc1.png" alt="" /></p>
 <h3 id="getting_started"><a href="#getting_started">Getting started</a></h3>
 <p>In order to get a blueprint for the folder etc, let&#39;s first create a Franklin site with the <code>basic</code> template:</p>
-<pre><code class="language-julia-repl">julia> newsite("jemdoc", template="basic")</code></pre>
+<pre><code class="language-julia-repl">julia&gt; newsite&#40;&quot;jemdoc&quot;, template&#61;&quot;basic&quot;&#41;</code></pre>
 <p>You can serve the site in order to see the modifications directly in your browser which can be useful to fine tune the port of the layout.</p>
 <p>We will need to provide the appropriate stylesheet in <code>_css/</code> and adjust the layout part in <code>_layout/</code>.</p>
 <h3 id="adapting_the_head_and_foot"><a href="#adapting_the_head_and_foot">Adapting the head and foot</a></h3>
@@ -235,19 +235,19 @@
 <h4 id="fixing_spacing"><a href="#fixing_spacing">Fixing spacing</a></h4>
 <p>Firefox or Chrome/ium&#39;s excellent dev-tools are super helpful to fine tune stylesheets. Here things are pretty straightforward though.</p>
 <p>First, we need to add vertical padding above <code>&lt;h1&gt;</code> level title:</p>
-<pre><code class="language-css">h1 { padding-top: 2em; }</code></pre>
+<pre><code class="language-css">h1 &#123; padding-top: 2em; &#125;</code></pre>
 <p>Then, let&#39;s widen the menu a little</p>
-<pre><code class="language-css">td#layout-menu {
+<pre><code class="language-css">td#layout-menu &#123;
   padding-left: 15px;
   padding-right: 25px;
-}</code></pre>
+&#125;</code></pre>
 <p>and let&#39;s reduce the padding on the left of the <code>franklin-content</code> element:</p>
-<pre><code class="language-css">.franklin-content { padding-left: 5%; }</code></pre>
+<pre><code class="language-css">.franklin-content &#123; padding-left: 5&#37;; &#125;</code></pre>
 <p>Finally, in the original stylesheet there is this element:</p>
-<pre><code class="language-css">pre {
+<pre><code class="language-css">pre &#123;
   padding: 0;
   margin: 0;
-}</code></pre>
+&#125;</code></pre>
 <p>which you can just remove to have a bit more space around code blocks.</p>
 <p>There&#39;s probably still things that could be done to improve the layout overall &#40;and make it more responsive&#33;&#41; but we&#39;ll leave it at that.</p>
 <p><img src="/assets/jemdoc/jemdoc4.png" alt="" /></p>
@@ -271,7 +271,7 @@
 <p>Please follow <a href="https://github.com/tlienart/FranklinTemplates.jl#fixingadding-a-template">these instructions</a>.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: September 10, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
+    &copy; Thibaut Lienart. Last modified: September 12, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
