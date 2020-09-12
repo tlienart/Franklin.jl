@@ -25,14 +25,14 @@ jobs:
       with:
         version: 1.5
     - run: julia -e '
-            cd("docs");
             using Pkg; Pkg.add(["NodeJS"]);
             Pkg.add(Pkg.PackageSpec(name="Franklin", rev="master"));
-            using NodeJS; run(`$(npm_cmd()) install highlight.js`);
             using Franklin;
+            cd("docs");
             Pkg.activate("."); Pkg.instantiate();
             optimize(minify=false, prerender=false);
             cd("../demos");
+            using NodeJS; run(`$(npm_cmd()) install highlight.js`);
             Pkg.activate("."); Pkg.instantiate();
             optimize();
             dst = "../docs/__site/demos";
