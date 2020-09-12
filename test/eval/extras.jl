@@ -57,11 +57,11 @@ end
     ```
     """ |> fd2html_td
     @test isapproxstr(s, """
-        <pre><code class="language-julia">
+        <pre><code class="language-julia">$(F.htmlesc("""
         using DataFrames
         df = DataFrame(A = 1:4, B = ["M", "F", "F", "M"])
         first(df, 3)
-        </code></pre>
+        """))</code></pre>
         <pre><code class="plaintext">
         3×2 DataFrame
         │ Row │ A     │ B      │

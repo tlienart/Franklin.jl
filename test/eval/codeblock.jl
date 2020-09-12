@@ -67,8 +67,8 @@ end
         b = 7
         ```""")
     @test F.resolve_code_block(c) ==
-        """<pre><code class="language-julia">a = 5
-        b = 7</code></pre>"""
+        """<pre><code class="language-julia">$(F.htmlesc("""a = 5
+        b = 7"""))</code></pre>"""
     # not julia code
     c = SubString(
         """```python:ex
@@ -95,8 +95,8 @@ end
             ```""")
         r = F.resolve_code_block(c)
         @test r ==
-            """<pre><code class="language-julia">a = 5
-            b = 7</code></pre>"""
+            """<pre><code class="language-julia">$(F.htmlesc("""a = 5
+            b = 7"""))</code></pre>"""
     end
     cd(bak)
 end

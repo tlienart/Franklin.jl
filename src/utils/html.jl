@@ -59,11 +59,11 @@ language will be resolved at build time; as a result no lines will be hidden
 for such blocks.
 """
 function html_code(c::AS, lang::AS="")::String
-    isempty(c)    && return ""
+    isempty(c) && return ""
     # if it's plaintext
     isempty(lang) && return "<pre><code class=\"plaintext\">$c</code></pre>"
-    # if it's html code escape it if it isn't
-    lang == "html" && !is_html_escaped(c) && (c = htmlesc(c))
+    # escape it if it isn't already
+    c = is_html_escaped(c) ? c : htmlesc(c)
     # remove hidden lines if any
     c = html_skip_hidden(c, lang)
     # if empty (e.g. via #hideall) return ""

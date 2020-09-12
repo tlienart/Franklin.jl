@@ -24,8 +24,8 @@ end
         ```}
         1 \foo 2
         """ |> fd2html
-    @test h // """<p>1 <pre><code class="language-julia">x = 5
-                  @show x</code></pre> 2</p>"""
+    @test h // """<p>1 <pre><code class="language-julia">$(F.htmlesc(raw"""x = 5
+                  @show x"""))</code></pre> 2</p>"""
 end
 
 @testset "3/block wp" begin
@@ -40,8 +40,8 @@ end
 
         2""" |> fd2html
     @test h // """<p>1</p>
-                  <pre><code class="language-julia">x = 5
-                  @show x</code></pre>
+                  <pre><code class="language-julia">$(F.htmlesc(raw"""x = 5
+                  @show x"""))</code></pre>
                   <p>2</p>"""
 end
 
@@ -96,8 +96,8 @@ end
         \newcommand{\bar}[1]{ABC \foo{!#1} DEF}
         aa \bar{x=1} bb
         """ |> fd2html
-    @test h // raw"""
-               <p>aa ABC <pre><code class="language-python">x=1</code></pre> DEF bb</p>
+    @test h // """
+               <p>aa ABC <pre><code class="language-python">$(F.htmlesc(raw"""x=1"""))</code></pre> DEF bb</p>
                """
 end
 

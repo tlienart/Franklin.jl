@@ -43,10 +43,10 @@ set_curpath("index.md")
     @test isfile(opath)
     @test read(opath, String) == "25"
 
-    @test h // raw"""
+    @test h // """
                 <p>Simple code:</p>
-                <pre><code class="language-julia">a = 5
-                print(a^2)</code></pre>
+                <pre><code class="language-julia">$(F.htmlesc(raw"""a = 5
+                print(a^2)"""))</code></pre>
                 <p>then:</p>
                 <pre><code class="plaintext">25</code></pre>
                 <p>done.</p>"""
@@ -69,10 +69,10 @@ end
     end
     @test occursin("non-Julia code blocks", s)
 
-    @test isapproxstr(h, raw"""
+    @test isapproxstr(h, """
                         <p>Simple code:</p>
-                        <pre><code class="language-python">a = 5
-                        print(a**2)</code></pre>
+                        <pre><code class="language-python">$(F.htmlesc("""a = 5
+                        print(a**2)"""))</code></pre>
                         <p>done.</p>""")
 end
 
@@ -98,10 +98,10 @@ end
     @test isfile(opath)
     @test read(opath, String) == "25"
 
-    @test h // raw"""
+    @test h // """
             <p>Simple code:</p>
-            <pre><code class="language-julia">a = 5
-            print(a^2)</code></pre>
+            <pre><code class="language-julia">$(F.htmlesc(raw"""a = 5
+            print(a^2)"""))</code></pre>
             <p>then:</p>
             <pre><code class="plaintext">25</code></pre>
             <p>done.</p>"""
@@ -130,10 +130,10 @@ end
     @test isfile(opath)
     @test read(opath, String) == "25"
 
-    @test h // raw"""
+    @test h // """
                 <p>Simple code:</p>
-                <pre><code class="language-julia">a = 5
-                print(a^2)</code></pre>
+                <pre><code class="language-julia">$(F.htmlesc(raw"""a = 5
+                print(a^2)"""))</code></pre>
                 <p>then:</p>
                 <pre><code class="plaintext">25</code></pre>
                 <p>done.</p>"""
@@ -154,11 +154,11 @@ end
         done.
         """ |> seval
     # dot(a, a) == 54
-    @test h // raw"""
+    @test h // """
                 <p>Simple code:</p>
-                <pre><code class="language-julia">using LinearAlgebra
+                <pre><code class="language-julia">$(F.htmlesc(raw"""using LinearAlgebra
                 a = [5, 2, 3, 4]
-                print(dot(a, a))</code></pre>
+                print(dot(a, a))"""))</code></pre>
                 <p>then:</p>
                 <pre><code class="plaintext">54</code></pre>
                 <p>done.</p>"""
@@ -206,9 +206,9 @@ end
         global h
         h = s |> seval
     end
-    @test h // raw"""
+    @test h // """
                 <p>Simple code:</p>
-                <pre><code class="language-julia">sqrt(-1)</code></pre>
+                <pre><code class="language-julia">$(F.htmlesc(raw"""sqrt(-1)"""))</code></pre>
                 <p>then:</p>
                 <pre><code class="plaintext">DomainError with -1.0:
                 sqrt will only return a complex result if called with a complex argument. Try sqrt(Complex(x)).
@@ -232,9 +232,9 @@ end
         r = h |> seval
     end
     @test occursin("non-Julia", s)
-    @test r// raw"""
+    @test r// """
         <p>Simple code:</p>
-        <pre><code class="language-python">sqrt(-1)</code></pre>
+        <pre><code class="language-python">$(F.htmlesc("""sqrt(-1)"""))</code></pre>
         <p>done.</p>
         """
 end
@@ -255,14 +255,14 @@ end
 
         \output{scripts/test186}
         """ |> seval
-    @test h // raw"""
+    @test h // """
             <p>Simple code:</p>
-            <pre><code class="language-julia">fn = "tempf.jl"
+            <pre><code class="language-julia">$(F.htmlesc(raw"""fn = "tempf.jl"
             write(fn, "a = 1+1")
             println("Is this a file? $(isfile(fn))")
             include(abspath(fn))
             println("Now: $a")
-            rm(fn)</code></pre>
+            rm(fn)"""))</code></pre>
             <p>done.</p>
             <pre><code class="plaintext">Is this a file? true
             Now: 2
@@ -282,9 +282,9 @@ end
 
         \show{ex}
         """ |> fd2html_td
-    @test h // raw"""
-                <pre><code class="language-julia">a = 5
-                a *= 2</code></pre>
+    @test h // """
+                <pre><code class="language-julia">$(F.htmlesc(raw"""a = 5
+                a *= 2"""))</code></pre>
                 <pre><code class="plaintext">10</code></pre>"""
 
     # Show with stdout
@@ -299,10 +299,10 @@ end
 
         \show{ex}
         """ |> fd2html_td
-    @test h // raw"""
-                <pre><code class="language-julia">a = 5
+    @test h // """
+                <pre><code class="language-julia">$(F.htmlesc(raw"""a = 5
                 println("hello")
-                a *= 2</code></pre>
+                a *= 2"""))</code></pre>
                 <pre><code class="plaintext">hello
                 10</code></pre>"""
 
@@ -318,9 +318,9 @@ end
 
         \show{ex}
         """ |> fd2html_td
-    @test h // raw"""
-            <pre><code class="language-julia">a = 5
+    @test h // """
+            <pre><code class="language-julia">$(F.htmlesc(raw"""a = 5
             a *= 2
-            # hello</code></pre>
+            # hello"""))</code></pre>
             <pre><code class="plaintext">10</code></pre>"""
 end

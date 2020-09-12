@@ -46,8 +46,8 @@ end
        blah
        """
     @test isapproxstr(s |> fd2html_td, """
-        <pre><code class="language-markdown">this has[^1]
+        <pre><code class="language-markdown">$(F.htmlesc("""this has[^1]
 
         [^1]: def
-        </code></pre> <p>blah</p>""")
+        """))</code></pre> <p>blah</p>""")
 end

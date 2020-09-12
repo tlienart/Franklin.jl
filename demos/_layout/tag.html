@@ -1,0 +1,31 @@
+<!--
+IMPORTANT NOTE:
+  on tag pages you CANNOT rely on local page variable such as `hasmath`
+  `hascode`, `title` etc as the generation of the tag pages will be triggered
+  by different pages each of which will have defined these variables in
+  a different ways.
+  For tag pages, ALL variables used MUST be
+  - global ones (whatever you might have defined in `config`)
+  - be tag string (`tag`)
+  otherwise you cannot guarantee their content.
+  There is one way to bend this: you can use {{fill varname rpath}} to
+  input the value of the variable `varname` defined at the page corresponding
+  to `rpath`.
+  You can also use `{{istag hello}} ... {{end}}` to have things that
+  depend upon which tag we're on (for instance if you want a specific title).
+-->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tag: {{fill fd_tag}}</title>
+</head>
+<body>
+  <div class="{{div_content}}">
+    <h1>Tag: {{fill fd_tag}}</h1>
+    {{taglist}}
+    {{insert page_foot.html}}
+  </div>
+</body>
+</html>
