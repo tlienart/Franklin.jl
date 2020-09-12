@@ -1,6 +1,6 @@
 @def title = "Franklin FAQ"
 
-# Franklin FAQ
+# Franklin Demos
 
 \style{text-align:center;width:100%;display:inline-block;font-variant-caps:small-caps}{[**Click here to see the source**](https://github.com/tlienart/Franklin.jl/tree/master/demos)}
 
