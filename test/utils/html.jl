@@ -57,9 +57,9 @@ end
         b = a + 5
         """
     @test F.html_code(c, "julia") ==
-        """<pre><code class="language-julia">using Random
+        """<pre><code class="language-julia">$(F.htmlesc("""using Random
         a = randn()
-        b = a + 5</code></pre>"""
+        b = a + 5"""))</code></pre>"""
 end
 
 @testset "html_content" begin

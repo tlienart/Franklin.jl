@@ -36,9 +36,9 @@
 
     @test isapproxstr(inter_html, "<p>Hello  ##FDINSERT##  blah  ##FDINSERT##  end and  ##FDINSERT##  end and </p><p> ##FDINSERT##</p> <p>done</p>")
 
-    @test isapproxstr(st |> seval, raw"""
-                <p>Hello &#92; blah &#92; end and <code>B \ c</code> end and</p>
-                <pre><code class="language-julia">A \ b</code></pre>
+    @test isapproxstr(st |> seval, """
+                <p>Hello &#92; blah &#92; end and <code>B \\ c</code> end and</p>
+                <pre><code class="language-julia">$(F.htmlesc(raw"""A \ b"""))</code></pre>
                 <p>done</p>
                 """)
 end
@@ -58,10 +58,10 @@ end
     tokens, = steps[:tokenization]
     @test tokens[7].name == :CHAR_LINEBREAK
     h = st |> seval
-    @test isapproxstr(st |> seval, raw"""
+    @test isapproxstr(st |> seval, """
                         <p>Hello &#92; blah &#92; end
-                        and <code>B \ c</code> end <br/> and</p>
-                        <pre><code class="language-julia">A \ b</code></pre>
+                        and <code>B \\ c</code> end <br/> and</p>
+                        <pre><code class="language-julia">$(F.htmlesc(raw"""A \ b"""))</code></pre>
                         <p>done</p>
                         """)
 end
@@ -239,14 +239,14 @@ end
             @show a+b
         end
         """
-    @test isapproxstr(st |> seval, raw"""
+    @test isapproxstr(st |> seval, """
         <p>A</p>
-            <pre><code class="language-julia">a = 1+1
+            <pre><code class="language-julia">$(F.htmlesc("""a = 1+1
             if a > 1
                 @show a
             end
             b = 2
-            @show a+b</code></pre>
+            @show a+b"""))</code></pre>
         <p>end</p>""")
 
     st = raw"""
@@ -260,11 +260,11 @@ end
             + bloh
         end
         """
-    @test isapproxstr(st |> seval, raw"""
+    @test isapproxstr(st |> seval, """
                         <p>A <code>single</code> and </p>
                         <pre><code class="language-python">blah</code></pre>
                         <p>and</p>
-                        <pre><code class="language-julia">a = 1+1</code></pre>
+                        <pre><code class="language-julia">$(F.htmlesc("""a = 1+1"""))</code></pre>
                         <p>then</p>
                         <ul>
                         <li><p>blah</p>

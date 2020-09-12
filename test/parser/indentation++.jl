@@ -59,7 +59,7 @@ end
         x=3}
         """ |> fd2html_td
     @test isapproxstr(s, """
-        <p>Hello <pre><code class="language-julia">a=5
-        x=3</code></pre></p>
+        <p>Hello <pre><code class="language-julia">$(F.htmlesc("""a=5
+        x=3"""))</code></pre></p>
         """)
 end

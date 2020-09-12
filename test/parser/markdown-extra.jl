@@ -66,11 +66,11 @@ end
         C
         """ |> fd2html_td
 
-    @test isapproxstr(h, raw"""
+    @test isapproxstr(h, """
             <p>A</p>
-            <pre><code class="language-markdown">```julia
+            <pre><code class="language-markdown">$(F.htmlesc("""```julia
             B
-            ```
+            ```"""))
             </code></pre>
             <p>C</p>
             """)

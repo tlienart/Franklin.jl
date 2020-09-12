@@ -93,12 +93,18 @@ end
     @test isapproxstr(h, """
         <h1 id="rational_numbers"><a href="#rational_numbers">Rational numbers</a></h1>
         <p>In julia rational numbers can be constructed with the <code>//</code> operator. Lets define two rational numbers, <code>x</code> and <code>y</code>:</p>
-        <pre><code class="language-julia"># Define variable x and y
-        x = 1//3
-        y = 2//5</code></pre>
+        <pre><code class="language-julia">$(F.htmlesc(raw"""
+            # Define variable x and y
+            x = 1//3
+            y = 2//5
+            """))
+        </code></pre>
         <pre><code class=\"plaintext\">2//5</code></pre>
         <p>When adding <code>x</code> and <code>y</code> together we obtain a new rational number:</p>
-        <pre><code class="language-julia">z = x + y</code></pre>
+        <pre><code class="language-julia">$(F.htmlesc(raw"""
+            z = x + y
+            """))
+        </code></pre>
         <pre><code class=\"plaintext\">11//15</code></pre>
         """)
 end
