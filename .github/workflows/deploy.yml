@@ -32,7 +32,7 @@ jobs:
             using Franklin;
             Pkg.activate("."); Pkg.instantiate();
             optimize(minify=false, prerender=false);
-            cd("../faq");
+            cd("../demos");
             Pkg.activate("."); Pkg.instantiate();
             optimize();
             dst = "../docs/__site/demos";
