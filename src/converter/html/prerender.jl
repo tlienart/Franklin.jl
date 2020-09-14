@@ -62,20 +62,13 @@ function js_prerender_highlight(hs::String)::String
         co, cc = matches[i:i+1]
         # core code
         cs = subs(hs, nextind(hs, matchrange(co).stop), prevind(hs, matchrange(cc).start))
-        cs = escape_string(cs)
+        # cs = escape_string(cs)
         # lang
         lang = co.captures[2]
-        if isnothing(lang)
-            write(jsbuffer, """console.log("<pre><code class=hljs>$cs</code></pre>");\n""")
-        else
-            if lang == "html" && is_html_escaped(cs)
-                # corner case, see Franklin.jl/issues/326
-                # highlight will re-escape the string further.
-                cs = html_unescape(cs) |> escape_string
-            end
-            # add to content of jsbuffer
-            write(jsbuffer, """console.log("<pre><code class=\\"$lang hljs\\">" + hljs.highlight("$lang", "$cs").value + "</code></pre>");""")
-        end
+        # un-escape code string
+        cs = html_unescape(cs) |> escape_string
+        # add to content of jsbuffer
+        write(jsbuffer, """console.log("<pre><code class=\\"$lang hljs\\">" + hljs.highlight("$lang", "$cs").value + "</code></pre>");""")
         # in between every block, write $splitter so that output can be split easily
         i == length(matches)-1 || write(jsbuffer, """console.log('$splitter');""")
     end
