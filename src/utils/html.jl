@@ -216,7 +216,7 @@ is_html_escaped(cs::AS) =
 Internal function to reverse the escaping of some html code (in order to avoid
 double escaping when pre-rendering with highlight, see issue 326).
 """
-function html_unescape(cs::String)
+function html_unescape(cs::AbstractString)
     # this is a bit inefficient but whatever, `cs` shouldn't  be very long.
     for (ssfrom, ssto) in _htmlescape_chars
         cs = replace(cs, ssto => ssfrom)
