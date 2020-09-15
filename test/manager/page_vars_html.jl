@@ -1,4 +1,4 @@
-fs2()
+fs()
 
 @testset "Scope (#412)" begin
     write(joinpath(td, "config.md"), """

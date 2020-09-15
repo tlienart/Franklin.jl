@@ -146,26 +146,7 @@ end
 
 gotd() = (flush_td(); cd(td); F.FOLDER_PATH[] = td; set_globals())
 
-function fs1()
-    F.FD_ENV[:STRUCTURE] = v"0.1"
-    gotd()
-    F.clear_dicts()
-    empty!(F.PATHS)
-    F.def_GLOBAL_VARS!()
-    F.set_paths!()
-    mkdir(F.PATHS[:src])
-    mkdir(F.PATHS[:src_pages])
-    mkdir(F.PATHS[:libs])
-    mkdir(F.PATHS[:src_css])
-    mkdir(F.PATHS[:src_html])
-    mkdir(F.PATHS[:assets])
-    F.def_GLOBAL_VARS!()
-    F.def_LOCAL_VARS!()
-    F.set_var!(F.LOCAL_VARS, "fd_rpath", "index.md")
-end
-
-function fs2()
-    F.FD_ENV[:STRUCTURE] = v"0.2"
+function fs()
     gotd()
     F.clear_dicts()
     empty!(F.PATHS)

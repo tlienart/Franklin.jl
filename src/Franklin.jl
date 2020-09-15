@@ -81,7 +81,6 @@ const FD_ENV = LittleDict(
     :DEBUG_MODE    => false,
     :SUPPRESS_ERR  => false,
     :SILENT_MODE   => false,
-    :STRUCTURE     => v"0.2",
     :QUIET_TEST    => false,
     :SHOW_WARNINGS => true,     # franklin-specific warnings
     )

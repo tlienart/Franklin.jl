@@ -6,7 +6,6 @@ const D = joinpath(dirname(dirname(pathof(Franklin))), "test", "_dummies")
 
 F.FD_ENV[:SILENT_MODE] = true
 # F.FD_ENV[:DEBUG_MODE] = true
-F.FD_ENV[:STRUCTURE] = v"0.1" # legacy, it's switched up in the tests.
 
 Franklin.FD_ENV[:QUIET_TEST] = true
 
@@ -26,10 +25,8 @@ println("🍺")
 # MANAGER folder
 println("MANAGER")
 include("manager/utils.jl")
-include("manager/utils_fs2.jl")
 include("manager/rss.jl")
 include("manager/config.jl")
-include("manager/config_fs2.jl")
 include("manager/dir_utils.jl")
 include("manager/page_vars_html.jl")
 include("manager/paginate.jl")
@@ -52,10 +49,8 @@ println("EVAL")
 include("eval/module.jl")
 include("eval/run.jl")
 include("eval/io.jl")
-include("eval/io_fs2.jl")
 include("eval/codeblock.jl")
 include("eval/eval.jl")
-include("eval/eval_fs2.jl")
 include("eval/integration.jl")
 include("eval/extras.jl")
 
@@ -78,10 +73,9 @@ println("🍺")
 println("CONVERTER/LX")
 include("converter/lx/input.jl")
 include("converter/lx/simple.jl")
-include("converter/lx/simple_fs2.jl")
 println("🍺")
 
-fs2()
+fs()
 
 println("GLOBAL")
 include("global/cases1.jl")
@@ -118,7 +112,6 @@ include("utils_file/basic.jl")
 
 println("INTEGRATION")
 include("integration/literate.jl")
-include("integration/literate_fs2.jl")
 include("integration/literate_extras.jl")
 include("integration/hfuns.jl")
 

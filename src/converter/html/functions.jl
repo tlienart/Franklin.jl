@@ -83,9 +83,8 @@ end
 $(SIGNATURES)
 
 H-Function of the form `{{ insert fpath }}` to plug in the content of a file at
-`fpath`. Note that the base path is assumed to be `PATHS[:src_html]`
-(`< v"0.2"`) and `PATHS[:layout]` otherwise and so paths have to be expressed
-relative to that.
+`fpath`. Note that the base path is assumed to be `PATHS[:layout]` and so paths
+have to be expressed relative to that.
 """
 function hfun_insert(params::Vector{String})::String
     # check params
@@ -94,7 +93,7 @@ function hfun_insert(params::Vector{String})::String
     end
     # apply
     repl   = ""
-    layout = path(layout_key())
+    layout = path(:layout)
     fpath  = joinpath(layout, split(params[1], "/")...)
     if isfile(fpath)
         repl = convert_html(read(fpath, String))
@@ -253,11 +252,7 @@ function hfun_redirect(params::Vector{String})::String
                                 "complete up to the `.html` extension (got '$addr')."))
     end
     startswith(addr, '/') && (addr = addr[nextind(addr, 1):end])
-    if FD_ENV[:STRUCTURE] < v"0.2"
-        dst = joinpath(path(:pub), addr)
-    else
-        dst = joinpath(path(:site), addr)
-    end
+    dst = joinpath(path(:site), addr)
     isfile(dst) && return ""
     mkpath(splitdir(dst)[1])
     write(dst, """
@@ -298,7 +293,7 @@ function hfun_paginate(params::Vector{String})::String
     if isnothing(iter)
         hfun_misc_warn(:paginate, """
             The page variable '$(params[1])' does not match the name of a page
-            variable. The call will be ignored.            
+            variable. The call will be ignored.
             """)
         return ""
     end

@@ -15,16 +15,8 @@ and truly start from scratch).
 """
 function prepare_output_dir()::Nothing
     clear = FD_ENV[:CLEAR]
-    if FD_ENV[:STRUCTURE] < v"0.2"
-        # if required to start from a blank slate -> remove the output dir
-        (clear & isdir(PATHS[:pub])) && rm(PATHS[:pub], recursive=true)
-        # create the output dir and the css dir if necessary
-        !isdir(path(:pub)) && mkdir(path(:pub))
-        !isdir(path(:css)) && mkdir(path(:css))
-    else
-        (clear & isdir(path(:site))) && rm(path(:site), recursive=true)
-        !isdir(path(:site)) && mkdir(path(:site))
-    end
+    (clear & isdir(path(:site))) && rm(path(:site), recursive=true)
+    !isdir(path(:site)) && mkdir(path(:site))
     return nothing
 end
 
@@ -37,17 +29,13 @@ output file will be written/copied).
 function form_output_path(base::AS, file::AS, case::Symbol)
     # .md -> .html for md pages:
     case == :md && (file = change_ext(file))
-    if FD_ENV[:STRUCTURE] < v"0.2"
-        outbase = _out_path(base)
-    else
-        outbase = _out_path2(base)
-        if case in (:md, :html)
-            # file is index.html or 404.html --> keep the path
-            # file is page.html  --> .../page/index.html
-            fname = splitext(file)[1]
-            if fname ∉ ("index", "404")
-                file = joinpath(fname, "index.html")
-            end
+    outbase = _out_path(base)
+    if case in (:md, :html)
+        # file is index.html or 404.html --> keep the path
+        # file is page.html  --> .../page/index.html
+        fname = splitext(file)[1]
+        if fname ∉ ("index", "404")
+            file = joinpath(fname, "index.html")
         end
     end
     outpath = joinpath(outbase, file)
@@ -56,25 +44,7 @@ function form_output_path(base::AS, file::AS, case::Symbol)
     return outpath
 end
 
-# NOTE: LEGACY way of getting the target path
 function _out_path(base::String)::String
-    if startswith(base, PATHS[:src_css])
-        f_out_path = replace(base, PATHS[:src_css] => PATHS[:css])
-        !ispath(f_out_path) && mkpath(f_out_path)
-        return f_out_path
-    end
-    len_in = lastindex(joinpath(PATHS[:src], ""))
-    length(base) <= len_in && return PATHS[:folder]
-    dpath = base[nextind(base, len_in):end]
-    # construct the out path
-    f_out_path = joinpath(PATHS[:folder], dpath)
-    f_out_path = replace(f_out_path, r"([^a-zA-Z\d\s_:])pages" => s"\1pub")
-    # if it doesn't exist, make the path
-    !ispath(f_out_path) && mkpath(f_out_path)
-    return f_out_path
-end
-
-function _out_path2(base::String)::String
     if startswith(base, path(:assets)) ||
        startswith(base, path(:css))    ||
        startswith(base, path(:layout)) ||
@@ -115,80 +85,10 @@ function scan_input_dir!(args...; kw...)
     d2i = filter!(d -> length(d) > 1, to_ignore[dir_indicator])
     f2i = to_ignore[.!dir_indicator]
 
-    if FD_ENV[:STRUCTURE] < v"0.2"
-        return _scan_input_dir!(args...; files2ignore=f2i, dirs2ignore=d2i)
-    end
-    return _scan_input_dir2!(args...; files2ignore=f2i, dirs2ignore=d2i, kw...)
+    return _scan_input_dir!(args...; files2ignore=f2i, dirs2ignore=d2i, kw...)
 end
 
 function _scan_input_dir!(other_files::TrackedFiles,
-                          infra_files::TrackedFiles,
-                          md_files::TrackedFiles,
-                          html_files::TrackedFiles,
-                          literate_files::TrackedFiles,
-                          verb::Bool=false;
-                          files2ignore=String[],
-                          dirs2ignore=String[])::Nothing
-    # top level files (src/*)
-    for file ∈ readdir(PATHS[:src])
-        fpath = joinpath(PATHS[:src], file)
-        isfile(fpath) || continue
-        # skip if it has to be ignored
-        should_ignore(fpath, files2ignore, dirs2ignore) && continue
-        fname, fext = splitext(file)
-        fpair = (PATHS[:src] => file)
-        if file == "config.md"
-            add_if_new_file!(infra_files, fpair, verb)
-        elseif fext == ".md"
-            add_if_new_file!(md_files, fpair, verb)
-        else
-            add_if_new_file!(html_files, fpair, verb)
-        end
-    end
-    # pages files (src/pages/*)
-    for (root, _, files) ∈ walkdir(PATHS[:src_pages])
-        for file ∈ files
-            fpath = joinpath(root, file)
-            isfile(fpath) || continue
-            # skip if it has to be ignored
-            should_ignore(fpath, files2ignore, dirs2ignore) && continue
-            fname, fext = splitext(file)
-            fpair = (root => file)
-            if fext == ".md"
-                add_if_new_file!(md_files, fpair, verb)
-            elseif fext == ".html"
-                add_if_new_file!(html_files, fpair, verb)
-            else
-                add_if_new_file!(other_files, fpair, verb)
-            end
-        end
-    end
-    # infastructure files (src/_css/* and src/_html_parts/*)
-    for d ∈ (:src_css, :src_html), (root, _, files) ∈ walkdir(PATHS[d])
-        for file ∈ files
-            isfile(joinpath(root, file)) || continue
-            fname, fext = splitext(file)
-            # skipping files that are not of the type INFRA_FILES
-            fext ∉ INFRA_FILES && continue
-            add_if_new_file!(infra_files, root=>file, verb)
-        end
-    end
-    # literate script files if any, note that the folder may not exist
-    if isdir(PATHS[:literate])
-        for (root, _, files) ∈ walkdir(PATHS[:literate])
-            for file ∈ files
-                isfile(joinpath(root, file)) || continue
-                fname, fext = splitext(file)
-                # skipping files that are not script file
-                fext != ".jl" && continue
-                add_if_new_file!(literate_files, root=>file, verb)
-            end
-        end
-    end
-    return nothing
-end
-
-function _scan_input_dir2!(other_files::TrackedFiles,
                            infra_files::TrackedFiles,
                            md_pages::TrackedFiles,
                            html_pages::TrackedFiles,
@@ -280,11 +180,7 @@ Rules:
 function should_ignore(fpath::AS, files2ignore::Vector,
                        dirs2ignore::Vector)::Bool
     # fpath is necessarily an absolute path so can strip the folder part
-    if FD_ENV[:STRUCTURE] < v"0.2"
-        fpath = fpath[length(path(:src))+length(PATH_SEP)+1:end]
-    else
-        fpath = fpath[length(path(:folder))+length(PATH_SEP)+1:end]
-    end
+    fpath = fpath[length(path(:folder))+length(PATH_SEP)+1:end]
     if any(c -> c isa Regex ? match(c, fpath) !== nothing : c == fpath,
                files2ignore)
         return true

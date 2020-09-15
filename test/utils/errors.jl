@@ -107,7 +107,7 @@ end
 end
 
 @testset "Unfound" begin
-    fs2();
+    fs();
     @test_throws F.FileNotFoundError F.resolve_rpath("./foo")
 end
 

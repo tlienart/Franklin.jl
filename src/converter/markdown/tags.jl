@@ -87,7 +87,7 @@ function write_tag_page(tag)::Nothing
     # make `fd_tag` available to that page generation
     set_var!(LOCAL_VARS, "fd_tag", tag)
 
-    layout  = path(layout_key())
+    layout  = path(:layout)
     content = read(joinpath(layout, "tag.html"), String)
 
     dir = joinpath(path(:tag), tag)

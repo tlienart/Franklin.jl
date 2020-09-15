@@ -47,28 +47,14 @@ function set_paths!()::LittleDict{Symbol,String}
     # Particularly for the output dir. If you do, check for example that
     # functions such as Franklin.publish point to the right dirs/files.
 
-    if FD_ENV[:STRUCTURE] < v"0.2"
-        PATHS[:folder]    = normpath(FOLDER_PATH[])
-        PATHS[:src]       = joinpath(PATHS[:folder], "src")
-        PATHS[:src_pages] = joinpath(PATHS[:src],    "pages")
-        PATHS[:src_css]   = joinpath(PATHS[:src],    "_css")
-        PATHS[:src_html]  = joinpath(PATHS[:src],    "_html_parts")
-        PATHS[:pub]       = joinpath(PATHS[:folder], "pub")
-        PATHS[:css]       = joinpath(PATHS[:folder], "css")
-        PATHS[:libs]      = joinpath(PATHS[:folder], "libs")
-        PATHS[:assets]    = joinpath(PATHS[:folder], "assets")
-        PATHS[:literate]  = joinpath(PATHS[:folder], "scripts")
-        PATHS[:tag]       = joinpath(PATHS[:pub],    GLOBAL_VARS["tag_page_path"].first)
-    else
-        PATHS[:folder]   = normpath(FOLDER_PATH[])
-        PATHS[:site]     = joinpath(PATHS[:folder], "__site")    # mandatory
-        PATHS[:assets]   = joinpath(PATHS[:folder], "_assets")   # mandatory
-        PATHS[:css]      = joinpath(PATHS[:folder], "_css")      # mandatory
-        PATHS[:layout]   = joinpath(PATHS[:folder], "_layout")   # mandatory
-        PATHS[:libs]     = joinpath(PATHS[:folder], "_libs")     # mandatory
-        PATHS[:literate] = joinpath(PATHS[:folder], "_literate") # optional
-        PATHS[:tag]      = joinpath(PATHS[:site],   GLOBAL_VARS["tag_page_path"].first)
-    end
+    PATHS[:folder]   = normpath(FOLDER_PATH[])
+    PATHS[:site]     = joinpath(PATHS[:folder], "__site")    # mandatory
+    PATHS[:assets]   = joinpath(PATHS[:folder], "_assets")   # mandatory
+    PATHS[:css]      = joinpath(PATHS[:folder], "_css")      # mandatory
+    PATHS[:layout]   = joinpath(PATHS[:folder], "_layout")   # mandatory
+    PATHS[:libs]     = joinpath(PATHS[:folder], "_libs")     # mandatory
+    PATHS[:literate] = joinpath(PATHS[:folder], "_literate") # optional
+    PATHS[:tag]      = joinpath(PATHS[:site],   GLOBAL_VARS["tag_page_path"].first)
 
     return PATHS
 end
@@ -95,5 +81,3 @@ with something like `savefig(joinpath(@OUTPUT, "ex1.png"))`.
 macro OUTPUT()
     return OUT_PATH[]
 end
-
-layout_key() = ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src_html, :layout)

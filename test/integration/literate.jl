@@ -1,12 +1,11 @@
-fs1()
+fs()
 
-scripts = joinpath(F.PATHS[:folder], "literate-scripts")
-mkpath(scripts)
+mkpath(F.path(:literate))
 
 @testset "Literate-0" begin
     @test_throws ErrorException literate_folder("foo/")
-    litpath = literate_folder("literate-scripts/")
-    @test litpath == joinpath(F.PATHS[:folder], "literate-scripts/")
+    litpath = literate_folder("_literate/")
+    @test litpath == literate_folder(F.path(:literate))
 end
 
 # @testset "Literate-a" begin
@@ -56,10 +55,10 @@ end
 
         z = x + y
         """
-    path = joinpath(scripts, "tutorial.jl")
+    path = joinpath(F.path(:literate), "tutorial.jl")
     write(path, s)
-    opath, = F.literate_to_franklin("/literate-scripts/tutorial")
-    @test endswith(opath, joinpath(F.PATHS[:assets], "literate", "tutorial.md"))
+    opath, = F.literate_to_franklin("/_literate/tutorial")
+    @test endswith(opath, joinpath(F.PATHS[:site], "assets", "literate", "tutorial.md"))
     out = read(opath, String)
     @test out == """
         <!--This file was generated, do not modify it.-->
@@ -88,7 +87,7 @@ end
         @def showall = true
         @def reeval = true
 
-        \literate{/literate-scripts/tutorial.jl}
+        \literate{/_literate/tutorial.jl}
         """ |> fd2html_td
     @test isapproxstr(h, """
         <h1 id="rational_numbers"><a href="#rational_numbers">Rational numbers</a></h1>
@@ -99,14 +98,53 @@ end
             y = 2//5
             """))
         </code></pre>
-        <pre><code class=\"plaintext\">2//5</code></pre>
+        <pre><code class="plaintext">2//5</code></pre>
         <p>When adding <code>x</code> and <code>y</code> together we obtain a new rational number:</p>
         <pre><code class="language-julia">$(F.htmlesc(raw"""
             z = x + y
             """))
-        </code></pre>
-        <pre><code class=\"plaintext\">11//15</code></pre>
+        </code></pre><pre><code class="plaintext">11//15</code></pre>
         """)
+
+    # issue 592
+    # Literate to Franklin
+    s = raw"""
+        # # Rational numbers
+        # ```julia
+        # const a = 1
+        # ```
+        a = 5
+        """
+    path = joinpath(F.path(:literate), "tutorial.jl")
+    write(path, s)
+    opath, = F.literate_to_franklin("/_literate/tutorial")
+    @test endswith(opath, joinpath(F.PATHS[:site], "assets", "literate", "tutorial.md"))
+    out = read(opath, String)
+    @test out // """
+        <!--This file was generated, do not modify it.-->
+        # Rational numbers
+        ```julia
+        const a = 1
+        ```
+
+        ```julia:ex1
+        a = 5
+        ```
+        """
+
+    # Use of `\literate` command
+    h = raw"""
+        @def hascode = true
+        @def showall = true
+        @def reeval = true
+
+        \literate{/_literate/tutorial.jl}
+        """ |> fd2html_td
+    @test h // """
+        <h1 id="rational_numbers"><a href="#rational_numbers">Rational numbers</a></h1>
+        <pre><code class="language-julia">$(F.htmlesc(raw"""const a = 1"""))</code></pre>
+        <pre><code class="language-julia">$(F.htmlesc(raw"""a = 5"""))</code></pre><pre><code class="plaintext">5</code></pre>
+        """
 end
 
 @testset "Literate-c" begin

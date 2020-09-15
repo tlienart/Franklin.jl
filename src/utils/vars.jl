@@ -12,8 +12,6 @@ for that value. (e.g.: "THE AUTHOR" => (String, Nothing))
 const GLOBAL_VARS = PageVars()
 
 const GLOBAL_VARS_DEFAULT = [
-    # Folder org
-    "folder_structure" => Pair(FD_ENV[:STRUCTURE], (VersionNumber,)),
     # General
     "author"           => Pair("THE AUTHOR", (String, Nothing)),
     "date_format"      => Pair("U dd, yyyy", (String,)),
@@ -191,9 +189,7 @@ function pagevar(rpath::AS, name::Union{Symbol,String})
         # does there exist a file with a `.md` ? if so go over it
         # otherwise return nothing
         fpath = rpath * ".md"
-        candpath = FD_ENV[:STRUCTURE] < v"0.2" ?
-                     joinpath(path(:src), fpath) :
-                     joinpath(path(:folder), fpath)
+        candpath = joinpath(path(:folder), fpath)
         isfile(candpath) || return nothing
         # store curpath
         bk_path = locvar(:fd_rpath)
