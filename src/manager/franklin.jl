@@ -163,8 +163,7 @@ function fd_setup()::NamedTuple
     other_files      = TrackedFiles()
     infra_files      = TrackedFiles()
     literate_scripts = TrackedFiles()
-    # named tuples of all the watched files
-    # NOTE: with FS2 the ordering now matters, i.p. other should be first
+    # named tuples of all the watched files (order matters)
     watched_files = (other    = other_files,
                      infra    = infra_files,
                      md       = md_pages,
@@ -246,6 +245,22 @@ function fd_fullpass(watched_files::NamedTuple)::Int
             FD_ENV[:PRERENDER]  = true
         end
         s += a
+    end
+    # re-evaluate delayed pages
+    if !isempty(DELAYED)
+        cp_DELAYED = copy(DELAYED)
+        for page in cp_DELAYED
+            case = Symbol(strip(splitext(page)[2], '.'))
+            fpair = path(:folder) => page
+            a = process_file(case, fpair, head, pg_foot, foot)
+            if a < 0 && FD_ENV[:PRERENDER] && FD_ENV[:NO_FAIL_PRERENDER]
+                FD_ENV[:PRERENDER] = false
+                process_file(case, fpair, head, pg_foot, foot)
+                FD_ENV[:PRERENDER]  = true
+            end
+            s += a
+        end
+        empty!(DELAYED)
     end
     # generate RSS if appropriate
     globvar("generate_rss") && rss_generator()
