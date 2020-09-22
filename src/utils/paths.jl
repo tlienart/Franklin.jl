@@ -54,7 +54,10 @@ function set_paths!()::LittleDict{Symbol,String}
     PATHS[:layout]   = joinpath(PATHS[:folder], "_layout")   # mandatory
     PATHS[:libs]     = joinpath(PATHS[:folder], "_libs")     # mandatory
     PATHS[:literate] = joinpath(PATHS[:folder], "_literate") # optional
-    PATHS[:tag]      = joinpath(PATHS[:site],   GLOBAL_VARS["tag_page_path"].first)
+    tpp = globvar("tag_page_path")
+    if !isnothing(tpp)
+        PATHS[:tag]  = joinpath(PATHS[:site],  tpp)
+    end
 
     return PATHS
 end
