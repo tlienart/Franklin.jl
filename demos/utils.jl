@@ -24,3 +24,17 @@ function hfun_members_table(params::Vector{String})::String
     write(io, "</table>")
     return String(take!(io))
 end
+
+# with question 007 -- case 1
+hfun_case_1() =
+    """<p style="color:red;">var read from foo is $(pagevar("foo", "var"))</p>"""
+
+
+# with question 007 -- case 2, note the `@delay`
+@delay function hfun_case_2()
+    all_tags = globvar("fd_page_tags")
+    isnothing(all_tags) && return ""
+    all_tags = union(values(all_tags)...)
+    tagstr = strip(prod("$t " for t in all_tags))
+    return """<p style="color:red;">tags: { $tagstr }</p>"""
+end
