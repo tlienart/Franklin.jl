@@ -249,6 +249,7 @@ function fd_fullpass(watched_files::NamedTuple)::Int
     # re-evaluate delayed pages
     if !isempty(DELAYED)
         cp_DELAYED = copy(DELAYED)
+        empty!(DELAYED) # so that functions are effectively applied
         for page in cp_DELAYED
             case = Symbol(strip(splitext(page)[2], '.'))
             fpair = path(:folder) => page
@@ -260,7 +261,6 @@ function fd_fullpass(watched_files::NamedTuple)::Int
             end
             s += a
         end
-        empty!(DELAYED)
     end
     # generate RSS if appropriate
     globvar("generate_rss") && rss_generator()

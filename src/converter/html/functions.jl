@@ -9,6 +9,8 @@ function convert_html_fblock(β::HFun)::String
     ex  = isempty(β.params) ? :($fun()) : :($fun($β.params))
     # see if a hfun was defined in utils
     if isdefined(Main, :Utils) && isdefined(Main.Utils, fun)
+        # skip eval if the page is delayed
+        FD_ENV[:SOURCE] in DELAYED && return ""
         res = Core.eval(Main.Utils, ex)
         return string(res)
     end
