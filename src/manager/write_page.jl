@@ -74,7 +74,7 @@ function write_page(output_path::AS, content::AS;
     # NOTE
     #   - output_path is assumed to exist // see form_output_path
     #   - head/pgfoot/foot === nothing --> read (see franklin.jl)
-    layout = path(layout_key())
+    layout = path(:layout)
     if isnothing(head)
         head = read(joinpath(layout, "head.html"), String)
     end

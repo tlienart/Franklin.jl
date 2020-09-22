@@ -40,29 +40,8 @@
      @test occursin("defined in 'utils.jl'.", s)
 end
 
-
 @testset "h-insert" begin
-    fs1()
-    temp_rnd = joinpath(F.PATHS[:src_html], "temp.rnd")
-    write(temp_rnd, "some random text to insert")
-    hs = raw"""
-        Trying to insert: {{ insert temp.rnd }} and see.
-        """
-    @test F.convert_html(hs) == "Trying to insert: some random text to insert and see.\n"
-
-    hs = raw"""Trying to insert: {{ insert nope.rnd }} and see."""
-
-    global r = ""; s = @capture_out begin
-        global r
-        r = F.convert_html(hs)
-    end
-    @test occursin("h-function call '{{insert ...}}'", s)
-    @test occursin("Couldn't find the file", s)
-    @test r == "Trying to insert:  and see."
-end
-
-@testset "h-insert-fs2" begin
-    fs2()
+    fs()
     temp_rnd = joinpath(F.PATHS[:layout], "temp.rnd")
     write(temp_rnd, "some random text to insert")
     hs = raw"""

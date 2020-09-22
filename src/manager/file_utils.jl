@@ -23,8 +23,7 @@ function process_config(; init::Bool=false)::Nothing
             config_warn()
         end
     else
-        key = ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src, :folder)
-        dir = path(key)
+        dir = path(:folder)
         config_path = joinpath(dir, "config.md")
         if isfile(config_path)
             convert_md(read(config_path, String); isconfig=true)
@@ -126,15 +125,13 @@ function process_file_err(case::Symbol, fpair::Pair{String, String},
         proc_html = convert_html(raw_html) |> postprocess_page
         write(outp, proc_html)
     else # case in (:other, :infra)
-        if FD_ENV[:STRUCTURE] >= v"0.2"
-            # there's a bunch of thing we don't want to copy over
-            if startswith(inp, path(:layout))   ||
-                startswith(inp, path(:literate)) ||
-                endswith(inp, "config.md") ||
-                endswith(inp, "search.md")
-                # skip
-                @goto end_copyblock
-            end
+        # there's a bunch of thing we don't want to copy over
+        if startswith(inp, path(:layout))   ||
+            startswith(inp, path(:literate)) ||
+            endswith(inp, "config.md") ||
+            endswith(inp, "search.md")
+            # skip
+            @goto end_copyblock
         end
         # NOTE: some processing may be added here later on (e.g. parsing of
         # CSS files). Only copy again if necessary (file is not there or
@@ -166,7 +163,7 @@ currently being processed. Does not start with a path separator.
 So `[some_fs_path]/blog/page.md` --> `blog/page.md` (keeps the extension).
 """
 function get_rpath(fpath::String)
-    root = path(ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src, :folder))
+    root = path(:folder)
     return fpath[lastindex(root)+length(PATH_SEP)+1:end]
 end
 

@@ -18,6 +18,7 @@ import NodeJS
 import Literate
 import HTTP
 import Random
+import ExprTools: splitdef, combinedef
 import REPL.REPLCompletions: emoji_symbols
 
 export serve, publish, cleanpull, newsite, optimize, fd2html,
@@ -81,10 +82,13 @@ const FD_ENV = LittleDict(
     :DEBUG_MODE    => false,
     :SUPPRESS_ERR  => false,
     :SILENT_MODE   => false,
-    :STRUCTURE     => v"0.2",
     :QUIET_TEST    => false,
     :SHOW_WARNINGS => true,     # franklin-specific warnings
     )
+
+# keep track of pages which need to be re-evaluated after the full-pass to ensure that
+# their h-fun are working with the fully-defined scope (e.g. if need tags)
+const DELAYED = Set{String}()
 
 """Dict to keep track of languages and how comments are indicated and their extensions. This is relevant to allow hiding lines of code. """
 const CODE_LANG = LittleDict{String,NTuple{2,String}}(

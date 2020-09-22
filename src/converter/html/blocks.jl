@@ -74,21 +74,10 @@ function process_html_cond(hs::AS, qblocks::Vector{AbstractBlock},
         else
             # HIsPage//HIsNotPage
             rpath = splitext(unixify(locvar(:fd_rpath)))[1]
-            if FD_ENV[:STRUCTURE] < v"0.2"
-                # current path is relative to /src/ for instance
-                # /src/pages/blah.md -> pages/blah
-                # if starts with `pages/`, replaces by `pub/`:
-                # pages/blah => pub/blah
-                rpath = replace(rpath, Regex("^pages") => "pub")
-            end
             # are we currently on a tag page?
             if !isempty(locvar(:fd_tag))
                 tag = locvar(:fd_tag)
-                if FD_ENV[:STRUCTURE] < v"0.2"
-                    rpath = "/pub/tag/$tag/"
-                else
-                    rpath = "/tag/$tag/"
-                end
+                rpath = "/tag/$tag/"
             end
 
             # compare with β.pages

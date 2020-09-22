@@ -1,7 +1,8 @@
-fs1()
+fs()
 
 @testset "figalt, fig" begin
-    write(joinpath(F.PATHS[:assets], "testimg.png"), "png code")
+    mkpath(joinpath(F.PATHS[:site], "assets"))
+    write(joinpath(F.PATHS[:site], "assets", "testimg.png"), "png code")
     h = raw"""
         A figure:
         \figalt{fig 1}{/assets/testimg.png}
@@ -16,7 +17,7 @@ fs1()
             <img src=\"/assets/testimg.png\" alt=\"\">
             Done.</p>
             """)
-    p = mkpath(joinpath(F.PATHS[:assets], "output"))
+    p = mkpath(joinpath(F.PATHS[:site], "assets", "output"))
     write(joinpath(p, "testimg_2.png"), "png code")
     h = raw"""
         Another figure:
@@ -41,7 +42,7 @@ end
     # has header in source
     #
     testcsv = "h1,h2,h3\nstring1, 1.567, 0\n,,\n l i n e ,.158,99999999"
-    write(joinpath(F.PATHS[:assets], "testcsv.csv"), testcsv)
+    write(joinpath(F.PATHS[:site], "assets", "testcsv.csv"), testcsv)
     # no header specified
     h = raw"""
         A table:
@@ -118,7 +119,7 @@ end
     #
 
     testcsv = "string1, 1.567, 0\n,,\n l i n e ,.158,99999999"
-    write(joinpath(F.PATHS[:assets], "testcsv.csv"), testcsv)
+    write(joinpath(F.PATHS[:site], "assets", "testcsv.csv"), testcsv)
     # no header specified
     h = raw"""
         A table:

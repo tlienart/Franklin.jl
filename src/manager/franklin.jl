@@ -88,35 +88,14 @@ function serve(; clear::Bool=false,
     # check if there's a config file, if there is, check the variable
     # definitions looking at the ones that would affect overall structure etc.
     process_config(init=true)
-    # in order to avoid the user incidentally causing troubles by redefining
-    # folder_structure along the way, we store it in FD_ENV.
-    fsv = GLOBAL_VARS["folder_structure"].first
-    FD_ENV[:STRUCTURE] = fsv
 
-    if FD_ENV[:STRUCTURE] < v"0.2"
-        FD_ENV[:SOURCE] = "first pass"
-        print_warning("""
-            You seem to be using Franklin's old file structure which is now
-            deprecated,  please consider upgrading to the new file structure.
-            See https://github.com/tlienart/Franklin.jl/blob/master/NEWS.md#v06-1
-            for more details.
-            """)
-        # check to see if we're in a folder that has the right structure,
-        # otherwise stop and tell the user to check (#155)
-        if !isdir(joinpath(FOLDER_PATH[], "src"))
-            throw(ArgumentError(
-                "The current directory doesn't have a `src/` folder. " *
-                "Please change directory to a valid Franklin folder."))
-        end
-    else
-        if !all(isdir, (joinpath(FOLDER_PATH[], "_layout"),
-                        joinpath(FOLDER_PATH[], "_css")))
-            throw(ArgumentError(
-                "The current directory doens't  have a `_layout` or `_css` " *
-                "folder, if you are using the old folder structure, please " *
-                "add `@def folder_structure = v\"0.1\"` in your config.md; " *
-                "otherwise, change directory to a valid Franklin folder."))
-        end
+    if !all(isdir, (joinpath(FOLDER_PATH[], "_layout"),
+                    joinpath(FOLDER_PATH[], "_css")))
+        throw(ArgumentError(
+            "The current directory doens't  have a `_layout` or `_css` " *
+            "folder, if you are using the old folder structure, please " *
+            "add `@def folder_structure = v\"0.1\"` in your config.md; " *
+            "otherwise, change directory to a valid Franklin folder."))
     end
 
     # check if a Project.toml file is available, if so activate the folder
@@ -148,7 +127,7 @@ function serve(; clear::Bool=false,
         nomess || println("→ Starting the server...")
         coreloopfun = (cntr, fw) -> fd_loop(cntr, fw, watched_files)
         # start the liveserver in the current directory
-        live_server_dir = ifelse(FD_ENV[:STRUCTURE] < v"0.2", "", "__site")
+        live_server_dir = "__site"
         LiveServer.setverbose(verb)
         LiveServer.serve(port=port, coreloopfun=coreloopfun,
                          dir=live_server_dir, host=host)
@@ -184,8 +163,7 @@ function fd_setup()::NamedTuple
     other_files      = TrackedFiles()
     infra_files      = TrackedFiles()
     literate_scripts = TrackedFiles()
-    # named tuples of all the watched files
-    # NOTE: with FS2 the ordering now matters, i.p. other should be first
+    # named tuples of all the watched files (order matters)
     watched_files = (other    = other_files,
                      infra    = infra_files,
                      md       = md_pages,
@@ -231,9 +209,8 @@ function fd_fullpass(watched_files::NamedTuple)::Int
     process_utils()
 
     # form page segments
-    root_key   = ifelse(FD_ENV[:STRUCTURE] < v"0.2", :src, :folder)
-    root       = path(root_key)
-    layout     = path(layout_key())
+    root       = path(:folder)
+    layout     = path(:layout)
 
     head    = read(joinpath(layout, "head.html"),      String)
     pg_foot = read(joinpath(layout, "page_foot.html"), String)
@@ -268,6 +245,22 @@ function fd_fullpass(watched_files::NamedTuple)::Int
             FD_ENV[:PRERENDER]  = true
         end
         s += a
+    end
+    # re-evaluate delayed pages
+    if !isempty(DELAYED)
+        cp_DELAYED = copy(DELAYED)
+        empty!(DELAYED) # so that functions are effectively applied
+        for page in cp_DELAYED
+            case = Symbol(strip(splitext(page)[2], '.'))
+            fpair = path(:folder) => page
+            a = process_file(case, fpair, head, pg_foot, foot)
+            if a < 0 && FD_ENV[:PRERENDER] && FD_ENV[:NO_FAIL_PRERENDER]
+                FD_ENV[:PRERENDER] = false
+                process_file(case, fpair, head, pg_foot, foot)
+                FD_ENV[:PRERENDER]  = true
+            end
+            s += a
+        end
     end
     # generate RSS if appropriate
     globvar("generate_rss") && rss_generator()
@@ -308,7 +301,7 @@ function fd_loop(cycle_counter::Int, ::LiveServer.FileWatcher,
         # update the dictionaries
         scan_input_dir!(watched_files..., verb; in_loop=true)
     else
-        layout = path(layout_key())
+        layout = path(:layout)
         # do a pass over the files, check if one has changed and if so trigger
         # the appropriate file processing mechanism
         for (case, dict) ∈ pairs(watched_files), (fpair, t) ∈ dict

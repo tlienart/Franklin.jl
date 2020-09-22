@@ -254,3 +254,15 @@ function invert_dict(dict)
     end
     return inv_dict
 end
+
+
+macro delay(defun)
+    def = splitdef(defun)
+    name = def[:name]
+    body = def[:body]
+    def[:body] = quote
+        union!(Franklin.DELAYED, (Franklin.FD_ENV[:SOURCE],))
+        $body
+    end
+    esc(combinedef(def))
+end

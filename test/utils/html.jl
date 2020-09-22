@@ -1,24 +1,10 @@
 @testset "misc-html" begin
-    fs1()
-    λ = "blah/blah.ext"
-    set_curpath("pages/cpB/blah.md")
-    @test F.html_ahref(λ, 1)           == "<a href=\"$λ\">1</a>"
-    @test F.html_ahref(λ, "bb")        == "<a href=\"$λ\">bb</a>"
-    @test F.html_ahref_key("cc", "dd") == "<a href=\"#cc\">dd</a>"
-    @test F.html_div("dn","ct") == "<div class=\"dn\">ct</div>"
-    @test F.html_img("src", "alt") == "<img src=\"src\" alt=\"alt\">"
-    @test F.html_code("code") == "<pre><code class=\"plaintext\">code</code></pre>"
-    @test F.html_code("code", "lang") == "<pre><code class=\"language-lang\">code</code></pre>"
-    @test F.html_err("blah") == "<p><span style=\"color:red;\">// blah //</span></p>"
-
-    fs2()
+    fs()
     λ = "blah/blah.ext"
     set_curpath("cpB/blah.md")
     @test F.html_ahref(λ, 1)           == "<a href=\"$λ\">1</a>"
     @test F.html_ahref(λ, "bb")        == "<a href=\"$λ\">bb</a>"
     @test F.html_ahref_key("cc", "dd") == "<a href=\"#cc\">dd</a>"
-
-    fs1()
 end
 
 @testset "misc-html 2" begin

@@ -37,8 +37,9 @@ function newmodule(name::String)::Module
             mod = Core.eval(Main, Meta.parse("""
                 module $name
                     import Franklin
-                    import Franklin: @OUTPUT, fdplotly, locvar,
-                                     pagevar, globvar, fd2html, get_url
+                    import Franklin: @OUTPUT, @delay, fdplotly,
+                                     locvar, pagevar, globvar,
+                                     fd2html, get_url 
                     if isdefined(Main, :Utils) && typeof(Main.Utils) == Module
                         import ..Utils
                     end

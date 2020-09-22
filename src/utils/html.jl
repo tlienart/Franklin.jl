@@ -129,24 +129,6 @@ html_err(mess::String="") =
 Helper function to get the relative url of the current page.
 """
 function url_curpage()
-    if FD_ENV[:STRUCTURE] < v"0.2"
-        return _url_curpage()
-    end
-    return _url_curpage2()
-end
-
-function _url_curpage()
-    # go from /pages/.../something.md to /pub/.../something.html note that if
-    # on windows then it would be \\ whence the PATH_SEP
-    rp = replace(locvar(:fd_rpath),
-            Regex("^pages$(escape_string(PATH_SEP))") => "pub$(PATH_SEP)")
-    rp = unixify(rp)
-    rp = splitext(rp)[1] * ".html"
-    startswith(rp, "/") || (rp = "/" * rp)
-    return rp
-end
-
-function _url_curpage2()
     # get the relative path to current page and split extension (.md)
     fn = splitext(locvar(:fd_rpath))[1]
     # if it's not `index` then add `index`:
@@ -168,9 +150,6 @@ end
 Take a `rpath` and return the corresponding valid url
 """
 function get_url(rpath)
-    if FD_ENV[:STRUCTURE] < v"0.2"
-        error("`get_url` undefined for older file specs, open an issue on Github.")
-    end
     rpc, ext = splitext(rpath)
     if ext in (".md", ".html")
         url = rpc

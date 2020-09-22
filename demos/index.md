@@ -1,4 +1,5 @@
 @def title = "Franklin FAQ"
+@def tags = ["index"]
 
 # Franklin Demos
 
@@ -13,6 +14,20 @@ The ordering is reverse chronological but just use the table of contents to guid
 **Note**: an important philosophy here is that if you can write a Julia function that would produce the HTML you want, then write that function and let Franklin call it.
 
 \toc
+
+## (007) delayed hfun
+
+When you call `serve()`, Franklin first does a full pass which builds all your pages and then waits for changes to happen in a given page before updating that page.
+If you have a page `A` and a page `B` and that the page `A` calls a function which would need something that will only be defined once `B` is built, you have two cases:
+
+1. A common one is to have the function used by `A` require a _local_ page variable defined on `B`; in that case just use `pagevar(...)`. When called, it will itself build `B` so that it can access the page variable defined on `B`. This is usually all you need.
+1. A less common one is to have the function used by `A` require a _global_ page variable such as, for instance, the list of all tags, which is only complete _once all pages have been built_. In that case the function to be used by `A` should be marked with `@delay hfun_...(...)` so that Franklin knows it has to wait for the full pass to be completed before re-building `A` now being sure that it will have access to the proper scope.
+
+The page [foo](/foo/) has a tag `foo` and a page variable `var`; let's show both use cases; see `utils.jl` to see the definition of the relevant functions.
+
+**Case 1** (local page variable access, `var = 5` on page foo): {{case_1}}
+
+**Case 2** (wait for full build, there's a tag `index` here and a tag `foo` on page foo): {{case_2}}
 
 ## (006) code highlighting
 

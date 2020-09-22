@@ -63,11 +63,8 @@ Otherwise, if in `code` mode, recurse with `./code/path`.
                      additional shortcut form is allowed).
 """
 function parse_rpath(rpath::AS; canonical::Bool=false, code::Bool=false)::AS
-
-    FS2 = FD_ENV[:STRUCTURE] >= v"0.2"
-
     # path from the website root folder
-    # examples with FS2:
+    # examples:
     # /foo.bar          ==> { /foo.bar        ; [__site]/foo.bar        }
     # /_assets/foo.bar  ==> { /assets/foo.bar ; [__site]/assets/foo.bar }
     #
@@ -76,19 +73,13 @@ function parse_rpath(rpath::AS; canonical::Bool=false, code::Bool=false)::AS
             throw(RelativePathError("Relative path `$rpath` doesn't " *
                                     "look right."))
         end
-        if FS2
-            rpath = replace(rpath, "/_assets" => "/assets")
-        end
+        rpath = replace(rpath, "/_assets" => "/assets")
         canonical || return rpath
-        if FS2
-            full_path = joinpath(PATHS[:site], join_rpath(rpath[2:end]))
-        else
-            full_path = joinpath(PATHS[:folder], join_rpath(rpath[2:end]))
-        end
+        full_path = joinpath(PATHS[:site], join_rpath(rpath[2:end]))
         return normpath(full_path)
 
     # path relative to the assets folder with the same path as the parent file
-    # example with FS2 assuming we're on page /page/
+    # example assuming we're on page /page/
     # ./foo.bar ==> { /assets/page/foo.bar  ; [__site]/assets/page/foo.bar}
     elseif startswith(rpath, "./")
         if length(rpath) <= 2
@@ -108,15 +99,9 @@ function parse_rpath(rpath::AS; canonical::Bool=false, code::Bool=false)::AS
             rpath = unixify(splitext(loc_rpath)[1]) * rpath[3:end]
             return "/assets/" * rpath
         else
-            if FS2
-                full_path = joinpath(PATHS[:site], "assets",
-                                     splitext(loc_rpath)[1],
-                                     join_rpath(rpath[3:end]))
-            else
-                full_path = joinpath(PATHS[:assets],
-                                     splitext(locvar(:fd_rpath))[1],
-                                     join_rpath(rpath[3:end]))
-            end
+            full_path = joinpath(PATHS[:site], "assets",
+                                 splitext(loc_rpath)[1],
+                                 join_rpath(rpath[3:end]))
             return normpath(full_path)
         end
     end
@@ -132,11 +117,7 @@ function parse_rpath(rpath::AS; canonical::Bool=false, code::Bool=false)::AS
     # otherwise, we consider the path as a full path relative to the
     # /assets/ folder. For instance `blah/img1.png` => `/assets/blah/img1.png`
     canonical || return "/assets/" * rpath # no doubling bc rpath[1] != '/'
-    if FS2
-        full_path = joinpath(PATHS[:site], "assets", join_rpath(rpath))
-    else
-        full_path = joinpath(PATHS[:assets], join_rpath(rpath))
-    end
+    full_path = joinpath(PATHS[:site], "assets", join_rpath(rpath))
     return normpath(full_path)
 end
 

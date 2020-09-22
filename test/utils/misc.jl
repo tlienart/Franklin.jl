@@ -204,7 +204,7 @@ end
 end
 
 @testset "get_url" begin
-    fs2()
+    fs()
     @test get_url("foo") == "/foo/"
     @test get_url("foo/bar") == "/foo/bar/"
     @test get_url("index") == "/"

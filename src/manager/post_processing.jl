@@ -70,8 +70,6 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
             path_to = joinpath(dirname(pathof(Franklin)),
                                 "scripts", "minify.py")
             py_script = read(path_to, String)
-            oldfs     = ifelse(FD_ENV[:STRUCTURE] < v"0.2",  "True", "False")
-            py_script = "old_folder_structure = $oldfs\n" * py_script
             write(FD_PY_MIN_NAME, py_script)
             # run it
             succ = success(`$([e for e in split(PY)]) $FD_PY_MIN_NAME`)
@@ -163,11 +161,7 @@ function cleanpull()::Nothing
 
     rmmsg = rpad("→ Removing local __site dir...", 35)
     print(rmmsg)
-    if FD_ENV[:STRUCTURE] >= v"0.2"
-        isdir(path(:site)) && rm(path(:site), force=true, recursive=true)
-    else
-        isdir(path(:pub)) && rm(path(:pub), force=true, recursive=true)
-    end
+    isdir(path(:site)) && rm(path(:site), force=true, recursive=true)
     println("\r" * rmmsg * " [done ✔ ]")
 
     try
@@ -190,21 +184,13 @@ Take a page (in HTML) and check all `href` on it to see if they lead somewhere.
 """
 function verify_links_page(path::AS, online::Bool)
     shortpath = replace(path, PATHS[:folder] => "")
-    if FD_ENV[:STRUCTURE] < v"0.2"
-        mdpath    = replace(shortpath,
-                        Regex(joinpath("^pub", "")=>joinpath("pages", "")))
-        mdpath    = splitext(mdpath)[1] * ".md"
-        shortpath = replace(shortpath, r"^\/"=>"")
-        mdpath    = replace(mdpath, r"^\/"=>"")
+    mdpath = replace(path, PATHS[:site] => "")
+    mdpath = splitext(mdpath)[1] * ".md"
+    dir, fn = splitdir(mdpath) # fn will be index.md
+    if dir == "/"
+        mdpath = dir * "index.md"
     else
-        mdpath = replace(path, PATHS[:site] => "")
-        mdpath = splitext(mdpath)[1] * ".md"
-        dir, fn = splitdir(mdpath) # fn will be index.md
-        if dir == "/"
-            mdpath = dir * "index.md"
-        else
-            mdpath = dir * "[" * PATH_SEP *  "index].md"
-        end
+        mdpath = dir * "[" * PATH_SEP *  "index].md"
     end
     allok = true
     page  = read(path, String)
@@ -215,13 +201,9 @@ function verify_links_page(path::AS, online::Bool)
             # if it's empty it's `href="/"` which is always ok
             isempty(link) && continue
             anchor = m.captures[3]
-            if FD_ENV[:STRUCTURE] < v"0.2"
-                full_link = joinpath(PATHS[:folder], link)
-            else
-                full_link = joinpath(PATHS[:site], link)
-                if endswith(full_link, "/")
-                    full_link *= "index.html"
-                end
+            full_link = joinpath(PATHS[:site], link)
+            if endswith(full_link, "/")
+                full_link *= "index.html"
             end
             if !isfile(full_link)
                 allok && println("")
@@ -283,35 +265,21 @@ function verify_links()::Nothing
         print(" [you don't seem online ✗]")
     end
 
-    if FD_ENV[:STRUCTURE] < v"0.2"
-        # go over `index.html` then everything in `pub/`
-        overallok = verify_links_page(joinpath(PATHS[:folder], "index.html"), online)
-
-        for (root, _, files) ∈ walkdir(PATHS[:pub])
-            for file ∈ files
-                splitext(file)[2] == ".html" || continue
-                path = joinpath(root, file)
-                allok = verify_links_page(path, online)
-                overallok = overallok && allok
+    overallok = true
+    for (root, _, files) ∈ walkdir(PATHS[:folder])
+        for file ∈ files
+            splitext(file)[2] == ".html" || continue
+            fpath = joinpath(root, file)
+            if startswith(fpath, path(:assets)) ||
+               startswith(fpath, path(:css))    ||
+               startswith(fpath, path(:layout)) ||
+               startswith(fpath, path(:libs))   ||
+               startswith(fpath, path(:literate))
+               startswith(fpath, joinpath(path(:folder), ".git"))
+               continue
             end
-        end
-    else
-        overallok = true
-        for (root, _, files) ∈ walkdir(PATHS[:folder])
-            for file ∈ files
-                splitext(file)[2] == ".html" || continue
-                fpath = joinpath(root, file)
-                if startswith(fpath, path(:assets)) ||
-                   startswith(fpath, path(:css))    ||
-                   startswith(fpath, path(:layout)) ||
-                   startswith(fpath, path(:libs))   ||
-                   startswith(fpath, path(:literate))
-                   startswith(fpath, joinpath(path(:folder), ".git"))
-                   continue
-                end
-                allok = verify_links_page(fpath, online)
-                overallok = overallok && allok
-            end
+            allok = verify_links_page(fpath, online)
+            overallok = overallok && allok
         end
     end
     overallok && println("\rAll internal $(ifelse(online,"and external ",""))links verified ✓.      ")

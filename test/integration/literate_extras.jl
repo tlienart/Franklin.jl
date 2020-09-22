@@ -1,4 +1,4 @@
-fs2()
+fs()
 
 @testset "(no)show" begin
     lit = raw"""

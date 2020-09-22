@@ -1,6 +1,6 @@
 # Tests for what happens in the `utils.jl`
 
-fs2()
+fs()
 write(joinpath("_layout", "head.html"), "")
 write(joinpath("_layout", "foot.html"), "")
 write(joinpath("_layout", "page_foot.html"), "")

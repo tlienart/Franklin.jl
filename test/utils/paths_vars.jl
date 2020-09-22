@@ -8,27 +8,7 @@ fd2html_tdv(e) = F.fd2html_v(e; dir=td)
 F.def_GLOBAL_VARS!()
 F.def_GLOBAL_LXDEFS!()
 
-@testset "Paths" begin
-    P = F.set_paths!()
-
-    @test F.PATHS[:folder]   == td
-    @test F.PATHS[:src]      == joinpath(td, "src")
-    @test F.PATHS[:src_css]  == joinpath(td, "src", "_css")
-    @test F.PATHS[:src_html] == joinpath(td, "src", "_html_parts")
-    @test F.PATHS[:libs]     == joinpath(td, "libs")
-    @test F.PATHS[:pub]      == joinpath(td, "pub")
-    @test F.PATHS[:css]      == joinpath(td, "css")
-
-    @test P == F.PATHS
-
-    mkdir(F.PATHS[:src])
-    mkdir(F.PATHS[:src_pages])
-    mkdir(F.PATHS[:libs])
-    mkdir(F.PATHS[:src_css])
-    mkdir(F.PATHS[:src_html])
-    mkdir(F.PATHS[:assets])
-end
-
+mkdir(F.PATHS[:libs])
 # copying _libs/katex in the F.PATHS[:libs] so that it can be used in testing
 # the js_prerender_math
 cp(joinpath(dirname(dirname(pathof(Franklin))), "test", "_libs", "katex"), joinpath(F.PATHS[:libs], "katex"))

@@ -1,4 +1,4 @@
-fs2()
+fs()
 
 @testset "fig/rpath" begin
     gotd()
