@@ -39,10 +39,11 @@ function newmodule(name::String)::Module
                     import Franklin
                     import Franklin: @OUTPUT, @delay, fdplotly,
                                      locvar, pagevar, globvar,
-                                     fd2html, get_url 
+                                     fd2html, get_url
                     if isdefined(Main, :Utils) && typeof(Main.Utils) == Module
                         import ..Utils
                     end
+                    using Dates
                 end
                 """))
         end

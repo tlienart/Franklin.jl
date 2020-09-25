@@ -20,7 +20,7 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool,
     for mdb in filter(β -> (β.name == :MD_DEF_BLOCK), blocks)
         inner = stent(mdb)
         exs = parse_code(inner)
-        mdl = Module()
+        mdl = newmodule("MD_DEFINITIONS")
         try
             foreach(ex -> Core.eval(mdl, ex), exs)
         catch

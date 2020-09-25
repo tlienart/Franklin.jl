@@ -84,3 +84,15 @@ end
         """
     @test_throws ErrorException s |> fd2html
 end
+
+# blocks of definition with date
+@testset "mddefblock+date" begin
+    s = """
+        +++
+        a = 5
+        pubdate = Date(2013, 9, 4)
+        +++
+        {{a}} {{pubdate}}
+        """ |> fd2html
+    @test isapproxstr(s, "<p> 5 2013-09-04</p>")
+end
