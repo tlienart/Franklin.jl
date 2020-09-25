@@ -43,7 +43,8 @@ Keyword arguments:
                       passing as arguments the rendered page and the page
                       variables
 * `host="127.0.0.1"`: the host to use for the local server
-* `show_warnings`:    whether to show franklin  warnings
+* `show_warnings=true`: whether to show franklin  warnings
+* `launch=!single`:   whether to launch the browser when serving
 """
 function serve(; clear::Bool=false,
                  verb::Bool=false,
@@ -59,7 +60,8 @@ function serve(; clear::Bool=false,
                  on_write::Function=(_, _) -> nothing,
                  log::Bool=false,
                  host::String="127.0.0.1",
-                 show_warnings::Bool=true
+                 show_warnings::Bool=true,
+                 launch::Bool=!single,
                  )::Union{Nothing,Int}
     LOGGING[] = log
     # set the global path
@@ -130,7 +132,7 @@ function serve(; clear::Bool=false,
         live_server_dir = "__site"
         LiveServer.setverbose(verb)
         LiveServer.serve(port=port, coreloopfun=coreloopfun,
-                         dir=live_server_dir, host=host)
+                         dir=live_server_dir, host=host, launch_browser=launch)
     end
     flag_env &&
         rprint("→ Use Pkg.activate() to go back to your main environment.")
