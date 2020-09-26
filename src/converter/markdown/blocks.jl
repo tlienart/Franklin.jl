@@ -118,7 +118,7 @@ function convert_header(β::OCBlock, lxdefs::Vector{LxDef})::String
     hk    = lowercase(string(β.name)) # h1, h2, ...
     title = convert_md(content(β), lxdefs;
                        isrecursive=true, has_mddefs=false)
-    rstitle = refstring(title)
+    rstitle = refstring(html_unescape(title))
     # check if the header has appeared before and if so suggest
     # an altered refstring; if that altered refstring also exist
     # (pathological case, see #241), then extend it with a letter
