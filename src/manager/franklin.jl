@@ -89,7 +89,7 @@ function serve(; clear::Bool=false,
 
     # check if there's a config file, if there is, check the variable
     # definitions looking at the ones that would affect overall structure etc.
-    process_config(init=true)
+    process_config()
 
     if !all(isdir, (joinpath(FOLDER_PATH[], "_layout"),
                     joinpath(FOLDER_PATH[], "_css")))

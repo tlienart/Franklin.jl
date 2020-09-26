@@ -36,6 +36,9 @@ The code should be reevaluated if any of following flags are true:
 1. the output is missings
 """
 function should_eval(code::AS, rpath::AS)
+    # 0. the page is currently delayed, skip evals
+    FD_ENV[:SOURCE] in DELAYED && return false
+    
     # 1. global setting forcing all pages to reeval
     FD_ENV[:FORCE_REEVAL] && return true
 
