@@ -122,8 +122,8 @@
 <p><strong>Note</strong>: often, it is enough to use <code>~~~...~~~</code> blocks or define newcommands &#40;or both&#41; rather than use <code>hfun_*</code> and <code>lx_*</code>; but sometimes it can be very convenient to have a way to just generate things with your own code. For instance, to locally use custom styling of text, Franklin comes with the following command:</p>
 <pre><code class="language-html">\newcommand&#123;\style&#125;&#91;2&#93;&#123;~~~&lt;span style&#61;&quot;&#33;#1&quot;&gt;&#33;#2&lt;/span&gt;~~~&#125;</code></pre>
 <p>which allows you to do something like <code>\style&#123;color:red&#125;&#123;hello&#125;</code>: <span style="color:red">hello</span>. No need for a <code>hfun_*</code> or <code>lx_*</code> function here...</p>
-<div class="franklin-toc"><ol><li><a href="#quothtmlquot_functions_hfun_">&quot;HTML&quot; functions &#40;<code>hfun_*</code>&#41;</a><ol><li><a href="#without_parameters">Without parameters</a></li><li><a href="#with_parameters">With parameters</a></li></ol></li><li><a href="#quotlatexquot_functions_lx_">&quot;LaTeX&quot; functions &#40;<code>lx_*</code>&#41;</a><ol><li><a href="#why_it_was_a_dumb_example">Why it was a dumb example</a></li></ol></li></ol></div>
-<h2 id="quothtmlquot_functions_hfun_"><a href="#quothtmlquot_functions_hfun_">&quot;HTML&quot; functions &#40;<code>hfun_*</code>&#41;</a></h2>
+<div class="franklin-toc"><ol><li><a href="#html_functions_hfun_">&quot;HTML&quot; functions &#40;<code>hfun_*</code>&#41;</a><ol><li><a href="#without_parameters">Without parameters</a></li><li><a href="#with_parameters">With parameters</a></li></ol></li><li><a href="#latex_functions_lx_">&quot;LaTeX&quot; functions &#40;<code>lx_*</code>&#41;</a><ol><li><a href="#why_it_was_a_dumb_example">Why it was a dumb example</a></li></ol></li></ol></div>
+<h2 id="html_functions_hfun_"><a href="#html_functions_hfun_">&quot;HTML&quot; functions &#40;<code>hfun_*</code>&#41;</a></h2>
 <p>A <code>hfun_*</code> function is a simple way to generate custom and plug custom HTML somewhere.</p>
 <h3 id="without_parameters"><a href="#without_parameters">Without parameters</a></h3>
 <p>A parameter-free HTML function <code>hfun_foo</code> will have a definition in <code>utils.jl</code> like</p>
@@ -163,7 +163,7 @@ end</code></pre>
     return generated_html
 end</code></pre>
 <p>Note that all functions defined in <code>utils.jl</code> can call <code>locvar&#40;name&#41;</code> and <code>globvar&#40;name&#41;</code> to retrieve the value associated with a local or global page variable by its name; for instance <code>locvar&#40;&quot;author&quot;&#41;</code>.</p>
-<h2 id="quotlatexquot_functions_lx_"><a href="#quotlatexquot_functions_lx_">&quot;LaTeX&quot; functions &#40;<code>lx_*</code>&#41;</a></h2>
+<h2 id="latex_functions_lx_"><a href="#latex_functions_lx_">&quot;LaTeX&quot; functions &#40;<code>lx_*</code>&#41;</a></h2>
 <p>A <code>lx_*</code> function is a way to bypass Franklin&#39;s parsing and generate Markdown which will be <em>reprocessed</em> by Franklin &#40;though you can always avoid that by generating HTML directly after wrapping it in <code>~~~</code>&#41;.</p>
 <p>This is a more advanced command and you should probably double check before making use of it as, usually, there will be a simpler way of achieving what you want. Also if you intend to use it, you will want to check out <a href="http://github.com/tlienart/FranklinUtils.jl">FranklinUtils</a> which provides helper functions for it.</p>
 <p>It&#39;s harder to come up with meaningful examples as most simple examples will be achievable another way so here we proceed with a dumb example &#40;and will show why it&#39;s dumb later&#41;.</p>
@@ -190,7 +190,7 @@ end</code></pre> </p>
 <p>which you would have called <code>\h2&#123;foo&#125;&#123;Bar&#125;</code>.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: September 25, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
+    &copy; Thibaut Lienart. Last modified: September 27, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
