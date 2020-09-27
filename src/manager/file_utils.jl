@@ -8,28 +8,13 @@ The keyword `init` is used internally to distinguish between the first call
 where only structural variables are considered (e.g. controlling folder
 structure).
 """
-function process_config(; init::Bool=false)::Nothing
+function process_config()::Nothing
     FD_ENV[:SOURCE] = "config.md"
-    if init
-        # initially the paths variable aren't set, try to find a config.md
-        # and read definitions in it; in particular folder_structure.
-        config_path_v1 = joinpath(FOLDER_PATH[], "src", "config.md")
-        config_path_v2 = joinpath(FOLDER_PATH[], "config.md")
-        if isfile(config_path_v2)
-            convert_md(read(config_path_v2, String); isconfig=true)
-        elseif isfile(config_path_v1)
-            convert_md(read(config_path_v1, String); isconfig=true)
-        else
-            config_warn()
-        end
+    config_path = joinpath(FOLDER_PATH[], "config.md")
+    if isfile(config_path)
+        convert_md(read(config_path, String); isconfig=true)
     else
-        dir = path(:folder)
-        config_path = joinpath(dir, "config.md")
-        if isfile(config_path)
-            convert_md(read(config_path, String); isconfig=true)
-        else
-            config_warn()
-        end
+        config_warn()
     end
     return nothing
 end
@@ -45,15 +30,8 @@ recommended.
 """
 function process_utils()
     FD_ENV[:SOURCE] = "utils.jl"
-    utils_path_v1 = joinpath(FOLDER_PATH[], "src", "utils.jl")
-    utils_path_v2 = joinpath(FOLDER_PATH[], "utils.jl")
-    if isfile(utils_path_v2)
-        utils = utils_path_v2
-    elseif isfile(utils_path_v1)
-        utils = utils_path_v1
-    else
-        return nothing
-    end
+    utils = joinpath(FOLDER_PATH[], "utils.jl")
+    isfile(utils) || return nothing
     # wipe / create module Utils
     newmodule("Utils")
     Base.include(Main.Utils, utils)
@@ -122,6 +100,10 @@ function process_file_err(case::Symbol, fpair::Pair{String, String},
         set_cur_rpath(joinpath(fpair...))
         set_page_env()
         raw_html  = read(inp, String)
+        # add the item *before* the conversion so that the conversion
+        # can affect the page itself with {{...}}
+        cond_add = globvar(:generate_sitemap) && FD_ENV[:FULL_PASS]
+        cond_add && add_sitemap_item(html=true)
         proc_html = convert_html(raw_html) |> postprocess_page
         write(outp, proc_html)
     else # case in (:other, :infra)

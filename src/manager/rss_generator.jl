@@ -59,7 +59,7 @@ $SIGNATURES
 
 Create an `RSSItem` out of the provided fields defined in the page vars.
 """
-function add_rss_item()::RSSItem
+function add_rss_item()
     link  = url_curpage()
     title = jor("rss_title", "title")
     descr = jor("rss", "rss_description")
@@ -85,8 +85,9 @@ function add_rss_item()::RSSItem
         An RSS description was found but without title for page '$link'.
         """)
 
-    RSS_DICT[link] = RSSItem(title, link, descr, author,
-                             category, comments, enclosure, pubDate)
+    res = RSS_DICT[link] = RSSItem(title, link, descr, author,
+                                   category, comments, enclosure, pubDate)
+    return res
 end
 
 

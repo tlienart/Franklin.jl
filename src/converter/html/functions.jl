@@ -243,6 +243,8 @@ $(SIGNATURES)
 H-Function of the form `{{redirect /addr/blah.html}}`.
 """
 function hfun_redirect(params::Vector{String})::String
+    # don't put those on the sitemap
+    set_var!(LOCAL_VARS, "sitemap_exclude", true)
     if length(params) != 1
         throw(HTMLFunctionError(
                 "I found an {{redirect ...}} block and expected a single " *
@@ -332,4 +334,41 @@ function hfun_paginate(params::Vector{String})::String
 
     # return a token which will be processed at the convert_and_write stage.
     return PAGINATE
+end
+
+
+"""
+    hfun_sitemap_opts
+
+Called with `{{sitemap_opts monthly 0.5}}`. It is assumed this is called only
+on raw html pages (e.g. custom landing page).
+
+## Example usage
+
+* `{{sitemap_opts exclude}}`
+* `{{sitemap_opts monthly 0.5}}`
+"""
+function hfun_sitemap_opts(params::Vector{String})::String
+    # Check arguments
+    if length(params) == 1 && lowercase(params[1]) != "exclude"
+        throw(HTMLFunctionError(
+                "I found an {{sitemap_opts xxx}} block with 1 arg and " *
+                "that is only allowed if the arg is 'exclude'. Verify."))
+    elseif length(params) != 2
+        throw(HTMLFunctionError(
+                "I found an {{sitemap_opts ...}} block and expected 2 args: " *
+                "the changefreq and the priority. " *
+                "I see $(length(params)) arguments instead. Verify."))
+    end
+    key = url_curpage()
+    if params[1] == "exclude"
+        delete!(SITEMAP_DICT, key)
+        return ""
+    end
+    changefreq = params[1]
+    priority = params[2]
+    fp = joinpath(path(:folder), locvar(:fd_rpath))
+    lastmod = Date(unix2datetime(stat(fp).mtime))
+    SITEMAP_DICT[key] = SMOpts(lastmod, changefreq, priority)
+    return ""
 end

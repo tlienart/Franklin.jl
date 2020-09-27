@@ -89,7 +89,7 @@ function serve(; clear::Bool=false,
 
     # check if there's a config file, if there is, check the variable
     # definitions looking at the ones that would affect overall structure etc.
-    process_config(init=true)
+    process_config()
 
     if !all(isdir, (joinpath(FOLDER_PATH[], "_layout"),
                     joinpath(FOLDER_PATH[], "_css")))
@@ -202,7 +202,7 @@ function fd_fullpass(watched_files::NamedTuple)::Int
     prepath = get(GLOBAL_VARS, "prepath", "")
     def_GLOBAL_VARS!()
     def_GLOBAL_LXDEFS!()
-    empty!(RSS_DICT)
+    empty!.((RSS_DICT, SITEMAP_DICT))
     # reinsert prepath if specified
     isempty(prepath) || (GLOBAL_VARS["prepath"] = prepath)
 
@@ -268,6 +268,8 @@ function fd_fullpass(watched_files::NamedTuple)::Int
     globvar("generate_rss") && rss_generator()
     # generate tags if appropriate
     generate_tag_pages()
+    # generate sitemap if appropriate
+    globvar("generate_sitemap") && sitemap_generator()
     # done
     FD_ENV[:FULL_PASS] = false
     # return -1 if any page failed to build, 0 otherwise

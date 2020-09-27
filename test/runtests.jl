@@ -94,7 +94,7 @@ begin
     # windows can't delete the folder)
     mkdir(p); cd(p);
     include("global/postprocess.jl");
-    include("global/rss.jl")
+    include("global/rss_sitemap.jl")
     cd(p)
     include("global/eval.jl")
     cd(joinpath(D, ".."))

@@ -86,8 +86,9 @@ const FD_ENV = LittleDict(
     :SHOW_WARNINGS => true,     # franklin-specific warnings
     )
 
-# keep track of pages which need to be re-evaluated after the full-pass to ensure that
-# their h-fun are working with the fully-defined scope (e.g. if need tags)
+# keep track of pages which need to be re-evaluated after the full-pass
+# to ensure that their h-fun are working with the fully-defined scope
+# (e.g. if need list of all tags)
 const DELAYED = Set{String}()
 
 """Dict to keep track of languages and how comments are indicated and their extensions. This is relevant to allow hiding lines of code. """
@@ -203,6 +204,7 @@ include("converter/html/prerender.jl")
 
 # FILE AND DIR MANAGEMENT
 include("manager/rss_generator.jl")
+include("manager/sitemap_generator.jl")
 include("manager/write_page.jl")
 include("manager/dir_utils.jl")
 include("manager/file_utils.jl")

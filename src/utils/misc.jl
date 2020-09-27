@@ -266,3 +266,17 @@ macro delay(defun)
     end
     esc(combinedef(def))
 end
+
+# URI encoding stolen from HTTP.jl (+ simplified)
+
+# RFC3986 Unreserved Characters (and '~' Unsafe per RFC1738).
+issafe(c::Char) = c == '-' ||
+                  c == '.' ||
+                  c == '_' ||
+                  (isascii(c) && (isletter(c) || isnumeric(c)))
+
+utf8(s::AS) = (Char(c) for c in codeunits(s))
+
+escapeuri(c::Char) = string('%', uppercase(string(Int(c), base=16, pad=2)))
+escapeuri(str::AS) =
+    join(ifelse(issafe(c), c, escapeuri(Char(c))) for c in utf8(str))
