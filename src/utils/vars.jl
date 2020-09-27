@@ -2,6 +2,15 @@ const DTAG  = LittleDict{String,Set{String}}
 const DTAGI = LittleDict{String,Vector{String}}
 
 """
+    dpair
+
+Helper function to create a default pair for a page variable.
+"""
+dpair(v) = Pair(v, (typeof(v),))
+
+"""
+    GLOBAL_VARS
+
 Dictionary of variables accessible to all pages. Used as an initialiser for
 `LOCAL_VARS` and modified by `config.md`.
 Entries have the format KEY => PAIR where KEY is a string (e.g.: "author") and
@@ -14,34 +23,41 @@ const GLOBAL_VARS = PageVars()
 const GLOBAL_VARS_DEFAULT = [
     # General
     "author"           => Pair("THE AUTHOR", (String, Nothing)),
-    "date_format"      => Pair("U dd, yyyy", (String,)),
-    "date_months"      => Pair(String[],     (Vector{String},)),
-    "date_shortmonths" => Pair(String[],     (Vector{String},)),
-    "date_days"        => Pair(String[],     (Vector{String},)),
-    "date_shortdays"   => Pair(String[],     (Vector{String},)),
-    "prepath"          => Pair("",           (String,)),
-    "tag_page_path"    => Pair("tag", (String,)),
+    "date_format"      => dpair("U dd, yyyy"),
+    "date_months"      => dpair(String[]),
+    "date_shortmonths" => dpair(String[]),
+    "date_days"        => dpair(String[]),
+    "date_shortdays"   => dpair(String[]),
+    "prepath"          => dpair(""),
+    "tag_page_path"    => dpair("tag"),
     # will be added to IGNORE_FILES
     "ignore"           => Pair(String[], (Vector{Any},)),
-    # RSS
-    "website_title"    => Pair("",   (String,)),
-    "website_descr"    => Pair("",   (String,)),
-    "website_url"      => Pair("",   (String,)),
-    "generate_rss"     => Pair(true, (Bool,)),
+    # RSS + sitemap
+    "website_title"    => dpair(""),
+    "website_descr"    => dpair(""),
+    "website_url"      => dpair(""),
+    "generate_rss"     => dpair(true),
+    "generate_sitemap" => dpair(true),
     # div names
-    "content_tag"      => Pair("div",              (String,)),
-    "content_class"    => Pair("franklin-content", (String,)),
-    "content_id"       => Pair("",                 (String,)),
+    "content_tag"      => dpair("div"),
+    "content_class"    => dpair("franklin-content"),
+    "content_id"       => dpair(""),
     # auto detection of code / math (see hasmath/hascode)
-    "autocode"         => Pair(true, (Bool,)),
-    "automath"         => Pair(true, (Bool,)),
+    "autocode"         => dpair(true),
+    "automath"         => dpair(true),
     # keep track page=>tags and tag=>pages
     "fd_page_tags"     => Pair(nothing, (DTAG,  Nothing)),
     "fd_tag_pages"     => Pair(nothing, (DTAGI, Nothing)),
     # -----------------------------------------------------
     # LEGACY
-    "div_content" => Pair("", (String,)), # see build_page
+    "div_content" => dpair(""), # see build_page
     ]
+
+const GLOBAL_VARS_ALIASES = LittleDict(
+    "prefix"    => "prepath",
+    "base_path" => "prepath",
+    "base_url"  => "website_url",
+    )
 
 """
 Re-initialise the global page vars dictionary. (This is done once).
@@ -63,40 +79,45 @@ const LOCAL_VARS = PageVars()
 const LOCAL_VARS_DEFAULT = [
     # General
     "title"         => Pair(nothing,    (String, Nothing)),
-    "hasmath"       => Pair(false,      (Bool,)),
-    "hascode"       => Pair(false,      (Bool,)),
+    "hasmath"       => dpair(false),
+    "hascode"       => dpair(false),
     "date"          => Pair(Date(1),    (String, Date, Nothing)),
-    "lang"          => Pair("julia",    (String,)), # default lang indented code
-    "reflinks"      => Pair(true,       (Bool,)),   # are there reflinks?
-    "indented_code" => Pair(false,      (Bool,)),   # support indented code?
-    "tags"          => Pair(String[],   (Vector{String},)),
-    "prerender"     => Pair(true,       (Bool,)),   # allow specific switch
+    "lang"          => dpair("julia"),  # default lang indented code
+    "reflinks"      => dpair(true),     # are there reflinks?
+    "indented_code" => dpair(false),    # support indented code?
+    "tags"          => dpair(String[]),
+    "prerender"     => dpair(true),     # allow specific switch
     # -----------------
     # TABLE OF CONTENTS
-    "mintoclevel" => Pair(1,  (Int,)), # set to 2 to ignore h1
-    "maxtoclevel" => Pair(10, (Int,)), # set to 3 to ignore h4,h5,h6
+    "mintoclevel" => dpair(1),   # set to 2 to ignore h1
+    "maxtoclevel" => dpair(10),  # set to 3 to ignore h4,h5,h6
     # ---------------
     # CODE EVALUATION
-    "reeval"        => Pair(false,  (Bool,)), # whether to reeval all pg
-    "showall"       => Pair(false,  (Bool,)), # if true, notebook style
-    "fd_eval"       => Pair(false,  (Bool,)), # toggle re-eval
+    "reeval"        => dpair(false),  # whether to reeval all pg
+    "showall"       => dpair(false),  # if true, notebook style
+    "fd_eval"       => dpair(false),  # toggle re-eval
     # ------------------
     # RSS 2.0 specs [^2]
-    "rss"             => Pair("",      (String,)),
-    "rss_description" => Pair("",      (String,)),
-    "rss_title"       => Pair("",      (String,)),
-    "rss_author"      => Pair("",      (String,)),
-    "rss_category"    => Pair("",      (String,)),
-    "rss_comments"    => Pair("",      (String,)),
-    "rss_enclosure"   => Pair("",      (String,)),
-    "rss_pubdate"     => Pair(Date(1), (Date,)),
+    "rss"             => dpair(""),
+    "rss_description" => dpair(""),
+    "rss_title"       => dpair(""),
+    "rss_author"      => dpair(""),
+    "rss_category"    => dpair(""),
+    "rss_comments"    => dpair(""),
+    "rss_enclosure"   => dpair(""),
+    "rss_pubdate"     => dpair(Date(1)),
+    # -------------
+    # SITEMAP specs https://www.sitemaps.org/protocol.html
+    "sitemap_changefreq" => dpair("monthly"),
+    "sitemap_priority"   => dpair(0.5),
+    "sitemap_exclude"    => dpair(false),
     # -------------
     # MISCELLANEOUS (should not be modified)
-    "fd_ctime"  => Pair(Date(1),    (Date,)),   # time of creation
-    "fd_mtime"  => Pair(Date(1),    (Date,)),   # time of last modification
-    "fd_rpath"  => Pair("",         (String,)), # rpath to current page [1]
-    "fd_url"    => Pair("",         (String,)), # url to current page [2]
-    "fd_tag"    => Pair("",         (String,)), # (generated) current tag
+    "fd_ctime"  => dpair(Date(1)),  # time of creation
+    "fd_mtime"  => dpair(Date(1)),  # time of last modification
+    "fd_rpath"  => dpair(""),       # rpath to current page [1]
+    "fd_url"    => dpair(""),       # url to current page [2]
+    "fd_tag"    => dpair(""),       # (generated) current tag
     ]
 #=
 NOTE:
@@ -363,8 +384,8 @@ The entries in `assignments` are of the form `KEY => STR` where `KEY` is a
 string key (e.g.: "hasmath") and `STR` is an assignment to evaluate (e.g.:
 "=false").
 """
-function set_vars!(vars::PageVars, assignments::Vector{Pair{String,String}}
-                   )::PageVars
+function set_vars!(vars::PageVars, assignments::Vector{Pair{String,String}}; 
+                   isglobal=false)::PageVars
     # if there's no assignment, cut it short
     isempty(assignments) && return vars
     # process each assignment in turn
@@ -385,7 +406,13 @@ function set_vars!(vars::PageVars, assignments::Vector{Pair{String,String}}
                 "An error (of type '$(typeof(err))') occurred when trying " *
                 "to evaluate '$tmp' in a page variable assignment."))
         end
-        if haskey(vars, key)
+        exists = haskey(vars, key)
+        # aliases are allowed for some global variables
+        if !exists && isglobal && haskey(GLOBAL_VARS_ALIASES, key)
+            exists = true
+            key = GLOBAL_VARS_ALIASES[key]
+        end
+        if exists
             # if the retrieved value has the right type, assign it to the corresponding key
             type_tmp  = typeof(tmp)
             acc_types = vars[key].second

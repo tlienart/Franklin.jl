@@ -100,6 +100,10 @@ function process_file_err(case::Symbol, fpair::Pair{String, String},
         set_cur_rpath(joinpath(fpair...))
         set_page_env()
         raw_html  = read(inp, String)
+        # add the item *before* the conversion so that the conversion
+        # can affect the page itself with {{...}}
+        cond_add = globvar(:generate_sitemap) && FD_ENV[:FULL_PASS]
+        cond_add && add_sitemap_item(html=true)
         proc_html = convert_html(raw_html) |> postprocess_page
         write(outp, proc_html)
     else # case in (:other, :infra)

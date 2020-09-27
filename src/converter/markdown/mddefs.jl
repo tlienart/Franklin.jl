@@ -72,7 +72,7 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool,
     # if in config file, update `GLOBAL_VARS` and return
     rpath = splitext(locvar(:fd_rpath))[1]
     if isconfig
-        set_vars!(GLOBAL_VARS, assignments)
+        set_vars!(GLOBAL_VARS, assignments, isglobal=true)
         return nothing
     end
 

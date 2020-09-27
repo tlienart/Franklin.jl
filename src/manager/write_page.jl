@@ -162,11 +162,15 @@ function convert_and_write(root::String, file::String, head::String,
     #   should we generate ? otherwise no
     #   are we in the full pass ? otherwise no
     #   is there a `rss` or `rss_description` ? otherwise no
-    cond_add = GLOBAL_VARS["generate_rss"].first &&  # should we generate?
-                    FD_ENV[:FULL_PASS] &&            # are we in the full pass?
+    cond_add = globvar(:generate_rss) &&   # should we generate?
+                    FD_ENV[:FULL_PASS] &&  # are we in the full pass?
                     !all(e -> isempty(locvar(e)), ("rss", "rss_description"))
     # otherwise yes
     cond_add && add_rss_item()
+
+    # Same for the sitemap
+    cond_add = globvar(:generate_sitemap) && FD_ENV[:FULL_PASS]
+    cond_add && add_sitemap_item()
 
     # adding document variables to the dictionary
     # note that some won't change and so it's not necessary to do this every

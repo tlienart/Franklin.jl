@@ -12,3 +12,19 @@
     @test occursin(raw"""<link>https://tlienart.github.io/FranklinTemplates.jl/menu1/index.html</link>""", fc)
     @test occursin(raw"""<description><![CDATA[A short description of the page which would serve as <strong>blurb</strong> in a <code>RSS</code> feed;""", fc)
 end
+
+@testset "Sitemap gen" begin
+    f = joinpath(p, "basic", "__site", "sitemap.xml")
+    @test isfile(f)
+    fc = prod(readlines(f, keep=true))
+
+    @test occursin(raw"""
+        <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+        <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">""", fc)
+    # check pages
+    for pg in ("", "menu1", "menu2", "menu3")
+        pgg = joinpath(pg, "index.html")
+        @test occursin("""
+            <loc>https://tlienart.github.io/FranklinTemplates.jl/$pgg</loc>""", fc)
+    end
+end
