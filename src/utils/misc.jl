@@ -267,6 +267,8 @@ macro delay(defun)
     esc(combinedef(def))
 end
 
+isdelayed() = FD_ENV[:FULL_PASS] && FD_ENV[:SOURCE] in DELAYED
+
 # URI encoding stolen from HTTP.jl (+ simplified)
 
 # RFC3986 Unreserved Characters (and '~' Unsafe per RFC1738).

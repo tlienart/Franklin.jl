@@ -37,8 +37,8 @@ The code should be reevaluated if any of following flags are true:
 """
 function should_eval(code::AS, rpath::AS)
     # 0. the page is currently delayed, skip evals
-    FD_ENV[:SOURCE] in DELAYED && return false
-    
+    isdelayed() && return false
+
     # 1. global setting forcing all pages to reeval
     FD_ENV[:FORCE_REEVAL] && return true
 
