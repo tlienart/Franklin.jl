@@ -217,8 +217,8 @@ Note that variables shown below that have a  name starting with  `fd_` are _not 
 | `indented_code` | `Bool` | `false` | whether indented blocks should be considered as code (\*\*\*)
 | `mintoclevel` | `Int` | `1` | minimum title level to go in the table of content (often you'll want this to  be `2`)
 | `maxtoclevel` | `Int` | `10` | maximum title level to go in the table of content
-| `fd_ctime` | `Date` |  | time of creation of the markdown file
-| `fd_mtime` | `Date` |  | time of last modification of the markdown file
+| `fd_ctime` | `String` |  | time of creation of the markdown file
+| `fd_mtime` | `String` |  | time of last modification of the markdown file
 | `fd_rpath` | `String` |  | relative path to file `[(...)/thispage.md]`
 @@
 

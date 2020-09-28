@@ -75,7 +75,7 @@ function add_rss_item()
     if pubDate == Date(1)
         pubDate = locvar(:date)
         if !isa(pubDate, Date) || pubDate == Date(1)
-            pubDate = locvar(:fd_mtime)
+            pubDate = Date(locvar(:fd_mtime_raw))
         end
     end
 
