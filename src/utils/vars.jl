@@ -113,11 +113,12 @@ const LOCAL_VARS_DEFAULT = [
     "sitemap_exclude"    => dpair(false),
     # -------------
     # MISCELLANEOUS (should not be modified)
-    "fd_ctime"  => dpair(Date(1)),  # time of creation
-    "fd_mtime"  => dpair(Date(1)),  # time of last modification
-    "fd_rpath"  => dpair(""),       # rpath to current page [1]
-    "fd_url"    => dpair(""),       # url to current page [2]
-    "fd_tag"    => dpair(""),       # (generated) current tag
+    "fd_mtime_raw" => dpair(Date(1)),
+    "fd_ctime"     => dpair("0001-01-01"),  # time of creation
+    "fd_mtime"     => dpair("0001-01-01"),  # time of last modification
+    "fd_rpath"     => dpair(""),       # rpath to current page [1]
+    "fd_url"       => dpair(""),       # url to current page [2]
+    "fd_tag"       => dpair(""),       # (generated) current tag
     ]
 #=
 NOTE:
@@ -332,7 +333,7 @@ function fd_date(d::DateTime)
     # set locale for this page
     Dates.LOCALES["date_locale"] = Dates.DateLocale(months, shortmonths,
                                                     days, shortdays)
-    return Dates.format(d, format, locale="date_locale")
+    return Date(d, format, locale="date_locale")
 end
 
 
@@ -384,7 +385,7 @@ The entries in `assignments` are of the form `KEY => STR` where `KEY` is a
 string key (e.g.: "hasmath") and `STR` is an assignment to evaluate (e.g.:
 "=false").
 """
-function set_vars!(vars::PageVars, assignments::Vector{Pair{String,String}}; 
+function set_vars!(vars::PageVars, assignments::Vector{Pair{String,String}};
                    isglobal=false)::PageVars
     # if there's no assignment, cut it short
     isempty(assignments) && return vars

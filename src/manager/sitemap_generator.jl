@@ -45,7 +45,7 @@ function add_sitemap_item(; html=false)
     loc = url_curpage()
     locvar(:sitemap_exclude) && return nothing
     if !html
-        lastmod = locvar(:fd_mtime)
+        lastmod = locvar(:fd_mtime_raw)
         changefreq = locvar(:sitemap_changefreq)
         priority = locvar(:sitemap_priority)
     else
@@ -76,8 +76,7 @@ function sitemap_generator()
     for (k, v) in SITEMAP_DICT
         key = joinpath(escapeuri.(split(k, '/'))...)
         loc = "<loc>$(joinpath(base_url, key))</loc>"
-        lastmod = ifelse(v.lastmod > Date(1),
-                         "<lastmod>$(v.lastmod)</lastmod>", "")
+        lastmod = "<lastmod>$(v.lastmod)</lastmod>"
         changefreq = "<changefreq>$(v.changefreq)</changefreq>"
         priority = "<priority>$(v.priority)</priority>"
         write(io, """
