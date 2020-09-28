@@ -333,8 +333,7 @@ function fd_date(d::DateTime)
     # set locale for this page
     Dates.LOCALES["date_locale"] = Dates.DateLocale(months, shortmonths,
                                                     days, shortdays)
-    return Date(d, format, locale="date_locale")
-end
+    return Dates.format(d, format, locale="date_locale") end
 
 
 """
