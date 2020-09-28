@@ -268,6 +268,9 @@ function form_lxenvs(delims::Vector{Token})
     # reprocesses the lot.
     # -- re-add the math envs.
 
+    # NOTE: write a plan first and do things bit by bit otherwise will take forever
+    # and be a big distraction
+
 
 end
 
