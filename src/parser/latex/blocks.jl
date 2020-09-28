@@ -147,7 +147,7 @@ function find_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
     # go over tokens, stop over the ones that indicate a command
     for (i, τ) ∈ enumerate(tokens)
         active_τ[i] || continue
-        (τ.name == :LX_COMMAND) || continue
+        τ.name == :LX_COMMAND || continue
         # 1. look for the definition given the command name
         lxname   = τ.ss
         lxdefref = get_lxdef_ref(lxname, lxdefs, inmath, offset)
@@ -179,10 +179,11 @@ function find_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
             b1_idx = findfirst(β -> (from(β) == nxtidx), braces)
             # --> it needs to exist + there should be enough braces left
             if isnothing(b1_idx) || (b1_idx + lxnarg - 1 > nbraces)
-                throw(LxComError("Command '$lxname' expects $lxnarg " *
-                                 "argument(s) and there should be no " *
-                                 "space(s) between the command name and " *
-                                 "the first brace: \\com{arg1}..."))
+                throw(LxComError("""
+                    Command '$lxname' expects $lxnarg argument(s) and there
+                    should be no space(s) between the command name and the first
+                    brace: \\com{arg1}...
+                    """))
             end
 
             # --> examine candidate braces, there should be no spaces between
@@ -190,10 +191,10 @@ function find_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
             cand_braces = braces[b1_idx:b1_idx+lxnarg-1]
             for bidx ∈ 1:lxnarg-1
                 if (to(cand_braces[bidx]) + 1 != from(cand_braces[bidx+1]))
-                    throw(LxComError("Argument braces should not be " *
-                                     "separated by space(s): " *
-                                     "\\com{arg1}{arg2}... Verify a " *
-                                     "'$lxname' command."))
+                    throw(LxComError("""
+                        Argument braces should not be separated by space(s):
+                        \\com{arg1}{arg2}... Verify a '$lxname' command.
+                        """))
                 end
             end
 
@@ -219,3 +220,61 @@ function find_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
     end
     return lxcoms, tokens[active_τ]
 end
+
+
+"""
+$(SIGNATURES)
+
+Find `\\begin{xxx}` and `\\end{xxx}` blocks.
+"""
+function form_lxenv_delims!(tokens::Vector{Token}, blocks::Vector{OCBlock})
+    rmidx = Int[]
+    for (i, τ) ∈ enumerate(tokens)
+        τ.name ∈ (:CAND_LX_BEGIN, :CAND_LX_END) || continue
+        # try to get an adjoining brace
+        nxtidx = to(τ) + 1
+        braceidx = findfirst(β, (β.name == :LXB && from(β) == nxtidx), blocks)
+        # it needs to exist
+        if isnothing(braceidx)
+            throw(LxEnvError("""
+                Found a delimiter '\\begin' or '\\end' and expected a name in braces
+                after that but didn't find it. There should be no space between the
+                delimiter and the brace: \\begin{name}.
+                """))
+        end
+        push!(rmidx, braceidx)
+        # get the brace
+        brace = blocks[braceidx]
+        # form a valid token and replace the candidate by it
+        from_c = from(τ)
+        to_c = to(brace)
+        name = ifelse(τ.name == :CAND_LX_BEGIN, :LX_BEGIN, :LX_END)
+        tokens[i] = Token(name, subs(τ.ss.string, from_c, to_c))
+    end
+    deleteat!(blocks, rmidx)
+    return nothing
+end
+
+
+function form_lxenvs(delims::Vector{Token})
+    # they are ordered
+
+    # TODO
+
+    # -- pair off the LX_BEGIN and matching LX_END
+    # -- allow definition of NEWENVIRONMENT
+    # -- test the whole lot
+    # -- write a convert ocb which takes the content, puts it between the stuff then
+    # reprocesses the lot.
+    # -- re-add the math envs.
+
+
+end
+
+
+## List of Changes
+# converter/markdown/md.jl L76 -- 82
+# parser/latex/blocks --> function at L230
+# parser/markdown/tokens --> commented out maths envs in MD_TOKENS, MD_OCB_MATH
+# utils/errors added LxEnvError L29
+# regexes added \* to the LX_NAME_PAT + also extended the tests

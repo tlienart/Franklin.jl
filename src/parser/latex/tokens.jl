@@ -50,8 +50,6 @@ struct LxCom <: AbstractBlock
     braces::Vector{OCBlock}           # relevant {...} with the command
 end
 LxCom(ss, def)   = LxCom(ss, def, Vector{OCBlock}())
-from(lxc::LxCom) = from(lxc.ss)
-to(lxc::LxCom)   = to(lxc.ss)
 
 
 """
@@ -77,4 +75,3 @@ function getname(lxc::LxCom)::String
     end
     return String(getindex(lxc.lxdef).name)[2:end]
 end
-# XXX if nothing lxc.lxdef then extract from lxc.ss but extract before {}

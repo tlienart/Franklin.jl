@@ -73,9 +73,13 @@ function convert_md(mds::AbstractString,
     #>> a. find them
     blocks, tokens  = find_all_ocblocks(tokens, MD_OCB)
     toks_pre_ocb    = deepcopy(tokens) # see find_double_brace_blocks
-    #>> a'. find the rest
+    #>> a'. find LXB, DIV and Maths
     blocks2, tokens = find_all_ocblocks(tokens, vcat(MD_OCB2, MD_OCB_MATH))
+    #>> a''. find and validate LX_DELIMS tokens
+    delims = form_lxenv_delims!(tokens, blocks2)
+    lxenvs = form_lxenvs(delims)
     append!(blocks, blocks2)
+    append!(blocks, lxenvs)
     ranges = deactivate_inner_blocks!(blocks)
     #>> b. merge CODE_BLOCK_IND which are separated by emptyness
     merge_indented_blocks!(blocks, mds)

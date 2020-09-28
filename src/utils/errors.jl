@@ -25,6 +25,12 @@ struct LxComError <: FranklinException
     m::String
 end
 
+"""An env delimiter was seen but seemed invalid."""
+struct LxEnvError <: FranklinException
+    m::String
+end
+
+
 """A math block name failed to parse."""
 struct MathBlockError <: FranklinException
     m::String
