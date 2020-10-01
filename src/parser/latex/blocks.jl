@@ -274,10 +274,32 @@ function form_lxenvs(delims::Vector{Token})
 
 end
 
+# Begin - End
+#
+# 1. ✅ find BEGIN - END (candidate token)
+#   - NOTE removed maths begin/end parser/markdown/tokens L60
+#       . :MATH_ALIGN ; :MATH_D (equation) ; :MATH_EQA (eqnarray)
+#   -
+# 2. assemble BEGIN{XXX} - END{XXX} (full token)
+# 3. form blocks (balancing) BEGIN{XXX} --> END{XXX} (ocblock)
+# 4. deactivate everything within the outermost block, iterative procedure
+# 5. process block
+#   0. check if it's a special environment (maths) if so separate
+#   a. find latest environment definition --> {PRE}{CONTENT}{POST}
+#   b. form a string out of | PRE ␣ CONTENT ␣ POST |
+#   c. reprocess string
+#
+# NewEnvironment should be like \newenvironment{name}[nargs]{pre}{post}
+# where nargs is optional
+#
+# 1. imitate the find newcommand
+#   - ✅ added newenv token parser/markdown/tokens L60
+#
+# OTHER
+#   . ✅ added \* to the LX_NAME_PAT + extended tests
+
 
 ## List of Changes
 # converter/markdown/md.jl L76 -- 82
 # parser/latex/blocks --> function at L230
-# parser/markdown/tokens --> commented out maths envs in MD_TOKENS, MD_OCB_MATH
 # utils/errors added LxEnvError L29
-# regexes added \* to the LX_NAME_PAT + also extended the tests
