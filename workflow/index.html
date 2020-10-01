@@ -117,7 +117,7 @@
     <span style="font-size:24px;font-weight:300;">Set things up in minutes and focus on writing great content.</span>
     
 <div class="blank"></div>
-<div class="franklin-toc"><ol><li><a href="#creating_your_website">Creating your website</a><ol><li><a href="#folder_structure">Folder structure</a></li><li><a href="#top_folder">Top folder</a></li><li><a href="#reserved_names">Reserved names</a></li><li><a href="#editing_and_testing_your_website">Editing and testing your website</a></li></ol></li><li><a href="#post-processing">Post-processing</a><ol><li><a href="#verify_links">Verify links</a></li><li><a href="#pre-rendering_and_compression">Pre-rendering and compression</a></li><li><a href="#publish">Publish</a></li></ol></li></ol></div>
+<div class="franklin-toc"><ol><li><a href="#creating_your_website">Creating your website</a><ol><li><a href="#folder_structure">Folder structure</a></li><li><a href="#top_folder">Top folder</a></li><li><a href="#reserved_names">Reserved names</a></li><li><a href="#tag_pages">Tag pages</a></li><li><a href="#editing_and_testing_your_website">Editing and testing your website</a></li></ol></li><li><a href="#post-processing">Post-processing</a><ol><li><a href="#verify_links">Verify links</a></li><li><a href="#pre-rendering_and_compression">Pre-rendering and compression</a></li><li><a href="#publish">Publish</a></li></ol></li></ol></div>
 <h2 id="creating_your_website"><a href="#creating_your_website">Creating your website</a></h2>
 <p>To get started, the easiest is to use the <code>newsite</code> function to generate a website folder which you can then modify to your heart&#39;s content. The command takes one mandatory argument: the <em>name</em> of the folder &#40;which can be <code>&quot;.&quot;</code> if you want to set things up in your current directory&#41;. You can optionally specify a template:</p>
 <pre><code class="language-julia-repl">julia&gt; newsite&#40;&quot;TestWebsite&quot;; template&#61;&quot;vela&quot;&#41;
@@ -213,6 +213,8 @@
 </li>
 </ul></div>
 <p>Also bear in mind that Franklin will ignore <code>README.md</code>, <code>LICENSE.md</code>, <code>Manifest.toml</code> and <code>Project.toml</code>.</p>
+<h3 id="tag_pages"><a href="#tag_pages">Tag pages</a></h3>
+<p>All pages with a given tag can be found &#40;by default&#41; at <code>&#91;website&#93;/tag/&lt;tag_name&gt;</code>. The tag page location can be changed by setting the <code>tag_page_path</code> variable in <code>config.md</code>. For example, setting <code>@def tag_page_path &#61; &quot;my_tags&quot;</code> would cause tag pages to appear at <code>&#91;website&#93;/my_tags/&lt;tag_name&gt;</code>.</p>
 <h3 id="editing_and_testing_your_website"><a href="#editing_and_testing_your_website">Editing and testing your website</a></h3>
 <p>The <code>serve</code> function can be used to launch a server which will track and render modifications. There are a few useful options you can use beyond the barebone <code>serve&#40;&#41;</code>, do <code>?serve</code> in your REPL for all options, we list a few noteworthy one below:</p>
 <div class="tlist"><ul>
@@ -266,7 +268,7 @@ All internal and external links verified ✓.</code></pre>
 <p>Note also that the <code>publish</code> function accepts a <code>final&#61;</code> keyword to which you can pass any function <code>&#40;&#41; -&gt; nothing</code> to do some final post-processing before pushing updates online. For instance, you can use <code>final&#61;lunr</code> where <code>lunr</code> is a function exported by Franklin which generates a Lunr search index &#40;see <a href="/extras/lunr/">this tutorial</a> for more details&#41;.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: September 30, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
+    &copy; Thibaut Lienart. Last modified: October 01, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
