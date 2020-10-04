@@ -12,23 +12,22 @@ $(TYPEDEF)
 Structure to keep track of the definition of a latex command declared via a
 `\newcommand{\name}[narg]{def}`.
 """
-struct LxDef
+struct LxDef{T}
     name::String
     narg::Int
-    def ::AS
+    def ::T
     # location of the definition
     from::Int
     to  ::Int
 end
 # if offset unspecified, start from basically -∞ (configs etc)
-function LxDef(name::String, narg::Int, def::AS)
-    o = FD_ENV[:OFFSET_LXDEFS] += 5  # precise offset doesn't matter, jus
+function LxDef(name::String, narg::Int, def)
+    o = FD_ENV[:OFFSET_LXDEFS] += 5  # precise offset doesn't matter
     LxDef(name, narg, def, o, o + 3) # just forward a bit
 end
 
 from(lxd::LxDef) = lxd.from
 to(lxd::LxDef)   = lxd.to
-
 
 """
 pastdef(λ)
@@ -50,7 +49,6 @@ struct LxCom <: AbstractBlock
     braces::Vector{OCBlock}           # relevant {...} with the command
 end
 LxCom(ss, def)   = LxCom(ss, def, Vector{OCBlock}())
-
 
 """
 For a given `LxCom`, retrieve the definition attached to the corresponding

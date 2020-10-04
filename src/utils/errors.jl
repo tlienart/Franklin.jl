@@ -10,6 +10,12 @@ struct OCBlockError <: FranklinException
     c::String
 end
 
+"""An Env Block was not parsed properly (e.g. the closing delim not found)."""
+struct EnvBlockError <: FranklinException
+    m::String
+    c::String
+end
+
 function Base.showerror(io::IO, be::OCBlockError)
     println(io, be.m)
     print(io, be.c)

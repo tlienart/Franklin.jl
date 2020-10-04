@@ -233,7 +233,7 @@ function form_lxenv_delims!(tokens::Vector{Token}, blocks::Vector{OCBlock})
         τ.name ∈ (:CAND_LX_BEGIN, :CAND_LX_END) || continue
         # try to get an adjoining brace
         nxtidx = to(τ) + 1
-        braceidx = findfirst(β, (β.name == :LXB && from(β) == nxtidx), blocks)
+        braceidx = findfirst(β -> (β.name == :LXB && from(β) == nxtidx), blocks)
         # it needs to exist
         if isnothing(braceidx)
             throw(LxEnvError("""
@@ -255,9 +255,43 @@ function form_lxenv_delims!(tokens::Vector{Token}, blocks::Vector{OCBlock})
     return nothing
 end
 
+"""
+$SIGNATUREs
 
-function form_lxenvs(delims::Vector{Token})
-    # they are ordered
+Find active environment blocks between an opening and matching closing
+delimiter. These can be nested. See also `find_ocblocks`, this is essentially
+the same thing except that we need to match with the name of the environment.
+"""
+function form_lxenvs(tokens::Vector{Token};
+                     inmath=false)::Tuple{Vector{OCBlock}, Vector{Token}}
+    # this is a similar logic than in find_ocblocks except that we need to
+    # find a token with the right envname
+    active_tokens = ones(Bool, length(tokens))
+    ocblocks = OCBlock[]
+    ntokens  = length(tokens)
+    for (i, τ) ∈ enumerate(tokens)
+        # only consider active and opening tokens
+        (active_tokens[i] && (τ.name == :LX_BEGIN)) || continue
+        # extract the environment name and find the balancing token
+        env = envname(τ)
+        @show env
+        inbalance = 1
+        j = i
+        while !iszero(inbalance) && (j < ntokens)
+            j += 1
+            inbalance += envbalance(tokens[j], env)
+        end
+        if inbalance > 0
+            throw(OCBlockError(
+                "I found at least one opening delimiter '\\begin{$env}' " *
+                "that is not closed properly.", context(τ)))
+        end
+        push!(ocblocks, OCBlock(:LX_ENV, τ => tokens[j]))
+        active_tokens[i:j] .= false
+    end
+    return ocblocks, tokens[active_tokens]
+end
+
 
     # TODO
 
@@ -272,18 +306,32 @@ function form_lxenvs(delims::Vector{Token})
     # and be a big distraction
 
 
-end
-
 # Begin - End
 #
 # 1. ✅ find BEGIN - END (candidate token)
 #   - NOTE removed maths begin/end parser/markdown/tokens L60
 #       . :MATH_ALIGN ; :MATH_D (equation) ; :MATH_EQA (eqnarray)
-#   -
-# 2. assemble BEGIN{XXX} - END{XXX} (full token)
-# 3. form blocks (balancing) BEGIN{XXX} --> END{XXX} (ocblock)
-# 4. deactivate everything within the outermost block, iterative procedure
-# 5. process block
+# 2. ✅ assemble BEGIN{XXX} - END{XXX} (full token)
+# 3. ✅ form blocks (balancing) BEGIN{XXX} --> END{XXX} (ocblock)
+# 4. ❌ deactivate everything within the outermost block, iterative procedure
+# need to keep the braces (if the definition has nargs)
+
+# ❌ can't do the begin - end just like an OCB because it also has arguments.
+# one thing could be to just transform the OCB with name `LX_ENV` into actual
+# LxEnv which would be similar to a LxCom but would also keep track of the
+# braces that should be used to define the parameters... also needs to keep
+# track of the definitions (otherwise we end up with the usual shit of where
+# is an environment defined).
+# * ✅ Generalise LxDef so that it can take T as def (understood to be either
+# AS for the newcommand case or Pair{<:AS, <:AS} for a newenv case w pre/post)
+# * ❌ look for argument definitions
+
+
+
+
+# 5. add logic for newenvironment, similar to newcommand
+# 6. add stuff in convert_md
+# 7. process block
 #   0. check if it's a special environment (maths) if so separate
 #   a. find latest environment definition --> {PRE}{CONTENT}{POST}
 #   b. form a string out of | PRE ␣ CONTENT ␣ POST |

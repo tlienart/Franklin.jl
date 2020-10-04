@@ -37,6 +37,19 @@ to(β::Token) = ifelse(β.name == :EOS, from(β), to(β.ss))
 context(t::Token) = context(str(t), from(t))
 
 """
+$(SIGNATURES)
+
+Convenience function to get the name of a lx-env delimiter (ignores spaces).
+"""
+function envname(t::Token)
+    m = match(LX_ENVNAME_PAT, str(t))
+    isnothing(m) || return m.captures[1]
+    # should not happen
+    error("`envname` called on token of type $(t.name) failed to return.")
+end
+envname(b::OCBlock) = envname(otok(b))
+
+"""
 $(TYPEDEF)
 
 A special block to wrap special characters like like a html entity and have it
@@ -48,8 +61,6 @@ struct HTML_SPCH <: AbstractBlock
     r::String
 end
 HTML_SPCH(ss) = HTML_SPCH(ss, "")
-
-
 
 """
 $(TYPEDEF)

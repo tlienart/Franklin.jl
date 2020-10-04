@@ -11,7 +11,7 @@ Regex to find the name in a new command within a brace block. For example:
 
 will give as first capture group `\\com`.
 """
-const LX_NAME_PAT = r"^\s*(\\[\p{L}]+\*?)\s*$"
+const LX_NAME_PAT = r"^\s*(\\\p{L}+\*?)\s*$"
 
 
 """
@@ -26,6 +26,14 @@ will give as second capture group `2`. If there are no number of arguments, the
 second capturing group will be `nothing`.
 """
 const LX_NARG_PAT = r"\s*(\[\s*(\d)\s*\])?\s*"
+
+
+"""
+LX_ENVNAME_PAT
+
+Regex to find the name in a LX_BEGIN or LX_END.
+"""
+const LX_ENVNAME_PAT = r"\\(?:begin|end)\{\s*(\p{L}+\*?)\s*\}"
 
 #= =====================================================
 MDDEF patterns

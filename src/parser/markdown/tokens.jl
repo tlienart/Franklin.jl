@@ -218,8 +218,9 @@ const MD_OCB_MATH = [
     MD_OCB_ALL
 
 Combination of all `MD_OCB` in order.
+DEV: only really used in tests.
 """
-const MD_OCB_ALL = vcat(MD_OCB, MD_OCB2, MD_OCB_MATH) # order matters
+const MD_OCB_ALL = vcat(MD_OCB, MD_OCB2, MD_OCB_MATH)
 
 """
     MD_OCB_IGNORE
