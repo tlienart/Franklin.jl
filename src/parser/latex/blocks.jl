@@ -130,6 +130,36 @@ function get_lxdef_ref(lxname::SubString, lxdefs::Vector{LxDef},
     return Ref(lxdefs, ks[end])
 end
 
+function find_opts_braces(τ::Token, narg::Int, braces::Vector{OCBlock})
+    # spot where an opening brace is expected, note that we can use exact
+    # char algebra here because we know that the last character is '}' w length 1.
+    nxtidx = to(τ) + 1
+    # try to find one at that place
+    b1_idx = findfirst(β -> (from(β) == nxtidx), braces)
+    # --> it needs to exist + there should be enough braces left for the options
+    if isnothing(b1_idx) || (b1_idx + narg - 1 > length(braces))
+        throw(LxComError("""
+            Command/Environment '$lxname' expects $lxnarg argument(s) and there
+            should be no space(s) between the command name and the first brace:
+            \\com{arg1}... or \\begin{env}{arg1}...
+            """))
+    end
+    # --> examine candidate braces, there should be no spaces between
+    # braces to avoid ambiguities
+    cand_braces = braces[b1_idx:b1_idx+narg-1]
+    for bidx ∈ 1:narg-1
+        if (to(cand_braces[bidx]) + 1 != from(cand_braces[bidx+1]))
+            throw(LxComError("""
+                Argument braces should not be separated by space(s):
+                \\com{arg1}{arg2}... Verify a '$lxname' command.
+                """))
+        end
+    end
+    # If we get here then we have candidate braces that match the number
+    # required which we can just return
+    return cand_braces
+end
+
 
 """
 $(SIGNATURES)
@@ -138,7 +168,7 @@ Find `\\command{arg1}{arg2}...` outside of `xblocks` and `lxdefs`.
 """
 function find_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
                      braces::Vector{OCBlock}, offset::Int=0;
-                     inmath::Bool=false)::Tuple{Vector{LxCom},Vector{Token}}
+                     inmath::Bool=false)::Tuple{Vector{LxCom}, Vector{Token}}
     # containers for the lxcoms
     lxcoms   = Vector{LxCom}()
     active_τ = ones(Bool, length(tokens))
@@ -174,38 +204,16 @@ function find_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
 
         # >> there is at least one argument --> find all of them
         else
-            # spot where an opening brace is expected
-            nxtidx = to(τ) + 1
-            b1_idx = findfirst(β -> (from(β) == nxtidx), braces)
-            # --> it needs to exist + there should be enough braces left
-            if isnothing(b1_idx) || (b1_idx + lxnarg - 1 > nbraces)
-                throw(LxComError("""
-                    Command '$lxname' expects $lxnarg argument(s) and there
-                    should be no space(s) between the command name and the first
-                    brace: \\com{arg1}...
-                    """))
-            end
-
-            # --> examine candidate braces, there should be no spaces between
-            #  braces to avoid ambiguities
-            cand_braces = braces[b1_idx:b1_idx+lxnarg-1]
-            for bidx ∈ 1:lxnarg-1
-                if (to(cand_braces[bidx]) + 1 != from(cand_braces[bidx+1]))
-                    throw(LxComError("""
-                        Argument braces should not be separated by space(s):
-                        \\com{arg1}{arg2}... Verify a '$lxname' command.
-                        """))
-                end
-            end
+            arg_braces = find_opts_braces(τ, lxnarg, braces)
 
             # all good, can push it
             from_c = from(τ)
-            to_c   = to(cand_braces[end])
+            to_c   = to(arg_braces[end])
             str_c  = subs(str(τ), from_c, to_c)
             if derived
-                push!(lxcoms, LxCom(str_c, nothing, cand_braces))
+                push!(lxcoms, LxCom(str_c, nothing, arg_braces))
             else
-                push!(lxcoms, LxCom(str_c, lxdefref, cand_braces))
+                push!(lxcoms, LxCom(str_c, lxdefref, arg_braces))
             end
 
             # deactivate tokens in the span of the command (will be
@@ -259,22 +267,38 @@ end
 $SIGNATUREs
 
 Find active environment blocks between an opening and matching closing
-delimiter. These can be nested. See also `find_ocblocks`, this is essentially
-the same thing except that we need to match with the name of the environment.
+delimiter. These can be nested. See also `find_ocblocks` and `find_lxcoms`,
+this is essentially a mix of the two.
 """
-function form_lxenvs(tokens::Vector{Token};
-                     inmath=false)::Tuple{Vector{OCBlock}, Vector{Token}}
-    # this is a similar logic than in find_ocblocks except that we need to
-    # find a token with the right envname
-    active_tokens = ones(Bool, length(tokens))
+function form_lxenvs(tokens::Vector{Token}, lxdefs::Vector{LxDef},
+                     braces::Vector{OCBlock}, offset::Int=0;
+                     inmath=false)::Tuple{Vector{LxEnv}, Vector{Token}}
+    # containers for the lxenvs
+    lxenvs   = Vector{LxEnv}()
+    active_τ = ones(Bool, length(tokens))
+    nbraces  = length(braces)
     ocblocks = OCBlock[]
     ntokens  = length(tokens)
+
     for (i, τ) ∈ enumerate(tokens)
         # only consider active and opening tokens
         (active_tokens[i] && (τ.name == :LX_BEGIN)) || continue
         # extract the environment name and find the balancing token
         env = envname(τ)
-        @show env
+        lxdefref = get_lxdef_ref(env, lxdefs, inmath, offset)
+
+        # will only be nothing in a `inmath` --> no failure, just ignore
+        isnothing(lxdefref[]) && continue
+
+        # explore number of arguments and find the relevant braces
+        lxnarg = getindex(lxdefref).narg
+        if lxnarg == 0
+            arg_braces = Vector{OCBlock}()
+        else
+            arg_braces = find_opts_braces(τ, lxnarg, braces)
+        end
+
+        # find the closing token \end{$env}
         inbalance = 1
         j = i
         while !iszero(inbalance) && (j < ntokens)
@@ -286,9 +310,23 @@ function form_lxenvs(tokens::Vector{Token};
                 "I found at least one opening delimiter '\\begin{$env}' " *
                 "that is not closed properly.", context(τ)))
         end
-        push!(ocblocks, OCBlock(:LX_ENV, τ => tokens[j]))
-        active_tokens[i:j] .= false
+
+        # XXX
+        #
+        # push!(ocblocks, OCBlock(:LX_ENV, τ => tokens[j]))
+        # # mark all tokens in the range as inactive apart from braces which are
+        # # needed in the formation of the actual envs
+        # idx = [k for k in i:j if active_tokens[k] && tokens[k].name != :LXB]
+        # active_tokens[k] .= false
+        #
+        # XXX
     end
+    # Form the actual LxEnv
+    braces = filter(τ -> τ.name == :LXB, tokens[active_tokens])
+    for env in ocblocks
+
+    end
+
     return ocblocks, tokens[active_tokens]
 end
 
