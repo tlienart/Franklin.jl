@@ -86,12 +86,12 @@ Content of an `LxEnv` block.
     `\\begin{aaa}{opt1} XXX \end{aaa}` --> ` XXX `
 """
 function content(lxe::LxEnv)
-    s = str(ocb.ss)
-    cfrom = nextind(s, to(ocpair.first))
-    if !isempty(braces)
-        cfrom = nextind(s, to(braces[end]))
+    s = str(lxe.ss)
+    cfrom = nextind(s, to(lxe.ocpair.first))
+    if !isempty(lxe.braces)
+        cfrom = nextind(s, to(lxe.braces[end]))
     end
-    cto = prevind(s, from(ocpair.second))
+    cto = prevind(s, from(lxe.ocpair.second))
     return subs(s, cfrom, cto)
 end
 
@@ -102,7 +102,7 @@ $SIGNATURES
 For a given `LxObj`, retrieve the definition attached to the corresponding `LxDef` via the
 reference.
 """
-function getdef(lxo::LxObj)::Union{Nothing,AS}
+function getdef(lxo::LxObj)
     isnothing(lxo.lxdef) && return nothing
     return getindex(lxo.lxdef).def
 end

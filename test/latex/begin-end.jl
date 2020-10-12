@@ -2,6 +2,9 @@ using Franklin, Test
 const F = Franklin
 # NOTE ongoing
 
+include("../test_utils.jl")
+
+
 has(t, s) = any(ti.name == s for ti in t)
 
 mds = raw"""
@@ -39,8 +42,6 @@ num_braces_post = length(filter(b -> b.name == :LXB, blocks))
 @test F.envname(tokens[6]) == "aaa"
 
 # ============= Part 2 : defs
-# XXX test this a fair bit (newenv def, and lxenv formation)
-# XXX remaining -- resolve command
 
 lxdefs, tokens, braces, blocks = F.find_lxdefs(tokens, blocks)
 
@@ -49,20 +50,82 @@ lxdefs, tokens, braces, blocks = F.find_lxdefs(tokens, blocks)
 @test lxdefs[1].def.first == "pre"
 @test lxdefs[1].def.second == "post"
 
-
-
-# ==============
-
-
-envs, tokens = F.find_lxenvs(tokens)
-
-@test length(envs) == 1
-@test envs[1].name == :LX_ENV
-@test F.envname(envs[1]) == "aaa"
-@test !has(tokens, :LX_BEGIN)
-@test !has(tokens, :LX_END)
-
-
 # TODO:
 # - nesting
 # - maths
+
+s = raw"""
+    \newenvironment{aaa}{pre}{post}
+    \begin{aaa}
+    bbb
+    \end{aaa}""" |> fd2html
+@test s // "pre bbb post"
+
+s = raw"""
+    \newenvironment{aaa}[1]{pre:#1}{post:#1}
+    \begin{aaa}{00}
+    bbb
+    \end{aaa}""" |> fd2html
+@test s // "pre: 00 bbb post: 00"
+
+# redefinition
+s = raw"""
+    \newcommand{\abc}{123}
+    \abc
+    \newcommand{\abc}{321}
+    \abc
+    """ |> fd2html
+@test s // "123\n321"
+
+s = raw"""
+    \newcommand{\abc}{123}
+    \abc
+    \newcommand{\abc}[1]{321:#1}
+    \abc{aa}
+    """ |> fd2html
+@test s // "123\n321: aa"
+
+s = raw"""
+    \newenvironment{aaa}{pre}{post}
+    \begin{aaa}
+    bbb
+    \end{aaa}
+
+    ---
+
+    \newenvironment{aaa}{PRE}{POST}
+    \begin{aaa}
+    ccc
+    \end{aaa}
+    """ |> fd2html
+@test s // "pre bbb post\n<hr />\nPRE ccc POST"
+
+s = raw"""
+    \newenvironment{aaa}{pre}{post}
+    \begin{aaa}
+    bbb
+    \end{aaa}
+
+    ---
+
+    \newenvironment{aaa}[1]{pre:#1}{post:#1}
+    \begin{aaa}{00}
+    bbb
+    \end{aaa}
+    """ |> fd2html
+@test s // "pre bbb post\n<hr />\npre: 00 bbb post: 00"
+
+# nesting
+
+s = raw"""
+    \newenvironment{aaa}{pre}{post}
+    \newenvironment{bbb}[2]{abc:#1}{def:#2}
+    \begin{aaa}
+    A
+    \begin{bbb}{00}{11}
+    B
+    \end{bbb}
+    C
+    \end{aaa}
+    """ |> fd2html
+@test s // "pre A abc: 00 B def: 11 C post"

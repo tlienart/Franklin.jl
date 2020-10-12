@@ -151,9 +151,11 @@ function get_lxdef_ref(lxname::SubString, lxdefs::Vector{LxDef},
                        )::Tuple{Ref,Bool}
     # find lxdefs with matching name
     ks = findall(δ -> (δ.name == lxname), lxdefs)
+
     # check that the def is before the usage
     fromlx = from(lxname) + offset
     filter!(k -> (fromlx > from(lxdefs[k])), ks)
+
     # if no definition is found, there are three possibilities:
     #  1. there is a Utils definition
     #  2. we're in math, let the math engine deal with it
@@ -183,7 +185,7 @@ $(SIGNATURES)
 For a command or an environment, find the arguments (i.e. a sequence of braces
 immediately after the opening token).
 """
-function find_opts_braces(τ::Token, narg::Int, braces::Vector{OCBlock})
+function find_opts_braces(τ::Token, narg::Int, braces::Vector{OCBlock}, name="")
     # spot where an opening brace is expected, note that we can use exact
     # char algebra here because we know that the last character is '}' w length 1.
     nxtidx = to(τ) + 1
@@ -191,8 +193,9 @@ function find_opts_braces(τ::Token, narg::Int, braces::Vector{OCBlock})
     b1_idx = findfirst(β -> (from(β) == nxtidx), braces)
     # --> it needs to exist + there should be enough braces left for the options
     if isnothing(b1_idx) || (b1_idx + narg - 1 > length(braces))
+
         throw(LxComError("""
-            Command/Environment '$lxname' expects $lxnarg argument(s) and there
+            Command/Environment '$name' expects $narg argument(s) and there
             should be no space(s) between the command name and the first brace:
             \\com{arg1}... or \\begin{env}{arg1}...
             """))
@@ -233,7 +236,7 @@ function find_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
         τ.name == :LX_COMMAND || continue
 
         # 1. look for the definition given the command name
-        lxname   = τ.ss
+        lxname = τ.ss
         lxdefref, utils = get_lxdef_ref(lxname, lxdefs, inmath, offset)
         if utils
             # custom command defined in utils, take a single bracket
@@ -252,7 +255,7 @@ function find_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
             active_τ[i] = false
         # >> there is at least one argument --> find all of them
         else
-            arg_braces = find_opts_braces(τ, lxnarg, braces)
+            arg_braces = find_opts_braces(τ, lxnarg, braces, lxname)
             # all good, can push it
             from_c = from(τ)
             to_c   = to(arg_braces[end])
@@ -329,11 +332,12 @@ function find_lxenvs(tokens::Vector{Token}, lxdefs::Vector{LxDef},
 
     for (i, τ) ∈ enumerate(tokens)
         # only consider active and opening tokens
-        (active_tokens[i] && (τ.name == :LX_BEGIN)) || continue
+        active_τ[i] || continue
+        τ.name == :LX_BEGIN || continue
 
         # 1. extract the environment name and find the definition
-        env = envname(τ)
-        lxdefref, utils = get_lxdef_ref(env, lxdefs, inmath, offset; isenv=true)
+        env_name        = envname(τ)
+        lxdefref, utils = get_lxdef_ref(env_name, lxdefs, inmath, offset; isenv=true)
         if utils
             # custom env defined in utils, take a single bracket
             lxnarg = 1
@@ -350,23 +354,21 @@ function find_lxenvs(tokens::Vector{Token}, lxdefs::Vector{LxDef},
             arg_braces = Vector{OCBlock}()
         # >> at least one argument
         else
-            arg_braces = find_opts_braces(τ, lxnarg, braces)
+            arg_braces = find_opts_braces(τ, lxnarg, braces, env_name)
         end
 
         # 3. find closing delimiter
-        # find the closing token \end{$env}
-        # if 3 args, need to start the search at i+3+1
-        # \begin{name}{ooo}{ooo}{ooo}...xxx...\end{name}
-        #      i       i+1  i+2  i+3   i+4
+        # find the closing token \end{$env_name}
+        # note that the braces are not tokens anymore as they're already in OCB
         inbalance = 1
-        j = i + length(arg_braces)
+        j = i
         while !iszero(inbalance) && (j < ntokens)
             j += 1
-            inbalance += envbalance(tokens[j], env)
+            inbalance += envbalance(tokens[j], env_name)
         end
         if inbalance > 0
             throw(OCBlockError(
-                "I found at least one opening delimiter '\\begin{$env}' " *
+                "I found at least one opening delimiter '\\begin{$env_name}' " *
                 "that is not closed properly.", context(τ)))
         end
 
@@ -382,65 +384,5 @@ function find_lxenvs(tokens::Vector{Token}, lxdefs::Vector{LxDef},
         # Mark all tokens in the span of the env as inactive (reproc later)
         active_τ[i:j] .= false
     end
-    return lxenvs, tokens[active_tokens]
+    return lxenvs, tokens[active_τ]
 end
-
-
-    # TODO
-
-    # -- pair off the LX_BEGIN and matching LX_END
-    # -- allow definition of NEWENVIRONMENT
-    # -- test the whole lot
-    # -- write a convert ocb which takes the content, puts it between the stuff then
-    # reprocesses the lot.
-    # -- re-add the math envs.
-
-    # NOTE: write a plan first and do things bit by bit otherwise will take forever
-    # and be a big distraction
-
-
-# Begin - End
-#
-# 1. ✅ find BEGIN - END (candidate token)
-#   - NOTE removed maths begin/end parser/markdown/tokens L60
-#       . :MATH_ALIGN ; :MATH_D (equation) ; :MATH_EQA (eqnarray)
-# 2. ✅ assemble BEGIN{XXX} - END{XXX} (full token)
-# 3. ✅ form blocks (balancing) BEGIN{XXX} --> END{XXX} (ocblock)
-# 4. ❌ deactivate everything within the outermost block, iterative procedure
-# need to keep the braces (if the definition has nargs)
-
-# ❌ can't do the begin - end just like an OCB because it also has arguments.
-# one thing could be to just transform the OCB with name `LX_ENV` into actual
-# LxEnv which would be similar to a LxCom but would also keep track of the
-# braces that should be used to define the parameters... also needs to keep
-# track of the definitions (otherwise we end up with the usual shit of where
-# is an environment defined).
-# * ✅ Generalise LxDef so that it can take T as def (understood to be either
-# AS for the newcommand case or Pair{<:AS, <:AS} for a newenv case w pre/post)
-# * ❌ look for argument definitions
-
-
-
-
-# 5. add logic for newenvironment, similar to newcommand
-# 6. add stuff in convert_md
-# 7. process block
-#   0. check if it's a special environment (maths) if so separate
-#   a. find latest environment definition --> {PRE}{CONTENT}{POST}
-#   b. form a string out of | PRE ␣ CONTENT ␣ POST |
-#   c. reprocess string
-#
-# NewEnvironment should be like \newenvironment{name}[nargs]{pre}{post}
-# where nargs is optional
-#
-# 1. imitate the find newcommand
-#   - ✅ added newenv token parser/markdown/tokens L60
-#
-# OTHER
-#   . ✅ added \* to the LX_NAME_PAT + extended tests
-
-
-## List of Changes
-# converter/markdown/md.jl L76 -- 82
-# parser/latex/blocks --> function at L230
-# utils/errors added LxEnvError L29

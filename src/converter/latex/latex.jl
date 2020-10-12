@@ -28,10 +28,10 @@ function resolve_lxobj(lxo::LxObj, lxdefs::Vector{LxDef};
     lxd = getdef(lxo)
     env = lxo isa LxEnv
     # in case it's defined in Utils or in Franklin
-    fun = Symbol(ifelse(env, "env_", "lx_") * name)
+    name = getname(lxo)
+    fun  = Symbol(ifelse(env, "env_", "lx_") * name)
     # it will be `nothing` in math mode or when defined in utils
     if isnothing(lxd)
-        name = getname(lxo)
         # check if it's defined in Utils and act accordingly
         if isdefined(Main, :Utils) && isdefined(Main.Utils, fun)
             raw = Core.eval(Main.Utils, :($fun($lxo, $lxdefs)))

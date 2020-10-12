@@ -101,12 +101,14 @@ function convert_md(mds::AbstractString,
     #> 3. LaTeX commands
     #>> a. find "newcommands", update active blocks/braces
     lxdefs, tokens, braces, blocks = find_lxdefs(tokens, blocks)
+
     #>> b. if any lxdefs are given in the context, merge them. `pastdef` specifies
     # that the definitions appeared "earlier"
     lprelx = length(pre_lxdefs)
     (lprelx > 0) && (lxdefs = cat(pastdef.(pre_lxdefs), lxdefs, dims=1))
     #>> c. find latex environments
     lxenvs, tokens = find_lxenvs(tokens, lxdefs, braces)
+
     #>> d. find latex commands
     lxcoms, _ = find_lxcoms(tokens, lxdefs, braces)
 

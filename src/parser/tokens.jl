@@ -109,11 +109,11 @@ $(SIGNATURES)
 
 Convenience function to get the name of a lx-env delimiter (ignores spaces).
 """
-function envname(t::Token)
-    m = match(LX_ENVNAME_PAT, str(t))
+function envname(τ::Token)
+    m = match(LX_ENVNAME_PAT, τ.ss)
     isnothing(m) || return m.captures[1]
     # should not happen
-    error("`envname` called on token of type $(t.name) failed to return.")
+    error("`envname` called on token of type $(τ.name) failed to return.")
 end
 envname(b::OCBlock) = envname(otok(b))
 
