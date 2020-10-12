@@ -5,14 +5,14 @@ LATEX patterns, see html link fixer, validate_footnotes
 """
 LX_NAME_PAT
 
-Regex to find the name in a new command within a brace block. For example:
+Regex to find the name in a newcommand or a newenvironment within a brace
+block. For example:
 
     \\newcommand{\\com}[2]{def}
 
 will give as first capture group `\\com`.
 """
-const LX_NAME_PAT = r"^\s*(\\\p{L}+\*?)\s*$"
-
+const LX_NAME_PAT = r"^\s*(\\?\p{L}+\*?)\s*$"
 
 """
 LX_NARG_PAT

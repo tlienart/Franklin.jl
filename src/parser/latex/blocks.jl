@@ -1,17 +1,19 @@
 """
 $(SIGNATURES)
 
-Find `\\newcommand` elements and try to parse what follows to form a proper
-Latex command. Return a list of such elements.
+Find `\\newcommand` and `\\newenvironment` elements and try to parse what
+follows to form a proper Latex command/environment.
+Return a list of such elements.
 
 The format is:
 
-    \\newcommand{NAMING}[NARG]{DEFINING}
+    \\newcommand{\\NAME}[NARGS]{DEFINITION}
+    \\newenvironment{NAMING}[NARGS]{PRE}{POST}
 
-where [NARG] is optional (see `LX_NARG_PAT`).
+where [NARGS] is optional.
 """
 function find_lxdefs(tokens::Vector{Token}, blocks::Vector{OCBlock})
-    # container for the definitions
+    # container for definitions
     lxdefs  = Vector{LxDef}()
     # find braces `{` and `}`
     braces  = filter(β -> β.name == :LXB, blocks)
@@ -21,28 +23,41 @@ function find_lxdefs(tokens::Vector{Token}, blocks::Vector{OCBlock})
     active_blocks = ones(Bool, length(blocks))
 
     # go over active tokens, stop over the ones that indicate a newcommand
-    # deactivate the tokens that are within the scope of a newcommand
+    # or a newenvironment, deactivate the tokens that are within the scope
+    # of the definition of the command/environment
     for (i, τ) ∈ enumerate(tokens)
         # skip inactive tokens
         active_tokens[i] || continue
-        # look for tokens that indicate a newcommand
-        (τ.name == :LX_NEWCOMMAND) || continue
+        # look for tokens that indicate a new[com\env]
+        τ.name in (:LX_NEWCOMMAND, :LX_NEWENVIRONMENT) || continue
+        case = ifelse(τ.name == :LX_NEWCOMMAND, :com, :env)
 
-        # find first brace blocks after the newcommand (naming)
+        # find first brace blocks after the newX (naming)
         fromτ = from(τ)
         k = findfirst(β -> (fromτ < from(β)), braces)
-        # there must be two brace blocks after the newcommand (name, def)
-        if isnothing(k) || !(1 <= k < nbraces)
-            throw(LxDefError("Ill formed newcommand (needs two {...})"))
+
+        if case == :com
+            # there must be two brace blocks after the newcommand (name, def)
+            if isnothing(k) || !(1 <= k < nbraces)
+                throw(LxDefError(
+                    "Ill formed newcommand (needs two {...})"))
+            end
+        else
+            # there must be three brace blocks after the newenvironment
+            if isnothing(k) || !(1 <= k < nbraces - 1)
+                throw(LxDefError(
+                    "Ill formed newenvironment (needs three {...})"))
+            end
         end
 
-        # try to find a number of arg between these two first {...} to see
+        # try to find a number of arg between the two first {...} to see
         # if it may contain something which we'll try to interpret as [.d.]
         rge    = (to(braces[k])+1):(from(braces[k+1])-1)
         lxnarg = 0
-        # it found something between the naming brace and the def brace
+        # it found something between the naming brace and the 1st def brace
         # check if it looks like [.d.] where d is a number and . are
         # optional spaces (specification of the number of arguments)
+        # see the regex pattern LX_NARG_PAT
         if !isempty(rge)
             inter  = subs(str(braces[k]), rge)
             lxnarg = match(LX_NARG_PAT, inter)
@@ -52,9 +67,10 @@ function find_lxdefs(tokens::Vector{Token}, blocks::Vector{OCBlock})
                 if !isempty(sinner)
                     # corner case: {...}[ ]{...} (empty)
                     if isnothing(match(r"\[\s*\]", sinner))
-                        throw(LxDefError(
-                            "Ill formed newcommand (where I expected the " *
-                            "specification of the number of arguments)."))
+                        throw(LxDefError("""
+                            Ill formed new(command|environment), the indication
+                            for the number of arguments could not be read.
+                            Expected '[x]' where 'x' is a number."""))
                     end
                 end
             end
@@ -63,36 +79,54 @@ function find_lxdefs(tokens::Vector{Token}, blocks::Vector{OCBlock})
         end
 
         # assign naming / def
-        naming_braces  = braces[k]
-        defining_braces = braces[k+1]
-        # try to find a valid command name in the first set of braces
+        naming_braces = braces[k]
         matched = match(LX_NAME_PAT, content(naming_braces))
-        if isnothing(matched)
-            throw(LxDefError("Invalid definition of a new command expected " *
-                             "a command name of the form `\\command`."))
+        # >>> case 1: newcommand
+        if case == :com
+            if isnothing(matched) || !startswith(matched.captures[1], '\\')
+                throw(LxDefError("""
+                    Invalid naming in a newcommand, expected a command name of
+                    the form `\\command`."""))
+            end
+            lxname          = string(matched.captures[1])
+            defining_braces = braces[k+1] # valid bc of previous check
+            # recover the definition + span
+            lx_def = stent(defining_braces)
+            to_def = to(defining_braces)
+            # store the new command
+            push!(lxdefs, LxDef(lxname, lxnarg, lx_def, fromτ, to_def))
+        # >>> case 2: newenvironment
+        else
+            if isnothing(matched) || startswith(matched.captures[1], '\\')
+                throw(LxDefError("""
+                    Invalid naming in a newenvironment, expected an environment
+                    name form `command`."""))
+            end
+            lxname      = string(matched.captures[1])
+            pre_braces  = braces[k+1]
+            post_braces = braces[k+2] # both valid due to earlier check
+            # extract defs
+            pre_def  = stent(pre_braces)
+            post_def = stent(post_braces)
+            to_def   = to(post_braces)
+            # store the new env
+            push!(lxdefs, LxDef(lxname, lxnarg, pre_def => post_def,
+                                fromτ, to_def))
         end
-
-        # keep track of the command name, definition and where it stops
-        lxname = matched.captures[1]
-        lxdef  = stent(defining_braces)
-        todef  = to(defining_braces)
-        # store the new latex command
-        push!(lxdefs, LxDef(lxname, lxnarg, lxdef, fromτ, todef))
-
-        # mark newcommand token as processed as well as the next token
-        # which is necessarily the command name (brace token is inactive here)
-        active_tokens[i] = false
-        # mark any block (inc. braces!) starting in the scope as inactive
-        for (i, isactive) ∈ enumerate(active_blocks)
-            isactive || continue
-            (fromτ ≤ from(blocks[i]) ≤ todef) && (active_blocks[i] = false)
+        # mark any active token in the span as inactive
+        first_after = findfirst(t -> (from(t) > to_def), tokens[i+1:end])
+        if isnothing(first_after)
+            active_tokens[i:end] .= false
+        else
+            active_tokens[i:(i+first_after-1)] .= false
         end
     end # of enumeration of tokens
 
     # filter out the stuff that's now marked as inactive by virtue of being
-    # part of a newcommand definition (these things will be inspected later)
+    # part of a newX definition (these things will be inspected later)
     tokens = tokens[active_tokens]
     blocks = blocks[active_blocks]
+
     # separate the braces from the rest of the blocks, they will be used
     # to define the lxcoms
     braces_mask = map(β -> β.name == :LXB, blocks)
@@ -102,7 +136,6 @@ function find_lxdefs(tokens::Vector{Token}, blocks::Vector{OCBlock})
     return lxdefs, tokens, braces, blocks
 end
 
-
 """
 $(SIGNATURES)
 
@@ -110,26 +143,46 @@ Get the reference pointing to a `LxDef` corresponding to a given `lxname`.
 If no reference is found but `inmath=true`, we propagate and let KaTeX deal
 with it. If something is found, the reference is returned and will be accessed
 further down.
+The boolean that is also returned helps keeps track of whether the command or
+environment was defined in the utils.
 """
 function get_lxdef_ref(lxname::SubString, lxdefs::Vector{LxDef},
-                       inmath::Bool=false, offset::Int=0)::Ref
+                       inmath::Bool=false, offset::Int=0; isenv=false
+                       )::Tuple{Ref,Bool}
     # find lxdefs with matching name
     ks = findall(δ -> (δ.name == lxname), lxdefs)
     # check that the def is before the usage
     fromlx = from(lxname) + offset
     filter!(k -> (fromlx > from(lxdefs[k])), ks)
+    # if no definition is found, there are three possibilities:
+    #  1. there is a Utils definition
+    #  2. we're in math, let the math engine deal with it
+    #  3. throw an error
     if isempty(ks)
-        if isdefined(Main, :Utils) && isdefined(Main.Utils, Symbol("lx_$(lxname[2:end])"))
-            return Ref(nothing)
-        elseif !inmath
-            throw(LxComError("Command '$lxname' was used before it was defined."))
+        # check if defined in utils
+        if isdefined(Main, :Utils)
+            # env def 'env_***'
+            flag = isenv && isdefined(Main.Utils, Symbol("env_$(lxname)"))
+            # com def 'lx_***'
+            flag |= isdefined(Main.Utils, Symbol("lx_$(lxname[2:end])"))
+            flag && return (Ref(nothing), true)
         end
-        # not found but inmath --> let KaTex deal with it
-        return Ref(nothing)
+        # if we're here, and in math mode, let the math engine deal with it
+        inmath && return (Ref(nothing), false)
+        # otherwise throw an error
+        throw(LxComError("""
+            Command or environment '$lxname' was used before it was
+            defined."""))
     end
-    return Ref(lxdefs, ks[end])
+    return (Ref(lxdefs, ks[end]), false)
 end
 
+"""
+$(SIGNATURES)
+
+For a command or an environment, find the arguments (i.e. a sequence of braces
+immediately after the opening token).
+"""
 function find_opts_braces(τ::Token, narg::Int, braces::Vector{OCBlock})
     # spot where an opening brace is expected, note that we can use exact
     # char algebra here because we know that the last character is '}' w length 1.
@@ -178,51 +231,46 @@ function find_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
     for (i, τ) ∈ enumerate(tokens)
         active_τ[i] || continue
         τ.name == :LX_COMMAND || continue
+
         # 1. look for the definition given the command name
         lxname   = τ.ss
-        lxdefref = get_lxdef_ref(lxname, lxdefs, inmath, offset)
-        derived  = false
-        # will only be nothing in a 'inmath' --> no failure, just ignore token
-        if isnothing(lxdefref[])
-            lxn = lxname[2:end]
-            fun = Symbol("lx_" * lxn)
-            if isdefined(Main, :Utils) && isdefined(Main.Utils, fun)
-                # take a single bracket
-                lxnarg  = 1
-                derived = true
-            else
-                continue
-            end
+        lxdefref, utils = get_lxdef_ref(lxname, lxdefs, inmath, offset)
+        if utils
+            # custom command defined in utils, take a single bracket
+            lxnarg = 1
+        elseif isnothing(lxdefref[])
+            # unrecognised command in math mode, defer to backend
+            continue
         else
             lxnarg = getindex(lxdefref).narg
         end
+
         # 2. explore with # arguments
-        # 2.a there are none
+        # >> no arguments
         if lxnarg == 0
             push!(lxcoms, LxCom(lxname, lxdefref))
             active_τ[i] = false
-
         # >> there is at least one argument --> find all of them
         else
             arg_braces = find_opts_braces(τ, lxnarg, braces)
-
             # all good, can push it
             from_c = from(τ)
             to_c   = to(arg_braces[end])
             str_c  = subs(str(τ), from_c, to_c)
-            if derived
+
+            if utils
                 push!(lxcoms, LxCom(str_c, nothing, arg_braces))
             else
                 push!(lxcoms, LxCom(str_c, lxdefref, arg_braces))
             end
 
-            # deactivate tokens in the span of the command (will be
-            # reparsed later)
-            first_active = findfirst(τ -> (from(τ) > to_c), tokens[i+1:end])
-            if isnothing(first_active)
+            # deactivate tokens in the span of the command (will be reprocessed
+            # later on)
+            first_after = findfirst(τ -> (from(τ) > to_c), tokens[i+1:end])
+            if isnothing(first_after)
                 active_τ[i+1:end] .= false
-            elseif first_active > 1
-                active_τ[i+1:(i+first_active-1)] .= false
+            elseif first_after > 1
+                active_τ[i+1:(i+first_after-1)] .= false
             end
         end
     end
@@ -264,7 +312,7 @@ function form_lxenv_delims!(tokens::Vector{Token}, blocks::Vector{OCBlock})
 end
 
 """
-$SIGNATUREs
+$SIGNATURES
 
 Find active environment blocks between an opening and matching closing
 delimiter. These can be nested. See also `find_ocblocks` and `find_lxcoms`,
@@ -277,30 +325,41 @@ function form_lxenvs(tokens::Vector{Token}, lxdefs::Vector{LxDef},
     lxenvs   = Vector{LxEnv}()
     active_τ = ones(Bool, length(tokens))
     nbraces  = length(braces)
-    ocblocks = OCBlock[]
     ntokens  = length(tokens)
 
     for (i, τ) ∈ enumerate(tokens)
         # only consider active and opening tokens
         (active_tokens[i] && (τ.name == :LX_BEGIN)) || continue
-        # extract the environment name and find the balancing token
+
+        # 1. extract the environment name and find the definition
         env = envname(τ)
-        lxdefref = get_lxdef_ref(env, lxdefs, inmath, offset)
+        lxdefref, utils = get_lxdef_ref(env, lxdefs, inmath, offset; isenv=true)
+        if utils
+            # custom env defined in utils, take a single bracket
+            lxnarg = 1
+        elseif isnothing(lxdefref[])
+            # unrecognised environment in math mode, defer to backend
+            continue
+        else
+            lxnarg = getindex(lxdefref).narg
+        end
 
-        # will only be nothing in a `inmath` --> no failure, just ignore
-        isnothing(lxdefref[]) && continue
-
-        # explore number of arguments and find the relevant braces
-        lxnarg = getindex(lxdefref).narg
+        # 2. explore with # argument
+        # >> no arguments
         if lxnarg == 0
             arg_braces = Vector{OCBlock}()
+        # >> at least one argument
         else
             arg_braces = find_opts_braces(τ, lxnarg, braces)
         end
 
+        # 3. find closing delimiter
         # find the closing token \end{$env}
+        # if 3 args, need to start the search at i+3+1
+        # \begin{name}{ooo}{ooo}{ooo}...xxx...\end{name}
+        #      i       i+1  i+2  i+3   i+4
         inbalance = 1
-        j = i
+        j = i + length(arg_braces)
         while !iszero(inbalance) && (j < ntokens)
             j += 1
             inbalance += envbalance(tokens[j], env)
@@ -311,23 +370,19 @@ function form_lxenvs(tokens::Vector{Token}, lxdefs::Vector{LxDef},
                 "that is not closed properly.", context(τ)))
         end
 
-        # XXX
-        #
-        # push!(ocblocks, OCBlock(:LX_ENV, τ => tokens[j]))
-        # # mark all tokens in the range as inactive apart from braces which are
-        # # needed in the formation of the actual envs
-        # idx = [k for k in i:j if active_tokens[k] && tokens[k].name != :LXB]
-        # active_tokens[k] .= false
-        #
-        # XXX
-    end
-    # Form the actual LxEnv
-    braces = filter(τ -> τ.name == :LXB, tokens[active_tokens])
-    for env in ocblocks
+        # Construct and store the LxEnv
+        push!(lxenvs,
+              LxEnv(
+                subs(str(τ), from(τ), to(tokens[j])), # string of the whole env
+                ifelse(utils, nothing, lxdefref),     # def (none for custom)
+                arg_braces, τ => tokens[j]            # args + delims
+                )
+             )
 
+        # Mark all tokens in the span of the env as inactive (reproc later)
+        active_τ[i:j] .= false
     end
-
-    return ocblocks, tokens[active_tokens]
+    return lxenvs, tokens[active_tokens]
 end
 
 

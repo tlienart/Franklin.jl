@@ -10,7 +10,11 @@ const LX_TOKENS = (:LX_BRACE_OPEN, :LX_BRACE_CLOSE, :LX_COMMAND)
 $(TYPEDEF)
 
 Structure to keep track of the definition of a latex command declared via a
-`\newcommand{\name}[narg]{def}`.
+`\\newcommand{\\name}[narg]{def}` or of an environment via
+`\\newenvironment{name}[narg]{pre}{post}`.
+The parametric type depends on the definition type, for a command it will be
+a SubString (<: AbstractString), for an environment it will be a Pair of
+SubString (corresponding to pre-post).
 """
 struct LxDef{T}
     name::String
@@ -21,9 +25,9 @@ struct LxDef{T}
     to  ::Int
 end
 # if offset unspecified, start from basically -∞ (configs etc)
-function LxDef(name::String, narg::Int, def)
+function LxDef(name::AS, narg::Int, def)
     o = FD_ENV[:OFFSET_LXDEFS] += 5  # precise offset doesn't matter
-    LxDef(name, narg, def, o, o + 3) # just forward a bit
+    LxDef(string(name), narg, def, o, o + 3) # just forward a bit
 end
 
 from(lxd::LxDef) = lxd.from
@@ -55,7 +59,7 @@ struct LxCom <: LxObj
     lxdef ::Union{Nothing,Ref{LxDef}} # definition of the command
     braces::Vector{OCBlock}           # relevant {...} with the command
 end
-LxCom(ss, def)   = LxCom(ss, def, Vector{OCBlock}())
+LxCom(ss, def) = LxCom(ss, def, Vector{OCBlock}())
 
 
 """
@@ -67,8 +71,8 @@ A `LxEnv` is similar to a `LxCom` but for an environment.
     `\\begin{aaa}{opt1}{opt2} ... \\end{aaa}`
 """
 struct LxEnv <: LxObj
-    ss ::SubString
-    lxdef::Union{Nothing,Ref{LxDef}}
+    ss    ::SubString
+    lxdef ::Union{Nothing,Ref{LxDef}}
     braces::Vector{OCBlock}
     ocpair::Pair{Token,Token}
 end

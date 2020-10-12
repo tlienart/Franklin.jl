@@ -38,6 +38,20 @@ num_braces_post = length(filter(b -> b.name == :LXB, blocks))
 @test tokens[6].name == :LX_END
 @test F.envname(tokens[6]) == "aaa"
 
+# ============= Part 2 : defs
+# XXX test this a fair bit (newenv def, and lxenv formation)
+# XXX remaining -- resolve command
+
+lxdefs, tokens, braces, blocks = F.find_lxdefs(tokens, blocks)
+
+@test lxdefs[1].name == "aaa"
+@test lxdefs[1].narg == 5
+@test lxdefs[1].def.first == "pre"
+@test lxdefs[1].def.second == "post"
+
+# ==============
+
+
 envs, tokens = F.form_lxenvs(tokens)
 
 @test length(envs) == 1
