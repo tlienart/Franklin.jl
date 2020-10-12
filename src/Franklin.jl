@@ -192,7 +192,7 @@ include("converter/markdown/tags.jl")
 include("converter/markdown/md.jl")
 # > latex
 include("converter/latex/latex.jl")
-include("converter/latex/commands.jl")
+include("converter/latex/objects.jl")
 include("converter/latex/hyperrefs.jl")
 include("converter/latex/io.jl")
 # > html
