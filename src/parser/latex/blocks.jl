@@ -283,7 +283,7 @@ $(SIGNATURES)
 
 Find `\\begin{xxx}` and `\\end{xxx}` blocks.
 """
-function form_lxenv_delims!(tokens::Vector{Token}, blocks::Vector{OCBlock})
+function find_lxenv_delims!(tokens::Vector{Token}, blocks::Vector{OCBlock})
     rmidx = Int[]
     for (i, τ) ∈ enumerate(tokens)
         τ.name ∈ (:CAND_LX_BEGIN, :CAND_LX_END) || continue
@@ -318,7 +318,7 @@ Find active environment blocks between an opening and matching closing
 delimiter. These can be nested. See also `find_ocblocks` and `find_lxcoms`,
 this is essentially a mix of the two.
 """
-function form_lxenvs(tokens::Vector{Token}, lxdefs::Vector{LxDef},
+function find_lxenvs(tokens::Vector{Token}, lxdefs::Vector{LxDef},
                      braces::Vector{OCBlock}, offset::Int=0;
                      inmath=false)::Tuple{Vector{LxEnv}, Vector{Token}}
     # containers for the lxenvs

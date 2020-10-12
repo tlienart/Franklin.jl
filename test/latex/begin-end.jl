@@ -22,7 +22,7 @@ num_braces_orig = length(filter(b -> b.name == :LXB, blocks))
 
 @test num_braces_orig == 5
 
-F.form_lxenv_delims!(tokens, blocks)
+F.find_lxenv_delims!(tokens, blocks)
 
 @test has(tokens, :LX_BEGIN)
 @test has(tokens, :LX_END)
@@ -49,10 +49,12 @@ lxdefs, tokens, braces, blocks = F.find_lxdefs(tokens, blocks)
 @test lxdefs[1].def.first == "pre"
 @test lxdefs[1].def.second == "post"
 
+
+
 # ==============
 
 
-envs, tokens = F.form_lxenvs(tokens)
+envs, tokens = F.find_lxenvs(tokens)
 
 @test length(envs) == 1
 @test envs[1].name == :LX_ENV

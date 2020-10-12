@@ -41,7 +41,7 @@ function convert_block(β::AbstractBlock, lxdefs::Vector{LxDef})::AS
     # default case, ignore block (should not happen)
     return ""
 end
-convert_block(β::LxCom, lxdefs::Vector{LxDef}) = resolve_lxcom(β, lxdefs)
+convert_block(β::LxObj, lxdefs::Vector{LxDef}) = resolve_lxobj(β, lxdefs)
 
 
 """

@@ -36,8 +36,8 @@ config file is read (via `manager/file_utils.jl:process_config`).
 const GLOBAL_LXDEFS = LittleDict{String,LxDef}()
 
 """
-Convenience function to allocate default values for global latex commands
-accessible throughout the site. See [`resolve_lxcom`](@ref).
+Convenience function to allocate default values for global latex commands and environments
+accessible throughout the site. See [`resolve_lxobj`](@ref).
 """
  function def_GLOBAL_LXDEFS!()::Nothing
     empty!(GLOBAL_LXDEFS)
