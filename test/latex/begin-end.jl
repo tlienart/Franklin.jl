@@ -129,3 +129,15 @@ s = raw"""
     \end{aaa}
     """ |> fd2html
 @test s // "pre A abc: 00 B def: 11 C post"
+
+# pre-existing
+
+s = raw"""
+    AA
+    \begin{align}
+    A &= B \\
+    C &= D+E
+    \end{align}
+    BB
+    """ |> fd2html
+@test s // "<p>AA \\[\\begin{aligned}\nA &= B \\\\\nC &= D+E\n\\end{aligned}\\] BB</p>"

@@ -42,16 +42,6 @@ const HTML_OCB = [
 CONDITIONAL BLOCKS
 ================== =#
 
-#= NOTE / TODO
-* in a conditional block, should make sure else is not followed by elseif
-* no nesting of conditional blocks is allowed at the moment. This could
-be done at later stage (needs balancing) or something but seems a bit overkill
-at this point. This second point might fix the first one by making sure that
-    HIf -> HElseIf / HElse / HEnd
-    HElseIf -> HElseIf / HElse / HEnd
-    HElse -> HEnd
-=#
-
 """
 $(TYPEDEF)
 

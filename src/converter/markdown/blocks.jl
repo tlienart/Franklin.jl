@@ -58,9 +58,6 @@ const MATH_BLOCKS_PARENS = LittleDict{Symbol, Tuple{Int,Int,String,String}}(
     :MATH_A     => ( 1,  1, "\\(", "\\)"),
     :MATH_B     => ( 2,  2, "\\[", "\\]"),
     :MATH_C     => ( 2,  2, "\\[", "\\]"),
-    # :MATH_D     => (16, 14, "\\[", "\\]"),
-    # :MATH_ALIGN => (13, 11, "\\[\\begin{aligned}", "\\end{aligned}\\]"),
-    # :MATH_EQA   => (16, 14, "\\[\\begin{array}{c}", "\\end{array}\\]"),
     :MATH_I     => ( 4,  4, "", "")
     )
 

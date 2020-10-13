@@ -282,3 +282,43 @@ utf8(s::AS) = (Char(c) for c in codeunits(s))
 escapeuri(c::Char) = string('%', uppercase(string(Int(c), base=16, pad=2)))
 escapeuri(str::AS) =
     join(ifelse(issafe(c), c, escapeuri(Char(c))) for c in utf8(str))
+
+
+"""
+$SIGNATURES
+
+Internal function to process an array of strings to markdown table (in one
+single string). If header is empty, the first row of the file will be used as
+header.
+"""
+function csv2html(path::AS, header::AS)::String
+    csvcontent   = readdlm(path, ',', String, header=false)
+    nrows, ncols = size(csvcontent)
+    io = IOBuffer()
+    # writing the header
+    if ! isempty(header)
+        # header provided
+        newheader = split(header, ",")
+        hs = size(newheader,1)
+        if hs != ncols
+            return html_err("In `\\tableinput`: header size ($hs) and " *
+                            "number of columns ($ncols) do not match.")
+        end
+        write(io, prod("| " * h * " " for h in newheader))
+        rowrange = 1:nrows
+    else
+        # header from csv file
+        write(io, prod("| " * csvcontent[1, i] * " " for i in 1:ncols))
+        rowrange = 2:nrows
+    end
+    # writing end of header & header separator
+    write(io, "|\n|", repeat( " ----- |", ncols), "\n")
+    # writing content
+    for i in rowrange
+        for j in 1:ncols
+            write(io, "| ", csvcontent[i,j], " ")
+        end
+        write(io, "|\n")
+    end
+    return md2html(String(take!(io)))
+end

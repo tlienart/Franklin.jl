@@ -130,8 +130,6 @@ end
 @testset "P:2:blk-{}" begin
     b = "{ABC}" |> blk3
     @test F.content(b[1]) == "ABC"
-    b = "\\begin{eqnarray} \\sin^2(x)+\\cos^2(x) &=& 1\\end{eqnarray}" |> blk3
-    @test cont(b[1]) == " \\sin^2(x)+\\cos^2(x) &=& 1"
     b = raw"""
     a\newcommand{\eqa}[1]{\begin{eqnarray}#1\end{eqnarray}}b@@d .@@
     \eqa{\sin^2(x)+\cos^2(x) &=& 1}

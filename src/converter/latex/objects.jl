@@ -40,13 +40,13 @@ Convenience function to create pairs (envdname => simple envdef)
 """
 lxe(n, k, d=Pair("", "")) = n => LxDef(n, k, d)
 
-
-# XXX
-
 const LX_INTERNAL_ENVIRONMENTS = [
-    lxe("equation", 0, "\\[" => "\\]"),
-    lxe("align",    0, "\\[\\begin{aligned}" => "\\end{aligned}")
-]
+    lxe("equation", 0, raw"\[" => raw"\]"),
+    lxe("align",    0, raw"\[\begin{aligned}"    => raw"\end{aligned}\]"),
+    lxe("aligned",  0, raw"\[\begin{aligned}"    => raw"\end{aligned}\]"),
+    lxe("eqnarray", 0, raw"\[\begin{array}{rcl}" => raw"\end{array}\]"),
+    ]
+
 
 """
     GLOBAL_LXDEFS
@@ -64,8 +64,10 @@ accessible throughout the site. See [`resolve_lxobj`](@ref).
 """
  function def_GLOBAL_LXDEFS!()::Nothing
     empty!(GLOBAL_LXDEFS)
-    for (name, def) in LX_INTERNAL_COMMANDS
-        GLOBAL_LXDEFS[name] = def
+    for store in (LX_INTERNAL_ENVIRONMENTS, LX_INTERNAL_COMMANDS)
+        for (name, def) in store
+            GLOBAL_LXDEFS[name] = def
+        end
     end
-    nothing
+    return
 end

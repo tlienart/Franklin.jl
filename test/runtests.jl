@@ -54,6 +54,12 @@ include("eval/eval.jl")
 include("eval/integration.jl")
 include("eval/extras.jl")
 
+# LATEX
+println("LATEX")
+# include("latex/begin-end.jl")
+# include("latex/custom.jl")
+println("🍺")
+
 # CONVERTER folder
 println("CONVERTER/MD")
 include("converter/md/markdown.jl")

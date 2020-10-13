@@ -81,28 +81,23 @@ end
         ```latex
         \newcommand{\brol}{\mathbb B}
         ```
-        """
-
-    lxdefs, tokens, braces, blocks = explore_md_steps(st)[:latex]
-
-    @test lxdefs[1].name == "\\E"
-    @test lxdefs[1].narg == 1
-    @test lxdefs[1].def  == "\\mathbb E\\left[#1\\right]"
-    @test lxdefs[2].name == "\\eqa"
-    @test lxdefs[2].narg == 1
-    @test lxdefs[2].def  == "\\begin{eqnarray}#1\\end{eqnarray}"
-    @test lxdefs[3].name == "\\R"
-    @test lxdefs[3].narg == 0
-    @test lxdefs[3].def  == "\\mathbb R"
-
-    @test blocks[1].name == :ESCAPE
-    @test blocks[2].name == :CODE_BLOCK_LANG
-
-    lxcoms, tokens = F.find_lxcoms(tokens, lxdefs, braces)
-
-    @test lxcoms[1].ss == "\\eqa{ \\E{f(X)} \\in \\R &\\text{if}& f:\\R\\maptso\\R }"
-    lxd = getindex(lxcoms[1].lxdef)
-    @test lxd.name == "\\eqa"
+        """ |> fd2html
+    @test isapproxstr(st, raw"""
+        <p>
+          blah de blah
+          escape b1
+        </p>
+        <p>
+          Then something like
+            \[\begin{array}{rcl}
+              \mathbb E\left[ f(X)\right] \in \mathbb R &\text{if}& f:\mathbb R\maptso\mathbb R
+            \end{array}\]
+          and we could try to show latex:
+        </p>
+        <pre><code class="language-latex">
+          \newcommand&#123;\brol&#125;&#123;\mathbb B&#125;
+        </code></pre>
+        """)
 end
 
 
