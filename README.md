@@ -35,7 +35,7 @@ Go to [Franklin's main website](https://franklinjl.org).
 
 Some examples of websites using Franklin (_if you're using Franklin with a public repo, consider adding the "franklin" tag to the repo to help others find examples, thanks!_)
 
-* Franklin's own website is written in Franklin, [source](https://github.com/tlienart/franklindocs)
+* Franklin's own website is written in Franklin, [see docs/](docs/)
 * The [Julia website](https://julialang.org), including the blog, are deployed in Franklin.
 * [@cormullion's website](https://cormullion.github.io), the author of [Luxor.jl](https://github.com/JuliaGraphics/Luxor.jl),
 * MLJ's [tutorial website](https://alan-turing-institute.github.io/DataScienceTutorials.jl/) which shows how Franklin can interact nicely with [Literate.jl](https://github.com/fredrikekre/Literate.jl)
