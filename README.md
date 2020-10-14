@@ -8,8 +8,8 @@
 <p align="center">
   <img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg"
        alt="Lifecycle">
-  <a href="https://travis-ci.org/tlienart/Franklin.jl">
-    <img src="https://travis-ci.org/tlienart/Franklin.jl.svg?branch=master"
+  <a href="https://travis-ci.com/tlienart/Franklin.jl">
+    <img src="https://travis-ci.com/tlienart/Franklin.jl.svg?branch=master"
          alt="Build Status (Linux)">
   </a>
   <a href="https://ci.appveyor.com/project/tlienart/Franklin-jl">

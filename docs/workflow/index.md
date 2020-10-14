@@ -123,6 +123,10 @@ To avoid name clashes, refrain from using the following paths where `/` indicate
 
 Also bear in mind that Franklin will ignore `README.md`, `LICENSE.md`, `Manifest.toml` and `Project.toml`.
 
+### Tag pages
+
+All pages with a given tag can be found (by default) at `[website]/tag/<tag_name>`. The tag page location can be changed by setting the `tag_page_path` variable in `config.md`. For example, setting `@def tag_page_path = "my_tags"` would cause tag pages to appear at `[website]/my_tags/<tag_name>`.
+
 ### Editing and testing your website
 
 The `serve` function can be used to launch a server which will track and render modifications.
