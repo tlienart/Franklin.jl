@@ -17,12 +17,12 @@ function robots_generator()
     isfile(dst) && rm(dst)
     io = IOBuffer()
     globvar("generate_sitemap") && println(io, """
-Sitemap: $(joinpath(globvar(:website_url), "sitemap.xml"))
-    """)
+        Sitemap: $(joinpath(globvar(:website_url), "sitemap.xml"))
+        """)
     println(io, """
-User-agent: *
-Disallow:
-    """)
+        User-agent: *
+        Disallow:
+        """)
     write(dst, take!(io))
     return nothing
 end
