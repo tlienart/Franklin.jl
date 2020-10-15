@@ -23,19 +23,17 @@ end
 @testset "Ordering-2" begin
     st = raw"""
         A
+
         \begin{eqnarray}
             1 + 1 &=& 2
         \end{eqnarray}
+
         B
         """
-    steps = st |> explore_md_steps
-    blocks, = steps[:ocblocks]
-    @test length(blocks) == 1
-    @test blocks[1].name == :MATH_EQA
 
     @test isapproxstr(st |> seval, raw"""
             <p>A</p>
-            \[\begin{array}{c}
+            \[\begin{array}{rcl}
                 1 + 1 &=& 2
             \end{array}\]
             <p>B</p>""")
@@ -44,9 +42,11 @@ end
 @testset "Ordering-3" begin
     st = raw"""
         A
+
         \begin{eqnarray}
             1 + 1 &=& 2
         \end{eqnarray}
+
         B
         <!--
             blah
@@ -57,15 +57,9 @@ end
         -->
         C
         """
-    steps = st |> explore_md_steps
-    blocks, = steps[:ocblocks]
-    @test length(blocks) == 2
-    @test blocks[1].name == :MATH_EQA
-    @test blocks[2].name == :COMMENT
-
     @test isapproxstr(st |> seval, raw"""
             <p>A</p>
-            \[\begin{array}{c}
+            \[\begin{array}{rcl}
                 1 + 1 &=& 2
             \end{array}\]
             <p>B</p>
@@ -81,15 +75,10 @@ end
         }
         C
         """
-    steps = st |> explore_md_steps
-    blocks, = steps[:ocblocks]
-
-    @test length(blocks) == 3
-    @test all(getproperty.(blocks, :name) .== :LXB)
 
     @test isapproxstr(st |> seval, raw"""
             <p>A
-            \[\begin{array}{c}
+            \[\begin{array}{rcl}
                 B
             \end{array}\]
             C</p>""")

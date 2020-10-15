@@ -19,10 +19,10 @@ end
         Then something like
         \eqa{ \E{f(X)} \in \R &\text{if}& f:\R\maptso\R }
         """
-    @test isapproxstr(st |> conv,
+    @test isapproxstr(st |> fd2html,
             """<p>
             Then something like
-            \\[\\begin{array}{c} \\mathbb E\\left[ f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R \\end{array}\\]
+            \\[\\begin{array}{rcl} \\mathbb E\\left[ f(X)\\right] \\in \\mathbb R &\\text{if}& f:\\mathbb R\\maptso\\mathbb R \\end{array}\\]
             </p>""")
 end
 

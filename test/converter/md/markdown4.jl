@@ -1,20 +1,20 @@
 @testset "latex-wspace" begin
     s = raw"""
-    \newcommand{\hello}{hello}
-    A\hello B
-    """ |> fd2html_td
+        \newcommand{\hello}{hello}
+        A\hello B
+        """ |> fd2html_td
     @test isapproxstr(s, "<p>Ahello B</p>")
     s = raw"""
-    \newcommand{\eqa}[1]{\begin{eqnarray}#1\end{eqnarray}}
-    A\eqa{B}C
-    \eqa{
-        D
-    }E
-    """ |> fd2html_td
+        \newcommand{\eqa}[1]{\begin{eqnarray}#1\end{eqnarray}}
+        A\eqa{B}C
+        \eqa{
+            D
+        }E
+        """ |> fd2html_td
     @test isapproxstr(s, raw"""
             <p>
-            A\[\begin{array}{c} B\end{array}\]C
-            \[\begin{array}{c} D\end{array}\]E
+            A\[\begin{array}{rcl} B\end{array}\]C
+            \[\begin{array}{rcl} D\end{array}\]E
             </p>""")
 
     s = raw"""
@@ -27,7 +27,7 @@
     E
     """ |> fd2html_td
     @test isapproxstr(s, raw"""
-        \[\begin{array}{c} A\\
+        \[\begin{array}{rcl} A\\
         D\end{array}\]
         <p>E</p>
         """)
@@ -41,7 +41,7 @@
 
     E""" |> fd2html_td
     @test isapproxstr(s, raw"""
-        \[\begin{array}{c} A\\
+        \[\begin{array}{rcl} A\\
         D\end{array}\]
         <p>E</p>
            """)

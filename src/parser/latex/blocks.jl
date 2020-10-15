@@ -207,7 +207,7 @@ function find_opts_braces(τ::Token, narg::Int, braces::Vector{OCBlock}, name=""
         if (to(cand_braces[bidx]) + 1 != from(cand_braces[bidx+1]))
             throw(LxComError("""
                 Argument braces should not be separated by space(s):
-                \\com{arg1}{arg2}... Verify a '$lxname' command.
+                \\com{arg1}{arg2}... Verify a '$name' command/environment.
                 """))
         end
     end
