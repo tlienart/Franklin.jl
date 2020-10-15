@@ -270,6 +270,8 @@ function fd_fullpass(watched_files::NamedTuple)::Int
     generate_tag_pages()
     # generate sitemap if appropriate
     globvar("generate_sitemap") && sitemap_generator()
+    # generate robots if appropriate
+    globvar("generate_robots") && robots_generator()
     # done
     FD_ENV[:FULL_PASS] = false
     # return -1 if any page failed to build, 0 otherwise
