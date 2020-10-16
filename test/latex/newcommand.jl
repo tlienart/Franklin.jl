@@ -60,7 +60,7 @@ end
     s = raw"""
         abc \newcommand abc
         """
-    @test_throws F.LxComError (s |> fd2html)
+    @test_throws F.LxObjError (s |> fd2html)
     s = raw"""
         \newcommand{abc}{hello}
         """
@@ -70,7 +70,7 @@ end
         \abc
         \newcommand{\abc}{hello}
         """
-    @test_throws F.LxComError (s |> fd2html)
+    @test_throws F.LxObjError (s |> fd2html)
     # nargs not proper
     s = raw"""
         \newcommand{\abc}[d]{hello}
@@ -81,7 +81,7 @@ end
         \newcommand{\comb}[1]{HH#1HH}
         etc \comb then.
         """
-    @test_throws F.LxComError (s |> fd2html)
+    @test_throws F.LxObjError (s |> fd2html)
 end
 
 # ==== more integrated examples recuperated from previous more specific tests ===

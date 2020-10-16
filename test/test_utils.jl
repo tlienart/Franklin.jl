@@ -168,3 +168,5 @@ end
 fdi(s) = fd2html(s; internal=true)
 
 resource() = (F.FD_ENV[:SOURCE] = ""; set_globals())
+
+has(t, s) = any(ti.name == s for ti in t)

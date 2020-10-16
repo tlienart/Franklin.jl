@@ -172,7 +172,7 @@ function get_lxdef_ref(lxname::SubString, lxdefs::Vector{LxDef},
         # if we're here, and in math mode, let the math engine deal with it
         inmath && return (Ref(nothing), false)
         # otherwise throw an error
-        throw(LxComError("""
+        throw(LxObjError("""
             Command or environment '$lxname' was used before it was
             defined."""))
     end
@@ -194,7 +194,7 @@ function find_opts_braces(τ::Token, narg::Int, braces::Vector{OCBlock}, name=""
     # --> it needs to exist + there should be enough braces left for the options
     if isnothing(b1_idx) || (b1_idx + narg - 1 > length(braces))
 
-        throw(LxComError("""
+        throw(LxObjError("""
             Command/Environment '$name' expects $narg argument(s) and there
             should be no space(s) between the command name and the first brace:
             \\com{arg1}... or \\begin{env}{arg1}...
@@ -205,7 +205,7 @@ function find_opts_braces(τ::Token, narg::Int, braces::Vector{OCBlock}, name=""
     cand_braces = braces[b1_idx:b1_idx+narg-1]
     for bidx ∈ 1:narg-1
         if (to(cand_braces[bidx]) + 1 != from(cand_braces[bidx+1]))
-            throw(LxComError("""
+            throw(LxObjError("""
                 Argument braces should not be separated by space(s):
                 \\com{arg1}{arg2}... Verify a '$name' command/environment.
                 """))
@@ -295,7 +295,7 @@ function find_lxenv_delims!(tokens::Vector{Token}, blocks::Vector{OCBlock})
         braceidx = findfirst(β -> (β.name == :LXB && from(β) == nxtidx), blocks)
         # it needs to exist
         if isnothing(braceidx)
-            throw(LxEnvError("""
+            throw(LxObjError("""
                 Found a delimiter '\\begin' or '\\end' and expected a name in braces
                 after that but didn't find it. There should be no space between the
                 delimiter and the brace: \\begin{name}.

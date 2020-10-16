@@ -65,12 +65,12 @@ end
     s = raw"""
         \foo
         """
-    @test_throws F.LxComError (s |> fd2html)
+    @test_throws F.LxObjError (s |> fd2html)
     s = raw"""
         \newcommand{\foo}[2]{hello #1 #2}
         \foo{a} {}
         """
-    @test_throws F.LxComError (s |> fd2html)
+    @test_throws F.LxObjError (s |> fd2html)
 end
 
 @testset "ocblocks" begin
