@@ -14,6 +14,8 @@
         m = match(F.LX_NAME_PAT, s)
         @test m.captures[1] == raw"\cöm"
     end
+    m = match(F.LX_NAME_PAT, raw"\com*")
+    @test m.captures[1] == raw"\com*"
     for s in (
             raw"[2]",
             raw" [2] ",

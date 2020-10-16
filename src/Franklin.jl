@@ -78,7 +78,7 @@ const FD_ENV = LittleDict(
     :FORCE_REEVAL  => false,
     :CUR_PATH      => "",        # complements fd-rpath
     :SOURCE        => "",        # keeps track of the origin of a HTML string
-    :OFFSET_LXDEFS => -BIG_INT,  # helps keep track of order in lxcoms
+    :OFFSET_LXDEFS => -BIG_INT,  # helps keep track of order in lxcoms/envs
     :DEBUG_MODE    => false,
     :SUPPRESS_ERR  => false,
     :SILENT_MODE   => false,
@@ -192,7 +192,7 @@ include("converter/markdown/tags.jl")
 include("converter/markdown/md.jl")
 # > latex
 include("converter/latex/latex.jl")
-include("converter/latex/commands.jl")
+include("converter/latex/objects.jl")
 include("converter/latex/hyperrefs.jl")
 include("converter/latex/io.jl")
 # > html

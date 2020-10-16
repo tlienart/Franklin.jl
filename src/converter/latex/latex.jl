@@ -1,57 +1,77 @@
 """
+$SIGNATURES
+
+Resolve arguments for `LxObj` by interpolating `#k` appropriately.
+"""
+function resolve_args(base::AS, braces::Vector{OCBlock})
+    res = base
+    for (i, brace) in enumerate(braces)
+        brace_content = stent(brace)
+        # space-sensitive 'unsafe' one
+        res = replace(res, "!#$i" => brace_content)
+        # space-insensitive 'safe' one (e.g. for things like `\mathbb#1`)
+        res = replace(res, "#$i" => " " * brace_content)
+    end
+    return res
+end
+
+
+"""
 $(SIGNATURES)
 
-Take a `LxCom` object `lxc` and try to resolve it. Provided a definition exists
-etc, the definition is plugged in then sent forward to be re-parsed (in case
-further latex is present).
+Take a `<: LxObj` and try to resolve it by looking up the appropriate definition, applying it then
+reparsing the result.
 """
-function resolve_lxcom(lxc::LxCom, lxdefs::Vector{LxDef};
+function resolve_lxobj(lxo::LxObj, lxdefs::Vector{LxDef};
                        inmath::Bool=false)::String
-    # retrieve the definition the command points to
-    lxd = getdef(lxc)
-    # it will be `nothing` in math mode, let KaTeX have it
-    if lxd === nothing
-        name = getname(lxc) # `\\cite` -> `cite`
-        fun  = Symbol("lx_" * name)
+    # retrieve the definition the environment points to
+    lxd = getdef(lxo)
+    env = lxo isa LxEnv
+
+    # in case it's defined in Utils or in Franklin
+    name = getname(lxo)
+    fun  = Symbol(ifelse(env, "env_", "lx_") * name)
+    # it will be `nothing` in math mode or when defined in utils
+    if isnothing(lxd)
+        # check if it's defined in Utils and act accordingly
         if isdefined(Main, :Utils) && isdefined(Main.Utils, fun)
-            raw = Core.eval(Main.Utils, :($fun($lxc, $lxdefs)))
+            raw = Core.eval(Main.Utils, :($fun($lxo, $lxdefs)))
             return reprocess(raw, lxdefs)
         else
-            return lxc.ss
+            # let the math backend deal with the string
+            return lxo.ss
         end
     end
-    # otherwise it may be
-    # -> empty, in which case try to find a specific internal definition or
-    # return an empty string (see `commands.jl`)
-    # -> non-empty, in which case just apply that.
-    if isempty(lxd)
-        # see if a function `lx_name` exists
-        name = getname(lxc) # `\\cite` -> `cite`
-        fun  = Symbol("lx_" * name)
-        if isdefined(Franklin, fun)
-            # apply that function
-            return eval(:($fun($lxc, $lxdefs)))
-        else
-            return ""
-        end
+
+    # the definition can be empty (which can be on purpose, for internal defs)
+    if (!env && isempty(lxd)) || (env && isempty(lxd.first) && isempty(lxd.second))
+        name = getname(lxo)
+        isdefined(Franklin, fun) && return eval(:($fun($lxo, $lxdefs)))
+        return ""
     end
-    # non-empty case, take the definition and iteratively replace any `#...`
-    partial = lxd
-    for (i, brace) in enumerate(lxc.braces)
-        cont    = stent(brace)
-        # space-sensitive 'unsafe' one
-        partial = replace(partial, "!#$i" => cont)
-        # space-insensitive 'safe' one (e.g. `\mathbb#1`)
-        partial = replace(partial, "#$i" => " " * cont)
+
+    # non-empty cases
+    if !env
+        partial = resolve_args(lxd, lxo.braces)
+    else
+        partial  = resolve_args(lxd.first, lxo.braces)
+        partial *= content(lxo)
+        partial *= resolve_args(lxd.second, lxo.braces)
     end
+
     # if 'inmath' surround accordingly so that this information is preserved
-    partial = ifelse(inmath, mathenv(partial), partial)
-    # reprocess
+    inmath && (partial = mathenv(partial))
+
     return reprocess(partial, lxdefs)
 end
 
-"""Convenience function to take a string and re-parse it."""
-function reprocess(s::AS, lxdefs::Vector{LxDef}; nostripp=false)
+
+"""
+$SIGNATURES
+
+Convenience function to take a markdown string (e.g. produced by a latex command) and re-parse it.
+"""
+function reprocess(s::AS, lxdefs::Vector{<:LxDef}; nostripp=false) where T
     r = convert_md(s, lxdefs;
                    isrecursive=true, isconfig=false, has_mddefs=false,
                    nostripp=nostripp)

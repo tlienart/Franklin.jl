@@ -10,6 +10,12 @@ struct OCBlockError <: FranklinException
     c::String
 end
 
+"""An Env Block was not parsed properly (e.g. the closing delim not found)."""
+struct EnvBlockError <: FranklinException
+    m::String
+    c::String
+end
+
 function Base.showerror(io::IO, be::OCBlockError)
     println(io, be.m)
     print(io, be.c)
@@ -20,8 +26,8 @@ struct LxDefError <: FranklinException
     m::String
 end
 
-"""A latex command was found but could not be processed properly."""
-struct LxComError <: FranklinException
+"""A latex command or environment was found but could not be processed properly."""
+struct LxObjError <: FranklinException
     m::String
 end
 

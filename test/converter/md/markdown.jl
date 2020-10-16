@@ -1,45 +1,3 @@
-@testset "Partial MD" begin
-    st = raw"""
-        \newcommand{\com}{HH}
-        \newcommand{\comb}[1]{HH#1HH}
-        A list
-        * \com and \comb{blah}
-        * $f$ is a function
-        * a last element
-        """
-
-    steps = explore_md_steps(st)
-    lxdefs, tokens, braces, blocks, lxcoms = steps[:latex]
-
-    @test length(braces) == 1
-    @test F.content(braces[1]) == "blah"
-
-    @test length(blocks) == 1
-    @test blocks[1].name == :MATH_A
-    @test F.content(blocks[1]) == "f"
-
-    b2insert, = steps[:b2insert]
-
-    inter_md, mblocks = F.form_inter_md(st, b2insert, lxdefs)
-    @test inter_md // """
-            A list
-            *  ##FDINSERT## and  ##FDINSERT##
-            *  ##FDINSERT## is a function
-            * a last element"""
-    inter_html = F.md2html(inter_md)
-    @test inter_html // """
-        <p>A list</p>
-        <ul>
-        <li><p>##FDINSERT## and  ##FDINSERT##</p>
-        </li>
-        <li><p>##FDINSERT## is a function</p>
-        </li>
-        <li><p>a last element</p>
-        </li>
-        </ul>
-        """
-end
-
 
 # index arithmetic over a string is a bit trickier when using all symbols
 # we can use `prevind` and `nextind` to make sure it works properly
@@ -63,38 +21,6 @@ end
                     done
                     """
 end
-
-
-@testset "Latex eqa" begin
-    st = raw"""
-        a\newcommand{\eqa}[1]{\begin{eqnarray}#1\end{eqnarray}}b@@d .@@
-        \eqa{\sin^2(x)+\cos^2(x) &=& 1}
-        """
-
-    steps = explore_md_steps(st)
-    lxdefs, tokens, braces, blocks, lxcoms = steps[:latex]
-    b2insert, = steps[:b2insert]
-    inter_md, mblocks = steps[:inter_md]
-    @test inter_md // """
-                ab
-
-                ##FDINSERT##
-
-
-                 ##FDINSERT##
-                """
-
-    inter_html, = steps[:inter_html]
-
-    @test F.convert_block(b2insert[1], lxdefs) == "<div class=\"d\">.</div>"
-    @test isapproxstr(F.convert_block(b2insert[2], lxdefs), "\\[\\begin{array}{c} \\sin^2(x)+\\cos^2(x) &=& 1\\end{array}\\]")
-    hstring = F.convert_inter_html(inter_html, b2insert, lxdefs)
-    @test isapproxstr(hstring, raw"""
-                    <p>ab</p>
-                    <div class="d">.</div>
-                    \[\begin{array}{c} \sin^2(x)+\cos^2(x) &=& 1\end{array}\]""")
-end
-
 
 @testset "MD>HTML" begin
     st = raw"""

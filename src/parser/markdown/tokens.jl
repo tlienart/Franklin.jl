@@ -58,15 +58,12 @@ const MD_TOKENS = LittleDict{Char, Vector{TokenFinder}}(
               isexactly("\\\$")       => :INACTIVE,         # See note [^1]
               isexactly("\\[")        => :MATH_C_OPEN,      # \[ ...
               isexactly("\\]")        => :MATH_C_CLOSE,     #    ... \]
-              isexactly("\\begin{align}")    => :MATH_ALIGN_OPEN,
-              isexactly("\\end{align}")      => :MATH_ALIGN_CLOSE,
-              isexactly("\\begin{equation}") => :MATH_D_OPEN,
-              isexactly("\\end{equation}")   => :MATH_D_CLOSE,
-              isexactly("\\begin{eqnarray}") => :MATH_EQA_OPEN,
-              isexactly("\\end{eqnarray}")   => :MATH_EQA_CLOSE,
               # -- latex
-              isexactly("\\newcommand")      => :LX_NEWCOMMAND,
-              incrlook((_, c) -> α(c))       => :LX_COMMAND,  # \command⎵*
+              isexactly("\\newenvironment", ('{',)) => :LX_NEWENVIRONMENT,
+              isexactly("\\newcommand", ('{',))     => :LX_NEWCOMMAND,
+              isexactly("\\begin", ('{',)) => :CAND_LX_BEGIN,
+              isexactly("\\end", ('{',))   => :CAND_LX_END,
+              incrlook((_, c) -> α(c))     => :LX_COMMAND,  # \command⎵*
              ],
     '@'  => [ isexactly("@def", (' ',))   => :MD_DEF_OPEN,    # @def var = ...
               isexactly("@@", SPACE_CHAR) => :DIV_CLOSE,      # @@⎵*
@@ -213,10 +210,7 @@ const MD_OCB_MATH = [
     OCProto(:MATH_A,     :MATH_A,          (:MATH_A,)          ),
     OCProto(:MATH_B,     :MATH_B,          (:MATH_B,)          ),
     OCProto(:MATH_C,     :MATH_C_OPEN,     (:MATH_C_CLOSE,)    ),
-    OCProto(:MATH_D,     :MATH_D_OPEN,     (:MATH_D_CLOSE,)    ),
     OCProto(:MATH_I,     :MATH_I_OPEN,     (:MATH_I_CLOSE,)    ),
-    OCProto(:MATH_ALIGN, :MATH_ALIGN_OPEN, (:MATH_ALIGN_CLOSE,)),
-    OCProto(:MATH_EQA,   :MATH_EQA_OPEN,   (:MATH_EQA_CLOSE,)  ),
     ]
 
 
@@ -224,8 +218,9 @@ const MD_OCB_MATH = [
     MD_OCB_ALL
 
 Combination of all `MD_OCB` in order.
+DEV: only really used in tests.
 """
-const MD_OCB_ALL = vcat(MD_OCB, MD_OCB2, MD_OCB_MATH) # order matters
+const MD_OCB_ALL = vcat(MD_OCB, MD_OCB2, MD_OCB_MATH)
 
 """
     MD_OCB_IGNORE

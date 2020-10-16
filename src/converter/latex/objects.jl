@@ -1,5 +1,9 @@
-"""Convenience function to create pairs (commandname => simple lxdef)"""
-lxd(n::String, k::Int, d::String="") = "\\" * n => LxDef("\\" * n, k, subs(d))
+"""
+$SIGNATURES
+
+Convenience function to create pairs (commandname => simple lxdef)
+"""
+lxd(n, k, d="") = "\\" * n => LxDef("\\" * n, k, subs(d))
 
 const LX_INTERNAL_COMMANDS = [
     # ---------------
@@ -30,19 +34,40 @@ const LX_INTERNAL_COMMANDS = [
     ]
 
 """
+$SIGNATURES
+
+Convenience function to create pairs (envdname => simple envdef)
+"""
+lxe(n, k, d=Pair("", "")) = n => LxDef(n, k, d)
+
+const LX_INTERNAL_ENVIRONMENTS = [
+    lxe("equation", 0, raw"\[" => raw"\]"),
+    lxe("align",    0, raw"\[\begin{aligned}"    => raw"\end{aligned}\]"),
+    lxe("aligned",  0, raw"\[\begin{aligned}"    => raw"\end{aligned}\]"),
+    lxe("eqnarray", 0, raw"\[\begin{array}{rcl}" => raw"\end{array}\]"),
+    ]
+
+
+"""
+    GLOBAL_LXDEFS
+
 List of latex definitions accessible to all pages. This is filled when the
 config file is read (via `manager/file_utils.jl:process_config`).
 """
 const GLOBAL_LXDEFS = LittleDict{String,LxDef}()
 
 """
-Convenience function to allocate default values for global latex commands
-accessible throughout the site. See [`resolve_lxcom`](@ref).
+$SIGNATURES
+
+Convenience function to allocate default values for global latex commands and environments
+accessible throughout the site. See [`resolve_lxobj`](@ref).
 """
  function def_GLOBAL_LXDEFS!()::Nothing
     empty!(GLOBAL_LXDEFS)
-    for (name, def) in LX_INTERNAL_COMMANDS
-        GLOBAL_LXDEFS[name] = def
+    for store in (LX_INTERNAL_ENVIRONMENTS, LX_INTERNAL_COMMANDS)
+        for (name, def) in store
+            GLOBAL_LXDEFS[name] = def
+        end
     end
-    nothing
+    return
 end

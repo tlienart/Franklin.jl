@@ -41,11 +41,11 @@ function convert_block(β::AbstractBlock, lxdefs::Vector{LxDef})::AS
     # default case, ignore block (should not happen)
     return ""
 end
-convert_block(β::LxCom, lxdefs::Vector{LxDef}) = resolve_lxcom(β, lxdefs)
+convert_block(β::LxObj, lxdefs::Vector{LxDef}) = resolve_lxobj(β, lxdefs)
 
 
 """
-MATH_BLOCKS_PARENS
+    MATH_BLOCKS_PARENS
 
 Dictionary to keep track of how math blocks are fenced in standard LaTeX and
 how these fences need to be adapted for compatibility with KaTeX. Each tuple
@@ -58,9 +58,6 @@ const MATH_BLOCKS_PARENS = LittleDict{Symbol, Tuple{Int,Int,String,String}}(
     :MATH_A     => ( 1,  1, "\\(", "\\)"),
     :MATH_B     => ( 2,  2, "\\[", "\\]"),
     :MATH_C     => ( 2,  2, "\\[", "\\]"),
-    :MATH_D     => (16, 14, "\\[", "\\]"),
-    :MATH_ALIGN => (13, 11, "\\[\\begin{aligned}", "\\end{aligned}\\]"),
-    :MATH_EQA   => (16, 14, "\\[\\begin{array}{c}", "\\end{array}\\]"),
     :MATH_I     => ( 4,  4, "", "")
     )
 

@@ -73,8 +73,11 @@ function convert_md(mds::AbstractString,
     #>> a. find them
     blocks, tokens  = find_all_ocblocks(tokens, MD_OCB)
     toks_pre_ocb    = deepcopy(tokens) # see find_double_brace_blocks
-    #>> a'. find the rest
+    #>> a'. find LXB, DIV and Maths
     blocks2, tokens = find_all_ocblocks(tokens, vcat(MD_OCB2, MD_OCB_MATH))
+    #>> a''. find LX_BEGIN/END tokens
+    find_lxenv_delims!(tokens, blocks2)
+    # aggregate blocks
     append!(blocks, blocks2)
     ranges = deactivate_inner_blocks!(blocks)
     #>> b. merge CODE_BLOCK_IND which are separated by emptyness
@@ -98,11 +101,14 @@ function convert_md(mds::AbstractString,
     #> 3. LaTeX commands
     #>> a. find "newcommands", update active blocks/braces
     lxdefs, tokens, braces, blocks = find_lxdefs(tokens, blocks)
+
     #>> b. if any lxdefs are given in the context, merge them. `pastdef` specifies
     # that the definitions appeared "earlier"
     lprelx = length(pre_lxdefs)
     (lprelx > 0) && (lxdefs = cat(pastdef.(pre_lxdefs), lxdefs, dims=1))
-    #>> c. find latex commands
+    #>> c. find latex environments
+    lxenvs, tokens = find_lxenvs(tokens, lxdefs, braces)
+    #>> d. find latex commands
     lxcoms, _ = find_lxcoms(tokens, lxdefs, braces)
 
     #> 3[ex]. find double brace blocks, note we do it on pre_ocb tokens
@@ -145,7 +151,8 @@ function convert_md(mds::AbstractString,
 
     #> 1. Merge all the blocks that will need further processing before
     # insertion
-    b2insert = merge_blocks(lxcoms, deactivate_divs(vcat(blocks, dbb)),
+    b2insert = merge_blocks(lxenvs, lxcoms,
+                            deactivate_divs(vcat(blocks, dbb)),
                             sp_chars, fnrefs, hrules)
 
     #> 2. Form intermediate markdown + html
@@ -203,8 +210,9 @@ function convert_md_math(ms::AS, lxdefs::Vector{LxDef}=Vector{LxDef}(),
     blocks, tokens = find_all_ocblocks(tokens, MD_OCB_ALL, inmath=true)
     braces = filter(β -> β.name == :LXB, blocks)
 
-    #> 3. Find latex commands (indicate we're in a math environment + offset)
-    lxcoms, _ = find_lxcoms(tokens, lxdefs,  braces, offset; inmath=true)
+    #> 3. Find latex envs and commands (indicate we're in a math environment + offset)
+    lxenvs, tokens = find_lxenvs(tokens, lxdefs, braces, offset; inmath=true)
+    lxcoms, _      = find_lxcoms(tokens, lxdefs,  braces, offset; inmath=true)
 
     #
     # Forming of the html string
@@ -224,7 +232,7 @@ function convert_md_math(ms::AS, lxdefs::Vector{LxDef}=Vector{LxDef}(),
         (head < next_lxc) && write(htmls, subs(ms, head, prevind(ms, next_lxc)))
         # add the first command after resolving, bool to indicate that we're in
         # a math env
-        write(htmls, resolve_lxcom(lxcoms[lxc_idx], lxdefs, inmath=true))
+        write(htmls, resolve_lxobj(lxcoms[lxc_idx], lxdefs, inmath=true))
         # move the head to after the lxcom and increment the com counter
         head     = nextind(ms, to(lxcoms[lxc_idx]))
         lxc_idx += 1

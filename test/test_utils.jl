@@ -91,9 +91,10 @@ function explore_md_steps(mds)
 
     # lxdefs = cat(F.pastdef.(collect(values(F.GLOBAL_LXDEFS))), lxdefs, dims=1)
 
-    lxcoms, _ = F.find_lxcoms(tokens, lxdefs, braces)
-    steps[:latex] = (lxdefs=lxdefs, tokens=tokens, braces=braces,
-                     blocks=blocks, lxcoms=lxcoms)
+    lxenvs, tokens = F.find_lxenvs(tokens, lxdefs, braces)
+    lxcoms, _      = F.find_lxcoms(tokens, lxdefs, braces)
+    steps[:latex]  = (lxdefs=lxdefs, tokens=tokens, braces=braces,
+                     blocks=blocks, lxenvs=lxenvs, lxcoms=lxcoms)
 
     dbb = F.find_double_brace_blocks(toks_pre_ocb)
 
@@ -109,7 +110,8 @@ function explore_md_steps(mds)
         filter!(b -> b.name != :CODE_BLOCK_IND, blocks)
     end
 
-    b2insert = F.merge_blocks(lxcoms, F.deactivate_divs(blocks),
+    b2insert = F.merge_blocks(lxenvs, lxcoms,
+                              F.deactivate_divs(blocks),
                               sp_chars, fnrefs, dbb, hrules)
     steps[:b2insert] = (b2insert=b2insert,)
 
@@ -166,3 +168,5 @@ end
 fdi(s) = fd2html(s; internal=true)
 
 resource() = (F.FD_ENV[:SOURCE] = ""; set_globals())
+
+has(t, s) = any(ti.name == s for ti in t)

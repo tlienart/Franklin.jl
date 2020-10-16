@@ -8,9 +8,6 @@
 # </url>
 # </urlset>
 #
-# TODO
-# allow {{sitemap_exclude}} for a HTML page to avoid having it in sitemap
-#
 
 struct SMOpts
     lastmod::Date        # 2005-01-01 -- format YYYY-MM-DD

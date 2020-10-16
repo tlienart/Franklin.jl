@@ -3,8 +3,6 @@ $(SIGNATURES)
 
 Find active blocks between an opening token (`otoken`) and a closing token
 `ctoken`. These can be nested (e.g. braces). Return the list of such blocks.
-If `deactivate` is `true`, all the tokens within the block will be marked as
-inactive (for further, separate processing).
 """
 function find_ocblocks(tokens::Vector{Token}, ocproto::OCProto;
                        inmath=false)::Tuple{Vector{OCBlock}, Vector{Token}}
@@ -18,20 +16,20 @@ function find_ocblocks(tokens::Vector{Token}, ocproto::OCProto;
     # if so look for the closing one and push
     for (i, τ) ∈ enumerate(tokens)
         # only consider active and opening tokens
-        (active_tokens[i] & (τ.name == ocproto.otok)) || continue
+        (active_tokens[i] && (τ.name == ocproto.otok)) || continue
         # if nestable, need to keep track of the balance
         if nestable
             # inbalance ≥ 0, 0 if all opening tokens are closed
             inbalance = 1 # we've seen an opening token
             j = i # index for the closing token
-            while !iszero(inbalance) & (j < ntokens)
+            while !iszero(inbalance) && (j < ntokens)
                 j += 1
                 inbalance += ocbalance(tokens[j], ocproto)
             end
             if inbalance > 0
-                throw(OCBlockError("I found at least one opening  token " *
-                                   "'$(ocproto.otok)' that is not closed properly.",
-                                   context(τ)))
+                throw(OCBlockError(
+                    "I found at least one opening token '$(ocproto.otok)' " *
+                    "that is not closed properly.", context(τ)))
             end
         else
             # seek forward to find the first closing token
@@ -48,7 +46,7 @@ function find_ocblocks(tokens::Vector{Token}, ocproto::OCProto;
 
         # remove processed tokens and tokens within blocks except if
         # it's a brace block in a math environment.
-        span = ifelse((ocproto.name == :LXB) & inmath, [i, j], i:j)
+        span = ifelse((ocproto.name == :LXB) && inmath, [i, j], i:j)
         active_tokens[span] .= false
     end
     return ocblocks, tokens[active_tokens]
@@ -68,6 +66,21 @@ function ocbalance(τ::Token, ocp::OCProto)::Int
     return 0
 end
 
+"""
+$(SIGNATURES)
+
+Helper function to update the inbalance counter when looking for the closing
+token of an environment block. Adds 1 if the token corresponds to an opening
+token, removes 1 if it's a closing token and 0 otherwise.
+"""
+function envbalance(τ::Token, env::AS)::Int
+    if τ.name == :LX_BEGIN && envname(τ) == env
+        return 1
+    elseif τ.name == :LX_END && envname(τ) == env
+        return -1
+    end
+    return 0
+end
 
 """
 $(SIGNATURES)

@@ -49,8 +49,6 @@ struct HTML_SPCH <: AbstractBlock
 end
 HTML_SPCH(ss) = HTML_SPCH(ss, "")
 
-
-
 """
 $(TYPEDEF)
 
@@ -104,6 +102,20 @@ $(SIGNATURES)
 Convenience function to retrieve the closing token of an `OCBlock`.
 """
 ctok(ocb::OCBlock)::Token = ocb.ocpair.second
+
+
+"""
+$(SIGNATURES)
+
+Convenience function to get the name of a lx-env delimiter (ignores spaces).
+"""
+function envname(τ::Token)
+    m = match(LX_ENVNAME_PAT, τ.ss)
+    isnothing(m) || return m.captures[1]
+    # should not happen
+    error("`envname` called on token of type $(τ.name) failed to return.")
+end
+envname(b::OCBlock) = envname(otok(b))
 
 
 """
