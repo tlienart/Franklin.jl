@@ -371,7 +371,6 @@ function find_lxenvs(tokens::Vector{Token}, lxdefs::Vector{LxDef},
                 "I found at least one opening delimiter '\\begin{$env_name}' " *
                 "that is not closed properly.", context(τ)))
         end
-
         # Construct and store the LxEnv
         push!(lxenvs,
               LxEnv(

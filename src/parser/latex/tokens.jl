@@ -113,11 +113,13 @@ $SIGNATURES
 For a given `LxObj`, retrieve the name of the object via the reference.
 Example: `\\cite` --> `cite` or `\\begin{aaa}` --> `aaa`.
 """
-function getname(lxo::LxObj)::String
-    if isnothing(lxo.lxdef)
-        s = String(lxo.ss)
+function getname(lxc::LxCom)::String
+    if isnothing(lxc.lxdef)
+        s = String(lxc.ss)
         j = findfirst('{', s)
-        return lxo.ss[2:prevind(s, j)]
+        return lxc.ss[2:prevind(s, j)]
     end
-    return String(getindex(lxo.lxdef).name)[2:end]
+    return String(getindex(lxc.lxdef).name)[2:end]
 end
+getname(lxe::LxEnv) = envname(lxe.ocpair.first)
+envname(lxe::LxEnv) = getname(lxe)

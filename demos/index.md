@@ -15,6 +15,91 @@ The ordering is reverse chronological but just use the table of contents to guid
 
 \toc
 
+## (008) (custom) environments and commands
+
+You can define new commands and new environments using essentially the same syntax as in LaTeX:
+
+```plaintext
+\newcommand{\command}[nargs]{def}
+\newenvironment{environment}[nargs]{pre}{post}
+```
+
+The first one allows to define a command that you can call as `\command{...}` and the second one an environment that you can call as
+```plaintext
+\begin{environment}{...}...\end{environment}
+```
+In both cases you can have a number of arguments (or zero) and the output is _reprocessed by Franklin_ (so treated as Franklin-markdown).
+Here are a few simple examples:
+
+```plaintext
+\newcommand{\hello}{**Hello!**}
+Result: \hello.
+```
+\newcommand{\hello}{**Hello!**}
+Result: \hello.
+
+```plaintext
+\newcommand{\html}[1]{~~~#1~~~}
+\newcommand{\red}[1]{\html{<span style="color:red">#1</span>}}
+Result: \red{hello!}.
+```
+\newcommand{\html}[1]{~~~#1~~~}
+\newcommand{\red}[1]{~~~<span style="color:red">#1</span>~~~}
+Result: \red{hello!}.
+
+```plaintext
+\newenvironment{center}{\html{<div style="text-align:center">}}{\html{</div>}}
+Result: \begin{center}This bit of text is in a centered div.\end{center}
+```
+\newenvironment{center}{\html{<div style="text-align:center">}}{\html{</div>}}
+Result: \begin{center}This bit of text is centered.\end{center}
+
+```plaintext
+\newenvironment{figure}[1]{\html{<figure>}}{\html{<figcaption>#1</figcaption></figure>}}
+Result: \begin{figure}{A koala eating a leaf.}![](/assets/koala.jpg)\end{figure}
+```
+\newenvironment{figure}[1]{\html{<figure>}}{\html{<figcaption>#1</figcaption></figure>}}
+Result: \begin{figure}{A koala eating a leaf.}![](/assets/koala.jpg)\end{figure}
+
+### Customise with Julia code
+
+Much like `hfun_*`, you can have commands and environments be effectively defined via Julia code. The main difference is that the output will be treated as Franklin-markdown and so will be _reprocessed by Franklin_ (where for a `hfun`, the output is plugged in directly as HTML).
+
+In both cases, a single option bracket is expected, no more no less. It can be empty but it has to be there. See also [the docs](https://franklinjl.org/syntax/utils/#latex_functions_lx_) for more information.
+
+Here are two simple examples (see in `utils.jl` too):
+
+```julia
+function lx_capa(com, _)
+  # this first line extracts the content of the brace
+  content = Franklin.content(com.braces[1])
+  output = replace(content, "a" => "A")
+  return "**$output**"
+end
+```
+
+```plaintext
+Result: \capa{Baba Yaga}.
+```
+Result: \capa{Baba Yaga}.
+
+```julia
+function env_cap(com, _)
+  option = Franklin.content(com.braces[1])
+  content = Franklin.content(com)
+  output = replace(content, option => uppercase(option))
+  return "~~~<b>~~~$output~~~</b>~~~"
+end
+```
+
+```plaintext
+Result: \begin{cap}{ba}Baba Yaga with a baseball bat\end{cap}
+```
+Result: \begin{cap}{ba}Baba Yaga with a baseball bat\end{cap}.
+
+Of course these are toy examples and you could have arrived to the same effect some other way.
+With a bit of practice, you might develop a preference towards using one out of the three options:  `hfun_*`, `lx_*` or `env_*` depending on your context.
+
 ## (007) delayed hfun
 
 When you call `serve()`, Franklin first does a full pass which builds all your pages and then waits for changes to happen in a given page before updating that page.

@@ -7,3 +7,16 @@
 .franklin-toc ol {
   list-style: georgian;
 }
+
+figure {
+  text-align: center;
+  border: 1px solid gray;
+}
+.franklin-content figure > img {
+  padding:0;
+  margin:0;
+}
+
+figcaption {
+  text-align: center;
+}

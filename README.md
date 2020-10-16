@@ -31,7 +31,7 @@ For anything that looks suspicious, feel free to open an issue here directly.
 
 ## Docs
 
-Go to [Franklin's main website](https://franklinjl.org).
+Go to [Franklin's main website](https://franklinjl.org). For users already familiar with Franklin you might also find [these demos](https://franklinjl.org/demos/) useful.
 
 Some examples of websites using Franklin (_if you're using Franklin with a public repo, consider adding the "franklin" tag to the repo to help others find examples, thanks!_)
 

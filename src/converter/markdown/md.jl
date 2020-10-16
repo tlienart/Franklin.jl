@@ -108,7 +108,6 @@ function convert_md(mds::AbstractString,
     (lprelx > 0) && (lxdefs = cat(pastdef.(pre_lxdefs), lxdefs, dims=1))
     #>> c. find latex environments
     lxenvs, tokens = find_lxenvs(tokens, lxdefs, braces)
-
     #>> d. find latex commands
     lxcoms, _ = find_lxcoms(tokens, lxdefs, braces)
 

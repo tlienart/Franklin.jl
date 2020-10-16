@@ -7,7 +7,11 @@ using DelimitedFiles
 
 # ========================================================================
 
-# with question 001 / approach 1; uses DelimitedFiles
+###########
+### 001 ###
+###########
+
+# approach 1; uses DelimitedFiles
 function hfun_members_table(params::Vector{String})::String
     path_to_csv = params[1]
     members = readdlm(path_to_csv, ',', skipstart=1)
@@ -25,16 +29,37 @@ function hfun_members_table(params::Vector{String})::String
     return String(take!(io))
 end
 
-# with question 007 -- case 1
+###########
+### 007 ###
+###########
+
+# case 1
 hfun_case_1() =
     """<p style="color:red;">var read from foo is $(pagevar("foo", "var"))</p>"""
 
-
-# with question 007 -- case 2, note the `@delay`
+# case 2, note the `@delay`
 @delay function hfun_case_2()
     all_tags = globvar("fd_page_tags")
     isnothing(all_tags) && return ""
     all_tags = union(values(all_tags)...)
     tagstr = strip(prod("$t " for t in all_tags))
     return """<p style="color:red;">tags: { $tagstr }</p>"""
+end
+
+###########
+### 008 ###
+###########
+
+function lx_capa(com, _)
+    # this first line extracts the content of the brace
+    content = Franklin.content(com.braces[1])
+    output = replace(content, "a" => "A")
+    return "**$output**"
+end
+
+function env_cap(com, _)
+    option = Franklin.content(com.braces[1])
+    content = Franklin.content(com)
+    output = replace(content, option => uppercase(option))
+    return "~~~<b>~~~$output~~~</b>~~~"
 end

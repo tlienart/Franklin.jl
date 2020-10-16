@@ -27,6 +27,7 @@ function resolve_lxobj(lxo::LxObj, lxdefs::Vector{LxDef};
     # retrieve the definition the environment points to
     lxd = getdef(lxo)
     env = lxo isa LxEnv
+
     # in case it's defined in Utils or in Franklin
     name = getname(lxo)
     fun  = Symbol(ifelse(env, "env_", "lx_") * name)
