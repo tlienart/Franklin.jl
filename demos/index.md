@@ -13,6 +13,8 @@ The ordering is reverse chronological but just use the table of contents to guid
 
 **Note**: an important philosophy here is that if you can write a Julia function that would produce the HTML you want, then write that function and let Franklin call it.
 
+**Note 2**: the numbering in georgian script in the table of content is on purpose, no good reason for it... 🚀
+
 \toc
 
 ## (008) (custom) environments and commands
