@@ -98,6 +98,12 @@
     <priority>0.5</priority>
 </url>
 <url>
+    <loc>workflow/sitemap-rss/index.html</loc>
+    <lastmod>2020-10-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
     <loc>extras/lunr/index.html</loc>
     <lastmod>2020-10-18</lastmod>
     <changefreq>monthly</changefreq>

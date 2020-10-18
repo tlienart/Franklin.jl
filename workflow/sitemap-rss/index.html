@@ -9,7 +9,7 @@
    
   <link rel="stylesheet" href="/css/jtd.css">
   <link rel="icon" href="/assets/infra/logoF_square.gif">
-   <title>Page structure</title>  
+   <title>RSS and Sitemap</title>  
 
   <!-- LUNR -->
   <script src="/libs/lunr/lunr.min.js"></script>
@@ -51,9 +51,9 @@
 		  <li class="menu-list-parent active"><a href="/workflow/" class="menu-list-link">• Workflow</a>
 			  <ul class="menu-list-child-list ">
 				<li class="menu-list-item "><a href="/workflow/" class="menu-list-link">Create and edit</a>
-				<li class="menu-list-item active"><a href="/workflow/structure/" class="menu-list-link">Page structure</a>
+				<li class="menu-list-item "><a href="/workflow/structure/" class="menu-list-link">Page structure</a>
 				<li class="menu-list-item "><a href="/workflow/deploy/" class="menu-list-link">Deploy</a>
-				<li class="menu-list-item "><a href="/workflow/sitemap-rss/" class="menu-list-link">Sitemap and RSS</a>
+				<li class="menu-list-item active"><a href="/workflow/sitemap-rss/" class="menu-list-link">Sitemap and RSS</a>
 			  </ul>
           <!-- SYNTAX -->
           <!-- NOTE: if adding a menu item, add ref to first item! -->
@@ -107,59 +107,40 @@
         <div class="main-header">
           <a name="pagetop"></a>
 
-          <a id="github" href="https://github.com/tlienart/Franklin.jl/blob/master/docs/workflow/structure.md">Page source</a>
+          <a id="github" href="https://github.com/tlienart/Franklin.jl/blob/master/docs/workflow/sitemap-rss.md">Page source</a>
 		  <span style="width:30px; text-align: center;color:lightgray;">|</span>
 		  <a id="github" href="https://github.com/tlienart/Franklin.jl">GitHub Repository</a>
         </div>
 
 <!-- Content appended here (in class franklin-content) -->
-<div class="franklin-content"><h1 id="page_structure"><a href="#page_structure">Page structure</a></h1>
-
-    <span style="font-size:24px;font-weight:300;">Pages are assembled like lego blocks.</span>
-    
-<h2 id="overview"><a href="#overview">Overview</a></h2>
-<p>At a high level, the process to go from a markdown file <code>file.md</code> to the corresponding html page is quite simple:</p>
-<pre><code class="language-plaintext">result &#61; head * body * page_foot * foot</code></pre>
-<p>where</p>
-<ul>
-<li><p><code>head</code> corresponds to <code>_layout/head.html</code>,</p>
+<div class="franklin-content"><h1 id="rss_and_sitemap"><a href="#rss_and_sitemap">RSS and Sitemap</a></h1>
+<div class="franklin-toc"><ol><li><a href="#sitemap">Sitemap</a></li><li><a href="#rss">RSS</a></li></ol></div>
+<h2 id="sitemap"><a href="#sitemap">Sitemap</a></h2>
+<p>Franklin automatically generates a <a href="https://www.sitemaps.org/protocol.html">sitemap</a> for your website which you can adjust as required. By default, the sitemap will have an entry for every page on your website, with a default priority of <code>0.5</code> and a change frequency set to <code>monthly</code>.</p>
+<p>For a given <em>markdown</em> page &#40;extension <code>.md</code>&#41; you can change this by setting the following <a href="/syntax/page-variables/">page variables</a>:</p>
+<div class="tlist"><ul>
+<li><p><code>sitemap_exclude</code>: set it to <code>false</code> to remove the page from the sitemap,</p>
 </li>
-<li><p><code>page_foot</code> and <code>foot</code> correspond respectively to <code>_layout/page_foot.html</code> and <code>_layout/foot.html</code>,</p>
+<li><p><code>sitemap_changefreq</code>: the change frequency, it can be one of <code>&#91;&quot;always&quot;, &quot;hourly&quot;, &quot;daily&quot;, &quot;weekly&quot;, &quot;monthly&quot;, &quot;yearly&quot;, &quot;never&quot;&#93;</code>,</p>
 </li>
-<li><p><code>body</code> correspond to Franklin&#39;s conversion of input markdown.</p>
+<li><p><code>sitemap_priority</code>: the relative priority of the page compared to other pages &#40;a value between <code>0</code> and <code>1</code>&#41;.</p>
 </li>
-</ul>
-<p>One additional step processes the resulting HTML to resolve any html function &#40;<code>&#123;&#123; ... &#125;&#125;</code>&#41; that may be left.</p>
-<p>The final HTML for a page will essentially look like:</p>
-<pre><code class="language-html">&lt;&#33;-- head.html --&gt;
-&lt;&#33;doctype html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-    ...
-  &lt;/head&gt;
-  &lt;body&gt;
-
-&lt;&#33;-- ...
-  resolved body &#43; page foot
-... --&gt;
-
-&lt;&#33;-- foot --&gt;
-  ...
-  &lt;/body&gt;
-&lt;/html&gt;</code></pre>
-<p>Of course it will depend of what you have in your <code>_layout/head.html</code> etc, you can tweak this at will. You can also make this as modular as you want by using conditional blocks in your <code>head.html</code> and insert specific sub layouts depending on the page. For instance the <code>head.html</code> file could include something like</p>
-<pre><code class="language-html">&lt;&#33;-- standard stuff --&gt;
-&#123;&#123;ispage blog/*&#125;&#125; &#123;&#123;insert head_blog&#125;&#125;&#123;&#123;end&#125;&#125;
-&lt;&#33;-- ... --&gt;</code></pre>
-<p>for more on this, see the section on <a href="/syntax/page-variables/">page variables</a>.</p>
-<div class="note"><div class="title">⚠ Note</div>
-<div class="content">This also means that it is required to have a <code>_layout/head.html</code>, <code>_layout/foot.html</code> and <code>_layout/page_foot.html</code>, you <strong>must</strong> have these files but they can be empty &#40;in practice it wouldn&#39;t make sense to have all of them be empty but you could have <code>page_foot</code> empty&#41;.</div></div>
-<h3 id="resolved_body"><a href="#resolved_body">Resolved body</a></h3>
-<p>The resolved body is plugged in a &quot;container&quot; div</p>
-<pre><code class="language-html">&lt;div class&#61;&quot;franklin-content&quot;&gt;
-...
-&lt;/div&gt;</code></pre>
-<p>if you&#39;re using a CSS framework like bootstrap, you might want to control the name of that outer div which you can do by specifying <code>@def div_content &#61; &quot;container&quot;</code> in your <code>config.md</code>.</p>
+</ul></div>
+<p>So for instance you could have in your markdown:</p>
+<pre><code class="language-plaintext">&#43;&#43;&#43;
+sitemap_changefreq &#61; &quot;yearly&quot;
+sitemap_priority &#61; 0.2
+&#43;&#43;&#43;</code></pre>
+<p>For a given <em>html</em> page &#40;extension <code>.html</code>&#41; you can also specify these options using the <a href="/utils/#html_functions_hfun_"><code>hfun</code></a> <code>sitemap_opts</code>:</p>
+<pre><code class="language-plaintext">&#123;&#123;sitemap_opts yearly 0.2&#125;&#125;</code></pre>
+<p>or to exclude the page from the sitemap</p>
+<pre><code class="language-plaintext">&#123;&#123;sitemap_opts exclude&#125;&#125;</code></pre>
+<p>Note that you can also disable the sitemap generation completely by setting the global page variable <code>generate_sitemap</code> to <code>false</code> in your <code>config.md</code>.</p>
+<h2 id="rss"><a href="#rss">RSS</a></h2>
+<p>Franklin supports generating an <a href="https://validator.w3.org/feed/docs/rss2.html">RSS feed</a> for your website which you can adjust at will. This is only supported for pages with a <em>markdown</em> source for now and you must define the <code>rss</code> or <code>rss_description</code> page variable which will contain the short description corresponding to the RSS entry for instance:</p>
+<pre><code class="language-plaintext">@def rss &#61; &quot;This page is about XXX and YYY.&quot;</code></pre>
+<p>Click <a href="/page-variables/#rss">here</a> for more details on the page variables related to the RSS feed.</p>
+<p>Note that you can also disable the rss generation completely by setting the global page variable <code>generate_rss</code> to <code>false</code> in your <code>config.md</code>.</p>
 <div class="page-foot">
   <div class="copyright">
     &copy; Thibaut Lienart. Last modified: October 18, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
