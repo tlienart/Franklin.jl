@@ -49,6 +49,7 @@ Some examples of websites using Franklin (_if you're using Franklin with a publi
 * [My website](https://tlienart.github.io) (_by now a bit outdated... there's only so much one can do in a day_)
 * [JuliaActuary](https://JuliaActuary.org), Julia's community promoting open-source actuarial science
 * [MIT Introduction to Computational Thinking](https://computationalthinking.mit.edu/Fall20) course website
+* [@abhishalya's website](https://abhishalya.github.io) using a custom minimalistic theme.
 
 ## Key features
 
