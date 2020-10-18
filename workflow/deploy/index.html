@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   
-   <!-- Syntax highlighting via Prism, note: restricted langs -->
-<link rel="stylesheet" href="/libs/highlight/github.min.css">
-   
+  
   <link rel="stylesheet" href="/css/jtd.css">
   <link rel="icon" href="/assets/infra/logoF_square.gif">
    <title>Deploying your website</title>  
@@ -117,18 +115,10 @@
     <span style="font-size:24px;font-weight:300;">Set it up once then don't think about it.</span>
     
 <div class="blank"></div>
-<div class="franklin-toc"><ol><li><a href="#deploying_on_github">Deploying on GitHub</a><ol><li><a href="#creating_a_repo_on_github">Creating a repo on GitHub</a></li><li><a href="#adding_access_tokens">Adding access tokens</a></li><li><a href="#synchronise_your_local_folder_userorg_website">Synchronise your local folder &#91;User/Org website&#93;</a></li><li><a href="#synchronise_your_local_folder_project_website">Synchronise your local folder &#91;Project website&#93;</a></li><li><a href="#troubleshooting">Troubleshooting</a></li></ol></li><li><a href="#deploying_on_gitlab">Deploying on GitLab</a><ol><li><a href="#creating_a_repo_on_gitlab">Creating a repo on GitLab</a></li><li><a href="#synchronise_your_local_folder">Synchronise your local folder</a></li></ol></li><li><a href="#deploying_on_netlify">Deploying on Netlify</a></li></ol></div>
+<div class="franklin-toc"><ol><li><a href="#deploying_on_github">Deploying on GitHub</a><ol><li><a href="#creating_a_repo_on_github">Creating a repo on GitHub</a></li><li><a href="#synchronise_your_local_folder">Synchronise your local folder</a></li><li><a href="#examples">Examples</a></li><li><a href="#customising_the_github_action">Customising the GitHub action</a></li><li><a href="#troubleshooting">Troubleshooting</a></li></ol></li><li><a href="#deploying_on_gitlab">Deploying on GitLab</a><ol><li><a href="#creating_a_repo_on_gitlab">Creating a repo on GitLab</a></li><li><a href="#synchronise_your_local_folder__2">Synchronise your local folder</a></li></ol></li><li><a href="#deploying_on_netlify">Deploying on Netlify</a></li></ol></div>
 <div class="blank"></div>
-<p>Deploying the website is trivial on Gitlab and services like Netlify. On GitHub there are a few extra steps <strong>especially if you want a user/org website</strong>.</p>
+<p>Deploying the website is trivial on GitHub, Gitlab and services like Netlify.</p>
 <h2 id="deploying_on_github"><a href="#deploying_on_github">Deploying on GitHub</a></h2>
-<p><strong>Warning</strong>: the setup to synchronise your local folder and the remote repository is <em>different</em> based on whether you want a user/org website:</p>
-<div class="tlist"><ul>
-<li><p>a <em>user</em> website has a base URL looking like <code>username.github.io</code>.</p>
-</li>
-<li><p>a <em>project</em> website has a base URL looking like <code>username.github.io/project/</code>.</p>
-</li>
-</ul></div>
-<p>Make sure to follow the appropriate instructions&#33;</p>
 <h3 id="creating_a_repo_on_github"><a href="#creating_a_repo_on_github">Creating a repo on GitHub</a></h3>
 <p>Start by creating an empty GitHub repository</p>
 <div class="tlist"><ul>
@@ -137,88 +127,49 @@
 <li><p>for a project website the repo can be named anything you want, let&#39;s say <code>myWebsite</code>.</p>
 </li>
 </ul></div>
-<h3 id="adding_access_tokens"><a href="#adding_access_tokens">Adding access tokens</a></h3>
-<p>In order for the deployment action to work on GitHub, you need to set up an access token on GitHub. The steps are explained below but you <a href="https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line">can read more on the topic here</a>.</p>
-<p><strong>STEP 1</strong>:</p>
-<div class="tlist"><ul>
-<li><p>Make a public/private key pair on your local machine with <code>ssh-keygen -N &quot;&quot; -f franklin</code> &#40;<a href="https://help.github.com/en/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key">see also here</a> for more information about generating ssh keys&#41;.</p>
-</li>
-<li><p>This creates 2 files, the private key: <code>franklin</code>, and the public key <code>franklin.pub</code>.</p>
-</li>
-</ul></div>
-<p><strong>STEP 2</strong>:</p>
-<div class="tlist"><ul>
-<li><p>Go to the repository and select <em>Settings &gt; Secrets</em> then click on <strong>Add new secret</strong>,</p>
-</li>
-<li><p>Name the secret <code>FRANKLIN_PRIV</code> and copy the contents of the <strong>private key</strong> &#40;<code>franklin</code>&#41; from the previous step.</p>
-</li>
-</ul></div>
-<p><img src="/assets/img/add_secret.png" alt="" /></p>
-<p><strong>STEP 3</strong>:</p>
-<div class="tlist"><ul>
-<li><p>Go to the repository and select <em>Settings &gt; Deploy keys</em> then click on <strong>Add deploy key</strong>,</p>
-</li>
-<li><p>Name the deploy key <code>FRANKLIN_PUB</code> and copy the contents of the <strong>public key</strong> &#40;<code>franklin.pub</code>&#41; from step 1.</p>
-</li>
-<li><p>Give the key write access.</p>
-</li>
-</ul></div>
-<p><img src="/assets/img/add_deploy_key.png" alt="" /></p>
-<p><strong>STEP 4</strong>:</p>
-<p>Remove both files &#40;<code>franklin</code>, <code>franklin.pub</code>&#41; from your local folder.</p>
-<h3 id="synchronise_your_local_folder_userorg_website"><a href="#synchronise_your_local_folder_userorg_website">Synchronise your local folder &#91;User/Org website&#93;</a></h3>
-<blockquote>
-<p>This assumes that you&#39;re working on a user folder with base URL looking like <code>username.github.io</code>. See <a href="https://github.com/tlienart2/tlienart2.github.io">this example</a> for instance.</p>
-</blockquote>
-<p>You need to synchronise your repository and your local website folder; to do so, go to your terminal, <code>cd</code> to the website folder and follow the steps below:</p>
-<div class="tlist"><ul>
-<li><p><code>git init &amp;&amp; git remote add origin URL_TO_YOUR_REPO</code></p>
-</li>
-<li><p><code>git checkout -b dev</code></p>
-</li>
-<li><p><code>git add -A &amp;&amp; git commit -am &quot;initial files&quot;</code></p>
-</li>
-</ul></div>
-<p>It is <strong>crucial</strong> to change the branch to <code>dev</code> &#40;or any other name that you like that is not <code>master</code>&#41;. This is because a user/org site <strong>must</strong> be deployed from the <code>master</code> branch on GitHub.</p>
-<p>Now, in an editor, open the file <a href="https://github.com/tlienart2/tlienart2.github.io/blob/dev/.github/workflows/deploy.yml"><code>.github/workflows/deploy.yml</code></a> and change the <code>on</code> section to</p>
-<pre><code class="language-yaml">on:
-  push:
-    branches:
-      - dev</code></pre>
-<p>change also the <code>BRANCH</code> line at the end to <code>BRANCH: master</code>:</p>
-<pre><code class="language-yaml">BRANCH: master
-FOLDER: __site</code></pre>
-<p>With all this, if you push changes to <code>dev</code> with</p>
-<pre><code class="language-julia">git push -u origin dev</code></pre>
-<p>the GitHub action will be triggered and deploy the content of the <code>__site</code> folder to  the <code>master</code> branch. GitHub pages will then deploy the website from the master branch.</p>
-<div class="note"><div class="title">⚠ Note</div>
-<div class="content">It takes a couple of minutes for the whole process to complete and your site to be available online.</div></div>
-<div class="note"><div class="title">⚠ Note</div>
-<div class="content">It is recommended to change your default branch on the repository to <code>dev</code> &#40;GitHub may have done that automatically for you&#41;. To do this, click on <em>Settings &gt; Branches</em> and select the default branch.</div></div>
-<h3 id="synchronise_your_local_folder_project_website"><a href="#synchronise_your_local_folder_project_website">Synchronise your local folder &#91;Project website&#93;</a></h3>
-<blockquote>
-<p>This assumes that you&#39;re working on a user folder with base URL looking like <code>username.github.io/myWebsite</code>. See <a href="https://github.com/tlienart2/myWebsite">this example</a> for instance.</p>
-</blockquote>
-<p>Now you need to synchronise your repository and your local website folder; to do so, go to your terminal, <code>cd</code> to the website folder and follow the steps below:</p>
+<h3 id="synchronise_your_local_folder"><a href="#synchronise_your_local_folder">Synchronise your local folder</a></h3>
+<p>You now just need to synchronise your repository and your local website folder; to do so, go to your terminal, <code>cd</code> to the website folder and follow the steps below:</p>
 <div class="tlist"><ul>
 <li><p><code>git init &amp;&amp; git remote add origin URL_TO_YOUR_REPO</code></p>
 </li>
 <li><p><code>git add -A &amp;&amp; git commit -am &quot;initial files&quot;</code></p>
 </li>
+<li><p><code>git push</code></p>
+</li>
 </ul></div>
-<p>That&#39;s it&#33; when you push your updates to the <code>master</code> branch, the <a href="https://github.com/tlienart2/myWebsite/blob/master/.github/workflows/deploy.yml">GitHub action</a> will deploy the <code>__site</code> folder to  a <code>gh-pages</code> branch that GitHub Pages will then use to deploy your website.</p>
+<p>the GitHub action will be triggered and deploy the content of the <code>__site</code> folder to  the <code>gh-pages</code> branch from which GitHub will deploy the website.</p>
 <div class="note"><div class="title">⚠ Note</div>
-<div class="content">It takes a couple of minutes for the whole process to complete and your site to be available online.</div></div>
+<div class="content">It takes a couple of minutes for the whole process to complete.</div></div>
+<p>Once a green check mark appears on the GitHub repo like so:</p>
+<p><img src="/assets/img/action_check.png" alt="" /></p>
+<p>your site has finished building and the generated files are on the <code>gh-pages</code> branch. If you see a red cross instead, click on it to see what failed, <em>usually</em> if you manage to build your site locally, the build process should work on GitHub too.</p>
+<p>The final step is to tell GitHub to deploy the <code>gh-pages</code> branch, for this, on the repository go to <code>Settings</code> then scroll down to <code>GitHub Pages</code> and in the <code>Source</code> dropdown, pick <code>gh-pages</code>.</p>
+<p>Your website should now be online. To view it, on the repository page, click on <code>github-pages</code> in the right margin,</p>
+<div class="small-img"><img src="/assets/img/deployment.png" alt="" /></div>
+<p>then on <code>View deployment</code>.</p>
+<div class="small-img"><img src="/assets/img/deployment2.png" alt="" /></div>
+<h3 id="examples"><a href="#examples">Examples</a></h3>
+<div class="tlist"><ul>
+<li><p><a href="https://github.com/tlienart2/tlienart2.github.io">basic user webpage</a></p>
+</li>
+<li><p><a href="https://github.com/tlienart2/myWebsite">basic project webpage</a></p>
+</li>
+</ul></div>
+<h3 id="customising_the_github_action"><a href="#customising_the_github_action">Customising the GitHub action</a></h3>
+<p>You might want to customise the GitHub action for instance:</p>
+<div class="tlist"><ul>
+<li><p>your website uses <a href="https://github.com/JuliaPy/PyPlot.jl"><code>PyPlot.jl</code></a> and so you need to make sure <a href="https://matplotlib.org/"><code>matplotlib</code></a> is installed,</p>
+</li>
+<li><p>you want to apply some node library such as <a href="https://purgecss.com/"><code>purgecss</code></a></p>
+</li>
+<li><p>you want to disable minification or prerendering</p>
+</li>
+<li><p>...</p>
+</li>
+</ul></div>
+<p>For all such operations, modify the file <code>.github/workflows/deploy.yml</code> in your site folder. It should be fairly straightforward to see how to extend it but if you get stuck, ask on the <strong>#franklin</strong> slack channel.</p>
 <h3 id="troubleshooting"><a href="#troubleshooting">Troubleshooting</a></h3>
-<div class="tlist"><ul>
-<li><p>Make sure you have set the access tokens properly,</p>
-</li>
-<li><p>Make sure GitHub Pages is pointing at the right branch &#40;see screenshot below&#41;,</p>
-</li>
-<li><p>Open an issue on Franklin&#39;s GitHub or ask on the <strong>#franklin</strong> juliaslack channel.</p>
-</li>
-</ul></div>
-<p><img src="/assets/img/deploy_branch.png" alt="" /></p>
+<p>If something failed, that you can&#39;t debug, ask on the <strong>#franklin</strong> slack channel explaining what&#39;s the issue and we&#39;ll try to help you out.</p>
 <h2 id="deploying_on_gitlab"><a href="#deploying_on_gitlab">Deploying on GitLab</a></h2>
 <h3 id="creating_a_repo_on_gitlab"><a href="#creating_a_repo_on_gitlab">Creating a repo on GitLab</a></h3>
 <p>Start by creating an empty GitLab repository</p>
@@ -228,7 +179,7 @@ FOLDER: __site</code></pre>
 <li><p>for a project website the repo can be named anything you want.</p>
 </li>
 </ul></div>
-<h3 id="synchronise_your_local_folder"><a href="#synchronise_your_local_folder">Synchronise your local folder</a></h3>
+<h3 id="synchronise_your_local_folder__2"><a href="#synchronise_your_local_folder__2">Synchronise your local folder</a></h3>
 <p>Now you need to synchronise your repository and your local website folder; to do so, go to your terminal, <code>cd</code> to the website folder and follow the steps below:</p>
 <div class="tlist"><ul>
 <li><p><code>git init &amp;&amp; git remote add origin URL_TO_YOUR_REPO</code></p>
@@ -252,10 +203,6 @@ FOLDER: __site</code></pre>
     </div> <!-- end of class main-content-wrap -->
     </div> <!-- end of class page-wrap-->
     
-    
-      <script src="/libs/highlight/highlight.pack.js"></script>
-<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
-
     
   </body>
 </html>
