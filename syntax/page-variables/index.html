@@ -115,7 +115,7 @@
 <!-- Content appended here (in class franklin-content) -->
 <div class="franklin-content"><h1 id="page_variables"><a href="#page_variables">Page variables</a></h1>
 
-    <span style="font-size:24px;font-weight:300;">Page variables offer a straightforward way to interact with the HTML templating from the markdown.</span>
+    <span style="font-size:24px;font-weight:300;">Page variables offer a straightforward way to interact with the HTML templating from the markdown and much more.</span>
     
 <div class="blank"></div>
 <div class="franklin-toc"><ol><li><a href="#overview">Overview</a><ol><li><a href="#using_page_variables">Using page variables</a></li></ol></li><li><a href="#html_functions">HTML functions</a><ol><li><a href="#basic_functions">Basic functions</a></li><li><a href="#conditional_blocks">Conditional blocks</a></li><li><a href="#for_loops">For loops</a></li></ol></li><li><a href="#global_page_variables">Global page variables</a></li><li><a href="#local_page_variables">Local page variables</a><ol><li><a href="#basic_settings">Basic settings</a></li><li><a href="#code_evaluation">Code evaluation</a></li><li><a href="#rss">RSS</a></li></ol></li></ol></div>
@@ -126,14 +126,22 @@
 <pre><code class="language-julia">@def some_str &#61; &quot;&quot;&quot;A string
     on several lines is ok
     but lines must be indented&quot;&quot;&quot;</code></pre>
+<p>You can also define them in blocks surrounded by <code>&#43;&#43;&#43;...&#43;&#43;&#43;</code>, the entire content of which will be evaluated as if it was Julia code but all assigned variables will be considered as page variables:</p>
+<pre><code class="language-julia">&#43;&#43;&#43;
+var1 &#61; &#91;1, 2,
+  3, 4&#93;
+var2 &#61; &quot;Hello goodbye&quot;
+&#43;&#43;&#43;</code></pre>
 <p>These variables can serve multiple purposes but, primarily, they can be accessed from the HTML template blocks e.g.:</p>
 <pre><code class="language-html">&lt;footer&gt;
   This is the footer. &amp;copy; &#123;&#123;fill author&#125;&#125;.
 &lt;/footer&gt;</code></pre>
 <p>which could be useful as footer on all pages.</p>
 <p>The syntax <code>&#123;&#123; ... &#125;&#125;</code> indicates a HTML <em>function</em>, <code>fill</code> is the function name and the rest of the bracket elements are <em>page variables</em> &#40;here <code>author</code>&#41; serving as arguments of the function.</p>
+<div class="note"><div class="title">⚠ Note</div>
+<div class="content">Argument-less calls such as <code>&#123;&#123; name &#125;&#125;</code> will be interpreted in either one of two way: first it will check whether there is a html function <code>name</code> and if so will call it, otherwise it will check whether there is a page variable <code>name</code> and will just insert it – it will be treated as a shortcut for <code>&#123;&#123;fill name&#125;&#125;</code>.</div></div>
 <p><em>Local</em> page variables denote variables that are defined on a single page and accessible on that page only by contrast to <em>global</em> page variables which are set globally &#40;in the <code>config.md</code> file&#41; and accessible on all pages.</p>
-<p>In both cases there are <em>default</em> page variables with default values which you can change and use. You can also define your own variables, both global and local.</p>
+<p>In both cases there are <em>default</em> page variables set by Franklin with default values which you can both change and use. You can of course also define your own variables, both global and local.</p>
 <h3 id="using_page_variables"><a href="#using_page_variables">Using page variables</a></h3>
 <p>Both local and global page variables are meant for essentially two purposes:</p>
 <div class="tlist"><ol>
