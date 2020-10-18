@@ -1,14 +1,10 @@
-@def hascode=true
-
 # Page variables
 
 <!--
-reviewed: Apr 19, 2020
+reviewed: Oct 18, 2020
 -->
 
-
-
-\blurb{Page variables offer a straightforward way to interact with the HTML templating from the markdown.}
+\blurb{Page variables offer a straightforward way to interact with the HTML templating from the markdown and much more.}
 
 \lineskip
 
@@ -30,6 +26,16 @@ where you could set the variable to a string, a number, a date,... anything. Def
     but lines must be indented"""
 ```
 
+You can also define them in blocks surrounded by `+++...+++`, the entire content of which will be evaluated as if it was Julia code but all assigned variables will be considered as page variables:
+
+```julia
++++
+var1 = [1, 2,
+  3, 4]
+var2 = "Hello goodbye"
++++
+```
+
 These variables can serve multiple purposes but, primarily, they can be accessed from the HTML template blocks e.g.:
 
 ```html
@@ -42,10 +48,14 @@ which could be useful as footer on all pages.
 
 The syntax `{{ ... }}` indicates a HTML _function_, `fill` is the function name and the rest of the bracket elements are _page variables_ (here `author`) serving as arguments of the function.
 
+\note{
+  Argument-less calls such as `{{ name }}` will be interpreted in either one of two way: first it will check whether there is a html function `name` and if so will call it, otherwise it will check whether there is a page variable `name` and will just insert it -- it will be treated as a shortcut for `{{fill name}}`.
+}
+
 _Local_ page variables denote variables that are defined on a single page and accessible on that page only by contrast to _global_ page variables which are set globally (in the `config.md` file) and accessible on all pages.
 
-In both cases there are _default_ page variables with default values which you can change and use.
-You can also define your own variables, both global and local.
+In both cases there are _default_ page variables set by Franklin with default values which you can both change and use.
+You can of course also define your own variables, both global and local.
 
 ### Using page variables
 
