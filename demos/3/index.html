@@ -10,10 +10,12 @@ Result: \red&#123;hello&#33;&#125;.</code></pre>
 <p>Result: <span style="color:red"> hello!</span>.</p>
 <pre><code class=language-plaintext >\newenvironment&#123;center&#125;&#123;\html&#123;&lt;div style&#61;&quot;text-align:center&quot;&gt;&#125;&#125;&#123;\html&#123;&lt;/div&gt;&#125;&#125;
 Result: \begin&#123;center&#125;This bit of text is in a centered div.\end&#123;center&#125;</code></pre>
-<p>Result:  <div style="text-align:center">This bit of text is centered. </div></p>
+<p>Result: </p>
+ <div style="text-align:center">This bit of text is centered. </div>
 <pre><code class=language-plaintext >\newenvironment&#123;figure&#125;&#91;1&#93;&#123;\html&#123;&lt;figure&gt;&#125;&#125;&#123;\html&#123;&lt;figcaption&gt;#1&lt;/figcaption&gt;&lt;/figure&gt;&#125;&#125;
 Result: \begin&#123;figure&#125;&#123;A koala eating a leaf.&#125;&#33;&#91;&#93;&#40;/assets/koala.jpg&#41;\end&#123;figure&#125;</code></pre>
-<p>Result:  <figure><img src="/demos/assets/koala.jpg" alt="" /> <figcaption> A koala eating a leaf.</figcaption></figure></p>
+<p>Result: </p>
+ <figure><img src="/demos/assets/koala.jpg" alt="" /> <figcaption> A koala eating a leaf.</figcaption></figure>
 <h3 id=customise_with_julia_code ><a href="#customise_with_julia_code">Customise with Julia code</a></h3>
 <p>Much like <code>hfun_*</code>, you can have commands and environments be effectively defined via Julia code. The main difference is that the output will be treated as Franklin-markdown and so will be <em>reprocessed by Franklin</em> &#40;where for a <code>hfun</code>, the output is plugged in directly as HTML&#41;.</p>
 <p>In both cases, a single option bracket is expected, no more no less. It can be empty but it has to be there. See also <a href="https://franklinjl.org/syntax/utils/#latex_functions_lx_">the docs</a> for more information.</p>
@@ -33,7 +35,9 @@ end</code></pre>
   return &quot;~~~&lt;b&gt;~~~&#36;output~~~&lt;/b&gt;~~~&quot;
 end</code></pre>
 <pre><code class=language-plaintext >Result: \begin&#123;cap&#125;&#123;ba&#125;Baba Yaga with a baseball bat\end&#123;cap&#125;</code></pre>
-<p>Result: <b>BaBA Yaga with a BAseBAll BAt</b>.</p>
+<p>Result: </p>
+<b>BaBA Yaga with a BAseBAll BAt</b>
+<p>.</p>
 <p>Of course these are toy examples and you could have arrived to the same effect some other way. With a bit of practice, you might develop a preference towards using one out of the three options: <code>hfun_*</code>, <code>lx_*</code> or <code>env_*</code> depending on your context.</p>
 <h2 id=007_delayed_hfun ><a href="#007_delayed_hfun">&#40;007&#41; delayed hfun</a></h2>
 <p>When you call <code>serve&#40;&#41;</code>, Franklin first does a full pass which builds all your pages and then waits for changes to happen in a given page before updating that page. If you have a page <code>A</code> and a page <code>B</code> and that the page <code>A</code> calls a function which would need something that will only be defined once <code>B</code> is built, you have two cases:</p>
@@ -111,8 +115,8 @@ ls &#61; latexify&#40;empty_ary&#41; # this is an L string</code></pre>
 \[
 \left[
 \begin{array}{cc}
-NaN & 4.3487323e24 \\
-NaN & 4.5789e-41 \\
+-7.480391e25 & -7.4804204e25 \\
+4.558e-41 & 4.558e-41 \\
 \end{array}
 \right]
 \]
