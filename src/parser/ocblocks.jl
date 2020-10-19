@@ -161,6 +161,29 @@ function deactivate_inner_dbb!(dbb, ranges)
     return nothing
 end
 
+"""
+$SIGNATURES
+
+Deactivate blocks that are contained in an environment so that they be reprocessed later.
+"""
+function deactivate_blocks_in_envs!(blocks, lxenvs)
+    lxe_ranges = []
+    for lxe in lxenvs
+        range = from(lxe) => to(lxe)
+        any(r -> r.first < range.first && r.second > range.second, lxe_ranges) && continue
+        push!(lxe_ranges, range)
+    end
+    inner_blocks = Int[]
+    for i in eachindex(blocks)
+        block = blocks[i]
+        range = from(block) => to(block)
+        if any(r -> r.first < range.first && r.second > range.second, lxe_ranges)
+            push!(inner_blocks, i)
+        end
+    end
+    deleteat!(blocks, inner_blocks)
+    return
+end
 
 """
 $(SIGNATURES)
