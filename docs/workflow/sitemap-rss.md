@@ -51,6 +51,6 @@ This is only supported for pages with a _markdown_ source for now and you must d
 @def rss = "This page is about XXX and YYY."
 ```
 
-Click [here](/page-variables/#rss) for more details on the page variables related to the RSS feed.
+Click [here](/syntax/page-variables/#rss) for more details on the page variables related to the RSS feed.
 
 Note that you can also disable the rss generation completely by setting the global page variable `generate_rss` to `false` in your `config.md`.
