@@ -314,7 +314,7 @@ function form_inter_md(mds::AS, blocks::Vector{<:AbstractBlock},
             if isa(β, OCBlock) && β.name ∈ MD_OCB_IGNORE
                 head = nextind(mds, to(β))
             else
-                if isa(β, OCBlock) && β.name ∈ MD_CLOSEP
+                if isa(β, LxEnv) || isa(β, OCBlock) && (β.name ∈ MD_CLOSEP)
                     write(intermd, CLOSEP_INSERT)
                 else
                     write(intermd, INSERT)
