@@ -1,8 +1,8 @@
 \begin{equation}
 \left[
 \begin{array}{cc}
--0.21134496 & -191.39746 \\
-4.5574e-41 & 4.5574e-41 \\
+NaN & 4.3487323e24 \\
+NaN & 4.5789e-41 \\
 \end{array}
 \right]
 \end{equation}
