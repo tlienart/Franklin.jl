@@ -105,6 +105,7 @@ end
     s = raw"""
         \newenvironment{aaa}{pre}{post}
         \newenvironment{bbb}[2]{abc:#1}{def:#2}
+        ABC
         \begin{aaa}
         A
         \begin{bbb}{00}{11}
@@ -113,7 +114,7 @@ end
         C
         \end{aaa}
         """ |> fd2html
-    @test s // "pre A abc: 00 B def: 11 C post"
+    @test s // "<p>ABC</p>\npre A abc: 00 B def: 11 C post"
 end
 
 @testset "env-maths" begin
@@ -125,7 +126,14 @@ end
         \end{align}
         BB
         """ |> fd2html
-    @test s // "<p>AA \\[\\begin{aligned}\nA &= B \\\\\nC &= D+E\n\\end{aligned}\\] BB</p>"
+    @test s // raw"""
+        <p>AA</p>
+        \[\begin{aligned}
+        A &= B \\
+        C &= D+E
+        \end{aligned}\]
+        <p>BB</p>
+        """
 end
 
 @testset "env-nest" begin
@@ -142,7 +150,7 @@ end
         \end{aaa}
         44
         """ |> fd2html
-    @test s // "<p>00 AA 11 BA 22 BB 33 AB 44</p>"
+    @test s // "<p>00</p>\nAA 11 BA 22 BB 33 AB\n<p>44</p>"
 end
 
 @testset "env-errors" begin

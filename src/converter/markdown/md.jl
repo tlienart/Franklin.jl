@@ -157,7 +157,7 @@ function convert_md(mds::AbstractString,
                             sp_chars, fnrefs, hrules)
 
     #> 2. Form intermediate markdown + html
-    inter_md, mblocks = form_inter_md(mds, b2insert, lxdefs)
+    inter_md, mblocks = form_inter_md(mds, b2insert, lxdefs; isrecursive=isrecursive)
     inter_html = md2html(inter_md; stripp=isrecursive && !nostripp)
 
     (:convert_md, "inter_md: '$inter_md'")     |> logger
@@ -278,7 +278,7 @@ Form an intermediate MD file where special blocks are replaced by a marker
 * `lxdefs`: existing latex definitions prior to the math block
 """
 function form_inter_md(mds::AS, blocks::Vector{<:AbstractBlock},
-                       lxdefs::Vector{LxDef}
+                       lxdefs::Vector{LxDef}; isrecursive=false
                        )::Tuple{String, Vector{AbstractBlock}}
     strlen  = lastindex(mds)
     intermd = IOBuffer()
@@ -314,7 +314,7 @@ function form_inter_md(mds::AS, blocks::Vector{<:AbstractBlock},
             if isa(β, OCBlock) && β.name ∈ MD_OCB_IGNORE
                 head = nextind(mds, to(β))
             else
-                if isa(β, OCBlock) && (β.name ∈ MD_CLOSEP)
+                if (isa(β, LxEnv) && !isrecursive) || (isa(β, OCBlock) && (β.name ∈ MD_CLOSEP))
                     write(intermd, CLOSEP_INSERT)
                 else
                     write(intermd, INSERT)
