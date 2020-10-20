@@ -4,6 +4,7 @@
 # Project.toml and the `deploy.yml` file here as examples.
 #
 using DelimitedFiles
+using TikzCDs
 
 # ========================================================================
 
@@ -58,8 +59,25 @@ function lx_capa(com, _)
 end
 
 function env_cap(com, _)
-    option = Franklin.content(com.braces[1])
     content = Franklin.content(com)
+    option = Franklin.content(com.braces[1])
     output = replace(content, option => uppercase(option))
     return "~~~<b>~~~$output~~~</b>~~~"
+end
+
+###########
+### 009 ###
+###########
+
+function env_tikzcd(e, _)
+  content = strip(Franklin.content(e))
+  name = strip(Franklin.content(e.braces[1]))
+  return """
+    ```julia:./$name
+    #hideall
+    save(SVG(joinpath(@OUTPUT, "$name.svg")),
+         TikzCD(raw\"\"\"$content\"\"\"))
+    ```
+    \\fig{./$name}
+  """
 end
