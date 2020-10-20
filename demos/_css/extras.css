@@ -24,7 +24,7 @@ figcaption {
 .small-imgc {
   text-align: center;
 }
-.small-imgc > p > img {
+.small-imgc img {
   margin:0;
   padding:0;
   width: 25%;

@@ -72,12 +72,6 @@ end
 function env_tikzcd(e, _)
   content = strip(Franklin.content(e))
   name = strip(Franklin.content(e.braces[1]))
-  return """
-    ```julia:./$name
-    #hideall
-    save(SVG(joinpath(@OUTPUT, "$name.svg")),
-         TikzCD(raw\"\"\"$content\"\"\"))
-    ```
-    \\fig{./$name}
-  """
+  save(SVG(joinpath(@OUTPUT, "$name.svg")), TikzCD(content))
+  return "\\fig{./$name}"
 end
