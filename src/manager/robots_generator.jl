@@ -7,6 +7,20 @@
 # allow {{robots_exclude}} for a HTML page to add it to disallow
 # allow a parameter to switch "Disallow:" to "Disallow: /"
 
+const DISALLOW = Vector{String}()
+
+"""
+$SIGNATURES
+
+Add an entry to `DISALLOW`.
+"""
+function add_disallow_item()
+    loc = url_curpage()
+    loc in DISALLOW && return nothing
+    push!(DISALLOW, loc)
+    return loc
+end
+
 """
 $SIGNATURES
 
@@ -16,13 +30,28 @@ function robots_generator()
     dst = joinpath(path(:site), "robots.txt")
     isfile(dst) && rm(dst)
     io = IOBuffer()
-    globvar("generate_sitemap") && println(io, """
+    globvar(:generate_sitemap) && println(io, """
         Sitemap: $(joinpath(globvar(:website_url), "sitemap.xml"))
         """)
-    println(io, """
+    print(io, """
         User-agent: *
-        Disallow:
         """)
+    if length(DISALLOW) != 0 || length(globvar(:robots_disallow)) != 0
+        for page in DISALLOW
+            print(io, """
+                Disallow: $page
+                """)
+        end
+        for dir in globvar(:robots_disallow)
+            print(io, """
+                Disallow: $dir
+                """)
+        end
+    else
+        print(io, """
+            Disallow:
+            """)
+    end
     write(dst, take!(io))
     return nothing
 end
