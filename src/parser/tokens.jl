@@ -112,8 +112,10 @@ Convenience function to get the name of a lx-env delimiter (ignores spaces).
 function envname(τ::Token)
     m = match(LX_ENVNAME_PAT, τ.ss)
     isnothing(m) || return m.captures[1]
-    # should not happen
-    error("`envname` called on token of type $(τ.name) failed to return.")
+    throw(LxObjError("""
+        In the context of trying to find environments, an isuse was met, possibly one of the
+        delimiter is malformed, check that all your environment blocks are delimited by
+        `\begin{somename}` and `\end{somename}`."""))
 end
 envname(b::OCBlock) = envname(otok(b))
 
