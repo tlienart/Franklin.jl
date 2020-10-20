@@ -23,7 +23,6 @@ Following up on [#008](#008_custom_environments_and_commands), here's a custom e
 
 Let's first see what you get for your effort:
 
-
 @@small-imgc \begin{tikzcd}{tcd1}
 A \arrow[r, "\phi"] \arrow[d, red]
   & B \arrow[d, "\psi" red] \\
@@ -44,6 +43,8 @@ A \arrow[r, "\phi"] \arrow[d, red]
 
 The corresponding `env_tikzcd` function is in the `utils.jl` file and is quite simple.
 
+**Note**: in this particular case, the environment uses the [`TikzCDs.jl`](https://github.com/JuliaTeX/TikzCDs.jl) which requires having `lualatex` and `dvisgm` as per their README.
+For this to work with a GitHub action, the relevant stuff needs to be installed, this is a very simple [one liner](https://github.com/tlienart/Franklin.jl/blob/3a93750c3e89eef061c6696eef47a3f2be338e4b/.github/workflows/deploy.yml#L20) to add to the deploy script.
 
 ## (008) (custom) environments and commands
 
