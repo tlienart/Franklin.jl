@@ -147,29 +147,29 @@
 <p>For instance you might prefer:</p>
 <pre><code class="language-julia">x &#61; randn&#40;10&#41;
 x&#91;1:3&#93;</code></pre><pre><code class="plaintext">3-element Array{Float64,1}:
- -0.27925981114985443
- -1.0388418703580038
-  0.665976594135018</code></pre>
+ -0.3605200952175363
+  1.1529838366099314
+ -0.7651732909582104</code></pre>
 <p>to just</p>
 <pre><code class="language-julia">x &#61; randn&#40;10&#41;</code></pre><pre><code class="plaintext">10-element Array{Float64,1}:
-  1.3522227048951119
- -1.6167420964281132
-  0.4833924011100777
- -1.5558131122355288
- -1.3354193207884049
- -0.34816502594186427
- -0.5810394854042055
-  1.1064454411336357
-  0.2412735532945955
-  1.0611877148083815</code></pre>
+  1.9357402134366564
+ -0.42848502357776225
+ -0.002050931160743408
+ -0.005612236627725628
+  1.0886175635922115
+ -0.41360196888433265
+ -0.5417386479466194
+ -1.195401368156654
+ -0.8138069468247751
+  0.8472461017691949</code></pre>
 <p>You can also use <code>@show</code> or <code>println</code> to show specific things beyond the last line</p>
 <pre><code class="language-julia">x &#61; rand&#40;10&#41;
 println&#40;sum&#40;x&#41;&#41;
-y &#61; 5</code></pre><pre><code class="plaintext">3.9522763378274304
+y &#61; 5</code></pre><pre><code class="plaintext">6.560746214356601
 5</code></pre>
 <p>if the last line is a <code>@show</code> or <code>print</code> then only that is shown:</p>
 <pre><code class="language-julia">x &#61; randn&#40;10&#41;
-@show x&#91;1&#93;</code></pre><pre><code class="plaintext">x[1] = -0.49120279874927747
+@show x&#91;1&#93;</code></pre><pre><code class="plaintext">x[1] = -0.22880783701244484
 </code></pre>
 <h2 id="example"><a href="#example">Example</a></h2>
 <h3 id="script"><a href="#script">Script</a></h3>
@@ -206,7 +206,7 @@ abs&#40;x&#41; &lt; eps&#40;&#41;
  </p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: October 19, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
+    &copy; Thibaut Lienart. Last modified: October 20, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
