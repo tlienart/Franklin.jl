@@ -43,8 +43,8 @@ A \arrow[r, "\phi"] \arrow[d, red]
 
 The corresponding `env_tikzcd` function is in the `utils.jl` file and is quite simple.
 
-<!-- **Note**: in this particular case, the environment uses the [`TikzCDs.jl`](https://github.com/JuliaTeX/TikzCDs.jl) which requires having `lualatex` and `dvisgm` as per their README.
-For this to work with a GitHub action, the relevant stuff needs to be installed, this is a very simple [one liner](https://github.com/tlienart/Franklin.jl/blob/3a93750c3e89eef061c6696eef47a3f2be338e4b/.github/workflows/deploy.yml#L20) to add to the deploy script. -->
+**Note**: in this particular case, the environment uses the [`TikzCDs.jl`](https://github.com/JuliaTeX/TikzCDs.jl) which requires having `lualatex` and `dvisgm` as per their README.
+For this to work with a GitHub action, the relevant stuff needs to be installed, it's not hard to do so with GitHub actions though you need to get TeXLive 2019 to avoid errors, I used [these 3 lines](https://github.com/tlienart/Franklin.jl/blob/354ac015c14aaedf9ebeaeb9d0b574ddad3738e5/.github/workflows/deploy.yml#L20-L23) which you could copy.
 
 ## (008) (custom) environments and commands
 
