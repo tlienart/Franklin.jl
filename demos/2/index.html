@@ -3,7 +3,7 @@ A \arrow&#91;r, &quot;\phi&quot;&#93; \arrow&#91;d, red&#93;
   &amp; B \arrow&#91;d, &quot;\psi&quot; red&#93; \\
   C \arrow&#91;r, red, &quot;\eta&quot; blue&#93;
   &amp; D
-\end&#123;tikzcd&#125;</code></pre> <p>The corresponding <code>env_tikzcd</code> function is in the <code>utils.jl</code> file and is quite simple.</p> <h2 id=008_custom_environments_and_commands ><a href="#008_custom_environments_and_commands">&#40;008&#41; &#40;custom&#41; environments and commands</a></h2> <p>You can define new commands and new environments using essentially the same syntax as in LaTeX:</p> <pre><code class=language-plaintext >\newcommand&#123;\command&#125;&#91;nargs&#93;&#123;def&#125;
+\end&#123;tikzcd&#125;</code></pre> <p>The corresponding <code>env_tikzcd</code> function is in the <code>utils.jl</code> file and is quite simple.</p> <p><strong>Note</strong>: in this particular case, the environment uses the <a href="https://github.com/JuliaTeX/TikzCDs.jl"><code>TikzCDs.jl</code></a> which requires having <code>lualatex</code> and <code>dvisgm</code> as per their README. For this to work with a GitHub action, the relevant stuff needs to be installed, it&#39;s not hard to do so with GitHub actions though you need to get TeXLive 2019 to avoid errors, I used <a href="https://github.com/tlienart/Franklin.jl/blob/354ac015c14aaedf9ebeaeb9d0b574ddad3738e5/.github/workflows/deploy.yml#L20-L23">these 3 lines</a> which you could copy.</p> <h2 id=008_custom_environments_and_commands ><a href="#008_custom_environments_and_commands">&#40;008&#41; &#40;custom&#41; environments and commands</a></h2> <p>You can define new commands and new environments using essentially the same syntax as in LaTeX:</p> <pre><code class=language-plaintext >\newcommand&#123;\command&#125;&#91;nargs&#93;&#123;def&#125;
 \newenvironment&#123;environment&#125;&#91;nargs&#93;&#123;pre&#125;&#123;post&#125;</code></pre> <p>The first one allows to define a command that you can call as <code>\command&#123;...&#125;</code> and the second one an environment that you can call as</p> <pre><code class=language-plaintext >\begin&#123;environment&#125;&#123;...&#125;...\end&#123;environment&#125;</code></pre>
 <p>In both cases you can have a number of arguments &#40;or zero&#41; and the output is <em>reprocessed by Franklin</em> &#40;so treated as Franklin-markdown&#41;. Here are a few simple examples:</p>
 <pre><code class=language-plaintext >\newcommand&#123;\hello&#125;&#123;**Hello&#33;**&#125;
@@ -120,8 +120,8 @@ ls &#61; latexify&#40;empty_ary&#41; # this is an L string</code></pre>
 \[
 \left[
 \begin{array}{cc}
--1.1640026e-8 & -3.3757372e-12 \\
-4.5911e-41 & 4.5911e-41 \\
+1.0e-45 & -1.20137124e30 \\
+0.0 & 4.5715e-41 \\
 \end{array}
 \right]
 \]
