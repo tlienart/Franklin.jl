@@ -16,6 +16,8 @@ jobs:
       with:
         python-version: '3.8'
     - run: pip install matplotlib
+    - name: Install deps for TikzCD
+      run: sudo apt-get install texlive-latex-base texlive-binaries texlive-luatex
     - name: Install Julia
       uses: julia-actions/setup-julia@v1
       with:
