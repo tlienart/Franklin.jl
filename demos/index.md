@@ -17,6 +17,34 @@ The ordering is reverse chronological but just use the table of contents to guid
 
 \toc
 
+## (009) custom environment for TikzCD
+
+Following up on [#008](#008_custom_environments_and_commands), here's a custom environment for Tikz diagrams using the [TikzCDs.jl](https://github.com/JuliaTeX/TikzCDs.jl) package.
+
+Let's first see what you get for your effort:
+
+
+@@small-imgc \begin{tikzcd}{tcd1}
+A \arrow[r, "\phi"] \arrow[d, red]
+  & B \arrow[d, "\psi" red] \\
+  C \arrow[r, red, "\eta" blue]
+  & D
+\end{tikzcd}@@
+
+Cool! Modulo a div class that shrinks the image a bit, the code that was used here is very nearly a copy-paste from an example in the [tikz-cd docs](https://ctan.kako-dev.de/graphics/pgf/contrib/tikz-cd/tikz-cd-doc.pdf), the only difference is one additional bracket with the file name (here `tcd1`):
+
+```plaintext
+\begin{tikzcd}{tcd1}
+A \arrow[r, "\phi"] \arrow[d, red]
+  & B \arrow[d, "\psi" red] \\
+  C \arrow[r, red, "\eta" blue]
+  & D
+\end{tikzcd}
+```
+
+The corresponding `env_tikzcd` function is in the `utils.jl` file and is quite simple.
+
+
 ## (008) (custom) environments and commands
 
 You can define new commands and new environments using essentially the same syntax as in LaTeX:

@@ -1,3 +1,4 @@
 [deps]
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 Latexify = "23fbe1c1-3f47-55db-b15f-69d7ec21a316"
+TikzCDs = "1e332c56-9431-4126-8a34-92cbdf251ae4"

@@ -20,3 +20,12 @@ figure {
 figcaption {
   text-align: center;
 }
+
+.small-imgc {
+  text-align: center;
+}
+.small-imgc > p > img {
+  margin:0;
+  padding:0;
+  width: 25%;
+}
