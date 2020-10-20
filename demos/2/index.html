@@ -1,0 +1,207 @@
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/demos/libs/katex/katex.min.css"> <link rel=stylesheet  href="/demos/libs/highlight/github.min.css"> <link rel=stylesheet  href="/demos/css/franklin.css"> <link rel=stylesheet  href="/demos/css/extras.css"> <title>Franklin FAQ</title> <div class=franklin-content ><h1 id=franklin_demos ><a href="#franklin_demos">Franklin Demos</a></h1> <span style="text-align:center;width:100%;display:inline-block;font-variant-caps:small-caps"><a href="https://github.com/tlienart/Franklin.jl/tree/master/demos"><strong>Click here to see the source</strong></a></span> <p>This website is meant to be a quick way to show how to do stuff that people ask &#40;or that I thought would be a nice demo&#41;, it will complement the <a href="https://franklinjl.org/">official documentation</a>.</p> <p>It&#39;s not meant to be beautiful, rather just show how to get specific stuff done. If one block answers one of your question, make sure to check <a href="https://github.com/tlienart/FranklinFAQ/blob/master/index.md">the source</a> to see how it was done. The ordering is reverse chronological but just use the table of contents to guide you to whatever you might want to explore.</p> <p><strong>Note</strong>: an important philosophy here is that if you can write a Julia function that would produce the HTML you want, then write that function and let Franklin call it.</p> <p><strong>Note 2</strong>: the numbering in georgian script in the table of content is on purpose, no good reason for it... 🚀</p> <div class=franklin-toc ><ol><li><a href="#008_custom_environments_and_commands">&#40;008&#41; &#40;custom&#41; environments and commands</a><ol><li><a href="#customise_with_julia_code">Customise with Julia code</a></ol><li><a href="#007_delayed_hfun">&#40;007&#41; delayed hfun</a><li><a href="#006_code_highlighting">&#40;006&#41; code highlighting</a><li><a href="#005_pagination">&#40;005&#41; pagination</a><li><a href="#004_use_latexifyjl">&#40;004&#41; use Latexify.jl</a><li><a href="#003_styling_of_code_output_blocks">&#40;003&#41; styling of code output blocks</a><li><a href="#002_code_block_scope">&#40;002&#41; code block scope</a><li><a href="#001_how_to_load_data_from_file_and_loop_over_rows">&#40;001&#41; how to load data from file and loop over rows</a><ol><li><a href="#approach_1_with_a_hfun">Approach 1, with a <code>hfun</code></a><li><a href="#approach_2_with_a_page_variable_and_a_for_loop">Approach 2, with a page variable and a for loop</a></ol></ol></div> <h2 id=008_custom_environments_and_commands ><a href="#008_custom_environments_and_commands">&#40;008&#41; &#40;custom&#41; environments and commands</a></h2> <p>You can define new commands and new environments using essentially the same syntax as in LaTeX:</p> <pre><code class=language-plaintext >\newcommand&#123;\command&#125;&#91;nargs&#93;&#123;def&#125;
+\newenvironment&#123;environment&#125;&#91;nargs&#93;&#123;pre&#125;&#123;post&#125;</code></pre> <p>The first one allows to define a command that you can call as <code>\command&#123;...&#125;</code> and the second one an environment that you can call as</p> <pre><code class=language-plaintext >\begin&#123;environment&#125;&#123;...&#125;...\end&#123;environment&#125;</code></pre>
+<p>In both cases you can have a number of arguments &#40;or zero&#41; and the output is <em>reprocessed by Franklin</em> &#40;so treated as Franklin-markdown&#41;. Here are a few simple examples:</p>
+<pre><code class=language-plaintext >\newcommand&#123;\hello&#125;&#123;**Hello&#33;**&#125;
+Result: \hello.</code></pre>
+<p>Result: <strong>Hello&#33;</strong>.</p>
+<pre><code class=language-plaintext >\newcommand&#123;\html&#125;&#91;1&#93;&#123;~~~#1~~~&#125;
+\newcommand&#123;\red&#125;&#91;1&#93;&#123;\html&#123;&lt;span style&#61;&quot;color:red&quot;&gt;#1&lt;/span&gt;&#125;&#125;
+Result: \red&#123;hello&#33;&#125;.</code></pre>
+<p>Result: <span style="color:red"> hello!</span>.</p>
+<pre><code class=language-plaintext >\newenvironment&#123;center&#125;&#123;\html&#123;&lt;div style&#61;&quot;text-align:center&quot;&gt;&#125;&#125;&#123;\html&#123;&lt;/div&gt;&#125;&#125;
+Result: \begin&#123;center&#125;This bit of text is in a centered div.\end&#123;center&#125;</code></pre>
+<p>Result: </p>
+ <div style="text-align:center">This bit of text is centered. </div>
+<pre><code class=language-plaintext >\newenvironment&#123;figure&#125;&#91;1&#93;&#123;\html&#123;&lt;figure&gt;&#125;&#125;&#123;\html&#123;&lt;figcaption&gt;#1&lt;/figcaption&gt;&lt;/figure&gt;&#125;&#125;
+Result: \begin&#123;figure&#125;&#123;A koala eating a leaf.&#125;&#33;&#91;&#93;&#40;/assets/koala.jpg&#41;\end&#123;figure&#125;</code></pre>
+<p>Result: </p>
+ <figure><img src="/demos/assets/koala.jpg" alt="" /> <figcaption> A koala eating a leaf.</figcaption></figure>
+<h3 id=customise_with_julia_code ><a href="#customise_with_julia_code">Customise with Julia code</a></h3>
+<p>Much like <code>hfun_*</code>, you can have commands and environments be effectively defined via Julia code. The main difference is that the output will be treated as Franklin-markdown and so will be <em>reprocessed by Franklin</em> &#40;where for a <code>hfun</code>, the output is plugged in directly as HTML&#41;.</p>
+<p>In both cases, a single option bracket is expected, no more no less. It can be empty but it has to be there. See also <a href="https://franklinjl.org/syntax/utils/#latex_functions_lx_">the docs</a> for more information.</p>
+<p>Here are two simple examples &#40;see in <code>utils.jl</code> too&#41;:</p>
+<pre><code class=language-julia >function lx_capa&#40;com, _&#41;
+  # this first line extracts the content of the brace
+  content &#61; Franklin.content&#40;com.braces&#91;1&#93;&#41;
+  output &#61; replace&#40;content, &quot;a&quot; &#61;&gt; &quot;A&quot;&#41;
+  return &quot;**&#36;output**&quot;
+end</code></pre>
+<pre><code class=language-plaintext >Result: \capa&#123;Baba Yaga&#125;.</code></pre>
+<p>Result: <strong>BAbA YAgA</strong>.</p>
+<pre><code class=language-julia >function env_cap&#40;com, _&#41;
+  option &#61; Franklin.content&#40;com.braces&#91;1&#93;&#41;
+  content &#61; Franklin.content&#40;com&#41;
+  output &#61; replace&#40;content, option &#61;&gt; uppercase&#40;option&#41;&#41;
+  return &quot;~~~&lt;b&gt;~~~&#36;output~~~&lt;/b&gt;~~~&quot;
+end</code></pre>
+<pre><code class=language-plaintext >Result: \begin&#123;cap&#125;&#123;ba&#125;Baba Yaga with a baseball bat\end&#123;cap&#125;</code></pre>
+<p>Result: </p>
+<b>BaBA Yaga with a BAseBAll BAt</b>
+<p>.</p>
+<p>Of course these are toy examples and you could have arrived to the same effect some other way. With a bit of practice, you might develop a preference towards using one out of the three options: <code>hfun_*</code>, <code>lx_*</code> or <code>env_*</code> depending on your context.</p>
+<h2 id=007_delayed_hfun ><a href="#007_delayed_hfun">&#40;007&#41; delayed hfun</a></h2>
+<p>When you call <code>serve&#40;&#41;</code>, Franklin first does a full pass which builds all your pages and then waits for changes to happen in a given page before updating that page. If you have a page <code>A</code> and a page <code>B</code> and that the page <code>A</code> calls a function which would need something that will only be defined once <code>B</code> is built, you have two cases:</p>
+<ol>
+<li><p>A common one is to have the function used by <code>A</code> require a <em>local</em> page variable defined on <code>B</code>; in that case just use <code>pagevar&#40;...&#41;</code>. When called, it will itself build <code>B</code> so that it can access the page variable defined on <code>B</code>. This is usually all you need.</p>
+
+<li><p>A less common one is to have the function used by <code>A</code> require a <em>global</em> page variable such as, for instance, the list of all tags, which is only complete <em>once all pages have been built</em>. In that case the function to be used by <code>A</code> should be marked with <code>@delay hfun_...&#40;...&#41;</code> so that Franklin knows it has to wait for the full pass to be completed before re-building <code>A</code> now being sure that it will have access to the proper scope.</p>
+
+</ol>
+<p>The page <a href="/demos/foo/">foo</a> has a tag <code>foo</code> and a page variable <code>var</code>; let&#39;s show both use cases; see <code>utils.jl</code> to see the definition of the relevant functions.</p>
+<p><strong>Case 1</strong> &#40;local page variable access, <code>var &#61; 5</code> on page foo&#41;: <p style="color:red;">var read from foo is 5</p></p>
+<p><strong>Case 2</strong> &#40;wait for full build, there&#39;s a tag <code>index</code> here and a tag <code>foo</code> on page foo&#41;: <p style="color:red;">tags: { index foo }</p></p>
+<h2 id=006_code_highlighting ><a href="#006_code_highlighting">&#40;006&#41; code highlighting</a></h2>
+<p>Inserting highlighted code is very easy in Franklin; just use triple backquotes and the name of the language:</p>
+<pre><code class=language-julia >struct Point&#123;T&#125;
+  x::T
+  y::T
+end</code></pre>
+<p>The highlighting is done via highlight.js, it&#39;s important to understand there are two modes:</p>
+<ul>
+<li><p>using the <code>_libs/highlight/highlight.pack.js</code>, this happens when serving locally <strong>and</strong> when publishing a website <strong>without</strong> pre-rendering,</p>
+
+<li><p>using the full <code>highlight.js</code> package, this happens when pre-rendering and supports all languages.</p>
+
+</ul>
+<p>The first one only has support for selected languages &#40;by default: <code>css</code>, <code>C/AL</code>, <code>C&#43;&#43;</code>, <code>yaml</code>, <code>bash</code>, <code>ini</code>, <code>TOML</code>, <code>markdown</code>, <code>html</code>, <code>xml</code>, <code>r</code>, <code>julia</code>, <code>julia-repl</code>, <code>plaintext</code>, <code>python</code> with the minified <code>github</code> theme&#41;, you can change this by going to the <a href="https://highlightjs.org/download/">highlightjs</a> and making your selection.</p>
+<p>The recommendation is to:</p>
+<ul>
+<li><p>check whether the language of your choosing is in the default list above &#40;so that when you serve locally things look nice&#41;, if not, go to the highlight.js website, get the files, and replace what&#39;s in <code>_libs/highlight/</code>,</p>
+
+<li><p>use pre-rendering if you can upon deployment.</p>
+
+</ul>
+<p>Here are some more examples with languages that are in the default list:</p>
+<pre><code class=language-r ># some R
+a &lt;- 10
+while &#40;a &gt; 4&#41; &#123;
+  cat&#40;a, &quot;...&quot;, sep &#61; &quot;&quot;&#41;
+  a &lt;- a - 1
+&#125;</code></pre>
+<pre><code class=language-python ># some Python
+def foo&#40;&#41;:
+  print&#40;&quot;Hello world&#33;&quot;&#41;
+  return</code></pre>
+<pre><code class=language-cpp >// some c&#43;&#43;
+#include &lt;iostream&gt;
+
+int main&#40;&#41; &#123;
+  std::cout &lt;&lt; &quot;Hello World&#33;&quot;;
+  return 0;
+&#125;</code></pre>
+<pre><code class=language-css >/* some CSS */
+p &#123;
+  border-style: solid;
+  border-right-color: #ff0000;
+&#125;</code></pre>
+<h2 id=005_pagination ><a href="#005_pagination">&#40;005&#41; pagination</a></h2>
+<p>Pagination works with <code>&#123;&#123;paginate list num&#125;&#125;</code> where <code>list</code> is a page variable with elements that you want to paginate &#40;either a list or tuple&#41;, and <code>num</code> is the number of elements you want per page. There are many ways you can use this, one possible way is to wrap it in a command if you want to insert this in an actual list which is what is demoed here:</p>
+<p><a id=pgex  class=anchor ></a> <ul><li>item 5<li>item 6<li>item 7<li>item 8</ul></p>
+<p>Now observe that</p>
+<ul>
+<li><p><a href="/demos/1/#pgex">page 1</a> has items 1-4</p>
+
+<li><p><a href="/demos/2/#pgex">page 2</a> has items 5-8</p>
+
+<li><p><a href="/demos/3/#pgex">page 3</a> has items 9-10</p>
+
+</ul>
+<h2 id=004_use_latexifyjl ><a href="#004_use_latexifyjl">&#40;004&#41; use Latexify.jl</a></h2>
+<p>Latexify produces a LaTeX string which should basically be passed to KaTeX. To do that you need to recuperate the output, extract the string and pass it into a maths block.</p>
+<p>Here there&#39;s a bug with <code>\begin&#123;equation&#125;</code> in Franklin &#40;issue <a href="https://github.com/tlienart/Franklin.jl/issues/584">#584</a>&#41; which is why I&#39;m replacing those with <code>&#36;&#36;</code> but it should be fixed in the near future so that you wouldn&#39;t have to use these two &quot;replace&quot; lines:</p>
+<pre><code class=language-julia >using Latexify
+empty_ary &#61; Array&#123;Float32, 2&#125;&#40;undef, 2, 2&#41;
+ls &#61; latexify&#40;empty_ary&#41; # this is an L string</code></pre>
+\[
+\left[
+\begin{array}{cc}
+-1.909897e32 & -3.426741e24 \\
+4.5661e-41 & 4.5661e-41 \\
+\end{array}
+\right]
+\]
+<h2 id=003_styling_of_code_output_blocks ><a href="#003_styling_of_code_output_blocks">&#40;003&#41; styling of code output blocks</a></h2>
+<p>At the moment &#40;August 2020&#41; no particular class is added on an output &#40;see <a href="https://github.com/tlienart/Franklin.jl/issues/531">#531</a>&#41;; you can still do something similar by adding a <code>@@code-output</code> &#40;or whatever appropriate name&#41; around the command that extracts the output and specify this in your css &#40;see <code>extras.css</code>&#41;:</p>
+<pre><code class=language-julia >x &#61; 7</code></pre>
+<div class=code-output ><pre><code class=plaintext >7</code></pre></div>
+<p>If you find yourself writing that a lot, you should probably define a command like</p>
+<pre><code class=language-plaintext >\newcommand&#123;\prettyshow&#125;&#91;1&#93;&#123;@@code-output \show&#123;#1&#125; @@&#125;</code></pre>
+<p>and put it in your <code>config.md</code> file so that it&#39;s globally available.</p>
+<div class=code-output ><pre><code class=plaintext >7</code></pre></div>
+<h2 id=002_code_block_scope ><a href="#002_code_block_scope">&#40;002&#41; code block scope</a></h2>
+<p>On a single page all code blocks share their environment so</p>
+<pre><code class=language-julia >x &#61; 5</code></pre>
+<p>then</p>
+<pre><code class=language-julia >y &#61; x&#43;2</code></pre>
+<pre><code class=plaintext >7</code></pre>
+<h2 id=001_how_to_load_data_from_file_and_loop_over_rows ><a href="#001_how_to_load_data_from_file_and_loop_over_rows">&#40;001&#41; how to load data from file and loop over rows</a></h2>
+<p>This was asked on Slack with the hope it could mimick the <a href="https://jekyllrb.com/docs/datafiles/">Data Files</a> functionality of Jekyll where you would have a file like</p>
+<pre><code class=language-julia >name,github
+Eric Mill,konklone
+Parker Moore,parkr
+Liu Fengyun,liufengyun</code></pre>
+<p>and you&#39;d want to loop over that and do something with it.</p>
+<p><strong>Relevant pieces</strong>:</p>
+<ul>
+<li><p>see <code>_assets/members.csv</code> &#40;content is the code block above&#41;</p>
+
+</ul>
+<h3 id=approach_1_with_a_hfun ><a href="#approach_1_with_a_hfun">Approach 1, with a <code>hfun</code></a></h3>
+<ul>
+<li><p>see <code>utils.jl</code> for the definition of <code>hfun_members_table</code>; calling <code>&#123;&#123;members_table _assets/members.csv&#125;&#125;</code> gives</p>
+
+</ul>
+
+<h3 id=approach_2_with_a_page_variable_and_a_for_loop ><a href="#approach_2_with_a_page_variable_and_a_for_loop">Approach 2, with a page variable and a for loop</a></h3>
+<ul>
+<li><p>see <code>config.md</code> for the definition of the <code>members_from_csv</code><em>global</em> page variable.</p>
+
+</ul>
+<p>Writing the following</p>
+<pre><code class=language-html >~~~
+&lt;ul&gt;
+&#123;&#123;for &#40;name, alias&#41; in members_from_csv&#125;&#125;
+  &lt;li&gt;
+    &lt;a href&#61;&quot;https://github.com/&#123;&#123;alias&#125;&#125;&quot;&gt;&#123;&#123;name&#125;&#125;&lt;/a&gt;
+  &lt;/li&gt;
+&#123;&#123;end&#125;&#125;
+&lt;/ul&gt;
+~~~</code></pre>
+<p>gives:</p>
+
+<ul>
+
+  <li>
+    <a href="https://github.com/konklone">Eric Mill</a>
+  
+
+  <li>
+    <a href="https://github.com/parkr">Parker Moore</a>
+  
+
+  <li>
+    <a href="https://github.com/liufengyun">Liu Fengyun</a>
+  
+
+</ul>
+
+<p><strong>Notes</strong>:</p>
+<ul>
+<li><p>we use a <em>global</em> page variable so that we don&#39;t reload the CSV file every single time something changes on the caller page.</p>
+
+</ul>
+<div class=page-foot >
+  <div class=copyright >
+    &copy; Thibaut Lienart. Last modified: October 20, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
+  </div>
+</div>
+</div>
+    
+        <script src="/demos/libs/katex/katex.min.js"></script>
+<script src="/demos/libs/katex/auto-render.min.js"></script>
+<script>renderMathInElement(document.body)</script>
+
+    
+    
+        <script src="/demos/libs/highlight/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
