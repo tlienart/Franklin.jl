@@ -28,3 +28,12 @@ end
             <loc>https://tlienart.github.io/FranklinTemplates.jl/$pgg</loc>""", fc)
     end
 end
+
+@testset "Robots.txt gen" begin
+    f = joinpath(p, "basic", "__site", "robots.txt")
+    @test isfile(f)
+    fc = prod(readlines(f, keep=true))
+
+    @test occursin(raw"""
+        Sitemap: https://tlienart.github.io/FranklinTemplates.jl/sitemap.xml""", fc)
+end
