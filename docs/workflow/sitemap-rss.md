@@ -60,9 +60,7 @@ Note that you can also disable the rss generation completely by setting the glob
 Franklin automatically generates a [robots.txt](https://www.robotstxt.org/) file for your website which you can adjust as required.
 By default, the file will contain a link to your sitemap, if one is generated, and no page will be disallowed to robots.
 
-For a given _markdown_ page (extension `.md`) you can change this by setting the following [page variables](/syntax/page-variables/): `robots_disallow_this_page`: set it to `true` to add it to disallowed pages,
-
-you could have in your markdown:
+For a given _markdown_ page (extension `.md`) you can disallow it by setting the [page variable](/syntax/page-variables/) `robots_disallow_this_page` to `true`, you could have in your markdown:
 
 ```plaintext
 +++
