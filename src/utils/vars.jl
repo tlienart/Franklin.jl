@@ -34,13 +34,13 @@ const GLOBAL_VARS_DEFAULT = [
     "ignore"           => Pair(String[], (Vector{Any},)),
     # for robots.txt
     "robots_disallow"  => Pair(String[], (Vector{Any},)),
+    "generate_robots"  => dpair(true),
     # RSS + sitemap
     "website_title"    => dpair(""),
     "website_descr"    => dpair(""),
     "website_url"      => dpair(""),
     "generate_rss"     => dpair(true),
     "generate_sitemap" => dpair(true),
-    "generate_robots"  => dpair(true),
     # div names
     "content_tag"      => dpair("div"),
     "content_class"    => dpair("franklin-content"),

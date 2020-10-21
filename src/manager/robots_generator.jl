@@ -3,9 +3,6 @@
 # User-agent: *
 # Disallow:
 #
-# TODO
-# allow {{robots_exclude}} for a HTML page to add it to disallow
-# allow a parameter to switch "Disallow:" to "Disallow: /"
 
 const DISALLOW = Vector{String}()
 
