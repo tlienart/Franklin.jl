@@ -9,7 +9,7 @@
    
   <link rel="stylesheet" href="/css/jtd.css">
   <link rel="icon" href="/assets/infra/logoF_square.gif">
-   <title>RSS and Sitemap</title>  
+   <title>RSS, Sitemap and Robots</title>  
 
   <!-- LUNR -->
   <script src="/libs/lunr/lunr.min.js"></script>
@@ -113,8 +113,8 @@
         </div>
 
 <!-- Content appended here (in class franklin-content) -->
-<div class="franklin-content"><h1 id="rss_and_sitemap"><a href="#rss_and_sitemap">RSS and Sitemap</a></h1>
-<div class="franklin-toc"><ol><li><a href="#sitemap">Sitemap</a></li><li><a href="#rss">RSS</a></li></ol></div>
+<div class="franklin-content"><h1 id="rss_sitemap_and_robots"><a href="#rss_sitemap_and_robots">RSS, Sitemap and Robots</a></h1>
+<div class="franklin-toc"><ol><li><a href="#sitemap">Sitemap</a></li><li><a href="#rss">RSS</a></li><li><a href="#robots">Robots</a></li></ol></div>
 <h2 id="sitemap"><a href="#sitemap">Sitemap</a></h2>
 <p>Franklin automatically generates a <a href="https://www.sitemaps.org/protocol.html">sitemap</a> for your website which you can adjust as required. By default, the sitemap will have an entry for every page on your website, with a default priority of <code>0.5</code> and a change frequency set to <code>monthly</code>.</p>
 <p>For a given <em>markdown</em> page &#40;extension <code>.md</code>&#41; you can change this by setting the following <a href="/syntax/page-variables/">page variables</a>:</p>
@@ -141,9 +141,15 @@ sitemap_priority &#61; 0.2
 <pre><code class="language-plaintext">@def rss &#61; &quot;This page is about XXX and YYY.&quot;</code></pre>
 <p>Click <a href="/syntax/page-variables/#rss">here</a> for more details on the page variables related to the RSS feed.</p>
 <p>Note that you can also disable the rss generation completely by setting the global page variable <code>generate_rss</code> to <code>false</code> in your <code>config.md</code>.</p>
+<h2 id="robots"><a href="#robots">Robots</a></h2>
+<p>Franklin automatically generates a <a href="https://www.robotstxt.org/">robots.txt</a> file for your website which you can adjust as required. By default, the file will contain a link to your sitemap, if one is generated, and no page will be disallowed to robots.</p>
+<p>For a given <em>markdown</em> page &#40;extension <code>.md</code>&#41; you can disallow it by setting the <a href="/syntax/page-variables/">page variable</a> <code>robots_disallow_this_page</code> to <code>true</code>, you could have in your markdown:</p>
+<pre><code class="language-plaintext">@def robots_disallow_this_page &#61; true</code></pre>
+<p>You can also disallow folders by setting the global variable <code>robots_disallow</code> to a vector of folders like <code>&#91;&quot;folder1/&quot;, &quot;folder2/&quot;&#93;</code> in your <code>config.md</code>. To disallow the whole website, you can set <code>robots_disallow &#61; &#91;&quot;/&quot;&#93;</code>.</p>
+<p>Note that you can disable the generation of the <code>robots.txt</code> file by setting the global variable <code>generate_robots</code> to <code>false</code> in your <code>config.md</code>.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: October 20, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
+    &copy; Thibaut Lienart. Last modified: October 23, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
