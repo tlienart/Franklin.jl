@@ -33,7 +33,7 @@ function robots_generator()
     print(io, """
         User-agent: *
         """)
-    if !(all(isempty, (DISALLOW, globvar(:robots_disallow)))
+    if !(all(isempty, (DISALLOW, globvar(:robots_disallow))))
         for page in DISALLOW
             print(io, """
                 Disallow: $page
