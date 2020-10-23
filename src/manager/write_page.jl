@@ -183,6 +183,10 @@ function convert_and_write(root::String, file::String, head::String,
     cond_add = globvar(:generate_sitemap) && FD_ENV[:FULL_PASS]
     cond_add && add_sitemap_item()
 
+    # Same for disallow robots locally
+    cond_add = locvar(:robots_disallow_this_page)
+    cond_add && add_disallow_item()
+
     pg = write_page(output_path, content; head=head, pgfoot=pgfoot, foot=foot)
 
     # 6. possible post-processing via the "on-write" function.

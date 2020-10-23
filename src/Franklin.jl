@@ -205,6 +205,7 @@ include("converter/html/prerender.jl")
 # FILE AND DIR MANAGEMENT
 include("manager/rss_generator.jl")
 include("manager/sitemap_generator.jl")
+include("manager/robots_generator.jl")
 include("manager/write_page.jl")
 include("manager/dir_utils.jl")
 include("manager/file_utils.jl")

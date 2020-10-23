@@ -32,6 +32,9 @@ const GLOBAL_VARS_DEFAULT = [
     "tag_page_path"    => dpair("tag"),
     # will be added to IGNORE_FILES
     "ignore"           => Pair(String[], (Vector{Any},)),
+    # for robots.txt
+    "robots_disallow"  => Pair(String[], (Vector{String},)),
+    "generate_robots"  => dpair(true),
     # RSS + sitemap
     "website_title"    => dpair(""),
     "website_descr"    => dpair(""),
@@ -111,6 +114,9 @@ const LOCAL_VARS_DEFAULT = [
     "sitemap_changefreq" => dpair("monthly"),
     "sitemap_priority"   => dpair(0.5),
     "sitemap_exclude"    => dpair(false),
+    # -------------
+    # ROBOTS.TXT
+    "robots_disallow_this_page" => dpair(false),
     # -------------
     # MISCELLANEOUS (should not be modified)
     "fd_mtime_raw" => dpair(Date(1)),
