@@ -33,7 +33,7 @@ const GLOBAL_VARS_DEFAULT = [
     # will be added to IGNORE_FILES
     "ignore"           => Pair(String[], (Vector{Any},)),
     # for robots.txt
-    "robots_disallow"  => Pair(String[], (Vector{Any},)),
+    "robots_disallow"  => Pair(String[], (Vector{String},)),
     "generate_robots"  => dpair(true),
     # RSS + sitemap
     "website_title"    => dpair(""),

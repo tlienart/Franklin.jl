@@ -63,11 +63,9 @@ By default, the file will contain a link to your sitemap, if one is generated, a
 For a given _markdown_ page (extension `.md`) you can disallow it by setting the [page variable](/syntax/page-variables/) `robots_disallow_this_page` to `true`, you could have in your markdown:
 
 ```plaintext
-+++
 @def robots_disallow_this_page = true
-+++
 ```
 
-You can also disallow folders by setting the global variable `robots_disallow` to a vector of folders like `[/folder1/, /folder2/]` in your `config.md`. To disallow the whole website, you can set `robots_disallow = [/]`.
+You can also disallow folders by setting the global variable `robots_disallow` to a vector of folders like `["folder1/", "folder2/"]` in your `config.md`. To disallow the whole website, you can set `robots_disallow = ["/"]`.
 
 Note that you can disable the generation of the `robots.txt` file by setting the global variable `generate_robots` to `false` in your `config.md`.

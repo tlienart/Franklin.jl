@@ -15,7 +15,7 @@ function add_disallow_item()
     loc = url_curpage()
     loc in DISALLOW && return nothing
     push!(DISALLOW, loc)
-    return loc
+    return nothing
 end
 
 """
@@ -33,15 +33,18 @@ function robots_generator()
     print(io, """
         User-agent: *
         """)
-    if length(DISALLOW) != 0 || length(globvar(:robots_disallow)) != 0
+    if !(all(isempty, (DISALLOW, globvar(:robots_disallow)))
         for page in DISALLOW
             print(io, """
                 Disallow: $page
                 """)
         end
         for dir in globvar(:robots_disallow)
+            if dir == "/"
+                dir = ""
+            end
             print(io, """
-                Disallow: $dir
+                Disallow: /$dir
                 """)
         end
     else
