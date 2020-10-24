@@ -108,14 +108,14 @@ function convert_md(mds::AbstractString,
     (lprelx > 0) && (lxdefs = cat(pastdef.(pre_lxdefs), lxdefs, dims=1))
     #>> c. find latex environments
     lxenvs, tokens = find_lxenvs(tokens, lxdefs, braces)
-    deactivate_blocks_in_envs!(blocks, lxenvs)
+    ranges2 = deactivate_blocks_in_envs!(blocks, lxenvs)
     #>> d. find latex commands
     lxcoms, _ = find_lxcoms(tokens, lxdefs, braces)
 
     #> 3[ex]. find double brace blocks, note we do it on pre_ocb tokens
     # as the step `find_all_ocblocks` possibly found and deactivated {...}.
     dbb = find_double_brace_blocks(toks_pre_ocb)
-    deactivate_inner_dbb!(dbb, ranges)
+    deactivate_inner_dbb!(dbb, vcat(ranges, ranges2))
 
     # ------------------------------------------------------------------------
     #> 4. Page variable definition (mddefs), also if in config, update lxdefs
