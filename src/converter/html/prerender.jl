@@ -51,7 +51,7 @@ function js_prerender_highlight(hs::String)::String
 
     # buffer to write the JS script
     jsbuffer = IOBuffer()
-    write(jsbuffer, """const hljs = require('highlight.js');""")
+    write(jsbuffer, """const hljs = require('$(HIGHLIGHTJS[])');""")
 
     # string to separate the output of the different blocks
     splitter = "_>fdsplit<_"
