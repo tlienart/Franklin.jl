@@ -12,7 +12,7 @@ function convert_block(β::AbstractBlock, lxdefs::Vector{LxDef})::AS
     βn = β.name
     βn ∈ MD_HEADER         && return convert_header(β, lxdefs)
 
-    βn == :CODE_INLINE     && return html_code_inline(content(β) |> htmlesc)
+    βn == :CODE_INLINE     && return html_code_inline(stent(β) |> htmlesc)
     βn == :CODE_BLOCK_LANG && return resolve_code_block(β.ss)
     βn == :CODE_BLOCK_IND  && return convert_indented_code_block(β.ss)
     βn == :CODE_BLOCK      && return html_code(stent(β), "{{fill lang}}")
