@@ -27,6 +27,11 @@ end
     @test tokens[1].name == :CODE_TRIPLE
     @test tokens[2].name == :CODE_TRIPLE
 
+    st = raw"""A ```` B ```` C"""
+    tokens = F.find_tokens(st, F.MD_TOKENS, F.MD_1C_TOKENS)
+    @test tokens[1].name == :CODE_QUAD
+    @test tokens[2].name == :CODE_QUAD
+
     st = raw"""A ````` B ````` C"""
     tokens = F.find_tokens(st, F.MD_TOKENS, F.MD_1C_TOKENS)
     @test tokens[1].name == :CODE_PENTA
@@ -34,12 +39,12 @@ end
 
     st = raw"""A ```b B ``` C"""
     tokens = F.find_tokens(st, F.MD_TOKENS, F.MD_1C_TOKENS)
-    @test tokens[1].name == :CODE_LANG
+    @test tokens[1].name == :CODE_LANG3
     @test tokens[2].name == :CODE_TRIPLE
 
     st = raw"""A `````b B ````` C"""
     tokens = F.find_tokens(st, F.MD_TOKENS, F.MD_1C_TOKENS)
-    @test tokens[1].name == :CODE_LANG2
+    @test tokens[1].name == :CODE_LANG5
     @test tokens[2].name == :CODE_PENTA
 
     h = raw"""
