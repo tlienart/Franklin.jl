@@ -199,14 +199,15 @@ const ALL_PAGE_VARS = Dict{String,PageVars}()
 
 Convenience function to get the value associated with a var available to a page
 corresponding to `rpath`. So for instance if `blog/index.md` has `@def var = 0`
-then this can be accessed with `pagevar("blog/index", "var")`.
+then this can be accessed with `pagevar("blog/index", "var")` or
+`pagevar("blog/index.md", "var")`.
 If `rpath` is not yet a key of `ALL_PAGE_VARS` then maybe the page hasn't been
 processed yet so force a pass over that page.
 """
 function pagevar(rpath::AS, name::Union{Symbol,String})
     # only split extension if it's .md or .html (otherwise can cause trouble
     # if there's a dot in the page name... not recommended but happens.)
-    rpc = splitext(rpath)[1]
+    rpc = splitext(rpath)
     if rpc[2] in (".md", ".html")
         rpath = rpc[1]
     end

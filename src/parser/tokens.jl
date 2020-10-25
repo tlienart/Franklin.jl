@@ -262,31 +262,22 @@ In combination with `incrlook`, checks to see if we have something that looks
 like a triple backtick followed by a valid combination of letter defining a
 language. Triggering char is a first backtick.
 """
-is_language() = incrlook(_is_language, _validate_language)
+is_language(j) = incrlook(_is_language(j), _validate_language(j))
 
-function _is_language(i::Int, c::Char)
-    i < 3  && return c == '`'  # ` followed by `` forms the opening ```
-    i == 3 && return α(c)      # must be a letter
-    return α(c, ('-',))        # can be a letter or a hyphen, for instance ```objective-c
+function _is_language(j)
+    λ(i::Int, c::Char) = begin
+        i < j  && return c == '`'  # ` followed by `` forms the opening ```
+        i == j && return α(c)      # must be a letter
+        return α(c, ('-',))        # can be a letter or a hyphen, for instance ```objective-c
+    end
+    return λ
 end
 
-_validate_language(stack::AS) = !isnothing(match(r"^```[a-zA-Z]", stack))
-
-"""
-$(SIGNATURES)
-
-See [`is_language`](@ref) but with 5 ticks.
-"""
-is_language2() = incrlook(_is_language2, _validate_language2)
-
-function _is_language2(i::Int, c::Char)
-    i < 5  && return c == '`'
-    i == 5 && return α(c)
-    return α(c, ('-',))
+function _validate_language(j)
+    rx = Regex("^$('`'^j)[a-zA-Z]")
+    λ(stack::AS) = !isnothing(match(rx, stack))
+    return λ
 end
-
-_validate_language2(stack::AS) = !isnothing(match(r"^`````[a-zA-Z]", stack))
-
 
 """
 $(SIGNATURES)
