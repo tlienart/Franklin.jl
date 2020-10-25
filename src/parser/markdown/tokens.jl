@@ -85,12 +85,15 @@ const MD_TOKENS = LittleDict{Char, Vector{TokenFinder}}(
               isexactly("_\$<_") => :MATH_I_CLOSE, # within mathenv (e.g. \R <> \mathbb R)
               incrlook(is_hr2)   => :HORIZONTAL_RULE,
              ],
-    '`'  => [ isexactly("`", ('`',), false)  => :CODE_SINGLE, # `⎵
-              isexactly("``",('`',), false)  => :CODE_DOUBLE, # ``⎵*
-              isexactly("```", SPACE_CHAR)   => :CODE_TRIPLE, # ```⎵*
+    '`'  => [ isexactly("`",  ('`',), false)  => :CODE_SINGLE, # `⎵
+              isexactly("``", ('`',), false)  => :CODE_DOUBLE, # ``⎵*
+              # 3+ can be named
+              isexactly("```",   SPACE_CHAR) => :CODE_TRIPLE, # ```⎵*
+              is_language(3)                 => :CODE_LANG3,  # ```lang*
+              isexactly("````",  SPACE_CHAR) => :CODE_QUAD,   # ````⎵*
+              is_language(4)                 => :CODE_LANG4,  # ````lang*
               isexactly("`````", SPACE_CHAR) => :CODE_PENTA,  # `````⎵*
-              is_language()                  => :CODE_LANG,   # ```lang*
-              is_language2()                 => :CODE_LANG2,  # `````lang*
+              is_language(5)                 => :CODE_LANG5,  # `````lang*
              ],
     '*'  => [ incrlook(is_hr3)   => :HORIZONTAL_RULE,
              ]
@@ -140,9 +143,11 @@ const MD_OCB = [
     # ---------------------------------------------------------------------
     OCProto(:COMMENT,         :COMMENT_OPEN, (:COMMENT_CLOSE,)),
     OCProto(:MD_DEF_BLOCK,    :MD_DEF_TOML,  (:MD_DEF_TOML,)  ),
-    OCProto(:CODE_BLOCK_LANG, :CODE_LANG,    (:CODE_TRIPLE,)  ),
-    OCProto(:CODE_BLOCK_LANG, :CODE_LANG2,   (:CODE_PENTA,)   ),
+    OCProto(:CODE_BLOCK_LANG, :CODE_LANG3,   (:CODE_TRIPLE,)  ),
+    OCProto(:CODE_BLOCK_LANG, :CODE_LANG4,   (:CODE_QUAD,)    ),
+    OCProto(:CODE_BLOCK_LANG, :CODE_LANG5,   (:CODE_PENTA,)   ),
     OCProto(:CODE_BLOCK,      :CODE_TRIPLE,  (:CODE_TRIPLE,)  ),
+    OCProto(:CODE_BLOCK,      :CODE_QUAD,    (:CODE_QUAD,)    ),
     OCProto(:CODE_BLOCK,      :CODE_PENTA,   (:CODE_PENTA,)   ),
     OCProto(:CODE_INLINE,     :CODE_DOUBLE,  (:CODE_DOUBLE,)  ),
     OCProto(:CODE_INLINE,     :CODE_SINGLE,  (:CODE_SINGLE,)  ),
