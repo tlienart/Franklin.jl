@@ -28,6 +28,9 @@ const NODE = begin
     end
 end
 
+# highligh.js library; can be overridden from the outside which is useful for testing
+const HIGHLIGHTJS = Ref{String}("highlight.js")
+
 shell_try(com)::Bool = try success(com); catch; false; end
 
 #=
@@ -37,7 +40,7 @@ require `katex.min.js`
 - For highlights, we need `node` and also to have the `highlight.js` installed via `npm`.
 =#
 const FD_CAN_PRERENDER = shell_try(`$NODE -v`)
-const FD_CAN_HIGHLIGHT = shell_try(`$NODE -e "require('highlight.js')"`)
+const FD_CAN_HIGHLIGHT = shell_try(`$NODE -e "require('$(HIGHLIGHTJS[])')"`)
 
 #=
 Minification
@@ -60,7 +63,7 @@ FD_CAN_HIGHLIGHT || begin
         println("""✘ Couldn't find node.js (`$NODE -v` failed).
                 → It is required for pre-rendering KaTeX and highlight.js but is not necessary to run Franklin (cf docs).""")
     end
-    println("""✘ Couldn't find highlight.js (`$NODE -e "require('highlight.js')"` failed).
+    println("""✘ Couldn't find highlight.js (`$NODE -e "require('$(HIGHLIGHTJS[])')"` failed).
             → It is required for pre-rendering highlight.js but is not necessary to run Franklin (cf docs).""")
 end
 
