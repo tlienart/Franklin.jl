@@ -36,10 +36,10 @@ Go to [Franklin's main website](https://franklinjl.org). For users already famil
 Some examples of websites using Franklin (_if you're using Franklin with a public repo, consider adding the "franklin" tag to the repo to help others find examples, thanks!_)
 
 * Franklin's own website is written in Franklin, [see docs/](docs/)
-* The [Julia website](https://julialang.org), including the blog, are deployed in Franklin.
+* The [Julia website](https://julialang.org), including the blog, are deployed in Franklin
 * [@cormullion's website](https://cormullion.github.io), the author of [Luxor.jl](https://github.com/JuliaGraphics/Luxor.jl),
 * MLJ's [tutorial website](https://alan-turing-institute.github.io/DataScienceTutorials.jl/) which shows how Franklin can interact nicely with [Literate.jl](https://github.com/fredrikekre/Literate.jl)
-* [Tom Kwong's website](https://ahsmart.com/) author of [_Hands-on Design Patterns and Best Practices with  Julia_](https://www.amazon.com/gp/product/183864881X).
+* [Tom Kwong's website](https://ahsmart.com/) author of [_Hands-on Design Patterns and Best Practices with  Julia_](https://www.amazon.com/gp/product/183864881X)
 * [SymbolicUtils.jl's manual](https://juliasymbolics.github.io/SymbolicUtils.jl/) using the Tufte template
 * [@terasakisatoshi's website](https://terasakisatoshi.github.io/MathSeminar.jl/) using the vela template, [source](https://github.com/terasakisatoshi/MathSeminar.jl)
 * [@Wikunia's blog](https://opensourc.es) using the vela template
@@ -49,7 +49,8 @@ Some examples of websites using Franklin (_if you're using Franklin with a publi
 * [My website](https://tlienart.github.io) (_by now a bit outdated... there's only so much one can do in a day_)
 * [JuliaActuary](https://JuliaActuary.org), Julia's community promoting open-source actuarial science
 * [MIT Introduction to Computational Thinking](https://computationalthinking.mit.edu/Fall20) course website
-* [@abhishalya's website](https://abhishalya.github.io) using a custom minimalistic theme.
+* [@abhishalya's website](https://abhishalya.github.io) using a custom minimalistic theme
+* [Rik Huijzer's website](https://huijzer.xyz) with a blog based on the basic template
 
 ## Key features
 
