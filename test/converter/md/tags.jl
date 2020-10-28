@@ -68,13 +68,13 @@ end
         @def title = "Page 3"
         """)
     write(joinpath("blog", "pg4.md"), """
-        @def tags = ["aa", "dd", "ee"]
+        @def tags = ["aa", "dd", "ee", "ee 00"]
         @def date = Date(2003, 01, 01)
         @def title = "Page 4"
         """)
     serve(clear=true, single=true, cleanup=false, nomess=true)
     @test isdir(joinpath("__site", "tag"))
-    for tag in ("aa", "bb", "cc", "dd", "ee")
+    for tag in ("aa", "bb", "cc", "dd", "ee", "ee_00")
         local p
         p = joinpath("__site", "tag", tag, "index.html")
         @test isfile(p)

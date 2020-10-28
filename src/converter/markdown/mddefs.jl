@@ -100,7 +100,7 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool,
     (:process_mddefs, "assignments done & copy to ALL_PAGE_VARS") |> logger
 
     # TAGS
-    tags = Set(locvar(:tags))
+    tags = Set(refstring.(locvar(:tags)))
     # Cases:
     # 0. there was no page tags before
     #   a. tags is empty --> do nothing

@@ -91,6 +91,6 @@ if F.FD_CAN_PRERENDER; @testset "prerender" begin
         jshl = F.js_prerender_highlight(hs)
         # conversion of the code
         @test occursin("""<pre><code class="julia hljs"><span class="hljs-keyword">using</span>""", jshl)
-        @test occursin(raw"""<span class="hljs-string">"hello <span class="hljs-variable">$b</span>"</span>""", jshl)
+        @test occursin(raw"""<span class=\"hljs-comment\"># Woodbury formula</span>""", jshl)
     end; end # if can highlight
 end; end # if can prerender
