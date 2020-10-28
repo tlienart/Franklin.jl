@@ -5,12 +5,10 @@
 import os
 from css_html_js_minify import process_single_html_file as min_html
 from css_html_js_minify import process_single_css_file as min_css
-from multiprocessing import Pool, cpu_count
-from functools import partial
 
 # modify those if you're not using the standard output paths.
 html_files = []
-css_files  = []
+css_files = []
 for root, dirs, files in os.walk("__site"):
     for fname in files:
         path = os.path.join(root, fname)
@@ -25,18 +23,7 @@ for root, dirs, files in os.walk("__site"):
 
 css_files = [cf for cf in css_files if not cf.endswith(".min.css")]
 
-
-if os.name == 'nt':
-    # multiprocessing doesn't seem to go well with windows...
-    for file in html_files:
-        min_html(file, overwrite=True)
-    for file in css_files:
-        min_css(file, overwrite=True)
-else:
-    pool = Pool(cpu_count())
-
-    pool.map_async(partial(min_html, overwrite=True), html_files)
-    pool.map_async(partial(min_css, overwrite=True), css_files)
-
-    pool.close()
-    pool.join()
+for file in html_files:
+    min_html(file, overwrite=True)
+for file in css_files:
+    min_css(file, overwrite=True)
