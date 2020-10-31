@@ -136,8 +136,12 @@ function rss_generator()::Nothing
           <link>$rss_link</link>
           <atom:link href="$(rss_link)feed.xml" rel="self" type="application/rss+xml" />
         """)
+
+    # sort items by pubDate
+    RSS_DICT_SORTED = sort(OrderedDict(RSS_DICT), rev = true, byvalue = true, by = x -> x.pubDate)
+
     # loop over items
-    for (k, v) in RSS_DICT
+    for (k, v) in RSS_DICT_SORTED
         full_link = rss_link
         if startswith(v.link, "/")
             full_link *= v.link[2:end]
