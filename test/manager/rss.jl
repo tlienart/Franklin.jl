@@ -66,6 +66,7 @@ end
     @test occursin("<description><![CDATA[Page with tag foo.", fc)
     @test occursin("<pubDate>Fri, 30 Oct 2020 00:00:00 UT</pubDate>", fc)
     @test occursin("<pubDate>Tue, 27 Oct 2020 00:00:00 UT</pubDate>", fc)
+    @test occursin("<atom:link href=\"https://github.com/tlienart/Franklin.jl/feed.xml\" rel=\"self\" type=\"application/rss+xml\" />", fc)
     @test findfirst("Fri, 30 Oct 2020", fc) < findfirst("27 Oct 2020", fc) # ordered by pubDate
 
     ## Tag filtered feeds
@@ -77,6 +78,7 @@ end
     @test occursin("<description><![CDATA[Page with tag foo.", foo_feed)
     @test occursin("<pubDate>Fri, 30 Oct 2020 00:00:00 UT</pubDate>", foo_feed)
     @test occursin("<pubDate>Tue, 27 Oct 2020 00:00:00 UT</pubDate>", foo_feed)
+    @test occursin("<atom:link href=\"https://github.com/tlienart/Franklin.jl/tag/foo/feed.xml\" rel=\"self\" type=\"application/rss+xml\" />", foo_feed)
     @test findfirst("Fri, 30 Oct 2020", foo_feed) < findfirst("27 Oct 2020", foo_feed) # ordered by pubDate
     ### bar tag
     feed = joinpath(F.PATHS[:tag], "bar", "feed.xml")
@@ -86,4 +88,5 @@ end
     @test !occursin("<description><![CDATA[Page with tag foo.", bar_feed)
     @test occursin("<pubDate>Fri, 30 Oct 2020 00:00:00 UT</pubDate>", bar_feed)
     @test !occursin("<pubDate>Tue, 27 Oct 2020 00:00:00 UT</pubDate>", bar_feed)
+    @test occursin("<atom:link href=\"https://github.com/tlienart/Franklin.jl/tag/bar/feed.xml\" rel=\"self\" type=\"application/rss+xml\" />", bar_feed)
 end
