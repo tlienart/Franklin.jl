@@ -61,7 +61,7 @@ $SIGNATURES
 Create an `RSSItem` out of the provided fields defined in the page vars.
 """
 function add_rss_item()
-    link  = url_curpage()
+    link  = get_url(url_curpage())
     title = jor("rss_title", "title")
     descr = jor("rss", "rss_description")
 
