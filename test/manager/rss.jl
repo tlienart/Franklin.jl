@@ -34,8 +34,8 @@ end
     @test item.author == ""
     @test item.pubDate == Date(2020, 10, 27)
     @test tags == ["foo"]
-    @test F.RSS_DICT["/hey/hello/index.html"][1].description == item.description
-    @test F.RSS_DICT["/hey/hello/index.html"][2] == ["foo"]
+    @test F.RSS_DICT["/hey/hello/"][1].description == item.description
+    @test F.RSS_DICT["/hey/hello/"][2] == ["foo"]
 
     # Page 2 with tags = ["foo", "bar"]
     F.def_LOCAL_VARS!()
@@ -52,8 +52,8 @@ end
     @test item.author == "chuck@norris.com"
     @test item.pubDate == Date(2020, 10, 30)
     @test tags == ["foo", "bar"]
-    @test F.RSS_DICT["/hey/ho/index.html"][1].description == item.description
-    @test F.RSS_DICT["/hey/ho/index.html"][2] == ["foo", "bar"]
+    @test F.RSS_DICT["/hey/ho/"][1].description == item.description
+    @test F.RSS_DICT["/hey/ho/"][2] == ["foo", "bar"]
 
     # Generation
     F.PATHS[:folder] = td
@@ -64,6 +64,8 @@ end
     fc = read(feed, String)
     @test occursin("<description><![CDATA[A <strong>description</strong> done. Page with tags foo and bar.", fc)
     @test occursin("<description><![CDATA[Page with tag foo.", fc)
+    @test occursin("<link>https://github.com/tlienart/Franklin.jl/hey/ho/</link>", fc)
+    @test occursin("<link>https://github.com/tlienart/Franklin.jl/hey/hello/</link>", fc)
     @test occursin("<pubDate>Fri, 30 Oct 2020 00:00:00 UT</pubDate>", fc)
     @test occursin("<pubDate>Tue, 27 Oct 2020 00:00:00 UT</pubDate>", fc)
     @test findfirst("Fri, 30 Oct 2020", fc) < findfirst("27 Oct 2020", fc) # ordered by pubDate
