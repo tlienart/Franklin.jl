@@ -144,14 +144,16 @@ function rss_generator()::Nothing
         rss_path = joinpath(path(:tag), tag, "feed.xml")
         ## Filter items containing this tag only
         rss_items = OrderedDict{String,RSSItem}(k => v[1] for (k, v) in RSS_DICT_SORTED if tag ∈ v[2])
+        ## Find the relative path for the tag-feeds
+        rss_rel = strip(globvar("tag_page_path"), '/') * "/" * tag * "/"
         ## Write the file
-        write_rss_xml(rss_path, rss_title, rss_descr, rss_link, rss_items)
+        write_rss_xml(rss_path, rss_title, rss_descr, rss_link, rss_items, rss_rel)
     end
 
     return nothing
 end
 
-function write_rss_xml(rss_path, rss_title, rss_descr, rss_link, rss_items)
+function write_rss_xml(rss_path, rss_title, rss_descr, rss_link, rss_items, rss_rel="")
     # is there an RSS file already? if so remove it
     isfile(rss_path) && rm(rss_path)
     # make sure the directory exists
@@ -166,7 +168,7 @@ function write_rss_xml(rss_path, rss_title, rss_descr, rss_link, rss_items)
           <title>$rss_title</title>
           <description><![CDATA[$(fix_relative_links(rss_descr, rss_link))]]></description>
           <link>$rss_link</link>
-          <atom:link href="$(rss_link)feed.xml" rel="self" type="application/rss+xml" />
+          <atom:link href="$(rss_link)$(rss_rel)feed.xml" rel="self" type="application/rss+xml" />
         """)
 
 
