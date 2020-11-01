@@ -27,7 +27,8 @@ struct RSSItem
     pubDate::Date        # note: should respect RFC822 (https://www.w3.org/Protocols/rfc822/)
 end
 
-const RSS_DICT = LittleDict{String,RSSItem}()
+# page_url => (RSSItem, tag vector)
+const RSS_DICT = LittleDict{String,Tuple{RSSItem,Vector{String}}}()
 
 
 """
@@ -71,6 +72,9 @@ function add_rss_item()
     comments  = locvar(:rss_comments)
     enclosure = locvar(:rss_enclosure)
 
+    # Keep track of tags for tag specific feeds
+    tags = locvar(:tags)::Vector{String}
+
     pubDate = locvar(:rss_pubdate)
     if pubDate == Date(1)
         pubDate = locvar(:date)
@@ -85,8 +89,9 @@ function add_rss_item()
         An RSS description was found but without title for page '$link'.
         """)
 
-    res = RSS_DICT[link] = RSSItem(title, link, descr, author,
-                                   category, comments, enclosure, pubDate)
+    rss = RSSItem(title, link, descr, author, category, comments, enclosure, pubDate)
+
+    res = RSS_DICT[link] = (rss, tags)
     return res
 end
 
@@ -121,9 +126,36 @@ function rss_generator()::Nothing
     endswith(rss_link, "/") || (rss_link *= "/")
     rss_descr = fd2html(rss_descr; internal=true) |> remove_html_ps
 
-    # is there an RSS file already? if so remove it
+    # sort items by pubDate
+    RSS_DICT_SORTED = sort(OrderedDict(RSS_DICT), rev = true, byvalue = true, by = x -> x[1].pubDate)
+
+    # Global feed; include all items
     rss_path = joinpath(PATHS[:site], "feed.xml")
+    ## Remove tags vector
+    rss_items = OrderedDict{String,RSSItem}(k => v[1] for (k, v) in RSS_DICT_SORTED)
+    ## Write the file
+    write_rss_xml(rss_path, rss_title, rss_descr, rss_link, rss_items)
+
+    # Tag specific feed; filter items by tag
+    ## Collect all tags
+    tags = Set{String}()
+    foreach(x -> union!(tags, x[2]), values(RSS_DICT))
+    for tag in tags
+        rss_path = joinpath(path(:tag), tag, "feed.xml")
+        ## Filter items containing this tag only
+        rss_items = OrderedDict{String,RSSItem}(k => v[1] for (k, v) in RSS_DICT_SORTED if tag ∈ v[2])
+        ## Write the file
+        write_rss_xml(rss_path, rss_title, rss_descr, rss_link, rss_items)
+    end
+
+    return nothing
+end
+
+function write_rss_xml(rss_path, rss_title, rss_descr, rss_link, rss_items)
+    # is there an RSS file already? if so remove it
     isfile(rss_path) && rm(rss_path)
+    # make sure the directory exists
+    mkpath(dirname(rss_path))
 
     # create a buffer which will correspond to the output
     rss_buff = IOBuffer()
@@ -137,11 +169,9 @@ function rss_generator()::Nothing
           <atom:link href="$(rss_link)feed.xml" rel="self" type="application/rss+xml" />
         """)
 
-    # sort items by pubDate
-    RSS_DICT_SORTED = sort(OrderedDict(RSS_DICT), rev = true, byvalue = true, by = x -> x.pubDate)
 
     # loop over items
-    for (k, v) in RSS_DICT_SORTED
+    for (k, v) in rss_items
         full_link = rss_link
         if startswith(v.link, "/")
             full_link *= v.link[2:end]

@@ -47,7 +47,7 @@ end
 
 @testset "RSS" begin
     F.set_var!(F.GLOBAL_VARS, "website_descr", "")
-    F.RSS_DICT["hello"] = F.RSSItem("","","","","","","",Date(1))
+    F.RSS_DICT["hello"] = (F.RSSItem("","","","","","","",Date(1)), String[])
     global r = ""; s = @capture_out begin
         global r
         r = F.rss_generator()
