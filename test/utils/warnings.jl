@@ -28,7 +28,7 @@ end
     s = @capture_out F.add_rss_item()
     @test occursin("Warning: in <input string>", s)
     @test occursin("An RSS description was found but without title", s)
-    @test occursin("for page '/hey/ho/'.", s)
+    @test occursin("for page '/hey/ho/index.html'.", s)
 end
 
 @testset "warn-paginate" begin

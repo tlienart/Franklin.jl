@@ -61,7 +61,7 @@ $SIGNATURES
 Create an `RSSItem` out of the provided fields defined in the page vars.
 """
 function add_rss_item()
-    link  = get_url(url_curpage())
+    link  = url_curpage()
     title = jor("rss_title", "title")
     descr = jor("rss", "rss_description")
 
@@ -141,11 +141,11 @@ function rss_generator()::Nothing
     tags = Set{String}()
     foreach(x -> union!(tags, x[2]), values(RSS_DICT))
     for tag in tags
-        rss_path = joinpath(path(:tag), tag, "feed.xml")
+        rss_path = joinpath(path(:tag), refstring(tag), "feed.xml")
         ## Filter items containing this tag only
         rss_items = OrderedDict{String,RSSItem}(k => v[1] for (k, v) in RSS_DICT_SORTED if tag ∈ v[2])
         ## Find the relative path for the tag-feeds
-        rss_rel = strip(globvar("tag_page_path"), '/') * "/" * tag * "/"
+        rss_rel = strip(globvar("tag_page_path"), '/') * "/" * refstring(tag) * "/"
         ## Write the file
         write_rss_xml(rss_path, rss_title, rss_descr, rss_link, rss_items, rss_rel)
     end
@@ -174,18 +174,14 @@ function write_rss_xml(rss_path, rss_title, rss_descr, rss_link, rss_items, rss_
 
     # loop over items
     for (k, v) in rss_items
-        full_link = rss_link
-        if startswith(v.link, "/")
-            full_link *= v.link[2:end]
-        else
-            full_link *= v.link
-        end
+        full_link = rss_link * lstrip(v.link, '/')
+        full_link = replace(full_link, r"index\.html$" => "")
         write(rss_buff,
           """
             <item>
               <title>$(v.title)</title>
               <link>$(full_link)</link>
-              <description><![CDATA[$(fix_relative_links(v.description, rss_link))<br><a href=\"$full_link\">Read more</a>]]></description>
+              <description><![CDATA[$(fix_relative_links(v.description, rss_link))<br><a href=\"$(full_link)\">Read more</a>]]></description>
           """)
         for elem in (:author, :category, :comments, :enclosure)
             e = getproperty(v, elem)
