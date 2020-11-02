@@ -20,22 +20,22 @@ end
     F.set_var!(F.GLOBAL_VARS, "website_descr", "Website descr")
     F.set_var!(F.GLOBAL_VARS, "website_url", "https://github.com/tlienart/Franklin.jl/")
 
-    # Page 1 with tags = ["foo"]
+    # Page 1 with tags = ["foo", "t.a g"]
     F.def_LOCAL_VARS!()
     set_curpath("hey/hello.md")
     F.set_var!(F.LOCAL_VARS, "rss_title", "title 1")
     F.set_var!(F.LOCAL_VARS, "rss", "Page with tag foo.")
     F.set_var!(F.LOCAL_VARS, "rss_pubdate", Date(2020, 10, 27))
-    F.set_var!(F.LOCAL_VARS, "tags", ["foo"])
+    F.set_var!(F.LOCAL_VARS, "tags", ["foo", "t.a g"])
 
     item, tags = F.add_rss_item()
     @test item.title == "title 1"
     @test item.description == "Page with tag foo.\n"
     @test item.author == ""
     @test item.pubDate == Date(2020, 10, 27)
-    @test tags == ["foo"]
+    @test tags == ["foo", "t.a g"]
     @test F.RSS_DICT["/hey/hello/index.html"][1].description == item.description
-    @test F.RSS_DICT["/hey/hello/index.html"][2] == ["foo"]
+    @test F.RSS_DICT["/hey/hello/index.html"][2] == ["foo", "t.a g"]
 
     # Page 2 with tags = ["foo", "bar"]
     F.def_LOCAL_VARS!()
@@ -95,4 +95,10 @@ end
     @test occursin("<pubDate>Fri, 30 Oct 2020 00:00:00 UT</pubDate>", bar_feed)
     @test !occursin("<pubDate>Tue, 27 Oct 2020 00:00:00 UT</pubDate>", bar_feed)
     @test occursin("<atom:link href=\"https://github.com/tlienart/Franklin.jl/tag/bar/feed.xml\" rel=\"self\" type=\"application/rss+xml\" />", bar_feed)
+
+    ### t.a g tag (check handling of special characters)
+    feed = joinpath(F.PATHS[:tag], "ta_g", "feed.xml")
+    @test isfile(feed)
+    tag_feed = read(feed, String)
+    @test occursin("<atom:link href=\"https://github.com/tlienart/Franklin.jl/tag/ta_g/feed.xml\" rel=\"self\" type=\"application/rss+xml\" />", tag_feed)
 end

@@ -141,11 +141,11 @@ function rss_generator()::Nothing
     tags = Set{String}()
     foreach(x -> union!(tags, x[2]), values(RSS_DICT))
     for tag in tags
-        rss_path = joinpath(path(:tag), tag, "feed.xml")
+        rss_path = joinpath(path(:tag), refstring(tag), "feed.xml")
         ## Filter items containing this tag only
         rss_items = OrderedDict{String,RSSItem}(k => v[1] for (k, v) in RSS_DICT_SORTED if tag ∈ v[2])
         ## Find the relative path for the tag-feeds
-        rss_rel = strip(globvar("tag_page_path"), '/') * "/" * tag * "/"
+        rss_rel = strip(globvar("tag_page_path"), '/') * "/" * refstring(tag) * "/"
         ## Write the file
         write_rss_xml(rss_path, rss_title, rss_descr, rss_link, rss_items, rss_rel)
     end
