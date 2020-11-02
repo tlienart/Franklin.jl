@@ -79,17 +79,33 @@ Result: \red{hello!}.
 Result: \red{hello!}.
 
 ```plaintext
-\newenvironment{center}{\html{<div style="text-align:center">}}{\html{</div>}}
+\newenvironment{center}{
+  \html{<div style="text-align:center">}
+}{
+  \html{</div>}
+}
 Result: \begin{center}This bit of text is in a centered div.\end{center}
 ```
-\newenvironment{center}{\html{<div style="text-align:center">}}{\html{</div>}}
+\newenvironment{center}{
+  \html{<div style="text-align:center">}
+}{
+  \html{</div>}
+}
 Result: \begin{center}This bit of text is centered.\end{center}
 
 ```plaintext
-\newenvironment{figure}[1]{\html{<figure>}}{\html{<figcaption>#1</figcaption></figure>}}
+\newenvironment{figure}[1]{
+  \html{<figure>}
+}{
+  \html{<figcaption>#1</figcaption></figure>}
+}
 Result: \begin{figure}{A koala eating a leaf.}![](/assets/koala.jpg)\end{figure}
 ```
-\newenvironment{figure}[1]{\html{<figure>}}{\html{<figcaption>#1</figcaption></figure>}}
+\newenvironment{figure}[1]{
+  \html{<figure>}
+}{
+  \html{<figcaption>#1</figcaption></figure>}
+}
 Result: \begin{figure}{A koala eating a leaf.}![](/assets/koala.jpg)\end{figure}
 
 ### Customise with Julia code

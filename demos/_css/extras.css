@@ -29,3 +29,33 @@ figcaption {
   padding:0;
   width: 25%;
 }
+
+
+/* ----------------- */
+
+
+pre {
+	position: relative;
+	/* padding: 30px; */
+}
+
+.copy-button {
+	cursor: pointer;
+	border: 0;
+	font-size: 10px;
+	text-transform: uppercase;
+	font-weight: 500;
+	padding: 6px 10px 10px;
+	color: #795548;
+	background-color: transparent;
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+.copy-button:hover,
+.copy-button:focus,
+.copy-button:active {
+	outline: 0;
+	background-color: #eee9e6;
+}
