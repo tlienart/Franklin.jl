@@ -88,7 +88,7 @@ function run_code(mod::Module, code::AS, out_path::AS;
         res = nothing
     end
     # if last bit ends with `;` return nothing (no display)
-    code[end] == ';' && return nothing
+    endswith(code, r";\s*") && return nothing
     # if last line is a Julia value return
     isa(exs[end], Expr) || return res
     # if last line of the code is a `show`
