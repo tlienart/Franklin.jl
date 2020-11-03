@@ -13,3 +13,30 @@
          <pre><code class="plaintext">12</code></pre>
         """)
 end
+
+
+@testset "shortcut" begin
+    a = """
+        A
+        ```!
+        x = 1
+        ```
+        B
+        ```!
+        print(x)
+        ```
+        """ |> fd2html
+    @test isapproxstr(a, """
+            <p>A</p>
+
+            <pre><code class="language-julia">
+            x &#61; 1
+            </code></pre>
+            <pre><code class="plaintext">1</code></pre>
+
+            <p>B</p>
+
+            <pre><code class="language-julia">print&#40;x&#41;</code></pre>
+            <pre><code class="plaintext">1</code></pre>
+            """)
+end

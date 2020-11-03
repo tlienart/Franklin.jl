@@ -9,17 +9,25 @@ $SIGNATURES
 Take a fenced code block and return a tuple with the language, the relative
 path (if any) and the code.
 """
-function parse_fenced_block(ss::SubString)::Tuple
-    # cases: (note there's necessarily a lang, see `convert_block`)
-    # * ```lang ... ``` where lang can be something like julia-repl
-    # * ```lang:path ... ``` where path is a relative path like "this/path"
-    # group 1 => lang; group 2 => path; group 3 => code
-    reg   = ifelse(startswith(ss, "`````"), CODE_5_PAT, CODE_3_PAT)
-    m     = match(reg, ss)
-    lang  = m.captures[1]
-    rpath = m.captures[2]
-    code  = strip(m.captures[3])
-    rpath === nothing || (rpath = rpath[2:end]) # ignore starting `:`
+function parse_fenced_block(ss::SubString, shortcut=false)::Tuple
+    if shortcut
+        lang  = locvar(:lang)
+        cntr  = locvar(:fd_evalc)
+        rpath = "_ceval_$cntr"
+        code  = match(CODE_3!_PAT, ss).captures[1]
+        set_var!(LOCAL_VARS, "fd_evalc", cntr + 1)
+    else
+        # cases: (note there's necessarily a lang, see `convert_block`)
+        # * ```lang ... ``` where lang can be something like julia-repl
+        # * ```lang:path ... ``` where path is a relative path like "this/path"
+        # group 1 => lang; group 2 => path; group 3 => code
+        reg   = ifelse(startswith(ss, "`````"), CODE_5_PAT, CODE_3_PAT)
+        m     = match(reg, ss)
+        lang  = m.captures[1]
+        rpath = m.captures[2]
+        code  = strip(m.captures[3])
+        rpath === nothing || (rpath = rpath[2:end]) # ignore starting `:`
+    end
     return lang, rpath, code
 end
 
@@ -74,9 +82,9 @@ Helper function to process the content of a code block.
 Return the html corresponding to the code block, possibly after having
 evaluated the code.
 """
-function resolve_code_block(ss::SubString)::String
+function resolve_code_block(ss::SubString; shortcut=false)::String
     # 1. what kind of code is it
-    lang, rpath, code = parse_fenced_block(ss)
+    lang, rpath, code = parse_fenced_block(ss, shortcut)
     # 1.a if no rpath is given, code should not be evaluated
     isnothing(rpath) && return html_code(code, lang)
     # 1.b if not julia code, eval is not supported
@@ -125,7 +133,7 @@ function resolve_code_block(ss::SubString)::String
         set_var!(LOCAL_VARS, "fd_eval", true)
     end
     # >> finally return as html
-    if locvar(:showall)
+    if locvar(:showall) || shortcut
         return html_code(code, lang) *
                 reprocess("\\show{$rpath}", [GLOBAL_LXDEFS["\\show"]])
     end

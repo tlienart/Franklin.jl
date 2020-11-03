@@ -14,8 +14,9 @@ function convert_block(β::AbstractBlock, lxdefs::Vector{LxDef})::AS
 
     βn == :CODE_INLINE     && return html_code_inline(stent(β) |> htmlesc)
     βn == :CODE_BLOCK_LANG && return resolve_code_block(β.ss)
-    βn == :CODE_BLOCK_IND  && return convert_indented_code_block(β.ss)
+    βn == :CODE_BLOCK!     && return resolve_code_block(β.ss, shortcut=true)
     βn == :CODE_BLOCK      && return html_code(stent(β), "{{fill lang}}")
+    βn == :CODE_BLOCK_IND  && return convert_indented_code_block(β.ss)
 
     βn == :ESCAPE          && return chop(β.ss, head=3, tail=3)
     βn == :FOOTNOTE_REF    && return convert_footnote_ref(β)

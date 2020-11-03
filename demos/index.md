@@ -19,16 +19,28 @@ The ordering is reverse chronological but just use the table of contents to guid
 
 ## (011) showing type information
 
-This is a short demo following a discussion on Slack:
+This is a short demo following a discussion on Slack, it shows three things:
 
-```julia:extype
+* how to mark a block as "_run here directly and show the output_" without having to explicitly add a path and use a `\show`
+* that types are now shown properly as they would be in the REPL.
+* that continuation works from cell to cell (i.e. you can assume that a cell further below another cell has access to what was defined in the first)
+
+```!
+s = "hello"
 struct T; v::Int; end
 [
     Dict(:a => T(1)),
     Dict(:b => T(2)),
 ]
 ```
-\show{extype}
+
+Here's another cell
+
+```!
+T(1)
+print(s)
+```
+
 
 ## (010) clipboard button for code blocks
 
