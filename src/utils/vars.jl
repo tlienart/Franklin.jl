@@ -118,13 +118,14 @@ const LOCAL_VARS_DEFAULT = [
     # ROBOTS.TXT
     "robots_disallow_this_page" => dpair(false),
     # -------------
-    # MISCELLANEOUS (should not be modified)
+    # MISCELLANEOUS (should not be modified by the user)
     "fd_mtime_raw" => dpair(Date(1)),
     "fd_ctime"     => dpair("0001-01-01"),  # time of creation
     "fd_mtime"     => dpair("0001-01-01"),  # time of last modification
-    "fd_rpath"     => dpair(""),       # rpath to current page [1]
-    "fd_url"       => dpair(""),       # url to current page [2]
-    "fd_tag"       => dpair(""),       # (generated) current tag
+    "fd_rpath"     => dpair(""),            # rpath to current page [1]
+    "fd_url"       => dpair(""),            # url to current page [2]
+    "fd_tag"       => dpair(""),            # (generated) current tag
+    "fd_evalc"     => dpair(1),             # counter for direct evaluation cells (3! blocks)
     ]
 #=
 NOTE:

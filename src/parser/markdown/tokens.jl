@@ -89,6 +89,7 @@ const MD_TOKENS = LittleDict{Char, Vector{TokenFinder}}(
               isexactly("``", ('`',), false)  => :CODE_DOUBLE, # ``⎵*
               # 3+ can be named
               isexactly("```",   SPACE_CHAR) => :CODE_TRIPLE, # ```⎵*
+              isexactly("```!",  SPACE_CHAR) => :CODE_TRIPLE!,# ```!⎵*
               is_language(3)                 => :CODE_LANG3,  # ```lang*
               isexactly("````",  SPACE_CHAR) => :CODE_QUAD,   # ````⎵*
               is_language(4)                 => :CODE_LANG4,  # ````lang*
@@ -146,6 +147,7 @@ const MD_OCB = [
     OCProto(:CODE_BLOCK_LANG, :CODE_LANG3,   (:CODE_TRIPLE,)  ),
     OCProto(:CODE_BLOCK_LANG, :CODE_LANG4,   (:CODE_QUAD,)    ),
     OCProto(:CODE_BLOCK_LANG, :CODE_LANG5,   (:CODE_PENTA,)   ),
+    OCProto(:CODE_BLOCK!,     :CODE_TRIPLE!, (:CODE_TRIPLE,)  ),
     OCProto(:CODE_BLOCK,      :CODE_TRIPLE,  (:CODE_TRIPLE,)  ),
     OCProto(:CODE_BLOCK,      :CODE_QUAD,    (:CODE_QUAD,)    ),
     OCProto(:CODE_BLOCK,      :CODE_PENTA,   (:CODE_PENTA,)   ),
@@ -253,7 +255,7 @@ CODE_BLOCKS_NAMES
 
 List of names of code blocks environments.
 """
-const CODE_BLOCKS_NAMES = (:CODE_BLOCK_LANG, :CODE_BLOCK, :CODE_BLOCK_IND)
+const CODE_BLOCKS_NAMES = (:CODE_BLOCK_LANG, :CODE_BLOCK, :CODE_BLOCK!, :CODE_BLOCK_IND)
 
 """
     MD_CLOSEP

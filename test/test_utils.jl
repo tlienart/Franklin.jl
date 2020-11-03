@@ -1,4 +1,5 @@
 import DataStructures: OrderedDict
+import Base.//
 
 # This set of tests directly uses the high-level `convert` functions
 # And checks the behaviour is as expected.
