@@ -17,6 +17,37 @@ The ordering is reverse chronological but just use the table of contents to guid
 
 \toc
 
+## (011) showing type information
+
+This is a short demo following a discussion on Slack:
+
+```julia:extype
+struct T; v::Int; end
+[
+    Dict(:a => T(1)),
+    Dict(:b => T(2)),
+]
+```
+\show{extype}
+
+## (010) clipboard button for code blocks
+
+It's fairly easy to add a "copy" button to your code blocks using  a tool like [`clipboard.js`](https://clipboardjs.com).
+In fact on this demo page, as you can see, there is a copy button on all code blocks.
+The steps to  reproduce  this are:
+
+* copy the [`clipboard.min.js`](https://github.com/tlienart/Franklin.jl/blob/master/demos/_libs/clipboard.min.js) to `/libs/clipboard.min.js` (_note that this is an old version of the library, `1.4` or something, if you take  the most recent version, you will have to adapt the script_)
+* load that in `_layout/head.html` adding something like
+
+```html
+<script src="/libs/clipboard.min.js"></script>
+```
+
+* add Javascript in the `_layout/foot.html`,  something [like this](https://github.com/tlienart/Franklin.jl/blob/master/demos/_layout/foot_clipboard.html)
+* adjust the CSS, for instance [something like this](https://github.com/tlienart/Franklin.jl/blob/0276b1afb054017ff7e81bc7d083021a867a4b92/demos/_css/extras.css#L37-L61)
+
+and that's it 🏁.
+
 ## (009) custom environment for TikzCD
 
 Following up on [#008](#008_custom_environments_and_commands), here's a custom environment for Tikz diagrams using the [TikzCDs.jl](https://github.com/JuliaTeX/TikzCDs.jl) package.
