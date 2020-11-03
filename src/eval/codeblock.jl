@@ -127,7 +127,11 @@ function resolve_code_block(ss::SubString; shortcut=false)::String
         # >> this weird thing is to make sure that the proper "show"
         #    is called...
         io = IOBuffer()
-        Core.eval(mod, quote show($io, "text/plain", $res) end)
+        if typeof(res) in (Symbol, Expr)
+            show(io, res)
+        else
+            Core.eval(mod, quote show($io, "text/plain", $res) end)
+        end
         write(cp.res_path, take!(io))
         # >> since we've evaluated a code block, toggle scope as stale
         set_var!(LOCAL_VARS, "fd_eval", true)
