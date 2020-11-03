@@ -41,6 +41,12 @@ T(1)
 print(s)
 ```
 
+Suppressed output:
+
+```!
+X = randn(2, 3);
+```
+
 
 ## (010) clipboard button for code blocks
 
