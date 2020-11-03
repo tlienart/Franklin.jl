@@ -1,4 +1,6 @@
 """
+    \\input{qualifier}{rpath}
+
 Resolve a command of the form `\\input{qualifier}{rpath}` where
 
 * `qualifier` indicates what should be inserted (either a code block or a
@@ -72,6 +74,8 @@ end
 
 
 """
+    \\output{...}
+
 Return the output of a code. Possibly including the result of the code
 (`res=true`) and possibly reprocessing the whole (`reproc=true`).
 At most one will be true. See [`lx_show`](@ref).
@@ -95,7 +99,7 @@ function lx_output(lxc::LxCom, lxd::Vector{LxDef};
             if !isempty(output) && !endswith(output, "\n")
                 output *= "\n"
             end
-            output *= result
+            output *= replace(result, r"Main\.FD_SANDBOX_[0-9]+\." => "")
         end
     end
     # should it be reprocessed ?
@@ -104,16 +108,22 @@ function lx_output(lxc::LxCom, lxd::Vector{LxDef};
 end
 
 """
+    \\textoutput{...}
+
 Same as [`output`](@ref) but with re-processing.
 """
 lx_textoutput(lxc::LxCom, lxd) = lx_output(lxc, lxd; reproc=true)
 
 """
+    \\show{...}
+
 Same as [`output`](@ref) but adding the result.
 """
 lx_show(lxc::LxCom, lxd) = lx_output(lxc, lxd; res=true)
 
 """
+    \\textinput{...}
+
 Resolve a `\\textinput{rpath}` command: insert **and reprocess** some text.
 If you just want to include text as a plaintext block use
 `\\input{plaintext}{rpath}` instead.
@@ -131,6 +141,8 @@ function lx_textinput(lxc::LxCom, lxd::Vector{LxDef})
 end
 
 """
+    \\figalt{...}{...}
+
 Resolve a `\\figalt{alt}{rpath}` (find a fig and include it with alt).
 """
 function lx_figalt(lxc::LxCom, _)
@@ -166,6 +178,8 @@ function lx_figalt(lxc::LxCom, _)
 end
 
 """
+    \\tableinput{...}{...}
+
 Resolve a `\\tableinput{header}{rpath}` (find a table+header and include it).
 """
 function lx_tableinput(lxc::LxCom, _)
@@ -192,6 +206,8 @@ function lx_tableinput(lxc::LxCom, _)
 end
 
 """
+    \\liteate{...}
+
 Resolve a `\\literate{rpath}` (find a literate script and insert it).
 """
 function lx_literate(lxc::LxCom, lxd::Vector{LxDef})
