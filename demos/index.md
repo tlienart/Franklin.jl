@@ -8,7 +8,7 @@
 This website is meant to be a quick way to show how to do stuff that people ask (or that I thought would be a nice demo), it will complement the [official documentation](https://franklinjl.org/).
 
 It's not meant to be beautiful, rather just show how to get specific stuff done.
-If one block answers one of your question, make sure to check [the source](https://github.com/tlienart/Franklin.jl/tree/master/demos) to see how it was done.
+If one block answers one of your question, make sure to check [the source](https://github.com/tlienart/Franklin.jl/tree/master/demos/index.md) to see how it was done.
 The ordering is reverse chronological but just use the table of contents to guide you to whatever you might want to explore.
 
 **Note**: an important philosophy here is that if you can write a Julia function that would produce the HTML you want, then write that function and let Franklin call it.
