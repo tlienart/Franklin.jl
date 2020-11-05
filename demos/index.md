@@ -17,6 +17,12 @@ The ordering is reverse chronological but just use the table of contents to guid
 
 \toc
 
+## (012) Dates
+
+The date of last modification on the page is kept in the `fd_mtime_raw` internal page variable, there is also a pre-formatted `fd_mtime`.
+
+Last modified: {{fd_mtime_raw}} or {{fd_mtime}}
+
 ## (011) showing type information
 
 This is a short demo following a discussion on Slack, it shows three things:
