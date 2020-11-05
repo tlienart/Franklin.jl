@@ -229,6 +229,7 @@ Note that variables shown below that have a  name starting with  `fd_` are _not 
 | `maxtoclevel` | `Int` | `10` | maximum title level to go in the table of content
 | `fd_ctime` | `String` |  | time of creation of the markdown file
 | `fd_mtime` | `String` |  | time of last modification of the markdown file
+| `fd_mtime_raw` | `Date` |  | time of last modification in `Date` object
 | `fd_rpath` | `String` |  | relative path to file `[(...)/thispage.md]`
 @@
 
