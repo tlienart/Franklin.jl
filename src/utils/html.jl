@@ -130,17 +130,18 @@ Helper function to get the relative url of the current page.
 """
 function url_curpage()
     # get the relative path to current page and split extension (.md)
-    fn = splitext(locvar(:fd_rpath))[1]
-    # if it's not `index` then add `index`:
-    if splitdir(fn)[2] != "index"
-        fn = joinpath(fn, "index")
+    fn, ext = splitext(locvar(:fd_rpath))
+    if ext != ".html"
+        # if it's not `index` then add `index`:
+        if splitdir(fn)[2] != "index"
+            fn = joinpath(fn, "index")
+        end
+        fn *= ".html"
     end
-    fn *= ".html"
     # unixify
     fn = unixify(fn)
     # if it does not start with "/", add a "/" in front
     startswith(fn, "/") || (fn = "/" * fn)
-    # append .html and return
     return fn
 end
 
