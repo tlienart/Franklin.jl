@@ -197,7 +197,7 @@ end
 ```plaintext
 Result: \begin{cap}{ba}Baba Yaga with a baseball bat\end{cap}
 ```
-Result: \begin{cap}{ba}Baba Yaga with a baseball bat\end{cap}.
+Result: \begin{cap}{ba}Baba Yaga with a baseball bat\end{cap}
 
 Of course these are toy examples and you could have arrived to the same effect some other way.
 With a bit of practice, you might develop a preference towards using one out of the three options:  `hfun_*`, `lx_*` or `env_*` depending on your context.
