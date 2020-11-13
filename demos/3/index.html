@@ -89,7 +89,6 @@ end</code></pre>
 <pre><code class=language-plaintext >Result: \begin&#123;cap&#125;&#123;ba&#125;Baba Yaga with a baseball bat\end&#123;cap&#125;</code></pre>
 <p>Result: </p>
 <b>BaBA Yaga with a BAseBAll BAt</b>
-<p>.</p>
 <p>Of course these are toy examples and you could have arrived to the same effect some other way. With a bit of practice, you might develop a preference towards using one out of the three options: <code>hfun_*</code>, <code>lx_*</code> or <code>env_*</code> depending on your context.</p>
 <h2 id=007_delayed_hfun ><a href="#007_delayed_hfun">&#40;007&#41; delayed hfun</a></h2>
 <p>When you call <code>serve&#40;&#41;</code>, Franklin first does a full pass which builds all your pages and then waits for changes to happen in a given page before updating that page. If you have a page <code>A</code> and a page <code>B</code> and that the page <code>A</code> calls a function which would need something that will only be defined once <code>B</code> is built, you have two cases:</p>
@@ -167,7 +166,7 @@ ls &#61; latexify&#40;empty_ary&#41; # this is an L string</code></pre>
 \[
 \left[
 \begin{array}{cc}
-0.0 & 0.0 \\
+1.1e-44 & 0.0 \\
 0.0 & 0.0 \\
 \end{array}
 \right]
