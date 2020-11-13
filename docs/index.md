@@ -23,6 +23,8 @@ _click on the '&check;' sign to know more_
 * \goto{/code/literate/} Straightforward integration with [Literate.jl](https://github.com/fredrikekre/Literate.jl).
 @@
 
+\note{If you already have experience with Franklin and just want to keep an eye on (new) tips and tricks, have a look at the short [demos](/demos/)}
+
 ## Quick start
 
 To install Franklin with Julia **≥ 1.3**,
