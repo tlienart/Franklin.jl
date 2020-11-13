@@ -68,7 +68,7 @@ const CODE_3_PAT = Regex(
         "```([a-zA-Z][a-zA-Z-]*)" *    # language
         "(?:(" * # optional script name
             "\\:[\\p{L}\\\\\\/_\\.]" * # :(...) start of script name
-            "[\\p{L}_0-9-\\\\\\/]+"  * # script name
+            "[\\p{L}_0-9-\\\\\\/]*"  * # script name
             "(?:\\.[a-zA-Z0-9]+)?"   * # script extension
         ")|(?:\\n|\\s))" *
         "\\s*\\n?((?:.|\\n)*)```") # rest of the code

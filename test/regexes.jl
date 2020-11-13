@@ -96,6 +96,7 @@ end
 ### Code blocks
 @testset "code" begin
     list = (
+        "```julia:n some code```", # issue 705
         "```julia:ex some code```",
         "```cpp:πγ some code```",
         "```julia:πγ.jl some code```",
