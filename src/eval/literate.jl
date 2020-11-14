@@ -10,10 +10,11 @@ $SIGNATURES
 Take a Literate.jl script and transform it into a Franklin-Markdown file.
 """
 function literate_to_franklin(rpath::AS)::Tuple{String,Bool}
-    rpath *= ifelse(endwith(rpath, ".jl"), "", ".jl")
-    if !startswith(fpath, '/')
+    rpath *= ifelse(endswith(rpath, ".jl"), "", ".jl")
+    if !startswith(rpath, '/')
         # try looking into the `_literate` folder
         fpath = joinpath(path(:literate), rpath)
+        srpath = split(fpath)[1:end-1] # ignore the file name
     else
         # rpath is of the form "/scripts/[path/]tutorial[.jl]"
         # split it so that when recombining it will lead to valid path inc windows
