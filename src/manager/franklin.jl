@@ -94,10 +94,8 @@ function serve(; clear::Bool=false,
     if !all(isdir, (joinpath(FOLDER_PATH[], "_layout"),
                     joinpath(FOLDER_PATH[], "_css")))
         throw(ArgumentError(
-            "The current directory doens't  have a `_layout` or `_css` " *
-            "folder, if you are using the old folder structure, please " *
-            "add `@def folder_structure = v\"0.1\"` in your config.md; " *
-            "otherwise, change directory to a valid Franklin folder."))
+            "The current directory doesn't  have a `_layout` or `_css` " *
+            "folder; change directory to a valid Franklin folder."))
     end
 
     # check if a Project.toml file is available, if so activate the folder
