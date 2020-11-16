@@ -148,10 +148,10 @@ end
 end
 
 @testset "Literate-c" begin
-    s = raw"""
-        \literate{foo}
-        """
-    @test_throws F.LiterateRelativePathError (s |> fd2html_td)
+    # s = raw"""
+    #     \literate{/foo/bar/foo}
+    #     """
+    # @test_throws F.LiterateRelativePathError (s |> fd2html_td)
     s = raw"""
         \literate{/foo}
         """
