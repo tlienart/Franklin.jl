@@ -64,12 +64,12 @@ end
         """))</code></pre>
         <pre><code class="plaintext">
         3×2 DataFrame
-        │ Row │ A     │ B      │
-        │     │ Int64 │ String │
-        ├─────┼───────┼────────┤
-        │ 1   │ 1     │ M      │
-        │ 2   │ 2     │ F      │
-        │ 3   │ 3     │ F      │
+         Row │ A      B
+             │ Int64  String
+        ─────┼───────────────
+           1 │     1  M
+           2 │     2  F
+           3 │     3  F
         </code></pre>
         """)
 end
