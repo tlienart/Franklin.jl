@@ -23,11 +23,10 @@
 </p>
 </h2>
 
-Franklin is a simple **static site generator** (SSG) oriented towards technical blogging (code, maths, ...) and light, fast-loading pages.
+Franklin is a simple **static site generator** (SSG) oriented towards technical blogging (code, maths, ...), flexibility and extensibility.
 The base syntax is plain markdown with a few extensions such as the ability to define and use LaTeX-like commands in or outside of maths environments and the possibility to evaluate code  blocks on the fly.
 
-Franklin now has a channel/stream **#franklin** on the Julia slack, this is the best place to ask usage question.
-For anything that looks suspicious, feel free to open an issue here directly.
+Franklin has a channel/stream **#franklin** on the Julia slack, this is the best place to ask usage question.
 
 ## Docs
 
