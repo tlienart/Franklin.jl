@@ -116,7 +116,7 @@
     <span style="font-size:24px;font-weight:300;">Set it up once then don't think about it.</span>
     
 <div class="blank"></div>
-<div class="franklin-toc"><ol><li><a href="#deploying_on_github">Deploying on GitHub</a><ol><li><a href="#creating_a_repo_on_github">Creating a repo on GitHub</a></li><li><a href="#synchronise_your_local_folder">Synchronise your local folder</a></li><li><a href="#examples">Examples</a></li><li><a href="#customising_the_github_action">Customising the GitHub action</a></li><li><a href="#troubleshooting">Troubleshooting</a></li></ol></li><li><a href="#deploying_on_gitlab">Deploying on GitLab</a><ol><li><a href="#creating_a_repo_on_gitlab">Creating a repo on GitLab</a></li><li><a href="#synchronise_your_local_folder__2">Synchronise your local folder</a></li></ol></li><li><a href="#deploying_on_netlify">Deploying on Netlify</a></li></ol></div>
+<div class="franklin-toc"><ol><li><a href="#deploying_on_github">Deploying on GitHub</a><ol><li><a href="#creating_a_repo_on_github">Creating a repo on GitHub</a></li><li><a href="#synchronise_your_local_folder">Synchronise your local folder</a></li><li><a href="#examples">Examples</a></li><li><a href="#customising_the_github_action">Customising the GitHub action</a></li><li><a href="#troubleshooting">Troubleshooting</a></li></ol></li><li><a href="#deploying_on_gitlab">Deploying on GitLab</a><ol><li><a href="#creating_a_repo_on_gitlab">Creating a repo on GitLab</a></li><li><a href="#create_and_optimize_your_site">Create and optimize your site</a></li><li><a href="#synchronise_your_local_folder__2">Synchronise your local folder</a></li><li><a href="#iterate">Iterate</a></li></ol></li><li><a href="#deploying_on_netlify">Deploying on Netlify</a></li></ol></div>
 <div class="blank"></div>
 <p>Deploying the website is trivial on GitHub, Gitlab and services like Netlify.</p>
 <h2 id="deploying_on_github"><a href="#deploying_on_github">Deploying on GitHub</a></h2>
@@ -180,6 +180,8 @@
 <li><p>for a project website the repo can be named anything you want.</p>
 </li>
 </ul></div>
+<h3 id="create_and_optimize_your_site"><a href="#create_and_optimize_your_site">Create and optimize your site</a></h3>
+<p>As before; before pushing, call <code>optimize&#40;&#41;</code> which will fix all your paths.</p>
 <h3 id="synchronise_your_local_folder__2"><a href="#synchronise_your_local_folder__2">Synchronise your local folder</a></h3>
 <p>Now you need to synchronise your repository and your local website folder; to do so, go to your terminal, <code>cd</code> to the website folder and follow the steps below:</p>
 <div class="tlist"><ul>
@@ -191,12 +193,14 @@
 <p>That&#39;s it&#33; when you push your updates to the <code>master</code> branch, the GitLab CI will copy the <code>__site</code> folder to a virtual <code>public</code> folder and deploy its content.</p>
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">It takes a couple of minutes for the whole process to complete and your site to be available online.</div></div>
+<h3 id="iterate"><a href="#iterate">Iterate</a></h3>
+<p>The <code>publish</code> command does the optimize followed by the git stuff all in one. So  you should probably use that  after the initial setup.</p>
 <h2 id="deploying_on_netlify"><a href="#deploying_on_netlify">Deploying on Netlify</a></h2>
 <p>Synchronise your local website folder with a repository &#40;e.g. a GitHub or GitLab repository&#41; then select that repository on Netlify and indicate you want to deploy the <code>__site</code> folder.</p>
 <p>That&#39;s it&#33;</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: November 17, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
+    &copy; Thibaut Lienart. Last modified: November 25, 2020. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
