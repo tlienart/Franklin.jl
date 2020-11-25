@@ -92,6 +92,10 @@ Start by creating an empty GitLab repository
 * for a project website the repo can be named anything you want.
 @@
 
+### Create and optimize your site
+
+As before; before pushing, call `optimize()` which will fix all your paths.
+
 ### Synchronise your local folder
 
 Now you need to synchronise your repository and your local website folder; to do so, go to your terminal, `cd` to the website folder and follow the steps below:
@@ -104,6 +108,10 @@ Now you need to synchronise your repository and your local website folder; to do
 That's it! when you push your updates to the `master` branch, the GitLab CI will copy the `__site` folder to a virtual `public` folder and deploy its content.
 
 \note{It takes a couple of minutes for the whole process to complete and your site to be available online.}
+
+### Iterate
+
+The `publish` command does the optimize followed by the git stuff all in one. So  you should probably use that  after the initial setup.
 
 ## Deploying on Netlify
 
