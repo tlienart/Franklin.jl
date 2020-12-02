@@ -19,10 +19,14 @@ function build_page(head, content, pgfoot, foot)
         content_class = dc
         content_id    = ""
     end
+    body = content * pgfoot
     # wrap the body in appropriate tags
     # <$tag class=$cclass>$content</$tag>
-    body = html_content(content_tag, content * pgfoot;
-                        class=content_class, id=content_id)
+    # if tag is empty, do not wrap it (can be useful for some templates)
+    if !isempty(content_tag)
+        body = html_content(content_tag, body;
+                            class=content_class, id=content_id)
+    end
     return head * body * foot
 end
 
