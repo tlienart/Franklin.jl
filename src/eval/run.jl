@@ -67,6 +67,13 @@ function run_code(mod::Module, code::AS, out_path::AS;
                     showerror(io, e)
                     println(String(take!(io)))
                     err = typeof(e)
+
+                    # Print stacktrace.
+                    for (exc, bt) in Base.catch_stack()
+                        showerror(stderr, exc, bt)
+                        println(stderr, "")
+                    end
+
                     break
                 end
                 e += 1
