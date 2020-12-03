@@ -261,7 +261,8 @@ macro delay(defun)
     name = def[:name]
     body = def[:body]
     def[:body] = quote
-        union!(Franklin.DELAYED, (Franklin.FD_ENV[:SOURCE],))
+        src = Franklin.FD_ENV[:SOURCE]
+        splitext(src)[2] in (".md", ".html") && union!(Franklin.DELAYED, (src,))
         $body
     end
     esc(combinedef(def))
