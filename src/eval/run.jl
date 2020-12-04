@@ -23,6 +23,12 @@ function parse_code(code::AS)
     exs
 end
 
+function trim_stacktrace(stacktrace::String)
+    rx = r"\[\d+\]\s\(\:\:Franklin.var(?:.*?)src\/eval\/run.jl"
+    first_match_start = first(first(findall(rx, stacktrace)))
+    stacktrace[1:first_match_start-3]
+end
+
 """
 $SIGNATURES
 
@@ -80,11 +86,6 @@ function run_code(mod::Module, code::AS, out_path::AS;
     end
     # if there was an error, return nothing and possibly show warning
     if !isnothing(err)
-        function strip_franklin(stacktrace::String)
-            rx = r"\[\d+\]\s\(\:\:Franklin.var(?:.*?)src\/eval\/run.jl"
-            first_match_start = first(first(findall(rx, stacktrace)))
-            stacktrace[1:first_match_start-3]
-        end
         FD_ENV[:SILENT_MODE] || print("\n")
         warn_err && print_warning("""
             There was an error of type '$err' when running a code block.
@@ -92,8 +93,8 @@ function run_code(mod::Module, code::AS, out_path::AS;
             might be helpful to understand and solve the issue.
             \nRelevant pointers:
             $POINTER_EVAL
-            \nStacktrace:
-            $(strip_franklin(stacktrace))
+            \nDetails:
+            $(trim_stacktrace(stacktrace))
             """)
         res = nothing
     end
