@@ -74,6 +74,7 @@ end
     @test occursin("Warning: in <input string>", s)
     @test occursin("error of type 'DomainError'", s)
     @test occursin("Checking the output files", s)
+    @test occursin("throw_complex_domainerror(::Symbol, ::Float64) at", s)
 end
 
 @testset "i462" begin

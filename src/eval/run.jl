@@ -52,6 +52,7 @@ function run_code(mod::Module, code::AS, out_path::AS;
     ne   = length(exs)
     res  = nothing # to capture final result
     err  = nothing
+    stacktrace = nothing
     ispath(out_path) || mkpath(dirname(out_path))
     open(out_path, "w") do outf
         if !FD_ENV[:SILENT_MODE]
@@ -68,11 +69,8 @@ function run_code(mod::Module, code::AS, out_path::AS;
                     println(String(take!(io)))
                     err = typeof(e)
 
-                    # Print stacktrace.
-                    for (exc, bt) in Base.catch_stack()
-                        showerror(stderr, exc, bt)
-                        println(stderr, "")
-                    end
+                    exc, bt = last(Base.catch_stack())
+                    stacktrace = sprint(showerror, exc, bt)
 
                     break
                 end
@@ -82,8 +80,6 @@ function run_code(mod::Module, code::AS, out_path::AS;
     end
     # if there was an error, return nothing and possibly show warning
     if !isnothing(err)
-        # TODO: add more informative message, maybe show type of error
-        # + parent path
         FD_ENV[:SILENT_MODE] || print("\n")
         warn_err && print_warning("""
             There was an error of type '$err' when running a code block.
@@ -91,6 +87,8 @@ function run_code(mod::Module, code::AS, out_path::AS;
             might be helpful to understand and solve the issue.
             \nRelevant pointers:
             $POINTER_EVAL
+            \nStacktrace:
+            $stacktrace
             """)
         res = nothing
     end
