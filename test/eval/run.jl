@@ -75,6 +75,7 @@ end
     @test occursin("error of type 'DomainError'", s)
     @test occursin("Checking the output files", s)
     @test occursin("throw_complex_domainerror(::Symbol, ::Float64) at", s)
+    @test !occursin("redirect_stdout", s)
 end
 
 @testset "i462" begin

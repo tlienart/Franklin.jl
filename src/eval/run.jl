@@ -80,6 +80,11 @@ function run_code(mod::Module, code::AS, out_path::AS;
     end
     # if there was an error, return nothing and possibly show warning
     if !isnothing(err)
+        function strip_franklin(stacktrace::String)
+            rx = r"\[\d+\]\s\(\:\:Franklin.var(?:.*?)src\/eval\/run.jl"
+            first_match_start = first(first(findall(rx, stacktrace)))
+            stacktrace[1:first_match_start-3]
+        end
         FD_ENV[:SILENT_MODE] || print("\n")
         warn_err && print_warning("""
             There was an error of type '$err' when running a code block.
@@ -88,7 +93,7 @@ function run_code(mod::Module, code::AS, out_path::AS;
             \nRelevant pointers:
             $POINTER_EVAL
             \nStacktrace:
-            $stacktrace
+            $(strip_franklin(stacktrace))
             """)
         res = nothing
     end
