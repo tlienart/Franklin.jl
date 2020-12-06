@@ -193,7 +193,7 @@ Dict to keep track of all pages and their vars. Each key is a relative path
 to a page, values are PageVars.
 The keys don't have the file extension so `"blog/pg1" => PageVars`.
 """
-const ALL_PAGE_VARS = Dict{String,PageVars}()
+const ALL_PAGE_VARS = LittleDict{String,PageVars}()
 
 """
     pagevar(rpath, name)

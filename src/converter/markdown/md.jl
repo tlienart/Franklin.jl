@@ -169,11 +169,14 @@ function convert_md(mds::AbstractString,
     (:convert_md, "hstring: '$hstring'") |> logger
 
     # final var adjustment, infer title if not given
+    rpath = splitext(locvar(:fd_rpath))[1]
     if isnothing(locvar(:title)) && !isempty(PAGE_HEADERS)
         title = first(values(PAGE_HEADERS))[1]
         set_var!(LOCAL_VARS, "title", title)
-        ALL_PAGE_VARS[splitext(locvar(:fd_rpath))[1]]["title"] =
-            deepcopy(LOCAL_VARS["title"])
+    end
+    # Copy vars to allpagevars to make them more easily accessible to other pages
+    if !(isrecursive || isinternal)
+        ALL_PAGE_VARS[rpath] = deepcopy(LOCAL_VARS)
     end
 
     # Return the string

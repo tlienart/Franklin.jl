@@ -64,7 +64,7 @@ function add_rss_item()
     link  = url_curpage()
     title = jor("rss_title", "title")
     descr = jor("rss", "rss_description")
-
+    
     descr = fd2html(descr; internal=true) |> remove_html_ps
 
     author    = locvar(:rss_author)
