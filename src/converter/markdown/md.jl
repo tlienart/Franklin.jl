@@ -199,6 +199,9 @@ function convert_md_math(ms::AS, lxdefs::Vector{LxDef}=Vector{LxDef}(),
                          offset::Int=0)::String
     # if a substring is given, copy it as string
     ms = String(ms)
+
+    (:convert_md_math, "ms: '$ms'") |> logger
+
     #
     # Parsing of the markdown string
     # (to find latex command, latex definitions, math envs etc.)
@@ -207,13 +210,20 @@ function convert_md_math(ms::AS, lxdefs::Vector{LxDef}=Vector{LxDef}(),
     #> 1. Tokenize (with restricted set)
     tokens = find_tokens(ms, MD_TOKENS_LX, MD_1C_TOKENS_LX)
 
+    (:convert_md_math, "tokens: '$tokens'") |> logger
+
     #> 2. Find braces and drop line returns thereafter
     blocks, tokens = find_all_ocblocks(tokens, MD_OCB_ALL, inmath=true)
+    deactivate_inner_blocks!(blocks)
     braces = filter(β -> β.name == :LXB, blocks)
+
+    (:convert_md_math, "braces: '$braces'") |> logger
 
     #> 3. Find latex envs and commands (indicate we're in a math environment + offset)
     lxenvs, tokens = find_lxenvs(tokens, lxdefs, braces, offset; inmath=true)
     lxcoms, _      = find_lxcoms(tokens, lxdefs,  braces, offset; inmath=true)
+
+    (:convert_md_math, "lxcoms: '$lxcoms'") |> logger
 
     #
     # Forming of the html string
