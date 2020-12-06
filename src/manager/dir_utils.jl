@@ -34,7 +34,7 @@ function form_output_path(base::AS, file::AS, case::Symbol)
         # file is index.html or 404.html --> keep the path
         # file is page.html  --> .../page/index.html
         fname = splitext(file)[1]
-        if fname ∉ ("index", "404")
+        if fname ∉ ("index", "404") && !endswith(fname, "/index")
             file = joinpath(fname, "index.html")
         end
     end
@@ -59,8 +59,6 @@ function _out_path(base::String)::String
        # path is not a 'special folder'
        outpath = replace(base, path(:folder) => path(:site))
    end
-    # if it doesn't exist, make the path
-    !ispath(outpath) && mkpath(outpath)
     return outpath
 end
 
