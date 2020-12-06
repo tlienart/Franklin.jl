@@ -8,13 +8,9 @@
 <p align="center">
   <img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg"
        alt="Lifecycle">
-  <a href="https://travis-ci.com/tlienart/Franklin.jl">
-    <img src="https://travis-ci.com/tlienart/Franklin.jl.svg?branch=master"
-         alt="Build Status (Linux)">
-  </a>
-  <a href="https://ci.appveyor.com/project/tlienart/Franklin-jl">
-    <img src="https://ci.appveyor.com/api/projects/status/github/tlienart/Franklin.jl?branch=master&svg=true"
-         alt="Build Status (Windows)">
+  <a href="https://github.com/tlienart/Franklin.jl/actions">
+    <img src="https://github.com/tlienart/Franklin.jl/workflows/CI/badge.svg"
+         alt="Build Status">
   </a>
   <a href="http://codecov.io/github/tlienart/Franklin.jl?branch=master">
     <img src="http://codecov.io/github/tlienart/Franklin.jl/coverage.svg?branch=master"
