@@ -214,3 +214,11 @@ end
         \[\begin{array}{rcl} \sin^2(x)+\cos^2(x) &=& 1\end{array}\]
         """)
 end
+
+@testset "issue #720" begin
+    s = raw"""
+        \newcommand{\ip}[2]{\langle #1, #2 \rangle}
+        $$\ip{\dot{a}}{\dot{b}}$$
+        """ |> fd2html
+    @test isapproxstr(s, raw"\[\langle \dot{a}, \dot{b} \rangle\]")
+end

@@ -26,7 +26,7 @@ end
     set_curpath("hey/ho.md")
     F.set_var!(F.LOCAL_VARS, "rss_title", "")
     s = @capture_out F.add_rss_item()
-    @test occursin("Warning: in <input string>", s)
+    @test occursin("Warning: in <unknown>", s)
     @test occursin("An RSS description was found but without title", s)
     @test occursin("for page '/hey/ho/index.html'.", s)
 end

@@ -169,11 +169,14 @@ function convert_md(mds::AbstractString,
     (:convert_md, "hstring: '$hstring'") |> logger
 
     # final var adjustment, infer title if not given
+    rpath = splitext(locvar(:fd_rpath))[1]
     if isnothing(locvar(:title)) && !isempty(PAGE_HEADERS)
         title = first(values(PAGE_HEADERS))[1]
         set_var!(LOCAL_VARS, "title", title)
-        ALL_PAGE_VARS[splitext(locvar(:fd_rpath))[1]]["title"] =
-            deepcopy(LOCAL_VARS["title"])
+    end
+    # Copy vars to allpagevars to make them more easily accessible to other pages
+    if !(isrecursive || isinternal)
+        ALL_PAGE_VARS[rpath] = deepcopy(LOCAL_VARS)
     end
 
     # Return the string
@@ -199,6 +202,9 @@ function convert_md_math(ms::AS, lxdefs::Vector{LxDef}=Vector{LxDef}(),
                          offset::Int=0)::String
     # if a substring is given, copy it as string
     ms = String(ms)
+
+    (:convert_md_math, "ms: '$ms'") |> logger
+
     #
     # Parsing of the markdown string
     # (to find latex command, latex definitions, math envs etc.)
@@ -207,13 +213,20 @@ function convert_md_math(ms::AS, lxdefs::Vector{LxDef}=Vector{LxDef}(),
     #> 1. Tokenize (with restricted set)
     tokens = find_tokens(ms, MD_TOKENS_LX, MD_1C_TOKENS_LX)
 
+    (:convert_md_math, "tokens: '$tokens'") |> logger
+
     #> 2. Find braces and drop line returns thereafter
     blocks, tokens = find_all_ocblocks(tokens, MD_OCB_ALL, inmath=true)
+    deactivate_inner_blocks!(blocks)
     braces = filter(β -> β.name == :LXB, blocks)
+
+    (:convert_md_math, "braces: '$braces'") |> logger
 
     #> 3. Find latex envs and commands (indicate we're in a math environment + offset)
     lxenvs, tokens = find_lxenvs(tokens, lxdefs, braces, offset; inmath=true)
     lxcoms, _      = find_lxcoms(tokens, lxdefs,  braces, offset; inmath=true)
+
+    (:convert_md_math, "lxcoms: '$lxcoms'") |> logger
 
     #
     # Forming of the html string

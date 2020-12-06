@@ -81,6 +81,16 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
                   "pip. The output will not be minified."
         end
     end
+
+    #
+    # Clean up empty folders if any
+    #
+    for name in readdir(path(:site))
+        p = joinpath(path(:site), name)
+        isdir(p) || continue
+        isempty(readdir(p)) && rm(p)
+    end
+
     FD_ENV[:SUPPRESS_ERR] = false
     return ifelse(sig, succ, nothing)
 end

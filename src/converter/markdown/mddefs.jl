@@ -93,11 +93,7 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool,
         set_var!(LOCAL_VARS, "hasmath", math)
     end
 
-    # copy the page vars to ALL_PAGE_VARS so that they can be accessed
-    # by other pages via `pagevar`.
-    ALL_PAGE_VARS[rpath] = deepcopy(LOCAL_VARS)
-
-    (:process_mddefs, "assignments done & copy to ALL_PAGE_VARS") |> logger
+    (:process_mddefs, "assignments done") |> logger
 
     # TAGS
     tags = Set(refstring.(locvar(:tags)))

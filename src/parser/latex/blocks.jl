@@ -238,6 +238,10 @@ function find_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
         # 1. look for the definition given the command name
         lxname = τ.ss
         lxdefref, utils = get_lxdef_ref(lxname, lxdefs, inmath, offset)
+
+        (:find_lxcoms, "lxname: '$lxname'") |> logger
+        (:find_lxcoms, "utils: '$utils'") |> logger
+
         if utils
             # custom command defined in utils, take a single bracket
             lxnarg = 1
@@ -247,6 +251,9 @@ function find_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
         else
             lxnarg = getindex(lxdefref).narg
         end
+
+        (:find_lxcoms, "lxnarg: '$lxnarg'") |> logger
+        (:find_lxcoms, "braces: '$(content.(braces))'") |> logger
 
         # 2. explore with # arguments
         # >> no arguments
