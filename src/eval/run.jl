@@ -26,6 +26,21 @@ end
 """
 $SIGNATURES
 
+Returns only the stack traces which are related to the user's code.
+This means removing stack traces pointing to Franklin's code.
+"""
+function trim_stacktrace(stacktrace::String)
+    # Franklin's stack traces always start with something like
+    # `(::Franklin.var"#96#98"{...})() at .../src/eval/run.jl:65`
+    rx = r"\[\d+\]\s\(\:\:Franklin.var(?:.*?)src\/eval\/run.jl"
+    first_match_start = first(findfirst(rx, stacktrace))
+    # Keep only everything before the regex match.
+    stacktrace[1:first_match_start-3]
+end
+
+"""
+$SIGNATURES
+
 Run some code in a given module while redirecting stdout to a given path.
 Return the result of the evaluation or `nothing` if the code was empty or
 the evaluation failed.
@@ -52,6 +67,7 @@ function run_code(mod::Module, code::AS, out_path::AS;
     ne   = length(exs)
     res  = nothing # to capture final result
     err  = nothing
+    stacktrace = nothing
     ispath(out_path) || mkpath(dirname(out_path))
     open(out_path, "w") do outf
         if !FD_ENV[:SILENT_MODE]
@@ -67,6 +83,10 @@ function run_code(mod::Module, code::AS, out_path::AS;
                     showerror(io, e)
                     println(String(take!(io)))
                     err = typeof(e)
+
+                    exc, bt = last(Base.catch_stack())
+                    stacktrace = sprint(showerror, exc, bt)
+
                     break
                 end
                 e += 1
@@ -75,8 +95,6 @@ function run_code(mod::Module, code::AS, out_path::AS;
     end
     # if there was an error, return nothing and possibly show warning
     if !isnothing(err)
-        # TODO: add more informative message, maybe show type of error
-        # + parent path
         FD_ENV[:SILENT_MODE] || print("\n")
         warn_err && print_warning("""
             There was an error of type '$err' when running a code block.
@@ -84,6 +102,8 @@ function run_code(mod::Module, code::AS, out_path::AS;
             might be helpful to understand and solve the issue.
             \nRelevant pointers:
             $POINTER_EVAL
+            \nDetails:
+            $(trim_stacktrace(stacktrace))
             """)
         res = nothing
     end
