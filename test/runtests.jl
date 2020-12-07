@@ -58,6 +58,7 @@ include("eval/extras.jl")
 println("LATEX")
 include("latex/newcommand.jl")
 include("latex/begin-end.jl")
+include("latex/nesting.jl")
 # include("latex/custom.jl")
 println("🍺")
 

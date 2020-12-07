@@ -193,7 +193,6 @@ function find_opts_braces(τ::Token, narg::Int, braces::Vector{OCBlock}, name=""
     b1_idx = findfirst(β -> (from(β) == nxtidx), braces)
     # --> it needs to exist + there should be enough braces left for the options
     if isnothing(b1_idx) || (b1_idx + narg - 1 > length(braces))
-
         throw(LxObjError("""
             Command/Environment '$name' expects $narg argument(s) and there
             should be no space(s) between the command name and the first brace:
@@ -214,6 +213,30 @@ function find_opts_braces(τ::Token, narg::Int, braces::Vector{OCBlock}, name=""
     # If we get here then we have candidate braces that match the number
     # required which we can just return
     return cand_braces
+end
+
+
+function find_opts_braces_math(τ::Token, narg::Int, braces::Vector{OCBlock}, name="")
+    cand_braces_idx = Int[]
+    # spot where an opening brace is expected, note that we can use exact
+    # char algebra here because we know that the last character is '}' w length 1.
+    nxtidx = to(τ) + 1
+    for i ∈ 1:narg
+        b_i_idx = findfirst(β -> (from(β) == nxtidx), braces)
+        # --> it needs to exist
+        if isnothing(b_i_idx)
+            throw(LxObjError("""
+                Command/Environment '$name' expects $narg argument(s) and there
+                should be no space(s) between the command name and the first brace:
+                \\com{arg1}... or \\begin{env}{arg1}...
+                """))
+        end
+        push!(cand_braces_idx, b_i_idx)
+        nxtidx = to(braces[cand_braces_idx[end]]) + 1
+    end
+    # If we get here then we have candidate braces that match the number
+    # required which we can just return
+    return braces[cand_braces_idx]
 end
 
 
@@ -262,7 +285,11 @@ function find_lxcoms(tokens::Vector{Token}, lxdefs::Vector{LxDef},
             active_τ[i] = false
         # >> there is at least one argument --> find all of them
         else
-            arg_braces = find_opts_braces(τ, lxnarg, braces, lxname)
+            if inmath
+                arg_braces = find_opts_braces_math(τ, lxnarg, braces, lxname)
+            else
+                arg_braces = find_opts_braces(τ, lxnarg, braces, lxname)
+            end
             # all good, can push it
             from_c = from(τ)
             to_c   = to(arg_braces[end])
@@ -361,7 +388,11 @@ function find_lxenvs(tokens::Vector{Token}, lxdefs::Vector{LxDef},
             arg_braces = Vector{OCBlock}()
         # >> at least one argument
         else
-            arg_braces = find_opts_braces(τ, lxnarg, braces, env_name)
+            if inmath
+                arg_braces = find_opts_braces_math(τ, lxnarg, braces, env_name)
+            else
+                arg_braces = find_opts_braces(τ, lxnarg, braces, env_name)
+            end
         end
 
         # 3. find closing delimiter

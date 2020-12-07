@@ -220,6 +220,7 @@ const MD_OCB_MATH = [
     OCProto(:MATH_I,     :MATH_I_OPEN,     (:MATH_I_CLOSE,)    ),
     ]
 
+const MD_OCB_LXB = [e for e in MD_OCB2 if e.name == :LXB]
 
 """
     MD_OCB_ALL
