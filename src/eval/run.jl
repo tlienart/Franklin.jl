@@ -23,9 +23,18 @@ function parse_code(code::AS)
     exs
 end
 
+"""
+$SIGNATURES
+
+Returns only the stack traces which are related to the user's code.
+This means removing stack traces pointing to Franklin's code.
+"""
 function trim_stacktrace(stacktrace::String)
+    # Franklin's stack traces always start with something like
+    # `(::Franklin.var"#96#98"{...})() at .../src/eval/run.jl:65`
     rx = r"\[\d+\]\s\(\:\:Franklin.var(?:.*?)src\/eval\/run.jl"
-    first_match_start = first(first(findall(rx, stacktrace)))
+    first_match_start = first(findfirst(rx, stacktrace))
+    # Keep only everything before the regex match.
     stacktrace[1:first_match_start-3]
 end
 
