@@ -216,15 +216,13 @@ function convert_md_math(ms::AS, lxdefs::Vector{LxDef}=Vector{LxDef}(),
     (:convert_md_math, "tokens: '$tokens'") |> logger
 
     #> 2. Find braces and drop line returns thereafter
-    blocks, tokens = find_all_ocblocks(tokens, MD_OCB_ALL, inmath=true)
-    deactivate_inner_blocks!(blocks)
-    braces = filter(β -> β.name == :LXB, blocks)
+    braces, tokens = find_all_ocblocks(tokens, MD_OCB_LXB, inmath=true)
 
     (:convert_md_math, "braces: '$braces'") |> logger
 
     #> 3. Find latex envs and commands (indicate we're in a math environment + offset)
     lxenvs, tokens = find_lxenvs(tokens, lxdefs, braces, offset; inmath=true)
-    lxcoms, _      = find_lxcoms(tokens, lxdefs,  braces, offset; inmath=true)
+    lxcoms, _      = find_lxcoms(tokens, lxdefs, braces, offset; inmath=true)
 
     (:convert_md_math, "lxcoms: '$lxcoms'") |> logger
 
