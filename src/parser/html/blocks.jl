@@ -59,7 +59,14 @@ function qualify_html_hblocks(blocks::Vector{OCBlock})::Vector{AbstractBlock}
             if isnothing(m.captures[2]) || isempty(strip(m.captures[2]))
                 ps = String[]
             else
-                ps = split(m.captures[2])
+                # split parameters such that values in "..." may contain spaces
+                splitregexp = r"([^\s\"']+)|\"([^\"]*)\""
+                ps = SubString.(
+                    m.captures[2],
+                    findall(splitregexp, m.captures[2]; overlap=false),
+                )
+                # strip leading and trailing "
+                ps = strip.(ps,Ref('"'))
             end
             qb[i] = HFun(β.ss, m.captures[1], ps)
             continue
