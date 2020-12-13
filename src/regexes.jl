@@ -127,6 +127,14 @@ scope.
 """
 const HBLOCK_FUN_PAT = Regex(HBO * VAR * raw"(\s+((.|\n)*?))?" * HBC)
 
+"""
+    HFUN_PARAMS_PAT
+
+Splits the parameter string of a hfun based on whitespaces but allowing single quoted strings
+with whitespace not to be split.
+"""
+const HFUN_PARAMS_PAT = r"([^\s\"']+)|\"([^\"]*)\""
+
 #= =====================================================
 Pattern checkers
 ===================================================== =#

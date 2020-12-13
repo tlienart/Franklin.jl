@@ -59,7 +59,8 @@ function qualify_html_hblocks(blocks::Vector{OCBlock})::Vector{AbstractBlock}
             if isnothing(m.captures[2]) || isempty(strip(m.captures[2]))
                 ps = String[]
             else
-                ps = split(m.captures[2])
+                # merge \"abc def\" (issue #731)
+                ps = split_hfun_parameters(m.captures[2])
             end
             qb[i] = HFun(β.ss, m.captures[1], ps)
             continue
@@ -86,3 +87,8 @@ Internal function to balance conditional blocks. See [`process_html_qblocks`](@r
 hbalance(::HTML_OPEN_COND) = 1
 hbalance(::HEnd) = -1
 hbalance(::AbstractBlock) = 0
+
+function split_hfun_parameters(s)
+    matches = [e.match for e in eachmatch(HFUN_PARAMS_PAT, s; overlap=false)]
+    return strip.(matches, '\"')
+end

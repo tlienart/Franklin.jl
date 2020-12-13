@@ -51,3 +51,15 @@ end
     fhs = F.process_html_qblocks(hs, qblocks)
     @test isapproxstr(fhs, "AEF")
 end
+
+# https://github.com/tlienart/Franklin.jl/issues/731
+@testset "hfun strings" begin
+    a = Franklin.split_hfun_parameters(strip("""
+        "Hello to you" my "julia friends" and "all the others"
+        """))
+    @test a[1] == "Hello to you"
+    @test a[2] == "my"
+    @test a[3] == "julia friends"
+    @test a[4] == "and"
+    @test a[5] == "all the others"
+end
