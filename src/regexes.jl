@@ -76,6 +76,12 @@ const CODE_3_PAT = Regex(
 const CODE_5_PAT = Regex("``" * CODE_3_PAT.pattern * "``")
 
 #= =====================================================
+Trim stacktrace
+===================================================== =#
+
+const STACKTRACE_TRIM_PAT = r"\[\d+\]\stop-level\sscope"
+
+#= =====================================================
 HTML entity pattern
 ===================================================== =#
 const HTML_ENT_PAT = r"&(?:[a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});"
@@ -143,7 +149,7 @@ Pattern checkers
     check_for_pat(v)
 
 Check that we have something like `{{for v in iterate}}` or
-`{for (v1,v2) in iterate}}` but not something with unmached parens.
+`{for (v1,v2) in iterate}}` but not something with unmatched parens.
 """
 function check_for_pat(v)
     op = startswith(v, "(")
