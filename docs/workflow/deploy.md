@@ -193,9 +193,10 @@ to
 Now for the final step, you will need to visualize the obtained previews.
 Since Github only allow you to deploy one branch, you will need an alternative like Netlify.
 Create an account on [Netlify.com](https://www.netlify.com/), add your repository and chose the `gh-preview` branch without any additional settings.
+Set your netlify website to be `{netlify name}.netlify.app`.
 
 Once everything is setup you will be able to visualize your PR preview on `{netlify name}.netlify.app/previews/PR{number of your PR}`.
-You can make things easier for your contributors by adding a comment with a link to your PR automatically.
+You can make things easier for your contributors to access it by adding a comment with a link to your PR automatically.
 To do this add the following Github action (create a `pr_comment.yml` file in `.github/workflows/`):
 ```yml
 name: PR Comment # Write a comment in the PR with a link to the preview of the given website
