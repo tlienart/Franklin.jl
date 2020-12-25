@@ -62,6 +62,24 @@ function _out_path(base::String)::String
     return outpath
 end
 
+"""
+$(SIGNATURES)
+
+A user can provide a slug which will then specify the output path.
+There is the underlying assumption that the path will not clash.
+"""
+function form_custom_output_path(slug::String)
+    # a slug is assumed to be `aa` or `aa/bb`
+    # extensions will be ignored, pre and post backslash as well
+    # --> aa/bb.html -> aa/bb (effectively aa/bb/index.html)
+    # --> /aa/bb/cc/ --> aa/bb/cc (effectively aa/bb/cc/index.html)
+    slug = strip(splitext(slug)[1], '/')
+    # form the path
+    p = mkpath(joinpath(path(:site), slug))
+    return joinpath(p, "index.html")
+end
+
+
 _access(p)   = isa(p, Regex) ? p.pattern : p
 _isempty(p)  = isempty(_access(p))
 _endswith(p) = endswith(_access(p), '/')

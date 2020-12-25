@@ -75,6 +75,10 @@ without in which case the scaffolding is read from `layout`.
 function write_page(output_path::AS, content::AS;
                     head::T=nothing, pgfoot::T=nothing, foot::T=nothing,
                     )::String where T <: Union{Nothing,AS}
+    slug = locvar(:slug)
+    if !isempty(slug)
+        output_path = form_custom_output_path(slug)
+    end
     # NOTE
     #   - output_path is assumed to exist // see form_output_path
     #   - head/pgfoot/foot === nothing --> read (see franklin.jl)

@@ -240,7 +240,9 @@ end
 """
 $(SIGNATURES)
 
-H-Function of the form `{{redirect /addr/blah.html}}`.
+H-Function of the form `{{redirect /addr/blah.html}}` or `{{redirect /addr/blah/}}`
+if the last part ends with `/` then `index.html` is appended. Note that the first
+`/` can be omitted.
 """
 function hfun_redirect(params::Vector{String})::String
     # don't put those on the sitemap
@@ -251,6 +253,7 @@ function hfun_redirect(params::Vector{String})::String
                 "address but got $(length(params)). Verify."))
     end
     addr = params[1]
+    addr *= ifelse(addr[end] == '/', "index.html", "")
     if !endswith(addr, ".html")
         throw(HTMLFunctionError("In a {{redirect address}} block the address must be " *
                                 "complete up to the `.html` extension (got '$addr')."))

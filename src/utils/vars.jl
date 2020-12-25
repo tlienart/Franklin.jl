@@ -90,6 +90,7 @@ const LOCAL_VARS_DEFAULT = [
     "indented_code" => dpair(false),    # support indented code?
     "tags"          => dpair(String[]),
     "prerender"     => dpair(true),     # allow specific switch
+    "slug"          => dpair(""),       # allow specific target url eg: aa/bb/cc
     # -----------------
     # TABLE OF CONTENTS
     "mintoclevel" => dpair(1),   # set to 2 to ignore h1
