@@ -75,6 +75,10 @@ const CODE_3_PAT = Regex(
 
 const CODE_5_PAT = Regex("``" * CODE_3_PAT.pattern * "``")
 
+const CODE_HIDE_PAT = Regex(raw"(?:^|[^\S\r\n]*?)#(\s)*?(?i)hide(all)?")
+
+const LITERATE_HIDE_PAT  = Regex(raw"(?:^|[^\S\r\n]*?)#src")
+
 #= =====================================================
 Trim stacktrace
 ===================================================== =#

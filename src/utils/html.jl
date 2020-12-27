@@ -71,10 +71,6 @@ function html_code(c::AS, lang::AS="")::String
     return "<pre><code class=\"language-$lang\">$c</code></pre>"
 end
 
-
-const REGEX_CODE_HIDE = Regex(raw"(?:^|[^\S\r\n]*?)#(\s)*?(?i)hide(all)?")
-const REGEX_LIT_HIDE  = Regex(raw"(?:^|[^\S\r\n]*?)#src")
-
 """
     html_skip_hidden
 
@@ -89,8 +85,8 @@ function html_skip_hidden(c::AS, lang::AS)::String
     # read code line by line and write to buffer
     buf = IOBuffer()
     for line in split(c, '\n')
-        m  = match(REGEX_CODE_HIDE, line)
-        ml = match(REGEX_LIT_HIDE, line)
+        m  = match(CODE_HIDE_PAT, line)
+        ml = match(LITERATE_HIDE_PAT, line)
         if m === ml === nothing
             println(buf, line)
         elseif m !== nothing
@@ -105,14 +101,12 @@ function html_skip_hidden(c::AS, lang::AS)::String
     return strip(String(take!(buf)))
 end
 
-
 """
     html_code_inline
 
 Convenience function to introduce inline code.
 """
 html_code_inline(c::AS) = "<code>$c</code>"
-
 
 """
     html_err
@@ -121,7 +115,6 @@ Insertion of a visible red message in HTML to show there was a problem.
 """
 html_err(mess::String="") =
     "<p><span style=\"color:red;\">// $mess //</span></p>"
-
 
 """
     url_curpage
@@ -203,7 +196,6 @@ function html_unescape(cs::AbstractString)
     end
     return cs
 end
-
 
 """
     simplify_ps(s)
