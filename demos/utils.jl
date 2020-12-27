@@ -42,7 +42,7 @@ hfun_case_1() =
 # case 2, note the `@delay`
 @delay function hfun_case_2()
     all_tags = globvar("fd_page_tags")
-    isnothing(all_tags) && return ""
+    (all_tags === nothing) && return ""
     all_tags = union(values(all_tags)...)
     tagstr = strip(prod("$t " for t in all_tags))
     return """<p style="color:red;">tags: { $tagstr }</p>"""
