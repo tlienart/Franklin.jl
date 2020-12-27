@@ -74,6 +74,7 @@ function form_custom_output_path(slug::String)
     # --> aa/bb.html -> aa/bb (effectively aa/bb/index.html)
     # --> /aa/bb/cc/ --> aa/bb/cc (effectively aa/bb/cc/index.html)
     slug = strip(splitext(slug)[1], '/')
+    set_var!(LOCAL_VARS, "fd_url", "/" * joinpath(slug, "index.html"))
     # form the path
     p = mkpath(joinpath(path(:site), slug))
     return joinpath(p, "index.html")
