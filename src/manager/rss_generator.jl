@@ -165,7 +165,7 @@ function write_rss_xml(rss_path, rss_title, rss_descr, rss_link, rss_items, rss_
         """
         <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
         <channel>
-          <title>$rss_title</title>
+          <title><![CDATA[$rss_title]]></title>
           <description><![CDATA[$(fix_relative_links(rss_descr, rss_link))]]></description>
           <link>$rss_link</link>
           <atom:link href="$(rss_link)$(rss_rel)feed.xml" rel="self" type="application/rss+xml" />
@@ -179,7 +179,7 @@ function write_rss_xml(rss_path, rss_title, rss_descr, rss_link, rss_items, rss_
         write(rss_buff,
           """
             <item>
-              <title>$(v.title)</title>
+              <title><![CDATA[$(v.title)]]></title>
               <link>$(full_link)</link>
               <description><![CDATA[$(fix_relative_links(v.description, rss_link))<br><a href=\"$(full_link)\">Read more</a>]]></description>
           """)

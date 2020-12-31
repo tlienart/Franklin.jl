@@ -5,7 +5,7 @@
     fc = prod(readlines(f, keep=true))
 
     @test occursin(raw"""<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">""", fc)
-    @test occursin(raw"""<title>Franklin Template</title>""", fc)
+    @test occursin(raw"""<title><![CDATA[Franklin Template]]></title>""", fc)
     @test occursin(raw"""<description><![CDATA[Example website using Franklin
   ]]></description>""", fc)
     @test !occursin(raw"""<author>""", fc)
