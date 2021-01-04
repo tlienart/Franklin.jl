@@ -752,3 +752,7 @@ ul.menu-list-child-list a.menu-list-link {
   margin-left: auto;
   margin-right: auto;
 }
+
+.franklin-content h1 > a {white-space: normal;}
+.franklin-content h2 > a {white-space: normal;}
+.franklin-content h3 > a {white-space: normal;}
