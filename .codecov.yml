@@ -1,4 +1,4 @@
 comment: false
 
 ignore:
-  - "precompile.jl"
+  - "src/precompile.jl"
