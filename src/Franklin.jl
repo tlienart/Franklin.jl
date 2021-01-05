@@ -213,4 +213,9 @@ include("manager/franklin.jl")
 include("manager/extras.jl")
 include("manager/post_processing.jl")
 
+if Base.VERSION >= v"1.4.2"
+    include("precompile.jl")
+    _precompile_()
+end
+
 end # module
