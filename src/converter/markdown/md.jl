@@ -20,8 +20,8 @@ Returns the html string as well as a dictionary of page variables.
 * `has_mddefs=true`:   a bool indicating whether to look for definitions of
                         page variables
 """
-function convert_md(mds::AbstractString,
-                    pre_lxdefs=collect(values(GLOBAL_LXDEFS));
+function convert_md(mds::String,
+                    pre_lxdefs::Vector{LxDef}=collect(values(GLOBAL_LXDEFS));
                     isrecursive::Bool=false,
                     isinternal::Bool=false,
                     isconfig::Bool=false,
@@ -31,8 +31,6 @@ function convert_md(mds::AbstractString,
                     )::String
     # instantiate page dictionaries
     isrecursive || isinternal || set_page_env()
-    # if we're given a substring, force it to a string
-    mds = String(mds)
 
     #
     # Parsing of the markdown string
@@ -105,7 +103,7 @@ function convert_md(mds::AbstractString,
     #>> b. if any lxdefs are given in the context, merge them. `pastdef` specifies
     # that the definitions appeared "earlier"
     lprelx = length(pre_lxdefs)
-    (lprelx > 0) && (lxdefs = cat(pastdef.(pre_lxdefs), lxdefs, dims=1))
+    (lprelx > 0) && (lxdefs = vcat(LxDef[pastdef(def) for def in pre_lxdefs], lxdefs))
     #>> c. find latex environments
     lxenvs, tokens = find_lxenvs(tokens, lxdefs, braces)
     ranges2 = deactivate_blocks_in_envs!(blocks, lxenvs)
@@ -146,7 +144,7 @@ function convert_md(mds::AbstractString,
     fnrefs = filter(τ -> τ.name == :FOOTNOTE_REF, tokens)
 
     # Discard indented blocks unless locvar(:indented_code)
-    if !locvar(:indented_code)
+    if !locvar(:indented_code)::Bool
         filter!(b -> b.name != :CODE_BLOCK_IND, blocks)
     end
 
@@ -169,8 +167,8 @@ function convert_md(mds::AbstractString,
     (:convert_md, "hstring: '$hstring'") |> logger
 
     # final var adjustment, infer title if not given
-    rpath = splitext(locvar(:fd_rpath))[1]
-    if isnothing(locvar(:title)) && !isempty(PAGE_HEADERS)
+    rpath = splitext(locvar(:fd_rpath)::String)[1]
+    if isnothing(locvar(:title)::Union{String,Nothing}) && !isempty(PAGE_HEADERS)
         title = first(values(PAGE_HEADERS))[1]
         set_var!(LOCAL_VARS, "title", title)
     end
@@ -182,6 +180,10 @@ function convert_md(mds::AbstractString,
     # Return the string
     return hstring
 end
+convert_md(mds::AbstractString; kwargs...) =
+    convert_md(convert(String, mds)::String; kwargs...)
+convert_md(mds::AbstractString, pre_lxdefs; kwargs...) =
+    convert_md(convert(String, mds)::String, convert(Vector{LxDef}, pre_lxdefs)::Vector{LxDef}; kwargs...)
 
 
 """
