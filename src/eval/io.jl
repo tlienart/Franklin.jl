@@ -88,7 +88,7 @@ function parse_rpath(rpath::AS; canonical::Bool=false, code::Bool=false)::AS
         end
         # if the locvar ends with `index.md` but is not strictly
         # index.md then remove it
-        loc_rpath = locvar(:fd_rpath)
+        loc_rpath = locvar(:fd_rpath)::String
         if endswith(loc_rpath, "index.md") && loc_rpath != "index.md"
             loc_rpath = replace(loc_rpath, r"index\.md$" => "")
         end

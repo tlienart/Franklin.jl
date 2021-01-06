@@ -223,7 +223,7 @@ function pagevar(rpath::AS, name::Union{Symbol,String})
         candpath = joinpath(path(:folder), fpath)
         isfile(candpath) || return nothing
         # store curpath
-        bk_path = locvar(:fd_rpath)
+        bk_path = locvar(:fd_rpath)::String
         bk_path_ = splitext(bk_path)[1]
 
         (:pagevar, "!haskey, bkpath: $bk_path, rpath: $rpath") |> logger

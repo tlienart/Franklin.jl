@@ -73,10 +73,10 @@ function process_html_cond(hs::AS, qblocks::Vector{AbstractBlock},
             end
         else
             # HIsPage//HIsNotPage
-            rpath = splitext(unixify(locvar(:fd_rpath)))[1]
+            rpath = splitext(unixify(locvar(:fd_rpath)::String))[1]
             # are we currently on a tag page?
-            if !isempty(locvar(:fd_tag))
-                tag = locvar(:fd_tag)
+            if !isempty(locvar(:fd_tag)::String)
+                tag = locvar(:fd_tag)::String
                 rpath = "/tag/$tag/"
             end
 
@@ -110,7 +110,7 @@ function process_html_cond(hs::AS, qblocks::Vector{AbstractBlock},
                                  " not a Bool: check '$(conds[idx])'."))
         end
         # which one is verified?
-        u = findfirst(c -> locvar(c), conds)
+        u = findfirst(c -> locvar(c)::Bool, conds)
         k = isnothing(u) ? 0 : u + lag
     end
 

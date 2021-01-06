@@ -64,22 +64,22 @@ function add_rss_item()
     link  = url_curpage()
     title = jor("rss_title", "title")
     descr = jor("rss", "rss_description")
-    
+
     descr = fd2html(descr; internal=true) |> remove_html_ps
 
-    author    = locvar(:rss_author)
-    category  = locvar(:rss_category)
-    comments  = locvar(:rss_comments)
-    enclosure = locvar(:rss_enclosure)
+    author    = locvar(:rss_author)::String
+    category  = locvar(:rss_category)::String
+    comments  = locvar(:rss_comments)::String
+    enclosure = locvar(:rss_enclosure)::String
 
     # Keep track of tags for tag specific feeds
     tags = locvar(:tags)::Vector{String}
 
-    pubDate = locvar(:rss_pubdate)
+    pubDate = locvar(:rss_pubdate)::Date
     if pubDate == Date(1)
         pubDate = locvar(:date)
         if !isa(pubDate, Date) || pubDate == Date(1)
-            pubDate = Date(locvar(:fd_mtime_raw))
+            pubDate = locvar(:fd_mtime_raw)::Date
         end
     end
 

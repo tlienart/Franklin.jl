@@ -70,7 +70,7 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool,
     end
 
     # if in config file, update `GLOBAL_VARS` and return
-    rpath = splitext(locvar(:fd_rpath))[1]
+    rpath = splitext(locvar(:fd_rpath)::String)[1]
     if isconfig
         set_vars!(GLOBAL_VARS, assignments, isglobal=true)
         return nothing
@@ -78,16 +78,16 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool,
 
     # otherwise set local vars
     set_vars!(LOCAL_VARS, assignments)
-    rpath = splitext(locvar(:fd_rpath))[1]
+    rpath = splitext(locvar(:fd_rpath)::String)[1]
 
-    hasmath = locvar(:hasmath)
-    hascode = locvar(:hascode)
-    if !hascode && globvar("autocode")
+    hasmath = locvar(:hasmath)::Bool
+    hascode = locvar(:hascode)::Bool
+    if !hascode && globvar("autocode")::Bool
         # check and set hascode automatically
         code = any(b -> startswith(string(b.name), "CODE_BLOCK"), blocks)
         set_var!(LOCAL_VARS, "hascode", code)
     end
-    if !hasmath && globvar("automath")
+    if !hasmath && globvar("automath")::Bool
         # check and set hasmath automatically
         math = any(b -> b.name in MATH_BLOCKS_NAMES, blocks)
         set_var!(LOCAL_VARS, "hasmath", math)
@@ -96,7 +96,7 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool,
     (:process_mddefs, "assignments done") |> logger
 
     # TAGS
-    tags = Set(refstring.(locvar(:tags)))
+    tags = Set(refstring.(locvar(:tags)::Vector{String}))
     # Cases:
     # 0. there was no page tags before
     #   a. tags is empty --> do nothing

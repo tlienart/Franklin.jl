@@ -11,8 +11,8 @@ path (if any) and the code.
 """
 function parse_fenced_block(ss::SubString, shortcut=false)::Tuple
     if shortcut
-        lang  = locvar(:lang)
-        cntr  = locvar(:fd_evalc)
+        lang  = locvar(:lang)::String
+        cntr  = locvar(:fd_evalc)::Int
         rpath = "_ceval_$cntr"
         code  = match(CODE_3!_PAT, ss).captures[1]
         set_var!(LOCAL_VARS, "fd_evalc", cntr + 1)
@@ -51,11 +51,11 @@ function should_eval(code::AS, rpath::AS)
     FD_ENV[:FORCE_REEVAL] && return true
 
     # 2. local setting forcing the current page to reeval everything
-    locvar(:reeval) && return true
+    locvar(:reeval)::Bool && return true
 
     # 3. if space previously marked as stale, return true
     # note that on every page build, this is re-init as false.
-    locvar(:fd_eval) && return true
+    locvar(:fd_eval)::Bool && return true
 
     # 4. if the code has changed reeval
     cp = form_codepaths(rpath)
@@ -108,7 +108,7 @@ function resolve_code_block(ss::SubString; shortcut=false)::String
         # 3. here we have code that should be (re)evaluated
         # >> retrieve the modulename, the module may not exist
         # (& may not need to)
-        modname = modulename(locvar(:fd_rpath))
+        modname = modulename(locvar(:fd_rpath)::String)
         # >> check if relevant module exists, otherwise create one
         mod = ismodule(modname) ?
                 getfield(Main, Symbol(modname)) :
@@ -133,7 +133,7 @@ function resolve_code_block(ss::SubString; shortcut=false)::String
         set_var!(LOCAL_VARS, "fd_eval", true)
     end
     # >> finally return as html
-    if locvar(:showall) || shortcut
+    if locvar(:showall)::Bool || shortcut
         return html_code(code, lang) *
                 reprocess("\\show{$rpath}", [GLOBAL_LXDEFS["\\show"]])
     end

@@ -207,7 +207,7 @@ $(SIGNATURES)
 H-Function of the form `{{taglist}}`.
 """
 function hfun_taglist()::String
-    tag = locvar(:fd_tag)
+    tag = locvar(:fd_tag)::String
 
     c = IOBuffer()
     write(c, "<ul>")
@@ -324,7 +324,7 @@ function hfun_paginate(params::Vector{String})::String
 
     # Was there already a pagination element on this page?
     # if so warn and ignore
-    if !isnothing(locvar(:paginate_itr))
+    if !isnothing(locvar(:paginate_itr)::Union{String,Nothing})
         hfun_misc_warn(:paginate, """
             Multiple calls to '{{paginate ...}}' on the page but at most one is
             expected.
@@ -370,7 +370,7 @@ function hfun_sitemap_opts(params::Vector{String})::String
     end
     changefreq = params[1]
     priority = params[2]
-    fp = joinpath(path(:folder), locvar(:fd_rpath))
+    fp = joinpath(path(:folder), locvar(:fd_rpath)::String)
     lastmod = Date(unix2datetime(stat(fp).mtime))
     SITEMAP_DICT[key] = SMOpts(lastmod, changefreq, priority)
     return ""

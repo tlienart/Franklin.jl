@@ -42,16 +42,16 @@ function postprocess_page(pg)
     # order in which things are done matter a bit.
     if FD_ENV[:PRERENDER]
         # Maths (KATEX)
-        if locvar(:hasmath) == true
+        if locvar(:hasmath)::Bool
             pg = js_prerender_katex(pg)
         end
         # Code (HIGHLIGHT.JS)
-        if locvar(:hascode) == true && FD_CAN_HIGHLIGHT
+        if locvar(:hascode)::Bool && FD_CAN_HIGHLIGHT
             pg = js_prerender_highlight(pg)
             # remove script
             pg = replace(pg, r"<script.*?(?:highlight\.pack\.js|initHighlightingOnLoad).*?<\/script>"=>"")
         end
-        if locvar(:hasmath) == true
+        if locvar(:hasmath)::Bool
             # remove katex scripts
             pg = replace(pg, r"<script.*?(?:katex\.min\.js|auto-render\.min\.js|renderMathInElement).*?<\/script>" => "")
         end
@@ -110,7 +110,7 @@ function write_page(output_path::AS, content::AS;
 
     # the previous convert call possibly resolved a {{paginate}} which will
     # have stored a :paginate_itr var, so we must branch on that
-    if !isnothing(locvar(:paginate_itr))
+    if locvar(:paginate_itr) !== nothing
         union!(PAGINATED, (outdir,))
         name    = locvar(:paginate_itr)
         iter    = locvar(name)

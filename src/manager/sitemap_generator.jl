@@ -40,14 +40,14 @@ Add an entry to `SITEMAP_DICT`.
 """
 function add_sitemap_item(; html=false)
     loc = url_curpage()
-    locvar(:sitemap_exclude) && return nothing
+    locvar(:sitemap_exclude)::Bool && return nothing
     if !html
         lastmod = locvar(:fd_mtime_raw)
         changefreq = locvar(:sitemap_changefreq)
         priority = locvar(:sitemap_priority)
     else
         # use default which can be overwritten in a {{sitemap_opts ...}}
-        fp = joinpath(path(:folder), locvar(:fd_rpath))
+        fp = joinpath(path(:folder), locvar(:fd_rpath)::String)
         lastmod = Date(unix2datetime(stat(fp).mtime))
         changefreq = "monthly"
         priority = 0.5

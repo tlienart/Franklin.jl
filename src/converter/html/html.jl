@@ -26,7 +26,7 @@ function convert_html(hs::AS)::String
     # See issue #204, basically not all markdown links are processed  as
     # per common mark with the JuliaMarkdown, so this is a patch that kind
     # of does
-    if locvar(:reflinks)
+    if locvar(:reflinks)::Bool
         fhs = find_and_fix_md_links(fhs)
     end
     isempty(fhs) && return ""
