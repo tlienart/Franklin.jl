@@ -1,2 +1,3 @@
 docs/* linguist-vendored
 demos/* linguist-vendored
+src/scripts/* linguist-vendored
