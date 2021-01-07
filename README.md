@@ -46,6 +46,7 @@ Some examples of websites using Franklin (_if you're using Franklin with a publi
 * [MIT Introduction to Computational Thinking](https://computationalthinking.mit.edu/Fall20) course website
 * [@abhishalya's website](https://abhishalya.github.io) using a custom minimalistic theme
 * [Rik Huijzer's website](https://huijzer.xyz) with a blog based on the basic template
+* [Circuitscape's website](https://circuitscape.org) was migrated from Jekyll
 
 ## Key features
 
