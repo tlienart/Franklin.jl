@@ -84,7 +84,14 @@ const FD_ENV = LittleDict(
     :SILENT_MODE   => false,
     :QUIET_TEST    => false,
     :SHOW_WARNINGS => true,     # franklin-specific warnings
+    :UTILS_COUNTER => 0,        # counter for utils module
+    :UTILS_HASH    => nothing   # hash of the utils
     )
+
+utils_name()   = "Utils_$(FD_ENV[:UTILS_COUNTER])"
+utils_symb()   = Symbol(utils_name())
+utils_module() = getproperty(Main, utils_symb())
+utils_hash()   = nothing
 
 # keep track of pages which need to be re-evaluated after the full-pass
 # to ensure that their h-fun are working with the fully-defined scope

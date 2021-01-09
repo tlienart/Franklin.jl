@@ -150,6 +150,8 @@ function _scan_input_dir!(other_files::TrackedFiles,
             else
                 if file == "config.md"
                     add_if_new_file!(infra_files, opts...)
+                elseif file == "utils.jl"
+                    add_if_new_file!(infra_files, opts...)                    
                 elseif fext == ".md"
                     add_if_new_file!(md_pages, opts...)
                 elseif fext ∈ (".html", ".htm")

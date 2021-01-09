@@ -171,7 +171,7 @@ function process_html_for(hs::AS, qblocks::Vector{AbstractBlock},
                              "Please make sure it's defined."))
     end
     if iname ∈ UTILS_NAMES # can only happen if Utils is defined.
-        iter = getfield(Main.Utils, Symbol(iname))
+        iter = getfield(utils_module(), Symbol(iname))
     else
         iter = locvar(iname)
     end

@@ -28,15 +28,31 @@ precedence over things defined internally in Franklin or in the global vars;
 in particular users can redefine the behaviour of `hfuns` though that's not
 recommended.
 """
-function process_utils()
+function process_utils()::Nothing
     FD_ENV[:SOURCE] = "utils.jl"
     utils = joinpath(FOLDER_PATH[], "utils.jl")
-    isfile(utils) || return nothing
-    # wipe / create module Utils
-    newmodule("Utils")
-    Base.include(Main.Utils, utils)
+
+    if !isfile(utils)
+        FD_ENV[:UTILS_COUNTER] = 0
+        FD_ENV[:UTILS_HASH] = nothing
+        return nothing
+    end
+
+    # has the hash changed?
+    if FD_ENV[:UTILS_HASH] !== nothing
+        new_hash    = hash(read(utils, String))
+        has_changed = (new_hash != FD_ENV[:UTILS_HASH])
+        has_changed || return nothing
+        FD_ENV[:UTILS_HASH] = new_hash
+    end
+    FD_ENV[:UTILS_COUNTER] += 1
+
+    # create new Utils module
+    newmodule(utils_name())
+    Base.include(utils_module(), utils)
+
     # keep track of utils names
-    ns = String.(names(Main.Utils, all=true))
+    ns = String.(names(utils_module(), all=true))
     filter!(n -> n[1] != '#' && n ∉ ("eval", "include", "Utils"), ns)
     empty!(UTILS_NAMES)
     append!(UTILS_NAMES, ns)

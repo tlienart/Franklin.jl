@@ -321,9 +321,6 @@ function fd_loop(cycle_counter::Int, ::LiveServer.FileWatcher,
             verb && print(fmsg)
             dict[fpair] = cur_t
 
-            # Reprocess utils.jl in Utils module
-            process_utils()
-
             # if it's an infra_file trigger a fullpass as potentially
             # the whole website depends upon it (e.g. CSS)
             if haskey(watched_files[:infra], fpair)

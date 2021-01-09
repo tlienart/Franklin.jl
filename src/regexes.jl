@@ -12,7 +12,7 @@ block. For example:
 
 will give as first capture group `\\com`.
 """
-const LX_NAME_PAT = r"^\s*(\\?\p{L}+\*?)\s*$"
+const LX_NAME_PAT = r"^\s*(\\?\p{L}[\p{L}_]*\*?)\s*$"
 
 """
 LX_NARG_PAT
@@ -33,7 +33,7 @@ LX_ENVNAME_PAT
 
 Regex to find the name in a LX_BEGIN or LX_END.
 """
-const LX_ENVNAME_PAT = r"\\(?:begin|end)\{\s*(\p{L}+\*?)\s*\}"
+const LX_ENVNAME_PAT = r"\\(?:begin|end)\{\s*(\p{L}[\p{L}_]*\*?)\s*\}"
 
 #= =====================================================
 MDDEF patterns

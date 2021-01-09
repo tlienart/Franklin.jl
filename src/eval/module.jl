@@ -31,6 +31,7 @@ happen. Return a handle pointing to the module.
 function newmodule(name::String)::Module
     mod  = nothing
     junk = tempname()
+
     open(junk, "w") do outf
         # discard the "WARNING: redefining module X"
         redirect_stderr(outf) do
@@ -40,9 +41,10 @@ function newmodule(name::String)::Module
                     import Franklin: @OUTPUT, @delay, fdplotly,
                                      locvar, pagevar, globvar,
                                      fd2html, get_url
-                    if isdefined(Main, :Utils) && typeof(Main.Utils) == Module
-                        import ..Utils
-                    end
+                    """ * ifelse(startswith(name, "Utils"), "",
+                            ifelse(FD_ENV[:UTILS_HASH] === nothing, "", """
+                    import $(Franklin.utils_name())
+                    """)) * """
                     using Dates
                 end
                 """))

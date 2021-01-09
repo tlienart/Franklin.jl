@@ -8,10 +8,10 @@ function convert_html_fblock(β::HFun)::String
     fun = Symbol("hfun_" * lowercase(β.fname))
     ex  = isempty(β.params) ? :($fun()) : :($fun($β.params))
     # see if a hfun was defined in utils
-    if isdefined(Main, :Utils) && isdefined(Main.Utils, fun)
+    if isdefined(Main, utils_symb()) && isdefined(utils_module(), fun)
         # skip eval if the page is delayed
         isdelayed() && return ""
-        res = Core.eval(Main.Utils, ex)
+        res = Core.eval(utils_module(), ex)
         return string(res)
     end
     # see if a hfun was defined internally
@@ -53,7 +53,7 @@ function hfun_fill(params::Vector{String})::String
     vname = params[1]
     if length(params) == 1
         if vname in UTILS_NAMES
-            repl = string(getfield(Main.Utils, Symbol(vname)))
+            repl = string(getfield(utils_module(), Symbol(vname)))
         else
             tmp_repl = locvar(vname)
             if isnothing(tmp_repl)
