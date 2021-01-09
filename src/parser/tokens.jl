@@ -113,7 +113,7 @@ function envname(τ::Token)
     m = match(LX_ENVNAME_PAT, τ.ss)
     isnothing(m) || return m.captures[1]
     throw(LxObjError("""
-        In the context of trying to find environments, an isuse was met, possibly one of the
+        In the context of trying to find environments, an issue was met, possibly one of the
         delimiter is malformed, check that all your environment blocks are delimited by
         `\begin{somename}` and `\end{somename}`."""))
 end

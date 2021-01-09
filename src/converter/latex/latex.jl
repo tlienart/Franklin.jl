@@ -34,8 +34,8 @@ function resolve_lxobj(lxo::LxObj, lxdefs::Vector{LxDef};
     # it will be `nothing` in math mode or when defined in utils
     if isnothing(lxd)
         # check if it's defined in Utils and act accordingly
-        if isdefined(Main, :Utils) && isdefined(Main.Utils, fun)
-            raw = Core.eval(Main.Utils, :($fun($lxo, $lxdefs)))
+        if isdefined(Main, utils_symb()) && isdefined(utils_module(), fun)
+            raw = Core.eval(utils_module(), :($fun($lxo, $lxdefs)))
             return reprocess(raw, lxdefs)
         else
             # let the math backend deal with the string

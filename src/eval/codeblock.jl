@@ -124,8 +124,8 @@ function resolve_code_block(ss::SubString; shortcut=false)::String
         # >> eval the code in the relevant module (this creates output/)
         res = run_code(mod, code, cp.out_path; strip_code=false)
         # >> write res to file
-        # >> this weird thing is to make sure that the proper "show"
-        #    is called...
+        # >> this weird thing with QuoteNode is to make sure that the proper
+        #    "show" method is called...
         io = IOBuffer()
         Core.eval(mod, quote show($(io), "text/plain", $(QuoteNode(res))) end)
         write(cp.res_path, take!(io))
