@@ -31,10 +31,10 @@ function form_output_path(base::AS, file::AS, case::Symbol)
     case == :md && (file = change_ext(file))
     outbase = _out_path(base)
     if case in (:md, :html)
-        # file is index.html or 404.html --> keep the path
+        # file is index.html or 404.html or in keep_path --> keep the path
         # file is page.html  --> .../page/index.html
         fname = splitext(file)[1]
-        if fname ∉ ("index", "404") && !endswith(fname, "/index")
+        if fname ∉ ("index", "404") && !endswith(fname, "/index") && !_keep_path(base, fname)
             file = joinpath(fname, "index.html")
         end
     end
@@ -60,6 +60,18 @@ function _out_path(base::String)::String
        outpath = replace(base, path(:folder) => path(:site))
    end
     return outpath
+end
+
+function _keep_path(base, fname)::Bool
+    rpath = get_rpath(joinpath(base, fname))
+    keep = globvar(:keep_path)::Vector{String}
+    isempty(keep) && return false
+    files = [f for f in keep if endswith(f, ".html")]
+    dirs = [d for d in keep if endswith(d, "/")]
+    spath = rpath * ".html"
+    any(f -> f == spath, files) && return true
+    any(d -> startswith(spath, d), dirs) && return true
+    return false
 end
 
 """
@@ -151,7 +163,7 @@ function _scan_input_dir!(other_files::TrackedFiles,
                 if file == "config.md"
                     add_if_new_file!(infra_files, opts...)
                 elseif file == "utils.jl"
-                    add_if_new_file!(infra_files, opts...)                    
+                    add_if_new_file!(infra_files, opts...)
                 elseif fext == ".md"
                     add_if_new_file!(md_pages, opts...)
                 elseif fext ∈ (".html", ".htm")

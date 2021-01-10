@@ -32,6 +32,8 @@ const GLOBAL_VARS_DEFAULT = [
     "tag_page_path"    => dpair("tag"),
     # will be added to IGNORE_FILES
     "ignore"           => Pair(String[], (Vector{Any},)),
+    # don't insert `index.html` at the end of the path for these files
+    "keep_path"        => Pair(String[], (Vector{String},)),
     # for robots.txt
     "robots_disallow"  => Pair(String[], (Vector{String},)),
     "generate_robots"  => dpair(true),
