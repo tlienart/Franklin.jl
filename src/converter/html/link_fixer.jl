@@ -79,5 +79,5 @@ function fix_links(pg::String)::String
     pp = strip(prepath, '/')
     ss = SubstitutionString("\\1=\"/$(pp)/")
     # replace things that look like href="/..." with href="/$prepath/..."
-    return replace(pg, r"(src|href|formaction|url)\s*?=\s*?\"\/" => ss)
+    return replace(pg, r"(src|href|formaction|url)\s*?=\s*?\"?\/" => ss)
 end
