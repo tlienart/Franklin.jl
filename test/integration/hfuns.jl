@@ -25,7 +25,7 @@
                     <!doctype html>
                     <html>
                     <head>
-                      <meta http-equiv="refresh" content="0; url=/foo/index.html">
+                      <meta http-equiv="refresh" content='0; url="/foo/index.html"'>
                     </head>
                     </html>"""
 end

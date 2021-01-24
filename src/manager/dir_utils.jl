@@ -53,7 +53,7 @@ function _out_path(base::String)::String
 
        # add a closing separator to folder path
        rbase   = joinpath(path(:folder), "") * "_"
-       outpath = base[nextind(base, length(rbase)):end]
+       outpath = base[nextind(base, lastindex(rbase)):end]
        outpath = joinpath(path(:site), outpath)
    else
        # path is not a 'special folder'
