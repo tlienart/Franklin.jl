@@ -43,6 +43,7 @@ Here's an example with the insertion of the content of a file `foo/content.md`; 
 {{insertmd foo/content.md}}
 
 You can look at [`utils.jl`](https://github.com/tlienart/Franklin.jl/blob/master/demos/utils.jl) for the definition of the `hfun` (same as above), at [`index.md`](https://github.com/tlienart/Franklin.jl/blob/master/demos/index.md) to see how it's called and at [`foo/content.md`](https://github.com/tlienart/Franklin.jl/blob/master/demos/foo/content.md) for the content file.
+Finally you can also check out the [`config.md`](https://github.com/tlienart/Franklin.jl/blob/master/demos/config.md) file to see how the content page is ignored.
 
 ## (012) Dates
 
