@@ -83,3 +83,14 @@ function env_tikzcd(e, _)
   save(SVG(outpath), TikzCD(content))
   return "\\fig{/$(Franklin.unixify(rpath))}"
 end
+
+###########
+### 013 ###
+###########
+
+function hfun_insertmd(params)
+    rpath = params[1]
+    fullpath = joinpath(Franklin.path(:folder), rpath)
+    isfile(fullpath) || return ""
+    return fd2html(read(fullpath, String), internal=true)
+end

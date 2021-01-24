@@ -17,6 +17,33 @@ The ordering is reverse chronological but just use the table of contents to guid
 
 \toc
 
+## (013) Inserting Markdown in Markdown
+
+Let's say you have a file `content.md` and you would like to include it in another page as if it had been written there in the first place.
+This is pretty easy to do.
+You could for instance use the following function:
+
+```julia
+function hfun_insertmd(params)
+  rpath = params[1]
+  fullpath = joinpath(Franklin.path(:folder), rpath)
+  isfile(fullpath) || return ""
+  return read(fullpath, String)
+end
+```
+
+One thing to note is that all `.md` files in your folder will be considered as potential pages to turn into HTML, so if a `.md` file is meant to exclusively be used "inserted", you should remove it from Franklin's reach by adding it to the `ignore` global variable putting something like this in your `config.md`:
+
+```
+@def ignore = ["path/to/content.md"]
+```
+
+Here's an example with the insertion of the content of a file `foo/content.md`; the result of `{{insertmd foo/content.md}}` is:
+
+{{insertmd foo/content.md}}
+
+You can look at [`utils.jl`](https://github.com/tlienart/Franklin.jl/blob/master/demos/utils.jl) for the definition of the `hfun` (same as above), at [`index.md`](https://github.com/tlienart/Franklin.jl/blob/master/demos/index.md) to see how it's called and at [`foo/content.md`](https://github.com/tlienart/Franklin.jl/blob/master/demos/foo/content.md) for the content file.
+
 ## (012) Dates
 
 The date of last modification on the page is kept in the `fd_mtime_raw` internal page variable, there is also a pre-formatted `fd_mtime`.
