@@ -267,7 +267,7 @@ function hfun_redirect(params::Vector{String})::String
     <!doctype html>
     <html>
     <head>
-      <meta http-equiv="refresh" content="0; url=$(locvar(:fd_url))">
+      <meta http-equiv="refresh" content='0; url="$(locvar(:fd_url))"'>
     </head>
     </html>
     """)

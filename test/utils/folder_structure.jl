@@ -47,6 +47,11 @@ end
     out = F.form_output_path(base, file, :md)
     @test out == joinpath(F.PATHS[:site], "menu", "page", "index.html")
 
+    # issue 768
+    file = "pagéα.md"
+    out = F.form_output_path(base, file, :md)
+    @test out == joinpath(F.PATHS[:site], "menu", "pagéα", "index.html")
+
     # OTHER STUFF
     file = "foo.css"
     base = F.PATHS[:css]
