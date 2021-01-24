@@ -42,7 +42,8 @@ Some examples of websites using Franklin (_if you're using Franklin with a publi
 * [My website](https://tlienart.github.io) (_by now a bit outdated... there's only so much one can do in a day_)
 * [JuliaActuary](https://JuliaActuary.org), Julia's community promoting open-source actuarial science
 * [MIT Introduction to Computational Thinking](https://computationalthinking.mit.edu/Fall20) course website
-* [Rik Huijzer's website](https://huijzer.xyz) with a blog based on the basic template
+* [Rik Huijzer's blog](https://huijzer.xyz) which is mostly about programming and statistics
+* [TuringModels](https://statisticalrethinkingjulia.github.io/TuringModels.jl/) implements the models from [Statistical Rethinking](https://xcelab.net/rm/statistical-rethinking/) using [Turing.jl](https://turing.ml/stable/)
 
 **Custom templates** (i.e. migrating an existing design)
 * The [Julia website](https://julialang.org), including the blog, are deployed using Franklin
@@ -50,7 +51,6 @@ Some examples of websites using Franklin (_if you're using Franklin with a publi
 * [@zlatanvasovic's website](https://zlatanvasovic.github.io) using Bootstrap 4.5
 * [PkgPage.jl](https://tlienart.github.io/PkgPage.jl/), front-page generator based on Franklin using Bootstrap 4.5
 * [@abhishalya's website](https://abhishalya.github.io) using a custom minimalistic theme
-
 
 ## Key features
 
