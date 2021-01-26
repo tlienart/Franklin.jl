@@ -677,8 +677,7 @@ ul.menu-list-child-list a.menu-list-link {
   margin-left:auto;
   margin-right:auto;
   background-color:  aliceblue;
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
+  border-radius: 5px;
   margin-bottom: 1em;
 }
 .note .content {
@@ -694,6 +693,31 @@ ul.menu-list-child-list a.menu-list-link {
   color: white;
   background: cornflowerblue;
 }
+
+.warning {
+  margin-top: 1.5em;
+  width: 95%;
+  margin-left:auto;
+  margin-right:auto;
+  background-color:  #f1b3b1;
+  border-radius: 5px;
+  margin-bottom: 1em;
+}
+.warning .content {
+  padding: 10px;
+  padding-left: 12px;
+}
+.warning .title{
+  font-size: 105%;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  padding-left: 7px;
+  padding-top: 2px;
+  color: white;
+  background: crimson;
+}
+
+
 
 .definition {
     background-color: aliceblue;

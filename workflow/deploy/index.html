@@ -130,6 +130,14 @@
 <li><p>for a project website the repo can be named anything you want, let&#39;s say <code>myWebsite</code>.</p>
 </li>
 </ul></div>
+<div class="warning"><div class="title">⚠ Warning&#33;</div>
+<div class="content">When you consider a <em>project website</em>, you <strong>must</strong> define a <code>prepath</code> variable in your <code>config.md</code> with the name of that project. For instance: <code>@def prepath &#61; &quot;myWebsite&quot;</code>.   This is used upon deployment to indicate that the base URL of your website is <code>username.github.io/myWebsite/</code> instead of <code>username.github.io</code>.   If you forget to do that, among other problems the CSS won&#39;t load and your website will look terrible 😅.</div></div>
+<div class="tlist"><ul>
+<li><p><a href="https://github.com/tlienart2/tlienart2.github.io">This repo</a> is an example of <em>user website</em> you can copy,</p>
+</li>
+<li><p><a href="https://github.com/tlienart2/myWebsite">This repo</a> is an example of <em>project website</em> you can copy.</p>
+</li>
+</ul></div>
 <h3 id="synchronise_your_local_folder"><a href="#synchronise_your_local_folder">Synchronise your local folder</a></h3>
 <p>You now just need to synchronise your repository and your local website folder; to do so, go to your terminal, <code>cd</code> to the website folder and follow the steps below:</p>
 <div class="tlist"><ul>
@@ -223,7 +231,7 @@ on:
   run: |
     echo &quot;PREVIEW_FRANKLIN_WEBSITE_URL&#61;https://&#123;netlify name&#125;.netlify.app/previews/PR&#36;&#123;&#123; github.event.number &#125;&#125;/&quot; &gt;&gt; &#36;GITHUB_ENV
     echo &quot;PREVIEW_FRANKLIN_PREPATH&#61;previews/PR&#36;&#123;&#123; github.event.number &#125;&#125;&quot; &gt;&gt; &#36;GITHUB_ENV</code></pre>
-<p>where <code>&#123;netlify name&#125;</code> is a name you will decide to use at the end of this explanation.  The first line keeps track of the URL where the preview will be available. the second line only keeps track of the &quot;prepath&quot; of that preview URL so that it can be passed to Franklin.</p>
+<p>where <code>&#123;netlify name&#125;</code> is a name you will decide to use at the end of this explanation. The first line keeps track of the URL where the preview will be available. the second line only keeps track of the &quot;prepath&quot; of that preview URL so that it can be passed to Franklin.</p>
 <p>Finally we want to deploy the main website and the PR preview on different branches &#40;and folders&#41;:</p>
 <pre><code class="language-yml">- name: Deploy &#40;preview&#41;
 if: github.event_name &#61;&#61; &#39;pull_request&#39; &amp;&amp; github.repository &#61;&#61; github.event.pull_request.head.repo.full_name # if this build is a PR build and the PR is NOT from a fork
@@ -240,7 +248,7 @@ with:
     GITHUB_TOKEN: &#36;&#123;&#123; secrets.GITHUB_TOKEN &#125;&#125;
     BRANCH: gh-pages # Replace here the branch where your website is deployed
     FOLDER: __site</code></pre>
-<p>Now to avoid problems with the subfolder structure of our website we need to make a small change to our <code>config.md</code> file. Change the following lines </p>
+<p>Now to avoid problems with the subfolder structure of our website we need to make a small change to our <code>config.md</code> file. Change the following lines</p>
 <pre><code class="language-julia">@def prepath     &#61; &quot;myprepath&quot; # This is possibly &quot;&quot; for your case
 @def website_url &#61; &quot;mywebsite.github.io&quot;</code></pre>
 <p>to</p>
@@ -264,7 +272,7 @@ jobs:
           GITHUB_TOKEN: &#36;&#123;&#123; secrets.GITHUB_TOKEN &#125;&#125;</code></pre>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: January 24, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: January 26, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
