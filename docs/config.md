@@ -27,6 +27,7 @@ Useful HTML snippets
 \newcommand{\lineskip}{@@blank@@}
 \newcommand{\skipline}{\lineskip}
 \newcommand{\note}[1]{@@note @@title ⚠ Note@@ @@content #1 @@ @@}
+\newcommand{\warn}[1]{@@warning @@title ⚠ Warning!@@ @@content #1 @@ @@}
 
 \newcommand{\esc}[2]{
     ```julia:esc__!#1

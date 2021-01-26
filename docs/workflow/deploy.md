@@ -25,6 +25,17 @@ Start by creating an empty GitHub repository
 * for a project website the repo can be named anything you want, let's say `myWebsite`.
 @@
 
+\warn{
+  When you consider a _project website_, you **must** define a `prepath` variable in your `config.md` with the name of that project. For instance: `@def prepath = "myWebsite"`.
+  This is used upon deployment to indicate that the base URL of your website is `username.github.io/myWebsite/` instead of `username.github.io`.
+  If you forget to do that, among other problems the CSS won't load and your website will look terrible 😅.
+}
+
+@@tlist
+- [This repo](https://github.com/tlienart2/tlienart2.github.io) is an example of _user website_ you can copy,
+- [This repo](https://github.com/tlienart2/myWebsite) is an example of _project website_ you can copy.
+@@
+
 ### Synchronise your local folder
 
 You now just need to synchronise your repository and your local website folder; to do so, go to your terminal, `cd` to the website folder and follow the steps below:
@@ -155,7 +166,7 @@ After the `Checkout` action add the following:
     echo "PREVIEW_FRANKLIN_WEBSITE_URL=https://{netlify name}.netlify.app/previews/PR${{ github.event.number }}/" >> $GITHUB_ENV
     echo "PREVIEW_FRANKLIN_PREPATH=previews/PR${{ github.event.number }}" >> $GITHUB_ENV
 ```
-where `{netlify name}` is a name you will decide to use at the end of this explanation. 
+where `{netlify name}` is a name you will decide to use at the end of this explanation.
 The first line keeps track of the URL where the preview will be available.
 the second line only keeps track of the "prepath" of that preview URL so that it can be passed to Franklin.
 
@@ -179,7 +190,7 @@ with:
 ```
 
 Now to avoid problems with the subfolder structure of our website we need to make a small change to our `config.md` file.
-Change the following lines 
+Change the following lines
 ```julia
 @def prepath     = "myprepath" # This is possibly "" for your case
 @def website_url = "mywebsite.github.io"
@@ -187,7 +198,7 @@ Change the following lines
 to
 ```julia
 @def prepath     = get(ENV, "PREVIEW_FRANKLIN_PREPATH", "myprepath") # In the third argument put the prepath you normally use
-@def website_url = get(ENV, "PREVIEW_FRANKLIN_WEBSITE_URL", "mywebsite.github.io") # Just put the website name 
+@def website_url = get(ENV, "PREVIEW_FRANKLIN_WEBSITE_URL", "mywebsite.github.io") # Just put the website name
 ```
 
 Now for the final step, you will need to visualize the obtained previews.
