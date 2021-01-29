@@ -145,6 +145,13 @@ with whitespace not to be split.
 """
 const HFUN_PARAMS_PAT = r"([^\s\"']+)|\"([^\"]*)\""
 
+"""
+    PREPATH_FIX_PAT
+
+See [`fix_links`](@ref).
+"""
+const PREPATH_FIX_PAT = r"(src|href|formaction|url)\s*?=\s*?[\"\']?\/"
+
 #= =====================================================
 Pattern checkers
 ===================================================== =#

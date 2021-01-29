@@ -315,3 +315,17 @@ end
     m = match(F.HBLOCK_FOR_PAT, s).captures[1]
     @test_throws F.HTMLBlockError F.check_for_pat(m)
 end
+
+@testset "fix_links" begin
+    F.set_var!(F.GLOBAL_VARS, "prepath", "foo")
+    p = """
+        url='/bar'
+        src="/bar"
+        href=/bar
+        """ |> F.fix_links
+    @test p // """
+        url="/foo/bar'
+        src="/foo/bar"
+        href="/foo/bar
+        """
+end
