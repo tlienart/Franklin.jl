@@ -205,8 +205,9 @@ function fd_fullpass(watched_files::NamedTuple)::Int
     isempty(prepath) || (GLOBAL_VARS["prepath"] = prepath)
 
     # process configuration file (see also `process_mddefs!`)
-    process_config()
+    # note the order (utils the config) is important, see also #774
     process_utils()
+    process_config()
 
     # form page segments
     root       = path(:folder)
