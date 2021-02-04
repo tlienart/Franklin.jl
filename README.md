@@ -51,6 +51,7 @@ Some examples of websites using Franklin (_if you're using Franklin with a publi
 * [@zlatanvasovic's website](https://zlatanvasovic.github.io) using Bootstrap 4.5
 * [PkgPage.jl](https://tlienart.github.io/PkgPage.jl/), front-page generator based on Franklin using Bootstrap 4.5
 * [@abhishalya's website](https://abhishalya.github.io) using a custom minimalistic theme
+* The [JuliaCon website](https://juliacon.org) are deployed using Franklin
 
 ## Key features
 
