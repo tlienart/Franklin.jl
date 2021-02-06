@@ -30,6 +30,12 @@ config_warn() = """
     $POINTER_WORKFLOW
     """ |> print_warning
 
+external_config_warn(filepath) = """
+    File '{{$filepath}}' not found. Library was not included.
+    \nRelevant pointers:
+    $POINTER_WORKFLOW
+    """ |> print_warning
+
 # --- utils ---
 
 function get_source()

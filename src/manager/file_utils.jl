@@ -22,6 +22,26 @@ end
 """
 $(SIGNATURES)
 
+Given a path to a markdown file, this checks if that file exists. If so,
+this processes the file as though it were the `config.md` markdown file.
+See [`process_config`](@ref) for details.
+"""
+function include_external_config(filepath)::Nothing
+    parent_source = FD_ENV[:SOURCE]
+    FD_ENV[:SOURCE] = filepath
+    if isfile(filepath)
+        convert_md(read(filepath, String); isconfig=true)
+    else
+        external_config_warn(filepath)
+    end
+    FD_ENV[:SOURCE] = parent_source
+    return nothing
+end
+
+
+"""
+$(SIGNATURES)
+
 Checks for a `utils.jl` file and uses it to set global computed variables,
 functions and html functions. Whatever is defined in `utils.jl` takes
 precedence over things defined internally in Franklin or in the global vars;
