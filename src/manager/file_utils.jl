@@ -85,7 +85,7 @@ function process_file(case::Symbol, fpair::Pair{String,String}, args...)::Int
                 $err
                 """)
         end
-        FD_ENV[:SUPPRESS_ERR] || throw(err)
+        FD_ENV[:SUPPRESS_ERR] || rethrow()
         return -1
     end
     return 0
