@@ -81,8 +81,8 @@
 		  <li class="menu-list-parent active"><a href="/extras/" class="menu-list-link">• Extras</a>
 			  <ul class="menu-list-child-list ">
 				<li class="menu-list-item "><a href="/extras/" class="menu-list-link">Overview</a>
-				<li class="menu-list-item "><a href="/extras/lunr/" class="menu-list-link">Lunr search</a>
-                <li class="menu-list-item active"><a href="/extras/utterances/" class="menu-list-link">Utterances comments</a>                    
+				<li class="menu-list-item "><a href="/extras/lunr/" class="menu-list-link">Search with Lunr</a>
+                <li class="menu-list-item active"><a href="/extras/utterances/" class="menu-list-link">Comments with Utterances</a>
 				<li class="menu-list-item "><a href="/extras/literate/" class="menu-list-link">Literate</a>
 				<li class="menu-list-item "><a href="/extras/plotly/" class="menu-list-link">Plotly</a>
 			  </ul>
@@ -153,7 +153,7 @@
 <p>One can directly edit the <code>repo</code>, <code>issue-term</code> and <code>theme</code> fields above or just fill out the corresponding forms in <a href="https://utteranc.es">utterances</a> that the proper filled-out script shows up that the end of the page for copying and pasting.</p>
 <p>The <em>issue label</em> is optional, so it does not appear in the script above, but if you want something different than &quot;Comment&quot;, then the argument <code>label&#61;&quot;Comment&quot;</code> should be added to the script, with whatever you want in place of &quot;Comment&quot;.</p>
 <h2 id="adding_the_comment_widget"><a href="#adding_the_comment_widget">Adding the comment widget</a></h2>
-<p>With the javascript code ready, you need to add it to the desired page, be it a blog post or any other page. Of course you can just add the code above directly to an html file, or inject it to a markdown file by fencing it with ....</p>
+<p>With the javascript code ready, you need to add it to the desired page, be it a blog post or any other page. Of course you can just add the code above directly to an html file, or inject it to a markdown file by fencing it with <code>~~~...~~~</code>.</p>
 <p>But if you want to add it to several pages, as in posts for a blog, the best way is to add an <code>hfun_*</code> function to <code>utils.jl</code> and simply call this function at the end of each page.</p>
 <p>For instance, the following function will do it</p>
 <pre><code class="language-julia">&quot;&quot;&quot;

@@ -83,8 +83,8 @@
 		  <li class="menu-list-parent "><a href="/extras/" class="menu-list-link">• Extras</a>
 			  <ul class="menu-list-child-list ">
 				<li class="menu-list-item "><a href="/extras/" class="menu-list-link">Overview</a>
-				<li class="menu-list-item "><a href="/extras/lunr/" class="menu-list-link">Lunr search</a>
-                <li class="menu-list-item "><a href="/extras/utterances/" class="menu-list-link">Utterances comments</a>                    
+				<li class="menu-list-item "><a href="/extras/lunr/" class="menu-list-link">Search with Lunr</a>
+                <li class="menu-list-item "><a href="/extras/utterances/" class="menu-list-link">Comments with Utterances</a>
 				<li class="menu-list-item "><a href="/extras/literate/" class="menu-list-link">Literate</a>
 				<li class="menu-list-item "><a href="/extras/plotly/" class="menu-list-link">Plotly</a>
 			  </ul>
@@ -148,29 +148,29 @@
 <p>For instance you might prefer:</p>
 <pre><code class="language-julia">x &#61; randn&#40;10&#41;
 x&#91;1:3&#93;</code></pre><pre><code class="plaintext">3-element Array{Float64,1}:
- -0.23625314241584053
-  0.5231216348144841
- -0.2685764665218872</code></pre>
+ -0.34835252138832845
+  1.6519671072363977
+  0.015405011775144214</code></pre>
 <p>to just</p>
 <pre><code class="language-julia">x &#61; randn&#40;10&#41;</code></pre><pre><code class="plaintext">10-element Array{Float64,1}:
-  0.5636927327783707
- -0.8385834574677419
-  1.0023105201846076
- -1.3639682024344697
- -0.3115224099417785
-  0.4327218873760992
- -0.5317202906390639
-  0.9748511746459361
- -0.06326531724432788
-  1.6218718315642553</code></pre>
+  0.41516398862496084
+  0.5221806158137263
+  0.7041725061664412
+ -0.6535736486982352
+  0.1758391913566344
+  1.0286937087491723
+  0.8239465498053422
+  0.0563523751446421
+  0.05808882265712036
+ -0.5977884073074222</code></pre>
 <p>You can also use <code>@show</code> or <code>println</code> to show specific things beyond the last line</p>
 <pre><code class="language-julia">x &#61; rand&#40;10&#41;
 println&#40;sum&#40;x&#41;&#41;
-y &#61; 5</code></pre><pre><code class="plaintext">4.416137783686876
+y &#61; 5</code></pre><pre><code class="plaintext">4.10609844101349
 5</code></pre>
 <p>if the last line is a <code>@show</code> or <code>print</code> then only that is shown:</p>
 <pre><code class="language-julia">x &#61; randn&#40;10&#41;
-@show x&#91;1&#93;</code></pre><pre><code class="plaintext">x[1] = 0.2668172145927524
+@show x&#91;1&#93;</code></pre><pre><code class="plaintext">x[1] = -0.35541861143108844
 </code></pre>
 <h2 id="example"><a href="#example">Example</a></h2>
 <h3 id="script"><a href="#script">Script</a></h3>
