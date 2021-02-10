@@ -11,6 +11,7 @@ Also, if you come up with other nice ways of extending Franklin, don't hesitate 
 
 @@flist
 * \goto{/extras/lunr/} Add a search functionality to your website using [`lunr.js`](https://lunrjs.com/),
+* \goto{/extras/utterances/} Add comment widget to selected pages with [utterances](https://utteranc.es).
 * \goto{/extras/literate/} Generate auxiliary files with Literate.
 * \goto{/extras/plotly/} Add interactive plots with [Plotly](https://plot.ly/javascript/).
 @@
