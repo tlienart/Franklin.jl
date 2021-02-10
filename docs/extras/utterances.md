@@ -64,7 +64,7 @@ The *issue label* is optional, so it does not appear in the script above, but if
 
 ## Adding the comment widget
 
-With the javascript code ready, you need to add it to the desired page, be it a blog post or any other page. Of course you can just add the code above directly to an html file, or inject it to a markdown file by fencing it with ~~~...~~~.
+With the javascript code ready, you need to add it to the desired page, be it a blog post or any other page. Of course you can just add the code above directly to an html file, or inject it to a markdown file by fencing it with `~~~...~~~`.
 
 But if you want to add it to several pages, as in posts for a blog, the best way is to add an `hfun_*` function to `utils.jl` and simply call this function at the end of each page.
 
