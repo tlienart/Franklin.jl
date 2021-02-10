@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+   <!-- Syntax highlighting via Prism, note: restricted langs -->
+<link rel="stylesheet" href="/libs/highlight/github.min.css">
+   
+  <link rel="stylesheet" href="/css/jtd.css">
+  <link rel="icon" href="/assets/infra/logoF_square.gif">
+   <title>Add comments with utterances</title>  
+
+  <!-- LUNR -->
+  <script src="/libs/lunr/lunr.min.js"></script>
+  <script src="/libs/lunr/lunr_index.js"></script>
+  <script src="/libs/lunr/lunrclient.min.js"></script>
+
+  <!-- PLOTLY -->
+  
+
+</head>
+<body>                      <!-- closed in foot.html -->
+  <div class="page-wrap">   <!-- closed in foot.html -->
+    <!-- SIDE BAR -->
+    <div class="side-bar">
+      <div class="header">
+        <a href="/" class="title">
+          <img style="height:60px;" src="/assets/infra/franklin.svg" alt="franklin" />
+          <style>
+          @media (max-width: 31.25rem){
+            .side-bar .show-menu {height:30px;}
+          }
+          @media (max-width: 50rem) {
+            .side-bar .header .title {padding-top:0; padding-bottom: 0;}
+            .header .title img {height:60px; max-width: 100px !important;}
+          }
+          @media (min-width: 66.5rem){
+            .header .title img {max-width: 140px !important;}
+          }
+          </style>
+        </a>
+      </div>
+      <label for="show-menu" class="show-menu">MENU</label>
+      <input type="checkbox" id="show-menu" role="button">
+      <div class="menu" id="side-menu">
+        <ul class="menu-list">
+          <!-- HOME -->
+          <li class="menu-list-item "><a href="/" class="menu-list-link">• Home</a>
+          <!-- WORKFLOW -->
+		  <li class="menu-list-parent "><a href="/workflow/" class="menu-list-link">• Workflow</a>
+			  <ul class="menu-list-child-list ">
+				<li class="menu-list-item "><a href="/workflow/" class="menu-list-link">Create and edit</a>
+				<li class="menu-list-item "><a href="/workflow/structure/" class="menu-list-link">Page structure</a>
+				<li class="menu-list-item "><a href="/workflow/deploy/" class="menu-list-link">Deploy</a>
+				<li class="menu-list-item "><a href="/workflow/sitemap-rss/" class="menu-list-link">Sitemap and RSS</a>
+			  </ul>
+          <!-- SYNTAX -->
+          <!-- NOTE: if adding a menu item, add ref to first item! -->
+          <li class="menu-list-parent "><a href="/syntax/markdown/" class="menu-list-link">• Syntax</a>
+            <ul class="menu-list-child-list ">
+              <li class="menu-list-item "><a href="/syntax/markdown/" class="menu-list-link">Markdown</a>
+              <li class="menu-list-item "><a href="/syntax/divs-commands/" class="menu-list-link">Divs and Commands</a>
+              <li class="menu-list-item "><a href="/syntax/page-variables/" class="menu-list-link">Page Variables</a>
+			  <li class="menu-list-item "><a href="/syntax/utils/" class="menu-list-link">Utils</a>
+            </ul>
+		  <!-- STYLING -->
+          <li class="menu-list-parent "><a href="/styling/templates/" class="menu-list-link">• Styling</a>
+            <ul class="menu-list-child-list ">
+              <li class="menu-list-item "><a href="/styling/templates/" class="menu-list-link">Templates</a>
+              <li class="menu-list-item "><a href="/styling/classes/" class="menu-list-link">Classes</a>
+            </ul>
+          <!-- CODE -->
+          <li class="menu-list-parent "><a href="/code/" class="menu-list-link">• Code</a>
+            <ul class="menu-list-child-list ">
+              <li class="menu-list-item "><a href="/code/" class="menu-list-link">Inserting code</a>
+              <li class="menu-list-item "><a href="/code/eval-tricks/" class="menu-list-link">Code tricks</a>
+              <li class="menu-list-item "><a href="/code/literate/" class="menu-list-link">Literate.jl</a>
+            </ul>
+		  <!-- EXTRAs -->
+		  <li class="menu-list-parent active"><a href="/extras/" class="menu-list-link">• Extras</a>
+			  <ul class="menu-list-child-list ">
+				<li class="menu-list-item "><a href="/extras/" class="menu-list-link">Overview</a>
+				<li class="menu-list-item "><a href="/extras/lunr/" class="menu-list-link">Lunr search</a>
+                <li class="menu-list-item active"><a href="/extras/utterances/" class="menu-list-link">Utterances comments</a>                    
+				<li class="menu-list-item "><a href="/extras/literate/" class="menu-list-link">Literate</a>
+				<li class="menu-list-item "><a href="/extras/plotly/" class="menu-list-link">Plotly</a>
+			  </ul>
+          <!-- FAQ -->
+          <li class="menu-list-parent "><a href="/faq/technical/" class="menu-list-link">• FAQ</a>
+            <ul class="menu-list-child-list ">
+              <li class="menu-list-item "><a href="/faq/technical/" class="menu-list-link">Technical</a>
+			  <li class="menu-list-item "><a href="/faq/troubleshooting/" class="menu-list-link">Troubleshooting</a>
+              <li class="menu-list-item "><a href="/faq/why-o-why/" class="menu-list-link">Meta</a>
+            </ul>
+        </ul>
+			<form id="lunrSearchForm" name="lunrSearchForm">
+				<input class="search-input" name="q" placeholder="Enter search term" type="text"> <input type="submit" value="Search" formaction="/search/index.html">
+			</form>
+      </div>
+      <div class="footer">
+        <a href="/faq/why-o-why/"><img style="width:40%;padding-left:10px;margin-bottom:15px;" src="/assets/infra/logoF2.svg" alt="Franklin Logo" /></a>
+      </div>
+    </div>
+    <!-- CONTENT -->
+    <div class="main-content-wrap"> <!-- closed in foot.html -->
+      <div class="main-content" id="focus" tabindex="-1" style="outline:0;">    <!-- closed in foot.html -->
+        <div class="main-header">
+          <a name="pagetop"></a>
+
+          <a id="github" href="https://github.com/tlienart/Franklin.jl/blob/master/docs/extras/utterances.md">Page source</a>
+		  <span style="width:30px; text-align: center;color:lightgray;">|</span>
+		  <a id="github" href="https://github.com/tlienart/Franklin.jl">GitHub Repository</a>
+        </div>
+
+<!-- Content appended here (in class franklin-content) -->
+<div class="franklin-content"><h1 id="add_comments_with_utterances"><a href="#add_comments_with_utterances">Add comments with utterances</a></h1>
+<p><div class="franklin-toc"><ol><li><a href="#pre-requisites">Pre-requisites</a><ol><li><a href="#selecting_the_repository_for_storing_the_comments">Selecting the repository for storing the comments</a></li><li><a href="#installing_the_utterances_app">Installing the utterances app</a></li><li><a href="#configuring_the_javascript_code">Configuring the javascript code</a></li></ol></li><li><a href="#adding_the_comment_widget">Adding the comment widget</a></li></ol></div><div class="blank"></div></p>
+<p>Although Franklin generates static sites, you can add a commment widget to any  webpage by using an external commenting system. There are several such systems, which work through some javascript or iframe code embedded in the page. The code works by calling an external server or app that handles the comment database and the interface with the user.</p>
+<p>We describe below how to implement a comment widget through <a href="https://utteranc.es">utterances</a>, which is a free, open-source, no-ads solution, which is pretty easy to set up. All the comments are saved in a github repository of your choosing, which can be the same repo that hosts the website or a different one. Each page that contains the javascript code for utterances is associated to an issue in the selected repository, and all the comments in that page are added as comments to that issue.</p>
+<p>The comments in your page work just like comments in github issues, which means they have markdown rendering, code highlighting, and the basic github reaction emojis. Unfortunately, github&#39;s markdown does not render latex formulas, but they can be added by using an external renderer as described in <a href="https://gist.github.com/a-rodin/fef3f543412d6e1ec5b6cf55bf197d7b"> a-rodin/A hack for showing LaTeX formulas in GitHub markdown.md</a>. It&#39;s not as friendly, but is doable. It is the same render used by github to display jupyter notebooks.</p>
+<p>A notable thing missing from utterances is nested replies. Another drawback is that, since it is based on github issues, any user that wants to leave a comment has to have a github account and log in to proceed.</p>
+<p>If one is interested in trying other comment engines, here is a list of options, with some of them being paid and/or closed source: <a href="https://commento.io">Commento</a>, <a href="https://graphcomment.com/en/">GraphComment</a>, <a href="https://intensedebate.com">IntenseDebate</a>, <a href="https://posativ.org/isso/">Isso</a>,  <a href="https://muut.com">Muut</a>, <a href="https://github.com/umputun/remark42">Remark42</a>, <a href="https://staticman.net">StaticMan</a>, and <a href="https://www.talkyard.io">Talkyard</a>.</p>
+<h2 id="pre-requisites"><a href="#pre-requisites">Pre-requisites</a></h2>
+<p>The installation is pretty simple, and the <a href="https://utteranc.es">utterances</a> page is clear in explaining it. Here is a quick rundown of the configuration.</p>
+<h3 id="selecting_the_repository_for_storing_the_comments"><a href="#selecting_the_repository_for_storing_the_comments">Selecting the repository for storing the comments</a></h3>
+<p>You need to choose a repository for storing the comments. It can be the same repository for the website, in case your site is hosted at github, or a different repository, if so you wish or need.</p>
+<p>The selected page has to be public, so your commentators can write to it via utterances. In fact, utterances just provides the interface. The comment itself is owned by the user and can, in fact, also be written and accessed directly at the repo.</p>
+<h3 id="installing_the_utterances_app"><a href="#installing_the_utterances_app">Installing the utterances app</a></h3>
+<p>There is an <a href="https://github.com/apps/utterances">utterances app</a> that needs permission to access your github repo in order to write the comments. It is just a matter of clicking the <code>Configure</code> button that appears in the app&#39;s page and following the steps to select the right repository.</p>
+<h3 id="configuring_the_javascript_code"><a href="#configuring_the_javascript_code">Configuring the javascript code</a></h3>
+<p>With the name of the repository at hand and the utterances app installed, it is time to configure the javascript code that is going to be inserted in the desired pages.</p>
+<p>There are a two required configurations to be made:</p>
+<div class="tlist"><ul>
+<li><p><em>The blog post issue mapping</em>, which defines the form of the name to be given to the issue associated to each page containing the comment widget. There are a few options, as described in the <a href="https://utteranc.es">utterances</a> page. The default is to have the title of the issue be the page pathname.</p>
+</li>
+<li><p><em>The theme for the widget</em>. The default is &quot;Github Light&quot;, but there a few others.</p>
+</li>
+</ul></div>
+<p>And there is one optional configuration:</p>
+<div class="tlist"><ul>
+<li><p><em>The issue label</em>, which is the title of the comment widget. The default is simply &quot;Comment&quot;, but you can change it at will.</p>
+</li>
+</ul></div>
+<p>The script itself has the general form</p>
+<pre><code class="language-html">&lt;script src&#61;&quot;https://utteranc.es/client.js&quot;
+        repo&#61;&quot;&#91;ENTER REPO HERE&#93;&quot;
+        issue-term&#61;&quot;pathname&quot;
+        theme&#61;&quot;github-light&quot;
+        crossorigin&#61;&quot;anonymous&quot;
+        async&gt;
+&lt;/script&gt;</code></pre>
+<p>One can directly edit the <code>repo</code>, <code>issue-term</code> and <code>theme</code> fields above or just fill out the corresponding forms in <a href="https://utteranc.es">utterances</a> that the proper filled-out script shows up that the end of the page for copying and pasting.</p>
+<p>The <em>issue label</em> is optional, so it does not appear in the script above, but if you want something different than &quot;Comment&quot;, then the argument <code>label&#61;&quot;Comment&quot;</code> should be added to the script, with whatever you want in place of &quot;Comment&quot;.</p>
+<h2 id="adding_the_comment_widget"><a href="#adding_the_comment_widget">Adding the comment widget</a></h2>
+<p>With the javascript code ready, you need to add it to the desired page, be it a blog post or any other page. Of course you can just add the code above directly to an html file, or inject it to a markdown file by fencing it with ....</p>
+<p>But if you want to add it to several pages, as in posts for a blog, the best way is to add an <code>hfun_*</code> function to <code>utils.jl</code> and simply call this function at the end of each page.</p>
+<p>For instance, the following function will do it</p>
+<pre><code class="language-julia">&quot;&quot;&quot;
+    &#123;&#123; addcomments &#125;&#125;
+
+Add a comment widget, managed by utterances &lt;https://utteranc.es&gt;.
+&quot;&quot;&quot;
+function hfun_addcomments&#40;&#41;
+    html_str &#61; &quot;&quot;&quot;
+        &lt;script src&#61;&quot;https://utteranc.es/client.js&quot;
+            repo&#61;&quot;&#91;ENTER REPO HERE&#93;&quot;
+            issue-term&#61;&quot;pathname&quot;
+            label&#61;&quot;Comment&quot;
+            theme&#61;&quot;github-light&quot;
+            crossorigin&#61;&quot;anonymous&quot;
+            async&gt;
+        &lt;/script&gt;
+    &quot;&quot;&quot;
+    return html_str
+end</code></pre>
+<p>Then, at the end of a markdown file, you just need to add</p>
+<pre><code class="language-html">&#123;&#123; addcomments &#125;&#125;</code></pre>
+<p>With that done, each time someone leaves a comment in a page, the comment will be written to the repo, and you will receive an email from github telling you so.</p>
+<div class="page-foot">
+  <div class="copyright">
+    &copy; Thibaut Lienart. Last modified: February 10, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+  </div>
+</div>
+</div><!-- CONTENT ENDS HERE -->
+    </div> <!-- end of class main-content -->
+    </div> <!-- end of class main-content-wrap -->
+    </div> <!-- end of class page-wrap-->
+    
+    
+      <script src="/libs/highlight/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
+
+    
+  </body>
+</html>
