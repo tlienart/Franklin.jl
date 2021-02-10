@@ -115,7 +115,7 @@
 
 <!-- Content appended here (in class franklin-content) -->
 <div class="franklin-content"><h1 id="add_comments_with_utterances"><a href="#add_comments_with_utterances">Add comments with utterances</a></h1>
-<p><div class="franklin-toc"><ol><li><a href="#pre-requisites">Pre-requisites</a><ol><li><a href="#selecting_the_repository_for_storing_the_comments">Selecting the repository for storing the comments</a></li><li><a href="#installing_the_utterances_app">Installing the utterances app</a></li><li><a href="#configuring_the_javascript_code">Configuring the javascript code</a></li></ol></li><li><a href="#adding_the_comment_widget">Adding the comment widget</a></li></ol></div><div class="blank"></div></p>
+<p><div class="franklin-toc"><ol><li><a href="#pre-requisites">Pre-requisites</a><ol><li><a href="#selecting_the_repository_for_storing_the_comments">Selecting the repository for storing the comments</a></li><li><a href="#installing_the_utterances_app">Installing the utterances app</a></li><li><a href="#configuring_the_javascript_code">Configuring the javascript code</a></li></ol></li><li><a href="#adding_the_comment_widget">Adding the comment widget</a></li><li><a href="#working_example">Working example</a></li></ol></div><div class="blank"></div></p>
 <p>Although Franklin generates static sites, you can add a commment widget to any  webpage by using an external commenting system. There are several such systems, which work through some javascript or iframe code embedded in the page. The code works by calling an external server or app that handles the comment database and the interface with the user.</p>
 <p>We describe below how to implement a comment widget through <a href="https://utteranc.es">utterances</a>, which is a free, open-source, no-ads solution, which is pretty easy to set up. All the comments are saved in a github repository of your choosing, which can be the same repo that hosts the website or a different one. Each page that contains the javascript code for utterances is associated to an issue in the selected repository, and all the comments in that page are added as comments to that issue.</p>
 <p>The comments in your page work just like comments in github issues, which means they have markdown rendering, code highlighting, and the basic github reaction emojis. Unfortunately, github&#39;s markdown does not render latex formulas, but they can be added by using an external renderer as described in <a href="https://gist.github.com/a-rodin/fef3f543412d6e1ec5b6cf55bf197d7b"> a-rodin/A hack for showing LaTeX formulas in GitHub markdown.md</a>. It&#39;s not as friendly, but is doable. It is the same render used by github to display jupyter notebooks.</p>
@@ -177,6 +177,15 @@ end</code></pre>
 <p>Then, at the end of a markdown file, you just need to add</p>
 <pre><code class="language-html">&#123;&#123; addcomments &#125;&#125;</code></pre>
 <p>With that done, each time someone leaves a comment in a page, the comment will be written to the repo, and you will receive an email from github telling you so.</p>
+<h2 id="working_example"><a href="#working_example">Working example</a></h2>
+<p>Prof. Ricardo Rosa&#39;s website uses Utterances for comments:</p>
+<div class="flist"><ul>
+<li><p><a href="https://rmsrosa.github.io/blog/2021/02/time_ave_bounds_SoS/">example page</a></p>
+</li>
+<li><p><a href="https://github.com/rmsrosa/rmsrosa.github.io">source repo</a></p>
+</li>
+</ul></div>
+<p>Kind thanks to Ricardo who kindly wrote most of this page 💯.</p>
 <div class="page-foot">
   <div class="copyright">
     &copy; Thibaut Lienart. Last modified: February 10, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
