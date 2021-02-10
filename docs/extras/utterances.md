@@ -98,3 +98,14 @@ Then, at the end of a markdown file, you just need to add
 ```
 
 With that done, each time someone leaves a comment in a page, the comment will be written to the repo, and you will receive an email from github telling you so.
+
+## Working example
+
+Prof. Ricardo Rosa's website uses Utterances for comments:
+
+@@flist
+* [example page](https://rmsrosa.github.io/blog/2021/02/time_ave_bounds_SoS/)
+* [source repo](https://github.com/rmsrosa/rmsrosa.github.io)
+@@
+
+Kind thanks to Ricardo who kindly wrote most of this page 💯.
