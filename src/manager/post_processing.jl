@@ -206,12 +206,17 @@ function verify_links_page(path::AS, online::Bool)
     page  = read(path, String)
     for m in eachmatch(r"\shref=\"(https?://)?(.*?)(?:#(.*?))?\"", page)
         if m.captures[1] === nothing
-            # internal link, remove the front / otherwise it fails with joinpath
-            link = replace(m.captures[2], r"^\/"=>"")
-            # if it's empty it's `href="/"` which is always ok
-            isempty(link) && continue
+            # internal link;
+            link = m.captures[2]
             anchor = m.captures[3]
-            full_link = joinpath(PATHS[:site], link)
+            (isempty(link) || link == "/") && continue # this is always ok
+            if link[1] === '/'
+                # Absolute link, join with the base site folder
+                full_link = joinpath(PATHS[:site], link[2:end])
+            else
+                # Relative path, compute from the current path
+                full_link = joinpath(dirname(path), link)
+            end
             if endswith(full_link, "/")
                 full_link *= "index.html"
             end
