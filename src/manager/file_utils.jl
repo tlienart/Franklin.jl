@@ -25,6 +25,9 @@ $(SIGNATURES)
 Given a path to a markdown file, this checks if that file exists. If so,
 this processes the file as though it were the `config.md` markdown file.
 See [`process_config`](@ref) for details.
+
+Note: this should be called from within the `utils.jl` so that it's processed
+*before* the user's config.md which then takes precedence.
 """
 function include_external_config(filepath)::Nothing
     parent_source = FD_ENV[:SOURCE]
