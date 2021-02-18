@@ -30,9 +30,8 @@ happen. Return a handle pointing to the module.
 """
 function newmodule(name::String)::Module
     mod  = nothing
-    junk = tempname()
 
-    open(junk, "w") do outf
+    mktemp() do _, outf
         # discard the "WARNING: redefining module X"
         redirect_stderr(outf) do
             mod = Core.eval(Main, Meta.parse("""
