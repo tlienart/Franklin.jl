@@ -41,20 +41,23 @@ end
     @test isapproxstr(h, raw"""
         <div class="franklin-toc">
           <ol>
-            <li>
-              <a href="#hello_fd">Hello <code>fd</code></a>
+            <li><a href="#hello_fd">Hello <code>fd</code></a>
               <ol>
-                <li><ol><li><a href="#weirdly_nested">weirdly nested</a></li></ol></li>
+                <li>
+                  <ol>
+                    <li><a href="#weirdly_nested">weirdly nested</a></li>
+                  </ol>
+                </li>
                 <li><a href="#goodbye">Goodbye&#33;</a></li>
               </ol>
             </li>
             <li><a href="#done">Done</a></li>
           </ol>
         </div>
-        <h2 id="hello_fd"><a href="#hello_fd">Hello <code>fd</code></a></h2>
-        <h4 id="weirdly_nested"><a href="#weirdly_nested">weirdly nested</a></h4>
-        <h3 id="goodbye"><a href="#goodbye">Goodbye&#33;</a></h3>
-        <h2 id="done"><a href="#done">Done</a></h2>
+        <h2 id="hello_fd"><a href="#hello_fd" class="header-anchor">Hello <code>fd</code></a></h2>
+        <h4 id="weirdly_nested"><a href="#weirdly_nested" class="header-anchor">weirdly nested</a></h4>
+        <h3 id="goodbye"><a href="#goodbye" class="header-anchor">Goodbye&#33;</a></h3>
+        <h2 id="done"><a href="#done" class="header-anchor">Done</a></h2>
         <p>done.</p>
         """)
 end
@@ -89,12 +92,12 @@ end
                 </li>
             </ol>
         </div>
-        <h1 id="a"><a href="#a">A</a></h1>
-        <h2 id="b"><a href="#b">B</a></h2>
-        <h4 id="c"><a href="#c">C</a></h4>
-        <h3 id="d"><a href="#d">D</a></h3>
-        <h2 id="e"><a href="#e">E</a></h2>
-        <h3 id="f"><a href="#f">F</a></h3>
+        <h1 id="a"><a href="#a" class="header-anchor">A</a></h1>
+        <h2 id="b"><a href="#b" class="header-anchor">B</a></h2>
+        <h4 id="c"><a href="#c" class="header-anchor">C</a></h4>
+        <h3 id="d"><a href="#d" class="header-anchor">D</a></h3>
+        <h2 id="e"><a href="#e" class="header-anchor">E</a></h2>
+        <h3 id="f"><a href="#f" class="header-anchor">F</a></h3>
         <p>done.</p>
         """)
 end

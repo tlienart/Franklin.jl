@@ -96,6 +96,7 @@ end
         ## Goodbye
         """ |> fd2html_td
     @test isapproxstr(s, raw"""
-<div class="franklin-toc"><ol><li><a href="#hello">Hello</a><ol><li><a href="#goodbye">Goodbye</a></li></ol></li></ol></div>
- <h1 id="hello"><a href="#hello">Hello</a></h1>  <h2 id="goodbye"><a href="#goodbye">Goodbye</a></h2>""")
+        <div class="franklin-toc"><ol><li><a href="#hello">Hello</a><ol><li><a href="#goodbye">Goodbye</a></li></ol></li></ol></div>
+        <h1 id="hello"><a href="#hello" class="header-anchor">Hello</a></h1>
+        <h2 id="goodbye"><a href="#goodbye" class="header-anchor">Goodbye</a></h2>""")
 end

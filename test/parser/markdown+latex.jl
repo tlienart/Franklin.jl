@@ -108,17 +108,17 @@ end
         6
         """ |> seval
     @test isapproxstr(h, """
-        <h1 id="t1"><a href="#t1">t1</a></h1>
+        <h1 id="t1"><a href="#t1" class="header-anchor">t1</a></h1>
         <p>1</p>
-        <h2 id="t2"><a href="#t2">t2</a></h2>
+        <h2 id="t2"><a href="#t2" class="header-anchor">t2</a></h2>
         <p>2</p>
-        <h2 id="t3_blah_etc"><a href="#t3_blah_etc">t3 <code>blah</code> etc</a></h2>
+        <h2 id="t3_blah_etc"><a href="#t3_blah_etc" class="header-anchor">t3 <code>blah</code> etc</a></h2>
         <p>3</p>
-        <h3 id="t4"><a href="#t4">t4 </a></h3>
+        <h3 id="t4"><a href="#t4" class="header-anchor">t4 </a></h3>
         <p>4</p>
-        <h3 id="t2__2"><a href="#t2__2">t2</a></h3>
+        <h3 id="t2__2"><a href="#t2__2" class="header-anchor">t2</a></h3>
         <p>5</p>
-        <h3 id="t2__3"><a href="#t2__3">t2</a></h3>
+        <h3 id="t2__3"><a href="#t2__3" class="header-anchor">t2</a></h3>
         <p>6</p>
         """)
 
@@ -132,11 +132,11 @@ end
         C
         """ |> seval
     @test  isapproxstr(h, """
-        <h2 id="example"><a href="#example">example</a></h2>
+        <h2 id="example"><a href="#example" class="header-anchor">example</a></h2>
         <p>A</p>
-        <h2 id="example__2"><a href="#example__2">example</a></h2>
+        <h2 id="example__2"><a href="#example__2" class="header-anchor">example</a></h2>
         <p>B</p>
-        <h2 id="example_2"><a href="#example_2">example 2</a></h2>
+        <h2 id="example_2"><a href="#example_2" class="header-anchor">example 2</a></h2>
         <p>C</p>
         """)
 end
@@ -150,14 +150,14 @@ end
 
 @testset "Header+lx" begin
     h = "# blah" |> fd2html_td
-    @test h // """<h1 id="blah"><a href="#blah">blah</a></h1>"""
+    @test h // """<h1 id="blah"><a href="#blah" class="header-anchor">blah</a></h1>"""
     h = raw"""
         \newcommand{\foo}{foo}
         \newcommand{\header}{# hello}
         \foo
         \header
         """ |> fd2html_td
-    @test h // """<p>foo <h1 id="hello"><a href="#hello">hello</a></h1></p>"""
+    @test h // """<p>foo <h1 id="hello"><a href="#hello" class="header-anchor">hello</a></h1></p>"""
     h = raw"""
         \newcommand{\foo}{foo}
         \foo hello
@@ -167,11 +167,11 @@ end
         \newcommand{\foo}{blah}
         # \foo hello
         """ |> fd2html_td
-    @test h // """<h1 id="blah_hello"><a href="#blah_hello">blah hello</a></h1>"""
+    @test h // """<h1 id="blah_hello"><a href="#blah_hello" class="header-anchor">blah hello</a></h1>"""
     h = raw"""
         \newcommand{\foo}{foo}
         \newcommand{\header}[2]{!#1 \foo #2}
         \header{##}{hello}
         """ |> fd2html_td
-    @test h // """<h2 id="foo_hello"><a href="#foo_hello">foo  hello</a></h2>"""
+    @test h // """<h2 id="foo_hello"><a href="#foo_hello" class="header-anchor">foo  hello</a></h2>"""
 end

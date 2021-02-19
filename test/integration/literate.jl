@@ -90,7 +90,7 @@ end
         \literate{/_literate/tutorial.jl}
         """ |> fd2html_td
     @test isapproxstr(h, """
-        <h1 id="rational_numbers"><a href="#rational_numbers">Rational numbers</a></h1>
+        <h1 id="rational_numbers"><a href="#rational_numbers" class="header-anchor">Rational numbers</a></h1>
         <p>In julia rational numbers can be constructed with the <code>//</code> operator. Lets define two rational numbers, <code>x</code> and <code>y</code>:</p>
         <pre><code class="language-julia">$(F.htmlesc(raw"""
             # Define variable x and y
@@ -141,7 +141,7 @@ end
         \literate{/_literate/tutorial.jl}
         """ |> fd2html_td
     @test h // """
-        <h1 id="rational_numbers"><a href="#rational_numbers">Rational numbers</a></h1>
+        <h1 id="rational_numbers"><a href="#rational_numbers" class="header-anchor">Rational numbers</a></h1>
         <pre><code class="language-julia">$(F.htmlesc(raw"""const a = 1"""))</code></pre>
         <pre><code class="language-julia">$(F.htmlesc(raw"""a = 5"""))</code></pre><pre><code class="plaintext">5</code></pre>
         """

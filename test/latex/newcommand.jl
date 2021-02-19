@@ -177,7 +177,7 @@ end
     @test isapproxstr(s, raw"""
         ⭒A⭒
         <p>then some</p>
-        <h2 id="blah"><a href="#blah">blah </a></h2>
+        <h2 id="blah"><a href="#blah" class="header-anchor">blah </a></h2>
         <p>end ⭒B⭒.</p>
         """)
 end

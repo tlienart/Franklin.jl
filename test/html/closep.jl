@@ -32,7 +32,7 @@ F.def_GLOBAL_VARS!()
     """ |> fd2html
     @test h // """
         <p>A</p>
-        <h1 id="h"><a href="#h">H</a></h1>
+        <h1 id="h"><a href="#h" class="header-anchor">H</a></h1>
         <p>B</p>"""
     h = """
     A
@@ -44,10 +44,10 @@ F.def_GLOBAL_VARS!()
     """ |> fd2html
     @test h // """
         <p>A</p>
-        <h1 id="h1"><a href="#h1">H1</a></h1>
-        <h2 id="h2"><a href="#h2">H2</a></h2>
+        <h1 id="h1"><a href="#h1" class="header-anchor">H1</a></h1>
+        <h2 id="h2"><a href="#h2" class="header-anchor">H2</a></h2>
         <p>B</p>
-        <h2 id="h2__2"><a href="#h2__2">H2</a></h2>
+        <h2 id="h2__2"><a href="#h2__2" class="header-anchor">H2</a></h2>
         <p>C</p>"""
 end
 
