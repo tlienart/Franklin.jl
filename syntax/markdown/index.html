@@ -116,19 +116,19 @@
         </div>
 
 <!-- Content appended here (in class franklin-content) -->
-<div class="franklin-content"><h1 id="markdown_syntax"><a href="#markdown_syntax">Markdown syntax</a></h1>
+<div class="franklin-content"><h1 id="markdown_syntax"><a href="#markdown_syntax" class="header-anchor">Markdown syntax</a></h1>
 
     <span style="font-size:24px;font-weight:300;">Franklin aims to support most of Common Mark with a few differences and some useful extensions.</span>
     
 <div class="blank"></div>
 <div class="franklin-toc"><ol><li><a href="#experimenting">Experimenting</a></li><li><a href="#basics">Basics</a><ol><li><a href="#headers">Headers</a></li><li><a href="#text_styling">Text styling</a></li><li><a href="#links">Links</a></li><li><a href="#lists">Lists</a></li><li><a href="#comments">Comments</a></li><li><a href="#symbols_and_html_entities">Symbols and HTML entities</a></li></ol></li><li><a href="#table_of_contents">Table of contents</a></li><li><a href="#code">Code</a><ol><li><a href="#highlighting">Highlighting</a></li><li><a href="#evaluated_code_blocks">Evaluated code blocks</a></li></ol></li><li><a href="#maths">Maths</a><ol><li><a href="#inline_and_display_maths">Inline and display maths</a></li><li><a href="#aligned_maths">Aligned maths</a></li></ol></li><li><a href="#raw_html">Raw HTML</a></li><li><a href="#file_insertions">File insertions</a><ol><li><a href="#inserting_a_figure">Inserting a figure</a></li><li><a href="#inserting_markdown">Inserting markdown</a></li><li><a href="#inserting_a_table">Inserting a table</a></li></ol></li></ol></div>
-<h2 id="experimenting"><a href="#experimenting">Experimenting</a></h2>
+<h2 id="experimenting"><a href="#experimenting" class="header-anchor">Experimenting</a></h2>
 <p>Beyond directly experimenting in a project folder, you  can also explore what HTML is generated with the <code>fd2html</code> function:</p>
 <pre><code class="language-julia-repl">julia> """Set `x` to 1, see [the docs](http://example.com).""" |> fd2html
 "&lt;p&gt;Set &lt;code&gt;x&lt;/code&gt; to 1, see &lt;a href&#61;&quot;http://example.com&quot;&gt;the docs&lt;/a&gt;.&lt;/p&gt;\n"</code></pre>
-<h2 id="basics"><a href="#basics">Basics</a></h2>
+<h2 id="basics"><a href="#basics" class="header-anchor">Basics</a></h2>
 <p>If you&#39;re already familiar with Markdown, you can skip this section, though it may serve as a useful reminder.</p>
-<h3 id="headers"><a href="#headers">Headers</a></h3>
+<h3 id="headers"><a href="#headers" class="header-anchor">Headers</a></h3>
 <pre><code class="language-markdown"># Level 1
 ## Level 2
 ...
@@ -136,13 +136,13 @@
 <p>will generate the various header levels.</p>
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">Franklin makes headers into links to help with internal links and automatic table of contents generation &#40;which you can include anywhere using <code>\toc</code>&#41;.</div></div>
-<h3 id="text_styling"><a href="#text_styling">Text styling</a></h3>
+<h3 id="text_styling"><a href="#text_styling" class="header-anchor">Text styling</a></h3>
 <pre><code class="language-plaintext">**Bold text**, *italic* or _italic_, **_bold italic_**, &#96;inline code&#96;.</code></pre>
 <p>Inserting a horizontal rule can be done with</p>
 <pre><code class="language-markdown">---</code></pre>
 <p>For a blockquote, start the line with <code>&gt;</code>:</p>
 <pre><code class="language-markdown">&gt; This is a blockquote</code></pre>
-<h3 id="links"><a href="#links">Links</a></h3>
+<h3 id="links"><a href="#links" class="header-anchor">Links</a></h3>
 <pre><code class="language-markdown">inline links: &#91;plain link&#93;&#40;https:://www.wikipedia.org&#41;
 
 reference links: &#91;&quot;reference&quot; link&#93;&#91;reflink&#93; and &#91;&quot;reference&quot; link&#93;&#91;&#93;
@@ -168,7 +168,7 @@ reference: &#33;&#91;alt text&#93;&#91;ref&#93;
 <li><p>&#40;<strong>suppress links</strong>&#41; if, for some reason, you want to have something like <code>&#91;...&#93;: ...</code> somewhere on your page that does <em>not</em> define a link, then you need to toggle ref-links off &#40;<code>@def reflinks &#61; false</code>&#41; and only use inline links <code>&#91;link name&#93;&#40;some/url/&#41;</code>.</p>
 </li>
 </ul></div>
-<h3 id="lists"><a href="#lists">Lists</a></h3>
+<h3 id="lists"><a href="#lists" class="header-anchor">Lists</a></h3>
 <p>Un-ordered list &#40;you can  also use <code>-</code>, <code>&#43;</code> or <code>.</code> instead  of <code>*</code>&#41;</p>
 <pre><code class="language-markdown">* item 1
 * item 2
@@ -179,9 +179,9 @@ reference: &#33;&#91;alt text&#93;&#91;ref&#93;
   1. subitem 1</code></pre>
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">List items <em>must</em> be on the same line &#40;<em>this is due to <a href="https://github.com/JuliaLang/julia/issues/30198">a limitation</a> of the Julia Markdown parser</em>&#41;.</div></div>
-<h3 id="comments"><a href="#comments">Comments</a></h3>
+<h3 id="comments"><a href="#comments" class="header-anchor">Comments</a></h3>
 <p>You can add comments in your markdown using HTML-style  comments: <code>&lt;&#33;-- your comment --&gt;</code> possibly on multiple lines. Note that comments are <strong>not</strong> allowed in a math environment.</p>
-<h3 id="symbols_and_html_entities"><a href="#symbols_and_html_entities">Symbols and HTML entities</a></h3>
+<h3 id="symbols_and_html_entities"><a href="#symbols_and_html_entities" class="header-anchor">Symbols and HTML entities</a></h3>
 <p>Outside code environments, there are a few quirks in dealing with symbols:</p>
 <div class="tlist"><ul>
 <li><p>&#40;<strong>dollar sign</strong>&#41; to introduce a dollar sign, you <em>must</em> escape it with a backslash: <code>\&#36;</code> as it is otherwise used to open and close inline math blocks,</p>
@@ -191,10 +191,10 @@ reference: &#33;&#91;alt text&#93;&#91;ref&#93;
 <li><p>&#40;<strong>backslash</strong>&#41; to introduce a backslash, you can just use <code>\</code>, while a <em>double backslash</em> <code>\\</code> can be used to specify a <em>line break</em> in text.</p>
 </li>
 </ul></div>
-<h2 id="table_of_contents"><a href="#table_of_contents">Table of contents</a></h2>
+<h2 id="table_of_contents"><a href="#table_of_contents" class="header-anchor">Table of contents</a></h2>
 <p>Franklin can insert an automatically generated table of contents simply by using <code>\toc</code> or <code>\tableofcontents</code> somewhere appropriate in your markdown. The table of contents will be generated in a <code>franklin-toc</code> div block, so if you would like to modify the styling, you should modify <code>.franklin-toc ol</code>, <code>.franklin-toc li</code> etc in your CSS.</p>
 <p>You can specify the minimum and maximum header level to control the table of contents nesting using <code>@def mintoclevel&#61;2</code> and <code>@def maxtoclevel&#61;3</code> where, here, it would build a table of contents with the <code>h2</code> and <code>h3</code> headers only &#40;this is the setting used here for instance&#41;.</p>
-<h2 id="code"><a href="#code">Code</a></h2>
+<h2 id="code"><a href="#code" class="header-anchor">Code</a></h2>
 <p>Inline code with single and double back-ticks</p>
 <pre><code class="language-markdown">Single back-ticks: &#96;var &#61; 5&#96;, and
 double back-ticks if the code includes ticks: &#96;&#96;var &#61; &quot;&#96;&quot;&#96;&#96;.</code></pre>
@@ -211,7 +211,7 @@ Code block:
     a &#61; 5
     println&#40;a&#41;</code></pre>
 <p>Indented code blocks are <em>ambiguous</em> with how other Franklin blocks can be defined such as div blocks and latex blocks. If you really want to use them, you will have to ensure that your div blocks and latex commands on that page do <strong>not use</strong> indentation as it might cause problems.</p>
-<h3 id="highlighting"><a href="#highlighting">Highlighting</a></h3>
+<h3 id="highlighting"><a href="#highlighting" class="header-anchor">Highlighting</a></h3>
 <p>Syntax highlighting is done via <a href="https://highlightjs.org/">highlight.js</a> and you can find the relevant script in the <code>/_libs/highlight/</code> folder. The default one supports highlighting for Bash, CSS, Ini, Julia, Julia-repl, Markdown, plaintext, Python, R, Ruby, Xml and Yaml. Note that if you use pre-rendering, then the full <code>highlight.js</code> is used with support for over 100 languages.</p>
 <p>By default unfenced code blocks &#40;e.g. indented code blocks&#41; will be highlighted as Julia code blocks; to change this, set <code>@def lang &#61; &quot;python&quot;</code>. If you want a code block to <em>not</em> be highlighted, we recommend you use <code>plaintext</code> to guarantee this:</p>
 <pre><code class="language-markdown">&#96;&#96;&#96;plaintext
@@ -226,7 +226,7 @@ this will not be highlighted
 </ul></div>
 <pre><code class="language-javascript">hljs.registerLanguage&#40;&quot;julia-repl&quot;,function&#40;a&#41;&#123;return&#123;c:&#91;&#123;cN:&quot;meta&quot;,b:/^julia&gt;/,r:10,starts:&#123;e:/^&#40;?&#33;&#91; &#93;&#123;6&#125;&#41;/,sL:&quot;julia&quot;&#125;&#125;,&#123;cN:&quot;metas&quot;,b:/^shell&gt;/,r:10,starts:&#123;e:/^&#40;?&#33;&#91; &#93;&#123;6&#125;&#41;/,sL:&quot;bash&quot;&#125;&#125;,&#123;cN:&quot;metap&quot;,b:/^\&#40;.*\&#41;\spkg&gt;/,r:10,starts:&#123;e:/^&#40;?&#33;&#91; &#93;&#123;6&#125;&#41;/,sL:&quot;julia&quot;&#125;&#125;&#93;&#125;&#125;&#41;;</code></pre>
 <p>&#40;see also <a href="https://github.com/tlienart/FranklinTemplates.jl#notes">the README</a> of FranklinTemplates&#41;.</p>
-<h3 id="evaluated_code_blocks"><a href="#evaluated_code_blocks">Evaluated code blocks</a></h3>
+<h3 id="evaluated_code_blocks"><a href="#evaluated_code_blocks" class="header-anchor">Evaluated code blocks</a></h3>
 <p>Julia code blocks can be evaluated and the result of the code either shown or rendered. To declare a code block for evaluation, use the fenced code block syntax with a name for the code block:</p>
 <pre><code class="language-markdown">&#96;&#96;&#96;julia:snippet1
 using LinearAlgebra, Random
@@ -243,8 +243,8 @@ a &#61; randn&#40;5&#41;
 round&#40;norm&#40;a&#41;, sigdigits&#61;4&#41;</code></pre>
 <pre><code class="plaintext">3.173</code></pre>
 <p>For more information on using evaluated code blocks, please head to the <a href="/code/">section on code insertion</a>.</p>
-<h2 id="maths"><a href="#maths">Maths</a></h2>
-<h3 id="inline_and_display_maths"><a href="#inline_and_display_maths">Inline and display maths</a></h3>
+<h2 id="maths"><a href="#maths" class="header-anchor">Maths</a></h2>
+<h3 id="inline_and_display_maths"><a href="#inline_and_display_maths" class="header-anchor">Inline and display maths</a></h3>
 <p>Inserting maths is done pretty much like in LaTeX:</p>
 <pre><code class="language-plaintext">Inline: &#36;x&#61;5&#36; or display:
 
@@ -255,7 +255,7 @@ round&#40;norm&#40;a&#41;, sigdigits&#61;4&#41;</code></pre>
 <p>One thing to keep in mind when adding maths on your page is that you should be generous in your use of whitespace, particularly  around inequality  operators to avoid ambiguity that could confuse KaTeX. So for instance prefer: <code>&#36;0 &lt; C&#36;</code> to <code>&#36;0&lt;C&#36;</code> &#40;the latter will not render properly&#41;. Also if you have to write double braces, make sure to add a space in between so <code>&#123; &#123;</code> or <code>&#125; &#125;</code> and not <code>&#123;&#123;</code> or <code>&#125;&#125;</code> since that has a specific meaning in Franklin:</p>
 <pre><code class="language-plaintext">&#36;&#36; \dfrac&#123; &#123;101&#125;_&#123;2&#125; &#125; &#36;&#36;</code></pre>
 \[\dfrac{1}{ {101}_{2} }\]
-<h3 id="aligned_maths"><a href="#aligned_maths">Aligned maths</a></h3>
+<h3 id="aligned_maths"><a href="#aligned_maths" class="header-anchor">Aligned maths</a></h3>
 <p>For aligned environment you can use <code>\begin&#123;eqnarray&#125;...\end&#123;eqnarray&#125;</code> or <code>\begin&#123;align&#125;...\end&#123;align&#125;</code></p>
 <pre><code class="language-markdown">\begin&#123;eqnarray&#125;
   \exp&#40;i\pi&#41;&#43;1 &amp;&#61;&amp; 0\\
@@ -276,7 +276,7 @@ round&#40;norm&#40;a&#41;, sigdigits&#61;4&#41;</code></pre>
 \end{aligned}\]
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">In proper LaTeX, the use of <code>\eqnarray</code> is discouraged due to possible interference with array column spacing. In Franklin this does not happen and so the only practical difference is that <code>\eqnarray</code> will give you a bit more horizontal spacing around the <code>&#61;</code> signs.</div></div>
-<h2 id="raw_html"><a href="#raw_html">Raw HTML</a></h2>
+<h2 id="raw_html"><a href="#raw_html" class="header-anchor">Raw HTML</a></h2>
 <p>You can inject raw HTML by fencing it with <code>~~~...~~~</code> which can be useful for custom formatting.</p>
 <p>A simple example is if you want to colour your text; for instance with</p>
 <pre><code class="language-html">~~~
@@ -286,9 +286,9 @@ round&#40;norm&#40;a&#41;, sigdigits&#61;4&#41;</code></pre>
 <p>You could also use this to locally customise a layout etc.</p>
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">Inside a raw HTML block, you cannot use markdown, maths, etc. For this reason, it is often preferable to use nested <code>@@divname...@@</code> blocks instead of raw HTML since those <em>can</em> have markdown, maths, etc. in them. &#40;See <a href="/syntax/divs-commands/">inserting divs</a>.&#41;</div></div>
-<h2 id="file_insertions"><a href="#file_insertions">File insertions</a></h2>
+<h2 id="file_insertions"><a href="#file_insertions" class="header-anchor">File insertions</a></h2>
 <p>A few commands are defined to help you with insertions of content; you can also define your own commands using custom HTML as was discussed before.</p>
-<h3 id="inserting_a_figure"><a href="#inserting_a_figure">Inserting a figure</a></h3>
+<h3 id="inserting_a_figure"><a href="#inserting_a_figure" class="header-anchor">Inserting a figure</a></h3>
 <p>The commands</p>
 <div class="tlist"><ul>
 <li><p><code>\figalt&#123;alt&#125;&#123;path&#125;</code>, and</p>
@@ -315,7 +315,7 @@ savefig&#40;joinpath&#40;@OUTPUT, &quot;test.png&quot;&#41;&#41;</code></pre>
 <div class="small-img"><img src="/assets/syntax/markdown/output/test.png" alt=""></div>
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">Remember that these docs are written in Franklin so you can inspect the source directory if you would like to see the source markdown.</div></div>
-<h3 id="inserting_markdown"><a href="#inserting_markdown">Inserting markdown</a></h3>
+<h3 id="inserting_markdown"><a href="#inserting_markdown" class="header-anchor">Inserting markdown</a></h3>
 <p>In some situation, you may have some markdown in a file which you might want to include somewhere else. This can be achieved thanks to the <code>\textinput&#123;path&#125;</code> commmand. The path specification is as the other commands, and the text will be formatted.</p>
 <p>As an example you could have in <code>/assets/ccc/sidefile.md</code>:</p>
 <pre><code class="language-markdown">some **markdown** in a side file.</code></pre>
@@ -324,7 +324,7 @@ savefig&#40;joinpath&#40;@OUTPUT, &quot;test.png&quot;&#41;&#41;</code></pre>
 <p>and this will be equivalent to just having in <code>index.md</code>:</p>
 <pre><code class="language-markdown">This is the index then some **markdown** in a side file.</code></pre>
 <p><strong>Note</strong>: if you don&#39;t specify a file extension, <code>.md</code> is appended to the specified path.</p>
-<h3 id="inserting_a_table"><a href="#inserting_a_table">Inserting a table</a></h3>
+<h3 id="inserting_a_table"><a href="#inserting_a_table" class="header-anchor">Inserting a table</a></h3>
 <p>You can insert tables directly from CSV files with the <code>\tableinput&#123;header&#125;&#123;path&#125;</code> command. If you generate the file on-the-fly, you should follow this example:</p>
 <pre><code class="language-julia">&#96;&#96;&#96;julia:./tableinput/gen
 testcsv &#61; &quot;h1,h2,h3
@@ -362,7 +362,7 @@ write&#40;&quot;assets/pages/tableinput/testcsv2.csv&quot;, testcsv&#41;
 <p>can also be used. It is also possible to use HTML to create a table with the HTML fenced between <code>~~~</code>. </p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: February 18, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: February 19, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

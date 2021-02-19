@@ -116,13 +116,13 @@
         </div>
 
 <!-- Content appended here (in class franklin-content) -->
-<div class="franklin-content"><h1 id="divs_and_commands"><a href="#divs_and_commands">Divs and Commands</a></h1>
+<div class="franklin-content"><h1 id="divs_and_commands"><a href="#divs_and_commands" class="header-anchor">Divs and Commands</a></h1>
 
     <span style="font-size:24px;font-weight:300;">Style your content quickly and easily with custom divs, make everything reproducible and maintainable with commands.</span>
     
 <div class="blank"></div>
 <div class="franklin-toc"><ol><li><a href="#div_blocks">Div blocks</a><ol><li><a href="#nesting">Nesting</a></li></ol></li><li><a href="#latex-like_commands">LaTeX-like commands</a><ol><li><a href="#math_examples">Math examples</a></li><li><a href="#text_examples">Text examples</a></li><li><a href="#nesting_examples">Nesting examples</a></li><li><a href="#whitespaces">Whitespaces</a></li><li><a href="#defining_commands_globally">Defining commands globally</a></li></ol></li><li><a href="#hyper-references">Hyper-references</a><ol><li><a href="#equations">Equations</a></li><li><a href="#references">References</a></li><li><a href="#anchor_points">Anchor points</a></li></ol></li></ol></div>
-<h2 id="div_blocks"><a href="#div_blocks">Div blocks</a></h2>
+<h2 id="div_blocks"><a href="#div_blocks" class="header-anchor">Div blocks</a></h2>
 <p>In order to locally style your content, you can use <code>@@divname ... @@</code> which will wrap the content in a <code>&lt;div class&#61;&quot;divname&quot;&gt; ... &lt;/div&gt;</code> block which you can then style as you wish in your CSS stylesheet. For instance, you may want to highlight some content with a light yellow background:</p>
 <pre><code class="language-plaintext">Some text then
 @@important
@@ -136,7 +136,7 @@
 &#125;</code></pre>
 <p>which will look like</p>
 <div class="important">Some important content</div>
-<h3 id="nesting"><a href="#nesting">Nesting</a></h3>
+<h3 id="nesting"><a href="#nesting" class="header-anchor">Nesting</a></h3>
 <p>Such div blocks can be nested as in standard HTML. The distinction with inserting raw HTML div blocks with the <code>~~~...~~~</code> syntax is that the content  of div blocks is processed as well &#40;i.e.: can contain Franklin markdown&#41;:</p>
 <pre><code class="language-plaintext">@@important
   Some text;
@@ -148,7 +148,7 @@
 <div class="important"><p>Some text;</p>
 <div class="silly-formatting">some <strong>silly</strong> text with \(2x+4=y\).</div>
 <p>and more text.</p></div>
-<h2 id="latex-like_commands"><a href="#latex-like_commands">LaTeX-like commands</a></h2>
+<h2 id="latex-like_commands"><a href="#latex-like_commands" class="header-anchor">LaTeX-like commands</a></h2>
 <p>Franklin allows the definition of commands using a LaTeX-like syntax. This can be particularly useful for repeating elements or styling inside or outside of maths environment.</p>
 <p>To define a command, you <strong>must</strong> use the following syntax:</p>
 <pre><code class="language-plaintext">\newcommand&#123;\name&#125;&#91;...&#93;&#123;...&#125;
@@ -165,7 +165,7 @@
 <p>As in LaTeX, command definitions can be anywhere as long as they appear before they are used. If you want a command to be available on all your pages, put the definition in the <code>config.md</code> file.</p>
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">Franklin currently cannot just take the content of a <code>.tex</code> document and convert it, this may be &#40;partially&#41; supported in the future if it is deemed useful. Mainly it would require pre-defining all standard commands such as <code>\textbf</code>, <code>\section</code>, etc.</div></div>
-<h3 id="math_examples"><a href="#math_examples">Math examples</a></h3>
+<h3 id="math_examples"><a href="#math_examples" class="header-anchor">Math examples</a></h3>
 <p>If you end up writing a lot of equations on your site, defining commands can become rather useful:</p>
 <pre><code class="language-plaintext">\newcommand&#123;\R&#125;&#123;\mathbb R&#125;
 
@@ -175,13 +175,13 @@ Let &#36;f:\R\to\R&#36; a function...</code></pre>
 
 &#36;&#36; \mathcal W_\psi&#91;f&#93; &#61; \int_\R f&#40;s&#41;\psi&#40;s&#41;\mathrm&#123;d&#125;s &#61; \scal&#123;f,\psi&#125; &#36;&#36;</code></pre>
 \[ \mathcal W_\psi[f] = \int_\mathbb R f(s)\psi(s)\mathrm{d}s = \left\langle  f,\psi \right\rangle \]
-<h3 id="text_examples"><a href="#text_examples">Text examples</a></h3>
+<h3 id="text_examples"><a href="#text_examples" class="header-anchor">Text examples</a></h3>
 <p>Commands can also be useful outside of maths environment. For instance, you could define a command to quickly set the style of some text:</p>
 <pre><code class="language-html">\newcommand&#123;\styletext&#125;&#91;2&#93;&#123;~~~&lt;span style&#61;&quot;#1&quot;&gt;#2&lt;/span&gt;~~~&#125;
 
 Here is \styletext&#123;color:magenta;font-size:14px;&#125;&#123;formatted text&#125;.</code></pre>
 <p>Here is <span style=" color:magenta;font-size:14px;font-variant:small-caps;"> formatted text</span>.</p>
-<h3 id="nesting_examples"><a href="#nesting_examples">Nesting examples</a></h3>
+<h3 id="nesting_examples"><a href="#nesting_examples" class="header-anchor">Nesting examples</a></h3>
 <p>Commands are resolved recursively which means that they can be nested and their definition can contain further Franklin markdown &#40;again this is similar to how LaTeX works&#41;.</p>
 <p>Consider for instance:</p>
 <pre><code class="language-plaintext">\newcommand&#123;\norm&#125;&#91;2&#93;&#123;\left\|#1\right\|_&#123;#2&#125;&#125;
@@ -218,7 +218,7 @@ Let &#36;x\in\R^n&#36;, there exists &#36;0 &lt; C_1 \le C_2&#36; such that
   padding: 10px;
   margin-bottom: 1em;
 &#125;</code></pre>
-<h3 id="whitespaces"><a href="#whitespaces">Whitespaces</a></h3>
+<h3 id="whitespaces"><a href="#whitespaces" class="header-anchor">Whitespaces</a></h3>
 <p>In a Franklin <code>newcommand</code>, to refer to an argument you can use <code>#k</code> or <code>&#33;#k</code>. There is a small difference: the first one <em>introduces a space</em> left of the argument while the second one does not.</p>
 <p>In general whitespaces are irrelevant and will not show up on the rendered webpage so that the usual <code>#k</code> is the recommended usage. This helps avoid some ambiguities when resolving a chain of nested commands.</p>
 <p>There are however cases where you do not want this because the whitespace does, in fact, show up. In such cases use <code>&#33;#k</code> &#40;assuming it&#39;s not ambiguous&#41;.</p>
@@ -228,9 +228,9 @@ Let &#36;x\in\R^n&#36;, there exists &#36;0 &lt; C_1 \le C_2&#36; such that
 
 Here \pathwith&#123;hello&#125; is no good whereas \pathwithout&#123;hello&#125; is.</code></pre>
 <p>Here <code>/usr/local/bin/ hello</code> is no good whereas <code>/usr/local/bin/hello</code> is.</p>
-<h3 id="defining_commands_globally"><a href="#defining_commands_globally">Defining commands globally</a></h3>
+<h3 id="defining_commands_globally"><a href="#defining_commands_globally" class="header-anchor">Defining commands globally</a></h3>
 <p>If you define commands on a page, the command will be available only on that page; if you wish to define a command that is available on all pages, you should  put the definition of the command in your <code>config.md</code> file.</p>
-<h2 id="hyper-references"><a href="#hyper-references">Hyper-references</a></h2>
+<h2 id="hyper-references"><a href="#hyper-references" class="header-anchor">Hyper-references</a></h2>
 <p>Three types of hyper-references are supported in Franklin:</p>
 <div class="flist"><ol>
 <li><p>for equations in display mode,</p>
@@ -244,7 +244,7 @@ Here \pathwith&#123;hello&#125; is no good whereas \pathwithout&#123;hello&#125;
 <p>To style the appearance of the maths or bib links in CSS, use <code>.franklin-content.eqref a</code> and <code>.franklin-content.bibref a</code> classes; for instance:</p>
 <pre><code class="language-css">.franklin-content .eqref a  &#123;color: blue;&#125;
 .franklin-content .bibref a &#123;color: green;&#125;</code></pre>
-<h3 id="equations"><a href="#equations">Equations</a></h3>
+<h3 id="equations"><a href="#equations" class="header-anchor">Equations</a></h3>
 <p>To label an equation, just use <code>\label&#123;some label&#125;</code> in the math environment and, to refer to it, use <code>\eqref&#123;some label&#125;</code>:</p>
 <pre><code class="language-plaintext">Some equation:
 
@@ -252,7 +252,7 @@ Here \pathwith&#123;hello&#125; is no good whereas \pathwithout&#123;hello&#125;
 
 and you can refer to it in the text: equation \eqref&#123;a cool equation&#125;.</code></pre>
 <p>As in LaTeX, you can refer to several equations in one shot by separating names with commas: <code>\eqref&#123;some label, some other&#125;</code> &#40;that also means you cannot use commas in labels&#41;.</p>
-<h3 id="references"><a href="#references">References</a></h3>
+<h3 id="references"><a href="#references" class="header-anchor">References</a></h3>
 <p>For references, you can use <code>\biblabel&#123;short&#125;&#123;name&#125;</code> to declare a reference which will appear as a clickable link <code>&#40;name&#41;</code> or <code>name</code> and can be referred to with <code>short</code>:</p>
 <pre><code class="language-plaintext">In the text you may refer to \citep&#123;noether15, bezanson17&#125; while in a bibliography section you would have
 
@@ -268,7 +268,7 @@ and you can refer to it in the text: equation \eqref&#123;a cool equation&#125;.
 </li>
 </ul></div>
 <p>As in LaTeX, if the reference is undefined on the page, the command will be replaced by <strong>&#40;??&#41;</strong>.</p>
-<h3 id="anchor_points"><a href="#anchor_points">Anchor points</a></h3>
+<h3 id="anchor_points"><a href="#anchor_points" class="header-anchor">Anchor points</a></h3>
 <p>You can specify anchor points on the page using <code>\label&#123;name of the anchor&#125;</code> anywhere on the page <em>outside</em> of maths environment. This will insert an anchor:</p>
 <pre><code class="language-html">&lt;a id&#61;&quot;name-of-the-anchor&quot;&gt;&lt;/a&gt;</code></pre>
 <p>You can subsequently link to it on the same page:</p>
@@ -280,7 +280,7 @@ and you can refer to it in the text: equation \eqref&#123;a cool equation&#125;.
 <p>can be linked to with <code>#some-subtitle</code>. If there are multiple headers with the same name, the second and subsequent ones can be referred to with <code>#some-subtitle__2</code>, <code>#some-subtitle__3</code> etc. &#40;note the double underscore&#41;.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: February 18, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: February 19, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

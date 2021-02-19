@@ -114,7 +114,7 @@
         </div>
 
 <!-- Content appended here (in class franklin-content) -->
-<div class="franklin-content"><h1 id="deploying_your_website"><a href="#deploying_your_website">Deploying your website</a></h1>
+<div class="franklin-content"><h1 id="deploying_your_website"><a href="#deploying_your_website" class="header-anchor">Deploying your website</a></h1>
 
     <span style="font-size:24px;font-weight:300;">Set it up once then don't think about it.</span>
     
@@ -122,8 +122,8 @@
 <div class="franklin-toc"><ol><li><a href="#deploying_on_github">Deploying on GitHub</a><ol><li><a href="#creating_a_repo_on_github">Creating a repo on GitHub</a></li><li><a href="#synchronise_your_local_folder">Synchronise your local folder</a></li><li><a href="#examples">Examples</a></li><li><a href="#customising_the_github_action">Customising the GitHub action</a></li><li><a href="#troubleshooting">Troubleshooting</a></li></ol></li><li><a href="#deploying_on_gitlab">Deploying on GitLab</a><ol><li><a href="#creating_a_repo_on_gitlab">Creating a repo on GitLab</a></li><li><a href="#create_and_optimize_your_site">Create and optimize your site</a></li><li><a href="#synchronise_your_local_folder__2">Synchronise your local folder</a></li><li><a href="#iterate">Iterate</a></li></ol></li><li><a href="#deploying_on_netlify">Deploying on Netlify</a></li><li><a href="#previewing_pull_requests">Previewing Pull Requests</a></li></ol></div>
 <div class="blank"></div>
 <p>Deploying the website is trivial on GitHub, Gitlab and services like Netlify.</p>
-<h2 id="deploying_on_github"><a href="#deploying_on_github">Deploying on GitHub</a></h2>
-<h3 id="creating_a_repo_on_github"><a href="#creating_a_repo_on_github">Creating a repo on GitHub</a></h3>
+<h2 id="deploying_on_github"><a href="#deploying_on_github" class="header-anchor">Deploying on GitHub</a></h2>
+<h3 id="creating_a_repo_on_github"><a href="#creating_a_repo_on_github" class="header-anchor">Creating a repo on GitHub</a></h3>
 <p>Start by creating an empty GitHub repository</p>
 <div class="tlist"><ul>
 <li><p>for a personal &#40;or org&#41; website the repository <strong>must</strong> be named <code>username.github.io</code> &#40;or <code>orgname.github.io</code>&#41; see also <a href="https://pages.github.com/">the github pages docs</a>,</p>
@@ -139,7 +139,7 @@
 <li><p><a href="https://github.com/tlienart2/myWebsite">This repo</a> is an example of <em>project website</em> you can copy.</p>
 </li>
 </ul></div>
-<h3 id="synchronise_your_local_folder"><a href="#synchronise_your_local_folder">Synchronise your local folder</a></h3>
+<h3 id="synchronise_your_local_folder"><a href="#synchronise_your_local_folder" class="header-anchor">Synchronise your local folder</a></h3>
 <p>You now just need to synchronise your repository and your local website folder; to do so, go to your terminal, <code>cd</code> to the website folder and follow the steps below:</p>
 <div class="tlist"><ul>
 <li><p><code>git init &amp;&amp; git remote add origin URL_TO_YOUR_REPO</code></p>
@@ -160,14 +160,14 @@
 <div class="small-img"><img src="/assets/img/deployment.png" alt="" /></div>
 <p>then on <code>View deployment</code>.</p>
 <div class="small-img"><img src="/assets/img/deployment2.png" alt="" /></div>
-<h3 id="examples"><a href="#examples">Examples</a></h3>
+<h3 id="examples"><a href="#examples" class="header-anchor">Examples</a></h3>
 <div class="tlist"><ul>
 <li><p><a href="https://github.com/tlienart2/tlienart2.github.io">basic user webpage</a></p>
 </li>
 <li><p><a href="https://github.com/tlienart2/myWebsite">basic project webpage</a></p>
 </li>
 </ul></div>
-<h3 id="customising_the_github_action"><a href="#customising_the_github_action">Customising the GitHub action</a></h3>
+<h3 id="customising_the_github_action"><a href="#customising_the_github_action" class="header-anchor">Customising the GitHub action</a></h3>
 <p>You might want to customise the GitHub action for instance:</p>
 <div class="tlist"><ul>
 <li><p>your website uses <a href="https://github.com/JuliaPy/PyPlot.jl"><code>PyPlot.jl</code></a> and so you need to make sure <a href="https://matplotlib.org/"><code>matplotlib</code></a> is installed,</p>
@@ -180,10 +180,10 @@
 </li>
 </ul></div>
 <p>For all such operations, modify the file <code>.github/workflows/deploy.yml</code> in your site folder. It should be fairly straightforward to see how to extend it but if you get stuck, ask on the <strong>#franklin</strong> slack channel.</p>
-<h3 id="troubleshooting"><a href="#troubleshooting">Troubleshooting</a></h3>
+<h3 id="troubleshooting"><a href="#troubleshooting" class="header-anchor">Troubleshooting</a></h3>
 <p>If something failed, that you can&#39;t debug, ask on the <strong>#franklin</strong> slack channel explaining what&#39;s the issue and we&#39;ll try to help you out.</p>
-<h2 id="deploying_on_gitlab"><a href="#deploying_on_gitlab">Deploying on GitLab</a></h2>
-<h3 id="creating_a_repo_on_gitlab"><a href="#creating_a_repo_on_gitlab">Creating a repo on GitLab</a></h3>
+<h2 id="deploying_on_gitlab"><a href="#deploying_on_gitlab" class="header-anchor">Deploying on GitLab</a></h2>
+<h3 id="creating_a_repo_on_gitlab"><a href="#creating_a_repo_on_gitlab" class="header-anchor">Creating a repo on GitLab</a></h3>
 <p>Start by creating an empty GitLab repository</p>
 <div class="tlist"><ul>
 <li><p>for a personal website the repository <strong>must</strong> be named <code>username.gitlab.io</code> see also <a href="https://about.gitlab.com/stages-devops-lifecycle/pages/">the gitlab pages docs</a>,</p>
@@ -191,9 +191,9 @@
 <li><p>for a project website the repo can be named anything you want.</p>
 </li>
 </ul></div>
-<h3 id="create_and_optimize_your_site"><a href="#create_and_optimize_your_site">Create and optimize your site</a></h3>
+<h3 id="create_and_optimize_your_site"><a href="#create_and_optimize_your_site" class="header-anchor">Create and optimize your site</a></h3>
 <p>As before; before pushing, call <code>optimize&#40;&#41;</code> which will fix all your paths.</p>
-<h3 id="synchronise_your_local_folder__2"><a href="#synchronise_your_local_folder__2">Synchronise your local folder</a></h3>
+<h3 id="synchronise_your_local_folder__2"><a href="#synchronise_your_local_folder__2" class="header-anchor">Synchronise your local folder</a></h3>
 <p>Now you need to synchronise your repository and your local website folder; to do so, go to your terminal, <code>cd</code> to the website folder and follow the steps below:</p>
 <div class="tlist"><ul>
 <li><p><code>git init &amp;&amp; git remote add origin URL_TO_YOUR_REPO</code></p>
@@ -204,12 +204,12 @@
 <p>That&#39;s it&#33; when you push your updates to the <code>master</code> branch, the GitLab CI will copy the <code>__site</code> folder to a virtual <code>public</code> folder and deploy its content.</p>
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">It takes a couple of minutes for the whole process to complete and your site to be available online.</div></div>
-<h3 id="iterate"><a href="#iterate">Iterate</a></h3>
+<h3 id="iterate"><a href="#iterate" class="header-anchor">Iterate</a></h3>
 <p>The <code>publish</code> command does the optimize followed by the git stuff all in one. So  you should probably use that  after the initial setup.</p>
-<h2 id="deploying_on_netlify"><a href="#deploying_on_netlify">Deploying on Netlify</a></h2>
+<h2 id="deploying_on_netlify"><a href="#deploying_on_netlify" class="header-anchor">Deploying on Netlify</a></h2>
 <p>Synchronise your local website folder with a repository &#40;e.g. a GitHub or GitLab repository&#41; then select that repository on Netlify and indicate you want to deploy the <code>__site</code> folder.</p>
 <p>That&#39;s it&#33;</p>
-<h2 id="previewing_pull_requests"><a href="#previewing_pull_requests">Previewing Pull Requests</a></h2>
+<h2 id="previewing_pull_requests"><a href="#previewing_pull_requests" class="header-anchor">Previewing Pull Requests</a></h2>
 <p>You can easily visualize the effect of a pull request on your website without having to serve it locally by using Netlify. To do this you need to change a couple of things. Assuming that you use Github Actions to deploy your website, you need to change your <code>deploy.yml</code> file to make builds from PRs. First change:</p>
 <pre><code class="language-yml">name: Build and Deploy
 on:
@@ -273,7 +273,7 @@ jobs:
           GITHUB_TOKEN: &#36;&#123;&#123; secrets.GITHUB_TOKEN &#125;&#125;</code></pre>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: February 18, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: February 19, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

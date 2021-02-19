@@ -1,4 +1,4 @@
-<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/demos/libs/katex/katex.min.css"> <link rel=stylesheet  href="/demos/libs/highlight/github.min.css"> <script src="/demos/libs/clipboard.min.js"></script> <link rel=stylesheet  href="/demos/css/franklin.css"> <link rel=stylesheet  href="/demos/css/extras.css"> <title>Franklin FAQ</title> <div class=franklin-content ><h1 id=franklin_demos ><a href="#franklin_demos">Franklin Demos</a></h1> <span style="text-align:center;width:100%;display:inline-block;font-variant-caps:small-caps"><a href="https://github.com/tlienart/Franklin.jl/tree/master/demos"><strong>Click here to see the source</strong></a></span> <p>This website is meant to be a quick way to show how to do stuff that people ask &#40;or that I thought would be a nice demo&#41;, it will complement the <a href="https://franklinjl.org/">official documentation</a>.</p> <p>It&#39;s not meant to be beautiful, rather just show how to get specific stuff done. If one block answers one of your question, make sure to check <a href="https://github.com/tlienart/Franklin.jl/tree/master/demos/index.md">the source</a> to see how it was done. The ordering is reverse chronological but just use the table of contents to guide you to whatever you might want to explore.</p> <p><strong>Note</strong>: an important philosophy here is that if you can write a Julia function that would produce the HTML you want, then write that function and let Franklin call it.</p> <p><strong>Note 2</strong>: the numbering in georgian script in the table of content is on purpose &#40;though for no particularly good reason other than that it looks nice... 🇬🇪&#41;</p> <div class=franklin-toc ><ol><li><a href="#013_inserting_markdown_in_markdown">&#40;013&#41; Inserting Markdown in Markdown</a><li><a href="#012_dates">&#40;012&#41; Dates</a><li><a href="#011_showing_type_information">&#40;011&#41; showing type information</a><li><a href="#010_clipboard_button_for_code_blocks">&#40;010&#41; clipboard button for code blocks</a><li><a href="#009_custom_environment_for_tikzcd">&#40;009&#41; custom environment for TikzCD</a><li><a href="#008_custom_environments_and_commands">&#40;008&#41; &#40;custom&#41; environments and commands</a><ol><li><a href="#customise_with_julia_code">Customise with Julia code</a></ol><li><a href="#007_delayed_hfun">&#40;007&#41; delayed hfun</a><li><a href="#006_code_highlighting">&#40;006&#41; code highlighting</a><li><a href="#005_pagination">&#40;005&#41; pagination</a><li><a href="#004_use_latexifyjl">&#40;004&#41; use Latexify.jl</a><li><a href="#003_styling_of_code_output_blocks">&#40;003&#41; styling of code output blocks</a><li><a href="#002_code_block_scope">&#40;002&#41; code block scope</a><li><a href="#001_how_to_load_data_from_file_and_loop_over_rows">&#40;001&#41; how to load data from file and loop over rows</a><ol><li><a href="#approach_1_with_a_hfun">Approach 1, with a <code>hfun</code></a><li><a href="#approach_2_with_a_page_variable_and_a_for_loop">Approach 2, with a page variable and a for loop</a></ol></ol></div> <h2 id=013_inserting_markdown_in_markdown ><a href="#013_inserting_markdown_in_markdown">&#40;013&#41; Inserting Markdown in Markdown</a></h2> <p>Let&#39;s say you have a file <code>content.md</code> and you would like to include it in another page as if it had been written there in the first place. This is pretty easy to do. You could for instance use the following function:</p> <pre><code class=language-julia >function hfun_insertmd&#40;params&#41;
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/demos/libs/katex/katex.min.css"> <link rel=stylesheet  href="/demos/libs/highlight/github.min.css"> <script src="/demos/libs/clipboard.min.js"></script> <link rel=stylesheet  href="/demos/css/franklin.css"> <link rel=stylesheet  href="/demos/css/extras.css"> <title>Franklin FAQ</title> <div class=franklin-content ><h1 id=franklin_demos ><a href="#franklin_demos" class=header-anchor >Franklin Demos</a></h1> <span style="text-align:center;width:100%;display:inline-block;font-variant-caps:small-caps"><a href="https://github.com/tlienart/Franklin.jl/tree/master/demos"><strong>Click here to see the source</strong></a></span> <p>This website is meant to be a quick way to show how to do stuff that people ask &#40;or that I thought would be a nice demo&#41;, it will complement the <a href="https://franklinjl.org/">official documentation</a>.</p> <p>It&#39;s not meant to be beautiful, rather just show how to get specific stuff done. If one block answers one of your question, make sure to check <a href="https://github.com/tlienart/Franklin.jl/tree/master/demos/index.md">the source</a> to see how it was done. The ordering is reverse chronological but just use the table of contents to guide you to whatever you might want to explore.</p> <p><strong>Note</strong>: an important philosophy here is that if you can write a Julia function that would produce the HTML you want, then write that function and let Franklin call it.</p> <p><strong>Note 2</strong>: the numbering in georgian script in the table of content is on purpose &#40;though for no particularly good reason other than that it looks nice... 🇬🇪&#41;</p> <div class=franklin-toc ><ol><li><a href="#013_inserting_markdown_in_markdown">&#40;013&#41; Inserting Markdown in Markdown</a><li><a href="#012_dates">&#40;012&#41; Dates</a><li><a href="#011_showing_type_information">&#40;011&#41; showing type information</a><li><a href="#010_clipboard_button_for_code_blocks">&#40;010&#41; clipboard button for code blocks</a><li><a href="#009_custom_environment_for_tikzcd">&#40;009&#41; custom environment for TikzCD</a><li><a href="#008_custom_environments_and_commands">&#40;008&#41; &#40;custom&#41; environments and commands</a><ol><li><a href="#customise_with_julia_code">Customise with Julia code</a></ol><li><a href="#007_delayed_hfun">&#40;007&#41; delayed hfun</a><li><a href="#006_code_highlighting">&#40;006&#41; code highlighting</a><li><a href="#005_pagination">&#40;005&#41; pagination</a><li><a href="#004_use_latexifyjl">&#40;004&#41; use Latexify.jl</a><li><a href="#003_styling_of_code_output_blocks">&#40;003&#41; styling of code output blocks</a><li><a href="#002_code_block_scope">&#40;002&#41; code block scope</a><li><a href="#001_how_to_load_data_from_file_and_loop_over_rows">&#40;001&#41; how to load data from file and loop over rows</a><ol><li><a href="#approach_1_with_a_hfun">Approach 1, with a <code>hfun</code></a><li><a href="#approach_2_with_a_page_variable_and_a_for_loop">Approach 2, with a page variable and a for loop</a></ol></ol></div> <h2 id=013_inserting_markdown_in_markdown ><a href="#013_inserting_markdown_in_markdown" class=header-anchor >&#40;013&#41; Inserting Markdown in Markdown</a></h2> <p>Let&#39;s say you have a file <code>content.md</code> and you would like to include it in another page as if it had been written there in the first place. This is pretty easy to do. You could for instance use the following function:</p> <pre><code class=language-julia >function hfun_insertmd&#40;params&#41;
   rpath &#61; params&#91;1&#93;
   fullpath &#61; joinpath&#40;Franklin.path&#40;:folder&#41;, rpath&#41;
   isfile&#40;fullpath&#41; || return &quot;&quot;
@@ -18,10 +18,10 @@ end</code></pre><pre><code class=plaintext >*
 </code></pre>
 
 <p>You can look at <a href="https://github.com/tlienart/Franklin.jl/blob/master/demos/utils.jl"><code>utils.jl</code></a> for the definition of the <code>hfun</code> &#40;same as above&#41;, at <a href="https://github.com/tlienart/Franklin.jl/blob/master/demos/index.md"><code>index.md</code></a> to see how it&#39;s called and at <a href="https://github.com/tlienart/Franklin.jl/blob/master/demos/foo/content.md"><code>foo/content.md</code></a> for the content file. Finally you can also check out the <a href="https://github.com/tlienart/Franklin.jl/blob/master/demos/config.md"><code>config.md</code></a> file to see how the content page is ignored.</p>
-<h2 id=012_dates ><a href="#012_dates">&#40;012&#41; Dates</a></h2>
+<h2 id=012_dates ><a href="#012_dates" class=header-anchor >&#40;012&#41; Dates</a></h2>
 <p>The date of last modification on the page is kept in the <code>fd_mtime_raw</code> internal page variable, there is also a pre-formatted <code>fd_mtime</code>.</p>
-<p>Last modified: 2021-02-18 or February 18, 2021</p>
-<h2 id=011_showing_type_information ><a href="#011_showing_type_information">&#40;011&#41; showing type information</a></h2>
+<p>Last modified: 2021-02-19 or February 19, 2021</p>
+<h2 id=011_showing_type_information ><a href="#011_showing_type_information" class=header-anchor >&#40;011&#41; showing type information</a></h2>
 <p>This is a short demo following a discussion on Slack, it shows three things:</p>
 <ul>
 <li><p>how to mark a block as &quot;<em>run here directly and show the output</em>&quot; without having to explicitly add a path and use a <code>\show</code></p>
@@ -44,7 +44,7 @@ struct T; v::Int; end
 print&#40;s&#41;</code></pre><pre><code class=plaintext >hello</code></pre>
 <p>Suppressed output:</p>
 <pre><code class=language-julia >X &#61; randn&#40;2, 3&#41;;</code></pre>
-<h2 id=010_clipboard_button_for_code_blocks ><a href="#010_clipboard_button_for_code_blocks">&#40;010&#41; clipboard button for code blocks</a></h2>
+<h2 id=010_clipboard_button_for_code_blocks ><a href="#010_clipboard_button_for_code_blocks" class=header-anchor >&#40;010&#41; clipboard button for code blocks</a></h2>
 <p>It&#39;s fairly easy to add a &quot;copy&quot; button to your code blocks using  a tool like <a href="https://clipboardjs.com"><code>clipboard.js</code></a>. In fact on this demo page, as you can see, there is a copy button on all code blocks. The steps to  reproduce  this are:</p>
 <ul>
 <li><p>copy the <a href="https://github.com/tlienart/Franklin.jl/blob/master/demos/_libs/clipboard.min.js"><code>clipboard.min.js</code></a> to <code>/libs/clipboard.min.js</code> &#40;<em>note that this is an old version of the library, <code>1.4</code> or something, if you take  the most recent version, you will have to adapt the script</em>&#41;</p>
@@ -60,7 +60,7 @@ print&#40;s&#41;</code></pre><pre><code class=plaintext >hello</code></pre>
 
 </ul>
 <p>and that&#39;s it 🏁.</p>
-<h2 id=009_custom_environment_for_tikzcd ><a href="#009_custom_environment_for_tikzcd">&#40;009&#41; custom environment for TikzCD</a></h2>
+<h2 id=009_custom_environment_for_tikzcd ><a href="#009_custom_environment_for_tikzcd" class=header-anchor >&#40;009&#41; custom environment for TikzCD</a></h2>
 <p>Following up on <a href="#008_custom_environments_and_commands">#008</a>, here&#39;s a custom environment for Tikz diagrams using the <a href="https://github.com/JuliaTeX/TikzCDs.jl">TikzCDs.jl</a> package.</p>
 <p>Let&#39;s first see what you get for your effort:</p>
 <div class=small-imgc ><img src="/demos/assets/index/tcd1.svg" alt=""></div>
@@ -73,7 +73,7 @@ A \arrow&#91;r, &quot;\phi&quot;&#93; \arrow&#91;d, red&#93;
 \end&#123;tikzcd&#125;</code></pre>
 <p>The corresponding <code>env_tikzcd</code> function is in the <code>utils.jl</code> file and is quite simple.</p>
 <p><strong>Note</strong>: in this particular case, the environment uses the <a href="https://github.com/JuliaTeX/TikzCDs.jl"><code>TikzCDs.jl</code></a> which requires having <code>lualatex</code> and <code>dvisgm</code> as per their README. For this to work with a GitHub action, the relevant stuff needs to be installed, it&#39;s not hard to do so with GitHub actions though you need to get TeXLive 2019 to avoid errors, I used <a href="https://github.com/tlienart/Franklin.jl/blob/354ac015c14aaedf9ebeaeb9d0b574ddad3738e5/.github/workflows/deploy.yml#L20-L23">these 3 lines</a> which you could copy.</p>
-<h2 id=008_custom_environments_and_commands ><a href="#008_custom_environments_and_commands">&#40;008&#41; &#40;custom&#41; environments and commands</a></h2>
+<h2 id=008_custom_environments_and_commands ><a href="#008_custom_environments_and_commands" class=header-anchor >&#40;008&#41; &#40;custom&#41; environments and commands</a></h2>
 <p>You can define new commands and new environments using essentially the same syntax as in LaTeX:</p>
 <pre><code class=language-plaintext >\newcommand&#123;\command&#125;&#91;nargs&#93;&#123;def&#125;
 \newenvironment&#123;environment&#125;&#91;nargs&#93;&#123;pre&#125;&#123;post&#125;</code></pre>
@@ -103,7 +103,7 @@ Result: \begin&#123;center&#125;This bit of text is in a centered div.\end&#123;
 Result: \begin&#123;figure&#125;&#123;A koala eating a leaf.&#125;&#33;&#91;&#93;&#40;/assets/koala.jpg&#41;\end&#123;figure&#125;</code></pre>
 <p>Result: </p>
  <figure><img src="/demos/assets/koala.jpg" alt="" /> <figcaption> A koala eating a leaf.</figcaption></figure>
-<h3 id=customise_with_julia_code ><a href="#customise_with_julia_code">Customise with Julia code</a></h3>
+<h3 id=customise_with_julia_code ><a href="#customise_with_julia_code" class=header-anchor >Customise with Julia code</a></h3>
 <p>Much like <code>hfun_*</code>, you can have commands and environments be effectively defined via Julia code. The main difference is that the output will be treated as Franklin-markdown and so will be <em>reprocessed by Franklin</em> &#40;where for a <code>hfun</code>, the output is plugged in directly as HTML&#41;.</p>
 <p>In both cases, a single option bracket is expected, no more no less. It can be empty but it has to be there. See also <a href="https://franklinjl.org/syntax/utils/#latex_functions_lx_">the docs</a> for more information.</p>
 <p>Here are two simple examples &#40;see in <code>utils.jl</code> too&#41;:</p>
@@ -125,7 +125,7 @@ end</code></pre>
 <p>Result: </p>
 <b>BaBA Yaga with a BAseBAll BAt</b>
 <p>Of course these are toy examples and you could have arrived to the same effect some other way. With a bit of practice, you might develop a preference towards using one out of the three options: <code>hfun_*</code>, <code>lx_*</code> or <code>env_*</code> depending on your context.</p>
-<h2 id=007_delayed_hfun ><a href="#007_delayed_hfun">&#40;007&#41; delayed hfun</a></h2>
+<h2 id=007_delayed_hfun ><a href="#007_delayed_hfun" class=header-anchor >&#40;007&#41; delayed hfun</a></h2>
 <p>When you call <code>serve&#40;&#41;</code>, Franklin first does a full pass which builds all your pages and then waits for changes to happen in a given page before updating that page. If you have a page <code>A</code> and a page <code>B</code> and that the page <code>A</code> calls a function which would need something that will only be defined once <code>B</code> is built, you have two cases:</p>
 <ol>
 <li><p>A common one is to have the function used by <code>A</code> require a <em>local</em> page variable defined on <code>B</code>; in that case just use <code>pagevar&#40;...&#41;</code>. When called, it will itself build <code>B</code> so that it can access the page variable defined on <code>B</code>. This is usually all you need.</p>
@@ -136,7 +136,7 @@ end</code></pre>
 <p>The page <a href="/demos/foo/">foo</a> has a tag <code>foo</code> and a page variable <code>var</code>; let&#39;s show both use cases; see <code>utils.jl</code> to see the definition of the relevant functions.</p>
 <p><strong>Case 1</strong> &#40;local page variable access, <code>var &#61; 5</code> on page foo&#41;: <p style="color:red;">var read from foo is 5</p></p>
 <p><strong>Case 2</strong> &#40;wait for full build, there&#39;s a tag <code>index</code> here and a tag <code>foo</code> on page foo&#41;: <p style="color:red;">tags: { index foo }</p></p>
-<h2 id=006_code_highlighting ><a href="#006_code_highlighting">&#40;006&#41; code highlighting</a></h2>
+<h2 id=006_code_highlighting ><a href="#006_code_highlighting" class=header-anchor >&#40;006&#41; code highlighting</a></h2>
 <p>Inserting highlighted code is very easy in Franklin; just use triple backquotes and the name of the language:</p>
 <pre><code class=language-julia >struct Point&#123;T&#125;
   x::T
@@ -180,7 +180,7 @@ p &#123;
   border-style: solid;
   border-right-color: #ff0000;
 &#125;</code></pre>
-<h2 id=005_pagination ><a href="#005_pagination">&#40;005&#41; pagination</a></h2>
+<h2 id=005_pagination ><a href="#005_pagination" class=header-anchor >&#40;005&#41; pagination</a></h2>
 <p>Pagination works with <code>&#123;&#123;paginate list num&#125;&#125;</code> where <code>list</code> is a page variable with elements that you want to paginate &#40;either a list or tuple&#41;, and <code>num</code> is the number of elements you want per page. There are many ways you can use this, one possible way is to wrap it in a command if you want to insert this in an actual list which is what is demoed here:</p>
 <p><a id=pgex  class=anchor ></a> <ul><li>item 9<li>item 10</ul></p>
 <p>Now observe that</p>
@@ -192,7 +192,7 @@ p &#123;
 <li><p><a href="/demos/3/#pgex">page 3</a> has items 9-10</p>
 
 </ul>
-<h2 id=004_use_latexifyjl ><a href="#004_use_latexifyjl">&#40;004&#41; use Latexify.jl</a></h2>
+<h2 id=004_use_latexifyjl ><a href="#004_use_latexifyjl" class=header-anchor >&#40;004&#41; use Latexify.jl</a></h2>
 <p>Latexify produces a LaTeX string which should basically be passed to KaTeX. To do that you need to recuperate the output, extract the string and pass it into a maths block.</p>
 <p>Here there&#39;s a bug with <code>\begin&#123;equation&#125;</code> in Franklin &#40;issue <a href="https://github.com/tlienart/Franklin.jl/issues/584">#584</a>&#41; which is why I&#39;m replacing those with <code>&#36;&#36;</code> but it should be fixed in the near future so that you wouldn&#39;t have to use these two &quot;replace&quot; lines:</p>
 <pre><code class=language-julia >using Latexify
@@ -201,12 +201,12 @@ ls &#61; latexify&#40;empty_ary&#41; # this is an L string</code></pre>
 \[
 \left[
 \begin{array}{cc}
--4.1895946e15 & -1.3065277e9 \\
-4.5734e-41 & 4.5734e-41 \\
+-2.397674e12 & -2.3976907e12 \\
+4.5644e-41 & 4.5644e-41 \\
 \end{array}
 \right]
 \]
-<h2 id=003_styling_of_code_output_blocks ><a href="#003_styling_of_code_output_blocks">&#40;003&#41; styling of code output blocks</a></h2>
+<h2 id=003_styling_of_code_output_blocks ><a href="#003_styling_of_code_output_blocks" class=header-anchor >&#40;003&#41; styling of code output blocks</a></h2>
 <p>At the moment &#40;August 2020&#41; no particular class is added on an output &#40;see <a href="https://github.com/tlienart/Franklin.jl/issues/531">#531</a>&#41;; you can still do something similar by adding a <code>@@code-output</code> &#40;or whatever appropriate name&#41; around the command that extracts the output and specify this in your css &#40;see <code>extras.css</code>&#41;:</p>
 <pre><code class=language-julia >x &#61; 7</code></pre>
 <div class=code-output ><pre><code class=plaintext >7</code></pre></div>
@@ -214,13 +214,13 @@ ls &#61; latexify&#40;empty_ary&#41; # this is an L string</code></pre>
 <pre><code class=language-plaintext >\newcommand&#123;\prettyshow&#125;&#91;1&#93;&#123;@@code-output \show&#123;#1&#125; @@&#125;</code></pre>
 <p>and put it in your <code>config.md</code> file so that it&#39;s globally available.</p>
 <div class=code-output ><pre><code class=plaintext >7</code></pre></div>
-<h2 id=002_code_block_scope ><a href="#002_code_block_scope">&#40;002&#41; code block scope</a></h2>
+<h2 id=002_code_block_scope ><a href="#002_code_block_scope" class=header-anchor >&#40;002&#41; code block scope</a></h2>
 <p>On a single page all code blocks share their environment so</p>
 <pre><code class=language-julia >x &#61; 5</code></pre>
 <p>then</p>
 <pre><code class=language-julia >y &#61; x&#43;2</code></pre>
 <pre><code class=plaintext >7</code></pre>
-<h2 id=001_how_to_load_data_from_file_and_loop_over_rows ><a href="#001_how_to_load_data_from_file_and_loop_over_rows">&#40;001&#41; how to load data from file and loop over rows</a></h2>
+<h2 id=001_how_to_load_data_from_file_and_loop_over_rows ><a href="#001_how_to_load_data_from_file_and_loop_over_rows" class=header-anchor >&#40;001&#41; how to load data from file and loop over rows</a></h2>
 <p>This was asked on Slack with the hope it could mimick the <a href="https://jekyllrb.com/docs/datafiles/">Data Files</a> functionality of Jekyll where you would have a file like</p>
 <pre><code class=language-julia >name,github
 Eric Mill,konklone
@@ -232,13 +232,13 @@ Liu Fengyun,liufengyun</code></pre>
 <li><p>see <code>_assets/members.csv</code> &#40;content is the code block above&#41;</p>
 
 </ul>
-<h3 id=approach_1_with_a_hfun ><a href="#approach_1_with_a_hfun">Approach 1, with a <code>hfun</code></a></h3>
+<h3 id=approach_1_with_a_hfun ><a href="#approach_1_with_a_hfun" class=header-anchor >Approach 1, with a <code>hfun</code></a></h3>
 <ul>
 <li><p>see <code>utils.jl</code> for the definition of <code>hfun_members_table</code>; calling <code>&#123;&#123;members_table _assets/members.csv&#125;&#125;</code> gives</p>
 
 </ul>
 
-<h3 id=approach_2_with_a_page_variable_and_a_for_loop ><a href="#approach_2_with_a_page_variable_and_a_for_loop">Approach 2, with a page variable and a for loop</a></h3>
+<h3 id=approach_2_with_a_page_variable_and_a_for_loop ><a href="#approach_2_with_a_page_variable_and_a_for_loop" class=header-anchor >Approach 2, with a page variable and a for loop</a></h3>
 <ul>
 <li><p>see <code>config.md</code> for the definition of the <code>members_from_csv</code><em>global</em> page variable.</p>
 
@@ -278,7 +278,7 @@ Liu Fengyun,liufengyun</code></pre>
 </ul>
 <div class=page-foot >
   <div class=copyright >
-    &copy; Thibaut Lienart. Last modified: February 18, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
+    &copy; Thibaut Lienart. Last modified: February 19, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
   </div>
 </div>
 </div>

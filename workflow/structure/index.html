@@ -114,11 +114,11 @@
         </div>
 
 <!-- Content appended here (in class franklin-content) -->
-<div class="franklin-content"><h1 id="page_structure"><a href="#page_structure">Page structure</a></h1>
+<div class="franklin-content"><h1 id="page_structure"><a href="#page_structure" class="header-anchor">Page structure</a></h1>
 
     <span style="font-size:24px;font-weight:300;">Pages are assembled like lego blocks.</span>
     
-<h2 id="overview"><a href="#overview">Overview</a></h2>
+<h2 id="overview"><a href="#overview" class="header-anchor">Overview</a></h2>
 <p>At a high level, the process to go from a markdown file <code>file.md</code> to the corresponding html page is quite simple:</p>
 <pre><code class="language-plaintext">result &#61; head * body * page_foot * foot</code></pre>
 <p>where</p>
@@ -155,7 +155,7 @@
 <p>for more on this, see the section on <a href="/syntax/page-variables/">page variables</a>.</p>
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">This also means that it is required to have a <code>_layout/head.html</code>, <code>_layout/foot.html</code> and <code>_layout/page_foot.html</code>, you <strong>must</strong> have these files but they can be empty &#40;in practice it wouldn&#39;t make sense to have all of them be empty but you could have <code>page_foot</code> empty&#41;.</div></div>
-<h3 id="resolved_body"><a href="#resolved_body">Resolved body</a></h3>
+<h3 id="resolved_body"><a href="#resolved_body" class="header-anchor">Resolved body</a></h3>
 <p>The resolved body is plugged in a &quot;container&quot; div</p>
 <pre><code class="language-html">&lt;div class&#61;&quot;franklin-content&quot;&gt;
 ...
@@ -163,7 +163,7 @@
 <p>if you&#39;re using a CSS framework like bootstrap, you might want to control the name of that outer div which you can do by specifying <code>@def div_content &#61; &quot;container&quot;</code> in your <code>config.md</code>.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: February 18, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: February 19, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

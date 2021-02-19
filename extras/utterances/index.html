@@ -114,21 +114,21 @@
         </div>
 
 <!-- Content appended here (in class franklin-content) -->
-<div class="franklin-content"><h1 id="add_comments_with_utterances"><a href="#add_comments_with_utterances">Add comments with utterances</a></h1>
+<div class="franklin-content"><h1 id="add_comments_with_utterances"><a href="#add_comments_with_utterances" class="header-anchor">Add comments with utterances</a></h1>
 <p><div class="franklin-toc"><ol><li><a href="#pre-requisites">Pre-requisites</a><ol><li><a href="#selecting_the_repository_for_storing_the_comments">Selecting the repository for storing the comments</a></li><li><a href="#installing_the_utterances_app">Installing the utterances app</a></li><li><a href="#configuring_the_javascript_code">Configuring the javascript code</a></li></ol></li><li><a href="#adding_the_comment_widget">Adding the comment widget</a></li><li><a href="#working_example">Working example</a></li></ol></div><div class="blank"></div></p>
 <p>Although Franklin generates static sites, you can add a commment widget to any  webpage by using an external commenting system. There are several such systems, which work through some javascript or iframe code embedded in the page. The code works by calling an external server or app that handles the comment database and the interface with the user.</p>
 <p>We describe below how to implement a comment widget through <a href="https://utteranc.es">utterances</a>, which is a free, open-source, no-ads solution, which is pretty easy to set up. All the comments are saved in a github repository of your choosing, which can be the same repo that hosts the website or a different one. Each page that contains the javascript code for utterances is associated to an issue in the selected repository, and all the comments in that page are added as comments to that issue.</p>
 <p>The comments in your page work just like comments in github issues, which means they have markdown rendering, code highlighting, and the basic github reaction emojis. Unfortunately, github&#39;s markdown does not render latex formulas, but they can be added by using an external renderer as described in <a href="https://gist.github.com/a-rodin/fef3f543412d6e1ec5b6cf55bf197d7b"> a-rodin/A hack for showing LaTeX formulas in GitHub markdown.md</a>. It&#39;s not as friendly, but is doable. It is the same render used by github to display jupyter notebooks.</p>
 <p>A notable thing missing from utterances is nested replies. Another drawback is that, since it is based on github issues, any user that wants to leave a comment has to have a github account and log in to proceed.</p>
 <p>If one is interested in trying other comment engines, here is a list of options, with some of them being paid and/or closed source: <a href="https://commento.io">Commento</a>, <a href="https://graphcomment.com/en/">GraphComment</a>, <a href="https://intensedebate.com">IntenseDebate</a>, <a href="https://posativ.org/isso/">Isso</a>,  <a href="https://muut.com">Muut</a>, <a href="https://github.com/umputun/remark42">Remark42</a>, <a href="https://staticman.net">StaticMan</a>, and <a href="https://www.talkyard.io">Talkyard</a>.</p>
-<h2 id="pre-requisites"><a href="#pre-requisites">Pre-requisites</a></h2>
+<h2 id="pre-requisites"><a href="#pre-requisites" class="header-anchor">Pre-requisites</a></h2>
 <p>The installation is pretty simple, and the <a href="https://utteranc.es">utterances</a> page is clear in explaining it. Here is a quick rundown of the configuration.</p>
-<h3 id="selecting_the_repository_for_storing_the_comments"><a href="#selecting_the_repository_for_storing_the_comments">Selecting the repository for storing the comments</a></h3>
+<h3 id="selecting_the_repository_for_storing_the_comments"><a href="#selecting_the_repository_for_storing_the_comments" class="header-anchor">Selecting the repository for storing the comments</a></h3>
 <p>You need to choose a repository for storing the comments. It can be the same repository for the website, in case your site is hosted at github, or a different repository, if so you wish or need.</p>
 <p>The selected page has to be public, so your commentators can write to it via utterances. In fact, utterances just provides the interface. The comment itself is owned by the user and can, in fact, also be written and accessed directly at the repo.</p>
-<h3 id="installing_the_utterances_app"><a href="#installing_the_utterances_app">Installing the utterances app</a></h3>
+<h3 id="installing_the_utterances_app"><a href="#installing_the_utterances_app" class="header-anchor">Installing the utterances app</a></h3>
 <p>There is an <a href="https://github.com/apps/utterances">utterances app</a> that needs permission to access your github repo in order to write the comments. It is just a matter of clicking the <code>Configure</code> button that appears in the app&#39;s page and following the steps to select the right repository.</p>
-<h3 id="configuring_the_javascript_code"><a href="#configuring_the_javascript_code">Configuring the javascript code</a></h3>
+<h3 id="configuring_the_javascript_code"><a href="#configuring_the_javascript_code" class="header-anchor">Configuring the javascript code</a></h3>
 <p>With the name of the repository at hand and the utterances app installed, it is time to configure the javascript code that is going to be inserted in the desired pages.</p>
 <p>There are a two required configurations to be made:</p>
 <div class="tlist"><ul>
@@ -152,7 +152,7 @@
 &lt;/script&gt;</code></pre>
 <p>One can directly edit the <code>repo</code>, <code>issue-term</code> and <code>theme</code> fields above or just fill out the corresponding forms in <a href="https://utteranc.es">utterances</a> that the proper filled-out script shows up that the end of the page for copying and pasting.</p>
 <p>The <em>issue label</em> is optional, so it does not appear in the script above, but if you want something different than &quot;Comment&quot;, then the argument <code>label&#61;&quot;Comment&quot;</code> should be added to the script, with whatever you want in place of &quot;Comment&quot;.</p>
-<h2 id="adding_the_comment_widget"><a href="#adding_the_comment_widget">Adding the comment widget</a></h2>
+<h2 id="adding_the_comment_widget"><a href="#adding_the_comment_widget" class="header-anchor">Adding the comment widget</a></h2>
 <p>With the javascript code ready, you need to add it to the desired page, be it a blog post or any other page. Of course you can just add the code above directly to an html file, or inject it to a markdown file by fencing it with <code>~~~...~~~</code>.</p>
 <p>But if you want to add it to several pages, as in posts for a blog, the best way is to add an <code>hfun_*</code> function to <code>utils.jl</code> and simply call this function at the end of each page.</p>
 <p>For instance, the following function will do it</p>
@@ -177,7 +177,7 @@ end</code></pre>
 <p>Then, at the end of a markdown file, you just need to add</p>
 <pre><code class="language-html">&#123;&#123; addcomments &#125;&#125;</code></pre>
 <p>With that done, each time someone leaves a comment in a page, the comment will be written to the repo, and you will receive an email from github telling you so.</p>
-<h2 id="working_example"><a href="#working_example">Working example</a></h2>
+<h2 id="working_example"><a href="#working_example" class="header-anchor">Working example</a></h2>
 <p>Prof. Ricardo Rosa&#39;s website uses Utterances for comments:</p>
 <div class="flist"><ul>
 <li><p><a href="https://rmsrosa.github.io/blog/2021/02/time_ave_bounds_SoS/">example page</a></p>
@@ -188,7 +188,7 @@ end</code></pre>
 <p>Kind thanks to Ricardo who kindly wrote most of this page 💯.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: February 18, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: February 19, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

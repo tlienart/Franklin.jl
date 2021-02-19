@@ -114,16 +114,16 @@
         </div>
 
 <!-- Content appended here (in class franklin-content) -->
-<div class="franklin-content"><h1 id="classes"><a href="#classes">Classes</a></h1>
+<div class="franklin-content"><h1 id="classes"><a href="#classes" class="header-anchor">Classes</a></h1>
 
     <span style="font-size:24px;font-weight:300;">Use Franklin's classes or add your own.</span>
     
 <div class="blank"></div>
 <p>By now you know that you can add <code>@@divname ... @@</code> anywhere you want in your content in order to define an environment and style it. Below we detail the default classes as well as some tricks that can be useful to style  your content.</p>
-<h2 id="franklins_classes"><a href="#franklins_classes">Franklin&#39;s classes</a></h2>
+<h2 id="franklins_classes"><a href="#franklins_classes" class="header-anchor">Franklin&#39;s classes</a></h2>
 <div class="lalignb"><table><tr><th align="right">Name</th><th align="right">Function</th></tr><tr><td align="right"><code>franklin-content</code></td><td align="right">wraps around the content of a page, so when a <code>mypage.md</code> is converted to some html, it gets inserted in the scaffolding as <code>&lt;div class&#61;&quot;franklin-content&quot;&gt; some html &lt;/div&gt;</code> &#40;&#42;&#41;</td></tr><tr><td align="right"><code>franklin-toc</code></td><td align="right">wraps around the inserted table of contents</td></tr><tr><td align="right"><code>fnref</code></td><td align="right">wraps around a footnote reference</td></tr><tr><td align="right"><code>fndef</code></td><td align="right">wraps around footnote definitions</td></tr><tr><td align="right"><code>fndef-content</code></td><td align="right">wraps around the content of footnote definitions</td></tr><tr><td align="right"><code>fndef-backref</code></td><td align="right">wraps around the back-reference of a footnote definition</td></tr></table></div>
 <p><strong>Notes</strong>:<br/> <span style="display:inline-block;width:45px;text-align:right;color:slategray;">&#40;&#42;&#41;</span> <span style="font-size:85%;line-height:0em;">you can change this name setting the global page variable <code>div_content</code> in your <code>config.md</code></span>.<br/></p>
-<h2 id="simple_tricks"><a href="#simple_tricks">Simple tricks</a></h2>
+<h2 id="simple_tricks"><a href="#simple_tricks" class="header-anchor">Simple tricks</a></h2>
 <p>As soon as you&#39;re using a style more than once, it makes sense to create it as a command. This makes it much easier to maintain and re-use. For instance, consider the following simple examples:</p>
 <pre><code class="language-html">\newcommand&#123;\blurb&#125;&#91;1&#93;&#123;
     ~~~
@@ -139,7 +139,7 @@
 <p>In fact, that one is pre-defined in Franklin, <code>\style&#123;style&#125;&#123;text&#125;</code> does precisely that.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: February 18, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: February 19, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

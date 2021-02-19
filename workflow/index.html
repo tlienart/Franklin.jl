@@ -114,13 +114,13 @@
         </div>
 
 <!-- Content appended here (in class franklin-content) -->
-<div class="franklin-content"><h1 id="working_with_franklin"><a href="#working_with_franklin">Working with Franklin</a></h1>
+<div class="franklin-content"><h1 id="working_with_franklin"><a href="#working_with_franklin" class="header-anchor">Working with Franklin</a></h1>
 
     <span style="font-size:24px;font-weight:300;">Set things up in minutes and focus on writing great content.</span>
     
 <div class="blank"></div>
 <div class="franklin-toc"><ol><li><a href="#creating_your_website">Creating your website</a><ol><li><a href="#folder_structure">Folder structure</a></li><li><a href="#top_folder">Top folder</a></li><li><a href="#reserved_names">Reserved names</a></li><li><a href="#tag_pages">Tag pages</a></li><li><a href="#editing_and_testing_your_website">Editing and testing your website</a></li></ol></li><li><a href="#post-processing">Post-processing</a><ol><li><a href="#verify_links">Verify links</a></li><li><a href="#pre-rendering_and_compression">Pre-rendering and compression</a></li><li><a href="#publish">Publish</a></li></ol></li></ol></div>
-<h2 id="creating_your_website"><a href="#creating_your_website">Creating your website</a></h2>
+<h2 id="creating_your_website"><a href="#creating_your_website" class="header-anchor">Creating your website</a></h2>
 <p>To get started, the easiest is to use the <code>newsite</code> function to generate a website folder which you can then modify to your heart&#39;s content. The command takes one mandatory argument: the <em>name</em> of the folder &#40;which can be <code>&quot;.&quot;</code> if you want to set things up in your current directory&#41;. You can optionally specify a template:</p>
 <pre><code class="language-julia-repl">julia&gt; newsite&#40;&quot;TestWebsite&quot;; template&#61;&quot;vela&quot;&#41;
 ✓ Website folder generated at &quot;TestWebsite&quot; &#40;now the current directory&#41;.
@@ -135,7 +135,7 @@
 ✓ LiveServer listening on http://localhost:8000/ ...
   &#40;use CTRL&#43;C to shut down&#41;</code></pre>
 <p>and navigate in a browser to the corresponding address to preview the website.</p>
-<h3 id="folder_structure"><a href="#folder_structure">Folder structure</a></h3>
+<h3 id="folder_structure"><a href="#folder_structure" class="header-anchor">Folder structure</a></h3>
 <p>The initial call to <code>newsite</code> generates a folder with the following structure:</p>
 <pre><code class="language-plaintext">.
 ├── _assets/
@@ -162,7 +162,7 @@
 </ul>
 </li>
 </ul></div>
-<h3 id="top_folder"><a href="#top_folder">Top folder</a></h3>
+<h3 id="top_folder"><a href="#top_folder" class="header-anchor">Top folder</a></h3>
 <p>In this folder,</p>
 <div class="tlist"><ul>
 <li><p><code>index.md</code> will generate the site&#39;s landing page,</p>
@@ -204,7 +204,7 @@
 <li><p><code>&#91;website&#93;/folder/subpage/</code></p>
 </li>
 </ul></div>
-<h3 id="reserved_names"><a href="#reserved_names">Reserved names</a></h3>
+<h3 id="reserved_names"><a href="#reserved_names" class="header-anchor">Reserved names</a></h3>
 <p>To avoid name clashes, refrain from using the following paths where <code>/</code> indicates the topdir &#40;website folder&#41;:</p>
 <div class="tlist"><ul>
 <li><p><code>/css/</code> or <code>/css.md</code></p>
@@ -215,9 +215,9 @@
 </li>
 </ul></div>
 <p>Also bear in mind that Franklin will ignore <code>README.md</code>, <code>LICENSE.md</code>, <code>Manifest.toml</code> and <code>Project.toml</code>.</p>
-<h3 id="tag_pages"><a href="#tag_pages">Tag pages</a></h3>
+<h3 id="tag_pages"><a href="#tag_pages" class="header-anchor">Tag pages</a></h3>
 <p>All pages with a given tag can be found &#40;by default&#41; at <code>&#91;website&#93;/tag/&lt;tag_name&gt;</code>. The tag page location can be changed by setting the <code>tag_page_path</code> variable in <code>config.md</code>. For example, setting <code>@def tag_page_path &#61; &quot;my_tags&quot;</code> would cause tag pages to appear at <code>&#91;website&#93;/my_tags/&lt;tag_name&gt;</code>.</p>
-<h3 id="editing_and_testing_your_website"><a href="#editing_and_testing_your_website">Editing and testing your website</a></h3>
+<h3 id="editing_and_testing_your_website"><a href="#editing_and_testing_your_website" class="header-anchor">Editing and testing your website</a></h3>
 <p>The <code>serve</code> function can be used to launch a server which will track and render modifications. There are a few useful options you can use beyond the barebone <code>serve&#40;&#41;</code>, do <code>?serve</code> in your REPL for all options, we list a few noteworthy one below:</p>
 <div class="tlist"><ul>
 <li><p><code>clear&#61;false</code>, whether to erase <code>__site</code> and start from a blank slate,</p>
@@ -233,8 +233,8 @@
 <li><p><code>eval_all&#61;false</code>, whether to re-evaluate all code blocks on all pages.</p>
 </li>
 </ul></div>
-<h2 id="post-processing"><a href="#post-processing">Post-processing</a></h2>
-<h3 id="verify_links"><a href="#verify_links">Verify links</a></h3>
+<h2 id="post-processing"><a href="#post-processing" class="header-anchor">Post-processing</a></h2>
+<h3 id="verify_links"><a href="#verify_links" class="header-anchor">Verify links</a></h3>
 <p>Before deploying you may want to verify that links on your website lead somewhere, to do so use the <code>verify_links&#40;&#41;</code>. It will take a few second to verify all links on every generated pages but can be quite helpful to identify dead links or links with typos:</p>
 <pre><code class="language-julia-repl">julia&gt; verify_links&#40;&#41;
 Verifying links... &#91;you seem online ✓&#93;
@@ -242,7 +242,7 @@ Verifying links... &#91;you seem online ✓&#93;
 <p>then after fixing and re-generating pages:</p>
 <pre><code class="language-julia-repl">julia&gt; verify_links&#40;&#41;
 All internal and external links verified ✓.</code></pre>
-<h3 id="pre-rendering_and_compression"><a href="#pre-rendering_and_compression">Pre-rendering and compression</a></h3>
+<h3 id="pre-rendering_and_compression"><a href="#pre-rendering_and_compression" class="header-anchor">Pre-rendering and compression</a></h3>
 <p>The <code>optimize</code> function can</p>
 <div class="tlist"><ul>
 <li><p>pre-render KaTeX and highlight.js code to HTML so that the pages don&#39;t have to load these javascript libraries,</p>
@@ -253,7 +253,7 @@ All internal and external links verified ✓.</code></pre>
 <p>See <code>?optimize</code> for options.</p>
 <p>Those two steps may lead to faster loading pages. Note that in order to run them, you will need a couple of external dependencies as mentioned in the <a href="/index.html#installing_optional_extras">installation section</a>.</p>
 <p>The <code>optimize</code> function is called by default in the <code>publish</code> function which can be used to help deploy your website.</p>
-<h3 id="publish"><a href="#publish">Publish</a></h3>
+<h3 id="publish"><a href="#publish" class="header-anchor">Publish</a></h3>
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">If you use GitHub or GitLab with a deployment action on those platforms, you do not need to use <code>publish</code>, you can just push your changes and let the relevant action do the rest on the platform. See the section on <a href="/workflow/deploy/">deployment</a>.</div></div>
 <p>Once you have synched your local folder with a remote repository &#40;see <a href="/workflow/deploy/">deployment instructions</a>&#41;, the <code>publish</code> function can be called to deploy your website; it essentially:</p>
@@ -270,7 +270,7 @@ All internal and external links verified ✓.</code></pre>
 <p>Note also that the <code>publish</code> function accepts a <code>final&#61;</code> keyword to which you can pass any function <code>&#40;&#41; -&gt; nothing</code> to do some final post-processing before pushing updates online. For instance, you can use <code>final&#61;lunr</code> where <code>lunr</code> is a function exported by Franklin which generates a Lunr search index &#40;see <a href="/extras/lunr/">this tutorial</a> for more details&#41;.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: February 18, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: February 19, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

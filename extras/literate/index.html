@@ -114,7 +114,7 @@
         </div>
 
 <!-- Content appended here (in class franklin-content) -->
-<div class="franklin-content"><h1 id="generating_auxiliary_files_with_literate"><a href="#generating_auxiliary_files_with_literate">Generating auxiliary files with Literate</a></h1>
+<div class="franklin-content"><h1 id="generating_auxiliary_files_with_literate"><a href="#generating_auxiliary_files_with_literate" class="header-anchor">Generating auxiliary files with Literate</a></h1>
 <p>See also <a href="/code/literate/">how to interact with literate scripts</a>.</p>
 <p><a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a> allows to pre and post-process a script in order, for instance, to generate a notebook out  of a script. This can be convenient if you want to have a tutorial be downloadable as a standalone notebook or as a scrubbed script.</p>
 <p>This page presents one way  of doing this which is used in <a href="https://github.com/alan-turing-institute/DataScienceTutorials.jl">DataScienceTutorials</a> and which  might inspire your own approach.</p>
@@ -128,7 +128,7 @@
 </li>
 </ol></div>
 <p>In what follows, it is assumed you have your Literate scripts  in a folder <code>/scripts/</code> and that you&#39;re using GitHub. It shouldn&#39;t be hard  to modify that to suit your own case.</p>
-<h2 id="using_literate_to_generate_auxiliary_files"><a href="#using_literate_to_generate_auxiliary_files">Using Literate to generate auxiliary files</a></h2>
+<h2 id="using_literate_to_generate_auxiliary_files"><a href="#using_literate_to_generate_auxiliary_files" class="header-anchor">Using Literate to generate auxiliary files</a></h2>
 <p>Literate can manipulate scripts fairly easily, for instance to  generate notebooks:</p>
 <pre><code class="language-julia">scripts &#61; joinpath.&#40;&quot;scripts&quot;, readdir&#40;&quot;scripts&quot;&#41;&#41;
 nbpath &#61; joinpath&#40;&quot;generated&quot;, &quot;notebooks&quot;&#41;
@@ -140,7 +140,7 @@ for script in scripts
                      execute&#61;false, documenter&#61;false&#41;
 end</code></pre>
 <p>This will go over all scripts in <code>/scripts/</code> and call <code>Literate.notebook</code> to generate a derived notebook in a <code>/generated/</code> folder &#40;which you will want to add to your <code>.gitignore</code>&#41;.</p>
-<h2 id="push_the_generated_files_to_a_page_branch"><a href="#push_the_generated_files_to_a_page_branch">Push the generated files to a page branch</a></h2>
+<h2 id="push_the_generated_files_to_a_page_branch"><a href="#push_the_generated_files_to_a_page_branch" class="header-anchor">Push the generated files to a page branch</a></h2>
 <p>Start by installing <code>gh-pages</code> with <code>npm</code>:</p>
 <pre><code class="language-bash">&#36;&gt; npm install gh-pages</code></pre>
 <p>Using the package <a href="https://github.com/davidanthoff/NodeJS.jl">NodeJS.jl</a> it is then easy to use <code>gh-pages</code> to push the generated notebooks to a folder on the <code>gh-pages</code> branch:</p>
@@ -156,7 +156,7 @@ run&#40;&#96;&#36;&#40;nodejs_cmd&#40;&#41;&#41; -e &#36;JS_GHP&#96;&#41;</code>
 <p>You can link to these generated notebooks with links adapted from:</p>
 <pre><code class="language-plaintext">https://raw.githubusercontent.com/username/project/gh-pages/notebooks/theNotebook.ipynb</code></pre>
 <p>See <a href="https://alan-turing-institute.github.io/DataScienceTutorials.jl/isl/lab-2/">this page</a> for example.</p>
-<h2 id="add_the_whole_process_to_publish"><a href="#add_the_whole_process_to_publish">Add the whole process to <code>publish</code></a></h2>
+<h2 id="add_the_whole_process_to_publish"><a href="#add_the_whole_process_to_publish" class="header-anchor">Add the whole process to <code>publish</code></a></h2>
 <p>You may want to re-generate all notebooks prior to pushing updates to GitHub. For this, use the <code>final</code> keyword of <code>publish</code> to which you can pass a function to use before publishing updates. For instance:</p>
 <pre><code class="language-julia">function gen_literate&#40;&#41;
     scripts &#61; joinpath.&#40;&quot;scripts&quot;, readdir&#40;&quot;scripts&quot;&#41;&#41;
@@ -179,7 +179,7 @@ end
 publish&#40;final&#61;gen_literate&#41;</code></pre>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: February 18, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: February 19, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

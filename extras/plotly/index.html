@@ -114,15 +114,15 @@
         </div>
 
 <!-- Content appended here (in class franklin-content) -->
-<div class="franklin-content"><h1 id="work_with_plotly"><a href="#work_with_plotly">Work with Plotly</a></h1>
+<div class="franklin-content"><h1 id="work_with_plotly"><a href="#work_with_plotly" class="header-anchor">Work with Plotly</a></h1>
 <p>If you want interactive plots on some pages and are not afraid of using heavy javascript libraries, then <a href="https://plot.ly/javascript/">Plotly</a> is a nice library. The Julia wrapper <a href="https://github.com/sglyon/PlotlyJS.jl">PlotlyJS.jl</a> can be used to generate Plotly plots.</p>
-<h2 id="pre-requisites"><a href="#pre-requisites">Pre-requisites</a></h2>
+<h2 id="pre-requisites"><a href="#pre-requisites" class="header-anchor">Pre-requisites</a></h2>
 <p>Download <a href="https://cdn.plot.ly/plotly-latest.min.js"><code>plotly.min.js</code></a> saving it to <code>/_libs/plotly/plotly.min.js</code>.</p>
 <p>Then create a variable <code>hasplotly</code> with default value <code>false</code>: in your <code>config.md</code> write</p>
 <pre><code class="language-julia">@def hasplotly &#61; false</code></pre>
 <p>Finally, in your <code>src/_layout/head.html</code> add</p>
 <pre><code class="language-html">&#123;&#123;if hasplotly&#125;&#125; &lt;script src&#61;&quot;/libs/plotly/plotly.min.js&quot;&gt;&lt;/script&gt; &#123;&#123;end&#125;&#125;</code></pre>
-<h2 id="offline-generated_plot"><a href="#offline-generated_plot">Offline-generated plot</a></h2>
+<h2 id="offline-generated_plot"><a href="#offline-generated_plot" class="header-anchor">Offline-generated plot</a></h2>
 <p>Assuming you already have the Plotly code for some plot, displaying  the  result on a page with Franklin is now pretty straightforward. Start by adding</p>
 <pre><code class="language-julia">@def hasplotly &#61; true</code></pre>
 <p>so that the JS library  will be  loaded then somewhere appropriate add:</p>
@@ -149,7 +149,7 @@
 	margin: { t: 0 } } );
 </script>
 
-<h2 id="live-generated_plot"><a href="#live-generated_plot">Live-generated plot</a></h2>
+<h2 id="live-generated_plot"><a href="#live-generated_plot" class="header-anchor">Live-generated plot</a></h2>
 <p>One step further is to use <code>PlotlyJS</code> to define a  plot then pass the result to Franklin. Start by adding <code>PlotlyJS</code> and <code>Random</code> to your environment:</p>
 <pre><code class="language-julia-repl">&#40;myWebsite&#41; pkg&gt; add PlotlyJS Random</code></pre>
 <p>Then, beyond the <code>@def hasplotly &#61; true</code>, add the following code:</p>
@@ -197,7 +197,7 @@ plt    &#61; plot&#40;data, layout&#41;</code></pre>
 
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: February 18, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: February 19, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

@@ -114,7 +114,7 @@
         </div>
 
 <!-- Content appended here (in class franklin-content) -->
-<div class="franklin-content"><h1 id="templates"><a href="#templates">Templates</a></h1>
+<div class="franklin-content"><h1 id="templates"><a href="#templates" class="header-anchor">Templates</a></h1>
 
     <span style="font-size:24px;font-weight:300;">Start from one of the template or build your own.</span>
     
@@ -122,18 +122,18 @@
 <div class="franklin-toc"><ol><li><a href="#adapting_a_theme_to_franklin">Adapting a theme to Franklin</a><ol><li><a href="#getting_started">Getting started</a></li><li><a href="#adapting_the_head_and_foot">Adapting the head and foot</a></li><li><a href="#adapting_the_stylesheet">Adapting the stylesheet</a></li><li><a href="#adjusting_other_files">Adjusting other files</a></li></ol></li><li><a href="#making_a_pr_to_the_theme_repo">Making a PR to the theme repo</a></li></ol></div>
 <div class="blank"></div>
 <p>The pre-defined templates that are currently available in Franklin with the <code>newsite</code> function can be viewed <a href="https://tlienart.github.io/FranklinTemplates.jl/" target="_blank" rel="noopener noreferrer">here</a> &#40;<em>opens in a new tab</em>&#41;.</p>
-<h2 id="adapting_a_theme_to_franklin"><a href="#adapting_a_theme_to_franklin">Adapting a theme to Franklin</a></h2>
+<h2 id="adapting_a_theme_to_franklin"><a href="#adapting_a_theme_to_franklin" class="header-anchor">Adapting a theme to Franklin</a></h2>
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">If you end up doing this, please consider making a PR to <a href="https://github.com/tlienart/FranklinTemplates.jl">FranklinTemplates</a>&#33;</div></div>
 <p>On this page, I&#39;ll take <a href="http://jemdoc.jaboc.net/">Jemdoc&#39;s website layout</a> and show how it can be adapted to be a working Franklin template. This will hopefully also show you how to adapt / modify an existing template.</p>
 <p>Jemdoc&#39;s layout looks like this:</p>
 <p><img src="/assets/jemdoc/jemdoc1.png" alt="" /></p>
-<h3 id="getting_started"><a href="#getting_started">Getting started</a></h3>
+<h3 id="getting_started"><a href="#getting_started" class="header-anchor">Getting started</a></h3>
 <p>In order to get a blueprint for the folder etc, let&#39;s first create a Franklin site with the <code>basic</code> template:</p>
 <pre><code class="language-julia-repl">julia&gt; newsite&#40;&quot;jemdoc&quot;, template&#61;&quot;basic&quot;&#41;</code></pre>
 <p>You can serve the site in order to see the modifications directly in your browser which can be useful to fine tune the port of the layout.</p>
 <p>We will need to provide the appropriate stylesheet in <code>_css/</code> and adjust the layout part in <code>_layout/</code>.</p>
-<h3 id="adapting_the_head_and_foot"><a href="#adapting_the_head_and_foot">Adapting the head and foot</a></h3>
+<h3 id="adapting_the_head_and_foot"><a href="#adapting_the_head_and_foot" class="header-anchor">Adapting the head and foot</a></h3>
 <p>The file <code>_html_parts/head.html</code> is the most important one you will have to adjust.</p>
 <p>Let us first change the name of the main stylesheet <code>_css/basic.css</code> to <code>_css/jemdoc.css</code> which is more appropriate. The reference to the stylesheet in <code>head.html</code> consequently has to be changed to mention <code>jemdoc.css</code> instead of <code>basic.css</code>:</p>
 <pre><code class="language-html">&lt;link rel&#61;&quot;stylesheet&quot; href&#61;&quot;/css/jemdoc.css&quot;&gt;</code></pre>
@@ -217,7 +217,7 @@
     &#123;&#123; end &#125;&#125;
   &lt;/body&gt;
 &lt;/html&gt;</code></pre>
-<h3 id="adapting_the_stylesheet"><a href="#adapting_the_stylesheet">Adapting the stylesheet</a></h3>
+<h3 id="adapting_the_stylesheet"><a href="#adapting_the_stylesheet" class="header-anchor">Adapting the stylesheet</a></h3>
 <p>By now the page looks pretty bad:</p>
 <p><img src="/assets/jemdoc/jemdoc2.png" alt="" /></p>
 <p>the content is not centred in its box and overflows on the right, the menu looks ridiculous, time to do some CSS styling&#33;</p>
@@ -234,7 +234,7 @@
 <li><p>there&#39;s not enough space after <code>&lt;pre&gt;</code> blocks</p>
 </li>
 </ol></div>
-<h4 id="fixing_spacing"><a href="#fixing_spacing">Fixing spacing</a></h4>
+<h4 id="fixing_spacing"><a href="#fixing_spacing" class="header-anchor">Fixing spacing</a></h4>
 <p>Firefox or Chrome/ium&#39;s excellent dev-tools are super helpful to fine tune stylesheets. Here things are pretty straightforward though.</p>
 <p>First, we need to add vertical padding above <code>&lt;h1&gt;</code> level title:</p>
 <pre><code class="language-css">h1 &#123; padding-top: 2em; &#125;</code></pre>
@@ -253,7 +253,7 @@
 <p>which you can just remove to have a bit more space around code blocks.</p>
 <p>There&#39;s probably still things that could be done to improve the layout overall &#40;and make it more responsive&#33;&#41; but we&#39;ll leave it at that.</p>
 <p><img src="/assets/jemdoc/jemdoc4.png" alt="" /></p>
-<h3 id="adjusting_other_files"><a href="#adjusting_other_files">Adjusting other files</a></h3>
+<h3 id="adjusting_other_files"><a href="#adjusting_other_files" class="header-anchor">Adjusting other files</a></h3>
 <p>Here we don&#39;t need to adjust anything else but, in general, you might want to adjust the other pages:</p>
 <div class="tlist"><ul>
 <li><p><code>head_highlight</code>, <code>head_katex</code>, <code>foot_highlight</code> and <code>foot_katex</code> are probably best left as they are, they will be appended if need be to pages &#40;see in <code>head</code> and <code>foot</code> the <code>&#123;&#123;if hasmath&#125;&#125;</code> and <code>&#123;&#123;if hascode&#125;&#125;</code> blocks&#41;</p>
@@ -268,12 +268,12 @@
   &lt;/div&gt;
 &lt;/div&gt;</code></pre>
 <p>It should be fairly straightforward to adapt that to your needs.</p>
-<h2 id="making_a_pr_to_the_theme_repo"><a href="#making_a_pr_to_the_theme_repo">Making a PR to the theme repo</a></h2>
+<h2 id="making_a_pr_to_the_theme_repo"><a href="#making_a_pr_to_the_theme_repo" class="header-anchor">Making a PR to the theme repo</a></h2>
 <p>Let&#39;s say you&#39;ve built your own template and are pretty happy with the result and you&#39;d like to share it for other users, great, thanks&#33;</p>
 <p>Please follow <a href="https://github.com/tlienart/FranklinTemplates.jl#fixingadding-a-template">these instructions</a>.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: February 18, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: February 19, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

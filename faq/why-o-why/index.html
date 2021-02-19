@@ -112,20 +112,20 @@
         </div>
 
 <!-- Content appended here (in class franklin-content) -->
-<div class="franklin-content"><h1 id="faq_-_meta"><a href="#faq_-_meta">FAQ - Meta</a></h1>
-<h2 id="why_bother_with_yet_another_ssg"><a href="#why_bother_with_yet_another_ssg">Why bother with yet another SSG?</a></h2>
+<div class="franklin-content"><h1 id="faq_-_meta"><a href="#faq_-_meta" class="header-anchor">FAQ - Meta</a></h1>
+<h2 id="why_bother_with_yet_another_ssg"><a href="#why_bother_with_yet_another_ssg" class="header-anchor">Why bother with yet another SSG?</a></h2>
 <p>There is a <a href="https://www.staticgen.com/">multitude of static site generators</a> out there... is this one worth your time?</p>
 <p>I didn&#39;t start working on Franklin hoping to &quot;beat&quot; mature and sophisticated generators like Hugo or Jekyll. Rather, I had been using Jacob Mattingley&#39;s much simpler <a href="http://jemdoc.jaboc.net/using.html">Jemdoc</a> package in Python with Wonseok Shin&#39;s <a href="https://github.com/wsshin/jemdoc_mathjax">neat extension</a> for MathJax support.</p>
 <p>I liked that Jemdoc&#43;Mathjax was simple to use and didn&#39;t require a lot of web-dev skills to get going. That&#39;s how I got the idea of doing something similar in Julia, hopefully improving on the few things I didn&#39;t like such as the lack of support for live-rendering preview or the speed of page generation.</p>
 <p>That being said, if you just want a blogging generator mostly for text and pictures, then Franklin may not be the tool for you. If you want to host a technical blog with maths, code blocks, and would like some easy and reproducible control over elements, then Franklin could help you &#40;feel free to <a href="https://github.com/tlienart/Franklin.jl/issues/new">open an issue</a> to see if Franklin is right for you&#41;.</p>
-<h3 id="why_not_pandoc"><a href="#why_not_pandoc">Why not Pandoc?</a></h3>
+<h3 id="why_not_pandoc"><a href="#why_not_pandoc" class="header-anchor">Why not Pandoc?</a></h3>
 <p><a href="https://pandoc.org/">Pandoc</a> is a very different beast. Franklin&#39;s aim was never to provide a full-fledged LaTeX to HTML conversion &#40;which Pandoc does&#41;. Rather, Franklin supports standard markdown <strong>and</strong> the definition of commands following a LaTeX-like syntax. These commands can make the use of repeated elements in your website significantly easier to use and maintain.</p>
 <p>Further, Pandoc does not deal with the generation of a full website with things like live-previews, code evaluation etc.</p>
-<h3 id="why_write_a_markdown_parser"><a href="#why_write_a_markdown_parser">Why write a markdown parser?</a></h3>
+<h3 id="why_write_a_markdown_parser"><a href="#why_write_a_markdown_parser" class="header-anchor">Why write a markdown parser?</a></h3>
 <p>I suspect many computer scientists or similar types will agree that <em>parsing</em> is an interesting topic. Franklin provided an incentive to think hard about how to parse extended markdown efficiently and while I&#39;d definitely not dare to say that the parser is very good, it does a decent job and I learned a lot coding it.</p>
 <p>In particular, processing LaTeX-like commands which can be re-defined and should be resolved recursively, proved pretty interesting &#40;and sometimes a bit tricky&#41;.  </p>
 <p>Initially Franklin was heavily reliant upon the Julia <code>Markdown</code> package &#40;part of the <code>stdlib</code>&#41; which can convert markdown to HTML but, over time, this changed as Franklin gained the capacity to parse a broader set of Markdown as well as extensions.</p>
-<h3 id="did_you_know"><a href="#did_you_know">Did you know?</a></h3>
+<h3 id="did_you_know"><a href="#did_you_know" class="header-anchor">Did you know?</a></h3>
 <p>Franklin was initially named &quot;<em>JuDoc</em>&quot; which happened to be a <a href="https://en.wikipedia.org/wiki/Judoc">fairly obscure saint</a> &#40;I definitely did not know that before registering the package&#41;.  The name was meant to be close to <em>Jemdoc</em> from which the initial inspiration for this package comes and, of course, to hint at the fact that it was in Julia. After being kindly told that the name was awkward, I received great suggestions and we ended up renaming the package to Franklin to honour</p>
 <div class="tlist"><ul>
 <li><p><a href="https://en.wikipedia.org/wiki/Rosalind_Franklin">Rosalind Franklin</a>, an English chemist who contributed to the discovery of the structure of DNA, and</p>
@@ -138,7 +138,7 @@
 <p>There&#39;s also happens to be a turtle and a US president with that name but that&#39;s mostly fortuitous.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: February 18, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: February 19, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
