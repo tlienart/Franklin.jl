@@ -134,7 +134,9 @@ function convert_header(β::OCBlock, lxdefs::Vector{LxDef})::String
         PAGE_HEADERS[rstitle] = (title, 1, parse(Int, hk[2]))
     end
     # return the title
-    return html_hk(hk, html_ahref_key(rstitle, title); id=rstitle)
+    return html_hk(hk, html_ahref_key(rstitle, title;
+                                      class=locvar(:header_anchor_class)::String),
+                   id=rstitle)
 end
 
 """

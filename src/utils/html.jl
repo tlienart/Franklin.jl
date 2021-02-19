@@ -6,7 +6,7 @@ html_sup(id::String, in::AS) = "<sup id=\"$id\">$in</sup>"
 
 """Convenience function for a header."""
 html_hk(hk::String, t::AS; id::String="", class::String="") =
-    "<$hk$(attr(:id, id))>$t</$hk>"
+    "<$hk$(attr(:id, id))$(attr(:class, class))>$t</$hk>"
 
 """Convenience function for content tagging (see `build_page`)"""
 html_content(tag::String, content::AS; class::String, id::String) =
@@ -27,7 +27,7 @@ end
 
 Convenience function to introduce a hyper reference relative to a key.
 """
-html_ahref_key(k::AS, n::Union{Int,AS}) = html_ahref("#$k", n)
+html_ahref_key(k::AS, n::Union{Int,AS}; class="") = html_ahref("#$k", n; class=class)
 
 """
     html_div

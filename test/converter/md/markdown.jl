@@ -63,8 +63,8 @@ end
         done
         """ |> seval
     @test h // """
-        <h1 id="title"><a href="#title">Title</a></h1>
+        <h1 id="title"><a href="#title" class="header-anchor">Title</a></h1>
         <p>and then</p>
-        <h2 id="subtitle_cool"><a href="#subtitle_cool">Subtitle cool&#33;</a></h2>
+        <h2 id="subtitle_cool"><a href="#subtitle_cool" class="header-anchor">Subtitle cool&#33;</a></h2>
         <p>done</p>"""
 end

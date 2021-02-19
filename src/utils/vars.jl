@@ -103,6 +103,9 @@ const LOCAL_VARS_DEFAULT = [
     "showall"       => dpair(false),  # if true, notebook style
     "fd_eval"       => dpair(false),  # toggle re-eval
     # ------------------
+    # header links class
+    "header_anchor_class" => dpair("header-anchor"),
+    # ------------------
     # RSS 2.0 specs [^2]
     "rss"             => dpair(""),
     "rss_description" => dpair(""),
