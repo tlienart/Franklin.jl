@@ -262,12 +262,13 @@ function hfun_redirect(params::Vector{String})::String
     dst = joinpath(path(:site), addr)
     isfile(dst) && return ""
     mkpath(splitdir(dst)[1])
+    pp = ifelse(FD_ENV[:FINAL_PASS]::Bool, "/$(globvar(:prepath)::String)", "")
     write(dst, """
     <!-- Generated Redirect -->
     <!doctype html>
     <html>
     <head>
-      <meta http-equiv="refresh" content='0; url="$(locvar(:fd_url))"'>
+      <meta http-equiv="refresh" content='0; url="$(pp)$(locvar(:fd_url)::String)"'>
     </head>
     </html>
     """)

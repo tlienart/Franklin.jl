@@ -77,7 +77,7 @@ function fix_links(pg::String)::String
     prepath = globvar(:prepath)
     isempty(prepath) && return pg
     pp = strip(prepath, '/')
-    ss = SubstitutionString("\\1=\"/$(pp)/")
+    ss = SubstitutionString("\\1=\\2/$(pp)/")
     # replace things that look like href="/..." with href="/$prepath/..."
     return replace(pg, PREPATH_FIX_PAT => ss)
 end

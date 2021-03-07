@@ -30,11 +30,6 @@ function convert_html(hs::AS)::String
         fhs = find_and_fix_md_links(fhs)
     end
     isempty(fhs) && return ""
-
-    # if FD_ENV[:FINAL_PASS] && !isempty(globvar("prepath"))
-    #     fhs = fix_links(fhs)
-    # end
-
     return String(fhs)
 end
 
