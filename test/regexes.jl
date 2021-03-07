@@ -324,8 +324,8 @@ end
         href=/bar
         """ |> F.fix_links
     @test p // """
-        url="/foo/bar'
+        url='/foo/bar'
         src="/foo/bar"
-        href="/foo/bar
+        href=/foo/bar
         """
 end
