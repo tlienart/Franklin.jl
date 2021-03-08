@@ -173,7 +173,7 @@ function write_rss_xml(rss_path, rss_title, rss_descr, rss_link, rss_items, rss_
     rss_buff = IOBuffer()
     write(rss_buff,
         """
-        <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+        <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
         <channel>
           <title><![CDATA[$rss_title]]></title>
           <description><![CDATA[$(fix_relative_links(rss_descr, rss_link))]]></description>
@@ -193,7 +193,7 @@ function write_rss_xml(rss_path, rss_title, rss_descr, rss_link, rss_items, rss_
               <link>$(full_link)</link>
               <description><![CDATA[$(fix_relative_links(v.description, rss_link))<br><a href=\"$(full_link)\">Read more</a>]]></description>
               $(ifelse(isempty(v.content),
-                "", "<content:encoded>$(v.content)</content:encoded>"))
+                "", "<content:encoded><![CDATA[$(fix_relative_links(v.content, rss_link))]]></content:encoded>"))
           """)
         for elem in (:author, :category, :comments, :enclosure)
             e = getproperty(v, elem)
