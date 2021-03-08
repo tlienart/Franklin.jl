@@ -19,6 +19,7 @@ struct RSSItem
     link::String
     description::String  # note: should not contain <p>
     # -- optional fields
+    content::String
     author::String       # note: should be a valid email
     category::String
     comments::String     # note: should be a valid URL
@@ -67,6 +68,15 @@ function add_rss_item()
 
     descr = fd2html(descr; internal=true) |> remove_html_ps
 
+    content = ""
+    if globvar(:rss_full_content)::Bool
+        raw = read(locvar(:fd_rpath)::String, String)
+        m = convert_md(raw; isinternal=true)
+        # remove all `{{}}` functions
+        m = replace(m, r"{{.*?}}" => "")
+        content = convert_html(m)
+    end
+
     author    = locvar(:rss_author)::String
     category  = locvar(:rss_category)::String
     comments  = locvar(:rss_comments)::String
@@ -89,7 +99,7 @@ function add_rss_item()
         An RSS description was found but without title for page '$link'.
         """)
 
-    rss = RSSItem(title, link, descr, author, category, comments, enclosure, pubDate)
+    rss = RSSItem(title, link, descr, content, author, category, comments, enclosure, pubDate)
 
     res = RSS_DICT[link] = (rss, tags)
     return res
@@ -181,7 +191,11 @@ function write_rss_xml(rss_path, rss_title, rss_descr, rss_link, rss_items, rss_
             <item>
               <title><![CDATA[$(v.title)]]></title>
               <link>$(full_link)</link>
-              <description><![CDATA[$(fix_relative_links(v.description, rss_link))<br><a href=\"$(full_link)\">Read more</a>]]></description>
+              <description><![CDATA[
+                $(fix_relative_links(v.description, rss_link))<br><a href=\"$(full_link)\">Read more</a>]]>
+              </description>
+              $(ifelse(isempty(v.content),
+                "", "<content:encoded>$(v.content)</content:encoded>"))
           """)
         for elem in (:author, :category, :comments, :enclosure)
             e = getproperty(v, elem)
