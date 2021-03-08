@@ -43,7 +43,7 @@ const GLOBAL_VARS_DEFAULT = [
     "website_url"      => dpair(""),
     "generate_rss"     => dpair(true),
     "generate_sitemap" => dpair(true),
-    "rss_full_content" => dpair(true),
+    "rss_full_content" => dpair(false),
     # div names
     "content_tag"      => dpair("div"),
     "content_class"    => dpair("franklin-content"),
