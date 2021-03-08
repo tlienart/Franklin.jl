@@ -53,7 +53,7 @@ $SIGNATURES
 RSS should not contain relative links so this finds relative links and prepends
 them with the canonical link.
 """
-fix_relative_links(s::String, link::String) =
+fix_relative_links(s::AbstractString, link::String) =
     replace(s, r"(href|src)\s*?=\s*?\"\/" => SubstitutionString("\\1=\"$link"))
 
 """
@@ -66,7 +66,7 @@ function add_rss_item()
     title = jor("rss_title", "title")
     descr = jor("rss", "rss_description")
 
-    descr = fd2html(descr; internal=true) |> remove_html_ps
+    descr = fd2html(descr; internal=true) |> remove_html_ps |> chomp
 
     content = ""
     if globvar(:rss_full_content)::Bool
@@ -134,7 +134,7 @@ function rss_generator()::Nothing
     end
 
     endswith(rss_link, "/") || (rss_link *= "/")
-    rss_descr = fd2html(rss_descr; internal=true) |> remove_html_ps
+    rss_descr = fd2html(rss_descr; internal=true) |> remove_html_ps |> chomp
 
     # sort items by pubDate
     RSS_DICT_SORTED = sort(OrderedDict(RSS_DICT), rev = true, byvalue = true, by = x -> x[1].pubDate)
