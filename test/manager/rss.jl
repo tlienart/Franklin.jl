@@ -1,6 +1,6 @@
 @testset "RSSItem" begin
     rss = F.RSSItem(
-        "title", "www.link.com", "description", "author@author.com", "category",
+        "title", "www.link.com", "description", "", "author@author.com", "category",
         "www.comments.com", "enclosure", Date(2012,12,12))
     @test rss.title == "title"
     @test rss.link == "www.link.com"

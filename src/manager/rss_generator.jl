@@ -191,9 +191,7 @@ function write_rss_xml(rss_path, rss_title, rss_descr, rss_link, rss_items, rss_
             <item>
               <title><![CDATA[$(v.title)]]></title>
               <link>$(full_link)</link>
-              <description><![CDATA[
-                $(fix_relative_links(v.description, rss_link))<br><a href=\"$(full_link)\">Read more</a>]]>
-              </description>
+              <description><![CDATA[$(fix_relative_links(v.description, rss_link))<br><a href=\"$(full_link)\">Read more</a>]]></description>
               $(ifelse(isempty(v.content),
                 "", "<content:encoded>$(v.content)</content:encoded>"))
           """)
