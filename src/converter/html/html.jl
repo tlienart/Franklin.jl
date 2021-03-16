@@ -83,8 +83,14 @@ Take a Markdown string and return the HTML that Franklin would produce for it.
 """
 fd2html(s; kw...)::String = fd2html_v(s; kw...)[1]
 
-# legacy JuDoc
-jd2html = fd2html
+"""
+    fd2text(s; kw)
+
+Take a Markdown string and return a version with no markup (used in RSS circumstances).
+This is bruteforce to say the least, it just discards all HTML tags. It should be safe
+in that '<' and '>' should have been escaped by the fd2html pass.
+"""
+fd2text(s; kw...)::String = replace(fd2html(s; kw...), r"\<.*?\>" => "")
 
 """
 $SIGNATURES

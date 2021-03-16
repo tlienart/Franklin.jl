@@ -21,7 +21,7 @@ import Random
 import ExprTools: splitdef, combinedef
 import REPL.REPLCompletions: emoji_symbols
 
-export serve, publish, cleanpull, newsite, optimize, fd2html,
+export serve, publish, cleanpull, newsite, optimize, fd2html, fd2text,
        literate_folder, verify_links, @OUTPUT, get_url
 
 # Extra functions
