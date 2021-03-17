@@ -53,7 +53,7 @@ $SIGNATURES
 RSS should not contain relative links so this finds relative links and prepends
 them with the canonical link.
 """
-fix_relative_links(s::String, link::String) =
+fix_relative_links(s::AS, link::String) =
     replace(s, r"(href|src)\s*?=\s*?\"\/" => SubstitutionString("\\1=\"$link"))
 
 """
