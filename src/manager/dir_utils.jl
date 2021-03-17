@@ -143,11 +143,12 @@ function _scan_input_dir!(other_files::TrackedFiles,
             # skip over `__site` folder, `.git` and `.github` folder
             startswith(fpath, path(:site)) && continue
             startswith(fpath, joinpath(path(:folder), ".git")) && continue
-            # skip over toml files
-            fext == ".toml" && continue
 
+            # TOML files are not tracked but are copied over
+            if fext == ".toml"
+                add_if_new_file!(other_files, opts...)
             # assets file --> other
-            if startswith(fpath, path(:assets))
+            elseif startswith(fpath, path(:assets))
                 add_if_new_file!(other_files, opts...)
             # infra_files
             elseif startswith(fpath, path(:css))    ||
