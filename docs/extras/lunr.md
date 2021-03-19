@@ -64,7 +64,7 @@ The file `lunrclient.js` (and its minified version) does the following:
 You might want to modify the `parseLunrResults` if you want the results to be  displayed differently.
 
 \note{
-    If you modify this file, make sure it's called properly in the `src/_html_parts/index.html` and, eventually, [minify it](https://jscompress.com/).  
+    If you modify this file, make sure it's called properly in the `_layout/index.html` and, eventually, [minify it](https://jscompress.com/).  
 }
 
 ## Adding a search box
