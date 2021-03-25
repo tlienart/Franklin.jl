@@ -68,7 +68,7 @@ function js_prerender_highlight(hs::String)::String
         # un-escape code string
         cs = html_unescape(cs) |> escape_string
         # add to content of jsbuffer
-        write(jsbuffer, """console.log("<pre><code class=\\"$lang hljs\\">" + hljs.highlight("$lang", "$cs").value + "</code></pre>");""")
+        write(jsbuffer, """console.log("<pre><code class=\\"$lang hljs\\">" + hljs.highlight("$cs", {'language': "$lang"}).value + "</code></pre>");""")
         # in between every block, write $splitter so that output can be split easily
         i == length(matches)-1 || write(jsbuffer, """console.log('$splitter');""")
     end
