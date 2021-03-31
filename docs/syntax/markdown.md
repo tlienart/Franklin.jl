@@ -345,6 +345,43 @@ In fact the syntax `\fig{./test}` is also allowed, Franklin will then first look
   \fig{./test}
 @@
 
+Figure style (for instance, if one wishes to modify figure width) can be further customized in two different ways. A first way is to define custom CSS for the figure. In the markdown, this comes down to writing:
+
+```
+@@im-50
+![](/assets/rndimg.jpg)
+@@
+```
+
+While defining custom CSS as such:
+
+```
+.im-50 {text-align: center;}
+.im-50 img {
+    padding: 0;
+    width: 50%;
+}
+```
+
+Another solution consist in defining a custo LaTeX command, for example:
+
+```
+\newcommand{\figenv}[3]{
+~~~
+<figure style="text-align:center;">
+<img src="!#2" style="padding:0;#3" alt="#1"/>
+<figcaption>#1</figcaption>
+</figure>
+~~~
+}
+```
+
+Which could be used as such (here changing the width and adding a 1px wide red border to the image):
+
+```
+\figenv{the caption}{/assets/rndimg.jpg}{width:50%;border: 1px solid red;}
+```
+
 \note{Remember that these docs are written in Franklin so you can inspect the source directory if you would like to see the source markdown.}
 
 ### Inserting markdown
