@@ -1,12 +1,17 @@
+# ONGOING [2021]
 #
 # if `generate_rss` is not False, then check if there's an `_rss` folder
-# with a `head.xml` and `item.xml`. If there isn't, generate one from default.
+# with a `head.xml` and `item.xml`. If there isn't, generate one from default
+# that should be in FranklinTemplates.
 # If one of the two files is present, use it/them. Generate the feed as:
 #
 # (head.xml) * prod(item.xml) * (</channel></rss>)
 #
 # where the prod takes the item template, takes all the items and assembles
 # them in chronological order.
+#
+# specs: https://cyber.harvard.edu/rss/rss.html#sampleFiles
+# example: https://yandex.com/support/zen/website/rss-modify.html
 #
 # -----------------------------------------------------------------------------
 
