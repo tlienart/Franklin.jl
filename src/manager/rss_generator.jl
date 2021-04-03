@@ -1,3 +1,15 @@
+#
+# if `generate_rss` is not False, then check if there's an `_rss` folder
+# with a `head.xml` and `item.xml`. If there isn't, generate one from default.
+# If one of the two files is present, use it/them. Generate the feed as:
+#
+# (head.xml) * prod(item.xml) * (</channel></rss>)
+#
+# where the prod takes the item template, takes all the items and assembles
+# them in chronological order.
+#
+# -----------------------------------------------------------------------------
+
 # TODO: could also expose the channel options if someone wanted
 # to define those; can probably leave for later until feedback has
 # been received.
@@ -66,7 +78,7 @@ function add_rss_item()
     title = jor("rss_title", "title")
     descr = jor("rss", "rss_description")
 
-    descr = fd2html(descr; internal=true) |> remove_html_ps
+    descr = fd2html(descr; internal=true) |> remove_html_ps |> chomp
 
     content = ""
     if globvar(:rss_full_content)::Bool
@@ -134,7 +146,7 @@ function rss_generator()::Nothing
     end
 
     endswith(rss_link, "/") || (rss_link *= "/")
-    rss_descr = fd2html(rss_descr; internal=true) |> remove_html_ps
+    rss_descr = fd2html(rss_descr; internal=true) |> remove_html_ps |> chomp
 
     # sort items by pubDate
     RSS_DICT_SORTED = sort(OrderedDict(RSS_DICT), rev = true, byvalue = true, by = x -> x[1].pubDate)
@@ -191,9 +203,19 @@ function write_rss_xml(rss_path, rss_title, rss_descr, rss_link, rss_items, rss_
             <item>
               <title><![CDATA[$(v.title)]]></title>
               <link>$(full_link)</link>
-              <description><![CDATA[$(fix_relative_links(v.description, rss_link))<br><a href=\"$(full_link)\">Read more</a>]]></description>
-              $(ifelse(isempty(v.content),
-                "", "<content:encoded><![CDATA[$(fix_relative_links(v.content, rss_link))]]></content:encoded>"))
+              <description>
+                <![CDATA[
+                    $(fix_relative_links(v.description, rss_link))
+                    $(ifelse(isempty(v.content),
+                        "",
+                        "<content:encoded><![CDATA[$(fix_relative_links(v.content, rss_link))]]></content:encoded>")
+                      )
+                    <br>
+                    <a href=\"$(full_link)\">Read more</a>
+                  ]]></description>",
+                "]]>
+              </description>
+              <content:encoded><![CDATA[$(fix_relative_links(v.content, rss_link))]]></content:encoded>"))
           """)
         for elem in (:author, :category, :comments, :enclosure)
             e = getproperty(v, elem)
