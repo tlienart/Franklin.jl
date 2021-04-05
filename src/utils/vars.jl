@@ -37,13 +37,15 @@ const GLOBAL_VARS_DEFAULT = [
     # for robots.txt
     "robots_disallow"  => Pair(String[], (Vector{String},)),
     "generate_robots"  => dpair(true),
-    # RSS + sitemap
-    "website_title"    => dpair(""),
-    "website_descr"    => dpair(""),
-    "website_url"      => dpair(""),
-    "generate_rss"     => dpair(true),
+    # RSS
+    "generate_rss"        => dpair(true),
+    "website_title"       => dpair(""),
+    "website_description" => dpair(""),
+    "website_url"         => dpair(""),
+    "rss_file"            => dpair("feed"),
+    "rss_full_content"    => dpair(false),
+    # Sitemap
     "generate_sitemap" => dpair(true),
-    "rss_full_content" => dpair(false),
     # div names
     "content_tag"      => dpair("div"),
     "content_class"    => dpair("franklin-content"),
@@ -54,6 +56,7 @@ const GLOBAL_VARS_DEFAULT = [
     # keep track page=>tags and tag=>pages
     "fd_page_tags"     => Pair(nothing, (DTAG,  Nothing)),
     "fd_tag_pages"     => Pair(nothing, (DTAGI, Nothing)),
+    "fd_rss_feed_url"  => dpair(""),
     # -----------------------------------------------------
     # LEGACY
     "div_content" => dpair(""), # see build_page
@@ -63,6 +66,10 @@ const GLOBAL_VARS_ALIASES = LittleDict(
     "prefix"    => "prepath",
     "base_path" => "prepath",
     "base_url"  => "website_url",
+    "rss_website_title" => "website_title",
+    "rss_website_url"   => "website_url",
+    "rss_website_descr" => "website_description"
+    "website_descr"     => "website_description",
     )
 
 """
@@ -129,10 +136,12 @@ const LOCAL_VARS_DEFAULT = [
     "fd_mtime_raw" => dpair(Date(1)),
     "fd_ctime"     => dpair("0001-01-01"),  # time of creation
     "fd_mtime"     => dpair("0001-01-01"),  # time of last modification
-    "fd_rpath"     => dpair(""),            # rpath to current page [1]
-    "fd_url"       => dpair(""),            # url to current page [2]
+    "fd_rpath"     => dpair(""),            # relative path to current page [1]
+    "fd_url"       => dpair(""),            # relative url to current page [2]
+    "fd_full_url"  => dpair(""),            # full url to current page [3]
     "fd_tag"       => dpair(""),            # (generated) current tag
     "fd_evalc"     => dpair(1),             # counter for direct evaluation cells (3! blocks)
+    "fd_page_html" => dpair(""),            # the generated html for the page
     ]
 #=
 NOTE:
@@ -150,6 +159,7 @@ NOTE:
 
 [1] e.g.: blog/kaggle.md
 [2] e.g.: blog/kaggle/index.html
+[3] e.g.: username.github.io/project/blog/kaggle/index.html
 =#
 
 """

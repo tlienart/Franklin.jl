@@ -104,7 +104,7 @@ function add_rss_item()
 
     pubDate = locvar(:rss_pubdate)::Date
     if pubDate == Date(1)
-        pubDate = locvar(:date)
+        pubDate = locvar(:date)::Date
         if !isa(pubDate, Date) || pubDate == Date(1)
             pubDate = locvar(:fd_mtime_raw)::Date
         end
@@ -134,9 +134,9 @@ function rss_generator()::Nothing
     isempty(RSS_DICT) && return nothing
 
     # are the basic defs there? otherwise warn and break
-    rss_title = globvar("website_title")
-    rss_descr = globvar("website_descr")
-    rss_link  = globvar("website_url")
+    rss_title = globvar("website_title")::String
+    rss_descr = globvar("website_descr")::String
+    rss_link  = globvar("website_url")::String
 
     if any(isempty, (rss_title, rss_descr, rss_link))
         print_warning("""

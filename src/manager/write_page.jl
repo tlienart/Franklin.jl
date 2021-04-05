@@ -79,6 +79,11 @@ function write_page(output_path::AS, content::AS;
     if !isempty(slug)
         output_path = form_custom_output_path(slug)
     end
+    full_url = joinpath(
+        locvar(:website_url)::String,
+        locvar(:fd_url)::String
+    )
+    set_var!(LOCAL_VARS, "fd_full_url", full_url)
     # NOTE
     #   - output_path is assumed to exist // see form_output_path
     #   - head/pgfoot/foot === nothing --> read (see franklin.jl)
@@ -177,13 +182,22 @@ function convert_and_write(root::String, file::String, head::String,
     set_var!(LOCAL_VARS, "fd_mtime_raw", Date(mtime))
     set_var!(LOCAL_VARS, "fd_mtime", fd_date(mtime))
 
+    if locvar(:rss_pubdate)::Date == Date(1)
+        pubdate = locvar(:date)
+        if !isa(pubdate, Date) || pubdate == Date(1)
+            pubdate = locvar(:fd_mtime_raw)::Date
+        end
+        set_var!(LOCAL_VARS, "rss_pubdate", pubdate)
+    end
+
+
     # Check if should add item
     #   should we generate ? otherwise no
     #   are we in the full pass ? otherwise no
     #   is there a `rss` or `rss_description` ? otherwise no
-    cond_add = globvar(:generate_rss) &&   # should we generate?
-                    FD_ENV[:FULL_PASS] &&  # are we in the full pass?
-                    !all(e -> isempty(locvar(e)), ("rss", "rss_description"))
+    cond_add = globvar(:generate_rss) &&  # should we generate?
+                 FD_ENV[:FULL_PASS]   &&  # are we in the full pass?
+                   !all(e -> isempty(locvar(e)), ("rss", "rss_description"))
     # otherwise yes
     cond_add && add_rss_item()
 

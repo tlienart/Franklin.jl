@@ -16,6 +16,12 @@ function process_config()::Nothing
     else
         config_warn()
     end
+    rss_url = joinpath(
+        globvar(:website_url)::String,
+        globvar(:rss_file)::String
+    )
+    rss_url *= ".xml"
+    set_var!(GLOBAL_VARS, "fd_rss_feed_url", rss_url)
     return nothing
 end
 
