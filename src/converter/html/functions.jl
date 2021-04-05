@@ -376,3 +376,15 @@ function hfun_sitemap_opts(params::Vector{String})::String
     SITEMAP_DICT[key] = SMOpts(lastmod, changefreq, priority)
     return ""
 end
+
+
+"""
+    hfun_fix_relative_links
+
+Makes relative links into full links, typically in the context of RSS.
+"""
+function hfun_fix_relative_links(params::Vector{String})::String
+    src = locvar(params[1])::String
+    base_link = globvar(:website_url)::String
+    return hfun_fix_relative_links(src, base_link)
+end

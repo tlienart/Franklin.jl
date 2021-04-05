@@ -38,10 +38,10 @@ const GLOBAL_VARS_DEFAULT = [
     "robots_disallow"  => Pair(String[], (Vector{String},)),
     "generate_robots"  => dpair(true),
     # RSS
-    "generate_rss"        => dpair(true),
+    "generate_rss"        => dpair(false),
     "website_title"       => dpair(""),
-    "website_description" => dpair(""),
     "website_url"         => dpair(""),
+    "website_description" => dpair(""),
     "rss_file"            => dpair("feed"),
     "rss_full_content"    => dpair(false),
     # Sitemap
@@ -68,7 +68,7 @@ const GLOBAL_VARS_ALIASES = LittleDict(
     "base_url"  => "website_url",
     "rss_website_title" => "website_title",
     "rss_website_url"   => "website_url",
-    "rss_website_descr" => "website_description"
+    "rss_website_descr" => "website_description",
     "website_descr"     => "website_description",
     )
 

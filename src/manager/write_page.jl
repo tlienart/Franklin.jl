@@ -170,6 +170,7 @@ function convert_and_write(root::String, file::String, head::String,
     set_cur_rpath(fpath)
     # conversion
     content = convert_md(read(fpath, String))
+    set_var!(LOCAL_VARS, "fd_page_html", content)
 
     # adding document variables to the dictionary
     # note that some won't change and so it's not necessary to do this every
@@ -179,13 +180,14 @@ function convert_and_write(root::String, file::String, head::String,
     s = stat(fpath)
     set_var!(LOCAL_VARS, "fd_ctime", fd_date(unix2datetime(s.ctime)))
     mtime = unix2datetime(s.mtime)
-    set_var!(LOCAL_VARS, "fd_mtime_raw", Date(mtime))
+    mtime_date = Date(mtime)
+    set_var!(LOCAL_VARS, "fd_mtime_raw", mtime_date)
     set_var!(LOCAL_VARS, "fd_mtime", fd_date(mtime))
 
     if locvar(:rss_pubdate)::Date == Date(1)
         pubdate = locvar(:date)
         if !isa(pubdate, Date) || pubdate == Date(1)
-            pubdate = locvar(:fd_mtime_raw)::Date
+            pubdate = mtime_date
         end
         set_var!(LOCAL_VARS, "rss_pubdate", pubdate)
     end

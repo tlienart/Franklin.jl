@@ -210,9 +210,8 @@ function fd_fullpass(watched_files::NamedTuple)::Int
     process_config()
 
     # form page segments
-    root       = path(:folder)
-    layout     = path(:layout)
-
+    root    = path(:folder)
+    layout  = path(:layout)
     head    = read(joinpath(layout, "head.html"),      String)
     pg_foot = read(joinpath(layout, "page_foot.html"), String)
     foot    = read(joinpath(layout, "foot.html"),      String)
@@ -228,6 +227,9 @@ function fd_fullpass(watched_files::NamedTuple)::Int
             should be one. Ignoring.
             """)
     end
+
+    # if RSS is to be generated, check the template and the variables
+    globvar("generate_rss")::Bool && prepare_for_rss()
 
     # go over all pages note that the html files are processed AFTER the
     # markdown files and so if you both have an `index.md` and an `index.html`
@@ -264,14 +266,16 @@ function fd_fullpass(watched_files::NamedTuple)::Int
             s += a
         end
     end
-    # generate RSS if appropriate
-    globvar("generate_rss") && rss_generator()
-    # generate tags if appropriate
+
+    # Finalize
+    # > generate RSS if appropriate
+    globvar("generate_rss")::Bool && rss_generator()
+    # > generate tags if appropriate
     generate_tag_pages()
-    # generate sitemap if appropriate
-    globvar("generate_sitemap") && sitemap_generator()
-    # generate robots if appropriate
-    globvar("generate_robots") && robots_generator()
+    # > generate sitemap if appropriate
+    globvar("generate_sitemap")::Bool && sitemap_generator()
+    # > generate robots if appropriate
+    globvar("generate_robots")::Bool && robots_generator()
     # done
     FD_ENV[:FULL_PASS] = false
     # return -1 if any page failed to build, 0 otherwise
