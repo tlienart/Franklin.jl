@@ -51,7 +51,7 @@ end
 function explore_md_steps(mds)
     F.def_GLOBAL_VARS!()
     F.def_GLOBAL_LXDEFS!()
-    empty!(F.RSS_DICT)
+    empty!(F.RSS_ITEMS)
 
     F.def_LOCAL_VARS!()
     F.def_PAGE_HEADERS!()

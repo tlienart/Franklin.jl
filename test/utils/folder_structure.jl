@@ -2,7 +2,7 @@
     F.def_GLOBAL_VARS!()
     root = F.FOLDER_PATH[] = mktempdir()
     empty!(F.PATHS); F.set_paths!()
-    @test Set(keys(F.PATHS)) == Set([:folder, :assets, :css, :layout, :libs, :literate, :site, :tag])
+    @test Set(keys(F.PATHS)) == Set([:folder, :assets, :css, :layout, :libs, :literate, :site, :tag, :rss])
     @test F.PATHS[:folder]   == root
     @test F.PATHS[:site]     == joinpath(root, "__site")
     @test F.PATHS[:assets]   == joinpath(root, "_assets")
@@ -10,6 +10,7 @@
     @test F.PATHS[:layout]   == joinpath(root, "_layout")
     @test F.PATHS[:libs]     == joinpath(root, "_libs")
     @test F.PATHS[:literate] == joinpath(root, "_literate")
+    @test F.PATHS[:rss]      == joinpath(root, "_rss")
     @test F.PATHS[:tag]      == joinpath(root, "__site", "tag")
 end
 

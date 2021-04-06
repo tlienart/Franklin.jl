@@ -11,7 +11,7 @@
     F.def_LOCAL_VARS!()
     write("pg1.md", "@def title = \"Page1\"")
     write("pg2.md", "@def title = \"Page2\"")
-    F.set_var!(F.GLOBAL_VARS, "fd_page_tags", F.DTAG(("pg1" => Set(["aa", "bb"]),)))
+    F.set_var!(F.GLOBAL_VARS, "fd_page_tags", F.DTAG(("pg1" => Set(["aa", "bb"]),)), check=false)
     F.globvar("fd_page_tags")["pg2"] = Set(["bb", "cc"])
 
     @test Set(keys(F.globvar("fd_page_tags"))) == Set(["pg1", "pg2"])
