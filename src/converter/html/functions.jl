@@ -379,12 +379,41 @@ end
 
 
 """
+    hfun_fd2rss
+
+Take a fd-markdown string, convert it to HTML and fix relative links.
+"""
+function hfun_fd2rss(params::Vector{String})::String
+    src = locvar(params[1])::String
+    src_html = fd2html(src; internal=true, nop=true)
+    return _fix_relative_links(src_html)
+end
+
+
+"""
     hfun_fix_relative_links
 
 Makes relative links into full links, typically in the context of RSS.
 """
 function hfun_fix_relative_links(params::Vector{String})::String
     src = locvar(params[1])::String
+    return _fix_relative_links(src)
+end
+
+function _fix_relative_links(src::String)
     base_link = globvar(:website_url)::String
-    return hfun_fix_relative_links(src, base_link)
+    isempty(strip(base_link, '/')) && return src
+    endswith(base_link, '/') || (base_link *= '/')
+    return replace(src, PREPATH_FIX_PAT => SubstitutionString("\\1=\\2$base_link"))
+end
+
+
+"""
+    hfun_RFC822
+
+Print a date with the format 822/1123 (RSS).
+"""
+function hfun_rfc822(params::Vector{String})
+    dt = DateTime(locvar(params[1])::Date)
+    return Dates.format(dt, Dates.RFC1123Format) * " +0000"
 end

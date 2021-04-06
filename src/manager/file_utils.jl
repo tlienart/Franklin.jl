@@ -95,7 +95,7 @@ $(SIGNATURES)
 See [`process_file_err`](@ref).
 """
 function process_file(case::Symbol, fpair::Pair{String,String}, args...)::Int
-    if FD_ENV[:DEBUG_MODE]
+    if FD_ENV[:DEBUG_MODE]::Bool
         process_file_err(case, fpair, args...)
         return 0
     end
@@ -105,7 +105,7 @@ function process_file(case::Symbol, fpair::Pair{String,String}, args...)::Int
     catch err
         rp = fpair.first
         rp = rp[end-min(20, length(rp))+1 : end]
-        if !FD_ENV[:QUIET_TEST]
+        if !FD_ENV[:QUIET_TEST]::Bool
             FD_ENV[:SOURCE] = fpair.second
             print_warning("""
                 Encountered an issue processing '$(fpair.second)' in $rp.
@@ -136,6 +136,18 @@ function process_file_err(case::Symbol, fpair::Pair{String, String},
     # depending on the file extension, either full process (.md), partial
     # process (.html) or no process (everything else)
     inp  = joinpath(fpair...)
+
+    # there's a bunch of things we don't want to copy over or process
+    if startswith(inp, path(:layout)) ||
+       startswith(inp, path(:literate)) ||
+       startswith(inp, path(:rss)) ||
+       endswith(inp, "config.md") ||
+       endswith(inp, "search.md") ||
+       endswith(inp, "utils.jl")
+
+       @goto end_copyblock
+   end
+
     outp = form_output_path(fpair.first, fpair.second, case)
     if case == :md
         FD_ENV[:SOURCE] = get_rpath(inp)
@@ -147,19 +159,11 @@ function process_file_err(case::Symbol, fpair::Pair{String, String},
         raw_html  = read(inp, String)
         # add the item *before* the conversion so that the conversion
         # can affect the page itself with {{...}}
-        cond_add = globvar(:generate_sitemap) && FD_ENV[:FULL_PASS]
+        cond_add = globvar(:generate_sitemap)::Bool && FD_ENV[:FULL_PASS]::Bool
         cond_add && add_sitemap_item(html=true)
         proc_html = convert_html(raw_html) |> postprocess_page
         write(outp, proc_html)
     else # case in (:other, :infra)
-        # there's a bunch of thing we don't want to copy over
-        if startswith(inp, path(:layout))   ||
-            startswith(inp, path(:literate)) ||
-            endswith(inp, "config.md") ||
-            endswith(inp, "search.md")
-            # skip
-            @goto end_copyblock
-        end
         # NOTE: some processing may be added here later on (e.g. parsing of
         # CSS files). Only copy again if necessary (file is not there or
         # has changed)

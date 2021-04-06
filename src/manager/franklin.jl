@@ -200,7 +200,7 @@ function fd_fullpass(watched_files::NamedTuple)::Int
     prepath = get(GLOBAL_VARS, "prepath", "")
     def_GLOBAL_VARS!()
     def_GLOBAL_LXDEFS!()
-    empty!.((RSS_DICT, SITEMAP_DICT))
+    empty!.((RSS_ITEMS, SITEMAP_DICT))
     # reinsert prepath if specified
     isempty(prepath) || (GLOBAL_VARS["prepath"] = prepath)
 

@@ -27,19 +27,19 @@ function robots_generator()
     dst = joinpath(path(:site), "robots.txt")
     isfile(dst) && rm(dst)
     io = IOBuffer()
-    globvar(:generate_sitemap) && println(io, """
-        Sitemap: $(joinpath(globvar(:website_url), "sitemap.xml"))
+    globvar(:generate_sitemap)::Bool && println(io, """
+        Sitemap: $(joinpath(globvar(:website_url)::String, "sitemap.xml"))
         """)
     print(io, """
         User-agent: *
         """)
-    if !(all(isempty, (DISALLOW, globvar(:robots_disallow))))
+    if !(all(isempty, (DISALLOW, globvar(:robots_disallow)::Vector{String})))
         for page in DISALLOW
             print(io, """
                 Disallow: $page
                 """)
         end
-        for dir in globvar(:robots_disallow)
+        for dir in globvar(:robots_disallow)::Vector{String}
             if dir == "/"
                 dir = ""
             end
