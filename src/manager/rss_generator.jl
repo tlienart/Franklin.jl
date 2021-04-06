@@ -19,8 +19,14 @@ are defined.
 """
 function prepare_for_rss()::Nothing
     # check for key variables
-    for key_var in (:website_title, :website_url, :website_description)
-        isempty(globvar(key_var)::String) || continue
+    key_vars = (:website_title, :website_url, :website_description)
+    flag = any(isempty, globvar(key_var)::String for key_var in key_vars)
+
+    # XXX [April 2020, 0.10.35] if the flag is false and generate_rss is false
+    # switch it to true for backward compatibility; otherwise return
+    gen_rss = globvar(:generate_rss)::Bool
+    if flag
+        gen_rss || return nothing
         print_warning("""
             RSS is set to be generated but the RSS feed is improperly described:
             at least one of the following variables have not been defined in
@@ -30,6 +36,8 @@ function prepare_for_rss()::Nothing
             $POINTER_PV
             """)
         return nothing
+    elseif !gen_rss
+        set_var!(GLOBAL_VARS, "generate_rss", true)
     end
     # check if there's an _rss folder, if there isn't generate one from
     # template (see FranklinTemplates)

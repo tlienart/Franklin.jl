@@ -46,23 +46,24 @@ Keyword arguments:
 * `show_warnings=true`: whether to show franklin  warnings
 * `launch=!single`:   whether to launch the browser when serving
 """
-function serve(; clear::Bool=false,
-                 verb::Bool=false,
-                 port::Int=8000,
-                 single::Bool=false,
-                 prerender::Bool=false,
-                 nomess::Bool=false,
-                 is_final_pass::Bool=false,
-                 no_fail_prerender::Bool=true,
-                 eval_all::Bool=false,
-                 silent::Bool=false,
-                 cleanup::Bool=true,
-                 on_write::Function=(_, _) -> nothing,
-                 log::Bool=false,
-                 host::String="127.0.0.1",
-                 show_warnings::Bool=true,
-                 launch::Bool=!single,
+function serve(; clear::Bool             = false,
+                 verb::Bool              = false,
+                 port::Int               = 8000,
+                 single::Bool            = false,
+                 prerender::Bool         = false,
+                 nomess::Bool            = false,
+                 is_final_pass::Bool     = false,
+                 no_fail_prerender::Bool = true,
+                 eval_all::Bool          = false,
+                 silent::Bool            = false,
+                 cleanup::Bool           = true,
+                 on_write::Function      = (_, _) -> nothing,
+                 log::Bool               = false,
+                 host::String            = "127.0.0.1",
+                 show_warnings::Bool     = true,
+                 launch::Bool            = !single,
                  )::Union{Nothing,Int}
+
     LOGGING[] = log
     # set the global path
     FOLDER_PATH[] = pwd()
@@ -229,7 +230,8 @@ function fd_fullpass(watched_files::NamedTuple)::Int
     end
 
     # if RSS is to be generated, check the template and the variables
-    globvar("generate_rss")::Bool && prepare_for_rss()
+    # the function will not do much if generate_rss is set to false
+    prepare_for_rss()
 
     # go over all pages note that the html files are processed AFTER the
     # markdown files and so if you both have an `index.md` and an `index.html`
