@@ -193,6 +193,9 @@ function convert_and_write(root::String, file::String, head::String,
         end
         set_var!(LOCAL_VARS, "rss_pubdate", pubdate)
     end
+    if isempty(locvar(:rss_author)::String)
+        set_var!(LOCAL_VARS, "rss_author", locvar(:author)::String)
+    end
 
     pg = write_page(output_path, content;
                     head=head, pgfoot=pgfoot, foot=foot)

@@ -120,8 +120,11 @@ function add_rss_item()
     if isempty(locvar(:rss_title)::String)
         set_var!(LOCAL_VARS, "rss_title", locvar(:title)::String)
     end
+    item = replace(convert_html(item_template), r"\n\n" => "")
+    item = replace(item, Regex(raw"""<a\shref=(?:"|')?\#.*?>(.*?)</a>""") => s"\1")
+
     rss_item = RSSItem(
-        replace(convert_html(item_template), r"\n\n" => ""),
+        item,
         locvar(:rss_pubdate)::Date,
         locvar(:tags)::Vector{String}
     )

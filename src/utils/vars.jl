@@ -30,6 +30,7 @@ const GLOBAL_VARS_DEFAULT = [
     "date_shortdays"   => dpair(String[]),
     "prepath"          => dpair(""),
     "tag_page_path"    => dpair("tag"),
+    "title_links"      => dpair(true),
     # will be added to IGNORE_FILES
     "ignore"           => Pair(String[], (Vector{Any},)),
     # don't insert `index.html` at the end of the path for these files
