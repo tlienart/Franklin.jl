@@ -24,6 +24,8 @@ The base syntax is plain markdown with a few extensions such as the ability to d
 
 Franklin has a channel **#franklin** on the Julia slack, this is the best place to ask usage question.
 
+**Note**: I'm looking for people with web-dev chops who would be keen to help improve and enrich the base themes available at [FranklinTemplates.jl](https://github.com/tlienart/FranklinTemplates.jl), even if you're not super confident in Julia. More generally, if you would like to work on something or fix something in either Franklin or FranklinTemplates, please reach out on Slack, I will gladly help you get started.
+
 ## Docs
 
 Go to [Franklin's main website](https://franklinjl.org). For users already familiar with Franklin you might also find [these demos](https://franklinjl.org/demos/) useful.
