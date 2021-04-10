@@ -41,7 +41,7 @@ We will need to provide the appropriate stylesheet in `_css/` and adjust the lay
 
 ### Adapting the head and foot
 
-The file `_html_parts/head.html` is the most important one you will have to adjust.
+The file `_layout/head.html` is the most important one you will have to adjust.
 
 Let us first change the name of the main stylesheet `_css/basic.css` to `_css/jemdoc.css` which is more appropriate.
 The reference to the stylesheet in `head.html` consequently has to be changed to mention `jemdoc.css` instead of `basic.css`:

@@ -20,6 +20,8 @@ As per Common Mark specifications, you have multiple ways of inserting code:
 This is some `inline code` or ``inline ` code with a tick``.
 `````
 
+NOTE: To use backslash (`\ `) at the end of inline code, you must include a trailing space to ensure the trailing tick is parsed correctly, eg `` `some code with \ ` ``. The trailing space will be trimmed in the rendered html. 
+
 * **code blocks**: it is recommended to use triple backticks (\`\`\`) optionally followed by a language name for highlighting like so:
 
 `````
