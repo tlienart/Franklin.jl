@@ -40,7 +40,7 @@ appropriate.
 function postprocess_page(pg)
     # Prerender if required (using JS tools)
     # order in which things are done matter a bit.
-    if FD_ENV[:PRERENDER]
+    if FD_ENV[:PRERENDER]::Bool
         # Maths (KATEX)
         if locvar(:hasmath)::Bool
             pg = js_prerender_katex(pg)
@@ -57,7 +57,7 @@ function postprocess_page(pg)
         end
     end
     # append pre-path to links if required (see optimize)
-    if FD_ENV[:FINAL_PASS]
+    if FD_ENV[:FINAL_PASS]::Bool
         pg = fix_links(pg)
     end
     return pg
@@ -77,8 +77,15 @@ function write_page(output_path::AS, content::AS;
                     )::String where T <: Union{Nothing,AS}
     slug = locvar(:slug)
     if !isempty(slug)
+        # this sets fd_url
         output_path = form_custom_output_path(slug)
     end
+    full_url = joinpath(
+        locvar(:website_url)::String,
+        strip(locvar(:fd_url)::String, '/')
+    )
+    set_var!(LOCAL_VARS, "fd_full_url", full_url)
+
     # NOTE
     #   - output_path is assumed to exist // see form_output_path
     #   - head/pgfoot/foot === nothing --> read (see franklin.jl)
@@ -94,6 +101,7 @@ function write_page(output_path::AS, content::AS;
     end
     # convert the pieces
     head, ctt, pgfoot, foot = map(convert_html, (head, content, pgfoot, foot))
+    set_var!(LOCAL_VARS, "fd_page_html", ctt)
 
     # remove dirs from past pagination attempts (so we limit risk of stale
     # pagination folder with stale files)
@@ -174,30 +182,40 @@ function convert_and_write(root::String, file::String, head::String,
     s = stat(fpath)
     set_var!(LOCAL_VARS, "fd_ctime", fd_date(unix2datetime(s.ctime)))
     mtime = unix2datetime(s.mtime)
-    set_var!(LOCAL_VARS, "fd_mtime_raw", Date(mtime))
+    mtime_date = Date(mtime)
+    set_var!(LOCAL_VARS, "fd_mtime_raw", mtime_date)
     set_var!(LOCAL_VARS, "fd_mtime", fd_date(mtime))
+
+    if locvar(:rss_pubdate)::Date == Date(1)
+        pubdate = locvar(:date)
+        if !isa(pubdate, Date) || pubdate == Date(1)
+            pubdate = mtime_date
+        end
+        set_var!(LOCAL_VARS, "rss_pubdate", pubdate)
+    end
+
+    pg = write_page(output_path, content;
+                    head=head, pgfoot=pgfoot, foot=foot)
 
     # Check if should add item
     #   should we generate ? otherwise no
     #   are we in the full pass ? otherwise no
     #   is there a `rss` or `rss_description` ? otherwise no
-    cond_add = globvar(:generate_rss) &&   # should we generate?
-                    FD_ENV[:FULL_PASS] &&  # are we in the full pass?
-                    !all(e -> isempty(locvar(e)), ("rss", "rss_description"))
+    cond_add = globvar(:generate_rss)::Bool &&  # should we generate?
+                 FD_ENV[:FULL_PASS]::Bool   &&  # are we in the full pass?
+                   !isempty(locvar(:rss_description)::String)
     # otherwise yes
     cond_add && add_rss_item()
 
     # Same for the sitemap
-    cond_add = globvar(:generate_sitemap) && FD_ENV[:FULL_PASS]
+    cond_add = globvar(:generate_sitemap) && FD_ENV[:FULL_PASS]::Bool
     cond_add && add_sitemap_item()
 
     # Same for disallow robots locally
-    cond_add = locvar(:robots_disallow_this_page)
+    cond_add = locvar(:robots_disallow_this_page)::Bool
     cond_add && add_disallow_item()
 
-    pg = write_page(output_path, content; head=head, pgfoot=pgfoot, foot=foot)
-
     # 6. possible post-processing via the "on-write" function.
-    FD_ENV[:ON_WRITE](pg, LOCAL_VARS)
+    (FD_ENV[:ON_WRITE]::Function)(pg, LOCAL_VARS)
     return nothing
 end

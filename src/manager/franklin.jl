@@ -46,23 +46,24 @@ Keyword arguments:
 * `show_warnings=true`: whether to show franklin  warnings
 * `launch=!single`:   whether to launch the browser when serving
 """
-function serve(; clear::Bool=false,
-                 verb::Bool=false,
-                 port::Int=8000,
-                 single::Bool=false,
-                 prerender::Bool=false,
-                 nomess::Bool=false,
-                 is_final_pass::Bool=false,
-                 no_fail_prerender::Bool=true,
-                 eval_all::Bool=false,
-                 silent::Bool=false,
-                 cleanup::Bool=true,
-                 on_write::Function=(_, _) -> nothing,
-                 log::Bool=false,
-                 host::String="127.0.0.1",
-                 show_warnings::Bool=true,
-                 launch::Bool=!single,
+function serve(; clear::Bool             = false,
+                 verb::Bool              = false,
+                 port::Int               = 8000,
+                 single::Bool            = false,
+                 prerender::Bool         = false,
+                 nomess::Bool            = false,
+                 is_final_pass::Bool     = false,
+                 no_fail_prerender::Bool = true,
+                 eval_all::Bool          = false,
+                 silent::Bool            = false,
+                 cleanup::Bool           = true,
+                 on_write::Function      = (_, _) -> nothing,
+                 log::Bool               = false,
+                 host::String            = "127.0.0.1",
+                 show_warnings::Bool     = true,
+                 launch::Bool            = !single,
                  )::Union{Nothing,Int}
+
     LOGGING[] = log
     # set the global path
     FOLDER_PATH[] = pwd()
@@ -200,7 +201,7 @@ function fd_fullpass(watched_files::NamedTuple)::Int
     prepath = get(GLOBAL_VARS, "prepath", "")
     def_GLOBAL_VARS!()
     def_GLOBAL_LXDEFS!()
-    empty!.((RSS_DICT, SITEMAP_DICT))
+    empty!.((RSS_ITEMS, SITEMAP_DICT))
     # reinsert prepath if specified
     isempty(prepath) || (GLOBAL_VARS["prepath"] = prepath)
 
@@ -210,9 +211,8 @@ function fd_fullpass(watched_files::NamedTuple)::Int
     process_config()
 
     # form page segments
-    root       = path(:folder)
-    layout     = path(:layout)
-
+    root    = path(:folder)
+    layout  = path(:layout)
     head    = read(joinpath(layout, "head.html"),      String)
     pg_foot = read(joinpath(layout, "page_foot.html"), String)
     foot    = read(joinpath(layout, "foot.html"),      String)
@@ -228,6 +228,10 @@ function fd_fullpass(watched_files::NamedTuple)::Int
             should be one. Ignoring.
             """)
     end
+
+    # if RSS is to be generated, check the template and the variables
+    # the function will not do much if generate_rss is set to false
+    prepare_for_rss()
 
     # go over all pages note that the html files are processed AFTER the
     # markdown files and so if you both have an `index.md` and an `index.html`
@@ -264,14 +268,16 @@ function fd_fullpass(watched_files::NamedTuple)::Int
             s += a
         end
     end
-    # generate RSS if appropriate
-    globvar("generate_rss") && rss_generator()
-    # generate tags if appropriate
+
+    # Finalize
+    # > generate RSS if appropriate
+    globvar("generate_rss")::Bool && rss_generator()
+    # > generate tags if appropriate
     generate_tag_pages()
-    # generate sitemap if appropriate
-    globvar("generate_sitemap") && sitemap_generator()
-    # generate robots if appropriate
-    globvar("generate_robots") && robots_generator()
+    # > generate sitemap if appropriate
+    globvar("generate_sitemap")::Bool && sitemap_generator()
+    # > generate robots if appropriate
+    globvar("generate_robots")::Bool && robots_generator()
     # done
     FD_ENV[:FULL_PASS] = false
     # return -1 if any page failed to build, 0 otherwise

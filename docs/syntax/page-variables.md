@@ -1,7 +1,7 @@
 # Page variables
 
 <!--
-reviewed: Oct 18, 2020
+reviewed: April 10, 2021
 -->
 
 \blurb{Page variables offer a straightforward way to interact with the HTML templating from the markdown and much more.}
@@ -26,7 +26,8 @@ where you could set the variable to a string, a number, a date,... anything. Def
     but lines must be indented"""
 ```
 
-You can also define them in blocks surrounded by `+++...+++`, the entire content of which will be evaluated as if it was Julia code but all assigned variables will be considered as page variables:
+You can also define them in blocks surrounded by `+++...+++`, the entire content of which will be evaluated as if it was Julia code but all assigned variables will be considered as page variables.
+For instance, consider:
 
 ```julia
 +++
@@ -35,6 +36,8 @@ var1 = [1, 2,
 var2 = "Hello goodbye"
 +++
 ```
+
+this block will be executed as normal Julia code and assigns `var1` and `var2` which then become available as page variable.
 
 These variables can serve multiple purposes but, primarily, they can be accessed from the HTML template blocks e.g.:
 
@@ -52,10 +55,45 @@ The syntax `{{ ... }}` indicates a HTML _function_, `fill` is the function name 
   Argument-less calls such as `{{ name }}` will be interpreted in either one of two way: first it will check whether there is a html function `name` and if so will call it, otherwise it will check whether there is a page variable `name` and will just insert it -- it will be treated as a shortcut for `{{fill name}}`.
 }
 
-_Local_ page variables denote variables that are defined on a single page and accessible on that page only by contrast to _global_ page variables which are set globally (in the `config.md` file) and accessible on all pages.
+_Local_ page variables denote variables that are defined on one page and directly accessible on that page. _Global_ page variables, by contrast, are directly available on _all_ pages. Any variable defined in your `config.md` file is global.
 
 In both cases there are _default_ page variables set by Franklin with default values which you can both change and use.
 You can of course also define your own variables, both global and local.
+
+### Defining and accessing page variables
+
+Let us say that in `config.md`, we have
+
+```
+@def global_var_1 = "foo"
+```
+
+and that in `index.md`, we have
+
+```
+@def local_var_1 = "bar"
+```
+
+On `index.md`, you can access both variables so this:
+
+```
+{{global_var_1}} - {{local_var_1}}
+```
+
+will insert
+
+```
+foo - bar
+```
+
+On another page `foo.md`, only `global_var_1` is directly accessible but you can still access `local_var_1` except you have to specify where it's defined (and you **must** use `fill`):
+
+```
+{{global_var_1}} - {{fill local_var_1 index.md}}
+```
+
+The second bit essentially says: "get `local_var_1` from the scope of the page `index.md`".
+
 
 ### Using page variables
 
@@ -76,12 +114,12 @@ In the first case, you can access variables in your HTML template via one of the
 
 ## HTML functions
 
-HTML functions can be used in any one of your `*.html` file and in particular in any of the `_layout/*.html` files such as `head.html`.
+HTML functions can be used in any one of your `*.html` **and** `.md` files; in particular, they can be used in any of the `_layout/*.html` files such as `head.html`.
 They are always called with the syntax `{{fname pv1 pv2 ...}}` where `pv1 pv2 ...` are page variable names.
 
 ### Basic functions
 
-A few functions are available with the `{{fill ...}}` arguably the most likely to be of use.
+A few functions are available with the `{{fill ...}}` arguably the most likely to be of use:
 
 @@lalign
 | Format | Role |
@@ -253,8 +291,7 @@ For more informations on these, see the section on [inserting and evaluating cod
 ### RSS
 
 These are variables related to [RSS 2.0 specifications](https://cyber.harvard.edu/rss/rss.html)  and must match the format indicated there.
-If you want proper RSS to be generated, you **must** define at least the `rss_description` or `rss` (which is an alias for `rss_description`).
-All these variables expect a `String`.
+For more information about generating an RSS feed, see [the dedicated RSS page](/syntax/rss/).
 
 @@lalign
 | Name | Default value |

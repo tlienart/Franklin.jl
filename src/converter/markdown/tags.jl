@@ -27,7 +27,7 @@ function generate_tag_pages(refresh_tags=Set{String}())::Nothing
     # Get the inverse dictionary {tag -> [rp1, rp2...]}
     TAG_PAGES = invert_dict(PAGE_TAGS)
     # store it in globvar
-    set_var!(GLOBAL_VARS, "fd_tag_pages", TAG_PAGES)
+    set_var!(GLOBAL_VARS, "fd_tag_pages", TAG_PAGES; check=false)
     all_tags = collect(keys(TAG_PAGES))
 
     # some tags may have been given to refresh which don't have any
@@ -111,8 +111,8 @@ that the user has to modify it. This will help users transition when they may
 have used a template that did not define `_layout/tag.html`.
 """
 function write_default_tag_layout()::Nothing
-    dc = globvar("div_content")
-    dc = ifelse(isempty(dc), globvar("content_class"), dc)
+    dc = globvar("div_content")::String
+    dc = ifelse(isempty(dc), globvar("content_class")::String, dc)
     html = """
         <!doctype html>
         <html lang="en">

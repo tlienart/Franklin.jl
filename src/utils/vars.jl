@@ -30,6 +30,7 @@ const GLOBAL_VARS_DEFAULT = [
     "date_shortdays"   => dpair(String[]),
     "prepath"          => dpair(""),
     "tag_page_path"    => dpair("tag"),
+    "title_links"      => dpair(true),
     # will be added to IGNORE_FILES
     "ignore"           => Pair(String[], (Vector{Any},)),
     # don't insert `index.html` at the end of the path for these files
@@ -37,13 +38,15 @@ const GLOBAL_VARS_DEFAULT = [
     # for robots.txt
     "robots_disallow"  => Pair(String[], (Vector{String},)),
     "generate_robots"  => dpair(true),
-    # RSS + sitemap
-    "website_title"    => dpair(""),
-    "website_descr"    => dpair(""),
-    "website_url"      => dpair(""),
-    "generate_rss"     => dpair(true),
+    # RSS
+    "generate_rss"        => dpair(false),
+    "website_title"       => dpair(""),
+    "website_url"         => dpair(""),
+    "website_description" => dpair(""),
+    "rss_file"            => dpair("feed"),
+    "rss_full_content"    => dpair(false),
+    # Sitemap
     "generate_sitemap" => dpair(true),
-    "rss_full_content" => dpair(false),
     # div names
     "content_tag"      => dpair("div"),
     "content_class"    => dpair("franklin-content"),
@@ -54,15 +57,20 @@ const GLOBAL_VARS_DEFAULT = [
     # keep track page=>tags and tag=>pages
     "fd_page_tags"     => Pair(nothing, (DTAG,  Nothing)),
     "fd_tag_pages"     => Pair(nothing, (DTAGI, Nothing)),
+    "fd_rss_feed_url"  => dpair(""),
     # -----------------------------------------------------
     # LEGACY
     "div_content" => dpair(""), # see build_page
     ]
 
 const GLOBAL_VARS_ALIASES = LittleDict(
-    "prefix"    => "prepath",
-    "base_path" => "prepath",
-    "base_url"  => "website_url",
+    "prefix"            => "prepath",
+    "base_path"         => "prepath",
+    "base_url"          => "website_url",
+    "rss_website_title" => "website_title",
+    "rss_website_url"   => "website_url",
+    "rss_website_descr" => "website_description",
+    "website_descr"     => "website_description",
     )
 
 """
@@ -108,7 +116,6 @@ const LOCAL_VARS_DEFAULT = [
     "header_anchor_class" => dpair("header-anchor"),
     # ------------------
     # RSS 2.0 specs [^2]
-    "rss"             => dpair(""),
     "rss_description" => dpair(""),
     "rss_title"       => dpair(""),
     "rss_author"      => dpair(""),
@@ -129,10 +136,12 @@ const LOCAL_VARS_DEFAULT = [
     "fd_mtime_raw" => dpair(Date(1)),
     "fd_ctime"     => dpair("0001-01-01"),  # time of creation
     "fd_mtime"     => dpair("0001-01-01"),  # time of last modification
-    "fd_rpath"     => dpair(""),            # rpath to current page [1]
-    "fd_url"       => dpair(""),            # url to current page [2]
+    "fd_rpath"     => dpair(""),            # relative path to current page [1]
+    "fd_url"       => dpair(""),            # relative url to current page [2]
+    "fd_full_url"  => dpair(""),            # full url to current page [3]
     "fd_tag"       => dpair(""),            # (generated) current tag
     "fd_evalc"     => dpair(1),             # counter for direct evaluation cells (3! blocks)
+    "fd_page_html" => dpair(""),            # the generated html for the page
     ]
 #=
 NOTE:
@@ -149,8 +158,15 @@ NOTE:
     (*) source      -- [unsupported assumes for now there's only one channel]
 
 [1] e.g.: blog/kaggle.md
-[2] e.g.: blog/kaggle/index.html
+[2] e.g.: /blog/kaggle/index.html
+[3] e.g.: https://username.github.io/project/blog/kaggle/index.html
 =#
+
+const LOCAL_VARS_ALIASES = LittleDict(
+    "rss_descr" => "rss_description",
+    "rss"       => "rss_description"
+    )
+
 
 """
 Re-initialise the local page vars dictionary. (This is done for every page).
@@ -375,12 +391,33 @@ Take a var dictionary `dict` and update the corresponding pair. This should
 only be used internally as it does not check the validity of `val`. See
 [`convert_and_write`](@ref) where it is used to store a file's creation and last
 modification time.
+
+Note: `check` can be false for DTAG, DTAGI which are considered as UnionAll types.
 """
-function set_var!(d::PageVars, k::K, v) where K
-    if k in keys(d)
-        d[k] = Pair(v, d[k].second)
+function set_var!(vars::PageVars, key::String, value::T;
+                  isglobal=false, check=true) where T
+    exists = haskey(vars, key)
+    # aliases are allowed for some global variables
+    if !exists
+        if isglobal && haskey(GLOBAL_VARS_ALIASES, key)
+            exists = true
+            key = GLOBAL_VARS_ALIASES[key]
+        elseif !isglobal && haskey(LOCAL_VARS_ALIASES, key)
+            exists = true
+            key = LOCAL_VARS_ALIASES[key]
+        end
+    end
+    if exists && check
+        # if the retrieved value has the right type, assign it to the corresponding key
+        acc_types = vars[key].second
+        if check_type(T, acc_types)
+            vars[key] = Pair(value, acc_types)
+        else
+            mddef_warn(key, value, acc_types)
+        end
     else
-        d[k] = Pair(v, (typeof(v), ))
+        # there is no key, so directly assign, the type is not checked
+        vars[key] = Pair(value, (T,))
     end
     return
 end
@@ -412,34 +449,16 @@ function set_vars!(vars::PageVars, assignments::Vector{Pair{String,String}};
         # this in a string it would fail (but come on...)
         idx = findfirst("<!--", assign)
         !isnothing(idx) && (assign = assign[1:prevind(assign, idx[1])])
-        tmp, = Meta.parse(assign, 1)
+        value, = Meta.parse(assign, 1)
         # try to evaluate the parsed assignment
         try
-            tmp = eval(tmp)
+            value = eval(value)
         catch err
             throw(PageVariableError(
                 "An error (of type '$(typeof(err))') occurred when trying " *
-                "to evaluate '$tmp' in a page variable assignment."))
+                "to evaluate '$value' in a page variable assignment."))
         end
-        exists = haskey(vars, key)
-        # aliases are allowed for some global variables
-        if !exists && isglobal && haskey(GLOBAL_VARS_ALIASES, key)
-            exists = true
-            key = GLOBAL_VARS_ALIASES[key]
-        end
-        if exists
-            # if the retrieved value has the right type, assign it to the corresponding key
-            type_tmp  = typeof(tmp)
-            acc_types = vars[key].second
-            if check_type(type_tmp, acc_types)
-                vars[key] = Pair(tmp, acc_types)
-            else
-                mddef_warn(key, tmp, acc_types)
-            end
-        else
-            # there is no key, so directly assign, the type is not checked
-            vars[key] = Pair(tmp, (typeof(tmp), ))
-        end
+        set_var!(vars, key, value; isglobal=isglobal)
     end
     return vars
 end

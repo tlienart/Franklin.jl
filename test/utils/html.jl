@@ -52,3 +52,17 @@ end
     h = F.html_content("div", "foo bar"; class="container", id="body")
     @test h == "<div class=\"container\" id=\"body\">foo bar</div>"
 end
+
+@testset "fd2text" begin
+    h = F.fd2text(
+        """
+        A **B** `C` [D](https://julialang.org)
+        - E
+        - F
+        G < H
+        """
+    )
+    @test isapproxstr(h, """
+        A B C D E F G &lt; H
+        """)
+end

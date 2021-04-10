@@ -93,7 +93,8 @@ function form_custom_output_path(slug::String)
 end
 
 
-_access(p)   = isa(p, Regex) ? p.pattern : p
+_access(p) = p
+_access(p::Regex) = p.pattern
 _isempty(p)  = isempty(_access(p))
 _endswith(p) = endswith(_access(p), '/')
 

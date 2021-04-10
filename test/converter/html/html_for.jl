@@ -83,6 +83,45 @@ end
         """)
 end
 
+@testset "for nested" begin
+    s = """
+        @def iter1 = ("a"=>0, "b"=>1)
+        @def iter2 = ("c"=>2, "d"=>3)
+        """ |> fd2html_td
+    h = raw"""
+        A
+        {{for (n1, v1) in iter1}}
+            {{for (n2, v2) in iter2}}
+            {{end}}
+        {{end}}
+        """ |> F.convert_html
+    @test isapproxstr(h, "A")
+    h = raw"""
+        A
+        {{for (n1, v1) in iter1}}
+            {{for (n2, v2) in iter2}}
+            B
+            {{end}}
+        {{end}}
+        """ |> F.convert_html
+    @test isapproxstr(h, "ABBBB")
+    h = raw"""
+        A
+        {{for (n1, v1) in iter1}}
+            {{for (n2, v2) in iter2}}
+            {{n1}},{{v1}},{{n2}},{{v2}}
+            {{end}}
+        {{end}}
+        """ |> F.convert_html
+    @test isapproxstr(h, """
+        A
+        a,0,c,2
+        a,0,d,3
+        b,1,c,2
+        b,1,d,3
+        """)
+end
+
 
 # read from file, see FranklinFAQ-001
 @testset "for-file" begin

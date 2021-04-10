@@ -21,7 +21,7 @@ import Random
 import ExprTools: splitdef, combinedef
 import REPL.REPLCompletions: emoji_symbols
 
-export serve, publish, cleanpull, newsite, optimize, fd2html,
+export serve, publish, cleanpull, newsite, optimize, fd2html, fd2text,
        literate_folder, verify_links, @OUTPUT, get_url
 
 # Extra functions
@@ -55,9 +55,9 @@ const POINTER_WORKFLOW =
 # obtained via `dig www...`; they may change over time; see `check_ping`
 # we check in sequence, one should work if the user is online...
 const IP_CHECK = (
-    "172.217.21.132" => "Google", # google
-    "140.82.118.4"   => "GitHub",   # github
-    "103.235.46.39"  => "Baidu",  # baidu
+    "172.217.21.132"  => "Google", # google
+    "185.199.109.153" => "GitHub", # github
+    "103.235.46.39"   => "Baidu",  # baidu
     )
 
 """Big number when we want things to be far."""
@@ -88,7 +88,7 @@ const FD_ENV = LittleDict(
     :UTILS_HASH    => nothing   # hash of the utils
     )
 
-utils_name()   = "Utils_$(FD_ENV[:UTILS_COUNTER])"
+utils_name()   = "Utils_$(FD_ENV[:UTILS_COUNTER]::Int)"
 utils_symb()   = Symbol(utils_name())
 utils_module() = getproperty(Main, utils_symb())
 utils_hash()   = nothing

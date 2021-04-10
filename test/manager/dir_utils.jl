@@ -22,3 +22,23 @@ fs()
     @test length(watched.md) == 1
     @test first(watched.md).first.second == "index.md"
 end
+
+@testset "coverage" begin
+    # form custom output path
+    F.def_LOCAL_VARS!()
+    path = F.form_custom_output_path("aa/bb")
+    @test endswith(F.locvar(:fd_url), "aa/bb/index.html")
+    @test isdir(dirname(path))
+
+    # helper functions around regexes
+    r1 = r"foo/bar"
+    r2 = "foo/bar"
+    @test F._access(r1) == r1.pattern
+    @test !F._isempty(r1)
+    @test !F._isempty(r2)
+    @test F._isempty(r"")
+    @test F._isempty("")
+    @test !F._endswith(r1)
+    @test F._endswith("foo/bar/")
+    @test F._endswith(r"foo/bar/")
+end

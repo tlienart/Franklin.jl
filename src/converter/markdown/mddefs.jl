@@ -33,17 +33,7 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool,
         for vname in vnames
             key    = String(vname)
             value  = getproperty(mdl, vname)
-            # is it already in curdict? if so check type
-            if haskey(curdict, key)
-                acc_types = curdict[key].second
-                if check_type(typeof(value), acc_types)
-                    curdict[key] = Pair(value, acc_types)
-                else
-                    mddef_warn(key, value, acc_types)
-                end
-            else
-                set_var!(curdict, key, value)
-            end
+            set_var!(curdict, key, value; isglobal=isconfig)
         end
     end
 
@@ -110,7 +100,7 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool,
     PAGE_TAGS = globvar("fd_page_tags")
     if isnothing(PAGE_TAGS)
         isempty(tags) && return nothing
-        set_var!(GLOBAL_VARS, "fd_page_tags", DTAG((rpath => tags,)))
+        set_var!(GLOBAL_VARS, "fd_page_tags", DTAG((rpath => tags,)); check=false)
     elseif !haskey(PAGE_TAGS, rpath)
         isempty(tags) && return nothing
         PAGE_TAGS[rpath] = tags

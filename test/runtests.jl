@@ -1,8 +1,10 @@
-using Franklin, Test, Markdown, Dates, Random
+using Franklin, Test, Markdown, Dates, Random, Pkg
 using Literate, DelimitedFiles, Suppressor
 const F = Franklin
 const R = @__DIR__
 const D = joinpath(dirname(dirname(pathof(Franklin))), "test", "_dummies")
+
+INIT_DIR = pwd()
 
 F.FD_ENV[:SILENT_MODE] = true
 # F.FD_ENV[:DEBUG_MODE] = true
@@ -25,11 +27,12 @@ println("🍺")
 # MANAGER folder
 println("MANAGER")
 include("manager/utils.jl")
-include("manager/rss.jl")
 include("manager/config.jl")
 include("manager/dir_utils.jl")
 include("manager/page_vars_html.jl")
 include("manager/paginate.jl")
+include("manager/robots_generator.jl")
+include("manager/rss_generator.jl")
 println("🍺")
 
 # PARSER folder
@@ -77,6 +80,7 @@ println("CONVERTER/HTML")
 include("converter/html/html.jl")
 include("converter/html/html2.jl")
 include("converter/html/html_for.jl")
+include("converter/html/html_functions.jl")
 println("🍺")
 println("CONVERTER/LX")
 include("converter/lx/input.jl")
@@ -101,8 +105,8 @@ begin
     # make dir, go in it, do the tests, then get completely out (otherwise
     # windows can't delete the folder)
     mkdir(p); cd(p);
-    include("global/postprocess.jl");
-    include("global/rss_sitemap.jl")
+    include("global/postprocess.jl")
+    include("global/sitemap.jl")
     cd(p)
     include("global/eval.jl")
     cd(joinpath(D, ".."))
@@ -142,3 +146,7 @@ println("Verifying ip addresses, if online these should succeed.")
 for (addr, name) in F.IP_CHECK
     println(rpad("Ping $name:", 13), ifelse(F.check_ping(addr), "✓", "✗"), ".")
 end
+
+
+Pkg.activate()
+cd(INIT_DIR)

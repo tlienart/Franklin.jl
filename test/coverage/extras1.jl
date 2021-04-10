@@ -45,17 +45,16 @@ end
     cd(td)
 end
 
-@testset "RSS" begin
-    F.set_var!(F.GLOBAL_VARS, "website_descr", "")
-    F.RSS_DICT["hello"] = (F.RSSItem("","","","","","","","",Date(1)), String[])
-    global r = ""; s = @capture_out begin
-        global r
-        r = F.rss_generator()
-    end
-    @test r === nothing
-    @test occursin("RSS items were found but", s)
-end
-
+# @testset "RSS" begin
+#     F.set_var!(F.GLOBAL_VARS, "website_descr", "")
+#     F.RSS_DICT["hello"] = (F.RSSItem("","","","","","","","",Date(1)), String[])
+#     global r = ""; s = @capture_out begin
+#         global r
+#         r = F.rss_generator()
+#     end
+#     @test r === nothing
+#     @test occursin("RSS items were found but", s)
+# end
 
 @testset "parser-lx" begin
     s = raw"""

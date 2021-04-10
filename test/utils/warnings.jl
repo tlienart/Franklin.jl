@@ -16,21 +16,6 @@ end
     @test occursin("No 'config.md' file found", s)
 end
 
-@testset "warn-rss" begin
-    resource(); gotd()
-    empty!(F.RSS_DICT)
-    F.set_var!(F.GLOBAL_VARS, "website_title", "Website title")
-    F.set_var!(F.GLOBAL_VARS, "website_descr", "Website descr")
-    F.set_var!(F.GLOBAL_VARS, "website_url", "https://github.com/tlienart/Franklin.jl/")
-    F.def_LOCAL_VARS!()
-    set_curpath("hey/ho.md")
-    F.set_var!(F.LOCAL_VARS, "rss_title", "")
-    s = @capture_out F.add_rss_item()
-    @test occursin("Warning: in <unknown>", s)
-    @test occursin("An RSS description was found but without title", s)
-    @test occursin("for page '/hey/ho/index.html'.", s)
-end
-
 @testset "warn-paginate" begin
     resource(); gotd()
     write(joinpath(td, "config.md"), "@def aa = 5")

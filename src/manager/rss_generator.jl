@@ -1,221 +1,140 @@
-# TODO: could also expose the channel options if someone wanted
-# to define those; can probably leave for later until feedback has
-# been received.
-
-# Specifications: RSS 2.0 -- https://cyber.harvard.edu/rss/rss.html#sampleFiles
-# steps:
-# 0. check if the relevant variables are defined otherwise don't generate the RSS
-# 1. is there an RSS file?
-#  --> remove it and create a new one (bc items may have been updated)
-# 2. go over all pages
-#  --> is there a rss var?
-#  NO  --> skip
-#  YES --> recuperate the `fd_ctime` and `fd_mtime` and add a RSS channel object
-# 3. save the file
-
+# Items are assembled by the rss_generator in a global feed and sub-feeds
+# for each of the tag. So each item is a tuple with the string of the item
+# and
 struct RSSItem
-    # -- required fields
-    title::String
-    link::String
-    description::String  # note: should not contain <p>
-    # -- optional fields
-    content::String
-    author::String       # note: should be a valid email
-    category::String
-    comments::String     # note: should be a valid URL
-    enclosure::String
-    # guid == link
-    pubDate::Date        # note: should respect RFC822 (https://www.w3.org/Protocols/rfc822/)
+    item::String
+    date::Date
+    tags::Vector{String}
 end
 
-# page_url => (RSSItem, tag vector)
-const RSS_DICT = LittleDict{String,Tuple{RSSItem,Vector{String}}}()
-
-
-"""
-    jor(a, b)
-
-Convenience function for fallback fields.
-"""
-jor(a::String, b::String) = ifelse(isempty(locvar(a)), locvar(b), locvar(a))
-
-"""
-    remove_html_ps
-
-Convenience function to remove <p> and </p> in RSS description (not supposed to
-happen).
-"""
-remove_html_ps(s::String)::String = replace(s, r"</?p>" => "")
-
-"""
-$SIGNATURES
-
-RSS should not contain relative links so this finds relative links and prepends
-them with the canonical link.
-"""
-fix_relative_links(s::String, link::String) =
-    replace(s, r"(href|src)\s*?=\s*?\"\/" => SubstitutionString("\\1=\"$link"))
-
-"""
-$SIGNATURES
-
-Create an `RSSItem` out of the provided fields defined in the page vars.
-"""
-function add_rss_item()
-    link  = url_curpage()
-    title = jor("rss_title", "title")
-    descr = jor("rss", "rss_description")
-
-    descr = fd2html(descr; internal=true) |> remove_html_ps
-
-    content = ""
-    if globvar(:rss_full_content)::Bool
-        raw = read(locvar(:fd_rpath)::String, String)
-        m = convert_md(raw; isinternal=true)
-        # remove all `{{}}` functions
-        m = replace(m, r"{{.*?}}" => "")
-        content = convert_html(m)
-    end
-
-    author    = locvar(:rss_author)::String
-    category  = locvar(:rss_category)::String
-    comments  = locvar(:rss_comments)::String
-    enclosure = locvar(:rss_enclosure)::String
-
-    # Keep track of tags for tag specific feeds
-    tags = locvar(:tags)::Vector{String}
-
-    pubDate = locvar(:rss_pubdate)::Date
-    if pubDate == Date(1)
-        pubDate = locvar(:date)
-        if !isa(pubDate, Date) || pubDate == Date(1)
-            pubDate = locvar(:fd_mtime_raw)::Date
-        end
-    end
-
-    # warning for title which should really be defined
-    isnothing(title) && (title = "")
-    isempty(title)   && print_warning("""
-        An RSS description was found but without title for page '$link'.
-        """)
-
-    rss = RSSItem(title, link, descr, content, author, category, comments, enclosure, pubDate)
-
-    res = RSS_DICT[link] = (rss, tags)
-    return res
-end
+const RSS_ITEMS = Vector{RSSItem}()
 
 
 """
 $SIGNATURES
 
-Extract the entries from RSS_DICT and assemble the RSS. If the dictionary is empty, nothing
-is generated.
+If there's an RSS feed to generate, check that the template files are there, if not
+then get them from FranklinTemplates. Also check that a few key variables
+are defined.
 """
-function rss_generator()::Nothing
-    # is there anything to go in the RSS feed?
-    isempty(RSS_DICT) && return nothing
+function prepare_for_rss()::Nothing
+    # check for key variables
+    key_vars = (:website_title, :website_url, :website_description)
+    flag = any(isempty, globvar(key_var)::String for key_var in key_vars)
 
-    # are the basic defs there? otherwise warn and break
-    rss_title = globvar("website_title")
-    rss_descr = globvar("website_descr")
-    rss_link  = globvar("website_url")
-
-    if any(isempty, (rss_title, rss_descr, rss_link))
+    # XXX [April 2020, 0.10.35] if the flag is false and generate_rss is false
+    # switch it to true for backward compatibility; otherwise return
+    gen_rss = globvar(:generate_rss)::Bool
+    if flag
+        gen_rss || return nothing
         print_warning("""
-            RSS items were found but the RSS feed is improperly described:
+            RSS is set to be generated but the RSS feed is improperly described:
             at least one of the following variables have not been defined in
-            your 'config.md': 'website_title', 'website_descr', 'website_url'.
+            your 'config.md': 'website_title', 'website_url', 'website_description'.
             The feed will not be (re)generated.
             \nRelevant pointer:
             $POINTER_PV
             """)
         return nothing
+    elseif !gen_rss
+        set_var!(GLOBAL_VARS, "generate_rss", true)
     end
-
-    endswith(rss_link, "/") || (rss_link *= "/")
-    rss_descr = fd2html(rss_descr; internal=true) |> remove_html_ps
-
-    # sort items by pubDate
-    RSS_DICT_SORTED = sort(OrderedDict(RSS_DICT), rev = true, byvalue = true, by = x -> x[1].pubDate)
-
-    # Global feed; include all items
-    rss_path = joinpath(PATHS[:site], "feed.xml")
-    ## Remove tags vector
-    rss_items = OrderedDict{String,RSSItem}(k => v[1] for (k, v) in RSS_DICT_SORTED)
-    ## Write the file
-    write_rss_xml(rss_path, rss_title, rss_descr, rss_link, rss_items)
-
-    # Tag specific feed; filter items by tag
-    ## Collect all tags
-    tags = Set{String}()
-    foreach(x -> union!(tags, x[2]), values(RSS_DICT))
-    for tag in tags
-        rss_path = joinpath(path(:tag), refstring(tag), "feed.xml")
-        ## Filter items containing this tag only
-        rss_items = OrderedDict{String,RSSItem}(k => v[1] for (k, v) in RSS_DICT_SORTED if tag ∈ v[2])
-        ## Find the relative path for the tag-feeds
-        rss_rel = strip(globvar("tag_page_path"), '/') * "/" * refstring(tag) * "/"
-        ## Write the file
-        write_rss_xml(rss_path, rss_title, rss_descr, rss_link, rss_items, rss_rel)
+    # check if there's an _rss folder, if there isn't generate one from
+    # template (see FranklinTemplates)
+    isdir(path(:rss)) || mkdir(path(:rss))
+    for template in ("head.xml", "item.xml")
+        dst = joinpath(path(:rss), template)
+        if !isfile(dst)
+            src = joinpath(
+                dirname(pathof(FranklinTemplates)),
+                "templates", "common", "_rss", template
+            )
+            cp(src, dst)
+        end
     end
-
     return nothing
 end
 
-function write_rss_xml(rss_path, rss_title, rss_descr, rss_link, rss_items, rss_rel="")
-    # is there an RSS file already? if so remove it
-    isfile(rss_path) && rm(rss_path)
-    # make sure the directory exists
-    mkpath(dirname(rss_path))
 
-    # create a buffer which will correspond to the output
-    rss_buff = IOBuffer()
-    write(rss_buff,
-        """
-        <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
-        <channel>
-          <title><![CDATA[$rss_title]]></title>
-          <description><![CDATA[$(fix_relative_links(rss_descr, rss_link))]]></description>
-          <link>$rss_link</link>
-          <atom:link href="$(rss_link)$(rss_rel)feed.xml" rel="self" type="application/rss+xml" />
-        """)
+"""
+$SIGNATURES
 
+Extract the entries from RSS_ITEMS and assemble the RSS. If RSS_ITEMS is empty, nothing
+is generated. If tags are associated with items, also create one feed per tag.
 
-    # loop over items
-    for (k, v) in rss_items
-        full_link = rss_link * lstrip(v.link, '/')
-        full_link = replace(full_link, r"index\.html$" => "")
-        write(rss_buff,
-          """
-            <item>
-              <title><![CDATA[$(v.title)]]></title>
-              <link>$(full_link)</link>
-              <description><![CDATA[$(fix_relative_links(v.description, rss_link))<br><a href=\"$(full_link)\">Read more</a>]]></description>
-              $(ifelse(isempty(v.content),
-                "", "<content:encoded><![CDATA[$(fix_relative_links(v.content, rss_link))]]></content:encoded>"))
-          """)
-        for elem in (:author, :category, :comments, :enclosure)
-            e = getproperty(v, elem)
-            isempty(e) || write(rss_buff,
-              """
-                  <$elem>$e</$elem>
-              """)
+Note: if a file `head_rtag.xml` is available, where `rtag` is the refstring of a tag, it
+will take precedence for the corresponding tag feed; otherwise `head.xml` will be used.
+"""
+function rss_generator()::Nothing
+    # is there anything to go in the RSS feed?
+    isempty(RSS_ITEMS) && return nothing
+
+    # sort items by reverse chronological order
+    sorted_items = sort(RSS_ITEMS, rev=true, by=x->x.date)
+
+    feed_name = globvar(:rss_file)::String * ".xml"
+    global_feed_path = joinpath(PATHS[:site], feed_name)
+    global_feed_head = replace(
+        read(joinpath(path(:rss), "head.xml"), String),
+        r"<!--(.|\n)*?-->" => ""
+    )
+    open(global_feed_path, "w") do io
+        write(io, convert_html(global_feed_head))
+        for item in sorted_items
+            write(io, item.item)
         end
-        write(rss_buff,
-          """
-              <guid>$(full_link)</guid>
-              <pubDate>$(Dates.format(v.pubDate, "e, d u Y")) 00:00:00 UT</pubDate>
-            </item>
-          """)
+        write(io, "</channel></rss>")
     end
-    # finalize
-    write(rss_buff,
-        """
-        </channel>
-        </rss>
-        """)
-    write(rss_path, take!(rss_buff))
 
+    # Tag specific feed; filter items by tag
+    # > Collect all raw tags
+    tags = Set{String}()
+    foreach(x -> union!(tags, x.tags), RSS_ITEMS)
+    # > write a feed per tag, use head_tag if it exists
+    for tag in tags
+        rtag = refstring(tag)
+        tag_dir = joinpath(path(:tag), refstring(tag))
+        isdir(tag_dir) || mkpath(tag_dir)
+        tag_feed_path = joinpath(tag_dir, feed_name)
+        open(tag_feed_path, "w") do io
+            tag_feed_head = global_feed_head
+            tag_feed_head_cand = joinpath(path(:rss), "head_$rtag.xml")
+            if isfile(tag_feed_head_cand)
+                tag_feed_head = read(tag_feed_head_cand)
+            end
+            write(io, tag_feed_head)
+            for item in sorted_items
+                tag ∈ item.tags || continue
+                write(io, item.item)
+            end
+            write(io, "</channel></rss>")
+        end
+    end
     return nothing
+end
+
+
+"""
+$SIGNATURES
+
+This is called in `convert_and_write` to add an RSS item.
+"""
+function add_rss_item()
+    item_template = replace(
+        read(joinpath(path(:rss), "item.xml"), String),
+        r"<!--(.|\n)*?-->" => ""
+    )
+    # if the rss_title is not given, infer from title
+    if isempty(locvar(:rss_title)::String)
+        set_var!(LOCAL_VARS, "rss_title", locvar(:title)::String)
+    end
+    item = replace(convert_html(item_template), r"\n\n" => "")
+    item = replace(item, Regex(raw"""<a\shref=(?:"|')?\#.*?>(.*?)</a>""") => s"\1")
+
+    rss_item = RSSItem(
+        item,
+        locvar(:rss_pubdate)::Date,
+        locvar(:tags)::Vector{String}
+    )
+    push!(RSS_ITEMS, rss_item)
 end

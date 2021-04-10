@@ -26,10 +26,16 @@ jobs:
       with:
         version: 1.5
     - run: julia -e '
-            using Pkg; Pkg.add(Pkg.PackageSpec(name="Franklin", rev="master"));
+            using Pkg;
+            Pkg.add(Pkg.PackageSpec(name="NodeJS"));
+            using NodeJS;
+            run(`$(npm_cmd()) install lunr`);
+            run(`$(npm_cmd()) install cheerio`);
+            Pkg.add(Pkg.PackageSpec(name="Franklin", rev="master"));
             using Franklin;
             cd("docs");
             Pkg.activate("."); Pkg.instantiate();
+            lunr();
             optimize(minify=false, prerender=false);
             cd("../demos");
             Pkg.activate("."); Pkg.instantiate();
