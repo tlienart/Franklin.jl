@@ -1,8 +1,10 @@
-using Franklin, Test, Markdown, Dates, Random
+using Franklin, Test, Markdown, Dates, Random, Pkg
 using Literate, DelimitedFiles, Suppressor
 const F = Franklin
 const R = @__DIR__
 const D = joinpath(dirname(dirname(pathof(Franklin))), "test", "_dummies")
+
+INIT_DIR = pwd()
 
 F.FD_ENV[:SILENT_MODE] = true
 # F.FD_ENV[:DEBUG_MODE] = true
@@ -143,3 +145,7 @@ println("Verifying ip addresses, if online these should succeed.")
 for (addr, name) in F.IP_CHECK
     println(rpad("Ping $name:", 13), ifelse(F.check_ping(addr), "✓", "✗"), ".")
 end
+
+
+Pkg.activate()
+cd(INIT_DIR)

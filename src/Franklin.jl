@@ -55,9 +55,9 @@ const POINTER_WORKFLOW =
 # obtained via `dig www...`; they may change over time; see `check_ping`
 # we check in sequence, one should work if the user is online...
 const IP_CHECK = (
-    "172.217.21.132" => "Google", # google
-    "140.82.118.4"   => "GitHub",   # github
-    "103.235.46.39"  => "Baidu",  # baidu
+    "172.217.21.132"  => "Google", # google
+    "185.199.109.153" => "GitHub", # github
+    "103.235.46.39"   => "Baidu",  # baidu
     )
 
 """Big number when we want things to be far."""
