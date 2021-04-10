@@ -100,9 +100,9 @@ version = "0.10.34"
 
 [[FranklinTemplates]]
 deps = ["LiveServer"]
-git-tree-sha1 = "0cf164fd4f7fd36a4b9f48144d8945d232ab0f99"
+git-tree-sha1 = "efe1863c594ff302b85539cbecb2fdb8e91895a3"
 uuid = "3a985190-f512-4703-8d38-2a7944ed5916"
-version = "0.8.13"
+version = "0.8.16"
 
 [[FunctionalCollections]]
 deps = ["Test"]
@@ -279,9 +279,9 @@ uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 
 [[PlotlyBase]]
 deps = ["Base64", "Dates", "DelimitedFiles", "DocStringExtensions", "JSON", "Kaleido_jll", "LaTeXStrings", "Logging", "Pkg", "Requires", "Statistics", "UUIDs"]
-git-tree-sha1 = "74a507dccef08c08d07f244a6e58ea3a3852d146"
+git-tree-sha1 = "1fcca9e3e25a43a33c9acbc5384ba47e7a5bd698"
 uuid = "a03496cd-edff-5a9b-9e67-9cda94a718b5"
-version = "0.5.1"
+version = "0.5.2"
 
 [[PlotlyJS]]
 deps = ["Blink", "DelimitedFiles", "JSExpr", "JSON", "Markdown", "Pkg", "PlotlyBase", "REPL", "Reexport", "Requires", "WebIO"]
@@ -295,9 +295,9 @@ uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 
 [[PyCall]]
 deps = ["Conda", "Dates", "Libdl", "LinearAlgebra", "MacroTools", "Serialization", "VersionParsing"]
-git-tree-sha1 = "dd1a970b543bd02efce2984582e996af28cab27f"
+git-tree-sha1 = "169bb8ea6b1b143c5cf57df6d34d022a7b60c6db"
 uuid = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
-version = "1.92.2"
+version = "1.92.3"
 
 [[PyPlot]]
 deps = ["Colors", "LaTeXStrings", "PyCall", "Sockets", "Test", "VersionParsing"]

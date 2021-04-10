@@ -62,6 +62,7 @@
               <li class="menu-list-item "><a href="/syntax/markdown/" class="menu-list-link">Markdown</a>
               <li class="menu-list-item "><a href="/syntax/divs-commands/" class="menu-list-link">Divs and Commands</a>
               <li class="menu-list-item active"><a href="/syntax/page-variables/" class="menu-list-link">Page Variables</a>
+							<li class="menu-list-item "><a href="/syntax/rss/" class="menu-list-link">RSS</a>
 			  <li class="menu-list-item "><a href="/syntax/utils/" class="menu-list-link">Utils</a>
             </ul>
 		  <!-- STYLING -->
@@ -119,7 +120,7 @@
     <span style="font-size:24px;font-weight:300;">Page variables offer a straightforward way to interact with the HTML templating from the markdown and much more.</span>
     
 <div class="blank"></div>
-<div class="franklin-toc"><ol><li><a href="#overview">Overview</a><ol><li><a href="#using_page_variables">Using page variables</a></li></ol></li><li><a href="#html_functions">HTML functions</a><ol><li><a href="#basic_functions">Basic functions</a></li><li><a href="#conditional_blocks">Conditional blocks</a></li><li><a href="#for_loops">For loops</a></li></ol></li><li><a href="#global_page_variables">Global page variables</a></li><li><a href="#local_page_variables">Local page variables</a><ol><li><a href="#basic_settings">Basic settings</a></li><li><a href="#code_evaluation">Code evaluation</a></li><li><a href="#rss">RSS</a></li></ol></li></ol></div>
+<div class="franklin-toc"><ol><li><a href="#overview">Overview</a><ol><li><a href="#defining_and_accessing_page_variables">Defining and accessing page variables</a></li><li><a href="#using_page_variables">Using page variables</a></li></ol></li><li><a href="#html_functions">HTML functions</a><ol><li><a href="#basic_functions">Basic functions</a></li><li><a href="#conditional_blocks">Conditional blocks</a></li><li><a href="#for_loops">For loops</a></li></ol></li><li><a href="#global_page_variables">Global page variables</a></li><li><a href="#local_page_variables">Local page variables</a><ol><li><a href="#basic_settings">Basic settings</a></li><li><a href="#code_evaluation">Code evaluation</a></li><li><a href="#rss">RSS</a></li></ol></li></ol></div>
 <h2 id="overview"><a href="#overview" class="header-anchor">Overview</a></h2>
 <p>The general syntax to define a page variable is to write <code>@def varname &#61; value</code> on a new line e.g.:</p>
 <pre><code class="language-julia">@def author &#61; &quot;Septimia Zenobia&quot;</code></pre>
@@ -127,12 +128,13 @@
 <pre><code class="language-julia">@def some_str &#61; &quot;&quot;&quot;A string
     on several lines is ok
     but lines must be indented&quot;&quot;&quot;</code></pre>
-<p>You can also define them in blocks surrounded by <code>&#43;&#43;&#43;...&#43;&#43;&#43;</code>, the entire content of which will be evaluated as if it was Julia code but all assigned variables will be considered as page variables:</p>
+<p>You can also define them in blocks surrounded by <code>&#43;&#43;&#43;...&#43;&#43;&#43;</code>, the entire content of which will be evaluated as if it was Julia code but all assigned variables will be considered as page variables. For instance, consider:</p>
 <pre><code class="language-julia">&#43;&#43;&#43;
 var1 &#61; &#91;1, 2,
   3, 4&#93;
 var2 &#61; &quot;Hello goodbye&quot;
 &#43;&#43;&#43;</code></pre>
+<p>this block will be executed as normal Julia code and assigns <code>var1</code> and <code>var2</code> which then become available as page variable.</p>
 <p>These variables can serve multiple purposes but, primarily, they can be accessed from the HTML template blocks e.g.:</p>
 <pre><code class="language-html">&lt;footer&gt;
   This is the footer. &amp;copy; &#123;&#123;fill author&#125;&#125;.
@@ -141,8 +143,20 @@ var2 &#61; &quot;Hello goodbye&quot;
 <p>The syntax <code>&#123;&#123; ... &#125;&#125;</code> indicates a HTML <em>function</em>, <code>fill</code> is the function name and the rest of the bracket elements are <em>page variables</em> &#40;here <code>author</code>&#41; serving as arguments of the function.</p>
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">Argument-less calls such as <code>&#123;&#123; name &#125;&#125;</code> will be interpreted in either one of two way: first it will check whether there is a html function <code>name</code> and if so will call it, otherwise it will check whether there is a page variable <code>name</code> and will just insert it – it will be treated as a shortcut for <code>&#123;&#123;fill name&#125;&#125;</code>.</div></div>
-<p><em>Local</em> page variables denote variables that are defined on a single page and accessible on that page only by contrast to <em>global</em> page variables which are set globally &#40;in the <code>config.md</code> file&#41; and accessible on all pages.</p>
+<p><em>Local</em> page variables denote variables that are defined on one page and directly accessible on that page. <em>Global</em> page variables, by contrast, are directly available on <em>all</em> pages. Any variable defined in your <code>config.md</code> file is global.</p>
 <p>In both cases there are <em>default</em> page variables set by Franklin with default values which you can both change and use. You can of course also define your own variables, both global and local.</p>
+<h3 id="defining_and_accessing_page_variables"><a href="#defining_and_accessing_page_variables" class="header-anchor">Defining and accessing page variables</a></h3>
+<p>Let us say that in <code>config.md</code>, we have</p>
+<pre><code class="language-julia">@def global_var_1 &#61; &quot;foo&quot;</code></pre>
+<p>and that in <code>index.md</code>, we have</p>
+<pre><code class="language-julia">@def local_var_1 &#61; &quot;bar&quot;</code></pre>
+<p>On <code>index.md</code>, you can access both variables so this:</p>
+<pre><code class="language-julia">&#123;&#123;global_var_1&#125;&#125; - &#123;&#123;local_var_1&#125;&#125;</code></pre>
+<p>will insert</p>
+<pre><code class="language-julia">foo - bar</code></pre>
+<p>On another page <code>foo.md</code>, only <code>global_var_1</code> is directly accessible but you can still access <code>local_var_1</code> except you have to specify where it&#39;s defined &#40;and you <strong>must</strong> use <code>fill</code>&#41;:</p>
+<pre><code class="language-julia">&#123;&#123;global_var_1&#125;&#125; - &#123;&#123;fill local_var_1 index.md&#125;&#125;</code></pre>
+<p>The second bit essentially says: &quot;get <code>local_var_1</code> from the scope of the page <code>index.md</code>&quot;.</p>
 <h3 id="using_page_variables"><a href="#using_page_variables" class="header-anchor">Using page variables</a></h3>
 <p>Both local and global page variables are meant for essentially two purposes:</p>
 <div class="tlist"><ol>
@@ -155,9 +169,9 @@ var2 &#61; &quot;Hello goodbye&quot;
 <pre><code class="language-julia">@def lang &#61; &quot;julia&quot;</code></pre>
 <p>In the first case, you can access variables in your HTML template via one of the HTML functions such as the <code>fill</code> function shown above.</p>
 <h2 id="html_functions"><a href="#html_functions" class="header-anchor">HTML functions</a></h2>
-<p>HTML functions can be used in any one of your <code>*.html</code> file and in particular in any of the <code>_layout/*.html</code> files such as <code>head.html</code>. They are always called with the syntax <code>&#123;&#123;fname pv1 pv2 ...&#125;&#125;</code> where <code>pv1 pv2 ...</code> are page variable names.</p>
+<p>HTML functions can be used in any one of your <code>*.html</code><strong>and</strong> <code>.md</code> files; in particular, they can be used in any of the <code>_layout/*.html</code> files such as <code>head.html</code>. They are always called with the syntax <code>&#123;&#123;fname pv1 pv2 ...&#125;&#125;</code> where <code>pv1 pv2 ...</code> are page variable names.</p>
 <h3 id="basic_functions"><a href="#basic_functions" class="header-anchor">Basic functions</a></h3>
-<p>A few functions are available with the <code>&#123;&#123;fill ...&#125;&#125;</code> arguably the most likely to be of use.</p>
+<p>A few functions are available with the <code>&#123;&#123;fill ...&#125;&#125;</code> arguably the most likely to be of use:</p>
 <div class="lalign"><table><tr><th align="center">Format</th><th align="center">Role</th></tr><tr><td align="center"><code>&#123;&#123;fill vname&#125;&#125;</code> or <code>&#123;&#123;vname&#125;&#125;</code></td><td align="center">place the value of page variable <code>vname</code></td></tr><tr><td align="center"><code>&#123;&#123;fill vname rpath&#125;&#125;</code></td><td align="center">same but taking the value from the page at <code>rpath</code> where <code>rpath</code> is a relative path like <code>blog/pg1</code></td></tr><tr><td align="center"><code>&#123;&#123;insert fpath&#125;&#125;</code></td><td align="center">insert the content of the file at <code>fpath</code></td></tr><tr><td align="center"><code>&#123;&#123;href  vname&#125;&#125;</code></td><td align="center">inserts a reference &#40;<em>mostly internal use</em>&#41;</td></tr><tr><td align="center"><code>&#123;&#123;toc&#125;&#125;</code></td><td align="center">places a table of content &#40;<em>mostly internal use</em>&#41;</td></tr></table></div>
 <p>The <code>&#123;&#123;insert fpath&#125;&#125;</code> can be useful if you want to include specific HTML scaffolding on some pages, for instance in example pages you will see in the <code>head.html</code>:</p>
 <pre><code class="language-html">&#123;&#123;if hasmath&#125;&#125; &#123;&#123;insert head_katex.html&#125;&#125; &#123;&#123;end&#125;&#125;</code></pre>
@@ -215,7 +229,7 @@ var2 &#61; &quot;Hello goodbye&quot;
 <p>For more informations on these, see the section on <a href="/code/">inserting and evaluating code</a>.</p>
 <div class="lalign"><table><tr><th align="right">Name</th><th align="right">Type</th><th align="right">Default value</th><th align="right">Comment</th></tr><tr><td align="right"><code>reeval</code></td><td align="right"><code>Bool</code></td><td align="right"><code>false</code></td><td align="right">whether to reevaluate all code blocks on the page</td></tr><tr><td align="right"><code>showall</code></td><td align="right"><code>Bool</code></td><td align="right"><code>false</code></td><td align="right">notebook mode if <code>true</code> where the output of the code block is shown below</td></tr><tr><td align="right"><code>fd_eval</code></td><td align="right"><code>Bool</code></td><td align="right"><code>false</code></td><td align="right">internal variable to keep track of whether the scope is stale &#40;in which case all subsequent blocks are re-evaluated&#41;</td></tr></table></div>
 <h3 id="rss"><a href="#rss" class="header-anchor">RSS</a></h3>
-<p>These are variables related to <a href="https://cyber.harvard.edu/rss/rss.html">RSS 2.0 specifications</a>  and must match the format indicated there. If you want proper RSS to be generated, you <strong>must</strong> define at least the <code>rss_description</code> or <code>rss</code> &#40;which is an alias for <code>rss_description</code>&#41;. All these variables expect a <code>String</code>.</p>
+<p>These are variables related to <a href="https://cyber.harvard.edu/rss/rss.html">RSS 2.0 specifications</a>  and must match the format indicated there. For more information about generating an RSS feed, see <a href="/syntax/rss/">the dedicated RSS page</a>.</p>
 <div class="lalign"><table><tr><th align="right">Name</th><th align="right">Default value</th></tr><tr><td align="right"><code>rss</code>, <code>rss_description</code></td><td align="right"><code>&quot;&quot;</code></td></tr><tr><td align="right"><code>rss_title</code></td><td align="right">current page title</td></tr><tr><td align="right"><code>rss_author</code></td><td align="right">current author</td></tr><tr><td align="right"><code>rss_category</code></td><td align="right"><code>&quot;&quot;</code></td></tr><tr><td align="right"><code>rss_comments</code></td><td align="right"><code>&quot;&quot;</code></td></tr><tr><td align="right"><code>rss_enclosure</code></td><td align="right"><code>&quot;&quot;</code></td></tr><tr><td align="right"><code>rss_pubdate</code></td><td align="right"><code>&quot;&quot;</code></td></tr></table></div>
 <p>To recapitulate, for a working RSS feed to be generated you need:</p>
 <div class="tlist"><ul>
@@ -233,7 +247,7 @@ var2 &#61; &quot;Hello goodbye&quot;
 </ul></div>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: April 05, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: April 10, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
