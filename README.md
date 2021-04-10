@@ -44,15 +44,16 @@ Some examples of websites using Franklin (_if you're using Franklin with a publi
 * [MIT Introduction to Computational Thinking](https://computationalthinking.mit.edu/Fall20) course website
 * [Rik Huijzer's blog](https://huijzer.xyz) which is mostly about programming and statistics
 * [TuringModels](https://statisticalrethinkingjulia.github.io/TuringModels.jl/) implements the models from [Statistical Rethinking](https://xcelab.net/rm/statistical-rethinking/) using [Turing.jl](https://turing.ml/stable/)
-* [Ricardo Rosa's website](https://rmsrosa.github.io/en/) [source repo](https://github.com/rmsrosa/rmsrosa.github.io).
+* [Ricardo Rosa's website](https://rmsrosa.github.io/en/) ([repo](https://github.com/rmsrosa/rmsrosa.github.io)).
 
 **Custom templates** (i.e. migrating an existing design)
-* The [Julia website](https://julialang.org), including the blog, are deployed using Franklin
-* [Circuitscape's website](https://circuitscape.org) was migrated from Jekyll
-* [@zlatanvasovic's website](https://zlatanvasovic.github.io) using Bootstrap 4.5
+* The [Julia website](https://julialang.org), including the blog, are deployed using Franklin ([repo](https://github.com/JuliaLang/www.julialang.org))
+* [Circuitscape's website](https://circuitscape.org) was migrated from Jekyll ([repo](https://github.com/Circuitscape/www.circuitscape.org))
+* [@zlatanvasovic's website](https://zlatanvasovic.github.io) using Bootstrap 4.5 ([repo](https://github.com/zlatanvasovic/zlatanvasovic.github.io))
 * [PkgPage.jl](https://tlienart.github.io/PkgPage.jl/), front-page generator based on Franklin using Bootstrap 4.5
-* [@abhishalya's website](https://abhishalya.github.io) using a custom minimalistic theme
-* The [JuliaCon website](https://juliacon.org) is deployed using Franklin
+* [@abhishalya's website](https://abhishalya.github.io) using a custom minimalistic theme ([repo](https://github.com/abhishalya/abhishalya.github.io))
+* [JuliaCon's website](https://juliacon.org) using Franklin and Bootstrap ([repo](https://github.com/JuliaCon/www.juliacon.org))
+* [JuliaGPU's website](https://juliagpu.org) using Franklin and a custom template ([repo](https://github.com/JuliaGPU/juliagpu.org))
 
 ## Key features
 
