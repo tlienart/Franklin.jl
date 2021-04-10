@@ -13,8 +13,7 @@ Add an entry to `DISALLOW`.
 """
 function add_disallow_item()
     loc = url_curpage()
-    loc in DISALLOW && return nothing
-    push!(DISALLOW, loc)
+    loc in DISALLOW || push!(DISALLOW, loc)
     return nothing
 end
 

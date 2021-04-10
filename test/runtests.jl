@@ -30,6 +30,7 @@ include("manager/config.jl")
 include("manager/dir_utils.jl")
 include("manager/page_vars_html.jl")
 include("manager/paginate.jl")
+include("manager/robots_generator.jl")
 println("🍺")
 
 # PARSER folder

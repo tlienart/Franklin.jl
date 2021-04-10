@@ -88,7 +88,7 @@ const FD_ENV = LittleDict(
     :UTILS_HASH    => nothing   # hash of the utils
     )
 
-utils_name()   = "Utils_$(FD_ENV[:UTILS_COUNTER])"
+utils_name()   = "Utils_$(FD_ENV[:UTILS_COUNTER]::Int)"
 utils_symb()   = Symbol(utils_name())
 utils_module() = getproperty(Main, utils_symb())
 utils_hash()   = nothing
