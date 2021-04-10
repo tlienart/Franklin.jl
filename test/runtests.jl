@@ -80,6 +80,7 @@ println("CONVERTER/HTML")
 include("converter/html/html.jl")
 include("converter/html/html2.jl")
 include("converter/html/html_for.jl")
+include("converter/html/html_functions.jl")
 println("🍺")
 println("CONVERTER/LX")
 include("converter/lx/input.jl")
@@ -104,8 +105,8 @@ begin
     # make dir, go in it, do the tests, then get completely out (otherwise
     # windows can't delete the folder)
     mkdir(p); cd(p);
-    include("global/postprocess.jl");
-    include("global/rss_sitemap.jl")        # XXX adjust RSS
+    include("global/postprocess.jl")
+    include("global/sitemap.jl")
     cd(p)
     include("global/eval.jl")
     cd(joinpath(D, ".."))
