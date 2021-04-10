@@ -200,8 +200,8 @@ function process_html_for(hs::AS, qblocks::Vector{AbstractBlock},
 
     # content of the for block
     inner = subs(hs, nextind(hs, to(β_open)), prevind(hs, from(β_close)))
-    isempty(strip(inner)) && @goto final_step
     content = ""
+    isempty(strip(inner)) && @goto final_step
     if length(vnames) == 1
         rx1 = Regex("{{\\s*(?:fill\\s)?\\s*$vname\\s*}}")           # {{ fill v}} or {{v}}
         rx2 = Regex("{{\\s*(?:fill\\s)?\\s*(\\S+)\\s+$vname\\s*}}") # {{ fill x v}}

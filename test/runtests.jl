@@ -25,12 +25,12 @@ println("🍺")
 # MANAGER folder
 println("MANAGER")
 include("manager/utils.jl")
-include("manager/rss.jl")           # XXX need to redo all
 include("manager/config.jl")
 include("manager/dir_utils.jl")
 include("manager/page_vars_html.jl")
 include("manager/paginate.jl")
 include("manager/robots_generator.jl")
+include("manager/rss_generator.jl")
 println("🍺")
 
 # PARSER folder

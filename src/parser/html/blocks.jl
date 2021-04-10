@@ -79,12 +79,15 @@ const HTML_OPEN_COND_SP =
 """Blocks that can open a conditional block."""
 const HTML_OPEN_COND = Union{HIf, HTML_OPEN_COND_SP}
 
+"""Blocks that can open another block."""
+const HTML_OPEN_OTHER = HFor
+
 """
 $SIGNATURES
 
 Internal function to balance conditional blocks. See [`process_html_qblocks`](@ref).
 """
-hbalance(::HTML_OPEN_COND) = 1
+hbalance(::Union{HTML_OPEN_COND, HTML_OPEN_OTHER}) = 1
 hbalance(::HEnd) = -1
 hbalance(::AbstractBlock) = 0
 
