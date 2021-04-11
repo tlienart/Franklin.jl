@@ -35,8 +35,8 @@ jobs:
             using Franklin;
             cd("docs");
             Pkg.activate("."); Pkg.instantiate();
-            lunr();
             optimize(minify=false, prerender=false);
+            lunr();
             cd("../demos");
             Pkg.activate("."); Pkg.instantiate();
             optimize(prerender=false);
