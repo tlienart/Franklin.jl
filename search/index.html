@@ -3,15 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-   <!-- Un-minified script so that can play a bit -->
-<link rel="stylesheet" href="/libs/katex/katex.min.css">
-     
-   <!-- Syntax highlighting via Prism, note: restricted langs -->
-<link rel="stylesheet" href="/libs/highlight/github.min.css">
-   
+  
+  
   <link rel="stylesheet" href="/css/jtd.css">
   <link rel="icon" href="/assets/infra/logoF_square.gif">
-   <title>Work with Literate.jl</title>  
+   <title>Search ⋅ Franklin</title>  
 
   <!-- LUNR -->
   <script src="/libs/lunr/lunr.min.js"></script>
@@ -74,11 +70,11 @@
               <li class="menu-list-item "><a href="/styling/classes/" class="menu-list-link">Classes</a>
             </ul>
           <!-- CODE -->
-          <li class="menu-list-parent active"><a href="/code/" class="menu-list-link">• Code</a>
+          <li class="menu-list-parent "><a href="/code/" class="menu-list-link">• Code</a>
             <ul class="menu-list-child-list ">
               <li class="menu-list-item "><a href="/code/" class="menu-list-link">Inserting code</a>
               <li class="menu-list-item "><a href="/code/eval-tricks/" class="menu-list-link">Code tricks</a>
-              <li class="menu-list-item active"><a href="/code/literate/" class="menu-list-link">Literate.jl</a>
+              <li class="menu-list-item "><a href="/code/literate/" class="menu-list-link">Literate.jl</a>
             </ul>
 		  <!-- EXTRAs -->
 		  <li class="menu-list-parent "><a href="/extras/" class="menu-list-link">• Extras</a>
@@ -111,101 +107,15 @@
         <div class="main-header">
           <a name="pagetop"></a>
 
-          <a id="github" href="https://github.com/tlienart/Franklin.jl/blob/master/docs/code/literate.md">Page source</a>
+          <a id="github" href="https://github.com/tlienart/Franklin.jl/blob/master/docs/search.md">Page source</a>
 		  <span style="width:30px; text-align: center;color:lightgray;">|</span>
 		  <a id="github" href="https://github.com/tlienart/Franklin.jl">GitHub Repository</a>
         </div>
 
 <!-- Content appended here (in class franklin-content) -->
-<div class="franklin-content"><h1 id="work_with_literatejl"><a href="#work_with_literatejl" class="header-anchor">Work with Literate.jl</a></h1>
-
-    <span style="font-size:24px;font-weight:300;">Franklin works seamlessly with Literate to offer a convenient way to write and maintain tutorials.</span>
-    
-<div class="blank"></div>
-<div class="franklin-toc"><ol><li><a href="#overview">Overview</a><ol><li><a href="#file_organisation">File organisation</a></li><li><a href="#tricks">Tricks</a></li></ol></li><li><a href="#example">Example</a><ol><li><a href="#script">Script</a></li><li><a href="#result">Result</a></li></ol></li></ol></div>
-<h2 id="overview"><a href="#overview" class="header-anchor">Overview</a></h2>
-<p><a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a> is a convenient package that allows you to write scripts in Julia and convert them to markdown pages or Jupyter notebooks.</p>
-<p>You can combine this with Franklin with the <code>\literate</code> command which you can call in Franklin like:</p>
-<pre><code class="language-julia">\literate&#123;/_literate/script.jl&#125;</code></pre>
-<p>it does what you expect:</p>
-<div class="tlist"><ul>
-<li><p>the markdown is interpreted and evaluated</p>
-</li>
-<li><p>the code blocks are evaluated and their output can be shown selectively</p>
-</li>
-</ul></div>
-<p>If you want the script to be shown like a notebook where the output of every code block is shown, use <code>@def showall &#61; true</code>.</p>
-<p>Combining Franklin with Literate offers a very convenient way to write and maintain tutorial websites &#40;see for instance the <a href="https://github.com/alan-turing-institute/DataScienceTutorials.jl">DataScienceTutorials</a>&#41;.</p>
-<h3 id="file_organisation"><a href="#file_organisation" class="header-anchor">File organisation</a></h3>
-<p>We recommend you have a folder <code>/_literate/</code> in your root folder, place your literate scripts there and call them as in the example above.</p>
-<h3 id="tricks"><a href="#tricks" class="header-anchor">Tricks</a></h3>
-<p>In the <code>showall &#61; true</code> mode, the last line of each code block is displayed in full. In some cases you will have to  think about this a bit more than you would in your REPL and might for instance:</p>
-<div class="tlist"><ul>
-<li><p><em>suppress the output</em>, in which case  you should add a <code>;</code>  at the end  of the line</p>
-</li>
-<li><p><em>only show a few elements</em> &#40;see below&#41;</p>
-</li>
-</ul></div>
-<p>For instance you might prefer:</p>
-<pre><code class="language-julia">x &#61; randn&#40;10&#41;
-x&#91;1:3&#93;</code></pre><pre><code class="plaintext">3-element Array{Float64,1}:
- -0.05438987332507256
- -0.06328092106672129
- -0.7004566268600232</code></pre>
-<p>to just</p>
-<pre><code class="language-julia">x &#61; randn&#40;10&#41;</code></pre><pre><code class="plaintext">10-element Array{Float64,1}:
-  0.8798921969510668
-  1.5114184661704841
-  0.7039524460495125
- -0.05186180240582111
-  1.2393515311923997
- -1.476699324580843
-  0.5548478046542827
-  0.3586839860912622
- -0.3637839413799365
- -1.2563691049235273</code></pre>
-<p>You can also use <code>@show</code> or <code>println</code> to show specific things beyond the last line</p>
-<pre><code class="language-julia">x &#61; rand&#40;10&#41;
-println&#40;sum&#40;x&#41;&#41;
-y &#61; 5</code></pre><pre><code class="plaintext">5.14860886556325
-5</code></pre>
-<p>if the last line is a <code>@show</code> or <code>print</code> then only that is shown:</p>
-<pre><code class="language-julia">x &#61; randn&#40;10&#41;
-@show x&#91;1&#93;</code></pre><pre><code class="plaintext">x[1] = -1.5856846076105653
-</code></pre>
-<h2 id="example"><a href="#example" class="header-anchor">Example</a></h2>
-<h3 id="script"><a href="#script" class="header-anchor">Script</a></h3>
-<pre><code class="language-julia"># Some **really cool** maths:
-#
-# &#36;&#36; \exp&#40;i\pi&#41; &#43; 1 \quad &#61; \quad 0 &#36;&#36;
-#
-# We can show this with some code:
-
-x &#61; exp&#40;im*π&#41; &#43; 1
-
-# that looks close to zero but
-
-x ≈ 0
-
-# however
-
-abs&#40;x&#41; &lt; eps&#40;&#41;
-
-# #### Conclusion
-#
-# The equation is proven thanks to our very rigorous proof.</code></pre>
-<h3 id="result"><a href="#result" class="header-anchor">Result</a></h3>
-<p><p>Some <strong>really cool</strong> maths:</p>
-\[ \exp(i\pi) + 1 \quad = \quad 0 \]
-<p>We can show this with some code:</p>
-<pre><code class="language-julia">x &#61; exp&#40;im*π&#41; &#43; 1</code></pre><pre><code class="plaintext">0.0 + 1.2246467991473532e-16im</code></pre>
-<p>that looks close to zero but</p>
-<pre><code class="language-julia">x ≈ 0</code></pre><pre><code class="plaintext">false</code></pre>
-<p>however</p>
-<pre><code class="language-julia">abs&#40;x&#41; &lt; eps&#40;&#41;</code></pre><pre><code class="plaintext">true</code></pre>
-<h4 id="conclusion"><a href="#conclusion" class="header-anchor">Conclusion</a></h4>
-<p>The equation is proven thanks to our very rigorous proof.</p>
- </p>
+<div class="franklin-content"><h2 id="search"><a href="#search" class="header-anchor">Search</a></h2>
+<p>Number of results found: <span id="resultCount"></span></p>
+<div id="searchResults"></div>
 <div class="page-foot">
   <div class="copyright">
     &copy; Thibaut Lienart. Last modified: April 11, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
@@ -216,15 +126,6 @@ abs&#40;x&#41; &lt; eps&#40;&#41;
     </div> <!-- end of class main-content-wrap -->
     </div> <!-- end of class page-wrap-->
     
-      <script src="/libs/katex/katex.min.js"></script>
-<script src="/libs/katex/auto-render.min.js"></script>
-<script>renderMathInElement(document.body)</script>
-
-    
-    
-      <script src="/libs/highlight/highlight.pack.js"></script>
-<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
-
     
   </body>
 </html>
