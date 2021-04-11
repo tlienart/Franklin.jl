@@ -142,7 +142,6 @@ function process_file_err(case::Symbol, fpair::Pair{String, String},
        startswith(inp, path(:literate)) ||
        startswith(inp, path(:rss)) ||
        endswith(inp, "config.md") ||
-       endswith(inp, "search.md") ||
        endswith(inp, "utils.jl")
 
        @goto end_copyblock
