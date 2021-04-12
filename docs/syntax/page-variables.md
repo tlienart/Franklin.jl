@@ -18,7 +18,7 @@ The general syntax to define a page variable is to write `@def varname = value` 
 @def author = "Septimia Zenobia"
 ```
 
-where you could set the variable to a string, a number, a date,... anything. Definitions can span multiple lines but if they do, the subsequent lines **must** be indented e.g.:
+where you could set the variable to a string, a number, a date,... any Julia value. Definitions can span multiple lines but if they do, the subsequent lines **must** be indented e.g.:
 
 ```
 @def some_str = """A string
@@ -26,7 +26,8 @@ where you could set the variable to a string, a number, a date,... anything. Def
     but lines must be indented"""
 ```
 
-You can also define them in blocks surrounded by `+++...+++`, the entire content of which will be evaluated as if it was Julia code but all assigned variables will be considered as page variables.
+You can also define them in blocks surrounded by `+++` on a new line.
+The content between the `+++` markers will then be evaluated as Julia code and all assigned variables will be considered as page variables.
 For instance, consider:
 
 ```julia
@@ -37,9 +38,9 @@ var2 = "Hello goodbye"
 +++
 ```
 
-this block will be executed as normal Julia code and assigns `var1` and `var2` which then become available as page variable.
+this block will be executed as standard Julia code and the two assignments (`var1` and `var2`) will be caught and made available as page variable of the same name.
 
-These variables can serve multiple purposes but, primarily, they can be accessed from the HTML template blocks e.g.:
+Page variables can serve multiple purposes though their main use is to be accessed from the HTML template blocks e.g.:
 
 ```html
 <footer>
@@ -52,8 +53,10 @@ which could be useful as footer on all pages.
 The syntax `{{ ... }}` indicates a HTML _function_, `fill` is the function name and the rest of the bracket elements are _page variables_ (here `author`) serving as arguments of the function.
 
 \note{
-  Argument-less calls such as `{{ name }}` will be interpreted in either one of two way: first it will check whether there is a html function `name` and if so will call it, otherwise it will check whether there is a page variable `name` and will just insert it -- it will be treated as a shortcut for `{{fill name}}`.
+  Calls without arguments such as `{{ name }}` will be interpreted in either one of two way: first it will check whether there is a html function `name` and if so will call it, otherwise it will check whether there is a page variable `name` and will just insert it -- it will be treated as a shortcut for `{{fill name}}`.
 }
+
+### Local and Global
 
 _Local_ page variables denote variables that are defined on one page and directly accessible on that page. _Global_ page variables, by contrast, are directly available on _all_ pages. Any variable defined in your `config.md` file is global.
 
@@ -86,13 +89,13 @@ will insert
 foo - bar
 ```
 
-On another page `foo.md`, only `global_var_1` is directly accessible but you can still access `local_var_1` except you have to specify where it's defined (and you **must** use `fill`):
+On another page (say `other.md`), only `global_var_1` is directly accessible but you can still access `local_var_1` except you have to specify where it's defined (and you must use `fill` to do so):
 
 ```
 {{global_var_1}} - {{fill local_var_1 index.md}}
 ```
 
-The second bit essentially says: "get `local_var_1` from the scope of the page `index.md`".
+The second bit says: "get `local_var_1` from `index.md`".
 
 
 ### Using page variables
@@ -125,10 +128,9 @@ A few functions are available with the `{{fill ...}}` arguably the most likely t
 | Format | Role |
 | :----: | :--: |
 | `{{fill vname}}` or `{{vname}}` | place the value of page variable `vname`
-| `{{fill vname rpath}}` | same but taking the value from the page at `rpath` where `rpath` is a relative path like `blog/pg1`
-| `{{insert fpath}}` | insert the content of the file at `fpath`
-| `{{href  vname}}` | inserts a reference (_mostly internal use_)
-| `{{toc}}` | places a table of content (_mostly internal use_)
+| `{{fill vname rpath}}` | place the value of page variable `vname` defined at `rpath` where  `rpath` is a relative path like `blog/pg1`
+| `{{insert fpath}}` | insert the content of the file at `fpath` where `fpath` is taken relative to the `_layout` folder
+| `{{redirect /some/other/addr.html}}` | adds a redirect page: when a user goes to `(baseurl)/some/other/addr.html`, they will be redirected to the current page
 @@
 
 The `{{insert fpath}}` can be useful if you want to include specific HTML scaffolding on some pages, for instance in example pages you will see in the `head.html`:
@@ -136,6 +138,8 @@ The `{{insert fpath}}` can be useful if you want to include specific HTML scaffo
 ```html
 {{if hasmath}} {{insert head_katex.html}} {{end}}
 ```
+
+the conditional blocks are explained below.
 
 ### Conditional blocks
 
@@ -169,11 +173,13 @@ You can also use some dedicated conditional blocks:
 | `{{isnotpage path/to/page}}` | opposite of previous
 | `{{isdef vname}}` | whether `vname` is defined
 | `{{isnotdef vname}}` | opposite of previous
+| `{{isempty vname}}`| whether `vname` is empty
+| `{{isnotempty vname}}`| opposite of previous
 @@
 
 The `{{ispage ...}}` and `{{isnotpage ...}}` accept `*` as joker symbol; for instance `{{ispage maths/*}}` is allowed.
 
-**Note**: for the `C` users out there, you can also use `ifdef`, `ifndef`.
+**Note**: for people used to `C` syntax, you can also use `ifdef`, `ifndef`.
 
 Consider the following example (very similar to what is used on the current page):
 
@@ -186,7 +192,7 @@ Consider the following example (very similar to what is used on the current page
 </ul>
 ```
 
-This allows a simple, javascript-free, way of having a navigation menu that is styled depending on which page is currently active.
+This is a simple way of having a navigation menu that is styled depending on which page is currently active.
 
 ### For loops
 
@@ -217,28 +223,49 @@ These variables are best defined in your `config.md` file though you can overwri
 | Name | Type(s) | Default value | Comment
 | :--: | :-----: | :-----------: | :-----:
 | `author` | `String, Nothing` | `"THE AUTHOR"` |
-| `autocode` | `Bool` | `true` | whether to detect the presence of code blocks and set the local var `hascode` automatically
-| `automath` | `Bool` | `true` | whether to detect the presence of math blocks and set the local var `hasmath` automatically
+| `prepath` (alias `prefix`, `base_path`)    | `String`  | `""` | Use if your website is a project website to indicate the prefix of your landing page's URL (\*)
 | `date_format` | `String`  | `"U dd, yyyy"` | Must be a format recognised by Julia's `Dates.format`
-| `date_days` | `Vector{String}`  | `String[]` | Names for days of the week (\*)
-| `date_shortdays` | `Vector{String}`  | `String[]` | Short names for the days of the week (\*)
-| `date_months` | `Vector{String}`  | `String[]` | Names for months (\*)
-| `date_shortmonths` | `Vector{String}`  | `String[]` | Short names for months (\*)
+| `date_days` | `Vector{String}`  | `String[]` | Names for days of the week (\*\*)
+| `date_shortdays` | `Vector{String}`  | `String[]` | Short names for the days of the week (\*\*)
+| `date_months` | `Vector{String}`  | `String[]` | Names for months (\*\*)
+| `date_shortmonths` | `Vector{String}`  | `String[]` | Short names for months (\*\*)
 | `div_content` | `String`  | `"franklin-content"` | Name of the div that will englobe the processed content between `head` and `foot`
-| `ignore` | `Vector{String}` | `String[]` | Files that should be ignored by Franklin (\*\*)
-| `prepath`     | `String`  | `""` | Use if your website is a project website (\*\*\*)
-| `website_title`| `String` | `""` | (RSS) (\*\*\*\*)
-| `website_descr`| `String` | `""` | (RSS)
-| `website_url`  | `String` | `""` | (RSS)
-| `generate_rss` | `Bool` | `true` |
+| `ignore` | `Vector{String}` | `String[]` | Files that should be ignored by Franklin (\*\*\*)
 | `folder_structure` | `VersionNumber` | `v"0.2"` | only relevant for users of Franklin < 0.5, see [NEWS.md](http://github.com/tlienart/Franklin.jl/NEWS.md)
 @@
 
 **Notes**:\\
-\smindent{(\*)} \smnote{must be in a format recognized by Julia's `Dates.DateLocale`. Defaults to English. If left unset, the short names are created automatically by using the first three characters of the full names.}\\
-\smindent{(\*\*)} \smnote{to ignore a file add it's relative path like `"path/to/file.md"`, to ignore a directory end the path with a `/` like `"path/to/dir/"`.}\\
-\smindent{(\*\*\*)} \smnote{say you're using GitHub pages and your username is `darth`, by default Franklin will assume the root URL to  be `darth.github.io/`. However, if you want to build a project page so that the base URL is `darth.github.io/vador/` then use `@def prepath = "vador"`}.\\
-\smindent{(\*\*\*\*)} \smnote{these **must** be defined for RSS to be generated for your site (on top of `generate_rss` being `true`). See also the [RSS subsection](#rss) below}.
+\smindent{(\*)} \smnote{say you're using GitHub pages and your username is `darth`, by default Franklin will assume the root URL to  be `darth.github.io/`. However, if you want to build a project page so that the base URL is `darth.github.io/vador/` then use `@def prepath = "vador"`}\\
+\smindent{(\*\*)} \smnote{must be in a format recognized by Julia's `Dates.DateLocale`. Defaults to English. If left unset, the short names are created automatically by using the first three characters of the full names.}\\
+\smindent{(\*\*\*)} \smnote{to ignore a file add it's relative path like `"path/to/file.md"`, to ignore a directory end the path with a `/` like `"path/to/dir/"`.}.
+
+### Global RSS settings
+
+@@lalign
+| Name | Type(s) | Default value | Comment
+| :--: | :-----: | :-----------: | :-----:
+| `generate_rss` | `Bool` | `false` |
+| `website_title` (alias `rss_website_title`) | `String` | `""` | Used as website title in the RSS feed
+| `website_description` (alias `website_descr` or `rss_website_descr`) | `String` | `""` | Used as website description in the RSS feed
+| `website_url` (alias `base_url` or `rss_website_url`) | `String` | `""` | (RSS)
+@@
+
+If you set `generate_rss` to `true` then the three other variables **must** be defined (this is a requirement of the RSS specs, see also [the page on RSS](/syntax/rss/)).
+
+\note{
+  For backward compatibility reasons, if `generate_rss` is `false` but the three `website_*` variables are defined, `generate_rss` will be switched to `true`.
+}
+
+### Other global settings
+
+Those are less relevant global settings that you could modify but typically shouldn't.
+
+@@lalign
+| Name | Type(s) | Default value | Comment
+| :--: | :-----: | :-----------: | :-----:
+| `autocode` | `Bool` | `true` | whether to detect the presence of code blocks and set the local var `hascode` automatically
+| `automath` | `Bool` | `true` | whether to detect the presence of math blocks and set the local var `hasmath` automatically
+@@
 
 ## Local page variables
 

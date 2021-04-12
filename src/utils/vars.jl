@@ -23,12 +23,12 @@ const GLOBAL_VARS = PageVars()
 const GLOBAL_VARS_DEFAULT = [
     # General
     "author"           => Pair("THE AUTHOR", (String, Nothing)),
+    "prepath"          => dpair(""),
     "date_format"      => dpair("U dd, yyyy"),
-    "date_months"      => dpair(String[]),
-    "date_shortmonths" => dpair(String[]),
     "date_days"        => dpair(String[]),
     "date_shortdays"   => dpair(String[]),
-    "prepath"          => dpair(""),
+    "date_months"      => dpair(String[]),
+    "date_shortmonths" => dpair(String[]),
     "tag_page_path"    => dpair("tag"),
     "title_links"      => dpair(true),
     # will be added to IGNORE_FILES
