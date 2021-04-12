@@ -149,29 +149,29 @@
 <p>For instance you might prefer:</p>
 <pre><code class="language-julia">x &#61; randn&#40;10&#41;
 x&#91;1:3&#93;</code></pre><pre><code class="plaintext">3-element Array{Float64,1}:
- -0.23787787955794604
-  0.22765156850238583
- -0.35167583392651336</code></pre>
+ -1.3824808025961401
+  1.6882172212661448
+  0.3209156832797974</code></pre>
 <p>to just</p>
 <pre><code class="language-julia">x &#61; randn&#40;10&#41;</code></pre><pre><code class="plaintext">10-element Array{Float64,1}:
-  0.8539358573022968
-  0.23464958616295578
-  0.22460604998348782
-  2.06897656119881
- -0.26335248238271447
- -0.2450233292683041
-  0.5581464298434394
- -0.8119344091997576
-  0.5499263020677925
- -1.38096436197488</code></pre>
+  0.6922550924542941
+ -0.4458129649804557
+  0.17858712997919762
+  0.7091069437796368
+  0.035057537750587814
+  2.809477863332167
+  0.042785376469635414
+  0.3096285012803212
+  0.039448144162799424
+ -1.6061466810412943</code></pre>
 <p>You can also use <code>@show</code> or <code>println</code> to show specific things beyond the last line</p>
 <pre><code class="language-julia">x &#61; rand&#40;10&#41;
 println&#40;sum&#40;x&#41;&#41;
-y &#61; 5</code></pre><pre><code class="plaintext">5.231970574356514
+y &#61; 5</code></pre><pre><code class="plaintext">5.374915160741607
 5</code></pre>
 <p>if the last line is a <code>@show</code> or <code>print</code> then only that is shown:</p>
 <pre><code class="language-julia">x &#61; randn&#40;10&#41;
-@show x&#91;1&#93;</code></pre><pre><code class="plaintext">x[1] = 0.6222477466115857
+@show x&#91;1&#93;</code></pre><pre><code class="plaintext">x[1] = 0.5351597214576805
 </code></pre>
 <h2 id="example"><a href="#example" class="header-anchor">Example</a></h2>
 <h3 id="script"><a href="#script" class="header-anchor">Script</a></h3>
