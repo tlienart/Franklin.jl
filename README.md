@@ -32,13 +32,15 @@ Go to [Franklin's main website](https://franklinjl.org). For users already famil
 
 ## Key features
 
-* Use standard markdown with the possibility to use LaTeX-style commands,
+* Use standard markdown with the possibility to use LaTeX-style commands and generating functions written in Julia
 * Simple way to introduce div blocks allowing easy styling on a page (e.g. "Theorem" boxes etc.),
 * Can execute and show the output of Julia code blocks,
-* Simple optimisation step to accelerate webpage loading speed:
+* Easy HTML templating to define or adapt a given layout,
+* Custom RSS generation,
+* Simple website optimisation step:
   - compression of HTML and CSS of the generated pages,
   - optional pre-rendering of KaTeX and highlighted code blocks to remove javascript dependency,
-* Easy HTML templating to define or adapt a given layout.
+* Extremely flexible and extensible.
 
 See [the docs](https://franklinjl.org) for more information and examples.
 
