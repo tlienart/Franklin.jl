@@ -30,6 +30,20 @@ Franklin has a channel **#franklin** on the Julia slack, this is the best place 
 
 Go to [Franklin's main website](https://franklinjl.org). For users already familiar with Franklin you might also find [these demos](https://franklinjl.org/demos/) useful.
 
+## Key features
+
+* Use standard markdown with the possibility to use LaTeX-style commands,
+* Simple way to introduce div blocks allowing easy styling on a page (e.g. "Theorem" boxes etc.),
+* Can execute and show the output of Julia code blocks,
+* Simple optimisation step to accelerate webpage loading speed:
+  - compression of HTML and CSS of the generated pages,
+  - optional pre-rendering of KaTeX and highlighted code blocks to remove javascript dependency,
+* Easy HTML templating to define or adapt a given layout.
+
+See [the docs](https://franklinjl.org) for more information and examples.
+
+## Examples
+
 Some examples of websites using Franklin (_if you're using Franklin with a public repo, consider adding the "franklin" tag to the repo to help others find examples, thanks!_)
 
 **Adapted templates** (i.e. starting from one of [the available themes](https://tlienart.github.io/FranklinTemplates.jl/))
@@ -57,17 +71,6 @@ Some examples of websites using Franklin (_if you're using Franklin with a publi
 * [JuliaCon's website](https://juliacon.org) using Franklin and Bootstrap ([repo](https://github.com/JuliaCon/www.juliacon.org))
 * [JuliaGPU's website](https://juliagpu.org) using Franklin and a custom template ([repo](https://github.com/JuliaGPU/juliagpu.org))
 
-## Key features
-
-* Use standard markdown with the possibility to use LaTeX-style commands,
-* Simple way to introduce div blocks allowing easy styling on a page (e.g. "Theorem" boxes etc.),
-* Can execute and show the output of Julia code blocks,
-* Simple optimisation step to accelerate webpage loading speed:
-  - compression of HTML and CSS of the generated pages,
-  - optional pre-rendering of KaTeX and highlighted code blocks to remove javascript dependency,
-* Easy HTML templating to define or adapt a given layout.
-
-See [the docs](https://franklinjl.org) for more information and examples.
 
 ## Getting started
 
@@ -118,10 +121,9 @@ While Franklin broadly supports standard Markdown there are a few things that ma
 * (as of `v0.7`) code blocks should be delimited with backticks `` ` `` you *can* also use indented blocks to delimit code blocks but you now have to **opt in** explicitly on pages that would use them by using `@def indented_code = true`, if you want to use that everywhere, write that in the `config.md`. Note that indented blocks are **ambiguous** with some of the other things that Franklin provides (div blocks, latex commands) and so if you use them, you are responsible for avoiding ambiguities (effectively that means _not using indentation for anything else than code_)
 
 
-
 ## Associated repositories
 
-* [LiveServer.jl](https://github.com/asprionj/LiveServer.jl) a package coded with [Jonas Asprion](https://github.com/asprionj) to render and watch the content of a local folder in the browser.
+* [LiveServer.jl](https://github.com/asprionj/LiveServer.jl) a package authored with [Jonas Asprion](https://github.com/asprionj) to render and watch the content of a local folder in the browser.
 * [FranklinTemplates.jl](https://github.com/tlienart/FranklinTemplates.jl) the repositories where Franklin themes/templates are developed.
 
 ## Licenses
