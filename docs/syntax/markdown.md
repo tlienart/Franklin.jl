@@ -376,7 +376,7 @@ Another solution consists in defining a custom LaTeX command, for example:
 ~~~
 }
 ```
-This creates a command called figenv which takes 3 arguments and inserts raw HTML (~~~...~~~) plugging in each of the argument in the appropriate location i.e.: (1) the image caption (2) the image source path and (3) specific CSS styling for the image. This command could be used as such (here changing the width and adding a 1px wide red border to the image):
+This creates a command called `figenv` which takes 3 arguments and inserts raw HTML (`~~~`...`~~~`) plugging in each of the argument in the appropriate location i.e.: (1) the image caption (2) the image source path and (3) specific CSS styling for the image. This command could be used as such (here changing the width and adding a 1px wide red border to the image):
 
 ```
 \figenv{the caption}{/assets/rndimg.jpg}{width:50%;border: 1px solid red;}
