@@ -352,10 +352,11 @@ Figure style (for instance, if one wishes to modify figure width) can be further
 ![](/assets/rndimg.jpg)
 @@
 ```
+which puts the image in a div block with a class `name im-50`.
 
-While defining custom CSS as such:
+While defining the corresponding custom CSS as such:
 
-```
+```css
 .im-50 {text-align: center;}
 .im-50 img {
     padding: 0;
@@ -363,7 +364,7 @@ While defining custom CSS as such:
 }
 ```
 
-Another solution consist in defining a custo LaTeX command, for example:
+Another solution consists in defining a custom LaTeX command, for example:
 
 ```
 \newcommand{\figenv}[3]{
@@ -375,8 +376,7 @@ Another solution consist in defining a custo LaTeX command, for example:
 ~~~
 }
 ```
-
-Which could be used as such (here changing the width and adding a 1px wide red border to the image):
+This creates a command called figenv which takes 3 arguments and inserts raw HTML (~~~...~~~) plugging in each of the argument in the appropriate location i.e.: (1) the image caption (2) the image source path and (3) specific CSS styling for the image. This command could be used as such (here changing the width and adding a 1px wide red border to the image):
 
 ```
 \figenv{the caption}{/assets/rndimg.jpg}{width:50%;border: 1px solid red;}
