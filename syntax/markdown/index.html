@@ -314,6 +314,28 @@ savefig&#40;joinpath&#40;@OUTPUT, &quot;test.png&quot;&#41;&#41;</code></pre>
 <div class="small-img"><img src="/assets/syntax/markdown/output/test.png" alt=""></div>
 <p>In fact the syntax <code>\fig&#123;./test&#125;</code> is also allowed, Franklin will then first look in the <code>&#91;script_dir&#93;</code> for a <code>test.*</code> figure and, if it doesn&#39;t find one, will try to  look in <code>&#91;script_dir&#93;/output/</code> for a <code>test.*</code> figure:</p>
 <div class="small-img"><img src="/assets/syntax/markdown/output/test.png" alt=""></div>
+<p>Figure style &#40;for instance, if one wishes to modify figure width&#41; can be further customized in two different ways. A first way is to define custom CSS for the figure. In the markdown, this comes down to writing:</p>
+<pre><code class="language-julia">@@im-50
+&#33;&#91;&#93;&#40;/assets/rndimg.jpg&#41;
+@@</code></pre>
+<p>which puts the image in a div block with a class <code>name im-50</code>.</p>
+<p>While defining the corresponding custom CSS as such:</p>
+<pre><code class="language-css">.im-50 &#123;text-align: center;&#125;
+.im-50 img &#123;
+    padding: 0;
+    width: 50&#37;;
+&#125;</code></pre>
+<p>Another solution consists in defining a custom LaTeX command, for example:</p>
+<pre><code class="language-julia">\newcommand&#123;\figenv&#125;&#91;3&#93;&#123;
+~~~
+&lt;figure style&#61;&quot;text-align:center;&quot;&gt;
+&lt;img src&#61;&quot;&#33;#2&quot; style&#61;&quot;padding:0;#3&quot; alt&#61;&quot;#1&quot;/&gt;
+&lt;figcaption&gt;#1&lt;/figcaption&gt;
+&lt;/figure&gt;
+~~~
+&#125;</code></pre>
+<p>This creates a command called <code>figenv</code> which takes 3 arguments and inserts raw HTML &#40;<code>~~~</code>...<code>~~~</code>&#41; plugging in each of the argument in the appropriate location i.e.: &#40;1&#41; the image caption &#40;2&#41; the image source path and &#40;3&#41; specific CSS styling for the image. This command could be used as such &#40;here changing the width and adding a 1px wide red border to the image&#41;:</p>
+<pre><code class="language-julia">\figenv&#123;the caption&#125;&#123;/assets/rndimg.jpg&#125;&#123;width:50&#37;;border: 1px solid red;&#125;</code></pre>
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">Remember that these docs are written in Franklin so you can inspect the source directory if you would like to see the source markdown.</div></div>
 <h3 id="inserting_markdown"><a href="#inserting_markdown" class="header-anchor">Inserting markdown</a></h3>
@@ -363,7 +385,7 @@ write&#40;&quot;assets/pages/tableinput/testcsv2.csv&quot;, testcsv&#41;
 <p>can also be used. It is also possible to use HTML to create a table with the HTML fenced between <code>~~~</code>. </p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: April 12, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: April 20, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
