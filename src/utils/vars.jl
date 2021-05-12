@@ -196,7 +196,7 @@ Return `default` (which is `nothing` if not specified) if the variable is not fo
 """
 function locvar(name::Union{Symbol,String}; default=nothing)
     name = String(name)
-    return ifelse(haskey(LOCAL_VARS, name), LOCAL_VARS[name].first, default)
+    return haskey(LOCAL_VARS, name) ? LOCAL_VARS[name].first : default
 end
 
 """
@@ -207,7 +207,7 @@ Return `default` (which is `nothing` if not specified) if the variable is not fo
 """
 function globvar(name::Union{Symbol,String}; default=nothing)
     name = String(name)
-    return get(GLOBAL_VARS, name, default)
+    return haskey(GLOBAL_VARS, name) ? GLOBAL_VARS[name].first : default
 end
 
 
