@@ -230,7 +230,7 @@ processed yet so force a pass over that page.
 
 Return `default` (which is `nothing` if not specified) if the variable is not found.
 """
-function pagevar(rpath::AS, name::Union{Symbol,String}, default=nothing)
+function pagevar(rpath::AS, name::Union{Symbol,String}; default=nothing)
     # only split extension if it's .md or .html (otherwise can cause trouble
     # if there's a dot in the page name... not recommended but happens.)
     rpc = splitext(rpath)
@@ -269,8 +269,7 @@ function pagevar(rpath::AS, name::Union{Symbol,String}, default=nothing)
         end
     end
     name = String(name)
-    haskey(ALL_PAGE_VARS[rpath], name) || return default
-    return ALL_PAGE_VARS[rpath][name].first
+    return ifelse(haskey(ALL_PAGE_VARS[rpath], name), ALL_PAGE_VARS[rpath][name].first, default)
 end
 
 """
