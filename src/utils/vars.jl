@@ -269,7 +269,7 @@ function pagevar(rpath::AS, name::Union{Symbol,String}; default=nothing)
         end
     end
     name = String(name)
-    return ifelse(haskey(ALL_PAGE_VARS[rpath], name), ALL_PAGE_VARS[rpath][name].first, default)
+    return haskey(ALL_PAGE_VARS[rpath], name) ? ALL_PAGE_VARS[rpath][name].first : default
 end
 
 """
