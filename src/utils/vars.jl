@@ -205,7 +205,7 @@ end
 Convenience function to get the value associated with a global var.
 Return `default` (which is `nothing` if not specified) if the variable is not found.
 """
-function globvar(name::Union{Symbol,String})
+function globvar(name::Union{Symbol,String}; default=nothing)
     name = String(name)
     return get(GLOBAL_VARS, name, default)
 end
