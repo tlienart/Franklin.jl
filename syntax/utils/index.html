@@ -165,7 +165,7 @@ end</code></pre>
     # with the individual strings then form some HTML
     return generated_html
 end</code></pre>
-<p>Note that all functions defined in <code>utils.jl</code> can call <code>locvar&#40;name&#41;</code> and <code>globvar&#40;name&#41;</code> to retrieve the value associated with a local or global page variable by its name; for instance <code>locvar&#40;&quot;author&quot;&#41;</code>.</p>
+<p>Note that all functions defined in <code>utils.jl</code> can call <code>locvar&#40;name&#41;</code> and <code>globvar&#40;name&#41;</code> to retrieve the value associated with a local or global page variable by its name; for instance <code>locvar&#40;&quot;author&quot;&#41;</code>. You may optionally pass a <code>default</code> argument that will be returned instead of <code>nothing</code> if the variable does not exist, eg <code>locvar&#40;name; default&#61;&quot;Not named&quot;&#41;</code>.</p>
 <h2 id="latex_functions_lx_"><a href="#latex_functions_lx_" class="header-anchor">&quot;LaTeX&quot; functions &#40;<code>lx_*</code>&#41;</a></h2>
 <p>A <code>lx_*</code> function is a way to bypass Franklin&#39;s parsing and generate Markdown which will be <em>reprocessed</em> by Franklin &#40;though you can always avoid that by generating HTML directly after wrapping it in <code>~~~</code>&#41;.</p>
 <p>This is a more advanced command and you should probably double check before making use of it as, usually, there will be a simpler way of achieving what you want. Also if you intend to use it, you will want to check out <a href="http://github.com/tlienart/FranklinUtils.jl">FranklinUtils</a> which provides helper functions for it.</p>
@@ -193,7 +193,7 @@ end</code></pre> </p>
 <p>which you would have called <code>\h2&#123;foo&#125;&#123;Bar&#125;</code>.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: April 20, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: May 17, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
