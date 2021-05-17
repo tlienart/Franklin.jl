@@ -189,25 +189,25 @@ function def_LOCAL_VARS!()::Nothing
 end
 
 """
-    locvar(name)
+    locvar(name; default=nothing)
 
 Convenience function to get the value associated with a local var.
-Return `nothing` if the variable is not found.
+Return `default` (which is `nothing` if not specified) if the variable is not found.
 """
-function locvar(name::Union{Symbol,String})
+function locvar(name::Union{Symbol,String}; default=nothing)
     name = String(name)
-    return haskey(LOCAL_VARS, name) ? LOCAL_VARS[name].first : nothing
+    return haskey(LOCAL_VARS, name) ? LOCAL_VARS[name].first : default
 end
 
 """
-    globvar(name)
+    globvar(name; default=nothing)
 
 Convenience function to get the value associated with a global var.
-Return `nothing` if the variable is not found.
+Return `default` (which is `nothing` if not specified) if the variable is not found.
 """
-function globvar(name::Union{Symbol,String})
+function globvar(name::Union{Symbol,String}; default=nothing)
     name = String(name)
-    return haskey(GLOBAL_VARS, name) ? GLOBAL_VARS[name].first : nothing
+    return haskey(GLOBAL_VARS, name) ? GLOBAL_VARS[name].first : default
 end
 
 
@@ -219,7 +219,7 @@ The keys don't have the file extension so `"blog/pg1" => PageVars`.
 const ALL_PAGE_VARS = LittleDict{String,PageVars}()
 
 """
-    pagevar(rpath, name)
+    pagevar(rpath, name; default=nothing)
 
 Convenience function to get the value associated with a var available to a page
 corresponding to `rpath`. So for instance if `blog/index.md` has `@def var = 0`
@@ -227,8 +227,10 @@ then this can be accessed with `pagevar("blog/index", "var")` or
 `pagevar("blog/index.md", "var")`.
 If `rpath` is not yet a key of `ALL_PAGE_VARS` then maybe the page hasn't been
 processed yet so force a pass over that page.
+
+Return `default` (which is `nothing` if not specified) if the variable is not found.
 """
-function pagevar(rpath::AS, name::Union{Symbol,String})
+function pagevar(rpath::AS, name::Union{Symbol,String}; default=nothing)
     # only split extension if it's .md or .html (otherwise can cause trouble
     # if there's a dot in the page name... not recommended but happens.)
     rpc = splitext(rpath)
@@ -267,8 +269,7 @@ function pagevar(rpath::AS, name::Union{Symbol,String})
         end
     end
     name = String(name)
-    haskey(ALL_PAGE_VARS[rpath], name) || return nothing
-    return ALL_PAGE_VARS[rpath][name].first
+    return haskey(ALL_PAGE_VARS[rpath], name) ? ALL_PAGE_VARS[rpath][name].first : default
 end
 
 """

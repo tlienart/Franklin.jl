@@ -84,7 +84,7 @@ function hfun_bar(params)
 end
 ```
 
-Note that all functions defined in `utils.jl` can call `locvar(name)` and `globvar(name)` to retrieve the value associated with a local or global page variable by its name; for instance `locvar("author")`.
+Note that all functions defined in `utils.jl` can call `locvar(name)` and `globvar(name)` to retrieve the value associated with a local or global page variable by its name; for instance `locvar("author")`. You may optionally pass a `default` argument that will be returned instead of `nothing` if the variable does not exist, eg `locvar(name; default="Not named")`.
 
 ## "LaTeX" functions (`lx_*`)
 
