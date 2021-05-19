@@ -62,7 +62,7 @@ const FN_DEF_PAT = r"^\[\^[\p{L}0-9_]+\](:)?$"
 CODE blocks
 ===================================================== =#
 
-const CODE_3!_PAT = r"```\!\s*\n?((?:.|\n)*)```"
+const CODE_3!_PAT = r"```(?:\!|\>)\s*\n?((?:.|\n)*)```"
 
 const CODE_3_PAT = Regex(
         "```([a-zA-Z][a-zA-Z-]*)" *    # language
