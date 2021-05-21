@@ -197,9 +197,9 @@ version = "2.8.1"
 
 [[LiveServer]]
 deps = ["Crayons", "FileWatching", "HTTP", "Pkg", "Sockets", "Test"]
-git-tree-sha1 = "232282032d6daf8548510385a00c33533576c297"
+git-tree-sha1 = "dc79d9c48d20f3acb5fafed7da5fedb98a506df4"
 uuid = "16fef848-5104-11e9-1b77-fb7a48bbb589"
-version = "0.6.4"
+version = "0.6.5"
 
 [[Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
