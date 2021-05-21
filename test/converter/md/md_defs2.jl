@@ -96,3 +96,14 @@ end
         """ |> fd2html
     @test isapproxstr(s, "<p> 5 2013-09-04</p>")
 end
+
+# windows return
+@testset "mddefwindows" begin
+    s = "+++\r\na = \"hello\"\r\n+++\r\n# hi\r\n{{a}}" |> fd2html
+    @test isapproxstr(s,
+        """
+        <h1 id=\"hi\"><a href=\"#hi\" class=\"header-anchor\">hi</a></h1>
+        hello
+        """
+    )
+end
