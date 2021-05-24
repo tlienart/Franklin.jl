@@ -47,7 +47,7 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool,
         m = match(ASSIGN_PAT, inner)
         if isnothing(m)
             print_warning("""
-                Delimiters for an '@def ...' environement were found but at
+                Delimiters for an '@def ...' environment were found but at
                 least one assignment does not have the proper syntax. That
                 assignment will be ignored.
                 \nRelevant pointers:
