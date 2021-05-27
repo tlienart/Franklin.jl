@@ -28,7 +28,7 @@ Franklin has a channel **#franklin** on the Julia slack, this is the best place 
 
 ## Docs
 
-Go to [Franklin's main website](https://franklinjl.org). For users already familiar with Franklin you might also find [these demos](https://franklinjl.org/demos/) useful.
+Go to [Franklin's main website](https://franklinjl.org). For users already familiar with Franklin you might also find [these demos](https://franklinjl.org/demos/) useful. Ifihan Olusheye also wrote [this blog](https://dev.to/ifihan/building-a-blog-with-franklin-jl-3h77) on building a blog with Franklin.
 
 ## Key features
 
