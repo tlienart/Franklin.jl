@@ -63,6 +63,7 @@ Some examples of websites using Franklin (_if you're using Franklin with a publi
 * [Rik Huijzer's blog](https://huijzer.xyz) which is mostly about programming and statistics
 * [TuringModels](https://statisticalrethinkingjulia.github.io/TuringModels.jl/) implements the models from [Statistical Rethinking](https://xcelab.net/rm/statistical-rethinking/) using [Turing.jl](https://turing.ml/stable/)
 * [Ricardo Rosa's website](https://rmsrosa.github.io/en/) ([repo](https://github.com/rmsrosa/rmsrosa.github.io)).
+* [hustf's blog](https://hustf.github.io/)
 
 **Custom templates** (i.e. migrating an existing design)
 * The [Julia website](https://julialang.org), including the blog, are deployed using Franklin ([repo](https://github.com/JuliaLang/www.julialang.org))
