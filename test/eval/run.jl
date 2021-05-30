@@ -106,3 +106,14 @@ end
         <p>B</p>
         """)
 end
+
+@testset "trim_stacktrace" begin
+    @test rstrip(F.trim_stacktrace("""
+        Stacktrace:
+            [1] f()
+            [2] top-level scope
+        """)) == """
+        Stacktrace:
+            [1] f()"""
+    @test F.trim_stacktrace("unrecognized pattern") == "unrecognized pattern"
+end

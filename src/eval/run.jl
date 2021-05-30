@@ -28,11 +28,17 @@ $SIGNATURES
 
 Returns only the stack traces which are related to the user's code.
 This means removing stack traces pointing to Franklin's code.
+Return the string as-is if the format is unrecognized.
 """
 function trim_stacktrace(s::String)
-    first_match_start = first(findfirst(STACKTRACE_TRIM_PAT, s))
-    # Keep only everything before the regex match.
-    return s[1:first_match_start-3]
+    try
+        first_match_start = first(findfirst(STACKTRACE_TRIM_PAT, s))
+        # Keep only everything before the regex match.
+        return s[1:first_match_start-3]
+    catch err
+        @debug "Unrecognized stack trace:\n$s" exception = (err, catch_backtrace())
+        return s
+    end
 end
 
 """
