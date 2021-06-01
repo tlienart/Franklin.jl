@@ -94,9 +94,9 @@ version = "1.2.1"
 
 [[Latexify]]
 deps = ["Formatting", "InteractiveUtils", "LaTeXStrings", "MacroTools", "Markdown", "Printf", "Requires"]
-git-tree-sha1 = "f77a16cb3804f4a74f57e5272a6a4a9a628577cb"
+git-tree-sha1 = "a4b12a1bd2ebade87891ab7e36fdbce582301a92"
 uuid = "23fbe1c1-3f47-55db-b15f-69d7ec21a316"
-version = "0.15.5"
+version = "0.15.6"
 
 [[LibGit2]]
 deps = ["Printf"]

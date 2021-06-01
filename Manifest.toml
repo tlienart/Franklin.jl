@@ -112,9 +112,9 @@ version = "0.5.0"
 
 [[HTTP]]
 deps = ["Base64", "Dates", "IniFile", "MbedTLS", "NetworkOptions", "Sockets", "URIs"]
-git-tree-sha1 = "1fd26bc48f96adcdd8823f7fc300053faf3d7ba1"
+git-tree-sha1 = "86ed84701fbfd1142c9786f8e53c595ff5a4def9"
 uuid = "cd3eb016-35fb-5094-929b-558a96fad6f3"
-version = "0.9.9"
+version = "0.9.10"
 
 [[Hiccup]]
 deps = ["MacroTools", "Test"]
@@ -197,9 +197,9 @@ version = "2.8.1"
 
 [[LiveServer]]
 deps = ["Crayons", "FileWatching", "HTTP", "Pkg", "Sockets", "Test"]
-git-tree-sha1 = "dc79d9c48d20f3acb5fafed7da5fedb98a506df4"
+git-tree-sha1 = "4db4abb8b7d8dadff178b8311e540c86dffcf97d"
 uuid = "16fef848-5104-11e9-1b77-fb7a48bbb589"
-version = "0.6.5"
+version = "0.6.6"
 
 [[Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
@@ -237,9 +237,9 @@ version = "1.0.10"
 
 [[Mux]]
 deps = ["AssetRegistry", "Base64", "HTTP", "Hiccup", "Pkg", "Sockets", "WebSockets"]
-git-tree-sha1 = "2578b3cd03e4f568f213c7d51b2118f9e81c2617"
+git-tree-sha1 = "82dfb2cead9895e10ee1b0ca37a01088456c4364"
 uuid = "a975b10e-0019-58db-a62f-e48ff68538c9"
-version = "0.7.5"
+version = "0.7.6"
 
 [[NetworkOptions]]
 git-tree-sha1 = "ed3157f48a05543cce9b241e1f2815f7e843d96e"
