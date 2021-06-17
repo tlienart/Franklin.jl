@@ -1,1 +1,11 @@
+{{if mathjax}}
+  <script>
+  MathJax = {
+    tex: {inlineMath: [['\\(', '\\)']]},
+    svg: {fontCache: 'global'}
+  };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+{{else}}
 <link rel="stylesheet" href="/libs/katex/katex.min.css">
+{{end}}

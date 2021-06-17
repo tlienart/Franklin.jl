@@ -3,6 +3,7 @@
 @def generate_rss = false
 @def mintoclevel = 2
 @def maxtoclevel = 3
+@def mathjax=false
 
 <!-- supports question 001 -->
 @def members_from_csv = eachrow(readdlm("_assets/members.csv", ',', skipstart=1))
