@@ -9,12 +9,21 @@ You'll need to add the following lines in your layout (and discard KaTeX ones if
 ```html
 <script>
 MathJax = {
-  tex: {inlineMath: [['\\(', '\\)']]},
+  tex: {
+    inlineMath: [['\\(', '\\)']],
+    tags: 'all'
+  },
   svg: {fontCache: 'global'}
 };
 </script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 ```
+
+### Todo
+
+* fix references
+* environments with `*` should be ignored by Franklin and left to MathJax
+* ...
 
 ## Demos
 
@@ -74,3 +83,23 @@ ability to mix math and text in a paragraph is also important.  This
 expression $\sqrt{3x-1}+(1+x)^2$ is an example of an inline equation.  As
 you see, MathJax equations can be used this way as well, without unduly
 disturbing the spacing between lines.
+
+## Testing links
+
+Here's one using the equation environment:
+$$\begin{equation}
+x+1\over\sqrt{1-x^2}
+\end{equation}$$
+and one with equation* environment:
+
+$$\begin{equation*}
+x+1\over\sqrt{1-x^2}
+\end{equation*}$$
+
+---
+
+This is a forward reference \eqref{ref2} for the
+following equation:
+$$x+1\over\sqrt{1-x^2}\label{ref2}$$
+More math:
+$$x+1\over\sqrt{1-x^2}$$

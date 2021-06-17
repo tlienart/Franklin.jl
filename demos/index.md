@@ -17,6 +17,12 @@ The ordering is reverse chronological but just use the table of contents to guid
 
 \toc
 
+## (014) Using MathJax
+
+If you prefer MathJax over KaTeX for maths rendering, you can use that. For now this is not fully supported and so taking this path may lead to issues, please report them and help fixing those is welcome.
+
+Head to [this page](/mathjax/) for a demo and setup instructions.
+
 ## (013) Inserting Markdown in Markdown
 
 Let's say you have a file `content.md` and you would like to include it in another page as if it had been written there in the first place.
