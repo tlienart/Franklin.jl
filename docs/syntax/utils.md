@@ -1,6 +1,6 @@
 # Utils
 
-\blurb{The utils file allows to create functions to customise markdown parsing and/or d HTML generation.}
+\blurb{The utils file allows to create functions to customise markdown parsing and/or HTML generation.}
 
 \lineskip
 
