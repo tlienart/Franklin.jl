@@ -238,9 +238,9 @@ version = "1.0.3"
 
 [[TikzCDs]]
 deps = ["LaTeXStrings", "TikzPictures"]
-git-tree-sha1 = "79bfd7095e101754e7fc74a57269c85f3fcb111d"
+git-tree-sha1 = "8ced296a3429791b088ea386dffc962bde1a350c"
 uuid = "1e332c56-9431-4126-8a34-92cbdf251ae4"
-version = "0.1.0"
+version = "0.2.0"
 
 [[TikzPictures]]
 deps = ["LaTeXStrings", "Poppler_jll", "Requires"]
