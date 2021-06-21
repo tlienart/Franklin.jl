@@ -73,8 +73,6 @@ end
     s = @capture_out F.run_code(mod, c, junk)
     @test occursin("Warning: in <input string>", s)
     @test occursin("error of type 'DomainError'", s)
-    @test occursin("Checking the output files", s)
-    @test occursin("throw_complex_domainerror", s)
     @test !occursin("(::Franklin.var", s)
 end
 

@@ -87,7 +87,7 @@ function run_code(mod::Module, code::AS, out_path::AS;
                     println(String(take!(io)))
                     err = typeof(e)
 
-                    exc, bt = last(Base.catch_stack())
+                    exc, bt = last(Base.current_exceptions())
                     stacktrace = sprint(showerror, exc, bt)
 
                     break
