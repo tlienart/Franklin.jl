@@ -87,7 +87,11 @@ function run_code(mod::Module, code::AS, out_path::AS;
                     println(String(take!(io)))
                     err = typeof(e)
 
-                    exc, bt = last(Base.current_exceptions())
+                    if VERSION >= v"1.7.0-"
+                        exc, bt = last(Base.current_exceptions())
+                    else
+                        exc, bt = last(Base.catch_stack())
+                    end
                     stacktrace = sprint(showerror, exc, bt)
 
                     break
