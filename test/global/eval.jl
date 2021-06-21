@@ -187,3 +187,24 @@ end
             <pre><code class=\"plaintext\">9</code></pre>
             """)
 end
+
+# https://github.com/tlienart/Franklin.jl/issues/832
+@testset "#832" begin
+    s = """
+       ```!
+       x=5 # a
+       ```
+       """ |> F.fd2html
+    @test isapproxstr(s, """
+        <pre><code class="language-julia">x&#61;5 # a</code></pre>
+        <pre><code class="plaintext">5</code></pre>
+        """)
+    s = """
+       ```!
+       x=5; # a
+       ```
+       """ |> F.fd2html
+    @test isapproxstr(s, """
+        <pre><code class=\"language-julia\">x&#61;5; # a</code></pre>
+        """)
+end

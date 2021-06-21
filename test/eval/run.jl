@@ -24,19 +24,19 @@ end
 
 @testset "run_code" begin
     mn  = F.modulename("foo/path.md")
-    mod = F.newmodule(mn)
+    mod1 = F.newmodule(mn)
     junk = tempname()
 
     # empty code
     c = ""
-    @test isnothing(F.run_code(mod, c, junk))
+    @test isnothing(F.run_code(mod1, c, junk))
 
     # code with no print
     c = """
         const a = 5
         a^2
         """
-    r = F.run_code(mod, c, junk)
+    r = F.run_code(mod1, c, junk)
     @test r == 25
     @test isempty(read(junk, String))
 
@@ -48,7 +48,7 @@ end
         b = randn()
         b > 0
         """
-    r = F.run_code(mod, c, junk)
+    r = F.run_code(mod1, c, junk)
 
     @test r == false
     @test read(junk, String) == "hello\n"
@@ -59,7 +59,7 @@ end
         @show x
         y = 7;
         """
-    r = F.run_code(mod, c, junk)
+    r = F.run_code(mod1, c, junk)
     @test isnothing(r)
     @test read(junk, String) == "x = 5\n"
 
@@ -70,7 +70,7 @@ end
         b = 7
         """
 
-    s = @capture_out F.run_code(mod, c, junk)
+    s = @capture_out F.run_code(mod1, c, junk)
     @test occursin("Warning: in <input string>", s)
     @test occursin("error of type 'DomainError'", s)
     @test !occursin("(::Franklin.var", s)
