@@ -94,15 +94,15 @@ version = "0.8.4"
 
 [[Franklin]]
 deps = ["Dates", "DelimitedFiles", "DocStringExtensions", "ExprTools", "FranklinTemplates", "HTTP", "Literate", "LiveServer", "Logging", "Markdown", "NodeJS", "OrderedCollections", "Pkg", "REPL", "Random"]
-git-tree-sha1 = "e2fa98c56f928d5e505250ae94fd9425f092476d"
+git-tree-sha1 = "b799bb552f4ee4e5967f3d9917b91ea4b5026bae"
 uuid = "713c75ef-9fc9-4b05-94a9-213340da978e"
-version = "0.10.38"
+version = "0.10.39"
 
 [[FranklinTemplates]]
 deps = ["LiveServer"]
-git-tree-sha1 = "79c9aa63b69dd84279d9c5fdf6b55c4afe46deed"
+git-tree-sha1 = "04071bacb9faccd869b01af0803b2278fee95cf6"
 uuid = "3a985190-f512-4703-8d38-2a7944ed5916"
-version = "0.8.17"
+version = "0.8.18"
 
 [[FunctionalCollections]]
 deps = ["Test"]
@@ -279,10 +279,10 @@ deps = ["Dates", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "R
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 
 [[PlotlyBase]]
-deps = ["Base64", "Dates", "DelimitedFiles", "DocStringExtensions", "JSON", "Kaleido_jll", "LaTeXStrings", "Logging", "Pkg", "Requires", "Statistics", "UUIDs"]
-git-tree-sha1 = "f20d4669281187c9e9d75820f8ec95e88131fc1e"
+deps = ["Base64", "Dates", "DelimitedFiles", "DocStringExtensions", "JSON", "Kaleido_jll", "LaTeXStrings", "Logging", "Pkg", "REPL", "Requires", "Statistics", "UUIDs"]
+git-tree-sha1 = "bca220daa9705b891a42c6ce0c20534a3196e73e"
 uuid = "a03496cd-edff-5a9b-9e67-9cda94a718b5"
-version = "0.5.3"
+version = "0.5.4"
 
 [[PlotlyJS]]
 deps = ["Blink", "DelimitedFiles", "JSExpr", "JSON", "Markdown", "Pkg", "PlotlyBase", "REPL", "Reexport", "Requires", "WebIO"]
