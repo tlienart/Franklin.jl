@@ -252,6 +252,16 @@ function fd_fullpass(watched_files::NamedTuple)::Int
         s += a
     end
 
+    # Finalize
+    # > generate RSS if appropriate
+    globvar("generate_rss")::Bool && rss_generator()
+    # > generate tags if appropriate
+    generate_tag_pages()
+    # > generate sitemap if appropriate
+    globvar("generate_sitemap")::Bool && sitemap_generator()
+    # > generate robots if appropriate
+    globvar("generate_robots")::Bool && robots_generator()
+
     # re-evaluate delayed pages
     if !isempty(DELAYED)
         cp_DELAYED = copy(DELAYED)
@@ -263,21 +273,12 @@ function fd_fullpass(watched_files::NamedTuple)::Int
             if a < 0 && FD_ENV[:PRERENDER] && FD_ENV[:NO_FAIL_PRERENDER]
                 FD_ENV[:PRERENDER] = false
                 process_file(case, fpair, head, pg_foot, foot)
-                FD_ENV[:PRERENDER]  = true
+                FD_ENV[:PRERENDER] = true
             end
             s += a
         end
     end
 
-    # Finalize
-    # > generate RSS if appropriate
-    globvar("generate_rss")::Bool && rss_generator()
-    # > generate tags if appropriate
-    generate_tag_pages()
-    # > generate sitemap if appropriate
-    globvar("generate_sitemap")::Bool && sitemap_generator()
-    # > generate robots if appropriate
-    globvar("generate_robots")::Bool && robots_generator()
     # done
     FD_ENV[:FULL_PASS] = false
     # return -1 if any page failed to build, 0 otherwise

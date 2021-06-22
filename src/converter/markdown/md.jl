@@ -118,7 +118,7 @@ function convert_md(mds::String,
     # ------------------------------------------------------------------------
     #> 4. Page variable definition (mddefs), also if in config, update lxdefs
     if has_mddefs
-        process_mddefs(blocks, isconfig, pagevar)
+        process_mddefs(blocks, isconfig, pagevar, isinternal)
     end
 
     #> 4.b if config, update global lxdefs as well
