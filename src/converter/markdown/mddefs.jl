@@ -9,9 +9,10 @@ Depending on `isconfig`, will update `GLOBAL_VARS` or `LOCAL_VARS`.
 * `blocks`:    vector of active docs
 * `isconfig`:  whether the file being processed is the config file
                 (--> global page variables)
+* `isinternal`: whether the call is internal (e.g. within hfun). In that case skip tags.
 """
 function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool,
-                        pagevar::Bool=false)::Nothing
+                        pagevar::Bool=false, isinternal::Bool=false)::Nothing
 
     (:process_mddefs, "config: $isconfig, pagevar: $pagevar") |> logger
 
@@ -84,6 +85,8 @@ function process_mddefs(blocks::Vector{OCBlock}, isconfig::Bool,
     end
 
     (:process_mddefs, "assignments done") |> logger
+
+    isinternal && return nothing
 
     # TAGS
     tags = Set(refstring.(locvar(:tags)::Vector{String}))
