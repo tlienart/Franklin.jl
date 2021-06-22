@@ -57,7 +57,7 @@ Some examples of websites using Franklin (_if you're using Franklin with a publi
 * [@terasakisatoshi's website](https://terasakisatoshi.github.io/MathSeminar.jl/) using the vela template, [source](https://github.com/terasakisatoshi/MathSeminar.jl)
 * [@Wikunia's blog](https://opensourc.es) using the vela template
 * [SciML.ai](https://github.com/SciML/sciml.ai), Julia's SciML Scientific Machine Learning organization website
-* [My website](https://tlienart.github.io) (_by now a bit outdated... there's only so much one can do in a day_)
+* [My website](https://tlienart.github.io), using bootstrap 5
 * [JuliaActuary](https://JuliaActuary.org), Julia's community promoting open-source actuarial science
 * [MIT Introduction to Computational Thinking](https://computationalthinking.mit.edu/Fall20) course website
 * [Rik Huijzer's blog](https://huijzer.xyz) which is mostly about programming and statistics
