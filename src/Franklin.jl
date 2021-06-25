@@ -84,6 +84,7 @@ const FD_ENV = LittleDict(
     :SILENT_MODE   => false,
     :QUIET_TEST    => false,
     :SHOW_WARNINGS => true,     # franklin-specific warnings
+    :SHOW_TIMINGS  => false,    # first pass, how much time spent on each pg
     :UTILS_COUNTER => 0,        # counter for utils module
     :UTILS_HASH    => nothing   # hash of the utils
     )

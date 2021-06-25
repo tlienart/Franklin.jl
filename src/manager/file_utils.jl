@@ -101,7 +101,12 @@ function process_file(case::Symbol, fpair::Pair{String,String}, args...)::Int
     end
 
     try
-        process_file_err(case, fpair, args...)
+        δt = @elapsed process_file_err(case, fpair, args...)
+        if FD_ENV[:FULL_PASS] && FD_ENV[:SHOW_TIMINGS] && endswith(fpair.second, ".md")
+            println(
+                """[δt = $(round(δt, digits=2))s] $(fpair.second)"""
+            )
+        end
     catch err
         rp = fpair.first
         rp = rp[end-min(20, length(rp))+1 : end]

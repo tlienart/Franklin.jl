@@ -61,6 +61,7 @@ function serve(; clear::Bool             = false,
                  log::Bool               = false,
                  host::String            = "127.0.0.1",
                  show_warnings::Bool     = true,
+                 show_timings::Bool      = false,
                  launch::Bool            = !single,
                  )::Union{Nothing,Int}
 
@@ -81,12 +82,13 @@ function serve(; clear::Bool             = false,
     isnothing(prepath) || set_var!(GLOBAL_VARS, "prepath", prepath.first)
 
     # Set context out of kwargs vars
-    FD_ENV[:CLEAR]      = clear
-    FD_ENV[:VERB]       = verb
-    FD_ENV[:FINAL_PASS] = is_final_pass
-    FD_ENV[:PRERENDER]  = prerender
+    FD_ENV[:CLEAR]             = clear
+    FD_ENV[:VERB]              = verb
+    FD_ENV[:FINAL_PASS]        = is_final_pass
+    FD_ENV[:PRERENDER]         = prerender
     FD_ENV[:NO_FAIL_PRERENDER] = no_fail_prerender
-    FD_ENV[:ON_WRITE]   = on_write
+    FD_ENV[:ON_WRITE]          = on_write
+    FD_ENV[:SHOW_TIMINGS]      = show_timings
 
     # check if there's a config file, if there is, check the variable
     # definitions looking at the ones that would affect overall structure etc.
