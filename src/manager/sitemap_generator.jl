@@ -15,6 +15,7 @@ struct SMOpts
     priority::Float64    #
     function SMOpts(l, c, p)
         c = lowercase(c)
+        p = isa(p, String) ? parse(Float64, p) : float(p)
         allowedf = ("always", "hourly", "daily", "weekly", "monthly",
         "yearly", "never")
         assertf = """
