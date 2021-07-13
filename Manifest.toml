@@ -79,9 +79,9 @@ uuid = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 version = "0.8.5"
 
 [[ExprTools]]
-git-tree-sha1 = "555eab1f7c501166ba87eeb5d561e9f5e7d167d3"
+git-tree-sha1 = "b7e3d17636b348f005f11040025ae8c6f645fe92"
 uuid = "e2ba6199-217a-4e67-a87a-7c52f15ade04"
-version = "0.1.4"
+version = "0.1.6"
 
 [[FileWatching]]
 uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
@@ -94,9 +94,9 @@ version = "0.8.4"
 
 [[Franklin]]
 deps = ["Dates", "DelimitedFiles", "DocStringExtensions", "ExprTools", "FranklinTemplates", "HTTP", "Literate", "LiveServer", "Logging", "Markdown", "NodeJS", "OrderedCollections", "Pkg", "REPL", "Random"]
-git-tree-sha1 = "31ae44c9ffa9aaf6ad5889388db5c5dd75d7bac2"
+git-tree-sha1 = "6980906f1c87a38006846dd8a2ba45c63c977d1a"
 uuid = "713c75ef-9fc9-4b05-94a9-213340da978e"
-version = "0.10.40"
+version = "0.10.41"
 
 [[FranklinTemplates]]
 deps = ["LiveServer"]
@@ -191,9 +191,9 @@ uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[Literate]]
 deps = ["Base64", "IOCapture", "JSON", "REPL"]
-git-tree-sha1 = "501a1a74a0c825037860d36d87d703e987d39dbc"
+git-tree-sha1 = "2a5b07cb13c9988cd7ee737df9f45eabbfab151c"
 uuid = "98b081ad-f1c9-55d3-8b20-4c87d4299306"
-version = "2.8.1"
+version = "2.9.0"
 
 [[LiveServer]]
 deps = ["Crayons", "FileWatching", "HTTP", "Pkg", "Sockets", "Test"]
@@ -286,15 +286,15 @@ uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 
 [[PlotlyBase]]
 deps = ["Base64", "Dates", "DelimitedFiles", "DocStringExtensions", "JSON", "Kaleido_jll", "LaTeXStrings", "Logging", "Parameters", "Pkg", "REPL", "Requires", "Statistics", "UUIDs"]
-git-tree-sha1 = "64ae210cbf2b0e8ee1a65edc1d932b5771d60c8b"
+git-tree-sha1 = "b29c63ad0b1fb313bf42f6bb1260959cbaf57b8b"
 uuid = "a03496cd-edff-5a9b-9e67-9cda94a718b5"
-version = "0.6.3"
+version = "0.6.4"
 
 [[PlotlyJS]]
 deps = ["Blink", "DelimitedFiles", "JSExpr", "JSON", "Markdown", "Pkg", "PlotlyBase", "REPL", "Reexport", "Requires", "WebIO"]
-git-tree-sha1 = "04b78af3c43646bfcc938058ece9d030abc9d6e3"
+git-tree-sha1 = "af6f29b7c9eb02f5b2786e87b544036ad08f4479"
 uuid = "f0f68f2c-4968-5e81-91da-67840de0976a"
-version = "0.16.1"
+version = "0.16.3"
 
 [[Preferences]]
 deps = ["TOML"]
