@@ -51,7 +51,7 @@ use pip3 to install it.
 const FD_HAS_PY3    = shell_try(`$([e for e in split(PY)]) -V`)
 const FD_HAS_PIP3   = shell_try(`$([e for e in split(PIP)]) -V`)
 const FD_CAN_MINIFY = FD_HAS_PY3 && FD_HAS_PIP3 &&
-        (success(`$([e for e in split(PY)]) -m "import css_html_js_minify"`) ||
+        (success(`$([e for e in split(PY)]) -c "import css_html_js_minify"`) ||
          success(`$([e for e in split(PIP)]) install css_html_js_minify`))
 #=
 Information to the user
