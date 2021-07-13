@@ -104,6 +104,7 @@ function lx_output(lxc::LxCom, lxd::Vector{LxDef};
     end
     # should it be reprocessed ?
     reproc || return html_code(output)
+    println("<reprocess from lx_output>")
     return reprocess(output, lxd)
 end
 
@@ -137,6 +138,7 @@ function lx_textinput(lxc::LxCom, lxd::Vector{LxDef})
     catch e
         return html_err(e.m)
     end
+    println("<reprocess from lx_textinput>")
     return reprocess(input, lxd)
 end
 
@@ -221,5 +223,6 @@ function lx_literate(lxc::LxCom, lxd::Vector{LxDef})
         set_var!(LOCAL_VARS, "reeval", true)
     end
     # then reprocess
+    println("<reprocess from lx_literate>")
     return reprocess(read(opath, String), lxd, nostripp=true)
 end

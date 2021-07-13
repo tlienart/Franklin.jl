@@ -7,13 +7,6 @@ function clear_dicts()
     recursive_empty!.((GLOBAL_LXDEFS, GLOBAL_VARS, LOCAL_VARS, ALL_PAGE_VARS))
 end
 
-function recursive_empty!(d::AbstractDict)
-    for (k, v) in d
-        v isa AbstractDict && recursive_empty!(d[k])
-    end
-    empty!(d)
-end
-
 
 """
 $(SIGNATURES)
@@ -27,24 +20,26 @@ Keyword arguments:
 * `port=8000`:       the port to use for the local server (should pick a number
                       between 8000 and 9000)
 * `single=false`:    whether to run a single pass or run continuously
+* `prerender=false`: whether to pre-render javascript (KaTeX and highlight.js)
 * `nomess=false`:    suppresses all messages (internal use).
 * `is_final_pass=false`: whether we're in a "final pass" (if so, links are
-                      fixed in case of a project website, see
-                      [`convert_and_write`](@ref).
-* `prerender=false`: whether to pre-render javascript (KaTeX and highlight.js)
+                          fixed in case of a project website, see
+                          [`convert_and_write`](@ref).
 * `no_fail_prerender=true`: whether, in a prerendering phase, ignore errors and
-                      try to produce an output
+                            try to produce an output
 * `eval_all=false`:  whether to force re-evaluation of all code blocks
 * `silent=false`:    switch this on to suppress all output (including eval
-                      statements).
+                      statements)
 * `cleanup=true`:    whether to clear environment dictionaries, see
-                      [`cleanup`](@ref).
+                      [`cleanup`](@ref)
 * `on_write(pg, fd_vars)`: callback function after the page is rendered,
-                      passing as arguments the rendered page and the page
-                      variables
+                            passing as arguments the rendered page and the page
+                            variables
+* `log`: whether to activate the logger
 * `host="127.0.0.1"`: the host to use for the local server
-* `show_warnings=true`: whether to show franklin  warnings
 * `launch=!single`:   whether to launch the browser when serving
+* `show_warnings=true`: whether to show franklin warnings
+* `show_timings=false`: whether to show timings on the full pass (internal)
 """
 function serve(; clear::Bool             = false,
                  verb::Bool              = false,
@@ -60,23 +55,23 @@ function serve(; clear::Bool             = false,
                  on_write::Function      = (_, _) -> nothing,
                  log::Bool               = false,
                  host::String            = "127.0.0.1",
+                 launch::Bool            = !single,
                  show_warnings::Bool     = true,
                  show_timings::Bool      = false,
-                 launch::Bool            = !single,
+                 debug_page::String      = ""
                  )::Union{Nothing,Int}
 
+    # whether to log or not
     LOGGING[] = log
     # set the global path
     FOLDER_PATH[] = pwd()
     # silent mode?
     silent && (FD_ENV[:SILENT_MODE] = true; verb = false)
-
     if silent || !show_warnings
         FD_ENV[:SHOW_WARNINGS] = false
     end
 
-    # in case of optim, there may be a prepath given which should be
-    # kept
+    # in case of optim, there may be a prepath given which should be kept
     prepath = get(GLOBAL_VARS, "prepath", nothing)
     def_GLOBAL_VARS!()
     isnothing(prepath) || set_var!(GLOBAL_VARS, "prepath", prepath.first)
@@ -96,9 +91,10 @@ function serve(; clear::Bool             = false,
 
     if !all(isdir, (joinpath(FOLDER_PATH[], "_layout"),
                     joinpath(FOLDER_PATH[], "_css")))
-        throw(ArgumentError(
+        ArgumentError(
             "The current directory doesn't  have a `_layout` or `_css` " *
-            "folder; change directory to a valid Franklin folder."))
+            "folder; change directory to a valid Franklin folder."
+        ) |> throw
     end
 
     # check if a Project.toml file is available, if so activate the folder
@@ -118,7 +114,7 @@ function serve(; clear::Bool             = false,
     nomess || println("→ Initial full pass...")
     start = time()
     FD_ENV[:FORCE_REEVAL] = eval_all
-    sig = fd_fullpass(watched_files)
+    sig = fd_fullpass(watched_files; debug_page=debug_page)
     FD_ENV[:FORCE_REEVAL] = false
     sig < 0 && return sig
     fmsg = rpad("✔ full pass...", 40)
@@ -132,8 +128,13 @@ function serve(; clear::Bool             = false,
         # start the liveserver in the current directory
         live_server_dir = "__site"
         LiveServer.setverbose(verb)
-        LiveServer.serve(port=port, coreloopfun=coreloopfun,
-                         dir=live_server_dir, host=host, launch_browser=launch)
+        LiveServer.serve(
+            port=port,
+            coreloopfun=coreloopfun,
+            dir=live_server_dir,
+            host=host,
+            launch_browser=launch
+        )
     end
     flag_env &&
         rprint("→ Use Pkg.activate() to go back to your main environment.")
@@ -167,15 +168,18 @@ function fd_setup()::NamedTuple
     infra_files      = TrackedFiles()
     literate_scripts = TrackedFiles()
     # named tuples of all the watched files (order matters)
-    watched_files = (other    = other_files,
-                     infra    = infra_files,
-                     md       = md_pages,
-                     html     = html_pages,
-                     literate = literate_scripts)
+    watched_files = (
+        other    = other_files,
+        infra    = infra_files,
+        md       = md_pages,
+        html     = html_pages,
+        literate = literate_scripts
+    )
     # fill the dictionaries
     scan_input_dir!(watched_files...)
     return watched_files
 end
+
 
 """
 $(SIGNATURES)
@@ -193,24 +197,26 @@ as appropriate.
 
 See also [`fd_loop`](@ref), [`serve`](@ref) and [`publish`](@ref).
 """
-function fd_fullpass(watched_files::NamedTuple)::Int
+function fd_fullpass(watched_files::NamedTuple; debug_page::String="")::Int
     # keep track of context (some things either will or won't be done on
     # the full pass, e.g. see tag generation)
     FD_ENV[:FULL_PASS]  = true
+    show_time("setting up", stage=:start)
 
     # reset global page variables and latex definitions
     # NOTE: need to keep track of pre-path if specified, see optimize
-    prepath = get(GLOBAL_VARS, "prepath", "")
+    prepath = globvar("prepath")::String
     def_GLOBAL_VARS!()
     def_GLOBAL_LXDEFS!()
     empty!.((RSS_ITEMS, SITEMAP_DICT))
     # reinsert prepath if specified
-    isempty(prepath) || (GLOBAL_VARS["prepath"] = prepath)
+    isempty(prepath) || set_var!(GLOBAL_VARS, "prepath", prepath)
+    show_time("misc env")
 
     # process configuration file (see also `process_mddefs!`)
     # note the order (utils the config) is important, see also #774
-    process_utils()
-    process_config()
+    process_utils();  show_time("utils")
+    process_config(); show_time("config")
 
     # form page segments
     root    = path(:folder)
@@ -230,16 +236,20 @@ function fd_fullpass(watched_files::NamedTuple)::Int
             should be one. Ignoring.
             """)
     end
+    show_time("misc layout")
 
     # if RSS is to be generated, check the template and the variables
     # the function will not do much if generate_rss is set to false
-    prepare_for_rss()
+    prepare_for_rss(); show_time("prep rss", stage=:end)
 
     # go over all pages note that the html files are processed AFTER the
     # markdown files and so if you both have an `index.md` and an `index.html`
     # with otherwise the same path, it's the latter that will be considered.
     s = 0
     for (case, dict) ∈ pairs(watched_files), (fpair, t) ∈ dict
+        if !isempty(debug_page) && joinpath(fpair.second) != debug_page
+            continue
+        end
         # help keep track of what we're doing for debugging
         (:fd_fullpass, joinpath(fpair...)) |> logger
         # process
@@ -255,20 +265,32 @@ function fd_fullpass(watched_files::NamedTuple)::Int
     end
 
     # Finalize
+    show_time("finalize", stage=:start)
     # > generate RSS if appropriate
-    globvar("generate_rss")::Bool && rss_generator()
+    globvar("generate_rss")::Bool && begin
+        rss_generator()
+        show_time("rss gen")
+    end
     # > generate tags if appropriate
-    generate_tag_pages()
+    generate_tag_pages(); show_time("tag gen")
     # > generate sitemap if appropriate
-    globvar("generate_sitemap")::Bool && sitemap_generator()
+    globvar("generate_sitemap")::Bool && begin
+        sitemap_generator()
+        show_time("sitemap gen")
+    end
     # > generate robots if appropriate
-    globvar("generate_robots")::Bool && robots_generator()
+    globvar("generate_robots")::Bool && begin
+        robots_generator()
+        show_time("robots gen")
+    end
+    show_time("done", stage=:end)
 
     # re-evaluate delayed pages
     if !isempty(DELAYED)
         cp_DELAYED = copy(DELAYED)
         empty!(DELAYED) # so that functions are effectively applied
         for page in cp_DELAYED
+            show_time("delayed $page", stage=:start)
             case = Symbol(strip(splitext(page)[2], '.'))  # md / html
             fpair = path(:folder) => page
             a = process_file(case, fpair, head, pg_foot, foot)
@@ -277,6 +299,7 @@ function fd_fullpass(watched_files::NamedTuple)::Int
                 process_file(case, fpair, head, pg_foot, foot)
                 FD_ENV[:PRERENDER] = true
             end
+            show_time("repechage", stage=:end)
             s += a
         end
     end
@@ -287,12 +310,13 @@ function fd_fullpass(watched_files::NamedTuple)::Int
     return ifelse(s < 0, -1, 0)
 end
 
+
 """
 $(SIGNATURES)
 
-This is the function that is continuously run, checks if files have been
-modified and if so, processes them. Every 30 cycles, it checks whether any file
-was added or deleted and consequently updates the `watched_files`.
+This is the function that is continuously run: checks if files have been
+modified and if so, processes them. Every 30 cycles, it checks whether any
+file was added or deleted and consequently updates the `watched_files`.
 """
 function fd_loop(cycle_counter::Int, ::LiveServer.FileWatcher,
                  watched_files::NamedTuple

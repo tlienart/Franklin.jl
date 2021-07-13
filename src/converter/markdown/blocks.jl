@@ -32,9 +32,13 @@ function convert_block(β::AbstractBlock, lxdefs::Vector{LxDef})::AS
     # Div block --> need to process the block as a sub-element
     if βn == :DIV
         raw_cont = stent(β)
-        cont     = convert_md(raw_cont, lxdefs;
-                              isrecursive=true, has_mddefs=false,
-                              nostripp=true) |> simplify_ps
+        cont     = convert_md(
+                    raw_cont, lxdefs;
+                    isrecursive=true,
+                    has_mddefs=false,
+                    nostripp=true,
+                    called_from=:convert_block
+                    ) |> simplify_ps
         divname  = chop(otok(β).ss, head=2, tail=0)
         # parse @@c1,c2,c3 as class="c1 c2 c3"
         return html_div(replace(divname, ","=>" "), cont)
@@ -114,8 +118,12 @@ Helper function for the case of a header block (H1, ..., H6).
 """
 function convert_header(β::OCBlock, lxdefs::Vector{LxDef})::String
     hk    = lowercase(string(β.name)) # h1, h2, ...
-    title = convert_md(content(β), lxdefs;
-                       isrecursive=true, has_mddefs=false)
+    title = convert_md(
+                content(β), lxdefs;
+                isrecursive=true,
+                has_mddefs=false,
+                called_from=:convert_header
+                )
     rstitle = refstring(html_unescape(title))
     # check if the header has appeared before and if so suggest
     # an altered refstring; if that altered refstring also exist
@@ -200,8 +208,12 @@ function convert_footnote_def(β::OCBlock, lxdefs::Vector{LxDef})::String
         return ""
     end
     # need to process the content which could contain stuff
-    ct = convert_md(content(β), lxdefs;
-                       isrecursive=true, has_mddefs=false)
+    ct = convert_md(
+            content(β), lxdefs;
+            isrecursive=true,
+            has_mddefs=false,
+            called_from=:convert_footnote_def
+    )
     """
     <table class="fndef" id="fndef:$id">
         <tr>

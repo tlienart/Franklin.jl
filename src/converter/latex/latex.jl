@@ -22,8 +22,11 @@ $(SIGNATURES)
 Take a `<: LxObj` and try to resolve it by looking up the appropriate definition, applying it then
 reparsing the result.
 """
-function resolve_lxobj(lxo::LxObj, lxdefs::Vector{LxDef};
-                       inmath::Bool=false)::String
+function resolve_lxobj(
+            lxo::LxObj,
+            lxdefs::Vector{LxDef};
+            inmath::Bool=false
+            )::String
     # retrieve the definition the environment points to
     lxd = getdef(lxo)
     env = lxo isa LxEnv
@@ -36,6 +39,7 @@ function resolve_lxobj(lxo::LxObj, lxdefs::Vector{LxDef};
         # check if it's defined in Utils and act accordingly
         if isdefined(Main, utils_symb()) && isdefined(utils_module(), fun)
             raw = Core.eval(utils_module(), :($fun($lxo, $lxdefs)))
+            println("<reprocess from utils>")
             return reprocess(raw, lxdefs)
         else
             # let the math backend deal with the string
@@ -62,6 +66,8 @@ function resolve_lxobj(lxo::LxObj, lxdefs::Vector{LxDef};
     # if 'inmath' surround accordingly so that this information is preserved
     inmath && (partial = mathenv(partial))
 
+    name = isnothing(lxo.lxdef) ? "??" : getindex(lxo.lxdef).name
+    println("<reprocess from resolve_lxobj ($name)>")
     return reprocess(partial, lxdefs)
 end
 
@@ -72,8 +78,13 @@ $SIGNATURES
 Convenience function to take a markdown string (e.g. produced by a latex command) and re-parse it.
 """
 function reprocess(s::AS, lxdefs::Vector{<:LxDef}; nostripp=false) where T
-    r = convert_md(s, lxdefs;
-                   isrecursive=true, isconfig=false, has_mddefs=false,
-                   nostripp=nostripp)
+    r = convert_md(
+            s, lxdefs;
+            isrecursive=true,
+            isconfig=false,
+            has_mddefs=false,
+            nostripp=nostripp,
+            called_from=:reprocess
+    )
     return r
 end

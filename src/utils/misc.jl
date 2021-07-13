@@ -323,3 +323,64 @@ function csv2html(path::AS, header::AS)::String
     end
     return md2html(String(take!(io)))
 end
+
+"""
+$SIGNATURES
+
+Empty a dictionary recursively (when resetting environments).
+"""
+function recursive_empty!(d::AbstractDict)::Nothing
+    for (k, v) in d
+        v isa AbstractDict && recursive_empty!(d[k])
+    end
+    empty!(d)
+    return
+end
+
+"""
+$SIGNATURES
+
+A dummy function for displaying step times.
+"""
+function fmt_time(t::Float64)::String
+    rt = round(t, digits=2)
+    sp = ifelse(rt < 10, " ", "")
+    st = sp * string(rt)
+    st *= ifelse(length(st) == 4, "0", "")
+    return st
+end
+
+"""
+$SIGNATURES
+
+Show timings in the full pass.
+"""
+function show_time(msg::String; stage::Symbol=:step, thresh::Float64=0.0)::Nothing
+    FD_ENV[:FULL_PASS] || return
+    if stage === :start
+        FD_ENV[:STEP_START] = time()
+        FD_ENV[:STEP_PREV]  = time()
+        FD_ENV[:STEP_COUNT] = 0
+        println("💡 $msg")
+    elseif stage in (:step, :end)
+        t = time()
+        since_start = t - FD_ENV[:STEP_START]
+        since_prev  = t - FD_ENV[:STEP_PREV]
+        if since_prev > thresh
+            print("  → ")
+            print(Crayon(foreground=:light_blue),  "[t=$(fmt_time(since_start))] ")
+            print(Crayon(foreground=:green), "(δ=$(fmt_time(since_prev))) ")
+            println(Crayon(reset=true), msg)
+        end
+        FD_ENV[:STEP_COUNT] += 1
+        FD_ENV[:STEP_PREV]   = t
+        if stage === :end && since_start > 0.1
+            print("  ✓ ")
+            print(Crayon(foreground=:yellow), "$(FD_ENV[:STEP_COUNT]) ")
+            print(Crayon(reset=true), "steps executed in ")
+            print(Crayon(foreground=:light_blue), "T=$(fmt_time(since_start))")
+            println(Crayon(reset=true), "s.")
+        end
+    end
+    return
+end

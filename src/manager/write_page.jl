@@ -172,7 +172,8 @@ function convert_and_write(root::String, file::String, head::String,
     # and management of paths
     set_cur_rpath(fpath)
     # conversion
-    content = convert_md(read(fpath, String))
+    content = convert_md(read(fpath, String), called_from=:convert_and_write)
+    show_time("full MD conversion")
 
     # adding document variables to the dictionary
     # note that some won't change and so it's not necessary to do this every
@@ -193,9 +194,11 @@ function convert_and_write(root::String, file::String, head::String,
         end
         set_var!(LOCAL_VARS, "rss_pubdate", pubdate)
     end
+    show_time("finalise env")
 
     pg = write_page(output_path, content;
                     head=head, pgfoot=pgfoot, foot=foot)
+    show_time("write page")
 
     # Check if should add item
     #   should we generate ? otherwise no
@@ -206,16 +209,20 @@ function convert_and_write(root::String, file::String, head::String,
                    !isempty(locvar(:rss_description)::String)
     # otherwise yes
     cond_add && add_rss_item()
+    show_time("rss item")
 
     # Same for the sitemap
     cond_add = globvar(:generate_sitemap) && FD_ENV[:FULL_PASS]::Bool
     cond_add && add_sitemap_item()
+    show_time("sitemap item")
 
     # Same for disallow robots locally
     cond_add = locvar(:robots_disallow_this_page)::Bool
     cond_add && add_disallow_item()
+    show_time("allow item")
 
     # 6. possible post-processing via the "on-write" function.
     (FD_ENV[:ON_WRITE]::Function)(pg, LOCAL_VARS)
+    show_time("on-write")
     return nothing
 end

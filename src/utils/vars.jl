@@ -255,7 +255,7 @@ function pagevar(rpath::AS, name::Union{Symbol,String}; default=nothing)
         # set temporary cur path (so that defs go to the right place)
         set_cur_rpath(fpath, isrelative=true)
         # effectively we only care about the mddefs
-        convert_md(read(fpath, String), pagevar=true)
+        convert_md(read(fpath, String), pagevar=true, called_from=:pagevar)
 
         if !haskey(ALL_PAGE_VARS, bk_path_) # empty corner case in tests
             def_LOCAL_VARS!()

@@ -27,10 +27,15 @@ function convert_md(mds::String,
                     isconfig::Bool=false,
                     has_mddefs::Bool=true,
                     pagevar::Bool=false, # whether it's called from pagevar
-                    nostripp::Bool=false
+                    nostripp::Bool=false,
+                    called_from::Symbol=:nothing
                     )::String
+    if called_from !== :nothing
+        show_time("convert md called from $called_from")
+    end
     # instantiate page dictionaries
     isrecursive || isinternal || set_page_env()
+    show_time("md > page env")
 
     #
     # Parsing of the markdown string
@@ -41,6 +46,7 @@ function convert_md(mds::String,
     #> 1. Tokenize
     tokens = find_tokens(mds, MD_TOKENS, MD_1C_TOKENS)
     (:convert_md, "convert_md: '$([t.name for t in tokens])'") |> logger
+    show_time("md > tokenise")
 
     # validate toml open/close
     validate_start_of_line!(tokens, (:MD_DEF_TOML, MD_HEADER_OPEN...))
@@ -65,6 +71,7 @@ function convert_md(mds::String,
         # an indented code block get removed here
         filter_lr_indent!(tokens, mds)
     end
+    show_time("md > filter tokens")
 
     # ------------------------------------------------------------------------
     #> 2. Open-Close blocks (OCBlocks)
@@ -87,6 +94,7 @@ function convert_md(mds::String,
     filter!(τ -> τ.name ∉ L_RETURNS, tokens)
     #>> e. keep track of literal content of possible link definitions to use
     validate_and_store_link_defs!(blocks)
+    show_time("md > form blocks")
 
     if globvar(:autocode)::Bool && any(b -> b.name in CODE_BLOCKS_NAMES, blocks)
         set_var!(LOCAL_VARS, "hascode", true)
@@ -99,6 +107,7 @@ function convert_md(mds::String,
     #> 3. LaTeX commands
     #>> a. find "newcommands", update active blocks/braces
     lxdefs, tokens, braces, blocks = find_lxdefs(tokens, blocks)
+    show_time("md > find lxdefs")
 
     #>> b. if any lxdefs are given in the context, merge them. `pastdef` specifies
     # that the definitions appeared "earlier"
@@ -109,17 +118,20 @@ function convert_md(mds::String,
     ranges2 = deactivate_blocks_in_envs!(blocks, lxenvs)
     #>> d. find latex commands
     lxcoms, _ = find_lxcoms(tokens, lxdefs, braces)
+    show_time("md > find_lxcoms and lxenvs")
 
     #> 3[ex]. find double brace blocks, note we do it on pre_ocb tokens
     # as the step `find_all_ocblocks` possibly found and deactivated {...}.
     dbb = find_double_brace_blocks(toks_pre_ocb)
     deactivate_inner_dbb!(dbb, vcat(ranges, ranges2))
+    show_time("md > double brace blocks")
 
     # ------------------------------------------------------------------------
     #> 4. Page variable definition (mddefs), also if in config, update lxdefs
     if has_mddefs
         process_mddefs(blocks, isconfig, pagevar, isinternal)
     end
+    show_time("md > mddefs")
 
     #> 4.b if config, update global lxdefs as well
     if isconfig
@@ -134,6 +146,7 @@ function convert_md(mds::String,
     #> 5. Process special characters, emojis and html entities so that they
     # can be injected as they are in the HTML later
     sp_chars = find_special_chars(tokens)
+    show_time("md > special chars")
 
     # ========================================================================
     #
@@ -153,16 +166,19 @@ function convert_md(mds::String,
     b2insert = merge_blocks(lxenvs, lxcoms,
                             deactivate_divs(vcat(blocks, dbb)),
                             sp_chars, fnrefs, hrules)
+    show_time("md > merge blocks")
 
     #> 2. Form intermediate markdown + html
     inter_md, mblocks = form_inter_md(mds, b2insert, lxdefs; isrecursive=isrecursive)
     inter_html = md2html(inter_md; stripp=isrecursive && !nostripp)
+    show_time("md > form intermd + md2html")
 
     (:convert_md, "inter_md: '$inter_md'")     |> logger
     (:convert_md, "inter_html: '$inter_html'") |> logger
 
     #> 3. Plug resolved blocks in partial html to form the final html
     hstring = convert_inter_html(inter_html, mblocks, lxdefs)
+    show_time("md > convert inter html")
 
     (:convert_md, "hstring: '$hstring'") |> logger
 
@@ -176,6 +192,7 @@ function convert_md(mds::String,
     if !(isrecursive || isinternal)
         ALL_PAGE_VARS[rpath] = deepcopy(LOCAL_VARS)
     end
+    show_time("md > final adjustments")
 
     # Return the string
     return hstring

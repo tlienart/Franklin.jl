@@ -134,6 +134,7 @@ function resolve_code_block(ss::SubString; shortcut=false)::String
     end
     # >> finally return as html
     if locvar(:showall)::Bool || shortcut
+        println("<reprocess from eval>")
         return html_code(code, lang) *
                 reprocess("\\show{$rpath}", [GLOBAL_LXDEFS["\\show"]])
     end

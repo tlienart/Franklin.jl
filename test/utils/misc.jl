@@ -220,3 +220,11 @@ end
     h = fd2html(s, nop=true)
     @test h == "ABC DEF"
 end
+
+@testset "fmt_time" begin
+    @test fmt_time(0.5)   == " 0.50"
+    @test fmt_time(0.55)  == " 0.55"
+    @test fmt_time(5.55)  == " 5.55"
+    @test fmt_time(15.55) == "15.55"
+    @test fmt_time(15.50) == "15.50"
+end

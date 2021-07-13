@@ -39,7 +39,11 @@ function include_external_config(filepath)::Nothing
     parent_source = FD_ENV[:SOURCE]
     FD_ENV[:SOURCE] = filepath
     if isfile(filepath)
-        convert_md(read(filepath, String); isconfig=true)
+        convert_md(
+            read(filepath, String);
+            isconfig=true,
+            called_from=:include_external_config
+        )
     else
         external_config_warn(filepath)
     end
@@ -95,18 +99,16 @@ $(SIGNATURES)
 See [`process_file_err`](@ref).
 """
 function process_file(case::Symbol, fpair::Pair{String,String}, args...)::Int
+    if splitext(fpair.second)[2] in (".html", ".md")
+        show_time("page: $(fpair.second)", stage=:start)
+    end
     if FD_ENV[:DEBUG_MODE]::Bool
         process_file_err(case, fpair, args...)
         return 0
     end
 
     try
-        δt = @elapsed process_file_err(case, fpair, args...)
-        if FD_ENV[:FULL_PASS] && FD_ENV[:SHOW_TIMINGS] && endswith(fpair.second, ".md")
-            println(
-                """[δt = $(round(δt, digits=2))s] $(fpair.second)"""
-            )
-        end
+        process_file_err(case, fpair, args...)
     catch err
         rp = fpair.first
         rp = rp[end-min(20, length(rp))+1 : end]
@@ -156,17 +158,23 @@ function process_file_err(case::Symbol, fpair::Pair{String, String},
     if case == :md
         FD_ENV[:SOURCE] = get_rpath(inp)
         convert_and_write(fpair..., head, pgfoot, foot, outp)
+        show_time("done", stage=:end)
     elseif case == :html
         FD_ENV[:SOURCE] = get_rpath(inp)
         set_cur_rpath(joinpath(fpair...))
         set_page_env()
-        raw_html  = read(inp, String)
+        show_time("html - env")
         # add the item *before* the conversion so that the conversion
         # can affect the page itself with {{...}}
         cond_add = globvar(:generate_sitemap)::Bool && FD_ENV[:FULL_PASS]::Bool
-        cond_add && add_sitemap_item(html=true)
+        cond_add && begin
+            add_sitemap_item(html=true)
+            show_time("html - sitemap add")
+        end
+        raw_html  = read(inp, String)
         proc_html = convert_html(raw_html) |> postprocess_page
         write(outp, proc_html)
+        show_time("done", stage=:end)
     else # case in (:other, :infra)
         # NOTE: some processing may be added here later on (e.g. parsing of
         # CSS files). Only copy again if necessary (file is not there or
@@ -174,8 +182,8 @@ function process_file_err(case::Symbol, fpair::Pair{String, String},
         if !isfile(outp) || (mtime(outp) < t && !filecmp(inp, outp))
             cp(inp, outp, force=true)
         end
-        @label end_copyblock
     end
+    @label end_copyblock
     FD_ENV[:SOURCE] = ""
     FD_ENV[:FULL_PASS] || FD_ENV[:SILENT_MODE] || rprint("→ page updated [✓]")
     return nothing

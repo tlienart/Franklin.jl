@@ -18,6 +18,7 @@ import NodeJS
 import Literate
 import HTTP
 import Random
+import Crayons: Crayon
 import ExprTools: splitdef, combinedef
 import REPL.REPLCompletions: emoji_symbols
 
@@ -85,6 +86,9 @@ const FD_ENV = LittleDict(
     :QUIET_TEST    => false,
     :SHOW_WARNINGS => true,     # franklin-specific warnings
     :SHOW_TIMINGS  => false,    # first pass, how much time spent on each pg
+    :STEP_START    => 0,        # time at start of full pass step (for show timings)
+    :STEP_PREV     => 0,        # time of previous sub-step (for show timings)
+    :STEP_COUNT    => 0,        # number of steps in block
     :UTILS_COUNTER => 0,        # counter for utils module
     :UTILS_HASH    => nothing   # hash of the utils
     )
