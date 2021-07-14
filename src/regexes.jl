@@ -35,6 +35,13 @@ Regex to find the name in a LX_BEGIN or LX_END.
 """
 const LX_ENVNAME_PAT = r"\\(?:begin|end)\{\s*(\p{L}[\p{L}_]*\*?)\s*\}"
 
+"""
+MATH_LABEL_PAT
+
+Regex to find labels in math
+"""
+const MATH_LABEL_PAT = r"\\label{(.*?)}"
+
 #= =====================================================
 MDDEF patterns
 ===================================================== =#

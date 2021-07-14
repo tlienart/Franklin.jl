@@ -88,12 +88,12 @@ function convert_math_block(β::OCBlock, lxdefs::Vector{LxDef})::String
         PAGE_EQREFS[PAGE_EQREFS_COUNTER] += 1
 
         # check if there's a label, if there is, add that to the dictionary
-        matched = match(r"\\label{(.*?)}", inner)
+        matched = match(MATH_LABEL_PAT, inner)
 
         if !isnothing(matched)
             name   = refstring(matched.captures[1])
             write(htmls, "<a id=\"$name\" class=\"anchor\"></a>")
-            inner  = replace(inner, r"\\label{.*?}" => "")
+            inner  = replace(inner, MATH_LABEL_PAT => "")
             # store the label name and associated number
             PAGE_EQREFS[name] = PAGE_EQREFS[PAGE_EQREFS_COUNTER]
         end
