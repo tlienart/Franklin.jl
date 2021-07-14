@@ -394,11 +394,16 @@ function convert_inter_html(ihtml::AS,
     allmatches = collect(eachmatch(INSERT_PAT, ihtml))
     isempty(allmatches) && return ihtml
 
+    show_time("md > ihtml > init")
+
     strlen = lastindex(ihtml)
     # write the pieces of the final html in order, gradually processing the
     # blocks to insert
     htmls = IOBuffer()
     head  = 1
+
+    @show length(allmatches)
+
     for (i, m) ∈ enumerate(allmatches)
         # check whether there's <p> or </p> around the insert
         leftp  = !isnothing(m.captures[1])
@@ -410,7 +415,13 @@ function convert_inter_html(ihtml::AS,
             write(htmls, "<p>")
         end
         write(htmls, lefts)
+        t1 = time()
         resolved = convert_block(blocks[i], lxdefs)
+        elapsed = time() - t1
+        # if elapsed > 0.05
+        #     @show (round(elapsed, digits=2), blocks[i].name)
+        # end
+        show_time("md > ihtml > convertblock $i")
         write(htmls, resolved)
         if rightp && !leftp
             write(htmls, "</p>")
@@ -419,6 +430,9 @@ function convert_inter_html(ihtml::AS,
     end
     # store whatever is after the last INSERT if anything
     (head ≤ strlen) && write(htmls, subs(ihtml, head:strlen))
+
+    show_time("md > ihtml > body")
+
     # return the full string
     return String(take!(htmls))
 end

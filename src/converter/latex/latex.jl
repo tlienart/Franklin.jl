@@ -67,8 +67,9 @@ function resolve_lxobj(
     inmath && (partial = mathenv(partial))
 
     name = isnothing(lxo.lxdef) ? "??" : getindex(lxo.lxdef).name
-    println("<reprocess from resolve_lxobj ($name)>")
-    return reprocess(partial, lxdefs)
+    math = ifelse(inmath, "_math ", "")
+    println("<reprocess$(math)from resolve_lxobj ($name)>")
+    return reprocess(partial, lxdefs; inmath=inmath, offset=from(lxo))
 end
 
 
@@ -77,8 +78,11 @@ $SIGNATURES
 
 Convenience function to take a markdown string (e.g. produced by a latex command) and re-parse it.
 """
-function reprocess(s::AS, lxdefs::Vector{<:LxDef}; nostripp=false) where T
-    r = convert_md(
+function reprocess(s::AS, lxdefs::Vector{<:LxDef}; nostripp=false, inmath=false, offset=0)
+    inmath && return convert_md_math(
+        s, lxdefs, offset
+    )
+    return convert_md(
             s, lxdefs;
             isrecursive=true,
             isconfig=false,
@@ -86,5 +90,4 @@ function reprocess(s::AS, lxdefs::Vector{<:LxDef}; nostripp=false) where T
             nostripp=nostripp,
             called_from=:reprocess
     )
-    return r
 end

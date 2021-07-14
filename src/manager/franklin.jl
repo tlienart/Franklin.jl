@@ -193,7 +193,8 @@ as appropriate.
 * `verb=false`:      whether to display messages
 * `is_final_pass=false` : whether it's the final pass before deployment
 * `prerender=false`: whether to prerender katex and code blocks
-* `no_fail_prerender=true`: whether to skip if a prerendering goes wrong in which case don't prerender
+* `no_fail_prerender=true`: whether to skip if a prerendering goes wrong in which
+                            case don't prerender
 
 See also [`fd_loop`](@ref), [`serve`](@ref) and [`publish`](@ref).
 """
@@ -318,9 +319,11 @@ This is the function that is continuously run: checks if files have been
 modified and if so, processes them. Every 30 cycles, it checks whether any
 file was added or deleted and consequently updates the `watched_files`.
 """
-function fd_loop(cycle_counter::Int, ::LiveServer.FileWatcher,
-                 watched_files::NamedTuple
-                 )::Nothing
+function fd_loop(
+            cycle_counter::Int,
+            ::LiveServer.FileWatcher,
+            watched_files::NamedTuple
+            )::Nothing
     verb = FD_ENV[:VERB]
     # every 30 cycles (3 seconds), scan directory to check for new or deleted
     # files and update dicts accordingly
@@ -356,8 +359,9 @@ function fd_loop(cycle_counter::Int, ::LiveServer.FileWatcher,
             dict[fpair] = cur_t
 
             # if it's an infra_file trigger a fullpass as potentially
-            # the whole website depends upon it (e.g. CSS)
-            if haskey(watched_files[:infra], fpair)
+            # the whole website depends upon it
+            # if it's a CSS file then don't however, that's directly read by browser
+            if haskey(watched_files[:infra], fpair) && splitext(fpair.second)[2] != ".css"
                 verb && println("→ full pass...")
                 start = time()
                 fd_fullpass(watched_files)
