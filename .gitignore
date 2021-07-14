@@ -4,6 +4,7 @@
 *DS_Store
 Manifest.toml
 sandbox/
+sandbox-site/
 docs/build/
 test/__tmp/
 docs/__site/

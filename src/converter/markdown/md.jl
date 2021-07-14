@@ -20,15 +20,16 @@ Returns the html string as well as a dictionary of page variables.
 * `has_mddefs=true`:   a bool indicating whether to look for definitions of
                         page variables
 """
-function convert_md(mds::String,
-                    pre_lxdefs::Vector{LxDef}=collect(values(GLOBAL_LXDEFS));
-                    isrecursive::Bool=false,
-                    isinternal::Bool=false,
-                    isconfig::Bool=false,
-                    has_mddefs::Bool=true,
-                    pagevar::Bool=false, # whether it's called from pagevar
-                    nostripp::Bool=false
-                    )::String
+function convert_md(
+            mds::String,
+            pre_lxdefs::Vector{LxDef}=collect(values(GLOBAL_LXDEFS));
+            isrecursive::Bool=false,
+            isinternal::Bool=false,
+            isconfig::Bool=false,
+            has_mddefs::Bool=true,
+            pagevar::Bool=false, # whether it's called from pagevar
+            nostripp::Bool=false
+            )::String
     # instantiate page dictionaries
     isrecursive || isinternal || set_page_env()
 
