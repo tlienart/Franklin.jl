@@ -16,8 +16,6 @@ jobs:
       with:
         python-version: '3.8'
     - run: pip install matplotlib
-    - name: Install Qt
-      uses: jurplel/install-qt-action@v2
     - name: Install deps for TikzCD
       run: |
           sudo add-apt-repository ppa:jonathonf/texlive-2019

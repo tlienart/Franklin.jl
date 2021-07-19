@@ -48,7 +48,7 @@ the frequency response of a FIR filter so we define it:
 
 ```julia
 using Plots, DSP
-gr()
+pyplot()
 
 function FIRfreqz(b::Array, w = range(0, stop=π, length=1024))
     n = length(w)
