@@ -1,4 +1,7 @@
 [deps]
+DSP = "717857b8-e6f2-59f4-9121-6e50c889abd2"
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 Latexify = "23fbe1c1-3f47-55db-b15f-69d7ec21a316"
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 TikzCDs = "1e332c56-9431-4126-8a34-92cbdf251ae4"
+Weave = "44d3d7a6-8a23-5bf8-98c5-b353f8df5ec9"
