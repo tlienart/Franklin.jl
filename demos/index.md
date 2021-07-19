@@ -17,6 +17,10 @@ The ordering is reverse chronological but just use the table of contents to guid
 
 \toc
 
+## (015) Using Weave
+
+[Here's a page](/weave/) where the content is generated from a [Weave.jl](https://github.com/JunoLab/Weave.jl).
+
 ## (014) Using MathJax
 
 If you prefer MathJax over KaTeX for maths rendering, you can use that. For now this is not fully supported and so taking this path may lead to issues, please report them and help fixing those is welcome.

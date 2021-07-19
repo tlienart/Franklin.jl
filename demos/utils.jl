@@ -6,6 +6,7 @@
 using DelimitedFiles
 using TikzCDs
 using Dates
+using Weave
 
 # ========================================================================
 
@@ -93,4 +94,25 @@ function hfun_insertmd(params)
     fullpath = joinpath(Franklin.path(:folder), rpath)
     isfile(fullpath) || return ""
     return fd2html(read(fullpath, String), internal=true)
+end
+
+###########
+### 015 ###
+###########
+
+function hfun_insert_weave(params)
+    rpath = params[1]
+    fullpath = joinpath(Franklin.path(:folder), rpath)
+    (isfile(fullpath) && splitext(fullpath)[2] == ".jmd") || return ""
+    print("Weaving... ")
+    t = tempname()
+    weave(fullpath, out_path=t)
+    println("✓ [done].")
+    fn = splitext(splitpath(fullpath)[end])[1]
+    html = read(joinpath(t, fn * ".html"), String)
+    start = findfirst("<BODY>", html)
+    finish = findfirst("</BODY>", html)
+    range = nextind(html, last(start)):prevind(html, first(finish))
+    html = html[range]
+    return html
 end
