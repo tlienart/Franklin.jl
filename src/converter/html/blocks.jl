@@ -162,13 +162,15 @@ Process a for block (for a variable iterate).
 function process_html_for(hs::AS, qblocks::Vector{AbstractBlock},
                           i::Int)::Tuple{String,Int,Int}
     # check that the iterable is known
-    β_open = qblocks[i]
-    vname  = β_open.vname # x or (x, v)
-    iname  = β_open.iname # var
+    β_open  = qblocks[i]
+    vname   = β_open.vname # x or (x, v)
+    iname   = β_open.iname # var
+    content = ""
 
     if iname ∉ UTILS_NAMES && !haskey(LOCAL_VARS, iname)
-        throw(HTMLBlockError("The iterable '$iname' is not recognised. " *
-                             "Please make sure it's defined."))
+        throw(HTMLBlockError(
+            "The iterable '$iname' is not recognised. " *
+            "Please make sure it's defined."))
     end
     if iname ∈ UTILS_NAMES # can only happen if Utils is defined.
         iter = getfield(utils_module(), Symbol(iname))
