@@ -14,6 +14,12 @@
     <priority>0.5</priority>
 </url>
 <url>
+    <loc>wgl/index.html</loc>
+    <lastmod>2021-07-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
     <loc>index.html</loc>
     <lastmod>2021-07-22</lastmod>
     <changefreq>monthly</changefreq>

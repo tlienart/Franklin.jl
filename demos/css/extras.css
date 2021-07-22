@@ -1,1 +1,61 @@
-@charset "utf-8"; .code-output code.plaintext.hljs{background-color:#fbe367}.franklin-toc ol{list-style:georgian}figure{text-align:center;border:1px solid gray}.franklin-content figure>img{padding:0;margin:0}figcaption{text-align:center}.small-imgc{text-align:center}.small-imgc img{margin:0;padding:0;width:25%}pre{position:relative}.copy-button{cursor:pointer;border:0;font-size:10px;text-transform:uppercase;font-weight:500;padding:6px 10px 10px;color:#795548;background-color:transparent;position:absolute;top:0;right:0}.copy-button:hover,.copy-button:focus,.copy-button:active{outline:0;background-color:#eee9e6}
+/* supports question 3 */
+.code-output code.plaintext.hljs {
+  background-color: #fbe367;
+}
+
+/* Misc */
+.franklin-toc ol {
+  list-style: georgian;
+}
+
+figure {
+  text-align: center;
+  border: 1px solid gray;
+}
+.franklin-content figure > img {
+  padding:0;
+  margin:0;
+}
+
+figcaption {
+  text-align: center;
+}
+
+.small-imgc {
+  text-align: center;
+}
+.small-imgc img {
+  margin:0;
+  padding:0;
+  width: 25%;
+}
+
+
+/* ----------------- */
+
+
+pre {
+	position: relative;
+	/* padding: 30px; */
+}
+
+.copy-button {
+	cursor: pointer;
+	border: 0;
+	font-size: 10px;
+	text-transform: uppercase;
+	font-weight: 500;
+	padding: 6px 10px 10px;
+	color: #795548;
+	background-color: transparent;
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+.copy-button:hover,
+.copy-button:focus,
+.copy-button:active {
+	outline: 0;
+	background-color: #eee9e6;
+}
