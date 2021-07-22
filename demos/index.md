@@ -17,6 +17,28 @@ The ordering is reverse chronological but just use the table of contents to guid
 
 \toc
 
+## (016) using WGLMakie + JSServe
+
+This example assumes you're familiar with these two libraries and that you have the latest version of each.
+
+```julia:ex
+using WGLMakie, JSServe
+WGLMakie.activate!()
+
+io = IOBuffer()
+fig(o) = show(io, MIME"text/html"(), o)
+
+println(io, "~~~")
+Page(exportable=true, offline=true) |> fig
+scatter(1:4) |> fig
+surface(rand(4, 4)) |> fig
+JSServe.Slider(1:3) |> fig
+println(io, "~~~")
+println(String(take!(io)))
+```
+\textoutput{ex}
+
+
 ## (015) Using Weave
 
 [Here's a page](/weave/) where the content is generated from a [Weave.jl](https://github.com/JunoLab/Weave.jl).
