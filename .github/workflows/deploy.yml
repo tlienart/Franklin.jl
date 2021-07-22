@@ -38,7 +38,7 @@ jobs:
             serve(single=true, cleanup=false); lunr(); optimize(minify=false, prerender=false);
             cd("../demos");
             Pkg.activate("."); Pkg.instantiate();
-            optimize(prerender=false);
+            optimize(minify=false, prerender=false);
             dst = "../docs/__site/demos";
             mkpath(dst);
             foreach(p -> cp("__site/$p", "$dst/$p"), readdir("__site"));'
