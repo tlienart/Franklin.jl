@@ -72,7 +72,16 @@ lx_citep(lxc::LxCom, _) = form_href(lxc, "BIBR"; class="bibref")
 
 function lx_label(lxc::LxCom, _)
     refs = content(lxc.braces[1]) |> strip |> refstring
+    # note: this overwrites a previous label if there was one already
+    GLOBAL_VARS["anchors"].first[refs] = url_curpage()
     return "<a id=\"$refs\" class=\"anchor\"></a>"
+end
+
+@delay function lx_reflink(lxc::LxCom, _)
+    refs = content(lxc.braces[1]) |> strip |> refstring
+    anchors = globvar(:anchors)
+    refs in keys(anchors) || return "#"
+    return "$(anchors[refs])#$refs"
 end
 
 function lx_biblabel(lxc::LxCom, _)::String

@@ -15,6 +15,7 @@ const LX_INTERNAL_COMMANDS = [
     lxd("label",    1), # \label{id}
     lxd("biblabel", 2), # \biblabel{id}{name}
     lxd("toc",      0), # \toc
+    lxd("reflink",  1), # \reflink{id}
     # -------------------
     # inclusion / outputs (see converter/latex/io.jl)
     lxd("input",      2), # \input{what}{rpath}

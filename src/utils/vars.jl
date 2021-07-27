@@ -58,6 +58,8 @@ const GLOBAL_VARS_DEFAULT = [
     "fd_page_tags"     => Pair(nothing, (DTAG,  Nothing)),
     "fd_tag_pages"     => Pair(nothing, (DTAGI, Nothing)),
     "fd_rss_feed_url"  => dpair(""),
+    # keep track of all anchors {label => page} in case of clash, there's no guarantee
+    "anchors"          => dpair(LittleDict{String,String}()),
     # -----------------------------------------------------
     # LEGACY
     "div_content" => dpair(""), # see build_page
