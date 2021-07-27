@@ -44,6 +44,9 @@ function resolve_lxobj(lxo::LxObj, lxdefs::Vector{LxDef};
     end
 
     # the definition can be empty (which can be on purpose, for internal defs)
+    # NOTE: here note that there is NO re-processing. This is inconsistent
+    # with the behaviour of the lx_* functions defined in Utils. So for instance
+    # the output of lx_label is direct HTML.
     if (!env && isempty(lxd)) || (env && isempty(lxd.first) && isempty(lxd.second))
         name = getname(lxo)
         isdefined(Franklin, fun) && return eval(:($fun($lxo, $lxdefs)))
