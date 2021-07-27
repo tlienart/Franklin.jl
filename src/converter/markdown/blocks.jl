@@ -133,6 +133,8 @@ function convert_header(β::OCBlock, lxdefs::Vector{LxDef})::String
     else
         PAGE_HEADERS[rstitle] = (title, 1, parse(Int, hk[2]))
     end
+    # make the header anchor globally available
+    GLOBAL_VARS["anchors"].first[rstitle] = url_curpage()
     # return the title
     if globvar(:title_links)::Bool
         return html_hk(hk,
