@@ -27,7 +27,6 @@ Keyword arguments:
 * `port=8000`:       the port to use for the local server (should pick a number
                       between 8000 and 9000)
 * `single=false`:    whether to run a single pass or run continuously
-* `double=false`:    whether to run two passes before serving.
 * `nomess=false`:    suppresses all messages (internal use).
 * `is_final_pass=false`: whether we're in a "final pass" (if so, links are
                       fixed in case of a project website, see
@@ -51,7 +50,6 @@ function serve(; clear::Bool             = false,
                  verb::Bool              = false,
                  port::Int               = 8000,
                  single::Bool            = false,
-                 double::Bool            = false,
                  prerender::Bool         = false,
                  nomess::Bool            = false,
                  is_final_pass::Bool     = false,
