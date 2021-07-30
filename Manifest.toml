@@ -94,9 +94,9 @@ version = "0.8.4"
 
 [[Franklin]]
 deps = ["Dates", "DelimitedFiles", "DocStringExtensions", "ExprTools", "FranklinTemplates", "HTTP", "Literate", "LiveServer", "Logging", "Markdown", "NodeJS", "OrderedCollections", "Pkg", "REPL", "Random"]
-git-tree-sha1 = "45d6c016356fce118d6c94b9728d493dcd040fdf"
+git-tree-sha1 = "10b9e8af242742f895bcd7e75dbd9a8e66f5a817"
 uuid = "713c75ef-9fc9-4b05-94a9-213340da978e"
-version = "0.10.43"
+version = "0.10.44"
 
 [[FranklinTemplates]]
 deps = ["LiveServer"]
@@ -270,9 +270,9 @@ version = "0.12.2"
 
 [[Parsers]]
 deps = ["Dates"]
-git-tree-sha1 = "c8abc88faa3f7a3950832ac5d6e690881590d6dc"
+git-tree-sha1 = "94bf17e83a0e4b20c8d77f6af8ffe8cc3b386c0a"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "1.1.0"
+version = "1.1.1"
 
 [[Pidfile]]
 deps = ["FileWatching", "Test"]
@@ -285,16 +285,16 @@ deps = ["Dates", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "R
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 
 [[PlotlyBase]]
-deps = ["Base64", "Dates", "DelimitedFiles", "DocStringExtensions", "JSON", "Kaleido_jll", "LaTeXStrings", "Logging", "Parameters", "Pkg", "REPL", "Requires", "Statistics", "UUIDs"]
-git-tree-sha1 = "96c1e98b848d9cb6cea5088f1ef1b008e17a45a9"
+deps = ["Dates", "DelimitedFiles", "DocStringExtensions", "JSON", "LaTeXStrings", "Logging", "Parameters", "Pkg", "REPL", "Requires", "Statistics", "UUIDs"]
+git-tree-sha1 = "b01e7bbb151634e81171339407b6ff255122620a"
 uuid = "a03496cd-edff-5a9b-9e67-9cda94a718b5"
-version = "0.7.0"
+version = "0.8.2"
 
 [[PlotlyJS]]
-deps = ["Blink", "DelimitedFiles", "JSExpr", "JSON", "Markdown", "Pkg", "PlotlyBase", "REPL", "Reexport", "Requires", "WebIO"]
-git-tree-sha1 = "01c2792d06ed46744f9a95c9d5b4b9810cbe3279"
+deps = ["Base64", "Blink", "DelimitedFiles", "JSExpr", "JSON", "Kaleido_jll", "Markdown", "Pkg", "PlotlyBase", "REPL", "Reexport", "Requires", "WebIO"]
+git-tree-sha1 = "ed14a41890f61e72af737cc1ece36a120b5e5afd"
 uuid = "f0f68f2c-4968-5e81-91da-67840de0976a"
-version = "0.18.0"
+version = "0.18.2"
 
 [[Preferences]]
 deps = ["TOML"]
