@@ -10,7 +10,7 @@
         \output{ex}
         """ |> fd2html_td
     @test isapproxstr(s, """
-         <pre><code class="plaintext">12</code></pre>
+         <pre><code class="plaintext code-output">12</code></pre>
         """)
 end
 
@@ -32,12 +32,12 @@ end
             <pre><code class="language-julia">
             x &#61; 1
             </code></pre>
-            <pre><code class="plaintext">1</code></pre>
+            <pre><code class="plaintext code-output">1</code></pre>
 
             <p>B</p>
 
             <pre><code class="language-julia">print&#40;x&#41;</code></pre>
-            <pre><code class="plaintext">1</code></pre>
+            <pre><code class="plaintext code-output">1</code></pre>
             """)
 end
 
@@ -57,10 +57,10 @@ end
     @test isapproxstr(a, """
         <p>A</p>
         <pre><code class="language-julia">x &#61; :ab</code></pre>
-        <pre><code class="plaintext">:ab</code></pre>
+        <pre><code class="plaintext code-output">:ab</code></pre>
         <p>B</p>
         <pre><code class="language-julia">x &#61; :&#40;a&#43;b&#41;</code></pre>
-        <pre><code class="plaintext">:(a + b)</code></pre>
+        <pre><code class="plaintext code-output">:(a + b)</code></pre>
         <p>C</p>
         """)
 end

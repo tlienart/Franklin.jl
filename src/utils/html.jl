@@ -58,17 +58,18 @@ Convenience function to introduce a code block. With indented blocks, the
 language will be resolved at build time; as a result no lines will be hidden
 for such blocks.
 """
-function html_code(c::AS, lang::AS="")::String
+function html_code(c::AS, lang::AS=""; class::String="")::String
     isempty(c) && return ""
+    class = ifelse(isempty(class), "", " $class")
     # if it's plaintext
-    isempty(lang) && return "<pre><code class=\"plaintext\">$c</code></pre>"
+    isempty(lang) && return "<pre><code class=\"plaintext$(class)\">$c</code></pre>"
     # escape it if it isn't already
     c = is_html_escaped(c) ? c : htmlesc(c)
     # remove hidden lines if any
     c = html_skip_hidden(c, lang)
     # if empty (e.g. via #hideall) return ""
     c == "" && return ""
-    return "<pre><code class=\"language-$lang\">$c</code></pre>"
+    return "<pre><code class=\"language-$(lang)$(class)\">$c</code></pre>"
 end
 
 """

@@ -48,7 +48,7 @@ set_curpath("index.md")
                 <pre><code class="language-julia">$(F.htmlesc(raw"""a = 5
                 print(a^2)"""))</code></pre>
                 <p>then:</p>
-                <pre><code class="plaintext">25</code></pre>
+                <pre><code class="plaintext code-output">25</code></pre>
                 <p>done.</p>"""
 end
 
@@ -103,7 +103,7 @@ end
             <pre><code class="language-julia">$(F.htmlesc(raw"""a = 5
             print(a^2)"""))</code></pre>
             <p>then:</p>
-            <pre><code class="plaintext">25</code></pre>
+            <pre><code class="plaintext code-output">25</code></pre>
             <p>done.</p>"""
 
     # ------------
@@ -135,7 +135,7 @@ end
                 <pre><code class="language-julia">$(F.htmlesc(raw"""a = 5
                 print(a^2)"""))</code></pre>
                 <p>then:</p>
-                <pre><code class="plaintext">25</code></pre>
+                <pre><code class="plaintext code-output">25</code></pre>
                 <p>done.</p>"""
 end
 
@@ -160,7 +160,7 @@ end
                 a = [5, 2, 3, 4]
                 print(dot(a, a))"""))</code></pre>
                 <p>then:</p>
-                <pre><code class="plaintext">54</code></pre>
+                <pre><code class="plaintext code-output">54</code></pre>
                 <p>done.</p>"""
 end
 
@@ -210,7 +210,7 @@ end
                 <p>Simple code:</p>
                 <pre><code class="language-julia">$(F.htmlesc(raw"""sqrt(-1)"""))</code></pre>
                 <p>then:</p>
-                <pre><code class="plaintext">DomainError with -1.0:
+                <pre><code class="plaintext code-output">DomainError with -1.0:
                 sqrt will only return a complex result if called with a complex argument. Try sqrt(Complex(x)).
                 </code></pre>
                 <p>done.</p>"""
@@ -264,7 +264,7 @@ end
             println("Now: $a")
             rm(fn)"""))</code></pre>
             <p>done.</p>
-            <pre><code class="plaintext">Is this a file? true
+            <pre><code class="plaintext code-output">Is this a file? true
             Now: 2
             </code></pre>
             """
@@ -285,7 +285,7 @@ end
     @test h // """
                 <pre><code class="language-julia">$(F.htmlesc(raw"""a = 5
                 a *= 2"""))</code></pre>
-                <pre><code class="plaintext">10</code></pre>"""
+                <pre><code class="plaintext code-output">10</code></pre>"""
 
     # Show with stdout
     h = raw"""
@@ -303,7 +303,7 @@ end
                 <pre><code class="language-julia">$(F.htmlesc(raw"""a = 5
                 println("hello")
                 a *= 2"""))</code></pre>
-                <pre><code class="plaintext">hello
+                <pre><code class="plaintext code-output">hello
                 10</code></pre>"""
 
     # issue 427
@@ -322,5 +322,5 @@ end
             <pre><code class="language-julia">$(F.htmlesc(raw"""a = 5
             a *= 2
             # hello"""))</code></pre>
-            <pre><code class="plaintext">10</code></pre>"""
+            <pre><code class="plaintext code-output">10</code></pre>"""
 end

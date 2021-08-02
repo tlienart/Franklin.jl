@@ -103,7 +103,7 @@ function lx_output(lxc::LxCom, lxd::Vector{LxDef};
         end
     end
     # should it be reprocessed ?
-    reproc || return html_code(output)
+    reproc || return html_code(output; class="code-output")
     return reprocess(output, lxd)
 end
 

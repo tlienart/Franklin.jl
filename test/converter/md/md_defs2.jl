@@ -12,7 +12,7 @@
         \\show{ex}
         """ |> fd2html
     @test occursin(
-        "<code class=\"plaintext\">5</code>", h)
+        "<code class=\"plaintext code-output\">5</code>", h)
     h = """
         @def x = Dict(
             :a => (1, 2, 3),
@@ -25,7 +25,7 @@
         \\show{ex}
         """ |> fd2html
     @test occursin(
-        "<code class=\"plaintext\">1</code>", h)
+        "<code class=\"plaintext code-output\">1</code>", h)
     h = """
         @def x = Dict(
             :a => (1,
@@ -40,7 +40,7 @@
         \\show{ex}
         """ |> fd2html
     @test occursin(
-        "<code class=\"plaintext\">2</code>", h)
+        "<code class=\"plaintext code-output\">2</code>", h)
 end
 
 # Blocks of definitions

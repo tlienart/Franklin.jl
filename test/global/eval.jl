@@ -24,7 +24,7 @@
     h = foo |> fd2html_td
 
     @test isapproxstr(h, """
-                <pre><code class="language-julia">$(F.htmlesc("""println(randn())"""))</code></pre> <pre><code class=\"plaintext\">$a</code></pre>
+                <pre><code class="language-julia">$(F.htmlesc("""println(randn())"""))</code></pre> <pre><code class=\"plaintext code-output\">$a</code></pre>
                 """)
 
     # XXX TEXT MODIFICATION + IN SCOPE --> NO REEVAL
@@ -34,7 +34,7 @@
     h = foo |> fd2html_td
 
     @test isapproxstr(h, """
-                <pre><code class="language-julia">$(F.htmlesc("""println(randn())"""))</code></pre> <p><pre><code class=\"plaintext\">$a</code></pre> etc</p>
+                <pre><code class="language-julia">$(F.htmlesc("""println(randn())"""))</code></pre> <p><pre><code class=\"plaintext code-output\">$a</code></pre> etc</p>
                 """)
 
     # XXX CODE ADDITION --> NO REEVAL OF FIRST BLOCK
@@ -58,18 +58,18 @@
             println(randn())
             """))
         </code></pre>
-        <p><pre><code class=\"plaintext\">$a</code></pre> etc</p>
+        <p><pre><code class=\"plaintext code-output\">$a</code></pre> etc</p>
         <pre><code class="language-julia">
             $(F.htmlesc(raw"""
             println(randn())
             """))
         </code></pre>
-        <pre><code class=\"plaintext\">$b</code></pre>
+        <pre><code class=\"plaintext code-output\">$b</code></pre>
         <pre><code class="language-julia">
             $(F.htmlesc(raw"""
             println(randn())"""))
         </code></pre>
-        <pre><code class=\"plaintext\">$c</code></pre>
+        <pre><code class=\"plaintext code-output\">$c</code></pre>
         """)
 
     # XXX CODE MODIFICATION --> REEVAL OF BLOCK AND AFTER
@@ -98,18 +98,18 @@
             println(randn())
             """))
         </code></pre>
-        <pre><code class=\"plaintext\">$a</code></pre>
+        <pre><code class=\"plaintext code-output\">$a</code></pre>
         <pre><code class="language-julia">$(F.htmlesc(raw"""
             # modif
             println(randn())
             """))
         </code></pre>
-        <pre><code class=\"plaintext\">$d</code></pre>
+        <pre><code class=\"plaintext code-output\">$d</code></pre>
         <pre><code class="language-julia">$(F.htmlesc(raw"""
             println(randn())
             """))
         </code></pre>
-        <pre><code class=\"plaintext\">$e</code></pre>
+        <pre><code class=\"plaintext code-output\">$e</code></pre>
         """)
 end
 
@@ -137,13 +137,13 @@ end
                 println(a)
                 """))
             </code></pre>
-            <pre><code class=\"plaintext\">5</code></pre>
+            <pre><code class=\"plaintext code-output\">5</code></pre>
             <pre><code class="language-julia">$(F.htmlesc(raw"""
                 a += 3
                 println(a)
                 """))
             </code></pre>
-            <pre><code class=\"plaintext\">8</code></pre>
+            <pre><code class=\"plaintext code-output\">8</code></pre>
             """)
 
     h = raw"""
@@ -172,19 +172,19 @@ end
                 println(a)
                 """))
             </code></pre>
-            <pre><code class=\"plaintext\">5</code></pre>
+            <pre><code class=\"plaintext code-output\">5</code></pre>
             <pre><code class="language-julia">$(F.htmlesc(raw"""
                 a += 1
                 println(a)
                 """))
             </code></pre>
-            <pre><code class=\"plaintext\">6</code></pre>
+            <pre><code class=\"plaintext code-output\">6</code></pre>
             <pre><code class="language-julia">$(F.htmlesc(raw"""
                 a += 3
                 println(a)
                 """))
             </code></pre>
-            <pre><code class=\"plaintext\">9</code></pre>
+            <pre><code class=\"plaintext code-output\">9</code></pre>
             """)
 end
 
@@ -197,7 +197,7 @@ end
        """ |> F.fd2html
     @test isapproxstr(s, """
         <pre><code class="language-julia">x&#61;5 # a</code></pre>
-        <pre><code class="plaintext">5</code></pre>
+        <pre><code class="plaintext code-output">5</code></pre>
         """)
     s = """
        ```!
