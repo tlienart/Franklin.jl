@@ -87,7 +87,7 @@ end
        B""" |> fd2html_td
     @test isapproxstr(s, """
         <p>A</p>
-        <pre><code class="plaintext">1</code></pre>
+        <pre><code class="plaintext code-output">1</code></pre>
         <p>B</p>
         """)
     s = raw"""
@@ -100,7 +100,7 @@ end
        B""" |> fd2html_td
     @test isapproxstr(s, """
         <p>A</p>
-        <pre><code class="plaintext">"hello"</code></pre>
+        <pre><code class="plaintext code-output">"hello"</code></pre>
         <p>B</p>
         """)
 end

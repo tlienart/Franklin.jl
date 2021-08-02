@@ -98,12 +98,12 @@ end
             y = 2//5
             """))
         </code></pre>
-        <pre><code class="plaintext">2//5</code></pre>
+        <pre><code class="plaintext code-output">2//5</code></pre>
         <p>When adding <code>x</code> and <code>y</code> together we obtain a new rational number:</p>
         <pre><code class="language-julia">$(F.htmlesc(raw"""
             z = x + y
             """))
-        </code></pre><pre><code class="plaintext">11//15</code></pre>
+        </code></pre><pre><code class="plaintext code-output">11//15</code></pre>
         """)
 
     # issue 592
@@ -143,7 +143,7 @@ end
     @test h // """
         <h1 id="rational_numbers"><a href="#rational_numbers" class="header-anchor">Rational numbers</a></h1>
         <pre><code class="language-julia">$(F.htmlesc(raw"""const a = 1"""))</code></pre>
-        <pre><code class="language-julia">$(F.htmlesc(raw"""a = 5"""))</code></pre><pre><code class="plaintext">5</code></pre>
+        <pre><code class="language-julia">$(F.htmlesc(raw"""a = 5"""))</code></pre><pre><code class="plaintext code-output">5</code></pre>
         """
 end
 

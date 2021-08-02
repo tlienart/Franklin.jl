@@ -30,11 +30,11 @@ fs()
     @test isapproxstr(h, """
         <p>INI</p>
         <p>A</p>
-        <pre><code class="language-julia">$(F.htmlesc(raw"""1 + 1"""))</code></pre><pre><code class="plaintext">2</code></pre>
+        <pre><code class="language-julia">$(F.htmlesc(raw"""1 + 1"""))</code></pre><pre><code class="plaintext code-output">2</code></pre>
         <p>B</p>
         <pre><code class="language-julia">$(F.htmlesc(raw"""2^2;"""))</code></pre>
         <p>C</p>
-        <pre><code class="language-julia">$(F.htmlesc(raw"""println("hello")"""))</code></pre><pre><code class="plaintext">hello
+        <pre><code class="language-julia">$(F.htmlesc(raw"""println("hello")"""))</code></pre><pre><code class="plaintext code-output">hello
         </code></pre>
         <p>done.</p>
         """)

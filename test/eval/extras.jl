@@ -62,7 +62,7 @@ end
         df = DataFrame(A = 1:4, B = ["M", "F", "F", "M"])
         first(df, 3)
         """))</code></pre>
-        <pre><code class="plaintext">
+        <pre><code class="plaintext code-output">
         3×2 DataFrame
          Row │ A      B
              │ Int64  String
