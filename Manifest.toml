@@ -112,9 +112,9 @@ version = "0.5.0"
 
 [[HTTP]]
 deps = ["Base64", "Dates", "IniFile", "Logging", "MbedTLS", "NetworkOptions", "Sockets", "URIs"]
-git-tree-sha1 = "c6a1fff2fd4b1da29d3dccaffb1e1001244d844e"
+git-tree-sha1 = "44e3b40da000eab4ccb1aecdc4801c040026aeb5"
 uuid = "cd3eb016-35fb-5094-929b-558a96fad6f3"
-version = "0.9.12"
+version = "0.9.13"
 
 [[Hiccup]]
 deps = ["MacroTools", "Test"]
@@ -191,9 +191,9 @@ uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[Literate]]
 deps = ["Base64", "IOCapture", "JSON", "REPL"]
-git-tree-sha1 = "2a5b07cb13c9988cd7ee737df9f45eabbfab151c"
+git-tree-sha1 = "04a71882b041c0d896e4b379bb333a2e2d04054e"
 uuid = "98b081ad-f1c9-55d3-8b20-4c87d4299306"
-version = "2.9.0"
+version = "2.9.1"
 
 [[LiveServer]]
 deps = ["Crayons", "FileWatching", "HTTP", "Pkg", "Sockets", "Test"]
@@ -286,15 +286,15 @@ uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 
 [[PlotlyBase]]
 deps = ["Dates", "DelimitedFiles", "DocStringExtensions", "JSON", "LaTeXStrings", "Logging", "Parameters", "Pkg", "REPL", "Requires", "Statistics", "UUIDs"]
-git-tree-sha1 = "b01e7bbb151634e81171339407b6ff255122620a"
+git-tree-sha1 = "d5049450f7ce3a9b5ca8b9b911001dcb4f6af0ba"
 uuid = "a03496cd-edff-5a9b-9e67-9cda94a718b5"
-version = "0.8.2"
+version = "0.8.4"
 
 [[PlotlyJS]]
 deps = ["Base64", "Blink", "DelimitedFiles", "JSExpr", "JSON", "Kaleido_jll", "Markdown", "Pkg", "PlotlyBase", "REPL", "Reexport", "Requires", "WebIO"]
-git-tree-sha1 = "ed14a41890f61e72af737cc1ece36a120b5e5afd"
+git-tree-sha1 = "385e2f5e31d18b6f28c9e2ac5c2510a25f4fcdde"
 uuid = "f0f68f2c-4968-5e81-91da-67840de0976a"
-version = "0.18.2"
+version = "0.18.3"
 
 [[Preferences]]
 deps = ["TOML"]
@@ -368,9 +368,9 @@ version = "1.0.1"
 
 [[Tables]]
 deps = ["DataAPI", "DataValueInterfaces", "IteratorInterfaceExtensions", "LinearAlgebra", "TableTraits", "Test"]
-git-tree-sha1 = "8ed4a3ea724dac32670b062be3ef1c1de6773ae8"
+git-tree-sha1 = "d0c690d37c73aeb5ca063056283fde5585a41710"
 uuid = "bd369af6-aec1-5ad0-b16a-f7cc5008161c"
-version = "1.4.4"
+version = "1.5.0"
 
 [[Test]]
 deps = ["Distributed", "InteractiveUtils", "Logging", "Random"]

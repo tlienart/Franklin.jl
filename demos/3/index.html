@@ -51,7 +51,7 @@ end</code></pre>
 <p>or code for instance</p>
 <pre><code class="language-julia">for i in 1:5
   println&#40;&quot;*&quot;^i&#41;
-end</code></pre><pre><code class="plaintext">*
+end</code></pre><pre><code class="plaintext code-output">*
 **
 ***
 ****
@@ -61,7 +61,7 @@ end</code></pre><pre><code class="plaintext">*
 <p>You can look at <a href="https://github.com/tlienart/Franklin.jl/blob/master/demos/utils.jl"><code>utils.jl</code></a> for the definition of the <code>hfun</code> &#40;same as above&#41;, at <a href="https://github.com/tlienart/Franklin.jl/blob/master/demos/index.md"><code>index.md</code></a> to see how it&#39;s called and at <a href="https://github.com/tlienart/Franklin.jl/blob/master/demos/foo/content.md"><code>foo/content.md</code></a> for the content file. Finally you can also check out the <a href="https://github.com/tlienart/Franklin.jl/blob/master/demos/config.md"><code>config.md</code></a> file to see how the content page is ignored.</p>
 <h2 id="012_dates"><a href="#012_dates" class="header-anchor">&#40;012&#41; Dates</a></h2>
 <p>The date of last modification on the page is kept in the <code>fd_mtime_raw</code> internal page variable, there is also a pre-formatted <code>fd_mtime</code>.</p>
-<p>Last modified: 2021-07-30 or July 30, 2021</p>
+<p>Last modified: 2021-08-02 or August 02, 2021</p>
 <h2 id="011_showing_type_information"><a href="#011_showing_type_information" class="header-anchor">&#40;011&#41; showing type information</a></h2>
 <p>This is a short demo following a discussion on Slack, it shows three things:</p>
 <ul>
@@ -77,12 +77,12 @@ struct T; v::Int; end
 &#91;
     Dict&#40;:a &#61;&gt; T&#40;1&#41;&#41;,
     Dict&#40;:b &#61;&gt; T&#40;2&#41;&#41;,
-&#93;</code></pre><pre><code class="plaintext">2-element Array{Dict{Symbol,T},1}:
+&#93;</code></pre><pre><code class="plaintext code-output">2-element Array{Dict{Symbol,T},1}:
  Dict(:a => T(1))
  Dict(:b => T(2))</code></pre>
 <p>Here&#39;s another cell</p>
 <pre><code class="language-julia">T&#40;1&#41;
-print&#40;s&#41;</code></pre><pre><code class="plaintext">hello</code></pre>
+print&#40;s&#41;</code></pre><pre><code class="plaintext code-output">hello</code></pre>
 <p>Suppressed output:</p>
 <pre><code class="language-julia">X &#61; randn&#40;2, 3&#41;;</code></pre>
 <h2 id="010_clipboard_button_for_code_blocks"><a href="#010_clipboard_button_for_code_blocks" class="header-anchor">&#40;010&#41; clipboard button for code blocks</a></h2>
@@ -242,25 +242,25 @@ ls &#61; latexify&#40;empty_ary&#41; # this is an L string</code></pre>
 \[
 \left[
 \begin{array}{cc}
--3.1926483e-19 & 1.6958575e21 \\
-4.5755e-41 & 4.5755e-41 \\
+3.2e-44 & 1.0e-45 \\
+0.0 & 4.5846e-41 \\
 \end{array}
 \right]
 \]
 <h2 id="003_styling_of_code_output_blocks"><a href="#003_styling_of_code_output_blocks" class="header-anchor">&#40;003&#41; styling of code output blocks</a></h2>
 <p>At the moment &#40;August 2020&#41; no particular class is added on an output &#40;see <a href="https://github.com/tlienart/Franklin.jl/issues/531">#531</a>&#41;; you can still do something similar by adding a <code>@@code-output</code> &#40;or whatever appropriate name&#41; around the command that extracts the output and specify this in your css &#40;see <code>extras.css</code>&#41;:</p>
 <pre><code class="language-julia">x &#61; 7</code></pre>
-<div class="code-output"><pre><code class="plaintext">7</code></pre></div>
+<div class="code-output"><pre><code class="plaintext code-output">7</code></pre></div>
 <p>If you find yourself writing that a lot, you should probably define a command like</p>
 <pre><code class="language-plaintext">\newcommand&#123;\prettyshow&#125;&#91;1&#93;&#123;@@code-output \show&#123;#1&#125; @@&#125;</code></pre>
 <p>and put it in your <code>config.md</code> file so that it&#39;s globally available.</p>
-<div class="code-output"><pre><code class="plaintext">7</code></pre></div>
+<div class="code-output"><pre><code class="plaintext code-output">7</code></pre></div>
 <h2 id="002_code_block_scope"><a href="#002_code_block_scope" class="header-anchor">&#40;002&#41; code block scope</a></h2>
 <p>On a single page all code blocks share their environment so</p>
 <pre><code class="language-julia">x &#61; 5</code></pre>
 <p>then</p>
 <pre><code class="language-julia">y &#61; x&#43;2</code></pre>
-<pre><code class="plaintext">7</code></pre>
+<pre><code class="plaintext code-output">7</code></pre>
 <h2 id="001_how_to_load_data_from_file_and_loop_over_rows"><a href="#001_how_to_load_data_from_file_and_loop_over_rows" class="header-anchor">&#40;001&#41; how to load data from file and loop over rows</a></h2>
 <p>This was asked on Slack with the hope it could mimick the <a href="https://jekyllrb.com/docs/datafiles/">Data Files</a> functionality of Jekyll where you would have a file like</p>
 <pre><code class="language-julia">name,github
@@ -319,7 +319,7 @@ Liu Fengyun,liufengyun</code></pre>
 </ul>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: July 30, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
+    &copy; Thibaut Lienart. Last modified: August 02, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
