@@ -133,7 +133,8 @@
 </li>
 </ul></div>
 <div class="warning"><div class="title">⚠ Warning&#33;</div>
-<div class="content">When you consider a <em>project website</em>, you <strong>must</strong> define a <code>prepath</code> variable in your <code>config.md</code> with the name of that project. For instance: <code>@def prepath &#61; &quot;myWebsite&quot;</code>.   This is used upon deployment to indicate that the base URL of your website is <code>username.github.io/myWebsite/</code> instead of <code>username.github.io</code>.   If you forget to do that, among other problems the CSS won&#39;t load and your website will look terrible 😅.</div></div>
+<div class="content"><p>When you consider a <em>project website</em>, you <strong>must</strong> define a <code>prepath</code> variable in your <code>config.md</code> with the name of that project. For instance: <code>@def prepath &#61; &quot;myWebsite&quot;</code>.   This is used upon deployment to indicate that the base URL of your website is <code>username.github.io/myWebsite/</code> instead of <code>username.github.io</code>.   If you forget to do that, among other problems the CSS won&#39;t load and your website will look terrible 😅. </p>
+<p>However, if you add a custom domain like <code>example.com</code> to your <em>project</em> repo like <code>myWebsite</code>, then the variable <code>prepath</code> should be set empty string to make the CSS work.</p></div></div>
 <div class="tlist"><ul>
 <li><p><a href="https://github.com/tlienart2/tlienart2.github.io">This repo</a> is an example of <em>user website</em> you can copy,</p>
 </li>
@@ -274,7 +275,7 @@ jobs:
           GITHUB_TOKEN: &#36;&#123;&#123; secrets.GITHUB_TOKEN &#125;&#125;</code></pre>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: August 02, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: August 15, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
