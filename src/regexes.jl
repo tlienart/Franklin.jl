@@ -157,7 +157,7 @@ const HFUN_PARAMS_PAT = r"([^\s\"']+)|\"([^\"]*)\""
 
 See [`fix_links`](@ref).
 """
-const PREPATH_FIX_PAT = r"(src|href|formaction|url)\s*?=\s*?([\"\']?)\/"
+const PREPATH_FIX_PAT = r"(src|href|formaction|action|url)\s*?=\s*?([\"\']?)\/"
 
 #= =====================================================
 Pattern checkers
