@@ -286,15 +286,15 @@ uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 
 [[PlotlyBase]]
 deps = ["Dates", "DelimitedFiles", "DocStringExtensions", "JSON", "LaTeXStrings", "Logging", "Parameters", "Pkg", "REPL", "Requires", "Statistics", "UUIDs"]
-git-tree-sha1 = "7f7dc47383d2e84dd670360acee818caa84688c8"
+git-tree-sha1 = "e16340c5fef0af0a42de261df7eab54c691885bd"
 uuid = "a03496cd-edff-5a9b-9e67-9cda94a718b5"
-version = "0.8.7"
+version = "0.8.9"
 
 [[PlotlyJS]]
 deps = ["Base64", "Blink", "DelimitedFiles", "JSExpr", "JSON", "Kaleido_jll", "Markdown", "Pkg", "PlotlyBase", "REPL", "Reexport", "Requires", "WebIO"]
-git-tree-sha1 = "f49fa98b576f82a1cb114fa2067c85fcf98567af"
+git-tree-sha1 = "2e001b91e953f214191314c397c389d8743c8d5f"
 uuid = "f0f68f2c-4968-5e81-91da-67840de0976a"
-version = "0.18.4"
+version = "0.18.5"
 
 [[Preferences]]
 deps = ["TOML"]
