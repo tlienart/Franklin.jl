@@ -161,6 +161,10 @@ julia> verify_links()
 All internal and external links verified ✓.
 ```
 
+\note{
+  This functionality is pretty rudimentary and while it might help you to find internal dead links, for serious work you might still want to do a second pass with a well established link-checker such as [broken-link-checker](https://github.com/stevenvachon/broken-link-checker#readme).
+}
+
 ### Pre-rendering and compression
 
 The `optimize` function can
@@ -171,10 +175,14 @@ The `optimize` function can
 @@
 See `?optimize` for options.
 
-Those two steps may lead to faster loading pages.
+Those two steps _may_ lead to faster loading pages.
 Note that in order to run them, you will need a couple of external dependencies as mentioned in the [installation section](/index.html#installing_optional_extras).
 
-The `optimize` function is called by default in the `publish` function which can be used to help deploy your website.
+\note{
+  The minifier script (an external python lib) used is far from perfect and can break your website, generally speaking if things work locally but not when you deploy, try disabling it with `optimize(minify=false)`.
+
+  Also note that if you use GitHub or GitLab pages, the minification is not needed as these platforms compress the pages themselves.
+}
 
 ### Publish
 
