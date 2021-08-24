@@ -13,7 +13,7 @@ Once it's working, you might want to adjust  the `build_index.js` and/or the `lu
 
 ### Libraries
 
-Install `lunr` and `cheerio` (a HTML parser) with `node`:
+Install `lunr` and `cheerio` (a HTML parser) with `node` locally:
 
 ```bash
 $> npm install lunr
@@ -25,7 +25,7 @@ $> npm install cheerio
 ### Files
 
 Copy [this folder](https://github.com/tlienart/Franklin.jl/tree/master/docs/_libs/lunr) to a `/_libs/lunr/` directory.
-Discard the `lunr_index.js` which is the index of this website, you will rebuild your own of course!
+Discard the `lunr_index.js` which is the index of this website, a version for your website will be generated dynamically.
 
 The important files are `build_index.js` and `lunrclient.js` (of  which a minified version is provided which you will want to re-generate if you modify the base file).
 These files are adapted from [this repository](https://github.com/BLE-LTER/Lunr-Index-and-Search-for-Static-Sites) which shows how to use Lunr on a static website.
