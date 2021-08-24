@@ -368,9 +368,9 @@ version = "0.9.1"
 
 [[ImageIO]]
 deps = ["FileIO", "Netpbm", "OpenEXR", "PNGFiles", "TiffImages", "UUIDs"]
-git-tree-sha1 = "ba5334adebad6bcf43f2586e7151d2c83f09f9b6"
+git-tree-sha1 = "13c826abd23931d909e4c5538643d9691f62a617"
 uuid = "82e4d734-157c-48bb-816b-45c225c6df19"
-version = "0.5.7"
+version = "0.5.8"
 
 [[ImageMagick]]
 deps = ["FileIO", "ImageCore", "ImageMagick_jll", "InteractiveUtils", "Libdl", "Pkg", "Random"]
@@ -927,9 +927,9 @@ uuid = "01d81517-befc-4cb6-b9ec-a95719d0359c"
 version = "0.3.4"
 
 [[Reexport]]
-git-tree-sha1 = "adcd36e8ba9665c88eb0bd156d4e2a19f9b0d889"
+git-tree-sha1 = "22a05aff275f6704f8769799beafe47ee7d14416"
 uuid = "189a3867-3050-52da-a836-e630ba90ab69"
-version = "1.2.0"
+version = "1.2.1"
 
 [[RelocatableFolders]]
 deps = ["SHA", "Scratch"]

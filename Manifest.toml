@@ -333,9 +333,9 @@ deps = ["Serialization"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [[Reexport]]
-git-tree-sha1 = "adcd36e8ba9665c88eb0bd156d4e2a19f9b0d889"
+git-tree-sha1 = "22a05aff275f6704f8769799beafe47ee7d14416"
 uuid = "189a3867-3050-52da-a836-e630ba90ab69"
-version = "1.2.0"
+version = "1.2.1"
 
 [[Requires]]
 deps = ["UUIDs"]
