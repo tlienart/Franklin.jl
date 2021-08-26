@@ -44,6 +44,7 @@ Keyword arguments:
                       variables
 * `host="127.0.0.1"`: the host to use for the local server
 * `show_warnings=true`: whether to show franklin  warnings
+* `fail_on_warning=false`: if true, warnings become fatal errors
 * `launch=!single`:   whether to launch the browser when serving
 """
 function serve(; clear::Bool             = false,
@@ -61,6 +62,7 @@ function serve(; clear::Bool             = false,
                  log::Bool               = false,
                  host::String            = "127.0.0.1",
                  show_warnings::Bool     = true,
+                 fail_on_warning::Bool   = false,
                  launch::Bool            = !single,
                  )::Union{Nothing,Int}
 
@@ -73,6 +75,8 @@ function serve(; clear::Bool             = false,
     if silent || !show_warnings
         FD_ENV[:SHOW_WARNINGS] = false
     end
+
+    FD_ENV[:FAIL_ON_WARNING] = fail_on_warning
 
     # in case of optim, there may be a prepath given which should be
     # kept

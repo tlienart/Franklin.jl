@@ -18,6 +18,7 @@ Does a full pass followed by a pre-rendering and minification step.
 * `no_fail_prerender=true`: whether to ignore errors during the pre-rendering
                              process
 * `suppress_errors=true`:   whether to suppress errors
+* `fail_on_warning=false`:   if true, warnings become fatal errors
 * `cleanup=true`:   whether to empty environment dictionaries
 * `on_write(pg, fd_vars)`: callback function after the page is rendered,
                       passing as arguments the rendered page and the page
@@ -29,8 +30,10 @@ pages).
 """
 function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
                     prepath::String="", no_fail_prerender::Bool=true, on_write::Function=(_,_)->nothing,
-                    suppress_errors::Bool=true, clear::Bool=false, cleanup::Bool=true)::Union{Nothing,Bool}
+                    suppress_errors::Bool=true, clear::Bool=false, cleanup::Bool=true,
+                    fail_on_warning::Bool = false)::Union{Nothing,Bool}
     suppress_errors && (FD_ENV[:SUPPRESS_ERR] = true)
+    FD_ENV[:FAIL_ON_WARNING] = fail_on_warning
     #
     # Prerendering
     #
