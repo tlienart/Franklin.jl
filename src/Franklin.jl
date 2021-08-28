@@ -68,24 +68,24 @@ const BIG_INT = typemax(Int)
 # but works fine for what we do here and limits the necessity of passing lots
 # of arguments to lots of functions.
 const FD_ENV = LittleDict(
-    :FULL_PASS     => true,
-    :CLEAR         => false,
-    :VERB          => false,
-    :FINAL_PASS    => false,
-    :PRERENDER     => false,
-    :NO_FAIL_PRERENDER => true,  # skip prerendering if fails on a page
-    :ON_WRITE      => (_, _) -> nothing,
-    :FORCE_REEVAL  => false,
-    :CUR_PATH      => "",        # complements fd-rpath
-    :SOURCE        => "",        # keeps track of the origin of a HTML string
-    :OFFSET_LXDEFS => -BIG_INT,  # helps keep track of order in lxcoms/envs
-    :DEBUG_MODE    => false,
-    :SUPPRESS_ERR  => false,
-    :SILENT_MODE   => false,
-    :QUIET_TEST    => false,
-    :SHOW_WARNINGS => true,     # franklin-specific warnings
-    :UTILS_COUNTER => 0,        # counter for utils module
-    :UTILS_HASH    => nothing   # hash of the utils
+    :FULL_PASS         => true,
+    :CLEAR             => false,
+    :VERB              => false,
+    :FINAL_PASS        => false,
+    :PRERENDER         => false,
+    :NO_FAIL_PRERENDER => true,     # skip prerendering if fails on a page
+    :ON_WRITE          => (_, _) -> nothing,
+    :FORCE_REEVAL      => false,
+    :CUR_PATH          => "",       # complements fd-rpath
+    :SOURCE            => "",       # keeps track of the origin of a HTML string
+    :OFFSET_LXDEFS     => -BIG_INT, # helps keep track of order in lxcoms/envs
+    :DEBUG_MODE        => false,
+    :SUPPRESS_ERR      => false,
+    :SILENT_MODE       => false,
+    :QUIET_TEST        => false,
+    :SHOW_WARNINGS     => true,     # franklin-specific warnings
+    :UTILS_COUNTER     => 0,        # counter for utils module
+    :UTILS_HASH        => nothing   # hash of the utils
     )
 
 utils_name()   = "Utils_$(FD_ENV[:UTILS_COUNTER]::Int)"
