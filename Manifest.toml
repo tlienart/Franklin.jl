@@ -292,15 +292,15 @@ uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 
 [[PlotlyBase]]
 deps = ["ColorSchemes", "Dates", "DelimitedFiles", "DocStringExtensions", "JSON", "LaTeXStrings", "Logging", "Parameters", "Pkg", "REPL", "Requires", "Statistics", "UUIDs"]
-git-tree-sha1 = "3984b84a295d1bcf0d0f7902f9fb1eeed54f97db"
+git-tree-sha1 = "e9b96dd840b3c9d01669f1df28982b530b711165"
 uuid = "a03496cd-edff-5a9b-9e67-9cda94a718b5"
-version = "0.8.13"
+version = "0.8.15"
 
 [[PlotlyJS]]
 deps = ["Base64", "Blink", "DelimitedFiles", "JSExpr", "JSON", "Kaleido_jll", "Markdown", "Pkg", "PlotlyBase", "REPL", "Reexport", "Requires", "WebIO"]
-git-tree-sha1 = "2e001b91e953f214191314c397c389d8743c8d5f"
+git-tree-sha1 = "fc760eacadc70dcb2a9fec7c57f0dd5a5f12a814"
 uuid = "f0f68f2c-4968-5e81-91da-67840de0976a"
-version = "0.18.5"
+version = "0.18.6"
 
 [[Preferences]]
 deps = ["TOML"]
@@ -333,9 +333,9 @@ deps = ["Serialization"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [[Reexport]]
-git-tree-sha1 = "22a05aff275f6704f8769799beafe47ee7d14416"
+git-tree-sha1 = "45e428421666073eab6f2da5c9d310d99bb12f9b"
 uuid = "189a3867-3050-52da-a836-e630ba90ab69"
-version = "1.2.1"
+version = "1.2.2"
 
 [[Requires]]
 deps = ["UUIDs"]
