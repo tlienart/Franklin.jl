@@ -56,5 +56,6 @@ function print_warning(msg)
         println(line)
     end
     printyb("└\n")
+    FD_ENV[:FAIL_ON_WARNING] && throw(ErrorException("`fail_on_warning` is true, so exiting with error"))
     return
 end

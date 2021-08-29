@@ -84,6 +84,7 @@ const FD_ENV = LittleDict(
     :SILENT_MODE       => false,
     :QUIET_TEST        => false,
     :SHOW_WARNINGS     => true,     # franklin-specific warnings
+    :FAIL_ON_WARNING   => false,    # turn warnings into fatal errors
     :UTILS_COUNTER     => 0,        # counter for utils module
     :UTILS_HASH        => nothing   # hash of the utils
     )
