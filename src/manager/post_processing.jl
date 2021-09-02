@@ -117,15 +117,19 @@ function optimize(;
     end
 
     if !isempty(version) && version != "dev"
-        mpath = joinpath(PATHS[:folder], "__site", version)
-        cp(path(:site), mpath, force=true)
-        # go over every file and fix the prepath to prepath/version
-        for (root, _, files) in walkdir(mpath)
-            for file in files
-                endswith(file, ".html") || continue
-                fp = joinpath(root, file)
-                ct = read(fp, String)
-                write(fp, replace(ct, "/stable/" => "/$version/"))
+        for c in (version, "dev")
+            mpath = joinpath(PATHS[:folder], "__site", c)
+            isdir(mpath)  && rm(mpath, recursive=true)
+            cp(path(:site), mpath)
+
+            # go over every file and fix the prepath to prepath/version
+            for (root, _, files) in walkdir(mpath)
+                for file in files
+                    endswith(file, ".html") || continue
+                    fp = joinpath(root, file)
+                    ct = read(fp, String)
+                    write(fp, replace(ct, "/stable/" => "/$c/"))
+                end
             end
         end
     end
