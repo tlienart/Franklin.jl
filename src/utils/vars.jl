@@ -22,7 +22,7 @@ const GLOBAL_VARS = PageVars()
 
 const GLOBAL_VARS_DEFAULT = [
     # General
-    "author"           => Pair("THE AUTHOR", (String, Nothing)),
+    "author"           => Pair("", (String, Nothing)),
     "prepath"          => dpair(""),
     "date_format"      => dpair("U dd, yyyy"),
     "date_days"        => dpair(String[]),

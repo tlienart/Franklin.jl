@@ -50,6 +50,8 @@ function prepare_for_rss()::Nothing
                 "templates", "common", "_rss", template
             )
             cp(src, dst)
+            # ensure the file is not read-only
+            chmod(dst, 0o644)
         end
     end
     return nothing

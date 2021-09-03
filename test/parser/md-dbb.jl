@@ -38,13 +38,13 @@ end
     Franklin.eval(:(hfun_bar(p) = string(round(sqrt(Meta.parse(p[1])), digits=1)) ))
     s = "@@B @@A {{author}} @@\n@@ <!-- html -->\n" |> fd2html
     @test isapproxstr(s, """
-        <div class=\"B\"><div class=\"A\">THE AUTHOR</div></div>
+        <div class=\"B\"><div class=\"A\"></div></div>
         """)
     s = "**{{author}}**" |> fd2html
-    @test isapproxstr(s, "<p><strong>THE AUTHOR</strong></p>")
+    @test isapproxstr(s, "<p><strong></strong></p>")
     s = raw"\style{font-weight:bold;}{ {{author}} }" |> fd2html
     @test isapproxstr(s, """
-        <span style="font-weight:bold;">THE AUTHOR</span>
+        <span style="font-weight:bold;"></span>
         """)
     s = raw"@@bold {{bar 4}} @@" |> fd2html
     @test isapproxstr(s, """
