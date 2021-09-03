@@ -2,7 +2,7 @@
 \left[
 \begin{array}{cc}
 1.0e-45 & 1.0e-45 \\
-0.0 & 0.0 \\
+1.0e-45 & 0.0 \\
 \end{array}
 \right]
 \end{equation}
