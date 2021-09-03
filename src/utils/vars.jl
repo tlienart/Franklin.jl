@@ -198,6 +198,8 @@ Return `default` (which is `nothing` if not specified) if the variable is not fo
 """
 function locvar(name::Union{Symbol,String}; default=nothing)
     name = String(name)
+    name = get(LOCAL_VARS_ALIASES, name, name)
+    name = get(GLOBAL_VARS_ALIASES, name, name)
     return haskey(LOCAL_VARS, name) ? LOCAL_VARS[name].first : default
 end
 
