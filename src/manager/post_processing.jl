@@ -5,14 +5,19 @@ $(SIGNATURES)
 
 Does a full pass followed by a pre-rendering and minification step.
 
+* `prepath=""`:     set this to something like "project-name" if it's a project
+                     page (usually this is set via config.md)
+* `version=""`:     if "dev", the base url will be `/{prepath}/dev/`, if "xxx",
+                     the base url will be `/{prepath}/stable/`, a copy of
+                     the website will also be at `/{prepath}/xxx/` an example
+                     would be `version="v0.15.2"`. If left empty, the base url
+                     is just `/{prepath}/`.
 * `prerender=true`: whether to pre-render katex and highlight.js (requires
                      `node.js`)
 * `minify=true`:    whether to minify output (requires `python3` and
                      `css_html_js_minify`)
 * `sig=false`:      whether to return an integer indicating success (see
                      [`publish`](@ref))
-* `prepath=""`:     set this to something like "project-name" if it's a project
-                     page
 * `clear=false`:    whether to clear the output dir and thereby regenerate
                      everything
 * `no_fail_prerender=true`: whether to ignore errors during the pre-rendering
@@ -28,12 +33,25 @@ Note: if the prerendering is set to `true`, the minification will take longer
 as the HTML files will be larger (especially if you have lots of maths on
 pages).
 """
-function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
-                    prepath::String="", no_fail_prerender::Bool=true, on_write::Function=(_,_)->nothing,
-                    suppress_errors::Bool=true, clear::Bool=false, cleanup::Bool=true,
-                    fail_on_warning::Bool = false)::Union{Nothing,Bool}
+function optimize(;
+            prepath::String="",
+            version::String="",
+            prerender::Bool=true,
+            minify::Bool=true,
+            sig::Bool=false,
+            no_fail_prerender::Bool=true,
+            on_write::Function=(_,_)->nothing,
+            suppress_errors::Bool=true,
+            clear::Bool=false,
+            cleanup::Bool=true,
+            fail_on_warning::Bool = false
+            )::Union{Nothing,Bool}
+
     suppress_errors && (FD_ENV[:SUPPRESS_ERR] = true)
     FD_ENV[:FAIL_ON_WARNING] = fail_on_warning
+
+    isassigned(FOLDER_PATH) || (FOLDER_PATH[] = pwd(); set_paths!())
+
     #
     # Prerendering
     #
@@ -46,7 +64,18 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
               "You can install it with `npm install highlight.js`."
     end
     if !isempty(prepath)
-        GLOBAL_VARS["prepath"] = prepath => (String,)
+        GLOBAL_VARS["prepath"] = dpair(prepath)
+    end
+    no_set_paths = false
+    join_to_prepath = ""
+    version = lowercase(strip(version))
+    if !isempty(version)
+        c = ifelse(version == "dev", "dev", "stable")
+        join_to_prepath = c
+        PATHS[:site] = joinpath(PATHS[:folder], "__site", c)
+        PATHS[:tag]  = joinpath(PATHS[:site], "tag")
+        mkpath(PATHS[:site])
+        no_set_paths = true
     end
 
     # re-do a (silent) full pass
@@ -58,7 +87,9 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
     succ = nothing === serve(single=true, clear=clear, nomess=true,
                              is_final_pass=true, prerender=prerender,
                              no_fail_prerender=no_fail_prerender,
-                             cleanup=cleanup, on_write=on_write)
+                             cleanup=false, on_write=on_write,
+                             no_set_paths=no_set_paths,
+                             join_to_prepath=join_to_prepath)
     print_final(withpre, start)
 
     #
@@ -85,6 +116,24 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
         end
     end
 
+    if !isempty(version) && version != "dev"
+        for c in (version, "dev")
+            mpath = joinpath(PATHS[:folder], "__site", c)
+            isdir(mpath)  && rm(mpath, recursive=true)
+            cp(path(:site), mpath)
+
+            # go over every file and fix the prepath to prepath/version
+            for (root, _, files) in walkdir(mpath)
+                for file in files
+                    endswith(file, ".html") || continue
+                    fp = joinpath(root, file)
+                    ct = read(fp, String)
+                    write(fp, replace(ct, "/stable/" => "/$c/"))
+                end
+            end
+        end
+    end
+
     #
     # Clean up empty folders if any
     #
@@ -93,6 +142,8 @@ function optimize(; prerender::Bool=true, minify::Bool=true, sig::Bool=false,
         isdir(p) || continue
         isempty(readdir(p)) && rm(p)
     end
+
+    cleanup && clear_dicts()
 
     FD_ENV[:SUPPRESS_ERR] = false
     return ifelse(sig, succ, nothing)

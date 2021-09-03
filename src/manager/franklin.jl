@@ -63,6 +63,8 @@ function serve(; clear::Bool             = false,
                  show_warnings::Bool     = true,
                  fail_on_warning::Bool   = false,
                  launch::Bool            = !single,
+                 no_set_paths::Bool      = false,
+                 join_to_prepath::String = ""
                  )::Union{Nothing,Int}
 
     LOGGING[] = log
@@ -110,7 +112,7 @@ function serve(; clear::Bool             = false,
     end
 
     # construct the set of files to watch
-    watched_files = fd_setup()
+    watched_files = fd_setup(no_set_paths)
 
     # set a verbosity var that we'll use in the rest of the function
     nomess && (verb = false)
@@ -119,7 +121,7 @@ function serve(; clear::Bool             = false,
     nomess || println("→ Initial full pass...")
     start = time()
     FD_ENV[:FORCE_REEVAL] = eval_all
-    sig = fd_fullpass(watched_files)
+    sig = fd_fullpass(watched_files, join_to_prepath)
     FD_ENV[:FORCE_REEVAL] = false
     sig < 0 && return sig
     fmsg = rpad("✔ full pass...", 40)
@@ -157,11 +159,11 @@ directory. It also sets the paths variables and prepares the output directory.
 
 See also [`serve`](@ref).
 """
-function fd_setup()::NamedTuple
+function fd_setup(no_set_paths::Bool=false)::NamedTuple
     # . setting up:
     # -- reading and storing the path variables
     # -- setting up the output directory (see `clear`)
-    set_paths!()
+    no_set_paths || set_paths!()
     prepare_output_dir()
 
     # . recovering the list of files in the input dir we care about
@@ -200,7 +202,7 @@ as appropriate.
 
 See also [`fd_loop`](@ref), [`serve`](@ref) and [`publish`](@ref).
 """
-function fd_fullpass(watched_files::NamedTuple)::Int
+function fd_fullpass(watched_files::NamedTuple, join_to_prepath::String="")::Int
     # keep track of context (some things either will or won't be done on
     # the full pass, e.g. see tag generation)
     FD_ENV[:FULL_PASS]  = true
@@ -218,6 +220,11 @@ function fd_fullpass(watched_files::NamedTuple)::Int
     # note the order (utils the config) is important, see also #774
     process_utils()
     process_config()
+
+    if !isempty(join_to_prepath)
+        set_var!(GLOBAL_VARS, "prepath",
+                 joinpath(globvar("prepath"), join_to_prepath))
+    end
 
     # form page segments
     root    = path(:folder)
