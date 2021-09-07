@@ -30,9 +30,9 @@ version = "1.1.1"
 
 [[ArrayInterface]]
 deps = ["IfElse", "LinearAlgebra", "Requires", "SparseArrays", "Static"]
-git-tree-sha1 = "85d03b60274807181bae7549bb22b2204b6e5a0e"
+git-tree-sha1 = "019303a0f26d6012f35ecdfa4618551d145fb9f2"
 uuid = "4fba245c-0d91-5ea0-9b3e-6abc04ee57a9"
-version = "3.1.30"
+version = "3.1.31"
 
 [[Artifacts]]
 deps = ["Pkg"]
@@ -74,9 +74,9 @@ version = "1.16.0+6"
 
 [[ChainRulesCore]]
 deps = ["Compat", "LinearAlgebra", "SparseArrays"]
-git-tree-sha1 = "bdc0937269321858ab2a4f288486cb258b9a0af7"
+git-tree-sha1 = "30ee06de5ff870b45c78f529a6b093b3323256a3"
 uuid = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
-version = "1.3.0"
+version = "1.3.1"
 
 [[CodecZlib]]
 deps = ["TranscodingStreams", "Zlib_jll"]
@@ -145,9 +145,9 @@ uuid = "717857b8-e6f2-59f4-9121-6e50c889abd2"
 version = "0.7.3"
 
 [[DataAPI]]
-git-tree-sha1 = "ee400abb2298bd13bfc3df1c412ed228061a2385"
+git-tree-sha1 = "bec2532f8adb82005476c141ec23e921fc20971b"
 uuid = "9a962f9c-6df0-11e9-0e5d-c546b8b5ee8a"
-version = "1.7.0"
+version = "1.8.0"
 
 [[DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
@@ -610,10 +610,10 @@ uuid = "d3a379c0-f9a3-5b72-a4c0-6bf4d2e8af0f"
 version = "2.9.0+0"
 
 [[LogExpFunctions]]
-deps = ["DocStringExtensions", "IrrationalConstants", "LinearAlgebra"]
-git-tree-sha1 = "3d682c07e6dd250ed082f883dc88aee7996bf2cc"
+deps = ["ChainRulesCore", "DocStringExtensions", "IrrationalConstants", "LinearAlgebra"]
+git-tree-sha1 = "1f5097e3bce576e1cdf6dc9f051ab8c6e196b29e"
 uuid = "2ab3a3ac-af41-5b50-aa03-7779005ae688"
-version = "0.3.0"
+version = "0.3.1"
 
 [[Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
@@ -1098,6 +1098,12 @@ git-tree-sha1 = "d0c690d37c73aeb5ca063056283fde5585a41710"
 uuid = "bd369af6-aec1-5ad0-b16a-f7cc5008161c"
 version = "1.5.0"
 
+[[Tectonic]]
+deps = ["Pkg"]
+git-tree-sha1 = "acf12eccb390a78653ee805cd527898f01f78a85"
+uuid = "9ac5f52a-99c6-489f-af81-462ef484790f"
+version = "0.6.1"
+
 [[TensorCore]]
 deps = ["LinearAlgebra"]
 git-tree-sha1 = "1feb45f88d133a655e001435632f019a9a1bcdb6"
@@ -1115,10 +1121,10 @@ uuid = "1e332c56-9431-4126-8a34-92cbdf251ae4"
 version = "0.2.0"
 
 [[TikzPictures]]
-deps = ["LaTeXStrings", "Poppler_jll", "Requires"]
-git-tree-sha1 = "06b36e2baa9b97814ef1993207b71e2e23e9efb5"
+deps = ["LaTeXStrings", "Poppler_jll", "Requires", "Tectonic"]
+git-tree-sha1 = "f710171c6ecccf4a65fd19b65afb335f9d504d57"
 uuid = "37f6aa50-8035-52d0-81c2-5a1d08754b2d"
-version = "3.3.3"
+version = "3.4.0"
 
 [[TimeZones]]
 deps = ["Dates", "Future", "LazyArtifacts", "Mocking", "Pkg", "Printf", "RecipesBase", "Serialization", "Unicode"]

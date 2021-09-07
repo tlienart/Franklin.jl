@@ -149,29 +149,29 @@
 <p>For instance you might prefer:</p>
 <pre><code class="language-julia">x &#61; randn&#40;10&#41;
 x&#91;1:3&#93;</code></pre><pre><code class="plaintext code-output">3-element Array{Float64,1}:
-  0.5284475802411587
- -1.0069614940154041
- -1.3817214831921067</code></pre>
+ -0.6115521152149792
+  1.2267908495599047
+ -0.025371019218998186</code></pre>
 <p>to just</p>
 <pre><code class="language-julia">x &#61; randn&#40;10&#41;</code></pre><pre><code class="plaintext code-output">10-element Array{Float64,1}:
-  0.4928193817734973
- -1.4361323313283947
-  1.2744085090193185
- -1.122095331439509
-  0.25838015028862754
- -0.11251986914961631
- -0.345742930304704
- -0.13352699326779802
-  0.2830935214818922
- -1.6307473899715024</code></pre>
+ -1.1201627782730095
+  0.7408092133110001
+ -0.41420268826633205
+ -0.8416705704031967
+ -0.9425278630679813
+  0.21083558713580805
+  0.8018318423901278
+ -0.16583926977762847
+ -1.4493021493875793
+  1.5784392435455639</code></pre>
 <p>You can also use <code>@show</code> or <code>println</code> to show specific things beyond the last line</p>
 <pre><code class="language-julia">x &#61; rand&#40;10&#41;
 println&#40;sum&#40;x&#41;&#41;
-y &#61; 5</code></pre><pre><code class="plaintext code-output">4.6339531829994245
+y &#61; 5</code></pre><pre><code class="plaintext code-output">5.548539475729824
 5</code></pre>
 <p>if the last line is a <code>@show</code> or <code>print</code> then only that is shown:</p>
 <pre><code class="language-julia">x &#61; randn&#40;10&#41;
-@show x&#91;1&#93;</code></pre><pre><code class="plaintext code-output">x[1] = -1.4627058899476963
+@show x&#91;1&#93;</code></pre><pre><code class="plaintext code-output">x[1] = 1.519887816016779
 </code></pre>
 <h2 id="example"><a href="#example" class="header-anchor">Example</a></h2>
 <h3 id="script"><a href="#script" class="header-anchor">Script</a></h3>
@@ -208,7 +208,7 @@ abs&#40;x&#41; &lt; eps&#40;&#41;
  </p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: September 03, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: September 07, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

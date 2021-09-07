@@ -57,9 +57,9 @@ uuid = "a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f"
 version = "4.0.4"
 
 [[DataAPI]]
-git-tree-sha1 = "ee400abb2298bd13bfc3df1c412ed228061a2385"
+git-tree-sha1 = "bec2532f8adb82005476c141ec23e921fc20971b"
 uuid = "9a962f9c-6df0-11e9-0e5d-c546b8b5ee8a"
-version = "1.7.0"
+version = "1.8.0"
 
 [[DataValueInterfaces]]
 git-tree-sha1 = "bfc1187b79289637fa0ef6d4436ebdfe6905cbd6"
@@ -100,9 +100,9 @@ version = "0.8.4"
 
 [[Franklin]]
 deps = ["Dates", "DelimitedFiles", "DocStringExtensions", "ExprTools", "FranklinTemplates", "HTTP", "Literate", "LiveServer", "Logging", "Markdown", "NodeJS", "OrderedCollections", "Pkg", "REPL", "Random"]
-git-tree-sha1 = "cb6206b1d498ff96048ebdb597334ee8169d7f98"
+git-tree-sha1 = "d595a39575517f367d75114b119e586adf1d5eea"
 uuid = "713c75ef-9fc9-4b05-94a9-213340da978e"
-version = "0.10.49"
+version = "0.10.51"
 
 [[FranklinTemplates]]
 deps = ["LiveServer"]
@@ -298,9 +298,9 @@ version = "0.8.16"
 
 [[PlotlyJS]]
 deps = ["Base64", "Blink", "DelimitedFiles", "JSExpr", "JSON", "Kaleido_jll", "Markdown", "Pkg", "PlotlyBase", "REPL", "Reexport", "Requires", "WebIO"]
-git-tree-sha1 = "fc760eacadc70dcb2a9fec7c57f0dd5a5f12a814"
+git-tree-sha1 = "ec6bc7270269be2d565b272116ca74ca2f8bd9ab"
 uuid = "f0f68f2c-4968-5e81-91da-67840de0976a"
-version = "0.18.6"
+version = "0.18.7"
 
 [[Preferences]]
 deps = ["TOML"]
