@@ -12,6 +12,8 @@ Does a full pass followed by a pre-rendering and minification step.
                      the website will also be at `/{prepath}/xxx/` an example
                      would be `version="v0.15.2"`. If left empty, the base url
                      is just `/{prepath}/`.
+* `is_preview=false`: if true, then no matter what the version given is, it will
+                       not update `/stable/` and `/dev/`.
 * `prerender=true`: whether to pre-render katex and highlight.js (requires
                      `node.js`)
 * `minify=true`:    whether to minify output (requires `python3` and
@@ -70,7 +72,13 @@ function optimize(;
     join_to_prepath = ""
     version = lowercase(strip(version))
     if !isempty(version)
-        c = ifelse(version == "dev", "dev", "stable")
+        if version == "dev"
+            c = "dev"
+        elseif startswith(version, "previews/")
+            c = version
+        else
+            c = "stable"
+        end
         join_to_prepath = c
         PATHS[:site] = joinpath(PATHS[:folder], "__site", c)
         PATHS[:tag]  = joinpath(PATHS[:site], "tag")
@@ -116,7 +124,9 @@ function optimize(;
         end
     end
 
-    if !isempty(version) && version != "dev"
+    # if not dev or preview, the /stable/ path was overwritten and we copy that
+    # to whatever the version is so that it's also /v.../
+    if !isempty(version) && version != "dev" && !startswith(version, "previews/")
         for c in (version, "dev")
             mpath = joinpath(PATHS[:folder], "__site", c)
             isdir(mpath)  && rm(mpath, recursive=true)
