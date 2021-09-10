@@ -60,6 +60,8 @@ const GLOBAL_VARS_DEFAULT = [
     "fd_rss_feed_url"  => dpair(""),
     # keep track of all anchors {label => page} in case of clash, there's no guarantee
     "anchors"          => dpair(LittleDict{String,String}()),
+    # allow md strings in Literate
+    "literate_mds"     => dpair(false),
     # -----------------------------------------------------
     # LEGACY
     "div_content" => dpair(""), # see build_page

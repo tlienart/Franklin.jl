@@ -40,13 +40,23 @@ function literate_to_franklin(rpath::AS)::Tuple{String,Bool}
     # don't show Literate's infos
     Logging.disable_logging(Logging.LogLevel(Logging.Info))
     # >> output the markdown
-    Literate.markdown(fpath, outpath;
-                      config=Dict("codefence" => (LITERATE_JULIA_FENCE => "```")),
-                      documenter=false, postprocess=literate_post_process, credit=false)
+    Literate.markdown(
+        fpath, outpath;
+        flavor=Literate.CommonMarkFlavor(),
+        mdstrings=locvar(:literate_mds)::Bool,
+        config=Dict("codefence" => (LITERATE_JULIA_FENCE => "```")),
+        postprocess=literate_post_process,
+        credit=false
+    )
     # >> output the script
-    Literate.script(fpath, outpath; documenter=false,
-                      postprocess=s->(MESSAGE_FILE_GEN_LIT * s),
-                      name=fname * "_script", credit=false)
+    Literate.script(
+        fpath, outpath;
+        flavor=Literate.CommonMarkFlavor(),
+        mdstrings=locvar(:literate_mds)::Bool,
+        postprocess=s->(MESSAGE_FILE_GEN_LIT * s),
+        name=fname * "_script",
+        credit=false
+    )
     # bring back logging
     Logging.disable_logging(Logging.LogLevel(Logging.Debug))
     # see if things have changed
