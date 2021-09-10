@@ -1,6 +1,7 @@
 @def hascode = true
 @def showall = true
 @def hasmath = true
+@def literate_mds = true
 
 # Work with Literate.jl
 
@@ -38,7 +39,7 @@ We recommend you have a folder `/_literate/` in your root folder, place your lit
 ### Tricks
 
 In the `showall = true` mode, the last line of each code block is displayed in full.
-In some cases you will have to  think about this a bit more than you would in your REPL and might for instance:
+In some cases you will have to think about this a bit more than you would in your REPL and might for instance:
 
 @@tlist
 * _suppress the output_, in which case  you should add a `;`  at the end  of the line
@@ -73,6 +74,22 @@ x = randn(10)
 @show x[1]
 ```
 
+The `literate_mds = true` mode adds support for using literal markdown strings, `md""" ... """`, for the markdown sections, a feature introduced in [Literate v2.9](https://fredrikekre.github.io/Literate.jl/v2/fileformat/#Multiline-comments-and-markdown-strings). For example
+
+```md
+md"""
+# Title
+something cool
+"""
+```
+
+is rewritten to
+
+```
+# # Title
+# something cool
+```
+
 ## Example
 
 ### Script
@@ -94,9 +111,11 @@ x ≈ 0
 
 abs(x) < eps()
 
-# #### Conclusion
-#
-# The equation is proven thanks to our very rigorous proof.
+md"""
+#### Conclusion
+
+The equation $ \exp(i\pi) + 1 \quad = \quad 0 $ is proven thanks to our very rigorous proof.
+"""
 `````
 
 ### Result
