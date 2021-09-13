@@ -100,9 +100,9 @@ version = "0.8.4"
 
 [[Franklin]]
 deps = ["Dates", "DelimitedFiles", "DocStringExtensions", "ExprTools", "FranklinTemplates", "HTTP", "Literate", "LiveServer", "Logging", "Markdown", "NodeJS", "OrderedCollections", "Pkg", "REPL", "Random"]
-git-tree-sha1 = "5fccec511137c5f30316e8e2633d9fc528567071"
+git-tree-sha1 = "1fdad3237b61183852911529059edd5b1ad3d8f3"
 uuid = "713c75ef-9fc9-4b05-94a9-213340da978e"
-version = "0.10.52"
+version = "0.10.53"
 
 [[FranklinTemplates]]
 deps = ["LiveServer"]
@@ -320,9 +320,9 @@ version = "1.92.3"
 
 [[PyPlot]]
 deps = ["Colors", "LaTeXStrings", "PyCall", "Sockets", "Test", "VersionParsing"]
-git-tree-sha1 = "67dde2482fe1a72ef62ed93f8c239f947638e5a2"
+git-tree-sha1 = "14c1b795b9d764e1784713941e787e1384268103"
 uuid = "d330b81b-6aea-500a-939a-2ce795aea3ee"
-version = "2.9.0"
+version = "2.10.0"
 
 [[REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets"]
