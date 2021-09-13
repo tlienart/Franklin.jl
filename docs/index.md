@@ -30,7 +30,7 @@ _click on the '&check;' sign to know more_
 To install Franklin with Julia **≥ 1.3**,
 
 ```julia-repl
-(v1.4) pkg> add Franklin
+(v1.6) pkg> add Franklin
 ```
 
 You can then just try it out:
