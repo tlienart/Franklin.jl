@@ -190,7 +190,7 @@ var2 &#61; &quot;Hello goodbye&quot;
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">The conditional blocks are fairly basic; in particular operations between page variables are not supported, so you can&#39;t write something like <code>&#123;&#123;if hasmath &amp;&amp; hascode&#125;&#125;</code>.   For more complex use cases, consider defining your own HTML functions using the <a href="/syntax/utils/">utils file</a>.</div></div>
 <p>You can also use some dedicated conditional blocks:</p>
-<div class="lalign"><table><tr><th align="center">Format</th><th align="center">Role</th></tr><tr><td align="center"><code>&#123;&#123;ispage path/to/page&#125;&#125;</code></td><td align="center">whether the current page corresponds to the path</td></tr><tr><td align="center"><code>&#123;&#123;isnotpage path/to/page&#125;&#125;</code></td><td align="center">opposite of previous</td></tr><tr><td align="center"><code>&#123;&#123;isdef vname&#125;&#125;</code></td><td align="center">whether <code>vname</code> is defined</td></tr><tr><td align="center"><code>&#123;&#123;isnotdef vname&#125;&#125;</code></td><td align="center">opposite of previous</td></tr><tr><td align="center"><code>&#123;&#123;isempty vname&#125;&#125;</code></td><td align="center">whether <code>vname</code> is empty</td></tr><tr><td align="center"><code>&#123;&#123;isnotempty vname&#125;&#125;</code></td><td align="center">opposite of previous</td></tr></table></div>
+<div class="lalign"><table><tr><th align="center">Format</th><th align="center">Role</th></tr><tr><td align="center"><code>&#123;&#123;ispage path/to/page&#125;&#125;</code></td><td align="center">whether the current page corresponds to the path</td></tr><tr><td align="center"><code>&#123;&#123;isnotpage path/to/page&#125;&#125;</code></td><td align="center">opposite of previous</td></tr><tr><td align="center"><code>&#123;&#123;isdef vname&#125;&#125;</code></td><td align="center">whether <code>vname</code> is defined</td></tr><tr><td align="center"><code>&#123;&#123;isnotdef vname&#125;&#125;</code></td><td align="center">opposite of previous</td></tr><tr><td align="center"><code>&#123;&#123;isempty vname&#125;&#125;</code></td><td align="center">whether <code>vname</code> is nothing, empty, or if a date <code>0001-01-01</code></td></tr><tr><td align="center"><code>&#123;&#123;isnotempty vname&#125;&#125;</code></td><td align="center">opposite of previous</td></tr></table></div>
 <p>The <code>&#123;&#123;ispage ...&#125;&#125;</code> and <code>&#123;&#123;isnotpage ...&#125;&#125;</code> accept <code>*</code> as joker symbol; for instance <code>&#123;&#123;ispage maths/*&#125;&#125;</code> is allowed.</p>
 <p><strong>Note</strong>: for people used to <code>C</code> syntax, you can also use <code>ifdef</code>, <code>ifndef</code>.</p>
 <p>Consider the following example &#40;very similar to what is used on the current page&#41;:</p>
@@ -257,7 +257,7 @@ var2 &#61; &quot;Hello goodbye&quot;
 </ul></div>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: September 13, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: September 16, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
