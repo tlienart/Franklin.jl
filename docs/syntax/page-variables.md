@@ -173,7 +173,7 @@ You can also use some dedicated conditional blocks:
 | `{{isnotpage path/to/page}}` | opposite of previous
 | `{{isdef vname}}` | whether `vname` is defined
 | `{{isnotdef vname}}` | opposite of previous
-| `{{isempty vname}}`| whether `vname` is empty
+| `{{isempty vname}}`| whether `vname` is nothing, empty, or if a date `0001-01-01`
 | `{{isnotempty vname}}`| opposite of previous
 @@
 

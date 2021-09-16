@@ -18,3 +18,16 @@ end
     # must end with html
     @test_throws F.HTMLFunctionError ("{{redirect foo}}" |> fd2html)
 end
+
+@testset "isempty" begin
+    s = """
+        +++
+        using Dates
+        d = Date(1,1,1)
+        x = nothing
+        +++
+        {{isempty d}}A{{end}}
+        {{isempty x}}B{{end}}
+        """ |> fd2html_td
+    @test isapproxstr(s, "<p>AB</p>")
+end

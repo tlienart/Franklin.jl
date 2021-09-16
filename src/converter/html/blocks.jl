@@ -68,7 +68,7 @@ function process_html_cond(hs::AS, qblocks::Vector{AbstractBlock},
                 k ⊻= βi isa HIsNotDef
             elseif βi isa Union{HIsEmpty, HIsNotEmpty}
                 v = locvar(βi.vname)
-                e = isnothing(v) || isempty(v)
+                e = _isempty(v)
                 k = ifelse(βi isa HIsEmpty, e, !e)
             end
         else
@@ -153,6 +153,12 @@ function process_html_cond(hs::AS, qblocks::Vector{AbstractBlock},
 
     return content, head, i_close
 end
+
+# used for the HIsEmpty, HIsNotEmpty
+_isempty(v::T) where T = hasmethod(isempty, (T,)) ? isempty(v) : false
+_isempty(::Nothing)    = true
+_isempty(v::Date)      = (v == Date(1,1,1))
+
 
 """
 $SIGNATURES
