@@ -67,6 +67,7 @@ function run_code(mod::Module, code::AS, out_path::AS;
     isempty(code) && return nothing
     strip_code && (code = strip(code))
     exs  = parse_code(strip(code))
+    isempty(exs) && return nothing
     ne   = length(exs)
     res  = nothing # to capture final result
     err  = nothing
