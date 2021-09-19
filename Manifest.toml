@@ -424,6 +424,6 @@ version = "1.5.9"
 
 [[Widgets]]
 deps = ["Colors", "Dates", "Observables", "OrderedCollections"]
-git-tree-sha1 = "eae2fbbc34a79ffd57fb4c972b08ce50b8f6a00d"
+git-tree-sha1 = "80661f59d28714632132c73779f8becc19a113f2"
 uuid = "cc8bc4a8-27d6-5769-a93b-9d913e69aa62"
-version = "0.6.3"
+version = "0.6.4"
