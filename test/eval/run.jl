@@ -46,7 +46,7 @@ end
         Random.seed!(555)
         println("hello")
         b = randn()
-        b > 0
+        iszero(b)
         """
     r = F.run_code(mod1, c, junk)
 

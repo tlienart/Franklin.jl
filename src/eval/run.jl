@@ -67,12 +67,19 @@ function run_code(mod::Module, code::AS, out_path::AS;
     isempty(code) && return nothing
     strip_code && (code = strip(code))
     exs  = parse_code(strip(code))
-    isempty(exs) && return nothing
     ne   = length(exs)
     res  = nothing # to capture final result
     err  = nothing
     stacktrace = nothing
     ispath(out_path) || mkpath(dirname(out_path))
+
+    # we do this here so that `out_path` is still generated to avoid
+    # issue #885
+    if isempty(exs)
+        write(out_path, "")
+        return nothing
+    end
+
     open(out_path, "w") do outf
         if !FD_ENV[:SILENT_MODE]::Bool
             rprint("→ evaluating code [$(out_path |> basename |> splitext |> first)] in ($(locvar("fd_rpath")))")
