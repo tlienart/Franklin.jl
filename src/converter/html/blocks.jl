@@ -68,7 +68,7 @@ function process_html_cond(hs::AS, qblocks::Vector{AbstractBlock},
                 k ⊻= βi isa HIsNotDef
             elseif βi isa Union{HIsEmpty, HIsNotEmpty}
                 v = locvar(βi.vname)
-                e = _isempty(v)
+                e = _isemptyvar(v)
                 k = ifelse(βi isa HIsEmpty, e, !e)
             end
         else
@@ -155,9 +155,9 @@ function process_html_cond(hs::AS, qblocks::Vector{AbstractBlock},
 end
 
 # used for the HIsEmpty, HIsNotEmpty
-_isempty(v::T) where T = hasmethod(isempty, (T,)) ? isempty(v) : false
-_isempty(::Nothing)    = true
-_isempty(v::Date)      = (v == Date(1,1,1))
+_isemptyvar(v::T) where T = hasmethod(isempty, (T,)) ? isempty(v) : false
+_isemptyvar(::Nothing)    = true
+_isemptyvar(v::Date)      = (v == Date(1,1,1))
 
 
 """
