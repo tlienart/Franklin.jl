@@ -14,6 +14,9 @@ struct SMOpts
     changefreq::String   # one of...
     priority::Float64    #
     function SMOpts(l, c, p)
+        if l == Date(1)
+            l = Date(now())
+        end
         c = lowercase(c)
         p = isa(p, String) ? parse(Float64, p) : float(p)
         allowedf = ("always", "hourly", "daily", "weekly", "monthly",
