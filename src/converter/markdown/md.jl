@@ -173,6 +173,20 @@ function convert_md(
         title = first(values(PAGE_HEADERS))[1]
         set_var!(LOCAL_VARS, "title", title)
     end
+
+    # need to fill in fd_full_url and fd_page_html as in write_page which
+    # isn't called in the pagevar branch. This needs to happen before the
+    # ALL_PAGE_VARS copy which is what `pagevar` will query later on.
+    if pagevar
+        full_url = joinpath(
+            locvar(:website_url)::String,
+            strip(locvar(:fd_url)::String, '/')
+        )
+        set_var!(LOCAL_VARS, "fd_full_url", full_url)
+        ctt = convert_html(hstring)
+        set_var!(LOCAL_VARS, "fd_page_html", ctt)
+    end
+
     # Copy vars to allpagevars to make them more easily accessible to other pages
     if !(isrecursive || isinternal)
         ALL_PAGE_VARS[rpath] = deepcopy(LOCAL_VARS)
