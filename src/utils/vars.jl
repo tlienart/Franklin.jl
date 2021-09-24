@@ -62,6 +62,8 @@ const GLOBAL_VARS_DEFAULT = [
     "anchors"          => dpair(LittleDict{String,String}()),
     # allow md strings in Literate
     "literate_mds"     => dpair(false),
+    # each cell runs a cd in/out OUT_PATH
+    "auto_code_path"   => dpair(false),
     # -----------------------------------------------------
     # LEGACY
     "div_content" => dpair(""), # see build_page

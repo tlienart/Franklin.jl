@@ -121,8 +121,13 @@ function resolve_code_block(ss::SubString; shortcut=false)::String
         # make the output directory available to the code block
         # (see @OUTPUT macro)
         OUT_PATH[] = cp.out_dir
+        bk  = pwd()
+        out = ifelse(locvar(:auto_code_path)::Bool, cp.out_dir, bk)
+        isdir(out) || mkpath(out)
+        cd(out)
         # >> eval the code in the relevant module (this creates output/)
         res = run_code(mod, code, cp.out_path; strip_code=false)
+        cd(bk)
         # >> write res to file
         # >> this weird thing with QuoteNode is to make sure that the proper
         #    "show" method is called...

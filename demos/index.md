@@ -1,5 +1,8 @@
-@def title = "Franklin FAQ"
-@def tags = ["index"]
++++
+title = "Franklin FAQ"
+tags = ["index"]
+auto_code_path = true
++++
 
 # Franklin Demos
 
@@ -16,6 +19,36 @@ The ordering is reverse chronological but just use the table of contents to guid
 **Note 2**: the numbering in georgian script in the table of content is on purpose (though for no particularly good reason other than that it looks nice... 🇬🇪)
 
 \toc
+
+## (017) making cells work in their own path
+
+Currently if you're saving a figure in a code block, you need to specify where to place that figure, if you don't it will go in the current directory which is the main site directory, typically you don't want that, so one trick is to use the `@OUTPUT` macro like so:
+
+```!
+using PyPlot
+figure(figsize=(8,6))
+plot(rand(5), rand(5))
+savefig(joinpath(@OUTPUT, "ex_outpath_1.svg"))
+```
+
+and that directory is among the ones that are automatically checked when you use the `\fig` command (e.g. `\fig{ex_outpath_1.svg}`):
+
+\fig{ex_outpath_1.svg}
+
+if you're writing tutorials and have lots of such figures and you don't want your readers to see these weird `@OUTPUT` or you can't be bothered to add `#hide` everywhere, you can set a variable `auto_code_path` to `true` (either locally on a page or globally in your config), what this will do is that each time a cell is executed, Julia will first `cd` to the output path. So the above bit of code now reads:
+
+```!
+using PyPlot
+figure(figsize=(8,6))
+plot(rand(5), rand(5), color="red")
+savefig("ex_outpath_2.svg")
+```
+
+and like before just use `\fig{ex_outpath_2.svg}`:
+
+\fig{ex_outpath_2.svg}
+
+**Note**: since this was meant to be a non-breaking change, `auto_code_path` is set to `false` by default, you must set it yourself to `true` in your `config.md` if you want this to apply everywhere.
 
 ## (016) using WGLMakie + JSServe
 
