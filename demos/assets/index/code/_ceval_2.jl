@@ -1,3 +1,5 @@
 # This file was generated, do not modify it. # hide
-T(1)
-print(s)
+using PyPlot
+figure(figsize=(8,6))
+plot(rand(5), rand(5), color="red")
+savefig("ex_outpath_2.svg")

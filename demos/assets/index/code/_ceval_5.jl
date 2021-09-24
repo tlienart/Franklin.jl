@@ -1,3 +1,2 @@
 # This file was generated, do not modify it. # hide
-T(1)
-print(s)
+X = randn(2, 3);

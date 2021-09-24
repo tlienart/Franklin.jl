@@ -1,3 +1,4 @@
 # This file was generated, do not modify it. # hide
-T(1)
-print(s)
+for i in 1:5
+  println("*"^i)
+end
