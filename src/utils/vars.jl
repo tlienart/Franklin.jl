@@ -64,6 +64,8 @@ const GLOBAL_VARS_DEFAULT = [
     "literate_mds"     => dpair(false),
     # each cell runs a cd in/out OUT_PATH
     "auto_code_path"   => dpair(false),
+    # don't generate tag pages
+    "generate_tags"    => dpair(true),
     # -----------------------------------------------------
     # LEGACY
     "div_content" => dpair(""), # see build_page
@@ -239,6 +241,9 @@ processed yet so force a pass over that page.
 Return `default` (which is `nothing` if not specified) if the variable is not found.
 """
 function pagevar(rpath::AS, name::Union{Symbol,String}; default=nothing)
+    # HACK avoid stackoverflow for pagevar cycle
+    PAGEVAR_DEPTH[] > 5 && return default
+
     # only split extension if it's .md or .html (otherwise can cause trouble
     # if there's a dot in the page name... not recommended but happens.)
     rpc = splitext(rpath)

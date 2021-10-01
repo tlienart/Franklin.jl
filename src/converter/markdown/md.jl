@@ -33,6 +33,13 @@ function convert_md(
     # instantiate page dictionaries
     isrecursive || isinternal || set_page_env()
 
+    # HACK avoid stackoverflow in pagevar loop see #891
+    if pagevar
+        PAGEVAR_DEPTH[] += 1
+    else
+        PAGEVAR_DEPTH[] = 0
+    end
+
     #
     # Parsing of the markdown string
     # (to find latex command, latex definitions, math envs etc.)
