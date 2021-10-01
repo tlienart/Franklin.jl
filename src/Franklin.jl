@@ -94,6 +94,9 @@ utils_symb()   = Symbol(utils_name())
 utils_module() = getproperty(Main, utils_symb())
 utils_hash()   = nothing
 
+# HACK avoid stackoverflow for pagevar cycle (see juliacomputing issue #891)
+const PAGEVAR_DEPTH = Ref{Int}(0)
+
 # keep track of pages which need to be re-evaluated after the full-pass
 # to ensure that their h-fun are working with the fully-defined scope
 # (e.g. if need list of all tags)

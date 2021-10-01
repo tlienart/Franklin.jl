@@ -11,6 +11,7 @@ Note: the `clean_tags` cleans up orphan tags (tags that wouldn't be pointing
 to any page anymore).
 """
 function generate_tag_pages(refresh_tags=Set{String}())::Nothing
+    globvar(:generate_tags)::Bool || return
     # if there are no page tags, cleanup and finish
     PAGE_TAGS = globvar("fd_page_tags")
     isnothing(PAGE_TAGS) && return clean_tags()
