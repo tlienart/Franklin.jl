@@ -36,7 +36,7 @@ function convert_md(
     # HACK avoid stackoverflow in pagevar loop see #891
     if pagevar
         PAGEVAR_DEPTH[] += 1
-    else
+    elseif !isrecursive && !isinternal
         PAGEVAR_DEPTH[] = 0
     end
 
