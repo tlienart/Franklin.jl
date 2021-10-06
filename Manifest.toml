@@ -104,9 +104,9 @@ version = "0.8.4"
 
 [[Franklin]]
 deps = ["Dates", "DelimitedFiles", "DocStringExtensions", "ExprTools", "FranklinTemplates", "HTTP", "Literate", "LiveServer", "Logging", "Markdown", "NodeJS", "OrderedCollections", "Pkg", "REPL", "Random"]
-git-tree-sha1 = "85c3934124729aabc03c0cca76cacbc33f0609ab"
+git-tree-sha1 = "ca57f7e99cb91d90fa8f969bbc7ffda3b7e09a12"
 uuid = "713c75ef-9fc9-4b05-94a9-213340da978e"
-version = "0.10.58"
+version = "0.10.59"
 
 [[FranklinTemplates]]
 deps = ["LiveServer"]
@@ -313,9 +313,9 @@ version = "0.8.18"
 
 [[PlotlyJS]]
 deps = ["Base64", "Blink", "DelimitedFiles", "JSExpr", "JSON", "Kaleido_jll", "Markdown", "Pkg", "PlotlyBase", "REPL", "Reexport", "Requires", "WebIO"]
-git-tree-sha1 = "ec6bc7270269be2d565b272116ca74ca2f8bd9ab"
+git-tree-sha1 = "53d6325e14d3bdb85fd387a085075f36082f35a3"
 uuid = "f0f68f2c-4968-5e81-91da-67840de0976a"
-version = "0.18.7"
+version = "0.18.8"
 
 [[Preferences]]
 deps = ["TOML"]
@@ -387,9 +387,9 @@ version = "1.0.1"
 
 [[Tables]]
 deps = ["DataAPI", "DataValueInterfaces", "IteratorInterfaceExtensions", "LinearAlgebra", "TableTraits", "Test"]
-git-tree-sha1 = "1162ce4a6c4b7e31e0e6b14486a6986951c73be9"
+git-tree-sha1 = "fed34d0e71b91734bf0a7e10eb1bb05296ddbcd0"
 uuid = "bd369af6-aec1-5ad0-b16a-f7cc5008161c"
-version = "1.5.2"
+version = "1.6.0"
 
 [[Tar]]
 deps = ["ArgTools", "SHA"]
