@@ -27,7 +27,69 @@
 <p>It&#39;s not meant to be beautiful, rather just show how to get specific stuff done. If one block answers one of your question, make sure to check <a href="https://github.com/tlienart/Franklin.jl/tree/master/demos/index.md">the source</a> to see how it was done. The ordering is reverse chronological but just use the table of contents to guide you to whatever you might want to explore.</p>
 <p><strong>Note</strong>: an important philosophy here is that if you can write a Julia function that would produce the HTML you want, then write that function and let Franklin call it.</p>
 <p><strong>Note 2</strong>: the numbering in georgian script in the table of content is on purpose &#40;though for no particularly good reason other than that it looks nice... 🇬🇪&#41;</p>
-<div class="franklin-toc"><ol><li><a href="#017_making_cells_work_in_their_own_path">&#40;017&#41; making cells work in their own path</a></li><li><a href="#016_using_wglmakie_jsserve">&#40;016&#41; using WGLMakie &#43; JSServe</a></li><li><a href="#015_using_weave">&#40;015&#41; Using Weave</a></li><li><a href="#014_using_mathjax">&#40;014&#41; Using MathJax</a></li><li><a href="#013_inserting_markdown_in_markdown">&#40;013&#41; Inserting Markdown in Markdown</a></li><li><a href="#012_dates">&#40;012&#41; Dates</a></li><li><a href="#011_showing_type_information">&#40;011&#41; showing type information</a></li><li><a href="#010_clipboard_button_for_code_blocks">&#40;010&#41; clipboard button for code blocks</a></li><li><a href="#009_custom_environment_for_tikzcd">&#40;009&#41; custom environment for TikzCD</a></li><li><a href="#008_custom_environments_and_commands">&#40;008&#41; &#40;custom&#41; environments and commands</a><ol><li><a href="#customise_with_julia_code">Customise with Julia code</a></li></ol></li><li><a href="#007_delayed_hfun">&#40;007&#41; delayed hfun</a></li><li><a href="#006_code_highlighting">&#40;006&#41; code highlighting</a></li><li><a href="#005_pagination">&#40;005&#41; pagination</a></li><li><a href="#004_use_latexifyjl">&#40;004&#41; use Latexify.jl</a></li><li><a href="#003_styling_of_code_output_blocks">&#40;003&#41; styling of code output blocks</a></li><li><a href="#002_code_block_scope">&#40;002&#41; code block scope</a></li><li><a href="#001_how_to_load_data_from_file_and_loop_over_rows">&#40;001&#41; how to load data from file and loop over rows</a><ol><li><a href="#approach_1_with_a_hfun">Approach 1, with a <code>hfun</code></a></li><li><a href="#approach_2_with_a_page_variable_and_a_for_loop">Approach 2, with a page variable and a for loop</a></li></ol></li></ol></div>
+<div class="franklin-toc"><ol><li><a href="#018_collapsible_block">&#40;018&#41; collapsible block</a></li><li><a href="#017_making_cells_work_in_their_own_path">&#40;017&#41; making cells work in their own path</a></li><li><a href="#016_using_wglmakie_jsserve">&#40;016&#41; using WGLMakie &#43; JSServe</a></li><li><a href="#015_using_weave">&#40;015&#41; Using Weave</a></li><li><a href="#014_using_mathjax">&#40;014&#41; Using MathJax</a></li><li><a href="#013_inserting_markdown_in_markdown">&#40;013&#41; Inserting Markdown in Markdown</a></li><li><a href="#012_dates">&#40;012&#41; Dates</a></li><li><a href="#011_showing_type_information">&#40;011&#41; showing type information</a></li><li><a href="#010_clipboard_button_for_code_blocks">&#40;010&#41; clipboard button for code blocks</a></li><li><a href="#009_custom_environment_for_tikzcd">&#40;009&#41; custom environment for TikzCD</a></li><li><a href="#008_custom_environments_and_commands">&#40;008&#41; &#40;custom&#41; environments and commands</a><ol><li><a href="#customise_with_julia_code">Customise with Julia code</a></li></ol></li><li><a href="#007_delayed_hfun">&#40;007&#41; delayed hfun</a></li><li><a href="#006_code_highlighting">&#40;006&#41; code highlighting</a></li><li><a href="#005_pagination">&#40;005&#41; pagination</a></li><li><a href="#004_use_latexifyjl">&#40;004&#41; use Latexify.jl</a></li><li><a href="#003_styling_of_code_output_blocks">&#40;003&#41; styling of code output blocks</a></li><li><a href="#002_code_block_scope">&#40;002&#41; code block scope</a></li><li><a href="#001_how_to_load_data_from_file_and_loop_over_rows">&#40;001&#41; how to load data from file and loop over rows</a><ol><li><a href="#approach_1_with_a_hfun">Approach 1, with a <code>hfun</code></a></li><li><a href="#approach_2_with_a_page_variable_and_a_for_loop">Approach 2, with a page variable and a for loop</a></li></ol></li></ol></div>
+<h2 id="018_collapsible_block"><a href="#018_collapsible_block" class="header-anchor">&#40;018&#41; collapsible block</a></h2>
+<p>How to make a section expand when clicked, so that content is initially hidden? &#40;Based on <a href="https://www.w3schools.com/howto/howto_js_collapsible.asp">this html guide</a>.&#41;</p>
+<button type="button" class="collapsible">  We first define a command, <code>\collaps&#123;title&#125;&#123;content&#125;</code>, allowing both the title and the content to be given as markdown and processed by Franklin </button><div class="collapsiblecontent">  </p>
+<pre><code class="language-html">\newcommand&#123;\collaps&#125;&#91;2&#93;&#123;
+~~~&lt;button type&#61;&quot;button&quot; class&#61;&quot;collapsible&quot;&gt;~~~ #1 ~~~&lt;/button&gt;&lt;div class&#61;&quot;collapsiblecontent&quot;&gt;~~~ #2 ~~~&lt;/div&gt;~~~
+&#125;</code></pre>
+<p></div>
+<button type="button" class="collapsible">  Then, we need to add styling for these classes. Here, we add it to <code>_css/extras.css</code>. </button><div class="collapsiblecontent">  </p>
+<pre><code class="language-css">/* Style the button that is used to open and close the collapsible content */
+ .collapsible &#123;
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  width: 100&#37;;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: inherit;
+&#125;
+
+/* Add a background color to the button if it is clicked on &#40;add the .active class with JS&#41;, and when you move the mouse over it &#40;hover&#41; */
+.active, .collapsible:hover &#123;
+  background-color: #ccc;
+&#125;
+
+/* Style the collapsible content. Note: hidden by default */
+.collapsiblecontent &#123;
+  padding: 0 18px;
+  display: none;
+  overflow: hidden;
+  background-color: #f1f1f1;
+&#125;</code></pre>
+<p></div>
+<button type="button" class="collapsible">  Finally, we need the javascript that can be added either on the page where it is used, or in e.g. the foot <code>_layout/page_foot.html</code> </button><div class="collapsiblecontent">  </p>
+<pre><code class="language-html">&lt;script&gt;
+  var coll &#61; document.getElementsByClassName&#40;&quot;collapsible&quot;&#41;;
+  var i;
+  
+  for &#40;i &#61; 0; i &lt; coll.length; i&#43;&#43;&#41; &#123;
+    coll&#91;i&#93;.addEventListener&#40;&quot;click&quot;, function&#40;&#41; &#123;
+      this.classList.toggle&#40;&quot;active&quot;&#41;;
+      var content &#61; this.nextElementSibling;
+      if &#40;content.style.display &#61;&#61;&#61; &quot;block&quot;&#41; &#123;
+        content.style.display &#61; &quot;none&quot;;
+      &#125; else &#123;
+        content.style.display &#61; &quot;block&quot;;
+      &#125;
+    &#125;&#41;;
+  &#125;
+&lt;/script&gt;</code></pre>
+<p></div>
+<p>With these definitions, the expandible code sections could be added&#33;</p>
+<button type="button" class="collapsible">  An additional example: <strong>Press here to expand</strong> </button><div class="collapsiblecontent">  In the content part you can have latex: \(x^2\), </p>
+<p>lists</p>
+<ul>
+<li><p>Item 1</p>
+</li>
+<li><p>Item 2</p>
+</li>
+</ul>
+<p>And all other stuff processed by Franklin&#33; </div>
 <h2 id="017_making_cells_work_in_their_own_path"><a href="#017_making_cells_work_in_their_own_path" class="header-anchor">&#40;017&#41; making cells work in their own path</a></h2>
 <p>Currently if you&#39;re saving a figure in a code block, you need to specify where to place that figure, if you don&#39;t it will go in the current directory which is the main site directory, typically you don&#39;t want that, so one trick is to use the <code>@OUTPUT</code> macro like so:</p>
 <pre><code class="language-julia">using PyPlot
@@ -78,7 +140,7 @@ end</code></pre><pre><code class="plaintext code-output">*
 <p>You can look at <a href="https://github.com/tlienart/Franklin.jl/blob/master/demos/utils.jl"><code>utils.jl</code></a> for the definition of the <code>hfun</code> &#40;same as above&#41;, at <a href="https://github.com/tlienart/Franklin.jl/blob/master/demos/index.md"><code>index.md</code></a> to see how it&#39;s called and at <a href="https://github.com/tlienart/Franklin.jl/blob/master/demos/foo/content.md"><code>foo/content.md</code></a> for the content file. Finally you can also check out the <a href="https://github.com/tlienart/Franklin.jl/blob/master/demos/config.md"><code>config.md</code></a> file to see how the content page is ignored.</p>
 <h2 id="012_dates"><a href="#012_dates" class="header-anchor">&#40;012&#41; Dates</a></h2>
 <p>The date of last modification on the page is kept in the <code>fd_mtime_raw</code> internal page variable, there is also a pre-formatted <code>fd_mtime</code>.</p>
-<p>Last modified: 2021-10-06 or October 06, 2021</p>
+<p>Last modified: 2021-10-22 or October 22, 2021</p>
 <h2 id="011_showing_type_information"><a href="#011_showing_type_information" class="header-anchor">&#40;011&#41; showing type information</a></h2>
 <p>This is a short demo following a discussion on Slack, it shows three things:</p>
 <ul>
@@ -259,8 +321,8 @@ ls &#61; latexify&#40;empty_ary&#41; # this is an L string</code></pre>
 \[
 \left[
 \begin{array}{cc}
-0.0 & 0.0 \\
-9.1837e-41 & 1.0e-45 \\
+1.3e-43 & 2.859427e-19 \\
+1.37e-43 & 4.5807e-41 \\
 \end{array}
 \right]
 \]
@@ -336,10 +398,28 @@ Liu Fengyun,liufengyun</code></pre>
 </ul>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: October 06, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
+    &copy; Thibaut Lienart. Last modified: October 22, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
   </div>
 </div>
-</div><!-- CONTENT ENDS HERE -->
+
+<!-- Collapsible button example -->
+<script>
+  var coll = document.getElementsByClassName("collapsible");
+  var i;
+  
+  for (i = 0; i < coll.length; i++) {
+    coll[i].addEventListener("click", function() {
+      this.classList.toggle("active");
+      var content = this.nextElementSibling;
+      if (content.style.display === "block") {
+        content.style.display = "none";
+      } else {
+        content.style.display = "block";
+      }
+    });
+  }
+</script>
+<!-- End collapsible button example --></div><!-- CONTENT ENDS HERE -->
     
         
 <script src="/demos/libs/katex/katex.min.js"></script>
