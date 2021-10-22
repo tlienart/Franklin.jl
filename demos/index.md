@@ -20,6 +20,83 @@ The ordering is reverse chronological but just use the table of contents to guid
 
 \toc
 
+## (018) collapsible block
+How to make a section expand when clicked, so that content is initially hidden? (Based on [this html guide](https://www.w3schools.com/howto/howto_js_collapsible.asp).)
+
+\newcommand{\collaps}[2]{
+~~~<button type="button" class="collapsible">~~~ #1 ~~~</button><div class="collapsiblecontent">~~~ #2 ~~~</div>~~~
+}
+
+\collaps{We first define a command, `\collaps{title}{content}`, allowing both the title and the content to be given as markdown and processed by Franklin}{
+```html
+\newcommand{\collaps}[2]{
+~~~<button type="button" class="collapsible">~~~ #1 ~~~</button><div class="collapsiblecontent">~~~ #2 ~~~</div>~~~
+}
+```
+}
+
+\collaps{Then, we need to add styling for these classes. Here, we add it to `_css/extras.css`.}{
+```css
+ /* Style the button that is used to open and close the collapsible content */
+ .collapsible {
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: inherit;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active, .collapsible:hover {
+  background-color: #ccc;
+}
+
+/* Style the collapsible content. Note: hidden by default */
+.collapsiblecontent {
+  padding: 0 18px;
+  display: none;
+  overflow: hidden;
+  background-color: #f1f1f1;
+}
+```
+}
+
+\collaps{Finally, we need the javascript that can be added either on the page where it is used, or in e.g. the foot `_layout/page_foot.html`}{
+```html
+<script>
+  var coll = document.getElementsByClassName("collapsible");
+  var i;
+  
+  for (i = 0; i < coll.length; i++) {
+    coll[i].addEventListener("click", function() {
+      this.classList.toggle("active");
+      var content = this.nextElementSibling;
+      if (content.style.display === "block") {
+        content.style.display = "none";
+      } else {
+        content.style.display = "block";
+      }
+    });
+  }
+</script>
+```
+}
+
+With these definitions, the expandible code sections could be added!
+
+\collaps{An additional example: **Press here to expand**}{In the content part you can have latex: $x^2$, 
+
+lists
+* Item 1
+* Item 2
+
+And all other stuff processed by Franklin!
+}
+
 ## (017) making cells work in their own path
 
 Currently if you're saving a figure in a code block, you need to specify where to place that figure, if you don't it will go in the current directory which is the main site directory, typically you don't want that, so one trick is to use the `@OUTPUT` macro like so:
