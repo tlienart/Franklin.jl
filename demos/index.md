@@ -21,32 +21,21 @@ The ordering is reverse chronological but just use the table of contents to guid
 \toc
 
 ## (018) collapsible block
-\newcommand{\mybf}[1]{**#1**}
+How to make a section expand when clicked, so that content is initially hidden? (Based on [this html guide](https://www.w3schools.com/howto/howto_js_collapsible.asp).)
+
 \newcommand{\collaps}[2]{
-~~~<button type="button" class="collapsible">~~~#1~~~</button><div class="collapsiblecontent">~~~#2~~~</div>~~~
+~~~<button type="button" class="collapsible">~~~ #1 ~~~</button><div class="collapsiblecontent">~~~ #2 ~~~</div>~~~
 }
 
-How to make a section expand when clicked, so that content is initially hidden. Based on [html guide](https://www.w3schools.com/howto/howto_js_collapsible.asp)
-
-\collaps{**Press here to expand**}{In the content part you can have latex: $x^2$, 
-
-numbered lists
-* Item 1
-* Item 2
-
-And much other markdown stuff processed by Franklin! However, custom commands defined via `\newcommand` outside math environments and code environments don't work!
-
-}
-
-We first define a command, `\collaps{title}{content}`, allowing both the title and the content to be given as markdown and processed by Franklin
+\collaps{We first define a command, `\collaps{title}{content}`, allowing both the title and the content to be given as markdown and processed by Franklin}{
 ```html
 \newcommand{\collaps}[2]{
-~~~<button type="button" class="collapsible">~~~#1~~~</button><div class="collapsiblecontent">~~~#2~~~</div>~~~
+~~~<button type="button" class="collapsible">~~~ #1 ~~~</button><div class="collapsiblecontent">~~~ #2 ~~~</div>~~~
 }
 ```
+}
 
-
-Then, we need to add styling for these classes. Here, we add the following to `_css/extras.css`.
+\collaps{Then, we need to add styling for these classes. Here, we add it to `_css/extras.css`.}{
 ```css
  /* Style the button that is used to open and close the collapsible content */
  .collapsible {
@@ -58,7 +47,7 @@ Then, we need to add styling for these classes. Here, we add the following to `_
   border: none;
   text-align: left;
   outline: none;
-  font-size: 15px;
+  font-size: inherit;
 }
 
 /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
@@ -74,10 +63,9 @@ Then, we need to add styling for these classes. Here, we add the following to `_
   background-color: #f1f1f1;
 }
 ```
+}
 
-
-Finally, we need the javascript that can be added either on the page where it is used, or in e.g. the foot `_layout/page_foot.html`
-
+\collaps{Finally, we need the javascript that can be added either on the page where it is used, or in e.g. the foot `_layout/page_foot.html`}{
 ```html
 <script>
   var coll = document.getElementsByClassName("collapsible");
@@ -96,9 +84,18 @@ Finally, we need the javascript that can be added either on the page where it is
   }
 </script>
 ```
+}
 
+With these definitions, the expandible code sections could be added!
 
-With these definitions, the expandible section on top above could be added! 
+\collaps{An additional example: **Press here to expand**}{In the content part you can have latex: $x^2$, 
+
+lists
+* Item 1
+* Item 2
+
+And all other stuff processed by Franklin!
+}
 
 ## (017) making cells work in their own path
 
