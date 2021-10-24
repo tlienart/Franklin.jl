@@ -47,6 +47,9 @@ function should_eval(code::AS, rpath::AS)
     # 0. the page is currently delayed, skip evals
     isdelayed() && return false
 
+    # 0b. force no eval
+    locvar(:noeval)::Bool && return false
+
     # 1. global setting forcing all pages to reeval
     FD_ENV[:FORCE_REEVAL] && return true
 

@@ -117,6 +117,7 @@ const LOCAL_VARS_DEFAULT = [
     # ---------------
     # CODE EVALUATION
     "reeval"        => dpair(false),  # whether to reeval all pg
+    "noeval"        => dpair(false),  # whether to disable code eval
     "showall"       => dpair(false),  # if true, notebook style
     "fd_eval"       => dpair(false),  # toggle re-eval
     # ------------------
