@@ -46,7 +46,7 @@ function postprocess_page(pg)
             pg = js_prerender_katex(pg)
         end
         # Code (HIGHLIGHT.JS)
-        if locvar(:hascode)::Bool && FD_CAN_HIGHLIGHT
+        if locvar(:hascode)::Bool && FD_CAN_HIGHLIGHT()
             pg = js_prerender_highlight(pg)
             # remove script
             pg = replace(pg, r"<script.*?(?:highlight\.pack\.js|initHighlightingOnLoad).*?<\/script>"=>"")

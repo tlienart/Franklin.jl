@@ -27,7 +27,7 @@ function lunr()::Nothing
         start = time()
         msg   = rpad("→ Building the Lunr index...", 35)
         print(msg)
-        run(`$NODE $(splitdir(buildindex)[2])`)
+        run(`$(NODE()) $(splitdir(buildindex)[2])`)
         print_final(msg, start)
     catch e
         @warn "There was an error building the Lunr index."
