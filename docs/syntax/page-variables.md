@@ -310,6 +310,7 @@ For more informations on these, see the section on [inserting and evaluating cod
 @@lalign
 | Name | Type | Default value | Comment
 | ---- | ---- | ------------- | -------
+| `noeval` | `Bool` | `false` | whether to not evaluate all code blocks on the page
 | `reeval` | `Bool` | `false` | whether to reevaluate all code blocks on the page
 | `showall` | `Bool` | `false` | notebook mode if `true` where the output of the code block is shown below
 | `fd_eval` | `Bool` | `false` | internal variable to keep track of whether the scope is stale (in which case all subsequent blocks are re-evaluated)
