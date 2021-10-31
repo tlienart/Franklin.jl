@@ -57,7 +57,7 @@ function optimize(;
     #
     # Prerendering
     #
-    if prerender && !FD_CAN_PRERENDER(; force=true)
+    if prerender && !FD_CAN_PRERENDER()
         prerender = false
     end
     prerender && !FD_CAN_HIGHLIGHT(; force=true)
