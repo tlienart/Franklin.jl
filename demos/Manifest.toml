@@ -28,9 +28,9 @@ uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
 
 [[ArrayInterface]]
 deps = ["Compat", "IfElse", "LinearAlgebra", "Requires", "SparseArrays", "Static"]
-git-tree-sha1 = "d9352737cef8525944bf9ef34392d756321cbd54"
+git-tree-sha1 = "426050a30c2cda1969510e92d5c5b52735f41c7d"
 uuid = "4fba245c-0d91-5ea0-9b3e-6abc04ee57a9"
-version = "3.1.38"
+version = "3.1.39"
 
 [[Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
@@ -835,9 +835,9 @@ version = "0.5.10"
 
 [[Parsers]]
 deps = ["Dates"]
-git-tree-sha1 = "d911b6a12ba974dabe2291c6d450094a7226b372"
+git-tree-sha1 = "ae4bbcadb2906ccc085cf52ac286dc1377dceccc"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.1.1"
+version = "2.1.2"
 
 [[Pixman_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
