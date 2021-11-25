@@ -81,10 +81,10 @@ This will give:
 ## Live-generated plot
 
 One step further is to use `PlotlyJS` to define a  plot then pass the result to Franklin.
-Start by adding `PlotlyJS` and `Random` to your environment:
+Start by adding `PlotlyJS`  to your environment:
 
 ```julia-repl
-(myWebsite) pkg> add PlotlyJS Random
+(myWebsite) pkg> add PlotlyJS
 ```
 
 Then, beyond the `@def hasplotly = true`, add the following code:
