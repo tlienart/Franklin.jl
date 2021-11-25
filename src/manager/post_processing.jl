@@ -57,14 +57,10 @@ function optimize(;
     #
     # Prerendering
     #
-    if prerender && !FD_CAN_PRERENDER
-        @warn "I couldn't find node and so will not be able to pre-render javascript."
+    if prerender && !FD_CAN_PRERENDER()
         prerender = false
     end
-    if prerender && !FD_CAN_HIGHLIGHT
-        @warn "I couldn't load 'highlight.js' so will not be able to pre-render code blocks. " *
-              "You can install it with `npm install highlight.js`."
-    end
+    prerender && !FD_CAN_HIGHLIGHT(; force=true)
     if !isempty(prepath)
         GLOBAL_VARS["prepath"] = dpair(prepath)
     end
@@ -104,7 +100,7 @@ function optimize(;
     # Minification
     #
     if minify && (succ || no_fail_prerender)
-        if FD_CAN_MINIFY
+        if FD_CAN_MINIFY()
             start = time()
             mmsg = rpad("→ Minifying *.[html|css] files...", 35)
             print(mmsg)
@@ -114,13 +110,10 @@ function optimize(;
             py_script = read(path_to, String)
             write(FD_PY_MIN_NAME, py_script)
             # run it
-            succ = success(`$([e for e in split(PY)]) $FD_PY_MIN_NAME`)
+            succ = success(`$([e for e in split(PY())]) $FD_PY_MIN_NAME`)
             # remove the script file
             rm(FD_PY_MIN_NAME)
             print_final(mmsg, start)
-        else
-            @warn "I didn't find css_html_js_minify, you can install it via " *
-                  "pip. The output will not be minified."
         end
     end
 
