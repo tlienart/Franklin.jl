@@ -61,3 +61,16 @@ function fdplotly(json::String; id="fdp"*Random.randstring('a':'z', 3),
 		""")
     return nothing
 end
+
+"""
+    html_plotly
+
+Convenience function to plot a Plotly. User need to add a Javascript function `PlotlyJS_json`.
+"""
+html_plotly(src::AbstractString ; id="fdp"*Random.randstring('a':'z', 3),
+            style="") = """
+<div id="$id" style="$style"></div>
+<script>
+PlotlyJS_json('$id', '$src');
+</script>
+"""
