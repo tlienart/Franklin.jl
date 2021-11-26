@@ -182,7 +182,9 @@ const _htmlesc_to = values(_htmlescape_chars) |> collect
 Internal function to check if some html code has been escaped.
 """
 is_html_escaped(cs::AS) =
-    !isnothing(findfirst(ss -> occursin(ss, cs), _htmlesc_to))
+    !isnothing(findfirst(ss -> occursin(ss, cs), _htmlesc_to)) &&
+    isnothing(findfirst('<', cs))  # issue #917
+
 
 """
     html_unescape

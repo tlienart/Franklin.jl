@@ -45,6 +45,7 @@ function literate_to_franklin(rpath::AS)::Tuple{String,Bool}
         flavor=Literate.CommonMarkFlavor(),
         mdstrings=locvar(:literate_mds)::Bool,
         config=Dict("codefence" => (LITERATE_JULIA_FENCE => "```")),
+        preprocess=s->replace(s, r"#hide\s*?\n" => "# hide\n"),
         postprocess=literate_post_process,
         credit=false
     )

@@ -239,23 +239,6 @@ These variables are best defined in your `config.md` file though you can overwri
 \smindent{(\*\*)} \smnote{must be in a format recognized by Julia's `Dates.DateLocale`. Defaults to English. If left unset, the short names are created automatically by using the first three characters of the full names.}\\
 \smindent{(\*\*\*)} \smnote{to ignore a file add it's relative path like `"path/to/file.md"`, to ignore a directory end the path with a `/` like `"path/to/dir/"`.}.
 
-### Global RSS settings
-
-@@lalign
-| Name | Type(s) | Default value | Comment
-| :--: | :-----: | :-----------: | :-----:
-| `generate_rss` | `Bool` | `false` |
-| `website_title` (alias `rss_website_title`) | `String` | `""` | Used as website title in the RSS feed
-| `website_description` (alias `website_descr` or `rss_website_descr`) | `String` | `""` | Used as website description in the RSS feed
-| `website_url` (alias `base_url` or `rss_website_url`) | `String` | `""` | (RSS)
-@@
-
-If you set `generate_rss` to `true` then the three other variables **must** be defined (this is a requirement of the RSS specs, see also [the page on RSS](/syntax/rss/)).
-
-\note{
-  For backward compatibility reasons, if `generate_rss` is `false` but the three `website_*` variables are defined, `generate_rss` will be switched to `true`.
-}
-
 ### Other global settings
 
 Those are less relevant global settings that you could modify but typically shouldn't.
@@ -310,38 +293,8 @@ For more informations on these, see the section on [inserting and evaluating cod
 @@lalign
 | Name | Type | Default value | Comment
 | ---- | ---- | ------------- | -------
+| `noeval` | `Bool` | `false` | if set to `true`, disable code block evaluation on the page
 | `reeval` | `Bool` | `false` | whether to reevaluate all code blocks on the page
 | `showall` | `Bool` | `false` | notebook mode if `true` where the output of the code block is shown below
 | `fd_eval` | `Bool` | `false` | internal variable to keep track of whether the scope is stale (in which case all subsequent blocks are re-evaluated)
-@@
-
-### RSS
-
-These are variables related to [RSS 2.0 specifications](https://cyber.harvard.edu/rss/rss.html)  and must match the format indicated there.
-For more information about generating an RSS feed, see [the dedicated RSS page](/syntax/rss/).
-
-@@lalign
-| Name | Default value |
-| ---- | ------------- |
-| `rss`, `rss_description` | `""` |
-| `rss_title` | current page title |
-| `rss_author` | current author |
-| `rss_category` | `""` |
-| `rss_comments` | `""` |
-| `rss_enclosure` | `""` |
-| `rss_pubdate`   | `""` |
-@@
-
-To recapitulate, for a working RSS feed to be generated you need:
-
-@@tlist
-- to set the `website_*` variables in your  `config.md` (see [global page variables](#global_page_variables)),
-- on appropriate pages, to define at least `rss` to a valid description.
-@@
-
-For an example, see [this mirror of the Julia blog posts](https://github.com/cormullion/julialangblog) with:
-
-@@tlist
-- [the config file](https://github.com/cormullion/julialangblog/blob/master/src/config.md)
-- an [example of page](https://github.com/cormullion/julialangblog/blob/master/src/pages/2012-02-14-why-we-created-julia.md).
 @@
