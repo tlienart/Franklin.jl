@@ -22,21 +22,32 @@ Finally, in your `src/_layout/head.html` add
 {{if hasplotly}}
  <script src="/libs/plotly/plotly.min.js"></script> 
  <script>
-	const PlotlyJS_json = async (id, url) => {
-    response = await fetch(url); // get file
-    fig = await response.json(); // convert it to json
-    CONTAINER = document.getElementById(id);
-    // Make the plot fit the screen responsively. See the documentation of plotly.js. https://plotly.com/javascript/responsive-fluid-layout/
-    if (typeof fig.config === 'undefined') { fig["config"]={} }
-    delete fig.layout.width
-    delete fig.layout.height
-    fig["layout"]["autosize"] = true
-    fig["config"]["autosizable"] = true
-    fig["config"]["responsive"] = true
+     const PlotlyJS_json = async (id, url) => {
+          response = await fetch(url); // get file
+          fig = await response.json(); // convert it to json
+          CONTAINER = document.getElementById(id);
+          // Make the plot fit the screen responsively. See the documentation of plotly.js. https://plotly.com/javascript/responsive-fluid-layout/
+          if (typeof fig.config === 'undefined') { fig["config"]={} }
+          delete fig.layout.width
+          delete fig.layout.height
+          fig["layout"]["autosize"] = true
+          fig["config"]["autosizable"] = true
+          fig["config"]["responsive"] = true
 
-    Plotly.newPlot(CONTAINER, fig.data, fig.layout, fig.config);
+          // make it easier to scroll throught the website rather than being blocked by a figure.
+          fig.config["scrollZoom"] = false
+
+          // PlotlyJS.savefig by default add the some more attributes to make a static plot.
+          // Disable some of them to make the website fancier.
+          delete fig.config.staticPlot
+          delete fig.config.displayModeBar
+          delete fig.config.doubleClick
+          delete fig.config.showTips
+
+          Plotly.newPlot(CONTAINER, fig);
+    };
   </script>
- {{end}}
+  {{end}}
 ```
 
 ## Offline-generated plot
@@ -129,29 +140,38 @@ fdplotly(json(plt)) # hide
 ```
 \textoutput{ex1}
 
-### Use `\fig{}`
-Now you might use `\fig{}` to insert graph [just like normal](/syntax/markdown/#inserting_a_figure). This also work fine with `Plots.jl` and `PlotlyBase.jl`.
+### Using `\fig{...}` (recommended)
+Now you might use `\fig{...}` to insert graph [just like normal](/syntax/markdown/#inserting_a_figure). This also work fine with `Plots.jl` and `PlotlyBase.jl`.
 
-**Note**: `\fig{}` will call the Javascript function `PlotlyJS_json` defined [above](#pre-requisites). You might customize the behavior by modifying it. Also make sure `@def hasplotly = true` is properly set.
+**Note**: `\fig{...}` will call the JavaScript function `PlotlyJS_json` defined [above](#pre-requisites). You might customize the behavior by modifying the JavaScript. Also make sure `@def hasplotly = true` is properly set.
 
-``````plaintext
+`````plaintext
 ```julia:ex2
-using PlotsJS
-plot(scatter(x=1:10, y=rand(10), mode="markers"))
-Plots.title!("Responsive Plot")
-Plots.savefig(p, joinpath(@OUTPUT, "plotlyex.json")) # hide
+using PlotlyJS
+p=plot(
+     scatter(x=1:10, y=rand(10), mode="markers"),
+     Layout(title="Responsive Plots")
+     )
+savejson(p, joinpath(@OUTPUT, "plotlyex.json"))  # savejson is an alternative to savefig # hide
+# PlotlyBase.json (also exported by PlotlyJS) often gives a smaller json compared to PlotlyJS.savefig # hide
 ```
 
 \fig{plotlyex}
-``````
+`````
 
 This code block gives:
 
 ```julia:ex2
-using PlotsJS
-plot(scatter(x=1:10, y=rand(10), mode="markers"))
-Plots.title!("Responsive Plot")
-Plots.savefig(p, joinpath(@OUTPUT, "plotlyex.json")) # hide
+using PlotlyJS
+p=plot(
+     scatter(x=1:10, y=rand(10), mode="markers"),
+     Layout(title="Responsive Plots")
+     )
+savejson(p, joinpath(@OUTPUT, "plotlyex.json"))  # savejson is an alternative to savefig # hide
+# PlotlyBase.json (also exported by PlotlyJS) often gives a smaller json compared to PlotlyJS.savefig # hide
 ```
 
 \fig{plotlyex}
+
+
+**Note**: The plot will be automatically resized when the browser window size changes due to the JavaScript function provided above. This, however, will ignore the `layout.height` and the `layout.width` supplied in the json. It gives good output in most cases. But if you need fine control over the size of the figure, please modify the JavaScript.
