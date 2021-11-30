@@ -22,29 +22,28 @@ Finally, in your `src/_layout/head.html` add
 {{if hasplotly}}
  <script src="/libs/plotly/plotly.min.js"></script> 
  <script>
-     const PlotlyJS_json = async (id, url) => {
-          response = await fetch(url); // get file
-          fig = await response.json(); // convert it to json
-          CONTAINER = document.getElementById(id);
-          // Make the plot fit the screen responsively. See the documentation of plotly.js. https://plotly.com/javascript/responsive-fluid-layout/
-          if (typeof fig.config === 'undefined') { fig["config"]={} }
-          delete fig.layout.width
-          delete fig.layout.height
-          fig["layout"]["autosize"] = true
-          fig["config"]["autosizable"] = true
-          fig["config"]["responsive"] = true
+	const PlotlyJS_json = async (div, url) => {
+    response = await fetch(url); // get file
+    fig = await response.json(); // convert it to json
+    // Make the plot fit the screen responsively. See the documentation of plotly.js. https://plotly.com/javascript/responsive-fluid-layout/
+    if (typeof fig.config === 'undefined') { fig["config"]={} }
+    delete fig.layout.width
+    delete fig.layout.height
+    fig["layout"]["autosize"] = true
+    fig["config"]["autosizable"] = true
+    fig["config"]["responsive"] = true
 
-          // make it easier to scroll throught the website rather than being blocked by a figure.
-          fig.config["scrollZoom"] = false
+    // make it easier to scroll throught the website rather than being blocked by a figure.
+    fig.config["scrollZoom"] = false
 
-          // PlotlyJS.savefig by default add the some more attributes to make a static plot.
-          // Disable some of them to make the website fancier.
-          delete fig.config.staticPlot
-          delete fig.config.displayModeBar
-          delete fig.config.doubleClick
-          delete fig.config.showTips
+    // PlotlyJS.savefig by default add the some more attribute to make a static plot.
+    // Disable them to make the website fancier.
+    delete fig.config.staticPlot
+    delete fig.config.displayModeBar
+    delete fig.config.doubleClick
+    delete fig.config.showTips
 
-          Plotly.newPlot(CONTAINER, fig);
+    Plotly.newPlot(div, fig);
     };
   </script>
   {{end}}
@@ -67,7 +66,7 @@ so that the JS library  will be  loaded then somewhere appropriate add:
 
 <script>
 	TESTER = document.getElementById('tester');
-	Plotly.plot( TESTER, [{
+	Plotly.newPlot( TESTER, [{
 	x: [1, 2, 3, 4, 5],
 	y: [1, 2, 4, 8, 16] }], {
 	margin: { t: 0 } } );
@@ -82,7 +81,7 @@ This will give:
 
 <script>
 	TESTER = document.getElementById('tester');
-	Plotly.plot( TESTER, [{
+	Plotly.newPlot( TESTER, [{
 	x: [1, 2, 3, 4, 5],
 	y: [1, 2, 4, 8, 16] }], {
 	margin: { t: 0 } } );

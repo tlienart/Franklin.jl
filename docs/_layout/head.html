@@ -18,10 +18,9 @@
   {{if hasplotly}}
   <script src="/libs/plotly/plotly.min.js"></script> 
   <script>
-	const PlotlyJS_json = async (id, url) => {
+	const PlotlyJS_json = async (div, url) => {
     response = await fetch(url); // get file
     fig = await response.json(); // convert it to json
-    CONTAINER = document.getElementById(id);
     // Make the plot fit the screen responsively. See the documentation of plotly.js. https://plotly.com/javascript/responsive-fluid-layout/
     if (typeof fig.config === 'undefined') { fig["config"]={} }
     delete fig.layout.width
@@ -40,7 +39,7 @@
     delete fig.config.doubleClick
     delete fig.config.showTips
 
-    Plotly.newPlot(CONTAINER, fig);
+    Plotly.newPlot(div, fig);
     };
   </script>
   {{end}}

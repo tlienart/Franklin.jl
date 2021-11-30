@@ -54,8 +54,8 @@ function fdplotly(json::String; id="fdp"*Random.randstring('a':'z', 3),
 
 		<script>
 			var fig = $json;
-			CONTAINER = document.getElementById('$id');
-			Plotly.newPlot(CONTAINER, fig.data, fig.layout)
+			graphDiv = document.getElementById('$id');
+			Plotly.newPlot(graphDiv, fig.data, fig.layout)
 		</script>
 		~~~
 		""")
@@ -71,6 +71,7 @@ html_plotly(src::AbstractString ; id="fdp"*Random.randstring('a':'z', 3),
             style="") = """
 <div id="$id" style="$style"></div>
 <script>
-PlotlyJS_json('$id', '$src');
+graphDiv = document.getElementById("$id");
+plotlyPromise = PlotlyJS_json(graphDiv, '$src');
 </script>
 """
