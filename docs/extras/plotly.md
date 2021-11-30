@@ -20,30 +20,31 @@ Finally, in your `src/_layout/head.html` add
 
 ```html
 {{if hasplotly}}
- <script src="/libs/plotly/plotly.min.js"></script> 
- <script>
-	const PlotlyJS_json = async (div, url) => {
-    response = await fetch(url); // get file
-    fig = await response.json(); // convert it to json
-    // Make the plot fit the screen responsively. See the documentation of plotly.js. https://plotly.com/javascript/responsive-fluid-layout/
-    if (typeof fig.config === 'undefined') { fig["config"]={} }
-    delete fig.layout.width
-    delete fig.layout.height
-    fig["layout"]["autosize"] = true
-    fig["config"]["autosizable"] = true
-    fig["config"]["responsive"] = true
+  <script src="/libs/plotly/plotly.min.js"></script> 
+  <script>
+    // This function is used when calling `\fig{...}` See # Using \fig{...} below
+    const PlotlyJS_json = async (div, url) => {
+      response = await fetch(url); // get file
+      fig = await response.json(); // convert it to json
+      // Make the plot fit the screen responsively. See the documentation of plotly.js. https://plotly.com/javascript/responsive-fluid-layout/
+      if (typeof fig.config === 'undefined') { fig["config"]={} }
+      delete fig.layout.width
+      delete fig.layout.height
+      fig["layout"]["autosize"] = true
+      fig["config"]["autosizable"] = true
+      fig["config"]["responsive"] = true
 
-    // make it easier to scroll throught the website rather than being blocked by a figure.
-    fig.config["scrollZoom"] = false
+      // make it easier to scroll throught the website rather than being blocked by a figure.
+      fig.config["scrollZoom"] = false
 
-    // PlotlyJS.savefig by default add the some more attribute to make a static plot.
-    // Disable them to make the website fancier.
-    delete fig.config.staticPlot
-    delete fig.config.displayModeBar
-    delete fig.config.doubleClick
-    delete fig.config.showTips
+      // PlotlyJS.savefig by default add the some more attribute to make a static plot.
+      // Disable them to make the website fancier.
+      delete fig.config.staticPlot
+      delete fig.config.displayModeBar
+      delete fig.config.doubleClick
+      delete fig.config.showTips
 
-    Plotly.newPlot(div, fig);
+      Plotly.newPlot(div, fig);
     };
   </script>
   {{end}}
