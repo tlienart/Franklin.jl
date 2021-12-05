@@ -17,7 +17,34 @@
   <script src="/libs/lunr/lunrclient.min.js"></script>
 
   <!-- PLOTLY -->
-   <script src="/libs/plotly/plotly.min.js"></script> 
+  
+  <script src="/libs/plotly/plotly.min.js"></script> 
+  <script>
+	const PlotlyJS_json = async (div, url) => {
+    response = await fetch(url); // get file
+    fig = await response.json(); // convert it to json
+    // Make the plot fit the screen responsively. See the documentation of plotly.js. https://plotly.com/javascript/responsive-fluid-layout/
+    if (typeof fig.config === 'undefined') { fig["config"]={} }
+    delete fig.layout.width
+    delete fig.layout.height
+    fig["layout"]["autosize"] = true
+    fig["config"]["autosizable"] = true
+    fig["config"]["responsive"] = true
+
+    // make it easier to scroll throught the website rather than being blocked by a figure.
+    fig.config["scrollZoom"] = false
+
+    // PlotlyJS.savefig by default add the some more attribute to make a static plot.
+    // Disable them to make the website fancier.
+    delete fig.config.staticPlot
+    delete fig.config.displayModeBar
+    delete fig.config.doubleClick
+    delete fig.config.showTips
+
+    Plotly.newPlot(div, fig);
+    };
+  </script>
+  
 
 </head>
 <body>                      <!-- closed in foot.html -->
@@ -122,7 +149,35 @@
 <p>Then create a variable <code>hasplotly</code> with default value <code>false</code>: in your <code>config.md</code> write</p>
 <pre><code class="language-julia">@def hasplotly &#61; false</code></pre>
 <p>Finally, in your <code>src/_layout/head.html</code> add</p>
-<pre><code class="language-html">&#123;&#123;if hasplotly&#125;&#125; &lt;script src&#61;&quot;/libs/plotly/plotly.min.js&quot;&gt;&lt;/script&gt; &#123;&#123;end&#125;&#125;</code></pre>
+<pre><code class="language-html">&#123;&#123;if hasplotly&#125;&#125;
+  &lt;script src&#61;&quot;/libs/plotly/plotly.min.js&quot;&gt;&lt;/script&gt; 
+  &lt;script&gt;
+    // This function is used when calling &#96;\fig&#123;...&#125;&#96; See # Using \fig&#123;...&#125; below
+    const PlotlyJS_json &#61; async &#40;div, url&#41; &#61;&gt; &#123;
+      response &#61; await fetch&#40;url&#41;; // get file
+      fig &#61; await response.json&#40;&#41;; // convert it to json
+      // Make the plot fit the screen responsively. See the documentation of plotly.js. https://plotly.com/javascript/responsive-fluid-layout/
+      if &#40;typeof fig.config &#61;&#61;&#61; &#39;undefined&#39;&#41; &#123; fig&#91;&quot;config&quot;&#93;&#61;&#123;&#125; &#125;
+      delete fig.layout.width
+      delete fig.layout.height
+      fig&#91;&quot;layout&quot;&#93;&#91;&quot;autosize&quot;&#93; &#61; true
+      fig&#91;&quot;config&quot;&#93;&#91;&quot;autosizable&quot;&#93; &#61; true
+      fig&#91;&quot;config&quot;&#93;&#91;&quot;responsive&quot;&#93; &#61; true
+
+      // make it easier to scroll throught the website rather than being blocked by a figure.
+      fig.config&#91;&quot;scrollZoom&quot;&#93; &#61; false
+
+      // PlotlyJS.savefig by default add the some more attribute to make a static plot.
+      // Disable them to make the website fancier.
+      delete fig.config.staticPlot
+      delete fig.config.displayModeBar
+      delete fig.config.doubleClick
+      delete fig.config.showTips
+
+      Plotly.newPlot&#40;div, fig&#41;;
+    &#125;;
+  &lt;/script&gt;
+  &#123;&#123;end&#125;&#125;</code></pre>
 <h2 id="offline-generated_plot"><a href="#offline-generated_plot" class="header-anchor">Offline-generated plot</a></h2>
 <p>Assuming you already have the Plotly code for some plot, displaying  the  result on a page with Franklin is now pretty straightforward. Start by adding</p>
 <pre><code class="language-julia">@def hasplotly &#61; true</code></pre>
@@ -132,7 +187,7 @@
 
 &lt;script&gt;
 	TESTER &#61; document.getElementById&#40;&#39;tester&#39;&#41;;
-	Plotly.plot&#40; TESTER, &#91;&#123;
+	Plotly.newPlot&#40; TESTER, &#91;&#123;
 	x: &#91;1, 2, 3, 4, 5&#93;,
 	y: &#91;1, 2, 4, 8, 16&#93; &#125;&#93;, &#123;
 	margin: &#123; t: 0 &#125; &#125; &#41;;
@@ -144,15 +199,15 @@
 
 <script>
 	TESTER = document.getElementById('tester');
-	Plotly.plot( TESTER, [{
+	Plotly.newPlot( TESTER, [{
 	x: [1, 2, 3, 4, 5],
 	y: [1, 2, 4, 8, 16] }], {
 	margin: { t: 0 } } );
 </script>
 
 <h2 id="live-generated_plot"><a href="#live-generated_plot" class="header-anchor">Live-generated plot</a></h2>
-<p>One step further is to use <code>PlotlyJS</code> to define a  plot then pass the result to Franklin. Start by adding <code>PlotlyJS</code> and <code>Random</code> to your environment:</p>
-<pre><code class="language-julia-repl">&#40;myWebsite&#41; pkg&gt; add PlotlyJS Random</code></pre>
+<p>One step further is to use <code>PlotlyJS</code> to define a  plot then pass the result to Franklin. Start by adding <code>PlotlyJS</code>  to your environment:</p>
+<pre><code class="language-julia-repl">&#40;myWebsite&#41; pkg&gt; add PlotlyJS</code></pre>
 <p>Then, beyond the <code>@def hasplotly &#61; true</code>, add the following code:</p>
 <pre><code class="language-plaintext">&#96;&#96;&#96;julia:ex1
 using PlotlyJS
@@ -196,6 +251,33 @@ plt    &#61; plot&#40;data, layout&#41;</code></pre>
 	Plotly.newPlot(CONTAINER, fig.data, fig.layout)
 </script>
 
+<h3 id="using_fig_recommended"><a href="#using_fig_recommended" class="header-anchor">Using <code>\fig&#123;...&#125;</code> &#40;recommended&#41;</a></h3>
+<p>Now you might use <code>\fig&#123;...&#125;</code> to insert graph <a href="/syntax/markdown/#inserting_a_figure">just like normal</a>. This also work fine with <code>Plots.jl</code> and <code>PlotlyBase.jl</code>.</p>
+<p><strong>Note</strong>: <code>\fig&#123;...&#125;</code> will call the JavaScript function <code>PlotlyJS_json</code> defined <a href="#pre-requisites">above</a>. You might customize the behavior by modifying the JavaScript. Also make sure <code>@def hasplotly &#61; true</code> is properly set.</p>
+<pre><code class="language-plaintext">&#96;&#96;&#96;julia:ex2
+using PlotlyJS
+p&#61;plot&#40;
+     scatter&#40;x&#61;1:10, y&#61;rand&#40;10&#41;, mode&#61;&quot;markers&quot;&#41;,
+     Layout&#40;title&#61;&quot;Responsive Plots&quot;&#41;
+     &#41;
+savejson&#40;p, joinpath&#40;@OUTPUT, &quot;plotlyex.json&quot;&#41;&#41;  # savejson is an alternative to savefig # hide
+# PlotlyBase.json &#40;also exported by PlotlyJS&#41; often gives a smaller json compared to PlotlyJS.savefig # hide
+&#96;&#96;&#96;
+
+\fig&#123;plotlyex&#125;</code></pre>
+<p>This code block gives:</p>
+<pre><code class="language-julia">using PlotlyJS
+p&#61;plot&#40;
+     scatter&#40;x&#61;1:10, y&#61;rand&#40;10&#41;, mode&#61;&quot;markers&quot;&#41;,
+     Layout&#40;title&#61;&quot;Responsive Plots&quot;&#41;
+     &#41;</code></pre>
+<div id="fdppmf" style=""></div>
+<script>
+graphDiv = document.getElementById("fdppmf");
+plotlyPromise = PlotlyJS_json(graphDiv, '/assets/extras/plotly/code/output/plotlyex.json');
+</script>
+
+<p><strong>Note</strong>: The plot will be automatically resized when the browser window size changes due to the JavaScript function provided above. This, however, will ignore the <code>layout.height</code> and the <code>layout.width</code> supplied in the json. It gives good output in most cases. But if you need fine control over the size of the figure, please modify the JavaScript.</p>
 <div class="page-foot">
   <div class="copyright">
     &copy; Thibaut Lienart. Last modified: December 05, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
