@@ -38,7 +38,7 @@ jobs:
             serve(single=true, cleanup=false); lunr(); optimize(minify=false, prerender=false);
             cd("../demos");
             Pkg.activate("."); Pkg.instantiate();
-            Pkg.pin("TikzCDs", v"0.2.0");
+            Pkg.add(PackageSpec(name="TikzCDs", version="0.2.0"));
             optimize(minify=false, prerender=false);
             dst = "../docs/__site/demos";
             mkpath(dst);
