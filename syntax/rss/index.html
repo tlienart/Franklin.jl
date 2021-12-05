@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   
-  
+   <!-- Syntax highlighting via Prism, note: restricted langs -->
+<link rel="stylesheet" href="/libs/highlight/github.min.css">
+   
   <link rel="stylesheet" href="/css/jtd.css">
   <link rel="icon" href="/assets/infra/logoF_square.gif">
    <title>RSS</title>  
@@ -114,9 +116,84 @@
 
 <!-- Content appended here (in class franklin-content) -->
 <div class="franklin-content"><h1 id="rss"><a href="#rss" class="header-anchor">RSS</a></h1>
+
+    <span style="font-size:24px;font-weight:300;">Franklin aims to support automatic & easy RSS feed generation.</span>
+    
+<div class="blank"></div>
+<div class="franklin-toc"><ol><li><a href="#overview">Overview</a></li><li><a href="#how_to_setup_rss">How to Setup RSS</a><ol><li><a href="#global_configuration">Global Configuration</a></li><li><a href="#local_configuration">Local Configuration</a></li></ol></li><li><a href="#rss_page_variables">RSS Page Variables</a><ol><li><a href="#global_rss_variables">Global RSS Variables</a></li><li><a href="#local_rss_variables">Local RSS Variables</a></li><li><a href="#examples">Examples</a></li></ol></li></ol></div>
+<h2 id="overview"><a href="#overview" class="header-anchor">Overview</a></h2>
+<p>RSS &#40;commonly referred to as <em><strong>R</strong>eally <strong>S</strong>imple <strong>S</strong>yndication</em>&#41; is a standard web format that allows interested readers to <em>subscribe</em> to <em>feeds</em> and read new content on a platform of their choosing, i.e., without browsing to the website from which the content originated. Franklin makes it easy to generate this feed so that readers can more easily stay up to date with your new content.</p>
+<h2 id="how_to_setup_rss"><a href="#how_to_setup_rss" class="header-anchor">How to Setup RSS</a></h2>
+<p>There is a Franklin generated <code>_rss</code> folder that contains two parts: <code>head.xml</code> &amp; <code>item.xml</code> &#40;if this is not present for you, then copy the files from the <a href="https://github.com/tlienart/FranklinTemplates.jl/tree/master/src/templates/common/_rss">FranklinTemplates source</a>.</p>
+<p>The complete RSS feed will be built by assembling</p>
+<pre><code class="language-plaintext">head
+item
+item
+item
+&#40;foot&#41;</code></pre>
+<div class="note"><div class="title">⚠ Note</div>
+<div class="content"><code>foot.xml</code> is not exposed by default because there is nothing to customize there. Both <code>head.xml</code> &amp; <code>item.xml</code> contain sane defaults based on good standards. However, their contents may be modified.</div></div>
+<h3 id="global_configuration"><a href="#global_configuration" class="header-anchor">Global Configuration</a></h3>
+<p>In order to setup an RSS feed for your website, make sure to set the following in your <code>config.md</code>.</p>
+<pre><code class="language-julia">generate_rss &#61; true
+rss_website_title &#61; &quot;Website Title&quot;
+rss_website_descr &#61; &quot;Website Description&quot;
+rss_website_url   &#61; &quot;https://&lt;your username&gt;.github.io&quot;
+rss_full_content &#61; true</code></pre>
+<div class="note"><div class="title">⚠ Note</div>
+<div class="content">Notice the last line, <code>rss_full_content &#61; true</code>. This line is important if you wish for your RSS feed to include the <em>full content</em> of your posts. If <code>rss_full_content &#61; false</code>, then subscribers will be notified of new content, but must visit your site in order to read it.</div></div>
+<h3 id="local_configuration"><a href="#local_configuration" class="header-anchor">Local Configuration</a></h3>
+<p>For each page that you wish to be included in your RSS feed, you should specify the description of the page. This can be done with the <code>rss_description</code> or equivalently the <code>rss</code> or <code>rss_descr</code> local page variable.</p>
+<pre><code class="language-julia">rss_description &#61; &quot;The page synopsis.&quot;</code></pre>
+<p>Each page should include a publication date - specified by <code>rss_pubdate</code> and in the format of <code>Dates.Date</code>. For example:</p>
+<pre><code class="language-julia">rss_pubdate &#61; Date&#40;2021, 12, 31&#41;</code></pre>
+<p>Each page should also include a title. If one is not specified then the page <code>title</code> will be used instead. To explicitly set the <code>rss_title</code>, do the following:</p>
+<pre><code class="language-julia">rss_title &#61; &quot;Item Title&quot;</code></pre>
+<p>Optionally, the following page variables can be set as well</p>
+<ul>
+<li><p><code>rss_author</code></p>
+</li>
+<li><p><code>rss_category</code></p>
+</li>
+<li><p><code>rss_comments</code></p>
+</li>
+<li><p><code>rss_enclosure</code></p>
+</li>
+</ul>
+<div class="warning"><div class="title">⚠ Warning&#33;</div>
+<div class="content">Check the RSS specifications before using these optional page variables as many have strict requirements and should probably be left blank. For instance the <code>rss_author</code> variable <strong>must</strong> be an email address. So unless you are familiar it is advised to leave these out.</div></div>
+<h2 id="rss_page_variables"><a href="#rss_page_variables" class="header-anchor">RSS Page Variables</a></h2>
+<p>Here is a summary of all page variables related to RSS.</p>
+<h3 id="global_rss_variables"><a href="#global_rss_variables" class="header-anchor">Global RSS Variables</a></h3>
+<div class="lalign"><table><tr><th align="center">Name</th><th align="center">Type&#40;s&#41;</th><th align="center">Default value</th><th align="center">Comment</th></tr><tr><td align="center"><code>generate_rss</code></td><td align="center"><code>Bool</code></td><td align="center"><code>false</code></td><td align="center">indicates whether <code>feed.xml</code> should be generated</td></tr><tr><td align="center"><code>website_title</code> &#40;alias <code>rss_website_title</code>&#41;</td><td align="center"><code>String</code></td><td align="center"><code>&quot;&quot;</code></td><td align="center">Used as website title in the RSS feed</td></tr><tr><td align="center"><code>website_description</code> &#40;alias <code>website_descr</code> or <code>rss_website_descr</code>&#41;</td><td align="center"><code>String</code></td><td align="center"><code>&quot;&quot;</code></td><td align="center">Used as website description in the RSS feed</td></tr><tr><td align="center"><code>website_url</code> &#40;alias <code>base_url</code> or <code>rss_website_url</code>&#41;</td><td align="center"><code>String</code></td><td align="center"><code>&quot;&quot;</code></td><td align="center">&#40;RSS&#41;</td></tr></table></div>
+<div class="warning"><div class="title">⚠ Warning&#33;</div>
+<div class="content">If you set <code>generate_rss</code> to <code>true</code> then the three other variables <strong>must</strong> be defined.</div></div>
+<div class="note"><div class="title">⚠ Note</div>
+<div class="content">For backward compatibility reasons, if <code>generate_rss</code> is <code>false</code> but the three <code>website_*</code> variables are defined, <code>generate_rss</code> will be switched to <code>true</code>.</div></div>
+<h3 id="local_rss_variables"><a href="#local_rss_variables" class="header-anchor">Local RSS Variables</a></h3>
+<p>These are variables related to <a href="https://cyber.harvard.edu/rss/rss.html">RSS 2.0 specifications</a>  and must match the format indicated there.</p>
+<div class="lalign"><table><tr><th align="right">Name</th><th align="right">Default value</th></tr><tr><td align="right"><code>rss</code>, <code>rss_description</code></td><td align="right"><code>&quot;&quot;</code></td></tr><tr><td align="right"><code>rss_title</code></td><td align="right">current page title</td></tr><tr><td align="right"><code>rss_author</code></td><td align="right">current author</td></tr><tr><td align="right"><code>rss_category</code></td><td align="right"><code>&quot;&quot;</code></td></tr><tr><td align="right"><code>rss_comments</code></td><td align="right"><code>&quot;&quot;</code></td></tr><tr><td align="right"><code>rss_enclosure</code></td><td align="right"><code>&quot;&quot;</code></td></tr><tr><td align="right"><code>rss_pubdate</code></td><td align="right"><code>&quot;&quot;</code></td></tr></table></div>
+<p>To recapitulate, for a working RSS feed to be generated you need:</p>
+<div class="tlist"><ul>
+<li><p>to set the <code>website_*</code> variables in your <code>config.md</code> &#40;see <a href="#global_configuration">global configuration</a>&#41;,</p>
+</li>
+<li><p>on appropriate pages, to define at least <code>rss</code> to a valid description.</p>
+</li>
+</ul></div>
+<h3 id="examples"><a href="#examples" class="header-anchor">Examples</a></h3>
+<div class="tlist"><ul>
+<li><p><a href="https://raw.githubusercontent.com/JuliaLang/www.julialang.org/main/config.md">JuliaLang config</a></p>
+</li>
+<li><p><a href="https://julialang.org/feed.xml">JuliaLang feed</a> </p>
+</li>
+<li><p><a href="https://github.com/JuliaGPU/juliagpu.org/blob/master/config.md">JuliaGPU config</a></p>
+</li>
+<li><p><a href="https://juliagpu.org/post/index.xml">JuliaGPU feed</a></p>
+</li>
+</ul></div>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: November 03, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: December 05, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
@@ -124,6 +201,10 @@
     </div> <!-- end of class main-content-wrap -->
     </div> <!-- end of class page-wrap-->
     
+    
+      <script src="/libs/highlight/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
+
     
   </body>
 </html>
