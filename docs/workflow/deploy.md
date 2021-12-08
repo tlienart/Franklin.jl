@@ -12,7 +12,17 @@ reviewed: 18/10/20
 
 \lineskip
 
-Deploying the website is trivial on GitHub, Gitlab and services like Netlify.
+Deploying the website is trivial on an existing webserver, via GitHub or Gitlab, or on services like Netlify.
+
+## Deploying on an existing webserver
+
+The contents of the `__site__` folder can simply be deployed to a path on an existing server as follows.
+Supposing you wish your site to appear at `my.example.com/path/to/my/franklin/site/`.  You would take the following steps:
+
+First, prepare the `__site__` directory by running `optimize( prepath='/path/to/my/franklin/site/', minify = false )`.
+Franklin.jl does not use relative links, so this step is needed to ensure that the links between site elements are correct. (The `minify = false` argument is optional but is currently recommended.)
+
+Now copy the contents of the `__site__` directory to the target location using your chosen method.  You should now be able to see the site at `my.example.com/path/to/my/franklin/site/index.html`.
 
 ## Deploying on GitHub
 
