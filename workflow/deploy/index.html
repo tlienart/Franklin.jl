@@ -120,9 +120,21 @@
     <span style="font-size:24px;font-weight:300;">Set it up once then don't think about it.</span>
     
 <div class="blank"></div>
-<div class="franklin-toc"><ol><li><a href="#deploying_on_github">Deploying on GitHub</a><ol><li><a href="#creating_a_repo_on_github">Creating a repo on GitHub</a></li><li><a href="#synchronise_your_local_folder">Synchronise your local folder</a></li><li><a href="#examples">Examples</a></li><li><a href="#customising_the_github_action">Customising the GitHub action</a></li><li><a href="#troubleshooting">Troubleshooting</a></li></ol></li><li><a href="#deploying_on_gitlab">Deploying on GitLab</a><ol><li><a href="#creating_a_repo_on_gitlab">Creating a repo on GitLab</a></li><li><a href="#create_and_optimize_your_site">Create and optimize your site</a></li><li><a href="#synchronise_your_local_folder__2">Synchronise your local folder</a></li><li><a href="#iterate">Iterate</a></li></ol></li><li><a href="#deploying_on_netlify">Deploying on Netlify</a></li><li><a href="#previewing_pull_requests">Previewing Pull Requests</a></li></ol></div>
+<div class="franklin-toc"><ol><li><a href="#deploying_on_an_existing_webserver">Deploying on an existing webserver</a></li><li><a href="#deploying_on_github">Deploying on GitHub</a><ol><li><a href="#creating_a_repo_on_github">Creating a repo on GitHub</a></li><li><a href="#synchronise_your_local_folder">Synchronise your local folder</a></li><li><a href="#examples">Examples</a></li><li><a href="#customising_the_github_action">Customising the GitHub action</a></li><li><a href="#troubleshooting">Troubleshooting</a></li></ol></li><li><a href="#deploying_on_gitlab">Deploying on GitLab</a><ol><li><a href="#creating_a_repo_on_gitlab">Creating a repo on GitLab</a></li><li><a href="#create_and_optimize_your_site">Create and optimize your site</a></li><li><a href="#synchronise_your_local_folder__2">Synchronise your local folder</a></li><li><a href="#iterate">Iterate</a></li></ol></li><li><a href="#deploying_on_netlify">Deploying on Netlify</a></li><li><a href="#previewing_pull_requests">Previewing Pull Requests</a></li></ol></div>
 <div class="blank"></div>
-<p>Deploying the website is trivial on GitHub, Gitlab and services like Netlify.</p>
+<p>Deploying the website is trivial on an existing webserver, via GitHub or Gitlab, or on services like Netlify.</p>
+<h2 id="deploying_on_an_existing_webserver"><a href="#deploying_on_an_existing_webserver" class="header-anchor">Deploying on an existing webserver</a></h2>
+<p>The contents of the <code>__site</code> folder can simply be deployed to a path on an existing server as follows. Supposing you wish your site to appear at <code>http://my.example.com/path/to/my/franklin/site/</code>.  You would take the following steps:</p>
+<ul>
+<li><p>Prepare the <code>__site</code> directory by running <code>optimize&#40; prepath&#61;&#39;/path/to/my/franklin/site/&#39;, minify &#61; false &#41;</code>.</p>
+</li>
+</ul>
+<p>Franklin.jl does not use relative links, so this step is needed to ensure that the links between site elements are correct. &#40;The <code>minify &#61; false</code> argument is optional but is currently recommended.&#41;</p>
+<ul>
+<li><p>Copy the contents of the <code>__site</code> directory to the target location using your chosen method &#40;for example, using <a href="https://en.wikipedia.org/wiki/Rsync">rsync</a>&#41;.</p>
+</li>
+</ul>
+<p>Your site should now be live, with the index page appearing at <code>http://my.example.com/path/to/my/franklin/site/index.html</code>.</p>
 <h2 id="deploying_on_github"><a href="#deploying_on_github" class="header-anchor">Deploying on GitHub</a></h2>
 <h3 id="creating_a_repo_on_github"><a href="#creating_a_repo_on_github" class="header-anchor">Creating a repo on GitHub</a></h3>
 <p>Start by creating an empty GitHub repository</p>
@@ -275,7 +287,7 @@ jobs:
           GITHUB_TOKEN: &#36;&#123;&#123; secrets.GITHUB_TOKEN &#125;&#125;</code></pre>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: December 05, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: December 09, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
