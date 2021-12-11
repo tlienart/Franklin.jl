@@ -144,11 +144,11 @@ rss_full_content &#61; true</code></pre>
 <div class="content">Notice the last line, <code>rss_full_content &#61; true</code>. This line is important if you wish for your RSS feed to include the <em>full content</em> of your posts. If <code>rss_full_content &#61; false</code>, then subscribers will be notified of new content, but must visit your site in order to read it.</div></div>
 <h3 id="local_configuration"><a href="#local_configuration" class="header-anchor">Local Configuration</a></h3>
 <p>For each page that you wish to be included in your RSS feed, you should specify the description of the page. This can be done with the <code>rss_description</code> or equivalently the <code>rss</code> or <code>rss_descr</code> local page variable.</p>
-<pre><code class="language-julia">rss_description &#61; &quot;The page synopsis.&quot;</code></pre>
+<pre><code class="language-julia">@def rss_description &#61; &quot;The page synopsis.&quot;</code></pre>
 <p>Each page should include a publication date - specified by <code>rss_pubdate</code> and in the format of <code>Dates.Date</code>. For example:</p>
-<pre><code class="language-julia">rss_pubdate &#61; Date&#40;2021, 12, 31&#41;</code></pre>
+<pre><code class="language-julia">@def rss_pubdate &#61; Date&#40;2021, 12, 31&#41;</code></pre>
 <p>Each page should also include a title. If one is not specified then the page <code>title</code> will be used instead. To explicitly set the <code>rss_title</code>, do the following:</p>
-<pre><code class="language-julia">rss_title &#61; &quot;Item Title&quot;</code></pre>
+<pre><code class="language-julia">@def rss_title &#61; &quot;Item Title&quot;</code></pre>
 <p>Optionally, the following page variables can be set as well</p>
 <ul>
 <li><p><code>rss_author</code></p>
@@ -193,7 +193,7 @@ rss_full_content &#61; true</code></pre>
 </ul></div>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: December 09, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: December 11, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
