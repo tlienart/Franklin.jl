@@ -63,14 +63,14 @@ the description of the page. This can be done with the `rss_description` or
 equivalently the `rss` or `rss_descr` local page variable.
 
 ```julia
-rss_description = "The page synopsis."
+@def rss_description = "The page synopsis."
 ```
 
 Each page should include a publication date - specified by `rss_pubdate` and in
 the format of `Dates.Date`. For example:
 
 ```julia
-rss_pubdate = Date(2021, 12, 31)
+@def rss_pubdate = Date(2021, 12, 31)
 ```
 
 Each page should also include a title. If one is not specified then the page
@@ -78,7 +78,7 @@ Each page should also include a title. If one is not specified then the page
 following:
 
 ```julia
-rss_title = "Item Title"
+@def rss_title = "Item Title"
 ```
 
 Optionally, the following page variables can be set as well
