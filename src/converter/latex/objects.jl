@@ -32,6 +32,9 @@ const LX_INTERNAL_COMMANDS = [
     lxd("style",           2, "~~~<span style=\"!#1\">~~~!#2~~~</span>~~~"),
     lxd("tableofcontents", 0, "\\toc"),
     lxd("codeoutput",      1, "\\output{#1}"), # \codeoutput{rpath}
+    # ------------------
+    # other
+    lxd("nonumber", 1),
     ]
 
 """
@@ -42,10 +45,14 @@ Convenience function to create pairs (envdname => simple envdef)
 lxe(n, k, d=Pair("", "")) = n => LxDef(n, k, d)
 
 const LX_INTERNAL_ENVIRONMENTS = [
-    lxe("equation", 0, raw"\[" => raw"\]"),
-    lxe("align",    0, raw"\[\begin{aligned}"    => raw"\end{aligned}\]"),
-    lxe("aligned",  0, raw"\[\begin{aligned}"    => raw"\end{aligned}\]"),
-    lxe("eqnarray", 0, raw"\[\begin{array}{rcl}" => raw"\end{array}\]"),
+    lxe("equation",  0, raw"\["           => raw"\]"),
+    lxe("equation*", 0, raw"\nonumber{\[" => raw"\]}"),
+    lxe("align",     0, raw"\[\begin{aligned}"              => raw"\end{aligned}\]"),
+    lxe("align*",    0, raw"\nonumber{\[\begin{aligned}"    => raw"\end{aligned}\]}"),
+    lxe("aligned",   0, raw"\[\begin{aligned}"              => raw"\end{aligned}\]"),
+    lxe("aligned*",  0, raw"\nonumber{\[\begin{aligned}"    => raw"\end{aligned}\]}"),
+    lxe("eqnarray",  0, raw"\[\begin{array}{rcl}"           => raw"\end{array}\]"),
+    lxe("eqnarray*", 0, raw"\nonumber{\[\begin{array}{rcl}" => raw"\end{array}\]}")
     ]
 
 

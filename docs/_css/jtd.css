@@ -538,6 +538,11 @@ body { counter-reset: eqnum; }
     float: right;
     padding-right: 5px; }
 
+.nonumber .katex-display::after {
+  counter-increment: nothing;
+  content: "";
+}
+
 /* ==================================================================
     CODE & HIGHLIGHT.JS
 ================================================================== */

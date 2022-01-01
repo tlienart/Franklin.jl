@@ -70,7 +70,7 @@ How to make a section expand when clicked, so that content is initially hidden? 
 <script>
   var coll = document.getElementsByClassName("collapsible");
   var i;
-  
+
   for (i = 0; i < coll.length; i++) {
     coll[i].addEventListener("click", function() {
       this.classList.toggle("active");
@@ -88,7 +88,7 @@ How to make a section expand when clicked, so that content is initially hidden? 
 
 With these definitions, the expandible code sections could be added!
 
-\collaps{An additional example: **Press here to expand**}{In the content part you can have latex: $x^2$, 
+\collaps{An additional example: **Press here to expand**}{In the content part you can have latex: $x^2$,
 
 lists
 * Item 1

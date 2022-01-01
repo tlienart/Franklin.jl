@@ -56,41 +56,41 @@ so you can style the back-reference via the `.franklin-content fndef td.fndef-ba
 
 ### How to disable numbering of math in display mode?
 
-It is possible to specify in the CSS which Katex equations will be numbered or not by adjusting the
-`.katex-display::after` class.
-If you want to disable numbering in the entire site, just head to `_css/franklin.css` and remove the `.katex-display::after` block.
-You can also build a simple way to disable all numbering inside a specified `@@` div 
-(see [div blocks](/syntax/divs-commands/#div_blocks))
+\note{This is currently only available when you're using KaTeX for maths.}
 
-```markdown
-This is numbered:
-$$ 1+1 = 2 $$
+Use the environment `equation*`, `align*`, `aligned*` or `eqnarray*`. Alternatively, use `\nonumber{...your equation...}`.
 
-This isn't:
+You will have to make sure that your CSS sheet contains the following rule:
 
-@@no-number
-$$ 2+2 = 4 $$
-and
-$$ 3+3 = 7-1 $$
-@@
-
-Numbered again:
-$$ 7 + 1 = 8 $$
-```
-
-by adding in the CSS:
 ```css
-.no-number .katex-display::after {
+.nonumber .katex-display::after {
   counter-increment: nothing;
   content: "";
 }
 ```
 
-And possibly [define a command](/syntax/divs-commands/#latex-like_commands) in `config.md`:\
-```markdown
-\newcommand{\nalign}[1]{@@no-number \begin{align}#1\end{align}@@}
-```
-if you feel it is more convenient to write `\nalign{3+3 = 6}`.
+So for instance using `\begin{align*}...\end{align*}`:
+
+\begin{align*}
+    x &= 3 \\
+    y &= 4
+\end{align*}
+
+Or using `\nonumber{$$ ... $$}`:
+
+\nonumber{
+$$
+    x = 5
+$$
+}
+
+Recall that numbered equations can be referred to via `\eqref`:
+
+$$
+x = 14 \label{eqabc}
+$$
+
+like this: \eqref{eqabc}.
 
 
 ## Code
