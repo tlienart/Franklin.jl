@@ -206,7 +206,7 @@ function lx_tableinput(lxc::LxCom, _)
 end
 
 """
-    \\liteate{...}
+    \\literate{...}
 
 Resolve a `\\literate{rpath}` (find a literate script and insert it).
 """
@@ -222,4 +222,15 @@ function lx_literate(lxc::LxCom, lxd::Vector{LxDef})
     end
     # then reprocess
     return reprocess(read(opath, String), lxd, nostripp=true)
+end
+
+"""
+    \\nonumber{...}
+
+Suppress the displaying of a number.
+"""
+function lx_nonumber(c, lxd)
+    PAGE_EQREFS[PAGE_EQREFS_COUNTER] -= 1
+    return reprocess("@@nonumber " * content(c.braces[1]) * "@@", lxd)
+
 end
