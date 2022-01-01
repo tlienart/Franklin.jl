@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  
+   <!-- Un-minified script so that can play a bit -->
+<link rel="stylesheet" href="/libs/katex/katex.min.css">
+     
    <!-- Syntax highlighting via Prism, note: restricted langs -->
 <link rel="stylesheet" href="/libs/highlight/github.min.css">
    
@@ -150,28 +152,28 @@
     font-size: 80&#37;;
     padding-left: 10px;&#125;</code></pre>
 <h3 id="how_to_disable_numbering_of_math_in_display_mode"><a href="#how_to_disable_numbering_of_math_in_display_mode" class="header-anchor">How to disable numbering of math in display mode?</a></h3>
-<p>It is possible to specify in the CSS which Katex equations will be numbered or not by adjusting the <code>.katex-display::after</code> class. If you want to disable numbering in the entire site, just head to <code>_css/franklin.css</code> and remove the <code>.katex-display::after</code> block. You can also build a simple way to disable all numbering inside a specified <code>@@</code> div  &#40;see <a href="/syntax/divs-commands/#div_blocks">div blocks</a>&#41;</p>
-<pre><code class="language-markdown">This is numbered:
-&#36;&#36; 1&#43;1 &#61; 2 &#36;&#36;
-
-This isn&#39;t:
-
-@@no-number
-&#36;&#36; 2&#43;2 &#61; 4 &#36;&#36;
-and
-&#36;&#36; 3&#43;3 &#61; 7-1 &#36;&#36;
-@@
-
-Numbered again:
-&#36;&#36; 7 &#43; 1 &#61; 8 &#36;&#36;</code></pre>
-<p>by adding in the CSS:</p>
-<pre><code class="language-css">.no-number .katex-display::after &#123;
+<div class="note"><div class="title">⚠ Note</div>
+<div class="content">This is currently only available when you&#39;re using KaTeX for maths.</div></div>
+<p>Use the environment <code>equation*</code>, <code>align*</code>, <code>aligned*</code> or <code>eqnarray*</code>. Alternatively, use <code>\nonumber&#123;...your equation...&#125;</code>.</p>
+<p>You will have to make sure that your CSS sheet contains the following rule:</p>
+<pre><code class="language-css">.nonumber .katex-display::after &#123;
   counter-increment: nothing;
   content: &quot;&quot;;
 &#125;</code></pre>
-<p>And possibly <a href="/syntax/divs-commands/#latex-like_commands">define a command</a> in <code>config.md</code>:<br /></p>
-<pre><code class="language-markdown">\newcommand&#123;\nalign&#125;&#91;1&#93;&#123;@@no-number \begin&#123;align&#125;#1\end&#123;align&#125;@@&#125;</code></pre>
-<p>if you feel it is more convenient to write <code>\nalign&#123;3&#43;3 &#61; 6&#125;</code>.</p>
+<p>So for instance using <code>\begin&#123;align*&#125;...\end&#123;align*&#125;</code>:</p>
+<div class="nonumber">\[\begin{aligned}
+    x &= 3 \\
+    y &= 4
+\end{aligned}\]</div>
+<p>Or using <code>\nonumber&#123;&#36;&#36; ... &#36;&#36;&#125;</code>:</p>
+<div class="nonumber">\[
+    x = 5
+\]</div>
+<p>Recall that numbered equations can be referred to via <code>\eqref</code>:</p>
+<a id="eqabc" class="anchor"></a>\[
+x = 14 
+\]
+<p>like this: <span class="eqref">(<a href="#eqabc">1</a>)</span>.</p>
 <h2 id="code"><a href="#code" class="header-anchor">Code</a></h2>
 <h3 id="how_to_use_loops_for_templating"><a href="#how_to_use_loops_for_templating" class="header-anchor">How to use loops for templating?</a></h3>
 <p><strong>Reference</strong>: <a href="https://github.com/tlienart/Franklin.jl/issues/251">issue 251</a>, <strong>more on this</strong>: <a href="/code/eval-tricks/">code tricks</a>.</p>
@@ -198,13 +200,18 @@ end
 <p>See <a href="/extras/plotly/">this tutorial</a> for a way to do this.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: December 17, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: January 01, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
     </div> <!-- end of class main-content -->
     </div> <!-- end of class main-content-wrap -->
     </div> <!-- end of class page-wrap-->
+    
+      <script src="/libs/katex/katex.min.js"></script>
+<script src="/libs/katex/auto-render.min.js"></script>
+<script>renderMathInElement(document.body)</script>
+
     
     
       <script src="/libs/highlight/highlight.pack.js"></script>

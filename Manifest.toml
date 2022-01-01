@@ -104,9 +104,9 @@ version = "0.8.4"
 
 [[Franklin]]
 deps = ["Dates", "DelimitedFiles", "DocStringExtensions", "ExprTools", "FranklinTemplates", "HTTP", "Literate", "LiveServer", "Logging", "Markdown", "NodeJS", "OrderedCollections", "Pkg", "REPL", "Random"]
-git-tree-sha1 = "443ef18f57caffec78ad98726bbf137383766eca"
+git-tree-sha1 = "e31cc2e34e897bbe8831762ce6de5e7a59f6d8ae"
 uuid = "713c75ef-9fc9-4b05-94a9-213340da978e"
-version = "0.10.64"
+version = "0.10.65"
 
 [[FranklinTemplates]]
 deps = ["LiveServer"]
@@ -319,9 +319,9 @@ version = "0.18.8"
 
 [[Preferences]]
 deps = ["TOML"]
-git-tree-sha1 = "00cfd92944ca9c760982747e9a1d0d5d86ab1e5a"
+git-tree-sha1 = "2cf929d64681236a2e074ffafb8d568733d2e6af"
 uuid = "21216c6a-2e73-6563-6e65-726566657250"
-version = "1.2.2"
+version = "1.2.3"
 
 [[Printf]]
 deps = ["Unicode"]
@@ -329,9 +329,9 @@ uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 
 [[PyCall]]
 deps = ["Conda", "Dates", "Libdl", "LinearAlgebra", "MacroTools", "Serialization", "VersionParsing"]
-git-tree-sha1 = "4ba3651d33ef76e24fef6a598b63ffd1c5e1cd17"
+git-tree-sha1 = "71fd4022ecd0c6d20180e23ff1b3e05a143959c2"
 uuid = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
-version = "1.92.5"
+version = "1.93.0"
 
 [[PyPlot]]
 deps = ["Colors", "LaTeXStrings", "PyCall", "Sockets", "Test", "VersionParsing"]
