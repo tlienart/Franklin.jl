@@ -232,5 +232,4 @@ Suppress the displaying of a number.
 function lx_nonumber(c, lxd)
     PAGE_EQREFS[PAGE_EQREFS_COUNTER] -= 1
     return reprocess("@@nonumber " * content(c.braces[1]) * "@@", lxd)
-
 end
