@@ -275,7 +275,7 @@ savefig(joinpath(@OUTPUT, "sinc.svg")) # hide
 
 **Note**: observe that here everything is done with relative paths, `pyplot1` is placed in the  `/assets/` folder relatively to the path of the current page and the `\fig` since it's given a path that doesn't start with  `/` or `./` will also  look in  that folder to try to find a figure which starts with the name `sinc`. See also [more about paths](#more_on_paths).
 
-**Note**: If you wish to use `Plots.jl` and deploy to GitHub pages, you'll need to modify you `.github/workflows/Deploy.yml` by adding `env: GKSwstype: "100"` before the ` - name: Build and Deploy` line. [Here](https://github.com/storopoli/Bayesian-Julia/blob/master/.github/workflows/Deploy.yml) is an example.
+**Note**: If you wish to use `Plots.jl` and deploy to GitHub pages, you will need to modify the `.github/workflows/Deploy.yml` by adding `env: GKSwstype: "100"` before the ` - name: Build and Deploy` line. [Here](https://github.com/storopoli/Bayesian-Julia/blob/master/.github/workflows/Deploy.yml) is an example.
 
 ### Troubleshooting
 
