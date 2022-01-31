@@ -80,7 +80,9 @@ const CODE_3_PAT = Regex(
         ")|(?:\\n|\\s))" *
         "\\s*\\n?((?:.|\\n)*)```") # rest of the code
 
-const CODE_5_PAT = Regex("``" * CODE_3_PAT.pattern * "``")
+const CODE_4_PAT = Regex("`" * CODE_3_PAT.pattern * "`")
+
+const CODE_5_PAT = Regex("`" * CODE_4_PAT.pattern * "`")
 
 const CODE_HIDE_PAT = Regex(raw"(?:^|[^\S\r\n]*?)#(\s)*?(?i)hide(all)?")
 

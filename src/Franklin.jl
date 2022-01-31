@@ -10,6 +10,7 @@ using DelimitedFiles: readdlm
 using OrderedCollections
 using Pkg
 using DocStringExtensions: SIGNATURES, TYPEDEF
+using TOML
 
 import Logging
 import LiveServer
@@ -86,7 +87,8 @@ const FD_ENV = LittleDict(
     :SHOW_WARNINGS     => true,     # franklin-specific warnings
     :FAIL_ON_WARNING   => false,    # turn warnings into fatal errors
     :UTILS_COUNTER     => 0,        # counter for utils module
-    :UTILS_HASH        => nothing   # hash of the utils
+    :UTILS_HASH        => nothing,  # hash of the utils
+    :LITERATE_VERSION  => VersionNumber(TOML.parsefile(joinpath(dirname(dirname(pathof(Literate))), "Project.toml"))["version"]),
     )
 
 utils_name()   = "Utils_$(FD_ENV[:UTILS_COUNTER]::Int)"

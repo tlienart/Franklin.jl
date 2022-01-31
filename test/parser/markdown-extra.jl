@@ -208,3 +208,12 @@ end
     s = "abc :joi: def" |> fd2html
     @test s // "<p>abc :joi: def</p>"
 end
+
+@testset "quad-backticks" begin
+    s = """
+        ````julia
+        1+1
+        ````
+        """ |> fd2html
+    @test s // """<pre><code class="language-julia">1&#43;1</code></pre>"""
+end

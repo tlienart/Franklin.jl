@@ -67,17 +67,17 @@ end
         In julia rational numbers can be constructed with the `//` operator.
         Lets define two rational numbers, `x` and `y`:
 
-        ```julia:ex1
+        ````julia:ex1
         # Define variable x and y
         x = 1//3
         y = 2//5
-        ```
+        ````
 
         When adding `x` and `y` together we obtain a new rational number:
 
-        ```julia:ex2
+        ````julia:ex2
         z = x + y
-        ```
+        ````
 
         """
 
@@ -110,9 +110,9 @@ end
     # Literate to Franklin
     s = raw"""
         # # Rational numbers
-        # ```julia
+        # ````julia
         # const a = 1
-        # ```
+        # ````
         a = 5
         """
     path = joinpath(F.path(:literate), "tutorial.jl")
@@ -123,13 +123,13 @@ end
     @test out // """
         <!--This file was generated, do not modify it.-->
         # Rational numbers
-        ```julia
+        ````julia
         const a = 1
-        ```
+        ````
 
-        ```julia:ex1
+        ````julia:ex1
         a = 5
-        ```
+        ````
         """
 
     # Use of `\literate` command

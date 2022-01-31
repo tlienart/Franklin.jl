@@ -21,7 +21,8 @@ function parse_fenced_block(ss::SubString, shortcut=false)::Tuple
         # * ```lang ... ``` where lang can be something like julia-repl
         # * ```lang:path ... ``` where path is a relative path like "this/path"
         # group 1 => lang; group 2 => path; group 3 => code
-        reg   = ifelse(startswith(ss, "`````"), CODE_5_PAT, CODE_3_PAT)
+        reg = startswith(ss, "`````") ? CODE_5_PAT :
+              startswith(ss, "````")  ? CODE_4_PAT : CODE_3_PAT
         m     = match(reg, ss)
         lang  = m.captures[1]
         rpath = m.captures[2]

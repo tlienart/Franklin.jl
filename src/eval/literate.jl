@@ -1,8 +1,13 @@
 const LITERATE_FENCER        = "julialit"
-const LITERATE_JULIA_FENCE   = "```$LITERATE_FENCER"
+const LITERATE_JULIA_REPLACE = ifelse(FD_ENV[:LITERATE_VERSION] < v"2.9.0",
+                                      "```", "````")
+const LITERATE_JULIA_FENCE   = "$LITERATE_JULIA_REPLACE$LITERATE_FENCER"
 const LITERATE_JULIA_FENCE_L = length(LITERATE_JULIA_FENCE)
 const LITERATE_JULIA_FENCE_R = Regex(LITERATE_JULIA_FENCE)
 
+const LITERATE_FLAV = ifelse(FD_ENV[:LITERATE_VERSION] < v"2.9.0",
+                                Literate.CommonMarkFlavor(),
+                                Literate.FranklinFlavor())
 
 """
 $SIGNATURES
@@ -44,7 +49,7 @@ function literate_to_franklin(rpath::AS)::Tuple{String,Bool}
         fpath, outpath;
         flavor=Literate.CommonMarkFlavor(),
         mdstrings=locvar(:literate_mds)::Bool,
-        config=Dict("codefence" => (LITERATE_JULIA_FENCE => "```")),
+        config=Dict("codefence" => (LITERATE_JULIA_FENCE => LITERATE_JULIA_REPLACE)),
         preprocess=s->replace(s, r"#hide\s*?\n" => "# hide\n"),
         postprocess=literate_post_process,
         credit=false
@@ -82,7 +87,7 @@ function literate_post_process(s::String)::String
     c    = 1
     for m in em
         write(buf, SubString(s, head, prevind(s, m.offset)))
-        write(buf, "```julia:ex$c\n")
+        write(buf, "$(LITERATE_JULIA_REPLACE)julia:ex$c\n")
         head = nextind(s, m.offset + LITERATE_JULIA_FENCE_L)
         c   += 1
     end
