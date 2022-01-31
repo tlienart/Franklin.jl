@@ -5,7 +5,7 @@ const LITERATE_JULIA_FENCE   = "$LITERATE_JULIA_REPLACE$LITERATE_FENCER"
 const LITERATE_JULIA_FENCE_L = length(LITERATE_JULIA_FENCE)
 const LITERATE_JULIA_FENCE_R = Regex(LITERATE_JULIA_FENCE)
 
-const LITERATE_FLAV = ifelse(FD_ENV[:LITERATE_VERSION] < v"2.9.0",
+const LITERATE_FLAVOR = ifelse(FD_ENV[:LITERATE_VERSION] < v"2.9.0",
                                 Literate.CommonMarkFlavor(),
                                 Literate.FranklinFlavor())
 
@@ -47,7 +47,7 @@ function literate_to_franklin(rpath::AS)::Tuple{String,Bool}
     # >> output the markdown
     Literate.markdown(
         fpath, outpath;
-        flavor=Literate.CommonMarkFlavor(),
+        flavor=LITERATE_FLAVOR,
         mdstrings=locvar(:literate_mds)::Bool,
         config=Dict("codefence" => (LITERATE_JULIA_FENCE => LITERATE_JULIA_REPLACE)),
         preprocess=s->replace(s, r"#hide\s*?\n" => "# hide\n"),
@@ -57,7 +57,7 @@ function literate_to_franklin(rpath::AS)::Tuple{String,Bool}
     # >> output the script
     Literate.script(
         fpath, outpath;
-        flavor=Literate.CommonMarkFlavor(),
+        flavor=LITERATE_FLAVOR,
         mdstrings=locvar(:literate_mds)::Bool,
         postprocess=s->(MESSAGE_FILE_GEN_LIT * s),
         name=fname * "_script",
