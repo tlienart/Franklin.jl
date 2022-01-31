@@ -104,7 +104,7 @@ function rss_generator()::Nothing
             if isfile(tag_feed_head_cand)
                 tag_feed_head = read(tag_feed_head_cand)
             end
-            write(io, tag_feed_head)
+            write(io, convert_html(tag_feed_head))
             for item in sorted_items
                 tag ∈ item.tags || continue
                 write(io, item.item)
