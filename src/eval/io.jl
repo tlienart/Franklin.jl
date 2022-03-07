@@ -94,8 +94,6 @@ function parse_rpath(rpath::AS; canonical::Bool=false, code::Bool=false)::AS
         end
         if !canonical
             # here we want to remain unix-style, so we don't use joinpath
-            # note that rpath never starts with "/" so there's
-            # no doubling of "//"
             tmp   = unixify(splitext(loc_rpath)[1])
             rpath = ifelse(endswith(tmp, '/'), tmp, tmp * "/") * rpath[3:end]
             return "/assets/" * rpath
