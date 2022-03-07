@@ -150,7 +150,6 @@ function lx_figalt(lxc::LxCom, _)
     alt   = stent(lxc.braces[1])
     path  = parse_rpath(rpath; canonical=false, code=true)
     fdir, fext = splitext(path)
-
     # there are several cases
     # A. a path with no extension --> guess extension
     # B. a path with extension --> use that

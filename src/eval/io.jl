@@ -96,7 +96,8 @@ function parse_rpath(rpath::AS; canonical::Bool=false, code::Bool=false)::AS
             # here we want to remain unix-style, so we don't use joinpath
             # note that rpath never starts with "/" so there's
             # no doubling of "//"
-            rpath = unixify(splitext(loc_rpath)[1]) * rpath[3:end]
+            tmp   = unixify(splitext(loc_rpath)[1])
+            rpath = ifelse(endswith(tmp, '/'), tmp, tmp * "/") * rpath[3:end]
             return "/assets/" * rpath
         else
             full_path = joinpath(PATHS[:site], "assets",
@@ -114,10 +115,12 @@ function parse_rpath(rpath::AS; canonical::Bool=false, code::Bool=false)::AS
     if code # recurse adding "./"
         return parse_rpath("./code/" * rpath; canonical=canonical)
     end
+
     # otherwise, we consider the path as a full path relative to the
     # /assets/ folder. For instance `blah/img1.png` => `/assets/blah/img1.png`
     canonical || return "/assets/" * rpath # no doubling bc rpath[1] != '/'
     full_path = joinpath(PATHS[:site], "assets", join_rpath(rpath))
+
     return normpath(full_path)
 end
 
