@@ -118,7 +118,7 @@ end
         B3
     C
     @@da
-        @@db
+        @@db,dc:dd/de
             E
         @@
     @@
@@ -135,7 +135,7 @@ end
     @test islr(t[6])
     @test istok(t[7], :DIV_OPEN, "@@da")
     @test isind(t[8]) && t[8].lno == 8
-    @test istok(t[9], :DIV_OPEN, "@@db")
+    @test istok(t[9], :DIV_OPEN, "@@db,dc:dd/de")
     @test isind(t[10]) && t[10].lno == 9  # in front of E
     @test isind(t[11]) && t[11].lno == 10 # in front of @@
     @test istok(t[12], :DIV_CLOSE, "@@")
