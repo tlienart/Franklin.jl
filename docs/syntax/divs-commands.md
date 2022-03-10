@@ -39,6 +39,8 @@ which will look like
   Some important content
 @@
 
+You can do this with multiple classes separating them with a comma: `@@c1,c2 ... @@` for instance, this also works with [tailwind.css](https://tailwindcss.com/) classes: `@@c1,hover:basis-1/2 ... @@` etc.
+
 ### Nesting
 
 Such div blocks can be nested as in standard HTML.
