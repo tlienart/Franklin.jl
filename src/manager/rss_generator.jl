@@ -85,7 +85,7 @@ function rss_generator()::Nothing
         isempty(pp) || (pp = "/$pp")
         global_feed_head = replace(
             global_feed_head,
-            r"(\/[a-zA-Z0-9]+\.xsl)" => SubstitutionString("$pp\\1")
+            r"(\/[a-zA-Z0-9\_-]+\.xsl)" => SubstitutionString("$pp\\1")
         )
     end
 
