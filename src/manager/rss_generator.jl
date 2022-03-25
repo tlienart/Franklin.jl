@@ -80,6 +80,15 @@ function rss_generator()::Nothing
         read(joinpath(path(:rss), "head.xml"), String),
         r"<!--(.|\n)*?-->" => ""
     )
+    if FD_ENV[:FINAL_PASS]
+        pp = globvar(:prepath)::String
+        isempty(pp) || (pp = "/$pp")
+        global_feed_head = replace(
+            global_feed_head,
+            r"(\/[a-zA-Z0-9]+\.xsl)" => SubstitutionString("$pp\\1")
+        )
+    end
+
     open(global_feed_path, "w") do io
         write(io, convert_html(global_feed_head))
         for item in sorted_items
