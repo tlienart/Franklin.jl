@@ -160,7 +160,7 @@ function lx_figalt(lxc::LxCom, _)
                      (".png", ".jpeg", ".jpg", ".svg", ".gif", ".json"), (fext,))
     for ext ∈ candext
         candpath = fdir * ext
-        syspath  = joinpath(PATHS[:site], split(candpath, '/')...)
+        syspath  = joinpath(PATHS[:site], split(candpath, PATH_SEP)...)
         isfile(syspath) && return ext == ".json" ? html_plotly(candpath) : html_img(candpath, alt)
     end
     # now try in the output dir just in case (provided we weren't already
@@ -169,7 +169,7 @@ function lx_figalt(lxc::LxCom, _)
     if splitdir(p1)[2] != "output"
         for ext ∈ candext
             candpath = joinpath(p1, "output", p2 * ext)
-            syspath  = joinpath(PATHS[:site], split(candpath, '/')...)
+            syspath  = joinpath(PATHS[:site], split(candpath, PATH_SEP)...)
             isfile(syspath) && return ext == ".json" ? html_plotly(candpath) : html_img(candpath, alt)
         end
     end
@@ -198,7 +198,7 @@ function lx_tableinput(lxc::LxCom, _)
     p1, p2 = splitdir(fdir)
     if splitdir(p1)[2] != "output"
         candpath = joinpath(p1, "output", p2 * fext)
-        syspath = joinpath(PATHS[:site], split(candpath, '/')...)
+        syspath = joinpath(PATHS[:site], split(candpath, PATH_SEP)...)
         isfile(syspath) && return csv2html(syspath, header)
     end
     return html_err("Table matching '$path' not found.")
