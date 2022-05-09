@@ -30,6 +30,12 @@ Franklin has a channel **#franklin** on the Julia slack, this is the best place 
 
 Go to [Franklin's main website](https://franklinjl.org). For users already familiar with Franklin you might also find [these demos](https://franklinjl.org/demos/) useful. Ifihan Olusheye also wrote [this blog](https://dev.to/ifihan/building-a-blog-with-franklin-jl-3h77) on building a blog with Franklin.
 
+### Important notes
+
+* if, upon deployment, your website doesn't seem to apply CSS, you likely forgot a step, please [see here](https://franklinjl.org/workflow/deploy/#creating_a_repo_on_github).
+* it is currently recommended to **switch off** pre-rendering and minification (you can do this by passing `prerender=false, minify=false` to the `optimize(...)` call in your deploy script), the corresponding logic will be removed in future version of Franklin as it's tricky to maintain and caused too many issues.
+* if you're getting warning messages about some JS library not being found on your computer, you can safely ignore this.
+
 ## Key features
 
 * Use standard markdown with the possibility to use LaTeX-style commands and generating functions written in Julia
