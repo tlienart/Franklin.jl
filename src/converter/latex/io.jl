@@ -148,6 +148,7 @@ Resolve a `\\figalt{alt}{rpath}` (find a fig and include it with alt).
 function lx_figalt(lxc::LxCom, _)
     rpath = stent(lxc.braces[2])
     alt   = stent(lxc.braces[1])
+    # unix path relative to the root folder
     path  = parse_rpath(rpath; canonical=false, code=true)
     fdir, fext = splitext(path)
     # there are several cases
@@ -160,16 +161,19 @@ function lx_figalt(lxc::LxCom, _)
                      (".png", ".jpeg", ".jpg", ".svg", ".gif", ".json"), (fext,))
     for ext ∈ candext
         candpath = fdir * ext
-        syspath  = joinpath(PATHS[:site], split(candpath, PATH_SEP)...)
+        syspath  = joinpath(PATHS[:site], split(candpath, "/")...)
         isfile(syspath) && return ext == ".json" ? html_plotly(candpath) : html_img(candpath, alt)
     end
     # now try in the output dir just in case (provided we weren't already
-    # looking there)
-    p1, p2 = splitdir(fdir)
-    if splitdir(p1)[2] != "output"
+    # looking there) the dir split is "/"
+    ps = split(fdir, "/", keepempty=false)
+    if ps[end-1] != "output"
         for ext ∈ candext
-            candpath = joinpath(p1, "output", p2 * ext)
-            syspath  = joinpath(PATHS[:site], split(candpath, PATH_SEP)...)
+            candpath = "/" * join([ps[1:end-1]..., "output", ps[end] * ext], "/")
+            syspath  = joinpath(
+                PATHS[:site],
+                split(candpath, "/")...
+            )
             isfile(syspath) && return ext == ".json" ? html_plotly(candpath) : html_img(candpath, alt)
         end
     end
