@@ -135,9 +135,9 @@ version = "0.8.4"
 
 [[deps.Franklin]]
 deps = ["Dates", "DelimitedFiles", "DocStringExtensions", "ExprTools", "FranklinTemplates", "HTTP", "Literate", "LiveServer", "Logging", "Markdown", "NodeJS", "OrderedCollections", "Pkg", "REPL", "Random", "TOML"]
-git-tree-sha1 = "8853c7ba40a03948a9a188febdf2fcf157595a5e"
+git-tree-sha1 = "d0e1640f470a3c7aea2bb87e26d33c9097f524dc"
 uuid = "713c75ef-9fc9-4b05-94a9-213340da978e"
-version = "0.10.72"
+version = "0.10.73"
 
 [[deps.FranklinTemplates]]
 deps = ["LiveServer"]
@@ -518,9 +518,9 @@ version = "1.5.9"
 
 [[deps.Widgets]]
 deps = ["Colors", "Dates", "Observables", "OrderedCollections"]
-git-tree-sha1 = "505c31f585405fc375d99d02588f6ceaba791241"
+git-tree-sha1 = "fcdae142c1cfc7d89de2d11e08721d0f2f86c98a"
 uuid = "cc8bc4a8-27d6-5769-a93b-9d913e69aa62"
-version = "0.6.5"
+version = "0.6.6"
 
 [[deps.Zlib_jll]]
 deps = ["Libdl"]
