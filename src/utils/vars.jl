@@ -48,9 +48,10 @@ const GLOBAL_VARS_DEFAULT = [
     # Sitemap
     "generate_sitemap" => dpair(true),
     # div names
-    "content_tag"      => dpair("div"),
-    "content_class"    => dpair("franklin-content"),
-    "content_id"       => dpair(""),
+    "content_tag"       => dpair("div"),
+    "content_class"     => dpair("franklin-content"),
+    "content_id"        => dpair(""),
+    "code_output_class" => dpair("code-output"),
     # auto detection of code / math (see hasmath/hascode)
     "autocode"         => dpair(true),
     "automath"         => dpair(true),
