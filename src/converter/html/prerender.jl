@@ -46,7 +46,7 @@ highlight.js to pre-render them to HTML.
 function js_prerender_highlight(hs::String)::String
     # look for "<pre><code" and "</code></pre>" these will have been automatically generated
     # and therefore the regex can be fairly strict with spaces etc
-    matches = collect(eachmatch(r"<pre><code\s*(class=\"?(?:language-)?(.*?)\"?)?\s*>|<\/code><\/pre>", hs))
+    matches = collect(eachmatch(r"<pre><code\s*(class=\"?(?:(?:language-)?(?<lang>[^\ \">]+))?(?:\s+([^\ \">]+)?)*\"?)?\s*>|<\/code><\/pre>", hs))
     isempty(matches) && return hs
 
     # buffer to write the JS script
@@ -64,7 +64,7 @@ function js_prerender_highlight(hs::String)::String
         cs = subs(hs, nextind(hs, matchrange(co).stop), prevind(hs, matchrange(cc).start))
         # cs = escape_string(cs)
         # lang
-        lang = co.captures[2]
+        lang = co[:lang]
         # un-escape code string
         cs = html_unescape(cs) |> escape_string
         # add to content of jsbuffer
