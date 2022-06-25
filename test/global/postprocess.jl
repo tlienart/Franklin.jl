@@ -40,14 +40,14 @@
     index = read(joinpath("__site","index.html"), String)
     @test occursin("=\"/css/basic.css", index)
     @test occursin("=\"/css/franklin.css", index)
-    @test occursin("=\"/libs/highlight/github.min.css", index)
+    @test occursin("=\"/libs/highlight/styles/github.min.css", index)
     @test occursin("=\"/libs/katex/katex.min.css", index)
 
     optimize(minify=false, prerender=false, prepath="prependme")
     index = read(joinpath("__site","index.html"), String)
     @test occursin("=\"/prependme/css/basic.css", index)
     @test occursin("=\"/prependme/css/franklin.css", index)
-    @test occursin("=\"/prependme/libs/highlight/github.min.css", index)
+    @test occursin("=\"/prependme/libs/highlight/styles/github.min.css", index)
     @test occursin("=\"/prependme/libs/katex/katex.min.css", index)
 end
 
