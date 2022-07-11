@@ -67,11 +67,20 @@ end
 
 Convenience function to plot a Plotly. User need to add a Javascript function `PlotlyJS_json`.
 """
-html_plotly(src::AbstractString ; id="fdp"*Random.randstring('a':'z', 3),
-            style="") = """
-<div id="$id" style="$style"></div>
-<script>
-graphDiv = document.getElementById("$id");
-plotlyPromise = PlotlyJS_json(graphDiv, '$src');
-</script>
-"""
+function html_plotly(
+			src::AbstractString;
+			id::String = "fdp"*Random.randstring('a':'z', 3),
+            style::String = "")
+
+	pp = globvar(:prepath)::String
+	pp = ifelse(isempty(pp), pp, "/$pp")
+	pp = ifelse(FD_ENV[:FINAL_PASS]::Bool, pp, "")
+
+	return """
+		   <div id="$id" style="$style"></div>
+		   <script>
+		   graphDiv = document.getElementById("$id");
+		   plotlyPromise = PlotlyJS_json(graphDiv, '$pp$src');
+		   </script>
+		   """
+end
