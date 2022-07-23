@@ -10,12 +10,12 @@
 	var pre = document.getElementsByTagName('pre');
 
 	// Add a copy button in the 'pre' element.
-	// which only has the className of 'language-'.
+	// which only has the className of 'language-' or ' hljs'(if enable highlight.js pre-render).
 
 	for (var i = 0; i < pre.length; i++) {
-		var isLanguage = pre[i].children[0].className.indexOf('language-');
-
-		if ( isLanguage === 0 ) {
+		var tag_name = pre[i].children[0].className
+            	var isLanguage = tag_name.startsWith('language-') || tag_name.endsWith(' hljs');
+		if ( isLanguage ) {
 			var button           = document.createElement('button');
 					button.className = 'copy-button';
 					button.textContent = 'Copy';
