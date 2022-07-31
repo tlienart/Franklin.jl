@@ -11,7 +11,7 @@ These functions are to be defined in the `utils.jl` file which lies at the same 
 They **must** be named with `lx_` or `hfun_` followed by a name; for instance: `lx_foo`, `hfun_bar_baz` are accepted.
 These functions are defined in plain Julia and can themselves call other functions that would be defined in the `utils.jl` file or elsewhere.
 
-**Note**: often, it is enough to use `~~~...~~~` blocks or define newcommands (or both) rather than use `hfun_*` and `lx_*`; but sometimes it can be very convenient to have a way to just generate things with your own code.
+**Note**: often, it is enough to use `~~~...~~~` blocks or define `newcommand`s (or both) rather than use `hfun_*` and `lx_*`; but sometimes it can be very convenient to have a way to just generate things with your own code.
 For instance, to locally use custom styling of text, Franklin comes with the following command:
 
 ```html
@@ -74,7 +74,7 @@ You can also have parameters with `hfun_*` functions which will allow you to wri
 
 the parameters are passed as a **vector of strings** i.e.: in the case above, the function will receive `["arg1", "arg2"]` and these strings will need to be further processed by the function.
 
-The procedure is otherwise the same than at the previous point, you just need to define the function like this:
+The procedure is otherwise the same as at the previous point, you just need to define the function like this:
 
 ```julia
 function hfun_bar(params)
@@ -90,7 +90,7 @@ Note that all functions defined in `utils.jl` can call `locvar(name)` and `globv
 
 A `lx_*` function is a way to bypass Franklin's parsing and generate Markdown which will be _reprocessed_ by Franklin (though you can always avoid that by generating HTML directly after wrapping it in `~~~`).
 
-This is a more advanced command and you should probably double check before making use of it as, usually, there will be a simpler way of achieving what you want.
+This is a more advanced command and you should probably double-check before making use of it as, usually, there will be a simpler way of achieving what you want.
 Also if you intend to use it, you will want to check out [FranklinUtils](http://github.com/tlienart/FranklinUtils.jl) which provides helper functions for it.
 
 It's harder to come up with meaningful examples as most simple examples will be achievable another way so here we proceed with a dumb example (and will show why it's dumb later).
@@ -120,13 +120,13 @@ function lx_h2(com, _) # the signature must look like this
 end
 } <!--_-->
 
-\note{Same comment as earlier, you can see that the way the function is called depends on the name of the function definition `lx_foo` ⟶ `foo`. Make sure that the name does not clash with one of the pre-defined commands (`label`, `style`, ...).}
+\note{The same comment as earlier, you can see that the way the function is called depends on the name of the function definition `lx_foo` ⟶ `foo`. Make sure that the name does not clash with one of the pre-defined commands (`label`, `style`, ...).}
 
 \note{For the moment, this only works with a single brace see [issue 518](https://github.com/tlienart/Franklin.jl/issues/518) for comments.}
 
 ### Why it was a dumb example
 
-In this case it would have been simpler to just define this as a simple newcommand:
+In this case, it would have been simpler to just define this as a simple newcommand:
 
 ```html
 \newcommand{\h2}[2]{~~~<h2 id="!#1">#2</h2>~~~}
