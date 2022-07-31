@@ -38,7 +38,7 @@ var2 = "Hello goodbye"
 +++
 ```
 
-this block will be executed as standard Julia code and the two assignments (`var1` and `var2`) will be caught and made available as page variable of the same name.
+this block will be executed as standard Julia code and the two assignments (`var1` and `var2`) will be caught and made available as page variables of the same name.
 
 Page variables can serve multiple purposes though their main use is to be accessed from the HTML template blocks e.g.:
 
@@ -48,19 +48,19 @@ Page variables can serve multiple purposes though their main use is to be access
 </footer>
 ```
 
-which could be useful as footer on all pages.
+which could be useful as a footer on all pages.
 
-The syntax `{{ ... }}` indicates a HTML _function_, `fill` is the function name and the rest of the bracket elements are _page variables_ (here `author`) serving as arguments of the function.
+The syntax `{{ ... }}` indicates an HTML _function_, `fill` is the function name and the rest of the bracket elements are _page variables_ (here `author`) serving as arguments of the function.
 
 \note{
-  Calls without arguments such as `{{ name }}` will be interpreted in either one of two way: first it will check whether there is a html function `name` and if so will call it, otherwise it will check whether there is a page variable `name` and will just insert it -- it will be treated as a shortcut for `{{fill name}}`.
+  Calls without arguments such as `{{ name }}` will be interpreted in either one of two ways: first, it will check whether there is am html function `name` and if so will call it, otherwise it will check whether there is a page variable `name` and will just insert it -- it will be treated as a shortcut for `{{fill name}}`.
 }
 
 ### Local and Global
 
 _Local_ page variables denote variables that are defined on one page and directly accessible on that page. _Global_ page variables, by contrast, are directly available on _all_ pages. Any variable defined in your `config.md` file is global.
 
-In both cases there are _default_ page variables set by Franklin with default values which you can both change and use.
+In both cases, there are _default_ page variables set by Franklin with default values which you can both change and use.
 You can of course also define your own variables, both global and local.
 
 ### Defining and accessing page variables
@@ -143,7 +143,7 @@ the conditional blocks are explained below.
 
 ### Conditional blocks
 
-Conditional blocks allow to specify which parts of the HTML template should be active depending on the value of given page variable(s).
+Conditional blocks allow specifying which parts of the HTML template should be active depending on the value of the given page variable(s).
 The format follows this structure:
 
 ```html
@@ -259,7 +259,7 @@ Remember that:
 - you can also define your own variables (with different names),
 - you can change the default value of a variable by defining it in your `config.md`.
 @@
-Note that variables shown below that have a  name starting with  `fd_` are _not meant to be defined_ as their value is  typically  computed  on the fly (but they can be used).
+Note that variables shown below that have a name starting with  `fd_` are _not meant to be defined_ as their value is typically computed on the fly (but they can be used).
 
 ### Basic settings
 
@@ -283,12 +283,12 @@ Note that variables shown below that have a  name starting with  `fd_` are _not 
 
 **Notes**:\\
 \smindent{(\*)} \smnote{if the title is not set, the first header will be used as title}.\\
-\smindent{(\*\*)} \smnote{there may  be cases where you want to literally type `]:` in some code without it indicating a link reference. In such case, set `reflinks` to `false` to avoid ambiguities}.\\
+\smindent{(\*\*)} \smnote{there may be cases where you want to literally type `]:` in some code without it indicating a link reference. In such a case, set `reflinks` to `false` to avoid ambiguities}.\\
 \smindent{(\*\*\*)} \smnote{it is recommended to fence your code blocks (use backticks) as it's not ambiguous for the parser whereas indented blocks can be. If you do want to use indented blocks as code blocks, it's your responsibility to make sure there are no ambiguities}.
 
 ### Code evaluation
 
-For more informations on these, see the section on [inserting and evaluating code](/code/).
+For more information on these, see the section on [inserting and evaluating code](/code/).
 
 @@lalign
 | Name | Type | Default value | Comment
