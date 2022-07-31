@@ -94,7 +94,7 @@ reference: ![alt text][ref]
 
 ### Lists
 
-Un-ordered list (you can  also use `-`, `+` or `.` instead  of `*`)
+Unordered list (you can  also use `-`, `+` or `.` instead  of `*`)
 
 ```markdown
 * item 1
@@ -114,7 +114,7 @@ Ordered list (the proper numbering is done automatically)
 
 ### Comments
 
-You can add comments in your markdown using HTML-style  comments: `<!-- your comment -->` possibly on multiple lines. Note that comments are **not** allowed in a math environment.
+You can add comments in your markdown using HTML-style comments: `<!-- your comment -->` possibly on multiple lines. Note that comments are **not** allowed in a math environment.
 
 ### Symbols and HTML entities
 
@@ -154,7 +154,7 @@ println(a)
 You're not obliged to specify the language, if you don't it will assume the language corresponds to the [page variable](/syntax/page-variables/) `lang` (set to `julia` by default).
 If you want the block to be considered as plaintext, use  `plaintext` as the language specifier.
 
-Finally you can also use indented code blocks (which will also take its highlighting hint from `lang`) but this is **not recommended** and you have to explicitly opt-in by setting `indented_code` on a page that would use them:
+Finally, you can also use indented code blocks (which will also take its highlighting hint from `lang`) but this is **not recommended** and you have to explicitly opt in by setting `indented_code` on a page that would use them:
 
 ```markdown
 @def indented_code = true
@@ -182,7 +182,7 @@ this will not be highlighted
 ```
 `````
 
-If you wish to have higlighting for more languages outside of the pre-rendering mode, head to [highlight.js](https://highlightjs.org/), make a selection of languages and place the resulting `higlight.pack.js` in the `/_libs/highlight/` folder.
+If you wish to have highlighting for more languages outside of the pre-rendering mode, head to [highlight.js](https://highlightjs.org/), make a selection of languages and place the resulting `highlight.pack.js` in the `/_libs/highlight/` folder.
 If you do this, you might want to slightly modify it to ensure that the Julia-repl mode is properly highlighted (e.g. `shell>`):
 
 @@tlist
@@ -198,7 +198,7 @@ hljs.registerLanguage("julia-repl",function(a){return{c:[{cN:"meta",b:/^julia>/,
 
 ### Evaluated code blocks
 
-Julia code blocks can be evaluated and the result of the code either shown or rendered.
+Julia code blocks can be evaluated and the result of the code is either shown or rendered.
 To declare a code block for evaluation, use the fenced code block syntax with a name for the code block:
 
 `````markdown
@@ -241,9 +241,9 @@ Inline: $x=5$ or display:
 
 $$ \mathcal W_\psi[f] = \int_{\mathbb R} f(s)\psi(s)\mathrm{d}s $$
 
-You can  also use `\[...\]` for display maths.
+You can also use `\[...\]` for display maths.
 
-One thing to keep in mind when adding maths on your page is that you should be generous in your use of whitespace, particularly  around inequality  operators to avoid ambiguity that could confuse KaTeX.
+One thing to keep in mind when adding maths on your page is that you should be generous in your use of whitespace, particularly around inequality operators to avoid the ambiguity that could confuse KaTeX.
 So for instance prefer: `$0 < C$` to `$0<C$` (the latter will not render properly).
 Also if you have to write double braces, make sure to add a space in between so `{ {` or `} }` and not `{{` or `}}` since that has a specific meaning in Franklin:
 
@@ -280,7 +280,7 @@ For aligned environment you can use `\begin{eqnarray}...\end{eqnarray}` or `\beg
   1+1 &= 2
 \end{align}
 
-\note{In proper LaTeX, the use of `\eqnarray` is discouraged due to possible interference with array column spacing. In Franklin this does not happen and so the only practical difference is that `\eqnarray` will give you a bit more horizontal spacing around the `=` signs.}
+\note{In proper LaTeX, the use of `\eqnarray` is discouraged due to possible interference with array column spacing. In Franklin, this does not happen and so the only practical difference is that `\eqnarray` will give you a bit more horizontal spacing around the `=` signs.}
 
 ## Raw HTML
 
@@ -311,7 +311,7 @@ The commands
 * `\fig{path}`
 @@
 are convenient commands to insert figures.
-Of course you're free to use the default markdown way `![alt](full_path)` instead.
+Of course, you're free to use the default markdown way `![alt](full_path)` instead.
 One difference with these commands though is that they allow the use of relative paths; this can be convenient in order to organise your assets as you organise your pages.
 
 **Note**: to help with the organisation of assets, Franklin will assume by default that figures are placed in a folder `/output/` relative to where the script is, i.e. if the script is in `[script_dir]`, the figures will be in `[script_dir]/output/`. To help with this, the macro `@OUTPUT` can be used which specifies the path to this relative output dir:
@@ -345,7 +345,7 @@ In fact the syntax `\fig{./test}` is also allowed, Franklin will then first look
   \fig{./test}
 @@
 
-Figure style (for instance, if one wishes to modify figure width) can be further customized in two different ways. A first way is to define custom CSS for the figure. In the markdown, this comes down to writing:
+Figure style (for instance, if one wishes to modify figure width) can be further customized in two different ways. The first way is to define custom CSS for the figure. In the markdown, this comes down to writing:
 
 ```
 @@im-50
@@ -376,7 +376,7 @@ Another solution consists in defining a custom LaTeX command, for example:
 ~~~
 }
 ```
-This creates a command called `figenv` which takes 3 arguments and inserts raw HTML (`~~~`...`~~~`) plugging in each of the argument in the appropriate location i.e.: (1) the image caption (2) the image source path and (3) specific CSS styling for the image. This command could be used as such (here changing the width and adding a 1px wide red border to the image):
+This creates a command called `figenv` which takes 3 arguments and inserts raw HTML (`~~~`...`~~~`) plugging in each of the arguments in the appropriate location i.e.: (1) the image caption (2) the image source path and (3) specific CSS styling for the image. This command could be used as such (here changing the width and adding a 1px wide red border to the image):
 
 ```
 \figenv{the caption}{/assets/rndimg.jpg}{width:50%;border: 1px solid red;}
@@ -386,8 +386,8 @@ This creates a command called `figenv` which takes 3 arguments and inserts raw H
 
 ### Inserting markdown
 
-In some situation, you may have some markdown in a file which you might want to include somewhere else.
-This can be achieved thanks to the  `\textinput{path}` commmand.
+In some situations, you may have some markdown in a file which you might want to include somewhere else.
+This can be achieved thanks to the  `\textinput{path}` command.
 The path specification is as the other commands, and the text will be formatted.
 
 As an example you could have in `/assets/ccc/sidefile.md`:
@@ -414,7 +414,7 @@ This is the index then some **markdown** in a side file.
 ### Inserting a table
 
 You can insert tables directly from CSV files with the `\tableinput{header}{path}` command.
-If you generate the file on-the-fly, you should follow this example:
+If you generate the file on the fly, you should follow this example:
 
 `````
 ```julia:./tableinput/gen
@@ -431,7 +431,7 @@ Then you can insert the table with:
 \tableinput{}{./tableinput/testcsv.csv}
 `````
 
-Which will result in:
+This will result in:
 
 | h1  | h2             | h3    |
 | --- | -------------- | ----- |
@@ -460,7 +460,7 @@ With the above in mind, you can also include existing CSV files.
 
 \note{The look of the table will be defined by your CSS stylesheet.}
 
-There's a couple of rules that you have to keep in mind when using the `\tableinput{}{}` command:
+There are a couple of rules that you have to keep in mind when using the `\tableinput{}{}` command:
 
 @@tlist
 * Columns must be separated by a comma (`,`).
