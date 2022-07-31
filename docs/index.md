@@ -48,7 +48,7 @@ julia> serve()
   (use CTRL+C to shut down)
 ```
 
-If you navigate to that URL in your browser, you will see the website. If you then open `index.md` in an  editor and modify it at will, the changes will be live rendered in your browser.
+If you navigate to that URL in your browser, you will see the website. If you then open `index.md` in an editor and modify it at will, the changes will be live rendered in your browser.
 You can also inspect the file `menu1.md` which offers more examples of what Franklin can do.
 
 ## Installing optional extras
