@@ -13,7 +13,7 @@ If you have a question that you couldn't find an answer to easily, don't hesitat
 
 **Reference**: [issue 243](https://github.com/tlienart/Franklin.jl/issues/243), **more on this**: [styling](/styling/classes/).
 
-For the reference basically a footnote is inserted as
+For reference basically, a footnote is inserted as
 
 ```html
 <sup id="fnref:1"><a href="/menu1/#fndef:1" class="fnref">[1]</a></sup>
@@ -54,7 +54,7 @@ so you can style the back-reference via the `.franklin-content fndef td.fndef-ba
     padding-left: 10px;}
 ```
 
-### How to disable numbering of math in display mode?
+### How to disable the numbering of math in display mode?
 
 \note{This is currently only available when you're using KaTeX for maths.}
 
