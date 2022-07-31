@@ -20,7 +20,7 @@ this feed so that readers can more easily stay up to date with your new content.
 
 ## How to Setup RSS
 
-There is a Franklin generated `_rss` folder that contains two parts: `head.xml`
+There is a Franklin-generated `_rss` folder that contains two parts: `head.xml`
 & `item.xml` (if this is not present for you, then copy the files from the
 [FranklinTemplates source](https://github.com/tlienart/FranklinTemplates.jl/tree/master/src/templates/common/_rss).
 
@@ -40,7 +40,7 @@ standards. However, their contents may be modified.}
 
 ### Global Configuration
 
-In order to setup an RSS feed for your website, make sure to set the following
+In order to set up an RSS feed for your website, make sure to set the following
 in your `config.md`.
 
 ```julia
@@ -89,7 +89,7 @@ Optionally, the following page variables can be set as well
 - `rss_enclosure`
 
 \warn{Check the RSS specifications before using these optional page variables as
-many have strict requirements and should probably be left blank. For instance
+many have strict requirements and should probably be left blank. For instance, 
 the `rss_author` variable **must** be an email address. So unless you are
 familiar it is advised to leave these out.}
 
