@@ -6,7 +6,7 @@ reviewed: 22/12/19
 
 # Templates
 
-\blurb{Start from one of the template or build your own.}
+\blurb{Start from one of the templates or build your own.}
 
 \lineskip
 
@@ -21,7 +21,7 @@ The pre-defined templates that are currently available in Franklin with the `new
 \note{If you end up doing this, please consider making a PR to [FranklinTemplates](https://github.com/tlienart/FranklinTemplates.jl)!}
 
 On this page, I'll take [Jemdoc's website layout](http://jemdoc.jaboc.net/) and show how it can be adapted to be a working Franklin template.
-This will hopefully also show you how to adapt / modify an existing template.
+This will hopefully also show you how to adapt/modify an existing template.
 
 Jemdoc's layout looks like this:
 
@@ -35,7 +35,7 @@ In order to get a blueprint for the folder etc, let's first create a Franklin si
 julia> newsite("jemdoc", template="basic")
 ```
 
-You can serve the site in order to see the modifications directly in your browser which can be useful to fine tune the port of the layout.
+You can serve the site in order to see the modifications directly in your browser which can be useful to fine-tune the port of the layout.
 
 We will need to provide the appropriate stylesheet in `_css/` and adjust the layout part in `_layout/`.
 
@@ -60,9 +60,9 @@ The following step is fairly simple:
 Let's do this gradually.
 The top of the original HTML can be ignored at this point so we can start modifying starting after `</head>`.
 
-Jemdoc's body starts with a Google analytics script which I'll ignore as well.
+Jemdoc's body starts with a Google Analytics script which I'll ignore as well.
 We then have effectively one big table element.
-Stripped from its content and simplified it looks like:
+Stripped from its content and simplified it looks like this:
 
 ```html
 <table id="tlayout">
@@ -87,7 +87,7 @@ Stripped from its content and simplified it looks like:
 </table>
 ```
 
-Note that I've already filled in the `href=` in the links to sub-menus.
+Note that I've already filled in the `href=` in the links to the sub-menus.
 
 The "`CONTENT HERE`" part is where what Franklin generates from Markdown will go.
 Therefore, anything that is *after* that should go in `foot.html`; in our current case:
@@ -164,9 +164,9 @@ the content is not centred in its box and overflows on the right, the menu looks
 Let's start by removing everything from `_css/jemdoc.css`.
 Most of what's in there was used for the styling of the top navbar which we don't have anymore (note that the styling of the content itself is in `franklin.css`, don't change that for now; note also that `jemdoc.css` is loaded *after* `franklin.css` so that you can overwrite the styles there).
 
-Let's now just copy paste the content of the [two](http://jemdoc.jaboc.net/jemdoc.css) [original](http://jemdoc.jaboc.net/jacob.css) stylesheets into ours and hope for the best, we may have some fine-tuning to do after this.
+Let's now just copy-paste the content of the [two](http://jemdoc.jaboc.net/jemdoc.css) [original](http://jemdoc.jaboc.net/jacob.css) stylesheets into ours and hope for the best, we may have some fine-tuning to do after this.
 
-Doing nothing else than copy pasting already helps a lot:
+Doing nothing else than copy-pasting already helps a lot:
 
 ![](/assets/jemdoc/jemdoc3.png)
 
@@ -180,7 +180,7 @@ A few things should be fixed:
 
 #### Fixing spacing
 
-Firefox or Chrome/ium's excellent dev-tools are super helpful to fine tune stylesheets.
+Firefox or Chrome/ium's excellent dev-tools are super helpful to fine-tune stylesheets.
 Here things are pretty straightforward though.
 
 First, we need to add vertical padding above `<h1>` level title:
@@ -215,7 +215,7 @@ pre {
 
 which you can just remove to have a bit more space around code blocks.
 
-There's probably still things that could be done to improve the layout overall (and make it more responsive!) but we'll leave it at that.
+There are probably still things that could be done to improve the layout overall (and make it more responsive!) but we'll leave it at that. 
 
 ![](/assets/jemdoc/jemdoc4.png)
 
@@ -242,6 +242,6 @@ It should be fairly straightforward to adapt that to your needs.
 
 ## Making a PR to the theme repo
 
-Let's say you've built your own template and are pretty happy with the result and you'd like to share it for other users, great, thanks!
+Let's say you've built your own template and are pretty happy with the result and you'd like to share it with other users, great, thanks!
 
 Please follow [these instructions](https://github.com/tlienart/FranklinTemplates.jl#fixingadding-a-template).
