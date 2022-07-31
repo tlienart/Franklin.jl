@@ -48,7 +48,7 @@ The final HTML for a page will essentially look like:
 </html>  
 ```
 
-Of course it will depend of what you have in your `_layout/head.html` etc, you can tweak this at will. You can also make this as modular as you want by using conditional blocks in your `head.html` and insert specific sub layouts depending on the page. For instance the `head.html` file could include something like
+Of course, it will depend on what you have in your `_layout/head.html` etc, you can tweak this at will. You can also make this as modular as you want by using conditional blocks in your `head.html` and inserting specific sub layouts depending on the page. For instance, the `head.html` file could include something like
 
 ```html
 <!-- standard stuff -->
@@ -62,7 +62,7 @@ for more on this, see the section on [page variables](/syntax/page-variables/).
 
 ### Resolved body
 
-The resolved body is plugged in a "container" div
+The resolved body is plugged into a "container" div
 
 ```html
 <div class="franklin-content">
