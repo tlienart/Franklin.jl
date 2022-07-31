@@ -12,7 +12,7 @@ reviewed: 22/12/2019
 
 \toc
 
-The basic idea is to exploit the fact that the output of a Julia code block evaluated by Franklin can be re-processed as Franklin Markdow when using the `\textoutput` command; this offers a wide range of possibilities best shown through a few examples (more or less in increasing degree of sophistication).
+The basic idea is to exploit the fact that the output of a Julia code block evaluated by Franklin can be re-processed as Franklin Markdown when using the `\textoutput` command; this offers a wide range of possibilities best shown through a few examples (more or less in increasing degree of sophistication).
 
 ## Generating a table
 
@@ -93,7 +93,7 @@ println("@@")
 
 ### Code
 
-That can obtained with (see detailed explanations further below)
+That can be obtained with (see detailed explanations further below)
 
 ```html
 \newcommand{\circle}[1]{
@@ -124,7 +124,7 @@ println("@@")
 The first part defines a command `\circle` which takes one argument for the fill colour and inserts SVG code for a circle with that colour.
 
 The second part is a Julia code block which will be evaluated but not displayed on the page (since there is a `#hideall`).
-The code loops over the each colour `c` and prints `\circle{c}` so that the code block effectively generates:
+The code loops over each colour `c` and prints `\circle{c}` so that the code block effectively generates:
 
 ```plaintext
 @@ccols \circle{pink}...\circle{yellow}@@
@@ -150,7 +150,7 @@ The last thing to do is to style the `colors` div appropriately:
 
 You may want to have a page with responsive team cards for instance where every card would follow the same layout but the content would be different.
 There are multiple ways you can do this with Franklin and a simple one below (adapted from [this tutorial](https://www.w3schools.com/howto/howto_css_team.asp)).
-The advantage of doing something like this is that it can help separate the content from the layout making both arguably easier more maintainable.
+The advantage of doing something like this is that it can help separate the content from the layout making both arguably easier and more maintainable.
 
 ### Preview
 
