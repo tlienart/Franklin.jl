@@ -67,7 +67,7 @@ The distinction with inserting raw HTML div blocks with the `~~~...~~~` syntax i
 ## LaTeX-like commands
 
 Franklin allows the definition of commands using a LaTeX-like syntax.
-This can be particularly useful for repeating elements or styling inside or outside of maths environment.
+This can be particularly useful for repeating elements or styling inside or outside of the maths environment.
 
 To define a command, you **must** use the following syntax:
 
@@ -113,7 +113,7 @@ $$ \mathcal W_\psi[f] = \int_\R f(s)\psi(s)\mathrm{d}s = \scal{f,\psi} $$
 
 ### Text examples
 
-Commands can also be useful outside of maths environment.
+Commands can also be useful outside of the maths environment.
 For instance, you could define a command to quickly set the style of some text:
 
 ```html
@@ -200,7 +200,7 @@ and specify the styling of the `definition` div in your CSS:
 In a Franklin `newcommand`, to refer to an argument you can use `#k` or `!#k`.
 There is a small difference: the first one _introduces a space_ left of the argument while the second one does not.
 
-In general whitespaces are irrelevant and will not show up on the rendered webpage so that the usual `#k` is the recommended usage.
+In general, whitespaces are irrelevant and will not show up on the rendered webpage so the usual `#k` is the recommended usage.
 This helps avoid some ambiguities when resolving a chain of nested commands.
 
 There are however cases where you do not want this because the whitespace does, in fact, show up.
@@ -222,7 +222,7 @@ Here \pathwith{hello} is no good whereas \pathwithout{hello} is.
 
 ### Defining commands globally
 
-If you define commands on a page, the command will be available only on that page; if you wish to define a command that is available on all pages, you should  put the definition of the command in your `config.md` file.
+If you define commands on a page, the command will be available only on that page; if you wish to define a command that is available on all pages, you should put the definition of the command in your `config.md` file.
 
 ## Hyper-references
 
@@ -231,7 +231,7 @@ Three types of hyper-references are supported in Franklin:
 @@flist
 1. for equations in display mode,
 1. for references (bibliography),
-1. for specific anchor points in the page.
+1. for specific anchor points on the page.
 @@
 
 The syntax for all three is close to that of standard LaTeX.
@@ -262,13 +262,13 @@ As in LaTeX, you can refer to several equations in one shot by separating names 
 For references, you can use `\biblabel{short}{name}` to declare a reference which will appear as a clickable link `(name)` or `name` and can be referred to with `short`:
 
 ```plaintext
-In the text you may refer to \citep{noether15, bezanson17} while in a bibliography section you would have
+In the text, you may refer to \citep{noether15, bezanson17} while in a bibliography section you would have
 
 * \biblabel{noether15}{Noether (1915)} **Noether**, Korper und Systeme rationaler Funktionen, 1915.
 * \biblabel{bezanson17}{Bezanson et al. (2017)} **Bezanson**, **Edelman**, **Karpinski** and **Shah**, [Julia: a fresh approach to numerical computing](https://julialang.org/publications/julia-fresh-approach-BEKS.pdf), SIAM review 2017.
 ```
 
-The `name` argument therefore corresponds to how the bibliography reference will appear in the text.
+The `name` argument, therefore, corresponds to how the bibliography reference will appear in the text.
 In the case above, the text will lead to
 
 ```plaintext
@@ -286,7 +286,7 @@ As in LaTeX, if the reference is undefined on the page, the command will be repl
 
 ### Anchor points
 
-You can specify anchor points on the page using `\label{name of the anchor}` anywhere on the page _outside_ of maths environment.
+You can specify anchor points on the page using `\label{name of the anchor}` anywhere on the page _outside_ of the maths environment.
 This will insert an anchor:
 
 ```html

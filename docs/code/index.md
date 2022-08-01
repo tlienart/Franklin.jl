@@ -20,7 +20,7 @@ As per Common Mark specifications, you have multiple ways of inserting code:
 This is some `inline code` or ``inline ` code with a tick``.
 `````
 
-**Note**: To use backslash (`\ `) at the end of inline code, you must include a trailing space to ensure the trailing tick is parsed correctly, eg `` `some code with \ ` ``. The trailing space will be trimmed in the rendered html. 
+**Note**: To use a backslash (`\ `) at the end of the inline code, you must include a trailing space to ensure the trailing tick is parsed correctly, eg `` `some code with \ ` ``. The trailing space will be trimmed in the rendered html. 
 
 * **code blocks**: it is recommended to use triple backticks (\`\`\`) optionally followed by a language name for highlighting like so:
 
@@ -45,8 +45,8 @@ This is some code:
 
 ### Evaluating code
 
-When presenting code in a post, it's often convenient to have a way to check the code works and the output shown corresponds to the code.
-In Franklin there are two approaches that help you for this:
+When presenting code in a post, it's often convenient to have a way to check that the code works and that the output shown corresponds to the code.
+In Franklin, there are two approaches that help you with it:
 
 @@tlist
 1. For Julia code, a **live-evaluation** of code blocks is supported,
@@ -57,11 +57,11 @@ In Franklin there are two approaches that help you for this:
 
 ## Live evaluation (Julia)
 
-Julia code blocks can be evaluated on the fly and their output either displayed as code or re-interpreted as Markdown.
+Julia code blocks can be evaluated on the fly and their output is either displayed as code or re-interpreted as Markdown.
 
 \note{
     **Evaluation time**: when a code block is created or modified and the page is saved, it will trigger a page build that will _wait_ for the evaluation of the code block to complete. So if your code block takes a long time to execute, the page will not be updated before that's done.
-    That being said, if you don't modify the code block, it will only be executed **once** as the output is saved to file.
+    That being said, if you don't modify the code block, it will only be executed **once** as the output is saved to a file.
 }
 
 Code blocks that _should not_ be evaluated should be added as per standard markdown, so for instance:
@@ -88,8 +88,8 @@ What this will do is:
 1. run the code and capture its output (`STDOUT`) and write it to `/assets/[subpath]/code/output/ex1.out`
 @@
 
-The `[subpath]` here is the _exact same sub-path structure_ than to the page where the code block is inserted.
-To clarify, let's say you wrote the above code-block in
+The `[subpath]` here is the _exact same sub-path structure_ as the page where the code block is inserted.
+To clarify, let's say you wrote the above code block in
 
 ```
 /folder1/page1.md
@@ -103,7 +103,7 @@ then with the syntax above, the script will be saved in
 
 ### More on paths
 
-There are three ways you can specify where the script corresponding to a code-block should be saved.
+There are three ways you can specify where the script corresponding to a code block should be saved.
 
 @@tlist
 1. _relative to the page_: `./[p]/script` is as above, it will write the code block to `/assets/[subpath]/p/script.jl` where `subpath` corresponds to the sub-path of the page where the code block is inserted (path below `/src/`)
@@ -143,7 +143,7 @@ and will look like
 dot(a, a) = 14
 ```
 
-If you now change the vector `a` in the code block, the page will be re-compiled with the code-block re-evaluated and the new output will be shown.
+If you now change the vector `a` in the code block, the page will be re-compiled with the code block re-evaluated and the new output will be shown.
 
 If you would like the output to be re-interpeted by Franklin as text, you can use `\textoutput` instead.
 Here's an example:
@@ -273,30 +273,30 @@ savefig(joinpath(@OUTPUT, "sinc.svg")) # hide
 
 \fig{sinc}
 
-**Note**: observe that here everything is done with relative paths, `pyplot1` is placed in the  `/assets/` folder relatively to the path of the current page and the `\fig` since it's given a path that doesn't start with  `/` or `./` will also  look in  that folder to try to find a figure which starts with the name `sinc`. See also [more about paths](#more_on_paths).
+**Note**: observe that here everything is done with relative paths, `pyplot1` is placed in the  `/assets/` folder relatively to the path of the current page and the `\fig` since it's given a path that doesn't start with  `/` or `./` will also look in that folder to try to find a figure which starts with the name `sinc`. See also [more about paths](#more_on_paths).
 
 **Note**: If you wish to use `Plots.jl` and deploy to GitHub pages, you will need to modify the `.github/workflows/Deploy.yml` by adding `env: GKSwstype: "100"` before the ` - name: Build and Deploy` line. [Here](https://github.com/storopoli/Bayesian-Julia/blob/master/.github/workflows/Deploy.yml) is an example.
 
 ### Troubleshooting
 
-A few  things can go  wrong when attempting to use and evaluate code blocks.
-The first thing to do  if no output is shown or an error appears is to  make sure that:
+A few things can go wrong when attempting to use and evaluate code blocks.
+The first thing to do when no output is shown or when an error appears is to make sure that:
 
 @@tlist
 1. if the code uses packages, these packages are available in the local environment,
 1. the code "just works" in the REPL.
 @@
 
-If this is the case and you  still have issues, then  you may want to force re-evaluation of the code on the page.
+If this is the case and you still have issues, then you may want to force a re-evaluation of the code on the page.
 In such a case, try adding `@def reeval = true` on the page which will cause **all** code blocks on the page to be completely re-evaluated and their output re-generated.
-Assuming that helped, you will then want to remove that line as  otherwise that page will be fully  re-evaluated _every single time the page is modified_ which will cause  an unnecessary overhead.
+Assuming that helped, you will then want to remove that line as otherwise that page will be fully re-evaluated _every single time the page is modified_ which will cause unnecessary overhead.
 
 **Important note**: unless you explicitly use `@def reeval = true`, code blocks are evaluated *only* if:
 @@tlist
 - an earlier code block has been evaluated (in which case, since their results may depend on  it, all subsequent blocks  are  re-evaluated),
 - the content of the code block has changed.
 @@
-An example where this can be a bit tricky is if your code block calls a function on a file, for instance `read(file, String)`; if the underlying *file* is changed, the code block will **not** be re-evaluated (since the code doesn't change), so in such cases you will want to use a `@def reeval = true`.
+An example where this can be a bit tricky is if your code block calls a function on a file, for instance `read(file, String)`; if the underlying *file* is changed, the code block will **not** be re-evaluated (since the code doesn't change), so in such cases, you will want to use a `@def reeval = true`.
 
 ## Offline evaluation (any language)
 
@@ -305,7 +305,7 @@ The philosophy here is:
 @@tlist
 * keep your code snippets in appropriate subfolders of `/assets/` where they can be run and their output can be saved, this can be compared to a `test/` folder in a Julia package,
 * run some or all of the snippets (before running Franklin),
-* use `\input{...}{...}` in your markdown (see below) and when the website is updated, it will plug-in the most recent parts that have been generated.
+* use `\input{...}{...}` in your markdown (see below) and when the website is updated, it will plug in the most recent parts that have been generated.
 @@
 
 That way, if you modify the code, everything will be updated on the website too while ensuring that the code actually runs and generates the output you're displaying.
@@ -368,7 +368,7 @@ In order to insert the plain-text output of a script, you can use
 \output{scripts/script1.jl}
 ```
 
-This will insert the content of the file `/assets/scripts/script1.out` into a non-highlighted code-block.
+This will insert the content of the file `/assets/scripts/script1.out` into a non-highlighted code block.
 
 ### Plot output
 
@@ -386,4 +386,4 @@ The `plot:id` option is useful if you have a script that generates several plots
 ### Slicing up
 
 The structure in the `generate_results.jl` effectively means that all your code is run as one big script.
-This also means that if you want to slice some of your code in several parts and show intermediate outputs (e.g. plots), you can just do that by having a `script_1_p1.jl`, `script_1_p2.jl` etc. and then just use  `\input` multiple times.
+This also means that if you want to slice some of your code into several parts and show intermediate outputs (e.g. plots), you can just do that by having a `script_1_p1.jl`, `script_1_p2.jl` etc. and then just use  `\input` multiple times.

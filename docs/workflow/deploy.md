@@ -12,9 +12,9 @@ reviewed: 18/10/20
 
 \lineskip
 
-Deploying the website is trivial on an existing webserver, via GitHub or Gitlab, or on services like Netlify.
+Deploying the website is trivial on an existing web server, via GitHub or Gitlab, or on services like Netlify.
 
-## Deploying on an existing webserver
+## Deploying on an existing web server
 
 The contents of the `__site` folder can simply be deployed to a path on an existing server as follows.
 Supposing you wish your site to appear at `http://my.example.com/path/to/my/franklin/site/`.  You would take the following steps:
@@ -33,7 +33,7 @@ Your site should now be live, with the index page appearing at `http://my.exampl
 Start by creating an empty GitHub repository
 
 @@tlist
-* for a personal (or org) website the repository **must** be named `username.github.io` (or `orgname.github.io`) see also [the github pages docs](https://pages.github.com/),
+* for a personal (or org) website the repository **must** be named `username.github.io` (or `orgname.github.io`) see also [the Github pages docs](https://pages.github.com/),
 * for a project website the repo can be named anything you want, let's say `myWebsite`.
 @@
 
@@ -42,7 +42,7 @@ Start by creating an empty GitHub repository
   This is used upon deployment to indicate that the base URL of your website is `username.github.io/myWebsite/` instead of `username.github.io`.
   If you forget to do that, among other problems the CSS won't load and your website will look terrible 😅. 
   
-  However, if you add a custom domain like `example.com` to your *project* repo like `myWebsite`, then the variable `prepath` should be set empty string to make the CSS work.
+  However, if you add a custom domain like `example.com` to your *project* repo like `myWebsite`, then the variable `prepath` should be set an empty string to make the CSS work.
 }
 
 @@tlist
@@ -60,7 +60,7 @@ You now just need to synchronise your repository and your local website folder; 
 - `git push`
 @@
 
-the GitHub action will be triggered and deploy the content of the `__site` folder to  the `gh-pages` branch from which GitHub will deploy the website.
+the GitHub action will be triggered and deploy the content of the `__site` folder to the `gh-pages` branch from which GitHub will deploy the website.
 
 \note{It takes a couple of minutes for the whole process to complete.}
 
@@ -113,7 +113,7 @@ If something failed, that you can't debug, ask on the **#franklin** slack channe
 Start by creating an empty GitLab repository
 
 @@tlist
-* for a personal website the repository **must** be named `username.gitlab.io` see also [the gitlab pages docs](https://about.gitlab.com/stages-devops-lifecycle/pages/),
+* for a personal website the repository **must** be named `username.gitlab.io` see also [the Gitlab pages docs](https://about.gitlab.com/stages-devops-lifecycle/pages/),
 * for a project website the repo can be named anything you want.
 @@
 
@@ -136,7 +136,7 @@ That's it! when you push your updates to the `master` branch, the GitLab CI will
 
 ### Iterate
 
-The `publish` command does the optimize followed by the git stuff all in one. So  you should probably use that  after the initial setup.
+The `publish` command does the optimize followed by the git stuff all in one. So you should probably use that after the initial setup.
 
 ## Deploying on Netlify
 
@@ -184,7 +184,7 @@ where `{netlify name}` is a name you will decide to use at the end of this expla
 The first line keeps track of the URL where the preview will be available.
 the second line only keeps track of the "prepath" of that preview URL so that it can be passed to Franklin.
 
-Finally we want to deploy the main website and the PR preview on different branches (and folders):
+Finally, we want to deploy the main website and the PR preview on different branches (and folders):
 ```yml
 - name: Deploy (preview)
 if: github.event_name == 'pull_request' && github.repository == github.event.pull_request.head.repo.full_name # if this build is a PR build and the PR is NOT from a fork
@@ -218,9 +218,9 @@ to
 Now for the final step, you will need to visualize the obtained previews.
 Since Github only allow you to deploy one branch, you will need an alternative like Netlify.
 Create an account on [Netlify.com](https://www.netlify.com/), add your repository and chose the `gh-preview` branch without any additional settings.
-Set your netlify website to be `{netlify name}.netlify.app`.
+Set your Netlify website to be `{netlify name}.netlify.app`.
 
-Once everything is setup you will be able to visualize your PR preview on `{netlify name}.netlify.app/previews/PR{number of your PR}`.
+Once everything is set up you will be able to visualize your PR preview on `{netlify name}.netlify.app/previews/PR{number of your PR}`.
 You can make things easier for your contributors to access it by adding a comment with a link to your PR automatically.
 To do this add the following Github action (create a `pr_comment.yml` file in `.github/workflows/`):
 ```yml

@@ -20,9 +20,9 @@
 </h2>
 
 Franklin is a simple **static site generator** (SSG) oriented towards technical blogging (code, maths, ...), flexibility and extensibility.
-The base syntax is plain markdown with a few extensions such as the ability to define and use LaTeX-like commands in or outside of maths environments and the possibility to evaluate code  blocks on the fly.
+The base syntax is plain markdown with a few extensions such as the ability to define and use LaTeX-like commands in or outside of maths environments and the possibility to evaluate code blocks on the fly.
 
-Franklin has a channel **#franklin** on the Julia slack, this is the best place to ask usage question.
+Franklin has a channel **#franklin** on the Julia slack, this is the best place to ask usage questions.
 
 **Note**: I'm looking for people with web-dev chops who would be keen to help improve and enrich the base themes available at [FranklinTemplates.jl](https://github.com/tlienart/FranklinTemplates.jl), even if you're not super confident in Julia. More generally, if you would like to work on something or fix something in either Franklin or FranklinTemplates, please reach out on Slack, I will gladly help you get started.
 
@@ -128,7 +128,7 @@ alias franklin=julia -O0 -e 'using Franklin; serve()'
 While Franklin broadly supports standard Markdown there are a few things that may trip you which are either due to Franklin or due to Julia's Markdown library, here are key ones you should keep in mind:
 
 * when writing a list, the content of the list item **must** be on a single line (no line break)
-* you can write comments with `<!-- comments -->` the comment markers `<!--` and `-->` **must** be separated by a character that is not a `-` to work properly so `<!--A-->` is ok but `<!---A--->` is not, best is to just systematically use a whitespace: `<!-- A -->`.
+* you can write comments with `<!-- comments -->` the comment markers `<!--` and `-->` **must** be separated by a character that is not a `-` to work properly so `<!--A-->` is ok but `<!---A--->` is not, best is to just systematically use whitespace: `<!-- A -->`.
 * be careful writing double braces, `{{...}}` has a *meaning* (html functions) this can cause issues in latex commands, if you have double braces in a latex command, **make sure to add whitespaces** for instance write `\dfrac{1}{ {101}_{2} }` instead of `\dfrac{1}{{101}_{2}}`. In general use whitespaces liberally to help the parser in math and latex commands.
 * (as of `v0.7`) code blocks should be delimited with backticks `` ` `` you *can* also use indented blocks to delimit code blocks but you now have to **opt in** explicitly on pages that would use them by using `@def indented_code = true`, if you want to use that everywhere, write that in the `config.md`. Note that indented blocks are **ambiguous** with some of the other things that Franklin provides (div blocks, latex commands) and so if you use them, you are responsible for avoiding ambiguities (effectively that means _not using indentation for anything else than code_)
 

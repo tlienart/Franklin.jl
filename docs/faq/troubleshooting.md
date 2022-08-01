@@ -9,14 +9,14 @@ If you encounter an error that is not mentioned here, then it's probably a bug a
 
 ## Error on interruption
 
-You may (rarely) get an an error thrown at you when interrupting the server with `<CTRL>+C`, particularly when using Juno.
+You may (rarely) get an error thrown at you when interrupting the server with `<CTRL>+C`, particularly when using Juno.
 There are a couple of reasons this may happen, both unrelated to Franklin.
 
 ### Juno
 
 Juno (very rarely) crashes if you coincidentally press `<CTRL>+C` while Juno is doing something in the background (Juno issue [#309](https://github.com/JunoLab/Juno.jl/issues/309)).
 
-The stacktrace you will see will seem particularly obscure, for instance:
+The stack trace you will see will seem particularly obscure, for instance:
 
 ```
 InterruptException:
@@ -43,7 +43,7 @@ Stacktrace:
 The [`LiveServer.jl`](https://github.com/asprionj/LiveServer.jl) package, which handles the live-serving of the files, is based upon [`HTTP.jl`](https://github.com/asprionj/LiveServer.jl).
 The latter has a fairly complex codebase with a number of asynchronous tasks and is known to sometimes crash in (somewhat) mysterious ways.
 
-If the stacktrace mentions `uv_write`, `uv_write_async`, `libuv` or something of the sorts, then this is an example of _known but mysterious way_.
+If the stack trace mentions `uv_write`, `uv_write_async`, `libuv` or something of the sort, then this is an example of _known but mysterious way_.
 
 Like the "Juno" case, these errors are caused when you happen to press interrupt just as the package was doing something important in the background.
 This is very rare but can happen and you can safely ignore it.

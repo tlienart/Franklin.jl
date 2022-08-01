@@ -52,7 +52,7 @@ Finally, in your `src/_layout/head.html` add
 
 ## Offline-generated plot
 
-Assuming you already have the Plotly code for some plot, displaying  the  result on a page with Franklin is now pretty straightforward.
+Assuming you already have the Plotly code for some plot, displaying the result on a page with Franklin is now pretty straightforward.
 Start by adding
 
 ```
@@ -91,7 +91,7 @@ This will give:
 
 ## Live-generated plot
 
-One step further is to use `PlotlyJS` to define a  plot then pass the result to Franklin.
+One step further is to use `PlotlyJS` to define a  plot and then pass the result to Franklin.
 Start by adding `PlotlyJS`  to your environment:
 
 ```julia-repl
@@ -141,9 +141,9 @@ fdplotly(json(plt)) # hide
 \textoutput{ex1}
 
 ### Using `\fig{...}` (recommended)
-Now you might use `\fig{...}` to insert graph [just like normal](/syntax/markdown/#inserting_a_figure). This also work fine with `Plots.jl` and `PlotlyBase.jl`.
+Now you might use `\fig{...}` to insert graph [just like normal](/syntax/markdown/#inserting_a_figure). This also works fine with `Plots.jl` and `PlotlyBase.jl`.
 
-**Note**: `\fig{...}` will call the JavaScript function `PlotlyJS_json` defined [above](#pre-requisites). You might customize the behavior by modifying the JavaScript. Also make sure `@def hasplotly = true` is properly set.
+**Note**: `\fig{...}` will call the JavaScript function `PlotlyJS_json` defined [above](#pre-requisites). You might customize the behavior by modifying the JavaScript. Also, make sure `@def hasplotly = true` is properly set.
 
 `````plaintext
 ```julia:ex2

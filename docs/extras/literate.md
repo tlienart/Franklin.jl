@@ -4,10 +4,10 @@
 
 See also [how to interact with literate scripts](/code/literate/).
 
-[Literate.jl](https://github.com/fredrikekre/Literate.jl) allows to pre and post-process a script in order, for instance, to generate a notebook out  of a script.
-This can be convenient if you want to have a tutorial be downloadable as a standalone notebook or as a scrubbed script.
+[Literate.jl](https://github.com/fredrikekre/Literate.jl) allows to pre and post-process a script in order, for instance, to generate a notebook out of a script.
+This can be convenient if you want to have a tutorial downloadable as a standalone notebook or as a scrubbed script.
 
-This page presents one way  of doing this which is used in [DataScienceTutorials](https://github.com/alan-turing-institute/DataScienceTutorials.jl) and which  might inspire your own approach.
+This page presents one way of doing this which is used in [DataScienceTutorials](https://github.com/alan-turing-institute/DataScienceTutorials.jl) and which might inspire your own approach.
 
 The key ingredients are:
 
@@ -17,13 +17,13 @@ The key ingredients are:
 1. add this as a `final` hook to `publish`.
 @@
 
-In what follows, it is assumed you have your Literate scripts  in a folder `/scripts/` and that you're using GitHub.
-It shouldn't be hard  to modify that to suit your own case.
+In what follows, it is assumed you have your Literate scripts in a folder `/scripts/` and that you're using GitHub.
+It shouldn't be hard to modify that to suit your own case.
 
 
 ## Using Literate to generate auxiliary files
 
-Literate can manipulate scripts fairly easily, for instance to  generate notebooks:
+Literate can manipulate scripts fairly easily, for instance, to generate notebooks:
 
 ```julia
 scripts = joinpath.("scripts", readdir("scripts"))
