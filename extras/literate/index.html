@@ -117,8 +117,8 @@
 <!-- Content appended here (in class franklin-content) -->
 <div class="franklin-content"><h1 id="generating_auxiliary_files_with_literate"><a href="#generating_auxiliary_files_with_literate" class="header-anchor">Generating auxiliary files with Literate</a></h1>
 <p>See also <a href="/code/literate/">how to interact with literate scripts</a>.</p>
-<p><a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a> allows to pre and post-process a script in order, for instance, to generate a notebook out  of a script. This can be convenient if you want to have a tutorial be downloadable as a standalone notebook or as a scrubbed script.</p>
-<p>This page presents one way  of doing this which is used in <a href="https://github.com/alan-turing-institute/DataScienceTutorials.jl">DataScienceTutorials</a> and which  might inspire your own approach.</p>
+<p><a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a> allows to pre and post-process a script in order, for instance, to generate a notebook out of a script. This can be convenient if you want to have a tutorial downloadable as a standalone notebook or as a scrubbed script.</p>
+<p>This page presents one way of doing this which is used in <a href="https://github.com/alan-turing-institute/DataScienceTutorials.jl">DataScienceTutorials</a> and which might inspire your own approach.</p>
 <p>The key ingredients are:</p>
 <div class="tlist"><ol>
 <li><p>use Literate to generate derived files,</p>
@@ -128,9 +128,9 @@
 <li><p>add this as a <code>final</code> hook to <code>publish</code>.</p>
 </li>
 </ol></div>
-<p>In what follows, it is assumed you have your Literate scripts  in a folder <code>/scripts/</code> and that you&#39;re using GitHub. It shouldn&#39;t be hard  to modify that to suit your own case.</p>
+<p>In what follows, it is assumed you have your Literate scripts in a folder <code>/scripts/</code> and that you&#39;re using GitHub. It shouldn&#39;t be hard to modify that to suit your own case.</p>
 <h2 id="using_literate_to_generate_auxiliary_files"><a href="#using_literate_to_generate_auxiliary_files" class="header-anchor">Using Literate to generate auxiliary files</a></h2>
-<p>Literate can manipulate scripts fairly easily, for instance to  generate notebooks:</p>
+<p>Literate can manipulate scripts fairly easily, for instance, to generate notebooks:</p>
 <pre><code class="language-julia">scripts &#61; joinpath.&#40;&quot;scripts&quot;, readdir&#40;&quot;scripts&quot;&#41;&#41;
 nbpath &#61; joinpath&#40;&quot;generated&quot;, &quot;notebooks&quot;&#41;
 isdir&#40;nbpath&#41; || mkpath&#40;nbpath&#41;
@@ -180,7 +180,7 @@ end
 publish&#40;final&#61;gen_literate&#41;</code></pre>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: July 24, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: August 01, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

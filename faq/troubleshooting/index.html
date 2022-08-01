@@ -119,10 +119,10 @@
 <p>This page is about some of the known errors you may encounter when using Franklin and how to deal with them. If you encounter an error that is not mentioned here, then it&#39;s probably a bug and it would be great if you could open an issue&#33;</p>
 <div class="franklin-toc"><ol><li><a href="#error_on_interruption">Error on interruption</a><ol><li><a href="#juno">Juno</a></li><li><a href="#not-juno">Not-Juno</a></li></ol></li><li><a href="#iostream_error">IOStream error</a></li></ol></div>
 <h2 id="error_on_interruption"><a href="#error_on_interruption" class="header-anchor">Error on interruption</a></h2>
-<p>You may &#40;rarely&#41; get an an error thrown at you when interrupting the server with <code>&lt;CTRL&gt;&#43;C</code>, particularly when using Juno. There are a couple of reasons this may happen, both unrelated to Franklin.</p>
+<p>You may &#40;rarely&#41; get an error thrown at you when interrupting the server with <code>&lt;CTRL&gt;&#43;C</code>, particularly when using Juno. There are a couple of reasons this may happen, both unrelated to Franklin.</p>
 <h3 id="juno"><a href="#juno" class="header-anchor">Juno</a></h3>
 <p>Juno &#40;very rarely&#41; crashes if you coincidentally press <code>&lt;CTRL&gt;&#43;C</code> while Juno is doing something in the background &#40;Juno issue <a href="https://github.com/JunoLab/Juno.jl/issues/309">#309</a>&#41;.</p>
-<p>The stacktrace you will see will seem particularly obscure, for instance:</p>
+<p>The stack trace you will see will seem particularly obscure, for instance:</p>
 <pre><code class="language-julia">InterruptException:
 _string_n at string.jl:60 &#91;inlined&#93;
 StringVector at iobuffer.jl:31 &#91;inlined&#93;
@@ -137,14 +137,14 @@ Stacktrace:
 <p><strong>Solution</strong>: ignore the error, kill then restart the server or, failing that, kill and restart Julia.</p>
 <h3 id="not-juno"><a href="#not-juno" class="header-anchor">Not-Juno</a></h3>
 <p>The <a href="https://github.com/asprionj/LiveServer.jl"><code>LiveServer.jl</code></a> package, which handles the live-serving of the files, is based upon <a href="https://github.com/asprionj/LiveServer.jl"><code>HTTP.jl</code></a>. The latter has a fairly complex codebase with a number of asynchronous tasks and is known to sometimes crash in &#40;somewhat&#41; mysterious ways.</p>
-<p>If the stacktrace mentions <code>uv_write</code>, <code>uv_write_async</code>, <code>libuv</code> or something of the sorts, then this is an example of <em>known but mysterious way</em>.</p>
+<p>If the stack trace mentions <code>uv_write</code>, <code>uv_write_async</code>, <code>libuv</code> or something of the sort, then this is an example of <em>known but mysterious way</em>.</p>
 <p>Like the &quot;Juno&quot; case, these errors are caused when you happen to press interrupt just as the package was doing something important in the background. This is very rare but can happen and you can safely ignore it.</p>
 <p><strong>Solution</strong>: ignore the error, kill then restart the server or, failing that, kill and restart Julia.</p>
 <h2 id="iostream_error"><a href="#iostream_error" class="header-anchor">IOStream error</a></h2>
 <p>See the comment about HTTP.jl in the <a href="#Not-Juno-1">subsection above</a>.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: July 24, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: August 01, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

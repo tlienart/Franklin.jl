@@ -179,7 +179,7 @@
   &lt;/script&gt;
   &#123;&#123;end&#125;&#125;</code></pre>
 <h2 id="offline-generated_plot"><a href="#offline-generated_plot" class="header-anchor">Offline-generated plot</a></h2>
-<p>Assuming you already have the Plotly code for some plot, displaying  the  result on a page with Franklin is now pretty straightforward. Start by adding</p>
+<p>Assuming you already have the Plotly code for some plot, displaying the result on a page with Franklin is now pretty straightforward. Start by adding</p>
 <pre><code class="language-julia">@def hasplotly &#61; true</code></pre>
 <p>so that the JS library  will be  loaded then somewhere appropriate add:</p>
 <pre><code class="language-html">~~~
@@ -206,7 +206,7 @@
 </script>
 
 <h2 id="live-generated_plot"><a href="#live-generated_plot" class="header-anchor">Live-generated plot</a></h2>
-<p>One step further is to use <code>PlotlyJS</code> to define a  plot then pass the result to Franklin. Start by adding <code>PlotlyJS</code>  to your environment:</p>
+<p>One step further is to use <code>PlotlyJS</code> to define a  plot and then pass the result to Franklin. Start by adding <code>PlotlyJS</code>  to your environment:</p>
 <pre><code class="language-julia-repl">&#40;myWebsite&#41; pkg&gt; add PlotlyJS</code></pre>
 <p>Then, beyond the <code>@def hasplotly &#61; true</code>, add the following code:</p>
 <pre><code class="language-plaintext">&#96;&#96;&#96;julia:ex1
@@ -252,8 +252,8 @@ plt    &#61; plot&#40;data, layout&#41;</code></pre>
 </script>
 
 <h3 id="using_fig_recommended"><a href="#using_fig_recommended" class="header-anchor">Using <code>\fig&#123;...&#125;</code> &#40;recommended&#41;</a></h3>
-<p>Now you might use <code>\fig&#123;...&#125;</code> to insert graph <a href="/syntax/markdown/#inserting_a_figure">just like normal</a>. This also work fine with <code>Plots.jl</code> and <code>PlotlyBase.jl</code>.</p>
-<p><strong>Note</strong>: <code>\fig&#123;...&#125;</code> will call the JavaScript function <code>PlotlyJS_json</code> defined <a href="#pre-requisites">above</a>. You might customize the behavior by modifying the JavaScript. Also make sure <code>@def hasplotly &#61; true</code> is properly set.</p>
+<p>Now you might use <code>\fig&#123;...&#125;</code> to insert graph <a href="/syntax/markdown/#inserting_a_figure">just like normal</a>. This also works fine with <code>Plots.jl</code> and <code>PlotlyBase.jl</code>.</p>
+<p><strong>Note</strong>: <code>\fig&#123;...&#125;</code> will call the JavaScript function <code>PlotlyJS_json</code> defined <a href="#pre-requisites">above</a>. You might customize the behavior by modifying the JavaScript. Also, make sure <code>@def hasplotly &#61; true</code> is properly set.</p>
 <pre><code class="language-plaintext">&#96;&#96;&#96;julia:ex2
 using PlotlyJS
 p&#61;plot&#40;
@@ -271,16 +271,16 @@ p&#61;plot&#40;
      scatter&#40;x&#61;1:10, y&#61;rand&#40;10&#41;, mode&#61;&quot;markers&quot;&#41;,
      Layout&#40;title&#61;&quot;Responsive Plots&quot;&#41;
      &#41;</code></pre>
-<div id="fdpksv" style=""></div>
+<div id="fdpgsh" style=""></div>
 <script>
-graphDiv = document.getElementById("fdpksv");
+graphDiv = document.getElementById("fdpgsh");
 plotlyPromise = PlotlyJS_json(graphDiv, '/assets/extras/plotly/code/output/plotlyex.json');
 </script>
 
 <p><strong>Note</strong>: The plot will be automatically resized when the browser window size changes due to the JavaScript function provided above. This, however, will ignore the <code>layout.height</code> and the <code>layout.width</code> supplied in the json. It gives good output in most cases. But if you need fine control over the size of the figure, please modify the JavaScript.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: July 24, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: August 01, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

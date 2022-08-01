@@ -121,7 +121,7 @@
     
 <div class="blank"></div>
 <div class="franklin-toc"><ol><li><a href="#generating_a_table">Generating a table</a><ol><li><a href="#preview">Preview</a></li><li><a href="#code">Code</a></li></ol></li><li><a href="#colourful_circles">Colourful circles</a><ol><li><a href="#preview__2">Preview</a></li><li><a href="#code__2">Code</a></li></ol></li><li><a href="#team_cards">Team cards</a><ol><li><a href="#preview__3">Preview</a></li><li><a href="#code__3">Code</a></li></ol></li><li><a href="#python_code_blocks">Python code blocks</a><ol><li><a href="#code__4">Code</a></li></ol></li></ol></div>
-<p>The basic idea is to exploit the fact that the output of a Julia code block evaluated by Franklin can be re-processed as Franklin Markdow when using the <code>\textoutput</code> command; this offers a wide range of possibilities best shown through a few examples &#40;more or less in increasing degree of sophistication&#41;.</p>
+<p>The basic idea is to exploit the fact that the output of a Julia code block evaluated by Franklin can be re-processed as Franklin Markdown when using the <code>\textoutput</code> command; this offers a wide range of possibilities best shown through a few examples &#40;more or less in increasing degree of sophistication&#41;.</p>
 <h2 id="generating_a_table"><a href="#generating_a_table" class="header-anchor">Generating a table</a></h2>
 <h3 id="preview"><a href="#preview" class="header-anchor">Preview</a></h3>
 
@@ -160,7 +160,7 @@ Minjie | 5757</code></pre>
 
 <div class="ccols"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 4"><circle cx="2" cy="2" r="1.5" fill=" pink"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 4"><circle cx="2" cy="2" r="1.5" fill=" lightpink"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 4"><circle cx="2" cy="2" r="1.5" fill=" hotpink"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 4"><circle cx="2" cy="2" r="1.5" fill=" deeppink"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 4"><circle cx="2" cy="2" r="1.5" fill=" mediumvioletred"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 4"><circle cx="2" cy="2" r="1.5" fill=" palevioletred"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 4"><circle cx="2" cy="2" r="1.5" fill=" coral"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 4"><circle cx="2" cy="2" r="1.5" fill=" tomato"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 4"><circle cx="2" cy="2" r="1.5" fill=" orangered"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 4"><circle cx="2" cy="2" r="1.5" fill=" darkorange"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 4"><circle cx="2" cy="2" r="1.5" fill=" orange"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 4"><circle cx="2" cy="2" r="1.5" fill=" gold"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 4"><circle cx="2" cy="2" r="1.5" fill=" yellow"/></svg></div>
 <h3 id="code__2"><a href="#code__2" class="header-anchor">Code</a></h3>
-<p>That can obtained with &#40;see detailed explanations further below&#41;</p>
+<p>That can be obtained with &#40;see detailed explanations further below&#41;</p>
 <pre><code class="language-html">\newcommand&#123;\circle&#125;&#91;1&#93;&#123;
   ~~~
   &lt;svg xmlns&#61;&quot;http://www.w3.org/2000/svg&quot; viewBox&#61;&quot;0 0 4 4&quot;&gt;
@@ -180,7 +180,7 @@ println&#40;&quot;@@&quot;&#41;
 &#96;&#96;&#96;
 \textoutput&#123;circles&#125;</code></pre>
 <p>The first part defines a command <code>\circle</code> which takes one argument for the fill colour and inserts SVG code for a circle with that colour.</p>
-<p>The second part is a Julia code block which will be evaluated but not displayed on the page &#40;since there is a <code>#hideall</code>&#41;. The code loops over the each colour <code>c</code> and prints <code>\circle&#123;c&#125;</code> so that the code block effectively generates:</p>
+<p>The second part is a Julia code block which will be evaluated but not displayed on the page &#40;since there is a <code>#hideall</code>&#41;. The code loops over each colour <code>c</code> and prints <code>\circle&#123;c&#125;</code> so that the code block effectively generates:</p>
 <pre><code class="language-plaintext">@@ccols \circle&#123;pink&#125;...\circle&#123;yellow&#125;@@</code></pre>
 <p>this output is then captured and reprocessed with the <code>\textoutput&#123;snippet&#125;</code> command.</p>
 <p>The last thing to do is to style the <code>colors</code> div appropriately:</p>
@@ -194,7 +194,7 @@ println&#40;&quot;@@&quot;&#41;
 .ccols svg &#123;
   width:30px;&#125;</code></pre>
 <h2 id="team_cards"><a href="#team_cards" class="header-anchor">Team cards</a></h2>
-<p>You may want to have a page with responsive team cards for instance where every card would follow the same layout but the content would be different. There are multiple ways you can do this with Franklin and a simple one below &#40;adapted from <a href="https://www.w3schools.com/howto/howto_css_team.asp">this tutorial</a>&#41;. The advantage of doing something like this is that it can help separate the content from the layout making both arguably easier more maintainable.</p>
+<p>You may want to have a page with responsive team cards for instance where every card would follow the same layout but the content would be different. There are multiple ways you can do this with Franklin and a simple one below &#40;adapted from <a href="https://www.w3schools.com/howto/howto_css_team.asp">this tutorial</a>&#41;. The advantage of doing something like this is that it can help separate the content from the layout making both arguably easier and more maintainable.</p>
 <h3 id="preview__3"><a href="#preview__3" class="header-anchor">Preview</a></h3>
 
 <div class="cards"><div class="row"><div class="column"><div class="card"><p><img src="/assets/img/team/beth.jpg" alt=" Jane Doe" /></p>
@@ -401,7 +401,7 @@ println&#40;py&quot;res&quot;&#41;
 &#125;</code></pre>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: July 24, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: August 01, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

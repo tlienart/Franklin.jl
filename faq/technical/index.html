@@ -119,11 +119,11 @@
 <!-- Content appended here (in class franklin-content) -->
 <div class="franklin-content"><h1 id="faq_-_technical"><a href="#faq_-_technical" class="header-anchor">FAQ - Technical</a></h1>
 <p>If you have a question that you couldn&#39;t find an answer to easily, don&#39;t hesitate to <a href="https://github.com/tlienart/Franklin.jl/issues/new">open an issue</a> on GitHub, it will help me make this section more complete&#33;</p>
-<div class="franklin-toc"><ol><li><a href="#styling">Styling</a><ol><li><a href="#can_you_style_footnote_text">Can you style footnote text?</a></li><li><a href="#how_to_disable_numbering_of_math_in_display_mode">How to disable numbering of math in display mode?</a></li></ol></li><li><a href="#code">Code</a><ol><li><a href="#how_to_use_loops_for_templating">How to use loops for templating?</a></li><li><a href="#how_to_insert_plotly_plots">How to insert Plotly plots?</a></li></ol></li></ol></div>
+<div class="franklin-toc"><ol><li><a href="#styling">Styling</a><ol><li><a href="#can_you_style_footnote_text">Can you style footnote text?</a></li><li><a href="#how_to_disable_the_numbering_of_math_in_display_mode">How to disable the numbering of math in display mode?</a></li></ol></li><li><a href="#code">Code</a><ol><li><a href="#how_to_use_loops_for_templating">How to use loops for templating?</a></li><li><a href="#how_to_insert_plotly_plots">How to insert Plotly plots?</a></li></ol></li></ol></div>
 <h2 id="styling"><a href="#styling" class="header-anchor">Styling</a></h2>
 <h3 id="can_you_style_footnote_text"><a href="#can_you_style_footnote_text" class="header-anchor">Can you style footnote text?</a></h3>
 <p><strong>Reference</strong>: <a href="https://github.com/tlienart/Franklin.jl/issues/243">issue 243</a>, <strong>more on this</strong>: <a href="/styling/classes/">styling</a>.</p>
-<p>For the reference basically a footnote is inserted as</p>
+<p>For reference basically, a footnote is inserted as</p>
 <pre><code class="language-html">&lt;sup id&#61;&quot;fnref:1&quot;&gt;&lt;a href&#61;&quot;/menu1/#fndef:1&quot; class&#61;&quot;fnref&quot;&gt;&#91;1&#93;&lt;/a&gt;&lt;/sup&gt;</code></pre>
 <p>So you can style that with the class <code>.franklin-content sup a.fnref</code>.</p>
 <p>For definitions, it&#39;s inserted as a table like:</p>
@@ -151,7 +151,7 @@
 .franklin-content .fndef td.fndef-content &#123;
     font-size: 80&#37;;
     padding-left: 10px;&#125;</code></pre>
-<h3 id="how_to_disable_numbering_of_math_in_display_mode"><a href="#how_to_disable_numbering_of_math_in_display_mode" class="header-anchor">How to disable numbering of math in display mode?</a></h3>
+<h3 id="how_to_disable_the_numbering_of_math_in_display_mode"><a href="#how_to_disable_the_numbering_of_math_in_display_mode" class="header-anchor">How to disable the numbering of math in display mode?</a></h3>
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">This is currently only available when you&#39;re using KaTeX for maths.</div></div>
 <p>Use the environment <code>equation*</code>, <code>align*</code>, <code>aligned*</code> or <code>eqnarray*</code>. Alternatively, use <code>\nonumber&#123;...your equation...&#125;</code>.</p>
@@ -200,7 +200,7 @@ end
 <p>See <a href="/extras/plotly/">this tutorial</a> for a way to do this.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: July 24, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: August 01, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

@@ -149,7 +149,7 @@
   ...
   &lt;/body&gt;
 &lt;/html&gt;</code></pre>
-<p>Of course it will depend of what you have in your <code>_layout/head.html</code> etc, you can tweak this at will. You can also make this as modular as you want by using conditional blocks in your <code>head.html</code> and insert specific sub layouts depending on the page. For instance the <code>head.html</code> file could include something like</p>
+<p>Of course, it will depend on what you have in your <code>_layout/head.html</code> etc, you can tweak this at will. You can also make this as modular as you want by using conditional blocks in your <code>head.html</code> and inserting specific sub layouts depending on the page. For instance, the <code>head.html</code> file could include something like</p>
 <pre><code class="language-html">&lt;&#33;-- standard stuff --&gt;
 &#123;&#123;ispage blog/*&#125;&#125; &#123;&#123;insert head_blog&#125;&#125;&#123;&#123;end&#125;&#125;
 &lt;&#33;-- ... --&gt;</code></pre>
@@ -157,14 +157,14 @@
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">This also means that it is required to have a <code>_layout/head.html</code>, <code>_layout/foot.html</code> and <code>_layout/page_foot.html</code>, you <strong>must</strong> have these files but they can be empty &#40;in practice it wouldn&#39;t make sense to have all of them be empty but you could have <code>page_foot</code> empty&#41;.</div></div>
 <h3 id="resolved_body"><a href="#resolved_body" class="header-anchor">Resolved body</a></h3>
-<p>The resolved body is plugged in a &quot;container&quot; div</p>
+<p>The resolved body is plugged into a &quot;container&quot; div</p>
 <pre><code class="language-html">&lt;div class&#61;&quot;franklin-content&quot;&gt;
 ...
 &lt;/div&gt;</code></pre>
 <p>if you&#39;re using a CSS framework like bootstrap, you might want to control the name of that outer div which you can do by specifying <code>@def div_content &#61; &quot;container&quot;</code> in your <code>config.md</code>.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: July 24, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: August 01, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

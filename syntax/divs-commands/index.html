@@ -151,7 +151,7 @@
 <div class="silly-formatting">some <strong>silly</strong> text with \(2x+4=y\).</div>
 <p>and more text.</p></div>
 <h2 id="latex-like_commands"><a href="#latex-like_commands" class="header-anchor">LaTeX-like commands</a></h2>
-<p>Franklin allows the definition of commands using a LaTeX-like syntax. This can be particularly useful for repeating elements or styling inside or outside of maths environment.</p>
+<p>Franklin allows the definition of commands using a LaTeX-like syntax. This can be particularly useful for repeating elements or styling inside or outside of the maths environment.</p>
 <p>To define a command, you <strong>must</strong> use the following syntax:</p>
 <pre><code class="language-plaintext">\newcommand&#123;\name&#125;&#91;...&#93;&#123;...&#125;
              -1-   -2-  -3-</code></pre>
@@ -178,7 +178,7 @@ Let &#36;f:\R\to\R&#36; a function...</code></pre>
 &#36;&#36; \mathcal W_\psi&#91;f&#93; &#61; \int_\R f&#40;s&#41;\psi&#40;s&#41;\mathrm&#123;d&#125;s &#61; \scal&#123;f,\psi&#125; &#36;&#36;</code></pre>
 \[ \mathcal W_\psi[f] = \int_\mathbb R f(s)\psi(s)\mathrm{d}s = \left\langle  f,\psi \right\rangle \]
 <h3 id="text_examples"><a href="#text_examples" class="header-anchor">Text examples</a></h3>
-<p>Commands can also be useful outside of maths environment. For instance, you could define a command to quickly set the style of some text:</p>
+<p>Commands can also be useful outside of the maths environment. For instance, you could define a command to quickly set the style of some text:</p>
 <pre><code class="language-html">\newcommand&#123;\styletext&#125;&#91;2&#93;&#123;~~~&lt;span style&#61;&quot;#1&quot;&gt;#2&lt;/span&gt;~~~&#125;
 
 Here is \styletext&#123;color:magenta;font-size:14px;&#125;&#123;formatted text&#125;.</code></pre>
@@ -222,7 +222,7 @@ Let &#36;x\in\R^n&#36;, there exists &#36;0 &lt; C_1 \le C_2&#36; such that
 &#125;</code></pre>
 <h3 id="whitespaces"><a href="#whitespaces" class="header-anchor">Whitespaces</a></h3>
 <p>In a Franklin <code>newcommand</code>, to refer to an argument you can use <code>#k</code> or <code>&#33;#k</code>. There is a small difference: the first one <em>introduces a space</em> left of the argument while the second one does not.</p>
-<p>In general whitespaces are irrelevant and will not show up on the rendered webpage so that the usual <code>#k</code> is the recommended usage. This helps avoid some ambiguities when resolving a chain of nested commands.</p>
+<p>In general, whitespaces are irrelevant and will not show up on the rendered webpage so the usual <code>#k</code> is the recommended usage. This helps avoid some ambiguities when resolving a chain of nested commands.</p>
 <p>There are however cases where you do not want this because the whitespace does, in fact, show up. In such cases use <code>&#33;#k</code> &#40;assuming it&#39;s not ambiguous&#41;.</p>
 <p>Consider for instance:</p>
 <pre><code class="language-plaintext">\newcommand&#123;\pathwith&#125;&#91;1&#93;&#123;&#96;/usr/local/bin/#1&#96;&#125;
@@ -231,7 +231,7 @@ Let &#36;x\in\R^n&#36;, there exists &#36;0 &lt; C_1 \le C_2&#36; such that
 Here \pathwith&#123;hello&#125; is no good whereas \pathwithout&#123;hello&#125; is.</code></pre>
 <p>Here <code>/usr/local/bin/ hello</code> is no good whereas <code>/usr/local/bin/hello</code> is.</p>
 <h3 id="defining_commands_globally"><a href="#defining_commands_globally" class="header-anchor">Defining commands globally</a></h3>
-<p>If you define commands on a page, the command will be available only on that page; if you wish to define a command that is available on all pages, you should  put the definition of the command in your <code>config.md</code> file.</p>
+<p>If you define commands on a page, the command will be available only on that page; if you wish to define a command that is available on all pages, you should put the definition of the command in your <code>config.md</code> file.</p>
 <h2 id="hyper-references"><a href="#hyper-references" class="header-anchor">Hyper-references</a></h2>
 <p>Three types of hyper-references are supported in Franklin:</p>
 <div class="flist"><ol>
@@ -239,7 +239,7 @@ Here \pathwith&#123;hello&#125; is no good whereas \pathwithout&#123;hello&#125;
 </li>
 <li><p>for references &#40;bibliography&#41;,</p>
 </li>
-<li><p>for specific anchor points in the page.</p>
+<li><p>for specific anchor points on the page.</p>
 </li>
 </ol></div>
 <p>The syntax for all three is close to that of standard LaTeX.</p>
@@ -256,11 +256,11 @@ and you can refer to it in the text: equation \eqref&#123;a cool equation&#125;.
 <p>As in LaTeX, you can refer to several equations in one shot by separating names with commas: <code>\eqref&#123;some label, some other&#125;</code> &#40;that also means you cannot use commas in labels&#41;.</p>
 <h3 id="references"><a href="#references" class="header-anchor">References</a></h3>
 <p>For references, you can use <code>\biblabel&#123;short&#125;&#123;name&#125;</code> to declare a reference which will appear as a clickable link <code>&#40;name&#41;</code> or <code>name</code> and can be referred to with <code>short</code>:</p>
-<pre><code class="language-plaintext">In the text you may refer to \citep&#123;noether15, bezanson17&#125; while in a bibliography section you would have
+<pre><code class="language-plaintext">In the text, you may refer to \citep&#123;noether15, bezanson17&#125; while in a bibliography section you would have
 
 * \biblabel&#123;noether15&#125;&#123;Noether &#40;1915&#41;&#125; **Noether**, Korper und Systeme rationaler Funktionen, 1915.
 * \biblabel&#123;bezanson17&#125;&#123;Bezanson et al. &#40;2017&#41;&#125; **Bezanson**, **Edelman**, **Karpinski** and **Shah**, &#91;Julia: a fresh approach to numerical computing&#93;&#40;https://julialang.org/publications/julia-fresh-approach-BEKS.pdf&#41;, SIAM review 2017.</code></pre>
-<p>The <code>name</code> argument therefore corresponds to how the bibliography reference will appear in the text. In the case above, the text will lead to</p>
+<p>The <code>name</code> argument, therefore, corresponds to how the bibliography reference will appear in the text. In the case above, the text will lead to</p>
 <pre><code class="language-plaintext">... refer to &#40;Noether &#40;1915&#41;, Bezanson et al. &#40;2017&#41;&#41; while ...</code></pre>
 <p>You can use either</p>
 <div class="tlist"><ul>
@@ -271,7 +271,7 @@ and you can refer to it in the text: equation \eqref&#123;a cool equation&#125;.
 </ul></div>
 <p>As in LaTeX, if the reference is undefined on the page, the command will be replaced by <strong>&#40;??&#41;</strong>.</p>
 <h3 id="anchor_points"><a href="#anchor_points" class="header-anchor">Anchor points</a></h3>
-<p>You can specify anchor points on the page using <code>\label&#123;name of the anchor&#125;</code> anywhere on the page <em>outside</em> of maths environment. This will insert an anchor:</p>
+<p>You can specify anchor points on the page using <code>\label&#123;name of the anchor&#125;</code> anywhere on the page <em>outside</em> of the maths environment. This will insert an anchor:</p>
 <pre><code class="language-html">&lt;a id&#61;&quot;name-of-the-anchor&quot;&gt;&lt;/a&gt;</code></pre>
 <p>You can subsequently link to it on the same page:</p>
 <pre><code class="language-plaintext">&#91;link to it&#93;&#40;#name-of-the-anchor&#41;</code></pre>
@@ -282,7 +282,7 @@ and you can refer to it in the text: equation \eqref&#123;a cool equation&#125;.
 <p>can be linked to with <code>#some-subtitle</code>. If there are multiple headers with the same name, the second and subsequent ones can be referred to with <code>#some-subtitle__2</code>, <code>#some-subtitle__3</code> etc. &#40;note the double underscore&#41;.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: July 24, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: August 01, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

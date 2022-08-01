@@ -170,7 +170,7 @@ reference: &#33;&#91;alt text&#93;&#91;ref&#93;
 </li>
 </ul></div>
 <h3 id="lists"><a href="#lists" class="header-anchor">Lists</a></h3>
-<p>Un-ordered list &#40;you can  also use <code>-</code>, <code>&#43;</code> or <code>.</code> instead  of <code>*</code>&#41;</p>
+<p>Unordered list &#40;you can  also use <code>-</code>, <code>&#43;</code> or <code>.</code> instead  of <code>*</code>&#41;</p>
 <pre><code class="language-markdown">* item 1
 * item 2
   * sub-item 1</code></pre>
@@ -181,7 +181,7 @@ reference: &#33;&#91;alt text&#93;&#91;ref&#93;
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">List items <em>must</em> be on the same line &#40;<em>this is due to <a href="https://github.com/JuliaLang/julia/issues/30198">a limitation</a> of the Julia Markdown parser</em>&#41;.</div></div>
 <h3 id="comments"><a href="#comments" class="header-anchor">Comments</a></h3>
-<p>You can add comments in your markdown using HTML-style  comments: <code>&lt;&#33;-- your comment --&gt;</code> possibly on multiple lines. Note that comments are <strong>not</strong> allowed in a math environment.</p>
+<p>You can add comments in your markdown using HTML-style comments: <code>&lt;&#33;-- your comment --&gt;</code> possibly on multiple lines. Note that comments are <strong>not</strong> allowed in a math environment.</p>
 <h3 id="symbols_and_html_entities"><a href="#symbols_and_html_entities" class="header-anchor">Symbols and HTML entities</a></h3>
 <p>Outside code environments, there are a few quirks in dealing with symbols:</p>
 <div class="tlist"><ul>
@@ -205,7 +205,7 @@ a &#61; 5
 println&#40;a&#41;
 &#96;&#96;&#96;</code></pre>
 <p>You&#39;re not obliged to specify the language, if you don&#39;t it will assume the language corresponds to the <a href="/syntax/page-variables/">page variable</a> <code>lang</code> &#40;set to <code>julia</code> by default&#41;. If you want the block to be considered as plaintext, use <code>plaintext</code> as the language specifier.</p>
-<p>Finally you can also use indented code blocks &#40;which will also take its highlighting hint from <code>lang</code>&#41; but this is <strong>not recommended</strong> and you have to explicitly opt-in by setting <code>indented_code</code> on a page that would use them:</p>
+<p>Finally, you can also use indented code blocks &#40;which will also take its highlighting hint from <code>lang</code>&#41; but this is <strong>not recommended</strong> and you have to explicitly opt in by setting <code>indented_code</code> on a page that would use them:</p>
 <pre><code class="language-markdown">@def indented_code &#61; true
 Code block:
 
@@ -218,7 +218,7 @@ Code block:
 <pre><code class="language-markdown">&#96;&#96;&#96;plaintext
 this will not be highlighted
 &#96;&#96;&#96;</code></pre>
-<p>If you wish to have higlighting for more languages outside of the pre-rendering mode, head to <a href="https://highlightjs.org/">highlight.js</a>, make a selection of languages and place the resulting <code>higlight.pack.js</code> in the <code>/_libs/highlight/</code> folder. If you do this, you might want to slightly modify it to ensure that the Julia-repl mode is properly highlighted &#40;e.g. <code>shell&gt;</code>&#41;:</p>
+<p>If you wish to have highlighting for more languages outside of the pre-rendering mode, head to <a href="https://highlightjs.org/">highlight.js</a>, make a selection of languages and place the resulting <code>highlight.pack.js</code> in the <code>/_libs/highlight/</code> folder. If you do this, you might want to slightly modify it to ensure that the Julia-repl mode is properly highlighted &#40;e.g. <code>shell&gt;</code>&#41;:</p>
 <div class="tlist"><ul>
 <li><p>open the <code>highlight.pack.js</code> in an editor of your choice</p>
 </li>
@@ -228,7 +228,7 @@ this will not be highlighted
 <pre><code class="language-javascript">hljs.registerLanguage&#40;&quot;julia-repl&quot;,function&#40;a&#41;&#123;return&#123;c:&#91;&#123;cN:&quot;meta&quot;,b:/^julia&gt;/,r:10,starts:&#123;e:/^&#40;?&#33;&#91; &#93;&#123;6&#125;&#41;/,sL:&quot;julia&quot;&#125;&#125;,&#123;cN:&quot;metas&quot;,b:/^shell&gt;/,r:10,starts:&#123;e:/^&#40;?&#33;&#91; &#93;&#123;6&#125;&#41;/,sL:&quot;bash&quot;&#125;&#125;,&#123;cN:&quot;metap&quot;,b:/^\&#40;.*\&#41;\spkg&gt;/,r:10,starts:&#123;e:/^&#40;?&#33;&#91; &#93;&#123;6&#125;&#41;/,sL:&quot;julia&quot;&#125;&#125;&#93;&#125;&#125;&#41;;</code></pre>
 <p>&#40;see also <a href="https://github.com/tlienart/FranklinTemplates.jl#notes">the README</a> of FranklinTemplates&#41;.</p>
 <h3 id="evaluated_code_blocks"><a href="#evaluated_code_blocks" class="header-anchor">Evaluated code blocks</a></h3>
-<p>Julia code blocks can be evaluated and the result of the code either shown or rendered. To declare a code block for evaluation, use the fenced code block syntax with a name for the code block:</p>
+<p>Julia code blocks can be evaluated and the result of the code is either shown or rendered. To declare a code block for evaluation, use the fenced code block syntax with a name for the code block:</p>
 <pre><code class="language-markdown">&#96;&#96;&#96;julia:snippet1
 using LinearAlgebra, Random
 Random.seed&#33;&#40;555&#41;
@@ -252,8 +252,8 @@ round&#40;norm&#40;a&#41;, sigdigits&#61;4&#41;</code></pre>
 &#36;&#36; \mathcal W_\psi&#91;f&#93; &#61; \int_&#123;\mathbb R&#125; f&#40;s&#41;\psi&#40;s&#41;\mathrm&#123;d&#125;s &#36;&#36;</code></pre>
 <p>Inline: \(x=5\) or display:</p>
 \[ \mathcal W_\psi[f] = \int_{\mathbb R} f(s)\psi(s)\mathrm{d}s \]
-<p>You can  also use <code>\&#91;...\&#93;</code> for display maths.</p>
-<p>One thing to keep in mind when adding maths on your page is that you should be generous in your use of whitespace, particularly  around inequality  operators to avoid ambiguity that could confuse KaTeX. So for instance prefer: <code>&#36;0 &lt; C&#36;</code> to <code>&#36;0&lt;C&#36;</code> &#40;the latter will not render properly&#41;. Also if you have to write double braces, make sure to add a space in between so <code>&#123; &#123;</code> or <code>&#125; &#125;</code> and not <code>&#123;&#123;</code> or <code>&#125;&#125;</code> since that has a specific meaning in Franklin:</p>
+<p>You can also use <code>\&#91;...\&#93;</code> for display maths.</p>
+<p>One thing to keep in mind when adding maths on your page is that you should be generous in your use of whitespace, particularly around inequality operators to avoid the ambiguity that could confuse KaTeX. So for instance prefer: <code>&#36;0 &lt; C&#36;</code> to <code>&#36;0&lt;C&#36;</code> &#40;the latter will not render properly&#41;. Also if you have to write double braces, make sure to add a space in between so <code>&#123; &#123;</code> or <code>&#125; &#125;</code> and not <code>&#123;&#123;</code> or <code>&#125;&#125;</code> since that has a specific meaning in Franklin:</p>
 <pre><code class="language-plaintext">&#36;&#36; \dfrac&#123; &#123;101&#125;_&#123;2&#125; &#125; &#36;&#36;</code></pre>
 \[\dfrac{1}{ {101}_{2} }\]
 <h3 id="aligned_maths"><a href="#aligned_maths" class="header-anchor">Aligned maths</a></h3>
@@ -276,7 +276,7 @@ round&#40;norm&#40;a&#41;, sigdigits&#61;4&#41;</code></pre>
   1+1 &= 2
 \end{aligned}\]
 <div class="note"><div class="title">⚠ Note</div>
-<div class="content">In proper LaTeX, the use of <code>\eqnarray</code> is discouraged due to possible interference with array column spacing. In Franklin this does not happen and so the only practical difference is that <code>\eqnarray</code> will give you a bit more horizontal spacing around the <code>&#61;</code> signs.</div></div>
+<div class="content">In proper LaTeX, the use of <code>\eqnarray</code> is discouraged due to possible interference with array column spacing. In Franklin, this does not happen and so the only practical difference is that <code>\eqnarray</code> will give you a bit more horizontal spacing around the <code>&#61;</code> signs.</div></div>
 <h2 id="raw_html"><a href="#raw_html" class="header-anchor">Raw HTML</a></h2>
 <p>You can inject raw HTML by fencing it with <code>~~~...~~~</code> which can be useful for custom formatting.</p>
 <p>A simple example is if you want to colour your text; for instance with</p>
@@ -297,7 +297,7 @@ round&#40;norm&#40;a&#41;, sigdigits&#61;4&#41;</code></pre>
 <li><p><code>\fig&#123;path&#125;</code></p>
 </li>
 </ul></div>
-<p>are convenient commands to insert figures. Of course you&#39;re free to use the default markdown way <code>&#33;&#91;alt&#93;&#40;full_path&#41;</code> instead. One difference with these commands though is that they allow the use of relative paths; this can be convenient in order to organise your assets as you organise your pages.</p>
+<p>are convenient commands to insert figures. Of course, you&#39;re free to use the default markdown way <code>&#33;&#91;alt&#93;&#40;full_path&#41;</code> instead. One difference with these commands though is that they allow the use of relative paths; this can be convenient in order to organise your assets as you organise your pages.</p>
 <p><strong>Note</strong>: to help with the organisation of assets, Franklin will assume by default that figures are placed in a folder <code>/output/</code> relative to where the script is, i.e. if the script is in <code>&#91;script_dir&#93;</code>, the figures will be in <code>&#91;script_dir&#93;/output/</code>. To help with this, the macro <code>@OUTPUT</code> can be used which specifies the path to this relative output dir:</p>
 <pre><code class="language-julia">&#96;&#96;&#96;julia:./ex1
 using PyPlot
@@ -314,7 +314,7 @@ savefig&#40;joinpath&#40;@OUTPUT, &quot;test.png&quot;&#41;&#41;</code></pre>
 <div class="small-img"><img src="/assets/syntax/markdown/output/test.png" alt=""></div>
 <p>In fact the syntax <code>\fig&#123;./test&#125;</code> is also allowed, Franklin will then first look in the <code>&#91;script_dir&#93;</code> for a <code>test.*</code> figure and, if it doesn&#39;t find one, will try to  look in <code>&#91;script_dir&#93;/output/</code> for a <code>test.*</code> figure:</p>
 <div class="small-img"><img src="/assets/syntax/markdown/output/test.png" alt=""></div>
-<p>Figure style &#40;for instance, if one wishes to modify figure width&#41; can be further customized in two different ways. A first way is to define custom CSS for the figure. In the markdown, this comes down to writing:</p>
+<p>Figure style &#40;for instance, if one wishes to modify figure width&#41; can be further customized in two different ways. The first way is to define custom CSS for the figure. In the markdown, this comes down to writing:</p>
 <pre><code class="language-julia">@@im-50
 &#33;&#91;&#93;&#40;/assets/rndimg.jpg&#41;
 @@</code></pre>
@@ -334,12 +334,12 @@ savefig&#40;joinpath&#40;@OUTPUT, &quot;test.png&quot;&#41;&#41;</code></pre>
 &lt;/figure&gt;
 ~~~
 &#125;</code></pre>
-<p>This creates a command called <code>figenv</code> which takes 3 arguments and inserts raw HTML &#40;<code>~~~</code>...<code>~~~</code>&#41; plugging in each of the argument in the appropriate location i.e.: &#40;1&#41; the image caption &#40;2&#41; the image source path and &#40;3&#41; specific CSS styling for the image. This command could be used as such &#40;here changing the width and adding a 1px wide red border to the image&#41;:</p>
+<p>This creates a command called <code>figenv</code> which takes 3 arguments and inserts raw HTML &#40;<code>~~~</code>...<code>~~~</code>&#41; plugging in each of the arguments in the appropriate location i.e.: &#40;1&#41; the image caption &#40;2&#41; the image source path and &#40;3&#41; specific CSS styling for the image. This command could be used as such &#40;here changing the width and adding a 1px wide red border to the image&#41;:</p>
 <pre><code class="language-julia">\figenv&#123;the caption&#125;&#123;/assets/rndimg.jpg&#125;&#123;width:50&#37;;border: 1px solid red;&#125;</code></pre>
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">Remember that these docs are written in Franklin so you can inspect the source directory if you would like to see the source markdown.</div></div>
 <h3 id="inserting_markdown"><a href="#inserting_markdown" class="header-anchor">Inserting markdown</a></h3>
-<p>In some situation, you may have some markdown in a file which you might want to include somewhere else. This can be achieved thanks to the <code>\textinput&#123;path&#125;</code> commmand. The path specification is as the other commands, and the text will be formatted.</p>
+<p>In some situations, you may have some markdown in a file which you might want to include somewhere else. This can be achieved thanks to the <code>\textinput&#123;path&#125;</code> command. The path specification is as the other commands, and the text will be formatted.</p>
 <p>As an example you could have in <code>/assets/ccc/sidefile.md</code>:</p>
 <pre><code class="language-markdown">some **markdown** in a side file.</code></pre>
 <p>whereas in <code>index.md</code>:</p>
@@ -348,7 +348,7 @@ savefig&#40;joinpath&#40;@OUTPUT, &quot;test.png&quot;&#41;&#41;</code></pre>
 <pre><code class="language-markdown">This is the index then some **markdown** in a side file.</code></pre>
 <p><strong>Note</strong>: if you don&#39;t specify a file extension, <code>.md</code> is appended to the specified path.</p>
 <h3 id="inserting_a_table"><a href="#inserting_a_table" class="header-anchor">Inserting a table</a></h3>
-<p>You can insert tables directly from CSV files with the <code>\tableinput&#123;header&#125;&#123;path&#125;</code> command. If you generate the file on-the-fly, you should follow this example:</p>
+<p>You can insert tables directly from CSV files with the <code>\tableinput&#123;header&#125;&#123;path&#125;</code> command. If you generate the file on the fly, you should follow this example:</p>
 <pre><code class="language-julia">&#96;&#96;&#96;julia:./tableinput/gen
 testcsv &#61; &quot;h1,h2,h3
 152,some string, 1.5f0
@@ -357,7 +357,7 @@ write&#40;&quot;assets/pages/tableinput/testcsv.csv&quot;, testcsv&#41;
 &#96;&#96;&#96;</code></pre>
 <p>Then you can insert the table with:</p>
 <pre><code class="language-julia">\tableinput&#123;&#125;&#123;./tableinput/testcsv.csv&#125;</code></pre>
-<p>Which will result in:</p>
+<p>This will result in:</p>
 <table><tr><th align="right">h1</th><th align="right">h2</th><th align="right">h3</th></tr><tr><td align="right">152</td><td align="right">some string</td><td align="right">1.5f0</td></tr><tr><td align="right">0</td><td align="right">another string</td><td align="right">2.87</td></tr></table>
 <p>In this case, given no header was specified in the call, a header was generated from the first line in the CSV &#40;here: <code>h1, h2, h3</code>&#41;.</p>
 <p>If your file doesn&#39;t have a header, you can specify it in the call:</p>
@@ -371,7 +371,7 @@ write&#40;&quot;assets/pages/tableinput/testcsv2.csv&quot;, testcsv&#41;
 <p>With the above in mind, you can also include existing CSV files.</p>
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">The look of the table will be defined by your CSS stylesheet.</div></div>
-<p>There&#39;s a couple of rules that you have to keep in mind when using the <code>\tableinput&#123;&#125;&#123;&#125;</code> command:</p>
+<p>There are a couple of rules that you have to keep in mind when using the <code>\tableinput&#123;&#125;&#123;&#125;</code> command:</p>
 <div class="tlist"><ul>
 <li><p>Columns must be separated by a comma &#40;<code>,</code>&#41;.</p>
 </li>
@@ -385,7 +385,7 @@ write&#40;&quot;assets/pages/tableinput/testcsv2.csv&quot;, testcsv&#41;
 <p>can also be used. It is also possible to use HTML to create a table with the HTML fenced between <code>~~~</code>. </p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: July 24, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: August 01, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

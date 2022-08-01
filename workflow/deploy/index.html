@@ -120,10 +120,10 @@
     <span style="font-size:24px;font-weight:300;">Set it up once then don't think about it.</span>
     
 <div class="blank"></div>
-<div class="franklin-toc"><ol><li><a href="#deploying_on_an_existing_webserver">Deploying on an existing webserver</a></li><li><a href="#deploying_on_github">Deploying on GitHub</a><ol><li><a href="#creating_a_repo_on_github">Creating a repo on GitHub</a></li><li><a href="#synchronise_your_local_folder">Synchronise your local folder</a></li><li><a href="#examples">Examples</a></li><li><a href="#customising_the_github_action">Customising the GitHub action</a></li><li><a href="#troubleshooting">Troubleshooting</a></li></ol></li><li><a href="#deploying_on_gitlab">Deploying on GitLab</a><ol><li><a href="#creating_a_repo_on_gitlab">Creating a repo on GitLab</a></li><li><a href="#create_and_optimize_your_site">Create and optimize your site</a></li><li><a href="#synchronise_your_local_folder__2">Synchronise your local folder</a></li><li><a href="#iterate">Iterate</a></li></ol></li><li><a href="#deploying_on_netlify">Deploying on Netlify</a></li><li><a href="#previewing_pull_requests">Previewing Pull Requests</a></li></ol></div>
+<div class="franklin-toc"><ol><li><a href="#deploying_on_an_existing_web_server">Deploying on an existing web server</a></li><li><a href="#deploying_on_github">Deploying on GitHub</a><ol><li><a href="#creating_a_repo_on_github">Creating a repo on GitHub</a></li><li><a href="#synchronise_your_local_folder">Synchronise your local folder</a></li><li><a href="#examples">Examples</a></li><li><a href="#customising_the_github_action">Customising the GitHub action</a></li><li><a href="#troubleshooting">Troubleshooting</a></li></ol></li><li><a href="#deploying_on_gitlab">Deploying on GitLab</a><ol><li><a href="#creating_a_repo_on_gitlab">Creating a repo on GitLab</a></li><li><a href="#create_and_optimize_your_site">Create and optimize your site</a></li><li><a href="#synchronise_your_local_folder__2">Synchronise your local folder</a></li><li><a href="#iterate">Iterate</a></li></ol></li><li><a href="#deploying_on_netlify">Deploying on Netlify</a></li><li><a href="#previewing_pull_requests">Previewing Pull Requests</a></li></ol></div>
 <div class="blank"></div>
-<p>Deploying the website is trivial on an existing webserver, via GitHub or Gitlab, or on services like Netlify.</p>
-<h2 id="deploying_on_an_existing_webserver"><a href="#deploying_on_an_existing_webserver" class="header-anchor">Deploying on an existing webserver</a></h2>
+<p>Deploying the website is trivial on an existing web server, via GitHub or Gitlab, or on services like Netlify.</p>
+<h2 id="deploying_on_an_existing_web_server"><a href="#deploying_on_an_existing_web_server" class="header-anchor">Deploying on an existing web server</a></h2>
 <p>The contents of the <code>__site</code> folder can simply be deployed to a path on an existing server as follows. Supposing you wish your site to appear at <code>http://my.example.com/path/to/my/franklin/site/</code>.  You would take the following steps:</p>
 <ul>
 <li><p>Prepare the <code>__site</code> directory by running <code>optimize&#40; prepath&#61;&#39;/path/to/my/franklin/site/&#39;, minify &#61; false &#41;</code>.</p>
@@ -139,14 +139,14 @@
 <h3 id="creating_a_repo_on_github"><a href="#creating_a_repo_on_github" class="header-anchor">Creating a repo on GitHub</a></h3>
 <p>Start by creating an empty GitHub repository</p>
 <div class="tlist"><ul>
-<li><p>for a personal &#40;or org&#41; website the repository <strong>must</strong> be named <code>username.github.io</code> &#40;or <code>orgname.github.io</code>&#41; see also <a href="https://pages.github.com/">the github pages docs</a>,</p>
+<li><p>for a personal &#40;or org&#41; website the repository <strong>must</strong> be named <code>username.github.io</code> &#40;or <code>orgname.github.io</code>&#41; see also <a href="https://pages.github.com/">the Github pages docs</a>,</p>
 </li>
 <li><p>for a project website the repo can be named anything you want, let&#39;s say <code>myWebsite</code>.</p>
 </li>
 </ul></div>
 <div class="warning"><div class="title">⚠ Warning&#33;</div>
 <div class="content"><p>When you consider a <em>project website</em>, you <strong>must</strong> define a <code>prepath</code> variable in your <code>config.md</code> with the name of that project. For instance: <code>@def prepath &#61; &quot;myWebsite&quot;</code>.   This is used upon deployment to indicate that the base URL of your website is <code>username.github.io/myWebsite/</code> instead of <code>username.github.io</code>.   If you forget to do that, among other problems the CSS won&#39;t load and your website will look terrible 😅. </p>
-<p>However, if you add a custom domain like <code>example.com</code> to your <em>project</em> repo like <code>myWebsite</code>, then the variable <code>prepath</code> should be set empty string to make the CSS work.</p></div></div>
+<p>However, if you add a custom domain like <code>example.com</code> to your <em>project</em> repo like <code>myWebsite</code>, then the variable <code>prepath</code> should be set an empty string to make the CSS work.</p></div></div>
 <div class="tlist"><ul>
 <li><p><a href="https://github.com/tlienart2/tlienart2.github.io">This repo</a> is an example of <em>user website</em> you can copy,</p>
 </li>
@@ -163,7 +163,7 @@
 <li><p><code>git push</code></p>
 </li>
 </ul></div>
-<p>the GitHub action will be triggered and deploy the content of the <code>__site</code> folder to  the <code>gh-pages</code> branch from which GitHub will deploy the website.</p>
+<p>the GitHub action will be triggered and deploy the content of the <code>__site</code> folder to the <code>gh-pages</code> branch from which GitHub will deploy the website.</p>
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">It takes a couple of minutes for the whole process to complete.</div></div>
 <p>Once a green check mark appears on the GitHub repo like so:</p>
@@ -200,7 +200,7 @@
 <h3 id="creating_a_repo_on_gitlab"><a href="#creating_a_repo_on_gitlab" class="header-anchor">Creating a repo on GitLab</a></h3>
 <p>Start by creating an empty GitLab repository</p>
 <div class="tlist"><ul>
-<li><p>for a personal website the repository <strong>must</strong> be named <code>username.gitlab.io</code> see also <a href="https://about.gitlab.com/stages-devops-lifecycle/pages/">the gitlab pages docs</a>,</p>
+<li><p>for a personal website the repository <strong>must</strong> be named <code>username.gitlab.io</code> see also <a href="https://about.gitlab.com/stages-devops-lifecycle/pages/">the Gitlab pages docs</a>,</p>
 </li>
 <li><p>for a project website the repo can be named anything you want.</p>
 </li>
@@ -219,7 +219,7 @@
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">It takes a couple of minutes for the whole process to complete and your site to be available online.</div></div>
 <h3 id="iterate"><a href="#iterate" class="header-anchor">Iterate</a></h3>
-<p>The <code>publish</code> command does the optimize followed by the git stuff all in one. So  you should probably use that  after the initial setup.</p>
+<p>The <code>publish</code> command does the optimize followed by the git stuff all in one. So you should probably use that after the initial setup.</p>
 <h2 id="deploying_on_netlify"><a href="#deploying_on_netlify" class="header-anchor">Deploying on Netlify</a></h2>
 <p>Synchronise your local website folder with a repository &#40;e.g. a GitHub or GitLab repository&#41; then select that repository on Netlify and indicate you want to deploy the <code>__site</code> folder.</p>
 <p>That&#39;s it&#33;</p>
@@ -247,7 +247,7 @@ on:
     echo &quot;PREVIEW_FRANKLIN_WEBSITE_URL&#61;https://&#123;netlify name&#125;.netlify.app/previews/PR&#36;&#123;&#123; github.event.number &#125;&#125;/&quot; &gt;&gt; &#36;GITHUB_ENV
     echo &quot;PREVIEW_FRANKLIN_PREPATH&#61;previews/PR&#36;&#123;&#123; github.event.number &#125;&#125;&quot; &gt;&gt; &#36;GITHUB_ENV</code></pre>
 <p>where <code>&#123;netlify name&#125;</code> is a name you will decide to use at the end of this explanation. The first line keeps track of the URL where the preview will be available. the second line only keeps track of the &quot;prepath&quot; of that preview URL so that it can be passed to Franklin.</p>
-<p>Finally we want to deploy the main website and the PR preview on different branches &#40;and folders&#41;:</p>
+<p>Finally, we want to deploy the main website and the PR preview on different branches &#40;and folders&#41;:</p>
 <pre><code class="language-yml">- name: Deploy &#40;preview&#41;
 if: github.event_name &#61;&#61; &#39;pull_request&#39; &amp;&amp; github.repository &#61;&#61; github.event.pull_request.head.repo.full_name # if this build is a PR build and the PR is NOT from a fork
 uses: JamesIves/github-pages-deploy-action@releases/v3
@@ -269,8 +269,8 @@ with:
 <p>to</p>
 <pre><code class="language-julia">@def prepath     &#61; get&#40;ENV, &quot;PREVIEW_FRANKLIN_PREPATH&quot;, &quot;myprepath&quot;&#41; # In the third argument put the prepath you normally use
 @def website_url &#61; get&#40;ENV, &quot;PREVIEW_FRANKLIN_WEBSITE_URL&quot;, &quot;mywebsite.github.io&quot;&#41; # Just put the website name</code></pre>
-<p>Now for the final step, you will need to visualize the obtained previews. Since Github only allow you to deploy one branch, you will need an alternative like Netlify. Create an account on <a href="https://www.netlify.com/">Netlify.com</a>, add your repository and chose the <code>gh-preview</code> branch without any additional settings. Set your netlify website to be <code>&#123;netlify name&#125;.netlify.app</code>.</p>
-<p>Once everything is setup you will be able to visualize your PR preview on <code>&#123;netlify name&#125;.netlify.app/previews/PR&#123;number of your PR&#125;</code>. You can make things easier for your contributors to access it by adding a comment with a link to your PR automatically. To do this add the following Github action &#40;create a <code>pr_comment.yml</code> file in <code>.github/workflows/</code>&#41;:</p>
+<p>Now for the final step, you will need to visualize the obtained previews. Since Github only allow you to deploy one branch, you will need an alternative like Netlify. Create an account on <a href="https://www.netlify.com/">Netlify.com</a>, add your repository and chose the <code>gh-preview</code> branch without any additional settings. Set your Netlify website to be <code>&#123;netlify name&#125;.netlify.app</code>.</p>
+<p>Once everything is set up you will be able to visualize your PR preview on <code>&#123;netlify name&#125;.netlify.app/previews/PR&#123;number of your PR&#125;</code>. You can make things easier for your contributors to access it by adding a comment with a link to your PR automatically. To do this add the following Github action &#40;create a <code>pr_comment.yml</code> file in <code>.github/workflows/</code>&#41;:</p>
 <pre><code class="language-yml">name: PR Comment # Write a comment in the PR with a link to the preview of the given website
 on:
   pull_request:
@@ -287,7 +287,7 @@ jobs:
           GITHUB_TOKEN: &#36;&#123;&#123; secrets.GITHUB_TOKEN &#125;&#125;</code></pre>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: July 24, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: August 01, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

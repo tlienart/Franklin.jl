@@ -129,7 +129,7 @@
 <p>There are a number of <a href="https://tlienart.github.io/FranklinTemplates.jl/">simple templates</a> you can choose from and tweak.</p>
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">The templates are meant to be used as <em>starting points</em> and will likely require some fixes to match what you want. Your help to make them better is very welcome.</div></div>
-<p>Once you have created a new website folder, you can start the live-rendering of your website with</p>
+<p>Once you have created a new website folder, you can start the live rendering of your website with</p>
 <pre><code class="language-julia-repl">julia&gt; serve&#40;&#41;
 → Initial full pass...
 → Starting the server...
@@ -170,19 +170,19 @@
 </li>
 <li><p><code>pages/page1.md</code> would correspond to pages on your website &#40;you can have whatever subfolder structure you want in here&#41;,</p>
 </li>
-<li><p><code>config.md</code> allows to specify variables that help steer the page generation, you can also use it to declare global variables or definitions that can then be used on all pages.</p>
+<li><p><code>config.md</code> allows specifying variables that help steer the page generation, you can also use it to declare global variables or definitions that can then be used on all pages.</p>
 </li>
 </ul></div>
 <div class="note"><div class="title">⚠ Note</div>
-<div class="content">You can also write pages in plain HTML. For instance you may want to write an <code>index.html</code> file instead of generating it via the <code>index.md</code>. You will still need to put it at the exact same place and let Franklin copy the files appropriately.</div></div>
-<p>Note that Franklin generates a folder structure in <code>__site</code> which allows to have URLs like <code>&#91;website&#93;/page1/</code>. The following rules are applied:</p>
+<div class="content">You can also write pages in plain HTML. For instance, you may want to write an <code>index.html</code> file instead of generating it via the <code>index.md</code>. You will still need to put it in the exact same place and let Franklin copy the files appropriately.</div></div>
+<p>Note that Franklin generates a folder structure in <code>__site</code> which allows having URLs like <code>&#91;website&#93;/page1/</code>. The following rules are applied:</p>
 <ul>
 <li><p>the filename is <code>&#91;path/&#93;index.md</code> or <code>&#91;path/&#93;index.html</code>, it will be copied over &quot;as is&quot; to <code>__site/&#91;path/&#93;index.html</code>,</p>
 </li>
 <li><p>the filename is <code>&#91;path/&#93;somepage.md</code> or <code>&#91;path/&#93;somepage.html</code>, it will be copied to <code>__site/&#91;path/&#93;somepage/index.html</code>.</p>
 </li>
 </ul>
-<p>So for instance if we ignore auxiliary files and you have</p>
+<p>So for instance, if we ignore auxiliary files and you have</p>
 <pre><code class="language-julia">.
 ├── index.md
 ├── folder
@@ -196,7 +196,7 @@
   │       └── index.html
   └── page
       └── index.html</code></pre>
-<p>which allows to have the following URLs:</p>
+<p>which allows having the following URLs:</p>
 <div class="tlist"><ul>
 <li><p><code>&#91;website&#93;/</code></p>
 </li>
@@ -206,7 +206,7 @@
 </li>
 </ul></div>
 <h3 id="reserved_names"><a href="#reserved_names" class="header-anchor">Reserved names</a></h3>
-<p>To avoid name clashes, refrain from using the following paths where <code>/</code> indicates the topdir &#40;website folder&#41;:</p>
+<p>To avoid name clashes, refrain from using the following paths where <code>/</code> indicates the top directory &#40;website folder&#41;:</p>
 <div class="tlist"><ul>
 <li><p><code>/css/</code> or <code>/css.md</code></p>
 </li>
@@ -219,7 +219,7 @@
 <h3 id="tag_pages"><a href="#tag_pages" class="header-anchor">Tag pages</a></h3>
 <p>All pages with a given tag can be found &#40;by default&#41; at <code>&#91;website&#93;/tag/&lt;tag_name&gt;</code>. The tag page location can be changed by setting the <code>tag_page_path</code> variable in <code>config.md</code>. For example, setting <code>@def tag_page_path &#61; &quot;my_tags&quot;</code> would cause tag pages to appear at <code>&#91;website&#93;/my_tags/&lt;tag_name&gt;</code>.</p>
 <h3 id="editing_and_testing_your_website"><a href="#editing_and_testing_your_website" class="header-anchor">Editing and testing your website</a></h3>
-<p>The <code>serve</code> function can be used to launch a server which will track and render modifications. There are a few useful options you can use beyond the barebone <code>serve&#40;&#41;</code>, do <code>?serve</code> in your REPL for all options, we list a few noteworthy one below:</p>
+<p>The <code>serve</code> function can be used to launch a server which will track and render modifications. There are a few useful options you can use beyond the barebone <code>serve&#40;&#41;</code>, do <code>?serve</code> in your REPL for all options, we list a few noteworthy ones below:</p>
 <div class="tlist"><ul>
 <li><p><code>clear&#61;false</code>, whether to erase <code>__site</code> and start from a blank slate,</p>
 </li>
@@ -236,7 +236,7 @@
 </ul></div>
 <h2 id="post-processing"><a href="#post-processing" class="header-anchor">Post-processing</a></h2>
 <h3 id="verify_links"><a href="#verify_links" class="header-anchor">Verify links</a></h3>
-<p>Before deploying you may want to verify that links on your website lead somewhere, to do so use the <code>verify_links&#40;&#41;</code>. It will take a few second to verify all links on every generated pages but can be quite helpful to identify dead links or links with typos:</p>
+<p>Before deploying you may want to verify that links on your website lead somewhere, to do so use the <code>verify_links&#40;&#41;</code>. It will take a few seconds to verify all links on every generated page but can be quite helpful to identify dead links or links with typos:</p>
 <pre><code class="language-julia-repl">julia&gt; verify_links&#40;&#41;
 Verifying links... &#91;you seem online ✓&#93;
 - internal link issue on page index.md: /menu3/.</code></pre>
@@ -244,7 +244,7 @@ Verifying links... &#91;you seem online ✓&#93;
 <pre><code class="language-julia-repl">julia&gt; verify_links&#40;&#41;
 All internal and external links verified ✓.</code></pre>
 <div class="note"><div class="title">⚠ Note</div>
-<div class="content">This functionality is pretty rudimentary and while it might help you to find internal dead links, for serious work you might still want to do a second pass with a well established link-checker such as <a href="https://github.com/stevenvachon/broken-link-checker#readme">broken-link-checker</a>.</div></div>
+<div class="content">This functionality is pretty rudimentary and while it might help you to find internal dead links, for serious work you might still want to do a second pass with a well-established link-checker such as <a href="https://github.com/stevenvachon/broken-link-checker#readme">broken-link-checker</a>.</div></div>
 <h3 id="pre-rendering_and_compression"><a href="#pre-rendering_and_compression" class="header-anchor">Pre-rendering and compression</a></h3>
 <p>The <code>optimize</code> function can</p>
 <div class="tlist"><ul>
@@ -256,14 +256,14 @@ All internal and external links verified ✓.</code></pre>
 <p>See <code>?optimize</code> for options.</p>
 <p>Those two steps <em>may</em> lead to faster loading pages. Note that in order to run them, you will need a couple of external dependencies as mentioned in the <a href="/index.html#installing_optional_extras">installation section</a>.</p>
 <div class="note"><div class="title">⚠ Note</div>
-<div class="content"><p>The minifier script &#40;an external python lib&#41; used is far from perfect and can break your website, generally speaking if things work locally but not when you deploy, try disabling it with <code>optimize&#40;minify&#61;false&#41;</code>.</p>
+<div class="content"><p>The minifier script &#40;an external python lib&#41; used is far from perfect and can break your website, generally speaking, if things work locally but not when you deploy, try disabling it with <code>optimize&#40;minify&#61;false&#41;</code>.</p>
 <p>Also note that if you use GitHub or GitLab pages, the minification is not needed as these platforms compress the pages themselves.</p></div></div>
 <h3 id="publish"><a href="#publish" class="header-anchor">Publish</a></h3>
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">If you use GitHub or GitLab with a deployment action on those platforms, you do not need to use <code>publish</code>, you can just push your changes and let the relevant action do the rest on the platform. See the section on <a href="/workflow/deploy/">deployment</a>.</div></div>
 <p>Once you have synched your local folder with a remote repository &#40;see <a href="/workflow/deploy/">deployment instructions</a>&#41;, the <code>publish</code> function can be called to deploy your website; it essentially:</p>
 <div class="tlist"><ul>
-<li><p>applies an optional optimisation step &#40;see previous point&#41;,</p>
+<li><p>applies an optional optimisation step &#40;see the previous point&#41;,</p>
 </li>
 <li><p>does a <code>git add -A; git commit -am &quot;franklin-update&quot;; git push</code>.</p>
 </li>
@@ -275,7 +275,7 @@ All internal and external links verified ✓.</code></pre>
 <p>Note also that the <code>publish</code> function accepts a <code>final&#61;</code> keyword to which you can pass any function <code>&#40;&#41; -&gt; nothing</code> to do some final post-processing before pushing updates online. For instance, you can use <code>final&#61;lunr</code> where <code>lunr</code> is a function exported by Franklin which generates a Lunr search index &#40;see <a href="/extras/lunr/">this tutorial</a> for more details&#41;.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: July 24, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: August 01, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

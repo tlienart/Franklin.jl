@@ -117,7 +117,7 @@
 <!-- Content appended here (in class franklin-content) -->
 <div class="franklin-content"><h1 id="templates"><a href="#templates" class="header-anchor">Templates</a></h1>
 
-    <span style="font-size:24px;font-weight:300;">Start from one of the template or build your own.</span>
+    <span style="font-size:24px;font-weight:300;">Start from one of the templates or build your own.</span>
     
 <div class="blank"></div>
 <div class="franklin-toc"><ol><li><a href="#adapting_a_theme_to_franklin">Adapting a theme to Franklin</a><ol><li><a href="#getting_started">Getting started</a></li><li><a href="#adapting_the_head_and_foot">Adapting the head and foot</a></li><li><a href="#adapting_the_stylesheet">Adapting the stylesheet</a></li><li><a href="#adjusting_other_files">Adjusting other files</a></li></ol></li><li><a href="#making_a_pr_to_the_theme_repo">Making a PR to the theme repo</a></li></ol></div>
@@ -126,13 +126,13 @@
 <h2 id="adapting_a_theme_to_franklin"><a href="#adapting_a_theme_to_franklin" class="header-anchor">Adapting a theme to Franklin</a></h2>
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">If you end up doing this, please consider making a PR to <a href="https://github.com/tlienart/FranklinTemplates.jl">FranklinTemplates</a>&#33;</div></div>
-<p>On this page, I&#39;ll take <a href="http://jemdoc.jaboc.net/">Jemdoc&#39;s website layout</a> and show how it can be adapted to be a working Franklin template. This will hopefully also show you how to adapt / modify an existing template.</p>
+<p>On this page, I&#39;ll take <a href="http://jemdoc.jaboc.net/">Jemdoc&#39;s website layout</a> and show how it can be adapted to be a working Franklin template. This will hopefully also show you how to adapt/modify an existing template.</p>
 <p>Jemdoc&#39;s layout looks like this:</p>
 <p><img src="/assets/jemdoc/jemdoc1.png" alt="" /></p>
 <h3 id="getting_started"><a href="#getting_started" class="header-anchor">Getting started</a></h3>
 <p>In order to get a blueprint for the folder etc, let&#39;s first create a Franklin site with the <code>basic</code> template:</p>
 <pre><code class="language-julia-repl">julia&gt; newsite&#40;&quot;jemdoc&quot;, template&#61;&quot;basic&quot;&#41;</code></pre>
-<p>You can serve the site in order to see the modifications directly in your browser which can be useful to fine tune the port of the layout.</p>
+<p>You can serve the site in order to see the modifications directly in your browser which can be useful to fine-tune the port of the layout.</p>
 <p>We will need to provide the appropriate stylesheet in <code>_css/</code> and adjust the layout part in <code>_layout/</code>.</p>
 <h3 id="adapting_the_head_and_foot"><a href="#adapting_the_head_and_foot" class="header-anchor">Adapting the head and foot</a></h3>
 <p>The file <code>_layout/head.html</code> is the most important one you will have to adjust.</p>
@@ -146,7 +146,7 @@
 </li>
 </ol></div>
 <p>Let&#39;s do this gradually. The top of the original HTML can be ignored at this point so we can start modifying starting after <code>&lt;/head&gt;</code>.</p>
-<p>Jemdoc&#39;s body starts with a Google analytics script which I&#39;ll ignore as well. We then have effectively one big table element. Stripped from its content and simplified it looks like:</p>
+<p>Jemdoc&#39;s body starts with a Google Analytics script which I&#39;ll ignore as well. We then have effectively one big table element. Stripped from its content and simplified it looks like this:</p>
 <pre><code class="language-html">&lt;table id&#61;&quot;tlayout&quot;&gt;
   &lt;tr valign&#61;&quot;top&quot;&gt;
     &lt;td id&#61;&quot;layout-menu&quot;&gt;
@@ -167,7 +167,7 @@
     &lt;/td&gt;
   &lt;/tr&gt;
 &lt;/table&gt;</code></pre>
-<p>Note that I&#39;ve already filled in the <code>href&#61;</code> in the links to sub-menus.</p>
+<p>Note that I&#39;ve already filled in the <code>href&#61;</code> in the links to the sub-menus.</p>
 <p>The &quot;<code>CONTENT HERE</code>&quot; part is where what Franklin generates from Markdown will go. Therefore, anything that is <em>after</em> that should go in <code>foot.html</code>; in our current case:</p>
 <pre><code class="language-html">&lt;&#33;-- ... --&gt;
       &lt;div id&#61;&quot;footer&quot;&gt;
@@ -223,8 +223,8 @@
 <p><img src="/assets/jemdoc/jemdoc2.png" alt="" /></p>
 <p>the content is not centred in its box and overflows on the right, the menu looks ridiculous, time to do some CSS styling&#33;</p>
 <p>Let&#39;s start by removing everything from <code>_css/jemdoc.css</code>. Most of what&#39;s in there was used for the styling of the top navbar which we don&#39;t have anymore &#40;note that the styling of the content itself is in <code>franklin.css</code>, don&#39;t change that for now; note also that <code>jemdoc.css</code> is loaded <em>after</em> <code>franklin.css</code> so that you can overwrite the styles there&#41;.</p>
-<p>Let&#39;s now just copy paste the content of the <a href="http://jemdoc.jaboc.net/jemdoc.css">two</a> <a href="http://jemdoc.jaboc.net/jacob.css">original</a> stylesheets into ours and hope for the best, we may have some fine-tuning to do after this.</p>
-<p>Doing nothing else than copy pasting already helps a lot:</p>
+<p>Let&#39;s now just copy-paste the content of the <a href="http://jemdoc.jaboc.net/jemdoc.css">two</a> <a href="http://jemdoc.jaboc.net/jacob.css">original</a> stylesheets into ours and hope for the best, we may have some fine-tuning to do after this.</p>
+<p>Doing nothing else than copy-pasting already helps a lot:</p>
 <p><img src="/assets/jemdoc/jemdoc3.png" alt="" /></p>
 <p>A few things should be fixed:</p>
 <div class="tlist"><ol>
@@ -236,7 +236,7 @@
 </li>
 </ol></div>
 <h4 id="fixing_spacing"><a href="#fixing_spacing" class="header-anchor">Fixing spacing</a></h4>
-<p>Firefox or Chrome/ium&#39;s excellent dev-tools are super helpful to fine tune stylesheets. Here things are pretty straightforward though.</p>
+<p>Firefox or Chrome/ium&#39;s excellent dev-tools are super helpful to fine-tune stylesheets. Here things are pretty straightforward though.</p>
 <p>First, we need to add vertical padding above <code>&lt;h1&gt;</code> level title:</p>
 <pre><code class="language-css">h1 &#123; padding-top: 2em; &#125;</code></pre>
 <p>Then, let&#39;s widen the menu a little</p>
@@ -252,7 +252,7 @@
   margin: 0;
 &#125;</code></pre>
 <p>which you can just remove to have a bit more space around code blocks.</p>
-<p>There&#39;s probably still things that could be done to improve the layout overall &#40;and make it more responsive&#33;&#41; but we&#39;ll leave it at that.</p>
+<p>There are probably still things that could be done to improve the layout overall &#40;and make it more responsive&#33;&#41; but we&#39;ll leave it at that. </p>
 <p><img src="/assets/jemdoc/jemdoc4.png" alt="" /></p>
 <h3 id="adjusting_other_files"><a href="#adjusting_other_files" class="header-anchor">Adjusting other files</a></h3>
 <p>Here we don&#39;t need to adjust anything else but, in general, you might want to adjust the other pages:</p>
@@ -270,11 +270,11 @@
 &lt;/div&gt;</code></pre>
 <p>It should be fairly straightforward to adapt that to your needs.</p>
 <h2 id="making_a_pr_to_the_theme_repo"><a href="#making_a_pr_to_the_theme_repo" class="header-anchor">Making a PR to the theme repo</a></h2>
-<p>Let&#39;s say you&#39;ve built your own template and are pretty happy with the result and you&#39;d like to share it for other users, great, thanks&#33;</p>
+<p>Let&#39;s say you&#39;ve built your own template and are pretty happy with the result and you&#39;d like to share it with other users, great, thanks&#33;</p>
 <p>Please follow <a href="https://github.com/tlienart/FranklinTemplates.jl#fixingadding-a-template">these instructions</a>.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: July 24, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: August 01, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

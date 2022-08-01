@@ -129,7 +129,7 @@
 </li>
 </ul>
 <pre><code class="language-plaintext">This is some &#96;inline code&#96; or &#96;&#96;inline &#96; code with a tick&#96;&#96;.</code></pre>
-<p><strong>Note</strong>: To use backslash &#40;<code>\</code>&#41; at the end of inline code, you must include a trailing space to ensure the trailing tick is parsed correctly, eg <code>&#96;some code with \ &#96;</code>. The trailing space will be trimmed in the rendered html. </p>
+<p><strong>Note</strong>: To use a backslash &#40;<code>\</code>&#41; at the end of the inline code, you must include a trailing space to ensure the trailing tick is parsed correctly, eg <code>&#96;some code with \ &#96;</code>. The trailing space will be trimmed in the rendered html. </p>
 <ul>
 <li><p><strong>code blocks</strong>: it is recommended to use triple backticks &#40;&#96;&#96;&#96;&#41; optionally followed by a language name for highlighting like so:</p>
 </li>
@@ -149,7 +149,7 @@ a &#61; 2
     @show a</code></pre>
 <p><strong>Note</strong>: when either using indented code blocks or using fenced code blocks with no language name, then the code language for highlighting can be specified with the local page variable <code>lang</code> i.e. <code>@def lang &#61; &quot;julia&quot;</code> &#40;which is the default&#41; or <code>@def lang &#61; &quot;&quot;</code> if you don&#39;t want the code to be highlighted.</p>
 <h3 id="evaluating_code"><a href="#evaluating_code" class="header-anchor">Evaluating code</a></h3>
-<p>When presenting code in a post, it&#39;s often convenient to have a way to check the code works and the output shown corresponds to the code. In Franklin there are two approaches that help you for this:</p>
+<p>When presenting code in a post, it&#39;s often convenient to have a way to check that the code works and that the output shown corresponds to the code. In Franklin, there are two approaches that help you with it:</p>
 <div class="tlist"><ol>
 <li><p>For Julia code, a <strong>live-evaluation</strong> of code blocks is supported,</p>
 </li>
@@ -158,9 +158,9 @@ a &#61; 2
 </ol></div>
 <p><strong>Note</strong>: Disabling code evaluation &#40;e.g., when presenting incomplete code snippets in tutorials or courses that would error upon evaluation&#41;, can be specified with the local page variable <code>noeval &#61; true</code> &#40;default <code>false</code>&#41;.</p>
 <h2 id="live_evaluation_julia"><a href="#live_evaluation_julia" class="header-anchor">Live evaluation &#40;Julia&#41;</a></h2>
-<p>Julia code blocks can be evaluated on the fly and their output either displayed as code or re-interpreted as Markdown.</p>
+<p>Julia code blocks can be evaluated on the fly and their output is either displayed as code or re-interpreted as Markdown.</p>
 <div class="note"><div class="title">⚠ Note</div>
-<div class="content"><strong>Evaluation time</strong>: when a code block is created or modified and the page is saved, it will trigger a page build that will <em>wait</em> for the evaluation of the code block to complete. So if your code block takes a long time to execute, the page will not be updated before that&#39;s done.     That being said, if you don&#39;t modify the code block, it will only be executed <strong>once</strong> as the output is saved to file.</div></div>
+<div class="content"><strong>Evaluation time</strong>: when a code block is created or modified and the page is saved, it will trigger a page build that will <em>wait</em> for the evaluation of the code block to complete. So if your code block takes a long time to execute, the page will not be updated before that&#39;s done.     That being said, if you don&#39;t modify the code block, it will only be executed <strong>once</strong> as the output is saved to a file.</div></div>
 <p>Code blocks that <em>should not</em> be evaluated should be added as per standard markdown, so for instance:</p>
 <pre><code class="language-julia">&#96;&#96;&#96;julia
 a &#61; 10
@@ -177,12 +177,12 @@ a &#61; 10
 <li><p>run the code and capture its output &#40;<code>STDOUT</code>&#41; and write it to <code>/assets/&#91;subpath&#93;/code/output/ex1.out</code></p>
 </li>
 </ol></div>
-<p>The <code>&#91;subpath&#93;</code> here is the <em>exact same sub-path structure</em> than to the page where the code block is inserted. To clarify, let&#39;s say you wrote the above code-block in</p>
+<p>The <code>&#91;subpath&#93;</code> here is the <em>exact same sub-path structure</em> as the page where the code block is inserted. To clarify, let&#39;s say you wrote the above code block in</p>
 <pre><code class="language-julia">/folder1/page1.md</code></pre>
 <p>then with the syntax above, the script will be saved in</p>
 <pre><code class="language-julia">/__site/assets/folder1/code/ex1.jl</code></pre>
 <h3 id="more_on_paths"><a href="#more_on_paths" class="header-anchor">More on paths</a></h3>
-<p>There are three ways you can specify where the script corresponding to a code-block should be saved.</p>
+<p>There are three ways you can specify where the script corresponding to a code block should be saved.</p>
 <div class="tlist"><ol>
 <li><p><em>relative to the page</em>: <code>./&#91;p&#93;/script</code> is as above, it will write the code block to <code>/assets/&#91;subpath&#93;/p/script.jl</code> where <code>subpath</code> corresponds to the sub-path of the page where the code block is inserted &#40;path below <code>/src/</code>&#41;</p>
 </li>
@@ -205,7 +205,7 @@ a &#61; &#91;1, 2, 3&#93;
 <pre><code class="language-html">&lt;pre&gt;&lt;code class&#61;&quot;language-julia&quot;&gt;dot&#40;a, a&#41; &#61; 14&lt;/code&gt;&lt;/pre&gt;</code></pre>
 <p>and will look like</p>
 <pre><code class="language-julia">dot&#40;a, a&#41; &#61; 14</code></pre>
-<p>If you now change the vector <code>a</code> in the code block, the page will be re-compiled with the code-block re-evaluated and the new output will be shown.</p>
+<p>If you now change the vector <code>a</code> in the code block, the page will be re-compiled with the code block re-evaluated and the new output will be shown.</p>
 <p>If you would like the output to be re-interpeted by Franklin as text, you can use <code>\textoutput</code> instead. Here&#39;s an example:</p>
 <pre><code class="language-julia">&#96;&#96;&#96;julia:./code_pg1/ex2
 using Statistics
@@ -279,17 +279,17 @@ for α in 1:5
     plot&#40;x, sinc.&#40;α .* x&#41;&#41;
 end</code></pre>
 <img src="/assets/code/code/output/sinc.svg" alt="">
-<p><strong>Note</strong>: observe that here everything is done with relative paths, <code>pyplot1</code> is placed in the <code>/assets/</code> folder relatively to the path of the current page and the <code>\fig</code> since it&#39;s given a path that doesn&#39;t start with <code>/</code> or <code>./</code> will also  look in  that folder to try to find a figure which starts with the name <code>sinc</code>. See also <a href="#more_on_paths">more about paths</a>.</p>
+<p><strong>Note</strong>: observe that here everything is done with relative paths, <code>pyplot1</code> is placed in the <code>/assets/</code> folder relatively to the path of the current page and the <code>\fig</code> since it&#39;s given a path that doesn&#39;t start with <code>/</code> or <code>./</code> will also look in that folder to try to find a figure which starts with the name <code>sinc</code>. See also <a href="#more_on_paths">more about paths</a>.</p>
 <p><strong>Note</strong>: If you wish to use <code>Plots.jl</code> and deploy to GitHub pages, you will need to modify the <code>.github/workflows/Deploy.yml</code> by adding <code>env: GKSwstype: &quot;100&quot;</code> before the <code>- name: Build and Deploy</code> line. <a href="https://github.com/storopoli/Bayesian-Julia/blob/master/.github/workflows/Deploy.yml">Here</a> is an example.</p>
 <h3 id="troubleshooting"><a href="#troubleshooting" class="header-anchor">Troubleshooting</a></h3>
-<p>A few  things can go  wrong when attempting to use and evaluate code blocks. The first thing to do  if no output is shown or an error appears is to  make sure that:</p>
+<p>A few things can go wrong when attempting to use and evaluate code blocks. The first thing to do when no output is shown or when an error appears is to make sure that:</p>
 <div class="tlist"><ol>
 <li><p>if the code uses packages, these packages are available in the local environment,</p>
 </li>
 <li><p>the code &quot;just works&quot; in the REPL.</p>
 </li>
 </ol></div>
-<p>If this is the case and you  still have issues, then  you may want to force re-evaluation of the code on the page. In such a case, try adding <code>@def reeval &#61; true</code> on the page which will cause <strong>all</strong> code blocks on the page to be completely re-evaluated and their output re-generated. Assuming that helped, you will then want to remove that line as  otherwise that page will be fully  re-evaluated <em>every single time the page is modified</em> which will cause  an unnecessary overhead.</p>
+<p>If this is the case and you still have issues, then you may want to force a re-evaluation of the code on the page. In such a case, try adding <code>@def reeval &#61; true</code> on the page which will cause <strong>all</strong> code blocks on the page to be completely re-evaluated and their output re-generated. Assuming that helped, you will then want to remove that line as otherwise that page will be fully re-evaluated <em>every single time the page is modified</em> which will cause unnecessary overhead.</p>
 <p><strong>Important note</strong>: unless you explicitly use <code>@def reeval &#61; true</code>, code blocks are evaluated <em>only</em> if:</p>
 <div class="tlist"><ul>
 <li><p>an earlier code block has been evaluated &#40;in which case, since their results may depend on  it, all subsequent blocks  are  re-evaluated&#41;,</p>
@@ -297,7 +297,7 @@ end</code></pre>
 <li><p>the content of the code block has changed.</p>
 </li>
 </ul></div>
-<p>An example where this can be a bit tricky is if your code block calls a function on a file, for instance <code>read&#40;file, String&#41;</code>; if the underlying <em>file</em> is changed, the code block will <strong>not</strong> be re-evaluated &#40;since the code doesn&#39;t change&#41;, so in such cases you will want to use a <code>@def reeval &#61; true</code>.</p>
+<p>An example where this can be a bit tricky is if your code block calls a function on a file, for instance <code>read&#40;file, String&#41;</code>; if the underlying <em>file</em> is changed, the code block will <strong>not</strong> be re-evaluated &#40;since the code doesn&#39;t change&#41;, so in such cases, you will want to use a <code>@def reeval &#61; true</code>.</p>
 <h2 id="offline_evaluation_any_language"><a href="#offline_evaluation_any_language" class="header-anchor">Offline evaluation &#40;any language&#41;</a></h2>
 <p>The philosophy here is:</p>
 <div class="tlist"><ul>
@@ -305,7 +305,7 @@ end</code></pre>
 </li>
 <li><p>run some or all of the snippets &#40;before running Franklin&#41;,</p>
 </li>
-<li><p>use <code>\input&#123;...&#125;&#123;...&#125;</code> in your markdown &#40;see below&#41; and when the website is updated, it will plug-in the most recent parts that have been generated.</p>
+<li><p>use <code>\input&#123;...&#125;&#123;...&#125;</code> in your markdown &#40;see below&#41; and when the website is updated, it will plug in the most recent parts that have been generated.</p>
 </li>
 </ul></div>
 <p>That way, if you modify the code, everything will be updated on the website too while ensuring that the code actually runs and generates the output you&#39;re displaying.</p>
@@ -341,17 +341,17 @@ include&#40;&quot;script2.jl&quot;&#41;</code></pre>
 <h3 id="plain-text_output"><a href="#plain-text_output" class="header-anchor">Plain-text output</a></h3>
 <p>In order to insert the plain-text output of a script, you can use</p>
 <pre><code class="language-julia">\output&#123;scripts/script1.jl&#125;</code></pre>
-<p>This will insert the content of the file <code>/assets/scripts/script1.out</code> into a non-highlighted code-block.</p>
+<p>This will insert the content of the file <code>/assets/scripts/script1.out</code> into a non-highlighted code block.</p>
 <h3 id="plot_output"><a href="#plot_output" class="header-anchor">Plot output</a></h3>
 <p>In order to insert a plot generated by a script, you can use <code>\fig</code> as indicated earlier or</p>
 <pre><code class="language-julia">\input&#123;plot&#125;&#123;scripts/script1.jl&#125;</code></pre>
 <p>or <code>\input&#123;plot:id&#125;&#123;scripts/script1.jl&#125;</code>. This will look for an image file with root name <code>/assets/scripts/script1.ext</code> where <code>ext</code> is <code>gif, png, jp&#40;e&#41;g, svg</code>. If you use <code>plot:id</code> then it will look for an image file with root name <code>/assets/scripts/script1id.ext</code>.</p>
 <p>The <code>plot:id</code> option is useful if you have a script that generates several plots for instance.</p>
 <h3 id="slicing_up"><a href="#slicing_up" class="header-anchor">Slicing up</a></h3>
-<p>The structure in the <code>generate_results.jl</code> effectively means that all your code is run as one big script. This also means that if you want to slice some of your code in several parts and show intermediate outputs &#40;e.g. plots&#41;, you can just do that by having a <code>script_1_p1.jl</code>, <code>script_1_p2.jl</code> etc. and then just use <code>\input</code> multiple times.</p>
+<p>The structure in the <code>generate_results.jl</code> effectively means that all your code is run as one big script. This also means that if you want to slice some of your code into several parts and show intermediate outputs &#40;e.g. plots&#41;, you can just do that by having a <code>script_1_p1.jl</code>, <code>script_1_p2.jl</code> etc. and then just use <code>\input</code> multiple times.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: July 24, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: August 01, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

@@ -117,8 +117,8 @@
 <!-- Content appended here (in class franklin-content) -->
 <div class="franklin-content"><h1 id="add_search_with_lunr"><a href="#add_search_with_lunr" class="header-anchor">Add search with Lunr</a></h1>
 <p><div class="franklin-toc"><ol><li><a href="#pre-requisites">Pre-requisites</a><ol><li><a href="#libraries">Libraries</a></li><li><a href="#files">Files</a></li><li><a href="#index_builder">Index builder</a></li><li><a href="#client">Client</a></li></ol></li><li><a href="#adding_a_search_box">Adding a search box</a><ol><li><a href="#adding_a_form_in_headhtml">Adding a form in <code>head.html</code></a></li><li><a href="#target_search_page">Target search page</a></li></ol></li><li><a href="#buildingupdating_the_index">Building/updating the index</a></li></ol></div><div class="blank"></div></p>
-<p><a href="https://lunrjs.com/"><code>lunr.js</code></a> is a neat little Javascript library that allows to equip your website with a search functionality fairly easily.</p>
-<p>The steps below show a simple way of doing this matching what is done on this website. Once it&#39;s working, you might want to adjust  the <code>build_index.js</code> and/or the <code>lunrclient.js</code> to match your needs.</p>
+<p><a href="https://lunrjs.com/"><code>lunr.js</code></a> is a neat little Javascript library that equips your website with a search functionality fairly easily.</p>
+<p>The steps below show a simple way of doing this matching what is done on this website. Once it&#39;s working, you might want to adjust the <code>build_index.js</code> and/or the <code>lunrclient.js</code> to match your needs.</p>
 <h2 id="pre-requisites"><a href="#pre-requisites" class="header-anchor">Pre-requisites</a></h2>
 <h3 id="libraries"><a href="#libraries" class="header-anchor">Libraries</a></h3>
 <p>Install <code>lunr</code> and <code>cheerio</code> &#40;a HTML parser&#41; with <code>node</code> locally:</p>
@@ -127,7 +127,7 @@
 <p>&#40;you might have to add <code>sudo</code> before <code>npm</code>&#41;.</p>
 <h3 id="files"><a href="#files" class="header-anchor">Files</a></h3>
 <p>Copy <a href="https://github.com/tlienart/Franklin.jl/tree/master/docs/_libs/lunr">this folder</a> to a <code>/_libs/lunr/</code> directory. Discard the <code>lunr_index.js</code> which is the index of this website, a version for your website will be generated dynamically.</p>
-<p>The important files are <code>build_index.js</code> and <code>lunrclient.js</code> &#40;of  which a minified version is provided which you will want to re-generate if you modify the base file&#41;. These files are adapted from <a href="https://github.com/BLE-LTER/Lunr-Index-and-Search-for-Static-Sites">this repository</a> which shows how to use Lunr on a static website.</p>
+<p>The important files are <code>build_index.js</code> and <code>lunrclient.js</code> &#40;of which a minified version is provided which you will want to re-generate if you modify the base file&#41;. These files are adapted from <a href="https://github.com/BLE-LTER/Lunr-Index-and-Search-for-Static-Sites">this repository</a> which shows how to use Lunr on a static website.</p>
 <p>You can choose whether to serve your own copy of <code>lunr.min.js</code> &#40;done here&#41; or to use an online version via</p>
 <pre><code class="language-html">&lt;script src&#61;&quot;https://unpkg.com/lunr/lunr.js&quot;&gt;&lt;/script&gt;</code></pre>
 <h3 id="index_builder"><a href="#index_builder" class="header-anchor">Index builder</a></h3>
@@ -135,10 +135,10 @@
 <div class="tlist"><ul>
 <li><p>it goes over all files in a <code>HTML_FOLDER</code> &#40;by default: <code>/__site/</code>&#41;,</p>
 </li>
-<li><p>it builds an index <code>lunr_index.js</code> which can subsequently be queried  upon the user entering search terms.</p>
+<li><p>it builds an index <code>lunr_index.js</code> which can subsequently be queried upon the user entering search terms.</p>
 </li>
 </ul></div>
-<p>By default, the index built is fairly barebone to reduce the size of the generated index. If you want fancier search, you might want to modify this a bit to add a preview of the page, boost results depending on where there are &#40;title, keyword, ...&#41;, add stop words, etc. &#40;Refer to the <a href="https://lunrjs.com/docs/index.html">Lunr docs</a> for this as well as <a href="https://github.com/BLE-LTER/Lunr-Index-and-Search-for-Static-Sites">the example repo</a> mentioned earlier or <a href="https://github.com/JuliaDocs/Documenter.jl/blob/master/assets/html/search.js">Documenter.jl</a>&#39;s version&#41;.</p>
+<p>By default, the index built is fairly barebone to reduce the size of the generated index. If you want a fancier search, you might want to modify this a bit to add a preview of the page, boost results depending on where there are &#40;title, keyword, ...&#41;, add stop words, etc. &#40;Refer to the <a href="https://lunrjs.com/docs/index.html">Lunr docs</a> for this as well as <a href="https://github.com/BLE-LTER/Lunr-Index-and-Search-for-Static-Sites">the example repo</a> mentioned earlier or <a href="https://github.com/JuliaDocs/Documenter.jl/blob/master/assets/html/search.js">Documenter.jl</a>&#39;s version&#41;.</p>
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">Modify this file at will but be careful with the lines with <code>PATH_PREPEND</code> if your website is a project website &#40;i.e. the root URL is something like <code>username.github.io/project/</code>&#41;. These lines help ensure that the generated links are valid. See also the section on <a href="#buildingupdating_the_index">updating the index</a>.</div></div>
 <h3 id="client"><a href="#client" class="header-anchor">Client</a></h3>
@@ -149,7 +149,7 @@
 <li><p>display the results</p>
 </li>
 </ul></div>
-<p>You might want to modify the <code>parseLunrResults</code> if you want the results to be  displayed differently.</p>
+<p>You might want to modify the <code>parseLunrResults</code> if you want the results to be displayed differently.</p>
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">If you modify this file, make sure it&#39;s called properly in the <code>_layout/index.html</code> and, eventually, <a href="https://jscompress.com/">minify it</a>.</div></div>
 <h2 id="adding_a_search_box"><a href="#adding_a_search_box" class="header-anchor">Adding a search box</a></h2>
@@ -185,7 +185,7 @@ Number of results found: ~~~&lt;span id&#61;&quot;resultCount&quot;&gt;&lt;/span
 ~~~
 &lt;div id&#61;&quot;searchResults&quot;&gt;&lt;/div&gt;
 ~~~</code></pre>
-<p>Note that if you modify the <code>id</code> of these elements, you  will need to adapt the <code>lunrclient</code> file&#40;s&#41; accordingly.</p>
+<p>Note that if you modify the <code>id</code> of these elements, you will need to adapt the <code>lunrclient</code> file&#40;s&#41; accordingly.</p>
 <h2 id="buildingupdating_the_index"><a href="#buildingupdating_the_index" class="header-anchor">Building/updating the index</a></h2>
 <p>Franklin exports a <code>lunr&#40;&#41;</code> function which</p>
 <div class="tlist"><ul>
@@ -202,12 +202,12 @@ Number of results found: ~~~&lt;span id&#61;&quot;resultCount&quot;&gt;&lt;/span
 <li><p>Call <code>lunr&#40;&#41;</code> or <code>lunr&#40;prepath&#41;</code> if there is a prepath and then publish your updates manually.</p>
 </li>
 </ol></div>
-<p>The <code>publish&#40;final&#61;lunr&#41;</code> calls the <code>lunr</code> function as a last step prior to doing a <code>git push</code>. An advantage of using this is that Franklin will properly handle the <code>prepath</code> if there is one defined in  your <code>config.md</code>.</p>
+<p>The <code>publish&#40;final&#61;lunr&#41;</code> calls the <code>lunr</code> function as the last step prior to doing a <code>git push</code>. An advantage of using this is that Franklin will properly handle the <code>prepath</code> if there is one defined in your <code>config.md</code>.</p>
 <div class="note"><div class="title">⚠ Note</div>
 <div class="content">This <code>final&#61;</code> keyword can be used with your own functions <code>&#40;&#41;-&gt;nothing</code> if you need to do some post-processing with the generated files before pushing.</div></div>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: July 24, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: August 01, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
