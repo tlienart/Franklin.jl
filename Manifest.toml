@@ -68,9 +68,9 @@ version = "0.12.8"
 
 [[deps.Compat]]
 deps = ["Dates", "LinearAlgebra", "UUIDs"]
-git-tree-sha1 = "924cdca592bc16f14d2f7006754a621735280b74"
+git-tree-sha1 = "5856d3031cdb1f3b2b6340dfdc66b6d9a149a374"
 uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "4.1.0"
+version = "4.2.0"
 
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -141,9 +141,9 @@ version = "0.10.76"
 
 [[deps.FranklinTemplates]]
 deps = ["LiveServer"]
-git-tree-sha1 = "d15c3043dc90d5df4e499f66a2e3a9c676a41240"
+git-tree-sha1 = "5164268efb55a222fe5f8034e62f45e9ff09b013"
 uuid = "3a985190-f512-4703-8d38-2a7944ed5916"
-version = "0.8.28"
+version = "0.8.29"
 
 [[deps.FunctionalCollections]]
 deps = ["Test"]
@@ -259,19 +259,24 @@ uuid = "98b081ad-f1c9-55d3-8b20-4c87d4299306"
 version = "2.13.4"
 
 [[deps.LiveServer]]
-deps = ["Crayons", "FileWatching", "HTTP", "Pkg", "Sockets", "Test"]
-git-tree-sha1 = "707f77cd832ed02fddcf5b914dbab70cbf0e463b"
+deps = ["Crayons", "FileWatching", "HTTP", "MIMEs", "Pkg", "Sockets", "Test"]
+git-tree-sha1 = "8c1fbc58306bd8762bab0169b957874cb258c118"
 uuid = "16fef848-5104-11e9-1b77-fb7a48bbb589"
-version = "0.7.4"
+version = "0.9.2"
 
 [[deps.LogExpFunctions]]
 deps = ["ChainRulesCore", "ChangesOfVariables", "DocStringExtensions", "InverseFunctions", "IrrationalConstants", "LinearAlgebra"]
-git-tree-sha1 = "361c2b088575b07946508f135ac556751240091c"
+git-tree-sha1 = "94d9c52ca447e23eac0c0f074effbcd38830deb5"
 uuid = "2ab3a3ac-af41-5b50-aa03-7779005ae688"
-version = "0.3.17"
+version = "0.3.18"
 
 [[deps.Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
+
+[[deps.MIMEs]]
+git-tree-sha1 = "65f28ad4b594aebe22157d6fac869786a255b7eb"
+uuid = "6c6e2e6c-3030-632d-7369-2d6c69616d65"
+version = "0.1.4"
 
 [[deps.MacroTools]]
 deps = ["Markdown", "Random"]
@@ -285,9 +290,9 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 
 [[deps.MbedTLS]]
 deps = ["Dates", "MbedTLS_jll", "MozillaCACerts_jll", "Random", "Sockets"]
-git-tree-sha1 = "14cb991ee7ccc6dabda93d310400575c3cae435b"
+git-tree-sha1 = "d9ab10da9de748859a7780338e1d6566993d1f25"
 uuid = "739be429-bea8-5141-9913-cc70e7f3736d"
-version = "1.1.2"
+version = "1.1.3"
 
 [[deps.MbedTLS_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -390,15 +395,15 @@ uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 
 [[deps.PyCall]]
 deps = ["Conda", "Dates", "Libdl", "LinearAlgebra", "MacroTools", "Serialization", "VersionParsing"]
-git-tree-sha1 = "1fc929f47d7c151c839c5fc1375929766fb8edcc"
+git-tree-sha1 = "53b8b07b721b77144a0fbbbc2675222ebf40a02d"
 uuid = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
-version = "1.93.1"
+version = "1.94.1"
 
 [[deps.PyPlot]]
 deps = ["Colors", "LaTeXStrings", "PyCall", "Sockets", "Test", "VersionParsing"]
-git-tree-sha1 = "14c1b795b9d764e1784713941e787e1384268103"
+git-tree-sha1 = "f9d953684d4d21e947cb6d642db18853d43cb027"
 uuid = "d330b81b-6aea-500a-939a-2ce795aea3ee"
-version = "2.10.0"
+version = "2.11.0"
 
 [[deps.REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
