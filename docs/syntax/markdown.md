@@ -74,6 +74,8 @@ This has a footnote[^1]
 [^1]: footnote definition
 ```
 
+**Note**: footnotes are expected to be on a single line, this is due to a limitation of the parser.
+
 For images, just add an exclamation mark `!`:
 
 ```markdown
@@ -475,4 +477,4 @@ The standard way of creating tables in Markdown, namely using:
 | LaTeX     | KaTeX     | MikTeX    |
 ```
 
-can also be used. It is also possible to use HTML to create a table with the HTML fenced between `~~~`. 
+can also be used. It is also possible to use HTML to create a table with the HTML fenced between `~~~`.
