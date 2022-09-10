@@ -126,7 +126,7 @@
 <h2 id="deploying_on_an_existing_web_server"><a href="#deploying_on_an_existing_web_server" class="header-anchor">Deploying on an existing web server</a></h2>
 <p>The contents of the <code>__site</code> folder can simply be deployed to a path on an existing server as follows. Supposing you wish your site to appear at <code>http://my.example.com/path/to/my/franklin/site/</code>.  You would take the following steps:</p>
 <ul>
-<li><p>Prepare the <code>__site</code> directory by running <code>optimize&#40; prepath&#61;&#39;/path/to/my/franklin/site/&#39;, minify &#61; false &#41;</code>.</p>
+<li><p>Prepare the <code>__site</code> directory by running <code>optimize&#40;prepath&#61;&quot;/path/to/my/franklin/site/&quot;, minify&#61;false&#41;</code>.</p>
 </li>
 </ul>
 <p>Franklin.jl does not use relative links, so this step is needed to ensure that the links between site elements are correct. &#40;The <code>minify &#61; false</code> argument is optional but is currently recommended.&#41;</p>
@@ -287,7 +287,7 @@ jobs:
           GITHUB_TOKEN: &#36;&#123;&#123; secrets.GITHUB_TOKEN &#125;&#125;</code></pre>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: September 08, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: September 10, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
