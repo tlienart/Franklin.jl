@@ -74,7 +74,7 @@ $SIGNATURES
 
 Convenience function to take a markdown string (e.g. produced by a latex command) and re-parse it.
 """
-function reprocess(s::AS, lxdefs::Vector{<:LxDef}; nostripp=false) where T
+function reprocess(s::AS, lxdefs::Vector{<:LxDef}; nostripp=false)
     r = convert_md(s, lxdefs;
                    isrecursive=true, isconfig=false, has_mddefs=false,
                    nostripp=nostripp)
