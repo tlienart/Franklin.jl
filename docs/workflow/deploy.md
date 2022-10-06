@@ -187,20 +187,20 @@ the second line only keeps track of the "prepath" of that preview URL so that it
 Finally, we want to deploy the main website and the PR preview on different branches (and folders):
 ```yml
 - name: Deploy (preview)
-if: github.event_name == 'pull_request' && github.repository == github.event.pull_request.head.repo.full_name # if this build is a PR build and the PR is NOT from a fork
-uses: JamesIves/github-pages-deploy-action@releases/v3
-with:
-    BRANCH: gh-preview # The branch where the PRs previews are stored
-    FOLDER: __site
-    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    TARGET_FOLDER: "previews/PR${{ github.event.number }}" # The website preview is going to be stored in a subfolder
+  if: github.event_name == 'pull_request' && github.repository == github.event.pull_request.head.repo.full_name # if this build is a PR build and the PR is NOT from a fork
+  uses: JamesIves/github-pages-deploy-action@releases/v3
+  with:
+      BRANCH: gh-preview # The branch where the PRs previews are stored
+      FOLDER: __site
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TARGET_FOLDER: "previews/PR${{ github.event.number }}" # The website preview is going to be stored in a subfolder
 - name: Deploy (main)
-if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
-uses: JamesIves/github-pages-deploy-action@releases/v3
-with:
-    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    BRANCH: gh-pages # Replace here the branch where your website is deployed
-    FOLDER: __site
+  if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+  uses: JamesIves/github-pages-deploy-action@releases/v3
+  with:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      BRANCH: gh-pages # Replace here the branch where your website is deployed
+      FOLDER: __site
 ```
 
 Now to avoid problems with the subfolder structure of our website we need to make a small change to our `config.md` file.
