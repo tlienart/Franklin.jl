@@ -199,7 +199,7 @@ See `?publish` for more information.
 
 In any case, before deploying, if you're working on a _project website_ i.e. a website whose root URL will look like `username.gitlab.io/project/` then you should add the following line in your `config.md` file:
 
-```markdown
+```julia
 @def prepath = "project"
 ```
 

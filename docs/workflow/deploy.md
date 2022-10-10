@@ -33,7 +33,7 @@ Your site should now be live, with the index page appearing at `http://my.exampl
 Start by creating an empty GitHub repository
 
 @@tlist
-* for a personal (or org) website the repository **must** be named `username.github.io` (or `orgname.github.io`) see also [the Github pages docs](https://pages.github.com/),
+* for a personal (or org) website the repository **must** be named `username.github.io` (or `orgname.github.io`) see also [the Github pages docs](https://pages.github.com/).
 * for a project website the repo can be named anything you want, let's say `myWebsite`.
 @@
 
