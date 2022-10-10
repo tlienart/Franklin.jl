@@ -102,6 +102,18 @@ You might want to customise the GitHub action for instance:
 For all such operations, modify the file `.github/workflows/deploy.yml` in your site folder.
 It should be fairly straightforward to see how to extend it but if you get stuck, ask on the **#franklin** slack channel.
 
+### Migrating to the new GitHub Pages infrastructure
+
+GitHub Pages has a whole new revamped infrastructure and workflow that does not require maintaining
+an extra `gh-pages` branch. The `gh-pages`/`gh-previews` would still be required if you have PR previews
+on for your project  (more about this in the "Previewing Pull Requests" section below). Read more
+about how you can migrate your current infrastructure to the new format -
+
+@@tlist
+- [github pages official docs](https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll)
+- [new workflow examples](https://github.com/actions/starter-workflows/tree/main/pages)
+@@
+
 ### Troubleshooting
 
 If something failed, that you can't debug, ask on the **#franklin** slack channel explaining what's the issue and we'll try to help you out.
@@ -233,13 +245,13 @@ Once everything is set up you will be able to visualize your PR preview on `{net
 
 ### GitHub Pages
 
-GitHub pages can also be used to deploy PR previews, but you will have to store the
+GitHub pages can also be used to deploy PR previews, but you will need to store the
 previews and the original rendered website in a single git branch. The previews will
 be stored in a sub-folder inside your generated website; hence, make sure this
 folder's name (the folder where previews are stored) does not conflict with an
 existing folder in your website.
 
-In the workflows below, we use the folder name "previews" to store PR previews.
+In the workflows below, we use a folder named "previews" to store the PR previews.
 
 After the `Checkout` action add the following:
 
