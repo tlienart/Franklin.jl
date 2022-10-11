@@ -9,11 +9,11 @@ Convenience function to assemble the html of a page out of its parts:
 function build_page(head, content, pgfoot, foot)
     # (legacy support) if div_content is offered explicitly, it takes
     # precedence, otherwise use defaults
-    dc = globvar("div_content")
+    dc = locvar("div_content")
     if isempty(dc)
-        content_tag   = globvar("content_tag")
-        content_class = globvar("content_class")
-        content_id    = globvar("content_id")
+        content_tag   = locvar("content_tag")
+        content_class = locvar("content_class")
+        content_id    = locvar("content_id")
     else
         content_tag   = "div"
         content_class = dc
