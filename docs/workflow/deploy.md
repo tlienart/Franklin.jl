@@ -227,14 +227,18 @@ Finally, we want to deploy the main website and the PR preview on different bran
 
 Now to avoid problems with the subfolder structure of our website we need to make a small change to our `config.md` file.
 Change the following lines
-```julia
-@def prepath     = "myprepath" # This is possibly "" for your case
-@def website_url = "mywebsite.github.io"
+```markdown
++++
+prepath     = "myprepath" # This is possibly "" for your case
+website_url = "mywebsite.github.io"
++++
 ```
 to
-```julia
-@def prepath     = get(ENV, "PREVIEW_FRANKLIN_PREPATH", "myprepath") # In the third argument put the prepath you normally use
-@def website_url = get(ENV, "PREVIEW_FRANKLIN_WEBSITE_URL", "mywebsite.github.io") # Just put the website name
+```markdown
++++
+@prepath     = get(ENV, "PREVIEW_FRANKLIN_PREPATH", "myprepath") # In the third argument put the prepath you normally use
+@website_url = get(ENV, "PREVIEW_FRANKLIN_WEBSITE_URL", "mywebsite.github.io") # Just put the website name
++++
 ```
 
 Now for the final step, you will need to visualize the obtained previews.
@@ -290,14 +294,18 @@ Finally, we want to deploy the main website and the PR preview on the same branc
 Now to avoid problems with the subfolder structure of our website we need to make a small change to our `config.md` file.
 Change the following lines
 
-```julia
-@def prepath     = "myprepath" # This is possibly "" for your case
-@def website_url = "mywebsite.github.io"
+```markdown
++++
+prepath     = "myprepath" # This is possibly "" for your case
+website_url = "mywebsite.github.io"
++++
 ```
 to
-```julia
-@def prepath     = get(ENV, "PREVIEW_FRANKLIN_PREPATH", "myprepath") # In the third argument put the prepath you normally use
-@def website_url = get(ENV, "PREVIEW_FRANKLIN_WEBSITE_URL", "mywebsite.github.io") # Just put the website name
+```markdown
++++
+prepath     = get(ENV, "PREVIEW_FRANKLIN_PREPATH", "myprepath") # In the third argument put the prepath you normally use
+website_url = get(ENV, "PREVIEW_FRANKLIN_WEBSITE_URL", "mywebsite.github.io") # Just put the website name
++++
 ```
 
 Once everything is set up you will be able to visualize your PR preview on `{github username}.github.io/previews/PR{number of your PR}`.
