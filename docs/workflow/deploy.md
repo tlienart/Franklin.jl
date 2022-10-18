@@ -310,6 +310,8 @@ website_url = get(ENV, "PREVIEW_FRANKLIN_WEBSITE_URL", "mywebsite.github.io") # 
 
 Once everything is set up you will be able to visualize your PR preview on `{github username}.github.io/previews/PR{number of your PR}`.
 
+For a live demo of PR previews deployed using GitHub Pages, have a look at [FluxML's website](https://fluxml.ai) ([repo](https://github.com/FluxML/fluxml.github.io))!
+
 ### PR Comments
 
 You can make things easier for your contributors to access it by adding a comment with a link to your PR automatically.
