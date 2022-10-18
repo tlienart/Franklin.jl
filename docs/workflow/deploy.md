@@ -236,8 +236,8 @@ website_url = "mywebsite.github.io"
 to
 ```markdown
 +++
-@prepath     = get(ENV, "PREVIEW_FRANKLIN_PREPATH", "myprepath") # In the third argument put the prepath you normally use
-@website_url = get(ENV, "PREVIEW_FRANKLIN_WEBSITE_URL", "mywebsite.github.io") # Just put the website name
+prepath     = get(ENV, "PREVIEW_FRANKLIN_PREPATH", "myprepath") # In the third argument put the prepath you normally use
+website_url = get(ENV, "PREVIEW_FRANKLIN_WEBSITE_URL", "mywebsite.github.io") # Just put the website name
 +++
 ```
 
