@@ -135,9 +135,9 @@ version = "0.8.4"
 
 [[deps.Franklin]]
 deps = ["Dates", "DelimitedFiles", "DocStringExtensions", "ExprTools", "FranklinTemplates", "HTTP", "Literate", "LiveServer", "Logging", "Markdown", "NodeJS", "OrderedCollections", "Pkg", "REPL", "Random", "TOML"]
-git-tree-sha1 = "3f20cb3cd5eadb1c770cd100e3987ace634b96eb"
+git-tree-sha1 = "c07db28f07a2b8bc8e8cf93f6dfb64051f23c1a7"
 uuid = "713c75ef-9fc9-4b05-94a9-213340da978e"
-version = "0.10.78"
+version = "0.10.79"
 
 [[deps.FranklinTemplates]]
 deps = ["LiveServer"]
@@ -357,9 +357,9 @@ version = "0.12.3"
 
 [[deps.Parsers]]
 deps = ["Dates"]
-git-tree-sha1 = "595c0b811cf2bab8b0849a70d9bd6379cc1cfb52"
+git-tree-sha1 = "6c01a9b494f6d2a9fc180a08b182fcb06f0958a0"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.4.1"
+version = "2.4.2"
 
 [[deps.Pidfile]]
 deps = ["FileWatching", "Test"]

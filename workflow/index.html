@@ -270,12 +270,14 @@ All internal and external links verified ✓.</code></pre>
 </ul></div>
 <p>See <code>?publish</code> for more information.</p>
 <p>In any case, before deploying, if you&#39;re working on a <em>project website</em> i.e. a website whose root URL will look like <code>username.gitlab.io/project/</code> then you should add the following line in your <code>config.md</code> file:</p>
-<pre><code class="language-markdown">@def prepath &#61; &quot;project&quot;</code></pre>
+<pre><code class="language-markdown">&#43;&#43;&#43;
+prepath &#61; &quot;project&quot;
+&#43;&#43;&#43;</code></pre>
 <p>the <code>publish</code> function will then ensure that all links are fixed before deploying your website.</p>
 <p>Note also that the <code>publish</code> function accepts a <code>final&#61;</code> keyword to which you can pass any function <code>&#40;&#41; -&gt; nothing</code> to do some final post-processing before pushing updates online. For instance, you can use <code>final&#61;lunr</code> where <code>lunr</code> is a function exported by Franklin which generates a Lunr search index &#40;see <a href="/extras/lunr/">this tutorial</a> for more details&#41;.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: October 12, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: October 19, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

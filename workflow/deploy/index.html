@@ -120,7 +120,7 @@
     <span style="font-size:24px;font-weight:300;">Set it up once then don't think about it.</span>
     
 <div class="blank"></div>
-<div class="franklin-toc"><ol><li><a href="#deploying_on_an_existing_web_server">Deploying on an existing web server</a></li><li><a href="#deploying_on_github">Deploying on GitHub</a><ol><li><a href="#creating_a_repo_on_github">Creating a repo on GitHub</a></li><li><a href="#synchronise_your_local_folder">Synchronise your local folder</a></li><li><a href="#examples">Examples</a></li><li><a href="#customising_the_github_action">Customising the GitHub action</a></li><li><a href="#troubleshooting">Troubleshooting</a></li></ol></li><li><a href="#deploying_on_gitlab">Deploying on GitLab</a><ol><li><a href="#creating_a_repo_on_gitlab">Creating a repo on GitLab</a></li><li><a href="#create_and_optimize_your_site">Create and optimize your site</a></li><li><a href="#synchronise_your_local_folder__2">Synchronise your local folder</a></li><li><a href="#iterate">Iterate</a></li></ol></li><li><a href="#deploying_on_netlify">Deploying on Netlify</a></li><li><a href="#previewing_pull_requests">Previewing Pull Requests</a></li></ol></div>
+<div class="franklin-toc"><ol><li><a href="#deploying_on_an_existing_web_server">Deploying on an existing web server</a></li><li><a href="#deploying_on_github">Deploying on GitHub</a><ol><li><a href="#creating_a_repo_on_github">Creating a repo on GitHub</a></li><li><a href="#synchronise_your_local_folder">Synchronise your local folder</a></li><li><a href="#examples">Examples</a></li><li><a href="#customising_the_github_action">Customising the GitHub action</a></li><li><a href="#migrating_to_the_new_github_pages_infrastructure">Migrating to the new GitHub Pages infrastructure</a></li><li><a href="#troubleshooting">Troubleshooting</a></li></ol></li><li><a href="#deploying_on_gitlab">Deploying on GitLab</a><ol><li><a href="#creating_a_repo_on_gitlab">Creating a repo on GitLab</a></li><li><a href="#create_and_optimize_your_site">Create and optimize your site</a></li><li><a href="#synchronise_your_local_folder__2">Synchronise your local folder</a></li><li><a href="#iterate">Iterate</a></li></ol></li><li><a href="#deploying_on_netlify">Deploying on Netlify</a></li><li><a href="#previewing_pull_requests">Previewing Pull Requests</a><ol><li><a href="#netlify">Netlify</a></li><li><a href="#github_pages">GitHub Pages</a></li><li><a href="#pr_comments">PR Comments</a></li></ol></li></ol></div>
 <div class="blank"></div>
 <p>Deploying the website is trivial on an existing web server, via GitHub or Gitlab, or on services like Netlify.</p>
 <h2 id="deploying_on_an_existing_web_server"><a href="#deploying_on_an_existing_web_server" class="header-anchor">Deploying on an existing web server</a></h2>
@@ -139,7 +139,7 @@
 <h3 id="creating_a_repo_on_github"><a href="#creating_a_repo_on_github" class="header-anchor">Creating a repo on GitHub</a></h3>
 <p>Start by creating an empty GitHub repository</p>
 <div class="tlist"><ul>
-<li><p>for a personal &#40;or org&#41; website the repository <strong>must</strong> be named <code>username.github.io</code> &#40;or <code>orgname.github.io</code>&#41; see also <a href="https://pages.github.com/">the Github pages docs</a>,</p>
+<li><p>for a personal &#40;or org&#41; website the repository <strong>must</strong> be named <code>username.github.io</code> &#40;or <code>orgname.github.io</code>&#41; see also <a href="https://pages.github.com/">the Github pages docs</a>.</p>
 </li>
 <li><p>for a project website the repo can be named anything you want, let&#39;s say <code>myWebsite</code>.</p>
 </li>
@@ -194,6 +194,14 @@
 </li>
 </ul></div>
 <p>For all such operations, modify the file <code>.github/workflows/deploy.yml</code> in your site folder. It should be fairly straightforward to see how to extend it but if you get stuck, ask on the <strong>#franklin</strong> slack channel.</p>
+<h3 id="migrating_to_the_new_github_pages_infrastructure"><a href="#migrating_to_the_new_github_pages_infrastructure" class="header-anchor">Migrating to the new GitHub Pages infrastructure</a></h3>
+<p>GitHub Pages has a whole new revamped infrastructure and workflow that does not require maintaining an extra <code>gh-pages</code> branch. The <code>gh-pages</code>/<code>gh-previews</code> would still be required if you have PR previews on for your project  &#40;more about this in the &quot;Previewing Pull Requests&quot; section below&#41;. Read more about how you can migrate your current infrastructure to the new format -</p>
+<div class="tlist"><ul>
+<li><p><a href="https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll">github pages official docs</a></p>
+</li>
+<li><p><a href="https://github.com/actions/starter-workflows/tree/main/pages">new workflow examples</a></p>
+</li>
+</ul></div>
 <h3 id="troubleshooting"><a href="#troubleshooting" class="header-anchor">Troubleshooting</a></h3>
 <p>If something failed, that you can&#39;t debug, ask on the <strong>#franklin</strong> slack channel explaining what&#39;s the issue and we&#39;ll try to help you out.</p>
 <h2 id="deploying_on_gitlab"><a href="#deploying_on_gitlab" class="header-anchor">Deploying on GitLab</a></h2>
@@ -224,7 +232,7 @@
 <p>Synchronise your local website folder with a repository &#40;e.g. a GitHub or GitLab repository&#41; then select that repository on Netlify and indicate you want to deploy the <code>__site</code> folder.</p>
 <p>That&#39;s it&#33;</p>
 <h2 id="previewing_pull_requests"><a href="#previewing_pull_requests" class="header-anchor">Previewing Pull Requests</a></h2>
-<p>You can easily visualize the effect of a pull request on your website without having to serve it locally by using Netlify. To do this you need to change a couple of things. Assuming that you use Github Actions to deploy your website, you need to change your <code>deploy.yml</code> file to make builds from PRs. First change:</p>
+<p>You can easily visualize the effect of a pull request on your website without having to serve it locally by using GitHub Pages or Netlify. To do this you need to change a couple of things. Assuming that you use Github Actions to deploy your website, you need to change your <code>deploy.yml</code> file to make builds from PRs. First change:</p>
 <pre><code class="language-yml">name: Build and Deploy
 on:
   push:
@@ -240,7 +248,11 @@ on:
     branches:
       - main # or master</code></pre>
 <p>This means that each time a PR will be opened, a &quot;preview&quot; website will be generated and updated by the GitHub action.</p>
-<p>Then we need to properly set up a local folder for each website generated by a PR. After the <code>Checkout</code> action add the following:</p>
+<p>Then we need to properly set up a local folder for each website generated by a PR.</p>
+<h3 id="netlify"><a href="#netlify" class="header-anchor">Netlify</a></h3>
+<p>Netlify can be used to deploy PR previews if you want to store the previews and the original rendered website in different git branches. We use a separate platform for previews, as GitHub allows you to deploy only one git branch at a time.</p>
+<p>Have a look at the next &#40;GitHub Pages&#41; sub-section if you want to deploy both the previews and the website on GitHub Pages.</p>
+<p>After the <code>Checkout</code> action add the following:</p>
 <pre><code class="language-yml">- name: Fix URLs for PR preview deployment &#40;pull request previews&#41;
   if: github.event_name &#61;&#61; &#39;pull_request&#39;
   run: |
@@ -250,27 +262,73 @@ on:
 <p>Finally, we want to deploy the main website and the PR preview on different branches &#40;and folders&#41;:</p>
 <pre><code class="language-yml">- name: Deploy &#40;preview&#41;
   if: github.event_name &#61;&#61; &#39;pull_request&#39; &amp;&amp; github.repository &#61;&#61; github.event.pull_request.head.repo.full_name # if this build is a PR build and the PR is NOT from a fork
-  uses: JamesIves/github-pages-deploy-action@releases/v3
+  uses: JamesIves/github-pages-deploy-action@releases/v4
   with:
-      BRANCH: gh-preview # The branch where the PRs previews are stored
-      FOLDER: __site
-      GITHUB_TOKEN: &#36;&#123;&#123; secrets.GITHUB_TOKEN &#125;&#125;
-      TARGET_FOLDER: &quot;previews/PR&#36;&#123;&#123; github.event.number &#125;&#125;&quot; # The website preview is going to be stored in a subfolder
+      branch: gh-preview # The branch where the PRs previews are stored
+      folder: __site
+      token: &#36;&#123;&#123; secrets.GITHUB_TOKEN &#125;&#125;
+      target-folder: &quot;previews/PR&#36;&#123;&#123; github.event.number &#125;&#125;&quot; # The website preview is going to be stored in a subfolder
+- name: Deploy &#40;main&#41;
+  if: github.event_name &#61;&#61; &#39;push&#39; &amp;&amp; github.ref &#61;&#61; &#39;refs/heads/dev&#39;
+  uses: JamesIves/github-pages-deploy-action@releases/v4
+  with:
+      token: &#36;&#123;&#123; secrets.GITHUB_TOKEN &#125;&#125;
+      branch: gh-pages # Replace here the branch where your website is deployed
+      folder: __site</code></pre>
+<p>Now to avoid problems with the subfolder structure of our website we need to make a small change to our <code>config.md</code> file. Change the following lines</p>
+<pre><code class="language-markdown">&#43;&#43;&#43;
+prepath     &#61; &quot;myprepath&quot; # This is possibly &quot;&quot; for your case
+website_url &#61; &quot;mywebsite.github.io&quot;
+&#43;&#43;&#43;</code></pre>
+<p>to</p>
+<pre><code class="language-markdown">&#43;&#43;&#43;
+prepath     &#61; get&#40;ENV, &quot;PREVIEW_FRANKLIN_PREPATH&quot;, &quot;myprepath&quot;&#41; # In the third argument put the prepath you normally use
+website_url &#61; get&#40;ENV, &quot;PREVIEW_FRANKLIN_WEBSITE_URL&quot;, &quot;mywebsite.github.io&quot;&#41; # Just put the website name
+&#43;&#43;&#43;</code></pre>
+<p>Now for the final step, you will need to visualize the obtained previews. Create an account on <a href="https://www.netlify.com/">Netlify.com</a>, add your repository and chose the <code>gh-preview</code> branch without any additional settings. Set your Netlify website to be <code>&#123;netlify name&#125;.netlify.app</code>.</p>
+<p>Once everything is set up you will be able to visualize your PR preview on <code>&#123;netlify name&#125;.netlify.app/previews/PR&#123;number of your PR&#125;</code>.</p>
+<h3 id="github_pages"><a href="#github_pages" class="header-anchor">GitHub Pages</a></h3>
+<p>GitHub pages can also be used to deploy PR previews, but you will need to store the previews and the original rendered website in a single git branch. The previews will be stored in a sub-folder inside your generated website; hence, make sure this folder&#39;s name &#40;the folder where previews are stored&#41; does not conflict with an existing folder in your website.</p>
+<p>In the workflows below, we use a folder named &quot;previews&quot; to store the PR previews.</p>
+<p>After the <code>Checkout</code> action add the following:</p>
+<pre><code class="language-yml">- name: Fix URLs for PR preview deployment &#40;pull request previews&#41;
+  if: github.event_name &#61;&#61; &#39;pull_request&#39;
+  run: | # &quot;previews&quot; below is the folder name where your PR previews are stored
+    echo &quot;PREVIEW_FRANKLIN_WEBSITE_URL&#61;https://&#123;github username&#125;.github.io/previews/PR&#36;&#123;&#123; github.event.number &#125;&#125;/&quot; &gt;&gt; &#36;GITHUB_ENV
+    echo &quot;PREVIEW_FRANKLIN_PREPATH&#61;previews/PR&#36;&#123;&#123; github.event.number &#125;&#125;&quot; &gt;&gt; &#36;GITHUB_ENV</code></pre>
+<p>where <code>&#123;github username&#125;</code> is your GitHub username. The first line keeps track of the URL where the preview will be available. the second line only keeps track of the &quot;prepath&quot; of that preview URL so that it can be passed to Franklin.</p>
+<p>Finally, we want to deploy the main website and the PR preview on the same branch &#40;but different folders&#41;:</p>
+<pre><code class="language-yml">- name: Deploy &#40;preview&#41;
+  if: github.event_name &#61;&#61; &#39;pull_request&#39; &amp;&amp; github.repository &#61;&#61; github.event.pull_request.head.repo.full_name # if this build is a PR build and the PR is NOT from a fork
+  uses: JamesIves/github-pages-deploy-action@releases/v4
+  with:
+      branch: gh-pages # The branch where your website is deployed
+      folder: __site
+      token: &#36;&#123;&#123; secrets.GITHUB_TOKEN &#125;&#125;
+      target-folder: &quot;previews/PR&#36;&#123;&#123; github.event.number &#125;&#125;&quot; # The website preview is going to be stored in the previews subfolder
 - name: Deploy &#40;main&#41;
   if: github.event_name &#61;&#61; &#39;push&#39; &amp;&amp; github.ref &#61;&#61; &#39;refs/heads/dev&#39;
   uses: JamesIves/github-pages-deploy-action@releases/v3
   with:
-      GITHUB_TOKEN: &#36;&#123;&#123; secrets.GITHUB_TOKEN &#125;&#125;
-      BRANCH: gh-pages # Replace here the branch where your website is deployed
-      FOLDER: __site</code></pre>
+      token: &#36;&#123;&#123; secrets.GITHUB_TOKEN &#125;&#125;
+      branch: gh-pages # Replace here the branch where your website is deployed
+      folder: __site
+      clean-exclude: |  # This makes sure that the previews are not wiped out during regular builds 
+        previews/*</code></pre>
 <p>Now to avoid problems with the subfolder structure of our website we need to make a small change to our <code>config.md</code> file. Change the following lines</p>
-<pre><code class="language-julia">@def prepath     &#61; &quot;myprepath&quot; # This is possibly &quot;&quot; for your case
-@def website_url &#61; &quot;mywebsite.github.io&quot;</code></pre>
+<pre><code class="language-markdown">&#43;&#43;&#43;
+prepath     &#61; &quot;myprepath&quot; # This is possibly &quot;&quot; for your case
+website_url &#61; &quot;mywebsite.github.io&quot;
+&#43;&#43;&#43;</code></pre>
 <p>to</p>
-<pre><code class="language-julia">@def prepath     &#61; get&#40;ENV, &quot;PREVIEW_FRANKLIN_PREPATH&quot;, &quot;myprepath&quot;&#41; # In the third argument put the prepath you normally use
-@def website_url &#61; get&#40;ENV, &quot;PREVIEW_FRANKLIN_WEBSITE_URL&quot;, &quot;mywebsite.github.io&quot;&#41; # Just put the website name</code></pre>
-<p>Now for the final step, you will need to visualize the obtained previews. Since Github only allow you to deploy one branch, you will need an alternative like Netlify. Create an account on <a href="https://www.netlify.com/">Netlify.com</a>, add your repository and chose the <code>gh-preview</code> branch without any additional settings. Set your Netlify website to be <code>&#123;netlify name&#125;.netlify.app</code>.</p>
-<p>Once everything is set up you will be able to visualize your PR preview on <code>&#123;netlify name&#125;.netlify.app/previews/PR&#123;number of your PR&#125;</code>. You can make things easier for your contributors to access it by adding a comment with a link to your PR automatically. To do this add the following Github action &#40;create a <code>pr_comment.yml</code> file in <code>.github/workflows/</code>&#41;:</p>
+<pre><code class="language-markdown">&#43;&#43;&#43;
+prepath     &#61; get&#40;ENV, &quot;PREVIEW_FRANKLIN_PREPATH&quot;, &quot;myprepath&quot;&#41; # In the third argument put the prepath you normally use
+website_url &#61; get&#40;ENV, &quot;PREVIEW_FRANKLIN_WEBSITE_URL&quot;, &quot;mywebsite.github.io&quot;&#41; # Just put the website name
+&#43;&#43;&#43;</code></pre>
+<p>Once everything is set up you will be able to visualize your PR preview on <code>&#123;github username&#125;.github.io/previews/PR&#123;number of your PR&#125;</code>.</p>
+<p>For a live demo of PR previews deployed using GitHub Pages, have a look at <a href="https://fluxml.ai">FluxML&#39;s website</a> &#40;<a href="https://github.com/FluxML/fluxml.github.io">repo</a>&#41;&#33;</p>
+<h3 id="pr_comments"><a href="#pr_comments" class="header-anchor">PR Comments</a></h3>
+<p>You can make things easier for your contributors to access it by adding a comment with a link to your PR automatically. To do this add the following Github action &#40;create a <code>pr_comment.yml</code> file in <code>.github/workflows/</code>&#41;:</p>
 <pre><code class="language-yml">name: PR Comment # Write a comment in the PR with a link to the preview of the given website
 on:
   pull_request:
@@ -287,7 +345,7 @@ jobs:
           GITHUB_TOKEN: &#36;&#123;&#123; secrets.GITHUB_TOKEN &#125;&#125;</code></pre>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: October 12, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: October 19, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
