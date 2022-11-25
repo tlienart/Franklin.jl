@@ -57,6 +57,7 @@ the front and the back (`\$` sign).
 """
 const MATH_BLOCKS_PARENS = LittleDict{Symbol, Tuple{Int,Int,String,String}}(
     :MATH_A     => ( 1,  1, "\\(", "\\)"),
+    :MATH_P     => ( 2,  2, "\\(", "\\)"),
     :MATH_B     => ( 2,  2, "\\[", "\\]"),
     :MATH_C     => ( 2,  2, "\\[", "\\]"),
     :MATH_I     => ( 4,  4, "", "")
@@ -80,7 +81,7 @@ function convert_math_block(β::OCBlock, lxdefs::Vector{LxDef})::String
     # if the math block is a "display" one (with a number)
     inner = chop(β.ss, head=pm[1], tail=pm[2])
     htmls = IOBuffer()
-    if β.name ∉ [:MATH_A, :MATH_I]
+    if β.name ∉ [:MATH_A, :MATH_P, :MATH_I]
         # NOTE: in the future if allow equation tags, then will need an `if`
         # here and only increment if there's no tag. For now just use numbers.
 

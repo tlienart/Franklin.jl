@@ -189,6 +189,26 @@ include("parser/latex/blocks.jl")
 include("parser/html/tokens.jl")
 include("parser/html/blocks.jl")
 
+function enable_pmath()
+    a = isexactly("\\(") => :MATH_P_OPEN
+    b = isexactly("\\)") => :MATH_P_CLOSE
+    t = MD_TOKENS['\\']
+    a in t || push!(t, a)
+    b in t || push!(t, b)
+    c = OCProto(:MATH_P, :MATH_P_OPEN, (:MATH_P_CLOSE,))
+    c in MD_OCB_MATH || push!(MD_OCB_MATH, c)
+    return
+end
+function disable_pmath()
+    a = isexactly("\\(") => :MATH_P_OPEN
+    b = isexactly("\\)") => :MATH_P_CLOSE
+    t = MD_TOKENS['\\']
+    c = [e for e in t if !(e in (a, b))]
+    empty!(t)
+    append!(t, c)
+    return
+end
+
 # EVAL
 include("eval/module.jl")
 include("eval/run.jl")

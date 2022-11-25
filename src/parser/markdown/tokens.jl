@@ -242,14 +242,18 @@ const MD_OCB_IGNORE = (:COMMENT, :MD_DEF)
 
 List of names of maths environments (display mode).
 """
-const MATH_DISPLAY_BLOCKS_NAMES = collect(e.name for e ∈ MD_OCB_MATH if e.name != :MATH_A)
+const MATH_DISPLAY_BLOCKS_NAMES = collect(
+    e.name for e ∈ MD_OCB_MATH if !(e.name  in (:MATH_A, :MATH_P))
+)
 
 """
     MATH_BLOCKS_NAMES
 
 List of names of all maths environments.
 """
-const MATH_BLOCKS_NAMES = tuple(:MATH_A, MATH_DISPLAY_BLOCKS_NAMES...)
+const MATH_BLOCKS_NAMES = tuple(
+    :MATH_A, :MATH_P, MATH_DISPLAY_BLOCKS_NAMES...
+)
 
 """
 CODE_BLOCKS_NAMES
