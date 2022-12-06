@@ -1,8 +1,8 @@
 \begin{equation}
 \left[
 \begin{array}{cc}
-9.21582e22 & 7569.883 \\
-4.5628e-41 & 4.5628e-41 \\
+1.0e-45 & 1.0e-45 \\
+0.0 & 0.0 \\
 \end{array}
 \right]
 \end{equation}
