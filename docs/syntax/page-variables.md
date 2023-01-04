@@ -40,6 +40,10 @@ var2 = "Hello goodbye"
 
 this block will be executed as standard Julia code and the two assignments (`var1` and `var2`) will be caught and made available as page variables of the same name.
 
+\note{
+  It is recommended to use the `+++` block syntax style instead of the `@def` page variables. Future releases of Franklin.jl will prioritize using the `+++` block syntax while the `@def` syntax will be deprecated in upcoming releases and will be low priority in fixing bugs regarding that syntax.
+}
+
 Page variables can serve multiple purposes though their main use is to be accessed from the HTML template blocks e.g.:
 
 ```html
