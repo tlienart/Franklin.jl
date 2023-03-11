@@ -135,6 +135,8 @@ var1 &#61; &#91;1, 2,
 var2 &#61; &quot;Hello goodbye&quot;
 &#43;&#43;&#43;</code></pre>
 <p>this block will be executed as standard Julia code and the two assignments &#40;<code>var1</code> and <code>var2</code>&#41; will be caught and made available as page variables of the same name.</p>
+<div class="note"><div class="title">⚠ Note</div>
+<div class="content">It is recommended to use the <code>&#43;&#43;&#43;</code> block syntax style instead of the <code>@def</code> page variables. Future releases of Franklin.jl will prioritize using the <code>&#43;&#43;&#43;</code> block syntax while the <code>@def</code> syntax will be deprecated in upcoming releases and will be low priority in fixing bugs regarding that syntax.</div></div>
 <p>Page variables can serve multiple purposes though their main use is to be accessed from the HTML template blocks e.g.:</p>
 <pre><code class="language-html">&lt;footer&gt;
   This is the footer. &amp;copy; &#123;&#123;fill author&#125;&#125;.
@@ -235,7 +237,7 @@ var2 &#61; &quot;Hello goodbye&quot;
 <div class="lalign"><table><tr><th align="right">Name</th><th align="right">Type</th><th align="right">Default value</th><th align="right">Comment</th></tr><tr><td align="right"><code>noeval</code></td><td align="right"><code>Bool</code></td><td align="right"><code>false</code></td><td align="right">if set to <code>true</code>, disable code block evaluation on the page</td></tr><tr><td align="right"><code>reeval</code></td><td align="right"><code>Bool</code></td><td align="right"><code>false</code></td><td align="right">whether to reevaluate all code blocks on the page</td></tr><tr><td align="right"><code>showall</code></td><td align="right"><code>Bool</code></td><td align="right"><code>false</code></td><td align="right">notebook mode if <code>true</code> where the output of the code block is shown below</td></tr><tr><td align="right"><code>fd_eval</code></td><td align="right"><code>Bool</code></td><td align="right"><code>false</code></td><td align="right">internal variable to keep track of whether the scope is stale &#40;in which case all subsequent blocks are re-evaluated&#41;</td></tr></table></div>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: December 06, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: March 11, 2023. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

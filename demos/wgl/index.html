@@ -32,10 +32,10 @@ end
 show&#40;io, MIME&quot;text/html&quot;&#40;&#41;, app&#41;
 println&#40;io, &quot;~~~&quot;&#41;
 println&#40;String&#40;take&#33;&#40;io&#41;&#41;&#41;</code></pre>
-Failed to precompile WGLMakie &#91;276b4fcb-3e11-5398-bf8b-a0c2d153d008&#93; to /home/runner/.julia/compiled/v1.7/WGLMakie/jl_69EI13.
+MethodError: no method matching show&#40;::IOBuffer, ::MIME&#123;Symbol&#40;&quot;text/html&quot;&#41;&#125;, ::Nothing&#41; Closest candidates are:   show&#40;::IO, ::Union&#123;MIME&#123;Symbol&#40;&quot;text/html&quot;&#41;&#125;, MIME&#123;Symbol&#40;&quot;application/prs.juno.plotpane&#43;html&quot;&#41;}}, &#33;Matched::JSServe.App&#41; at ~/.julia/packages/JSServe/KDXZU/src/display.jl:59   show&#40;::IO, &#33;Matched::MIME&#123;Symbol&#40;&quot;text/csv&quot;&#41;&#125;, ::Any&#41; at /opt/hostedtoolcache/julia/1.7.3/x64/share/julia/stdlib/v1.7/DelimitedFiles/src/DelimitedFiles.jl:829   show&#40;::IO, &#33;Matched::MIME&#123;Symbol&#40;&quot;text/tab-separated-values&quot;&#41;&#125;, ::Any&#41; at /opt/hostedtoolcache/julia/1.7.3/x64/share/julia/stdlib/v1.7/DelimitedFiles/src/DelimitedFiles.jl:830   ...
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: December 06, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
+    &copy; Thibaut Lienart. Last modified: March 11, 2023. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
   </div>
 </div>
 
