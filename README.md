@@ -70,7 +70,7 @@ Some examples of websites using Franklin (_if you're using Franklin with a publi
 * [TuringModels](https://statisticalrethinkingjulia.github.io/TuringModels.jl/) implements the models from [Statistical Rethinking](https://xcelab.net/rm/statistical-rethinking/) using [Turing.jl](https://turing.ml/stable/)
 * [Ricardo Rosa's website](https://rmsrosa.github.io/en/) ([repo](https://github.com/rmsrosa/rmsrosa.github.io)).
 * [hustf's blog](https://hustf.github.io/)
-* [Bayesian-Julia](https://storopoli.gitub.io/Bayesian-Julia/) A set of Tutorials on how to do Bayesian statistics using Turing ([repo](https://github.com/storopoli/Bayesian-Julia))
+* [Bayesian-Julia](https://storopoli.github.io/Bayesian-Julia/) A set of Tutorials on how to do Bayesian statistics using Turing ([repo](https://github.com/storopoli/Bayesian-Julia))
 * [Jose Storopoli's website](https://storopoli.io/) personal website with bootstrap buttons along with FontAwesome and Academicons icons ([repo](https://git.sr.ht/~storopoli/storopoli.io))
 * [ETH Zurich's Solving PDEs in parallel on GPUs with Julia](https://eth-vaw-glaciology.github.io/course-101-0250-00/) course website
 
