@@ -16,6 +16,8 @@ function unixify(rpath::AS)::AS
     isempty(rpath) && return "/"
     # if windows, replace "\\" by "/"
     Sys.isunix() || (rpath = replace(rpath, "\\" => "/"))
+    # if it's a path to a dot file, like path/.gitignore, return (issue #1001)
+    startswith(splitdir(rpath)[2], ".") && return rpath
     # if it has an extension e.g.: /blah.txt, return
     isempty(splitext(rpath)[2]) || return rpath
     # if it doesn't have an extension, check if it ends with `/` e.g. : /blah/
