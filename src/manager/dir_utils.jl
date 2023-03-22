@@ -114,7 +114,6 @@ function scan_input_dir!(args...; kw...)
     # ignore "/"
     d2i = filter!(d -> length(d) > 1, to_ignore[dir_indicator])
     f2i = to_ignore[.!dir_indicator]
-
     return _scan_input_dir!(args...; files2ignore=f2i, dirs2ignore=d2i, kw...)
 end
 

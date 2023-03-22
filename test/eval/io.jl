@@ -5,6 +5,8 @@ fs()
     @test F.unixify("blah.txt") == "blah.txt"
     @test F.unixify("blah/")    == "blah/"
     @test F.unixify("foo/bar")  == "foo/bar/"
+    @test F.unixify("foo/.gitignore") == "foo/.gitignore"
+    @test F.unixify(".gitignore") == ".gitignore"
 end
 
 @testset "join_rpath" begin
