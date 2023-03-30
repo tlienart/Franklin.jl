@@ -320,7 +320,8 @@ $SIGNATURES
 
 Verify all links in generated HTML.
 """
-function verify_links()::Nothing
+function verify_links(; ttl=64)::Nothing
+    @assert 1 ≤ ttl ≤ 255 "IP Time to Live must be between 1 and 255"
     # if this is done before `serve` is called
     if isempty(PATHS)
         FOLDER_PATH[] = pwd()
@@ -328,7 +329,7 @@ function verify_links()::Nothing
     end
     # check that the user is online (otherwise only verify internal links)
     # this is fast as it uses `ping` and does not resolve a request
-    online = findfirst(check_ping, first.(IP_CHECK)) !== nothing
+    online = findfirst(ipadd -> check_ping(ipadd, ttl), first.(IP_CHECK)) !== nothing
 
     print("Verifying links...")
     if online

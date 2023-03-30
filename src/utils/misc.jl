@@ -223,14 +223,15 @@ function rprint(s::AS)::Nothing
 end
 
 """
-    check_ping(ipaddr)
+    check_ping(ipaddr, ttl)
 
-Try a single ping to an address `ipaddr`. There's a timeout of 1s.
+Try a single ping to an address `ipaddr`. `ttl` limits the maximum number of IP
+routers that the packet can go through before being thrown away.
 """
-function check_ping(ipaddr)
+function check_ping(ipaddr, ttl)
     # portable count (creds https://docdave.science/writing-ping-in-julia/)
     opt = ifelse(Sys.iswindows(), "-n", "-c")
-    return success(`ping $opt 1 -t 1 $ipaddr`)
+    return success(`ping $opt 1 -t $ttl $ipaddr`)
 end
 
 """
