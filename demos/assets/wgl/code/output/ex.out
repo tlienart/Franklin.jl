@@ -1,6 +1,6 @@
 MethodError: no method matching show(::IOBuffer, ::MIME{Symbol("text/html")}, ::Nothing)
 Closest candidates are:
-  show(::IO, ::Union{MIME{Symbol("text/html")}, MIME{Symbol("application/prs.juno.plotpane+html")}}, !Matched::JSServe.App) at ~/.julia/packages/JSServe/KDXZU/src/display.jl:59
+  show(::IO, ::Union{MIME{Symbol("text/html")}, MIME{Symbol("application/prs.juno.plotpane+html")}}, !Matched::JSServe.App) at ~/.julia/packages/JSServe/uWIev/src/display.jl:60
+  show(::IO, !Matched::MIME{Symbol("text/csv")}, ::Any) at /opt/hostedtoolcache/julia/1.7.3/x64/share/julia/stdlib/v1.7/DelimitedFiles/src/DelimitedFiles.jl:829
   show(::IO, !Matched::Distributions.Distribution, ::Any) at ~/.julia/packages/Distributions/YQQXX/src/show.jl:18
-  show(::IO, !Matched::AbstractString, ::Any) at /opt/hostedtoolcache/julia/1.7.3/x64/share/julia/base/multimedia.jl:111
   ...
