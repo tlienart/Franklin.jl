@@ -38,6 +38,7 @@ will be rendered as:
 
 {{ render_table }}
 
+This done via a `hfun_render_table` which can be found in [`utils.jl`](https://github.com/tlienart/Franklin.jl/blob/master/demos/utils.jl).
 
 ## (018) collapsible block
 How to make a section expand when clicked, so that content is initially hidden? (Based on [this html guide](https://www.w3schools.com/howto/howto_js_collapsible.asp).)
