@@ -20,6 +20,25 @@ The ordering is reverse chronological but just use the table of contents to guid
 
 \toc
 
+## (019) From `Dataframe` to HTML table
+
+If you have some data that you would like to manipulate and render nicely in `Franklin`, you can use the following snippet relying on [`DataFrames.jl`](https://github.com/JuliaData/DataFrames.jl)
+and [`PrettyTables.jl`](https://github.com/ronisbr/PrettyTables.jl).
+
+The following `Dataframe`: 
+
+```julia
+A = rand('A':'Z', 10)
+B = rand(1:10, 10)
+C = rand(Bool, 10)
+DataFrame(; A, B, C)
+```
+
+will be rendered as:
+
+{{ render_table }}
+
+
 ## (018) collapsible block
 How to make a section expand when clicked, so that content is initially hidden? (Based on [this html guide](https://www.w3schools.com/howto/howto_js_collapsible.asp).)
 
