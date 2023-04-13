@@ -116,3 +116,22 @@ function hfun_insert_weave(params)
     html = html[range]
     return html
 end
+###########
+### 019 ###
+###########
+    
+function hfun_render_table()
+    A = rand('A':'Z', 10)
+    B = rand(1:10, 10)
+    C = rand(Bool, 10)
+    df = DataFrame(; A, B, C)    
+    pretty_table(
+        String, # export table as a String
+        df;
+        nosubheader = true, # Remove the type from the column names
+        tf = tf_html_default, # Use the default HTML rendered
+        alignment = :c, # Center alignment
+        formatters = (x, i, j) -> Franklin.md2html(x, stripp = true), # Convert every inner cell to html
+        allow_html_in_cells = true, # needed given the previous rendering
+    )
+end
