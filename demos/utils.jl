@@ -7,6 +7,8 @@ using DelimitedFiles
 using TikzCDs
 using Dates
 using Weave
+using DataFrames
+using PrettyTables
 
 # ========================================================================
 
