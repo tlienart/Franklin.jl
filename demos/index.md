@@ -250,6 +250,10 @@ and that's it 🏁.
 
 ## (009) custom environment for TikzCD
 
+> TikzCDs is currently too disfunctional so the demo is commented out for now.
+
+<!-- 
+
 Following up on [#008](#008_custom_environments_and_commands), here's a custom environment for Tikz diagrams using the [TikzCDs.jl](https://github.com/JuliaTeX/TikzCDs.jl) package.
 
 Let's first see what you get for your effort:
@@ -276,6 +280,9 @@ The corresponding `env_tikzcd` function is in the `utils.jl` file and is quite s
 
 **Note**: in this particular case, the environment uses the [`TikzCDs.jl`](https://github.com/JuliaTeX/TikzCDs.jl) which requires having `lualatex` and `dvisgm` as per their README.
 For this to work with a GitHub action, the relevant stuff needs to be installed, it's not hard to do so with GitHub actions though you need to get TeXLive 2019 to avoid errors, I used [these 3 lines](https://github.com/tlienart/Franklin.jl/blob/354ac015c14aaedf9ebeaeb9d0b574ddad3738e5/.github/workflows/deploy.yml#L20-L23) which you could copy.
+
+-->
+
 
 ## (008) (custom) environments and commands
 
