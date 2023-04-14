@@ -127,7 +127,7 @@ function hfun_render_table()
     tag = rand('A':'Z', 5)
     math = rand(["`a + b`", "`\\frac{1}{2}`", "`\\sqrt{2\\pi}`"], 5)
     website = rand(["[Franklin home page](https://franklinjl.org)", "[Franklin Github](https://github.com/tlienart/Franklin.jl)"], 5)
-    DataFrame(; val, tag, math, website)
+    df = DataFrame(; val, tag, math, website)
     pretty_table(
         String, # export table as a String
         df;
