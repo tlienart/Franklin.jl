@@ -30,7 +30,7 @@ The following `Dataframe`:
 ```julia
 val = rand(1:10, 5)
 tag = rand('A':'Z', 5)
-math = rand(["`a + b`", "`\\frac{1}{2}`", "`\\sqrt{2\\pi}`"], 5)
+math = rand(["``a + b``", "``\\frac{1}{2}``", "``\\sqrt{2\\pi}``"], 5)
 website = rand(["[Franklin home page](https://franklinjl.org)", "[Franklin Github](https://github.com/tlienart/Franklin.jl)"], 5)
 DataFrame(; val, tag, math, website)
 ```
