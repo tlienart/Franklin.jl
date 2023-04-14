@@ -28,10 +28,11 @@ and [`PrettyTables.jl`](https://github.com/ronisbr/PrettyTables.jl).
 The following `Dataframe`: 
 
 ```julia
-A = rand('A':'Z', 10)
-B = rand(1:10, 10)
-C = rand(Bool, 10)
-DataFrame(; A, B, C)
+val = rand(1:10, 5)
+tag = rand('A':'Z', 5)
+math = rand(["`a + b`", "`\\frac{1}{2}`", "`\\sqrt{2\\pi}`"], 5)
+website = rand(["[Franklin home page](https://franklinjl.org)", "[Franklin Github](https://github.com/tlienart/Franklin.jl)"], 5)
+DataFrame(; val, tag, math, website)
 ```
 
 will be rendered as:
