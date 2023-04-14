@@ -16,11 +16,6 @@ jobs:
       with:
         python-version: '3.8'
     - run: pip install matplotlib
-    - name: Install deps for TikzCD
-      run: |
-          sudo add-apt-repository ppa:jonathonf/texlive-2019
-          sudo apt-get -qq update
-          sudo apt install -y pdf2svg texlive-latex-base texlive-binaries texlive-pictures texlive-latex-extra texlive-luatex
     - name: Install Julia
       uses: julia-actions/setup-julia@v1
       with:
@@ -38,7 +33,6 @@ jobs:
             serve(single=true, cleanup=false); lunr(); optimize(minify=false, prerender=false);
             cd("../demos");
             Pkg.activate("."); Pkg.instantiate();
-            Pkg.add(PackageSpec(name="TikzCDs", version="0.2.0"));
             optimize(minify=false, prerender=false);
             dst = "../docs/__site/demos";
             mkpath(dst);
