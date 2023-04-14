@@ -118,6 +118,7 @@ function hfun_insert_weave(params)
     html = html[range]
     return html
 end
+    
 ###########
 ### 019 ###
 ###########
@@ -134,7 +135,7 @@ function hfun_render_table()
         nosubheader = true, # Remove the type from the column names
         tf = tf_html_default, # Use the default HTML rendered
         alignment = :c, # Center alignment
-        formatters = ((x, i, j) -> string(x), (x, i, j) -> Franklin.md2html(x, stripp = true)), # Convert every inner cell to html
+        formatters = ((x, i, j) -> string(x), (x, i, j) -> Franklin.fd2html(x, nop = true)), # Convert every inner cell to html
         allow_html_in_cells = true, # needed given the previous rendering
     )
 end
