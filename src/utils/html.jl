@@ -124,7 +124,11 @@ Helper function to get the relative url of the current page.
 """
 function url_curpage()
     # get the relative path to current page and split extension (.md)
-    fn, ext = splitext(locvar(:fd_rpath))
+    rpath = locvar(:fd_rpath)
+    keep  = globvar(:keep_path)::Vector{String}
+    rpath in keep && return rpath
+
+    fn, ext = splitext(rpath)
     if ext != ".html"
         # if it's not `index` then add `index`:
         if splitdir(fn)[2] != "index"
