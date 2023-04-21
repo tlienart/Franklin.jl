@@ -17,7 +17,8 @@ function generate_tag_pages(refresh_tags=Set{String}())::Nothing
     isnothing(PAGE_TAGS) && return clean_tags()
     # if there are page tags, eliminiate the pages that don't exist anymore
     for rpath in keys(PAGE_TAGS)
-        isfile(rpath * ".md") || delete!(PAGE_TAGS, rpath)
+        exts = globvar("tag_source_extensions")
+        any(isfile(rpath * ext) for ext in exts) || delete!(PAGE_TAGS, rpath)
     end
     # if there's nothing left, clean up and finish
     isempty(PAGE_TAGS) && return clean_tags()
