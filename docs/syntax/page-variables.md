@@ -239,9 +239,9 @@ These variables are best defined in your `config.md` file though you can overwri
 @@
 
 **Notes**:\\
-\smindent{(\*)} \smnote{say you're using GitHub pages and your username is `darth`, by default Franklin will assume the root URL to  be `darth.github.io/`. However, if you want to build a project page so that the base URL is `darth.github.io/vador/` then use `@def prepath = "vador"`}\\
-\smindent{(\*\*)} \smnote{must be in a format recognized by Julia's `Dates.DateLocale`. Defaults to English. If left unset, the short names are created automatically by using the first three characters of the full names.}\\
-\smindent{(\*\*\*)} \smnote{to ignore a file add it's relative path like `"path/to/file.md"`, to ignore a directory end the path with a `/` like `"path/to/dir/"`.}.
+\smindent{(\*)} \smnote{Say you're using GitHub pages and your username is `darth`, by default Franklin will assume the root URL to  be `darth.github.io/`. However, if you want to build a project page so that the base URL is `darth.github.io/vador/` then use `@def prepath = "vador"`}\\
+\smindent{(\*\*)} \smnote{Must be in a format recognized by Julia's `Dates.DateLocale`. Defaults to English. If left unset, the short names are created automatically by using the first three characters of the full names.}\\
+\smindent{(\*\*\*)} \smnote{To ignore a file add it's relative path like `"path/to/file.md"`, to ignore a directory end the path with a `/` like `"path/to/dir/"`. Always ignored are `.DS_Store`, `.gitignore`, `LICENSE.md`, `README.md`, `franklin`, `franklin.pub`, and `node_modules/` (see [`IGNORE_FILES`](https://github.com/tlienart/Franklin.jl/blob/master/src/utils/paths.jl#L14)).}
 
 ### Other global settings
 
