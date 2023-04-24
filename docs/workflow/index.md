@@ -121,7 +121,7 @@ To avoid name clashes, refrain from using the following paths where `/` indicate
 * `/literate/` or `/literate.md`
 @@
 
-Also bear in mind that Franklin will ignore `README.md`, `LICENSE.md`, `Manifest.toml` and `Project.toml`.
+Also bear in mind that Franklin will ignore `README.md`, `LICENSE.md`, `Manifest.toml` and `Project.toml` (`Manifest.toml` and `Project.toml` are still copied to the output directory).
 
 ### Tag pages
 
