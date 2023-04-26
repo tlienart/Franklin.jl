@@ -4,7 +4,7 @@
 # Project.toml and the `deploy.yml` file here as examples.
 #
 using DelimitedFiles
-# using TikzCDs
+using TikzPictures
 using Dates
 using Weave
 using DataFrames
@@ -73,21 +73,22 @@ end
 ### 009 ###
 ###########
 
-# XXX TikzCD is too disfunctional as of April 2023
+# so we don't have to install LaTeX on CI
+tikzUseTectonic(true)
 
-# function env_tikzcd(e, _)
-#   content = strip(Franklin.content(e))
-#   name = strip(Franklin.content(e.braces[1]))
-#   # save SVG at __site/assets/[path/to/file]/$name.svg
-#   rpath = joinpath("assets", splitext(Franklin.locvar(:fd_rpath))[1], "$name.svg")
-#   outpath = joinpath(Franklin.path(:site), rpath)
-#   # if the directory doesn't exist, create it
-#   outdir = dirname(outpath)
-#   isdir(outdir) || mkpath(outdir)
-#   # save the file and show it
-#   save(SVG(outpath), TikzCD(content))
-#   return "\\fig{/$(Franklin.unixify(rpath))}"
-# end
+function env_tikzcd(e, _)
+  content = strip(Franklin.content(e))
+  name = strip(Franklin.content(e.braces[1]))
+  # save SVG at __site/assets/[path/to/file]/$name.svg
+  rpath = joinpath("assets", splitext(Franklin.locvar(:fd_rpath))[1], "$name.svg")
+  outpath = joinpath(Franklin.path(:site), rpath)
+  # if the directory doesn't exist, create it
+  outdir = dirname(outpath)
+  isdir(outdir) || mkpath(outdir)
+  # save the file and show it
+  save(SVG(outpath), TikzPicture(content; environment="tikzcd", preamble="\\usepackage{tikz-cd}"))
+  return "\\fig{/$(Franklin.unixify(rpath))}"
+end
 
 ###########
 ### 013 ###
