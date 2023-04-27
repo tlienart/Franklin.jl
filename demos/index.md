@@ -2,6 +2,7 @@
 title = "Franklin FAQ"
 tags = ["index"]
 auto_code_path = true
+has_math = true
 +++
 
 # Franklin Demos
