@@ -2,6 +2,7 @@
 title = "Franklin FAQ"
 tags = ["index"]
 auto_code_path = true
+has_math = true
 +++
 
 # Franklin Demos
@@ -250,7 +251,7 @@ and that's it 🏁.
 
 ## (009) custom environment for TikzCD
 
-> TikzCDs is currently too disfunctional so the demo is commented out for now.
+> TikzCDs is currently too disfunctional so the demo is commented out for now. Like TikzPicture, it's possible to make it work with Tectonic but Tectonic doesn't work on M* macs.
 
 <!-- 
 
