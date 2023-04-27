@@ -64,7 +64,7 @@ end
 
 function _keep_path(base, fname)::Bool
     rpath = get_rpath(joinpath(base, fname))
-    keep = globvar(:keep_path)::Vector{String}
+    keep  = union(globvar(:keep_path)::Vector{String}, ["404.html"])
     isempty(keep) && return false
     files = [f for f in keep if endswith(f, ".html")]
     dirs = [d for d in keep if endswith(d, "/")]
