@@ -34,7 +34,7 @@ function form_output_path(base::AS, file::AS, case::Symbol)
         # file is index.html or 404.html or in keep_path --> keep the path
         # file is page.html  --> .../page/index.html
         fname = splitext(file)[1]
-        if fname ∉ ("index", "404") && !endswith(fname, "/index") && !_keep_path(base, fname)
+        if fname != "index" && !endswith(fname, "/index") && !_keep_path(base, fname)
             file = joinpath(fname, "index.html")
         end
     end
@@ -64,7 +64,7 @@ end
 
 function _keep_path(base, fname)::Bool
     rpath = get_rpath(joinpath(base, fname))
-    keep = globvar(:keep_path)::Vector{String}
+    keep  = union(globvar(:keep_path)::Vector{String}, ["404.html"])
     isempty(keep) && return false
     files = [f for f in keep if endswith(f, ".html")]
     dirs = [d for d in keep if endswith(d, "/")]
