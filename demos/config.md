@@ -10,6 +10,8 @@ mathjax = false
 ignore = ["foo/content.md"]
 weave = false
 
+generate_sitemap = true
+
 # supports question 001
 members_from_csv = eachrow(readdlm("_assets/members.csv", ',', skipstart=1))
 +++

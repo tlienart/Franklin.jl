@@ -34,7 +34,7 @@ function form_output_path(base::AS, file::AS, case::Symbol)
         # file is index.html or 404.html or in keep_path --> keep the path
         # file is page.html  --> .../page/index.html
         fname = splitext(file)[1]
-        if fname ∉ ("index", "404") && !endswith(fname, "/index") && !_keep_path(base, fname)
+        if fname != "index" && !endswith(fname, "/index") && !_keep_path(base, fname)
             file = joinpath(fname, "index.html")
         end
     end
