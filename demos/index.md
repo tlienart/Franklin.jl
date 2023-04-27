@@ -37,7 +37,7 @@ DataFrame(; val, tag, math, website)
 
 will be rendered as:
 
-<!-- {{ render_table }} -->
+{{ render_table }}
 
 This done via a `hfun_render_table` which can be found in [`utils.jl`](https://github.com/tlienart/Franklin.jl/blob/master/demos/utils.jl).
 
@@ -250,6 +250,11 @@ and that's it 🏁.
 
 ## (009) custom environment for TikzCD
 
+{{if isAppleARM}}
+> This demo unfortunately doesn't work on Apple ARM since it uses tectonic through the [TikzPictures.jl](https://github.com/JuliaTeX/TikzPictures.jl) package. See issue [Tectonic.jl#13](https://github.com/MichaelHatherly/Tectonic.jl/issues/13).
+
+{{else}}
+
 Following up on [#008](#008_custom_environments_and_commands), here's a custom environment for Tikz diagrams using the [TikzPictures.jl](https://github.com/JuliaTeX/TikzPictures.jl) package.
 
 Let's first see what you get for your effort:
@@ -273,6 +278,8 @@ A \arrow[r, "\phi"] \arrow[d, red]
 ```
 
 The corresponding `env_tikzcd` function is in the `utils.jl` file and is quite simple.
+
+{{end}}
 
 ## (008) (custom) environments and commands
 

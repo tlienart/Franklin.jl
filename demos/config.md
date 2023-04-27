@@ -10,6 +10,8 @@ mathjax = false
 ignore = ["foo/content.md"]
 weave = false
 
+isAppleARM = Sys.isapple() && Sys.ARCH === :aarch64
+
 # supports question 001
 members_from_csv = eachrow(readdlm("_assets/members.csv", ',', skipstart=1))
 +++
