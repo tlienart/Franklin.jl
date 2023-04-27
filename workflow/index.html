@@ -215,7 +215,7 @@
 <li><p><code>/literate/</code> or <code>/literate.md</code></p>
 </li>
 </ul></div>
-<p>Also bear in mind that Franklin will ignore <code>README.md</code>, <code>LICENSE.md</code>, <code>Manifest.toml</code> and <code>Project.toml</code>.</p>
+<p>Also bear in mind that Franklin will ignore <code>README.md</code>, <code>LICENSE.md</code>, <code>Manifest.toml</code> and <code>Project.toml</code> &#40;<code>Manifest.toml</code> and <code>Project.toml</code> are still copied to the output directory&#41;.</p>
 <h3 id="tag_pages"><a href="#tag_pages" class="header-anchor">Tag pages</a></h3>
 <p>All pages with a given tag can be found &#40;by default&#41; at <code>&#91;website&#93;/tag/&lt;tag_name&gt;</code>. The tag page location can be changed by setting the <code>tag_page_path</code> variable in <code>config.md</code>. For example, setting <code>@def tag_page_path &#61; &quot;my_tags&quot;</code> would cause tag pages to appear at <code>&#91;website&#93;/my_tags/&lt;tag_name&gt;</code>.</p>
 <h3 id="editing_and_testing_your_website"><a href="#editing_and_testing_your_website" class="header-anchor">Editing and testing your website</a></h3>
@@ -277,7 +277,7 @@ prepath &#61; &quot;project&quot;
 <p>Note also that the <code>publish</code> function accepts a <code>final&#61;</code> keyword to which you can pass any function <code>&#40;&#41; -&gt; nothing</code> to do some final post-processing before pushing updates online. For instance, you can use <code>final&#61;lunr</code> where <code>lunr</code> is a function exported by Franklin which generates a Lunr search index &#40;see <a href="/extras/lunr/">this tutorial</a> for more details&#41;.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: March 30, 2023. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: April 27, 2023. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->

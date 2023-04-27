@@ -27,7 +27,60 @@
 <p>It&#39;s not meant to be beautiful, rather just show how to get specific stuff done. If one block answers one of your question, make sure to check <a href="https://github.com/tlienart/Franklin.jl/tree/master/demos/index.md">the source</a> to see how it was done. The ordering is reverse chronological but just use the table of contents to guide you to whatever you might want to explore.</p>
 <p><strong>Note</strong>: an important philosophy here is that if you can write a Julia function that would produce the HTML you want, then write that function and let Franklin call it.</p>
 <p><strong>Note 2</strong>: the numbering in georgian script in the table of content is on purpose &#40;though for no particularly good reason other than that it looks nice... 🇬🇪&#41;</p>
-<div class="franklin-toc"><ol><li><a href="#018_collapsible_block">&#40;018&#41; collapsible block</a></li><li><a href="#017_making_cells_work_in_their_own_path">&#40;017&#41; making cells work in their own path</a></li><li><a href="#016_using_wglmakie_jsserve">&#40;016&#41; using WGLMakie &#43; JSServe</a></li><li><a href="#015_using_weave">&#40;015&#41; Using Weave</a></li><li><a href="#014_using_mathjax">&#40;014&#41; Using MathJax</a></li><li><a href="#013_inserting_markdown_in_markdown">&#40;013&#41; Inserting Markdown in Markdown</a></li><li><a href="#012_dates">&#40;012&#41; Dates</a></li><li><a href="#011_showing_type_information">&#40;011&#41; showing type information</a></li><li><a href="#010_clipboard_button_for_code_blocks">&#40;010&#41; clipboard button for code blocks</a></li><li><a href="#009_custom_environment_for_tikzcd">&#40;009&#41; custom environment for TikzCD</a></li><li><a href="#008_custom_environments_and_commands">&#40;008&#41; &#40;custom&#41; environments and commands</a><ol><li><a href="#customise_with_julia_code">Customise with Julia code</a></li></ol></li><li><a href="#007_delayed_hfun">&#40;007&#41; delayed hfun</a></li><li><a href="#006_code_highlighting">&#40;006&#41; code highlighting</a></li><li><a href="#005_pagination">&#40;005&#41; pagination</a></li><li><a href="#004_use_latexifyjl">&#40;004&#41; use Latexify.jl</a></li><li><a href="#003_styling_of_code_output_blocks">&#40;003&#41; styling of code output blocks</a></li><li><a href="#002_code_block_scope">&#40;002&#41; code block scope</a></li><li><a href="#001_how_to_load_data_from_file_and_loop_over_rows">&#40;001&#41; how to load data from file and loop over rows</a><ol><li><a href="#approach_1_with_a_hfun">Approach 1, with a <code>hfun</code></a></li><li><a href="#approach_2_with_a_page_variable_and_a_for_loop">Approach 2, with a page variable and a for loop</a></li></ol></li></ol></div>
+<div class="franklin-toc"><ol><li><a href="#019_from_dataframe_to_html_table">&#40;019&#41; From <code>Dataframe</code> to HTML table</a></li><li><a href="#018_collapsible_block">&#40;018&#41; collapsible block</a></li><li><a href="#017_making_cells_work_in_their_own_path">&#40;017&#41; making cells work in their own path</a></li><li><a href="#016_using_wglmakie_jsserve">&#40;016&#41; using WGLMakie &#43; JSServe</a></li><li><a href="#015_using_weave">&#40;015&#41; Using Weave</a></li><li><a href="#014_using_mathjax">&#40;014&#41; Using MathJax</a></li><li><a href="#013_inserting_markdown_in_markdown">&#40;013&#41; Inserting Markdown in Markdown</a></li><li><a href="#012_dates">&#40;012&#41; Dates</a></li><li><a href="#011_showing_type_information">&#40;011&#41; showing type information</a></li><li><a href="#010_clipboard_button_for_code_blocks">&#40;010&#41; clipboard button for code blocks</a></li><li><a href="#009_custom_environment_for_tikzcd">&#40;009&#41; custom environment for TikzCD</a></li><li><a href="#008_custom_environments_and_commands">&#40;008&#41; &#40;custom&#41; environments and commands</a><ol><li><a href="#customise_with_julia_code">Customise with Julia code</a></li></ol></li><li><a href="#007_delayed_hfun">&#40;007&#41; delayed hfun</a></li><li><a href="#006_code_highlighting">&#40;006&#41; code highlighting</a></li><li><a href="#005_pagination">&#40;005&#41; pagination</a></li><li><a href="#004_use_latexifyjl">&#40;004&#41; use Latexify.jl</a></li><li><a href="#003_styling_of_code_output_blocks">&#40;003&#41; styling of code output blocks</a></li><li><a href="#002_code_block_scope">&#40;002&#41; code block scope</a></li><li><a href="#001_how_to_load_data_from_file_and_loop_over_rows">&#40;001&#41; how to load data from file and loop over rows</a><ol><li><a href="#approach_1_with_a_hfun">Approach 1, with a <code>hfun</code></a></li><li><a href="#approach_2_with_a_page_variable_and_a_for_loop">Approach 2, with a page variable and a for loop</a></li></ol></li></ol></div>
+<h2 id="019_from_dataframe_to_html_table"><a href="#019_from_dataframe_to_html_table" class="header-anchor">&#40;019&#41; From <code>Dataframe</code> to HTML table</a></h2>
+<p>If you have some data that you would like to manipulate and render nicely in <code>Franklin</code>, you can use the following snippet relying on <a href="https://github.com/JuliaData/DataFrames.jl"><code>DataFrames.jl</code></a> and <a href="https://github.com/ronisbr/PrettyTables.jl"><code>PrettyTables.jl</code></a>.</p>
+<p>The following <code>Dataframe</code>: </p>
+<pre><code class="language-julia">val &#61; rand&#40;1:10, 5&#41;
+tag &#61; rand&#40;&#39;A&#39;:&#39;Z&#39;, 5&#41;
+math &#61; rand&#40;&#91;&quot;\&#36;a &#43; b\&#36;&quot;, &quot;\&#36;\\frac&#123;1&#125;&#123;2&#125;\&#36;&quot;, &quot;\&#36;\\sqrt&#123;2\\pi&#125;\&#36;&quot;&#93;, 5&#41;
+website &#61; rand&#40;&#91;&quot;&#91;Franklin home page&#93;&#40;https://franklinjl.org&#41;&quot;, &quot;&#91;Franklin Github&#93;&#40;https://github.com/tlienart/Franklin.jl&#41;&quot;&#93;, 5&#41;
+DataFrame&#40;; val, tag, math, website&#41;</code></pre>
+<p>will be rendered as:</p>
+<table>
+  <thead>
+    <tr class = "header headerLastRow">
+      <th style = "text-align: center;">val</th>
+      <th style = "text-align: center;">tag</th>
+      <th style = "text-align: center;">math</th>
+      <th style = "text-align: center;">website</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style = "text-align: center;">1</td>
+      <td style = "text-align: center;">P</td>
+      <td style = "text-align: center;">\(\frac{1}{2}\)</td>
+      <td style = "text-align: center;"><a href="https://github.com/tlienart/Franklin.jl">Franklin Github</a></td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">9</td>
+      <td style = "text-align: center;">T</td>
+      <td style = "text-align: center;">\(\frac{1}{2}\)</td>
+      <td style = "text-align: center;"><a href="https://franklinjl.org">Franklin home page</a></td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">7</td>
+      <td style = "text-align: center;">C</td>
+      <td style = "text-align: center;">\(\sqrt{2\pi}\)</td>
+      <td style = "text-align: center;"><a href="https://github.com/tlienart/Franklin.jl">Franklin Github</a></td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">10</td>
+      <td style = "text-align: center;">B</td>
+      <td style = "text-align: center;">\(\frac{1}{2}\)</td>
+      <td style = "text-align: center;"><a href="https://github.com/tlienart/Franklin.jl">Franklin Github</a></td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">2</td>
+      <td style = "text-align: center;">J</td>
+      <td style = "text-align: center;">\(a + b\)</td>
+      <td style = "text-align: center;"><a href="https://github.com/tlienart/Franklin.jl">Franklin Github</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>This done via a <code>hfun_render_table</code> which can be found in <a href="https://github.com/tlienart/Franklin.jl/blob/master/demos/utils.jl"><code>utils.jl</code></a>.</p>
 <h2 id="018_collapsible_block"><a href="#018_collapsible_block" class="header-anchor">&#40;018&#41; collapsible block</a></h2>
 <p>How to make a section expand when clicked, so that content is initially hidden? &#40;Based on <a href="https://www.w3schools.com/howto/howto_js_collapsible.asp">this html guide</a>.&#41;</p>
 <button type="button" class="collapsible">  We first define a command, <code>\collaps&#123;title&#125;&#123;content&#125;</code>, allowing both the title and the content to be given as markdown and processed by Franklin </button><div class="collapsiblecontent">  </p>
@@ -140,7 +193,7 @@ end</code></pre><pre><code class="plaintext code-output">*
 <p>You can look at <a href="https://github.com/tlienart/Franklin.jl/blob/master/demos/utils.jl"><code>utils.jl</code></a> for the definition of the <code>hfun</code> &#40;same as above&#41;, at <a href="https://github.com/tlienart/Franklin.jl/blob/master/demos/index.md"><code>index.md</code></a> to see how it&#39;s called and at <a href="https://github.com/tlienart/Franklin.jl/blob/master/demos/foo/content.md"><code>foo/content.md</code></a> for the content file. Finally you can also check out the <a href="https://github.com/tlienart/Franklin.jl/blob/master/demos/config.md"><code>config.md</code></a> file to see how the content page is ignored.</p>
 <h2 id="012_dates"><a href="#012_dates" class="header-anchor">&#40;012&#41; Dates</a></h2>
 <p>The date of last modification on the page is kept in the <code>fd_mtime_raw</code> internal page variable, there is also a pre-formatted <code>fd_mtime</code>.</p>
-<p>Last modified: 2023-03-30 or March 30, 2023</p>
+<p>Last modified: 2023-04-27 or April 27, 2023</p>
 <h2 id="011_showing_type_information"><a href="#011_showing_type_information" class="header-anchor">&#40;011&#41; showing type information</a></h2>
 <p>This is a short demo following a discussion on Slack, it shows three things:</p>
 <ul>
@@ -181,18 +234,9 @@ print&#40;s&#41;</code></pre><pre><code class="plaintext code-output">hello</cod
 </ul>
 <p>and that&#39;s it 🏁.</p>
 <h2 id="009_custom_environment_for_tikzcd"><a href="#009_custom_environment_for_tikzcd" class="header-anchor">&#40;009&#41; custom environment for TikzCD</a></h2>
-<p>Following up on <a href="#008_custom_environments_and_commands">#008</a>, here&#39;s a custom environment for Tikz diagrams using the <a href="https://github.com/JuliaTeX/TikzCDs.jl">TikzCDs.jl</a> package.</p>
-<p>Let&#39;s first see what you get for your effort:</p>
-<div class="small-imgc"><img src="/demos/assets/index/tcd1.svg" alt=""></div>
-<p>Cool&#33; Modulo a div class that shrinks the image a bit, the code that was used here is very nearly a copy-paste from an example in the <a href="https://ctan.kako-dev.de/graphics/pgf/contrib/tikz-cd/tikz-cd-doc.pdf">tikz-cd docs</a>, the only difference is one additional bracket with the file name &#40;here <code>tcd1</code>&#41;:</p>
-<pre><code class="language-plaintext">\begin&#123;tikzcd&#125;&#123;tcd1&#125;
-A \arrow&#91;r, &quot;\phi&quot;&#93; \arrow&#91;d, red&#93;
-  &amp; B \arrow&#91;d, &quot;\psi&quot; red&#93; \\
-  C \arrow&#91;r, red, &quot;\eta&quot; blue&#93;
-  &amp; D
-\end&#123;tikzcd&#125;</code></pre>
-<p>The corresponding <code>env_tikzcd</code> function is in the <code>utils.jl</code> file and is quite simple.</p>
-<p><strong>Note</strong>: in this particular case, the environment uses the <a href="https://github.com/JuliaTeX/TikzCDs.jl"><code>TikzCDs.jl</code></a> which requires having <code>lualatex</code> and <code>dvisgm</code> as per their README. For this to work with a GitHub action, the relevant stuff needs to be installed, it&#39;s not hard to do so with GitHub actions though you need to get TeXLive 2019 to avoid errors, I used <a href="https://github.com/tlienart/Franklin.jl/blob/354ac015c14aaedf9ebeaeb9d0b574ddad3738e5/.github/workflows/deploy.yml#L20-L23">these 3 lines</a> which you could copy.</p>
+<blockquote>
+<p>TikzCDs is currently too disfunctional so the demo is commented out for now. Like TikzPicture, it&#39;s possible to make it work with Tectonic but Tectonic doesn&#39;t work on M* macs.</p>
+</blockquote>
 <h2 id="008_custom_environments_and_commands"><a href="#008_custom_environments_and_commands" class="header-anchor">&#40;008&#41; &#40;custom&#41; environments and commands</a></h2>
 <p>You can define new commands and new environments using essentially the same syntax as in LaTeX:</p>
 <pre><code class="language-plaintext">\newcommand&#123;\command&#125;&#91;nargs&#93;&#123;def&#125;
@@ -321,8 +365,8 @@ ls &#61; latexify&#40;empty_ary&#41; # this is an L string</code></pre>
 \[
 \left[
 \begin{array}{cc}
-1.5e-44 & 3.0e-45 \\
-3.9e-44 & 3.0e-45 \\
+0.0 & 0.0 \\
+0.0 & 0.0 \\
 \end{array}
 \right]
 \]
@@ -398,7 +442,7 @@ Liu Fengyun,liufengyun</code></pre>
 </ul>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: March 30, 2023. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
+    &copy; Thibaut Lienart. Last modified: April 27, 2023. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
   </div>
 </div>
 
