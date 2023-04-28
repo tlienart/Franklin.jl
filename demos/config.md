@@ -9,8 +9,9 @@ maxtoclevel = 3
 mathjax = false
 ignore = ["foo/content.md"]
 weave = false
-
 generate_sitemap = true
+
+isAppleARM = Sys.isapple() && Sys.ARCH === :aarch64
 
 # supports question 001
 members_from_csv = eachrow(readdlm("_assets/members.csv", ',', skipstart=1))
