@@ -96,6 +96,8 @@ if !isAppleARM
         return "\\fig{/$(Franklin.unixify(rpath))}"
     end
     
+else
+    env_tikzcd(_, _) = ""
 end
 
 ###########
