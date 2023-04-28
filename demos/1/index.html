@@ -48,22 +48,16 @@ DataFrame&#40;; val, tag, math, website&#41;</code></pre>
   </thead>
   <tbody>
     <tr>
-      <td style = "text-align: center;">7</td>
-      <td style = "text-align: center;">I</td>
-      <td style = "text-align: center;">\(\sqrt{2\pi}\)</td>
+      <td style = "text-align: center;">5</td>
+      <td style = "text-align: center;">W</td>
+      <td style = "text-align: center;">\(\frac{1}{2}\)</td>
       <td style = "text-align: center;"><a href="https://franklinjl.org">Franklin home page</a></td>
     </tr>
     <tr>
-      <td style = "text-align: center;">4</td>
-      <td style = "text-align: center;">I</td>
+      <td style = "text-align: center;">10</td>
+      <td style = "text-align: center;">K</td>
       <td style = "text-align: center;">\(\sqrt{2\pi}\)</td>
       <td style = "text-align: center;"><a href="https://github.com/tlienart/Franklin.jl">Franklin Github</a></td>
-    </tr>
-    <tr>
-      <td style = "text-align: center;">3</td>
-      <td style = "text-align: center;">I</td>
-      <td style = "text-align: center;">\(a + b\)</td>
-      <td style = "text-align: center;"><a href="https://franklinjl.org">Franklin home page</a></td>
     </tr>
     <tr>
       <td style = "text-align: center;">7</td>
@@ -72,10 +66,16 @@ DataFrame&#40;; val, tag, math, website&#41;</code></pre>
       <td style = "text-align: center;"><a href="https://github.com/tlienart/Franklin.jl">Franklin Github</a></td>
     </tr>
     <tr>
-      <td style = "text-align: center;">5</td>
-      <td style = "text-align: center;">E</td>
-      <td style = "text-align: center;">\(\sqrt{2\pi}\)</td>
-      <td style = "text-align: center;"><a href="https://github.com/tlienart/Franklin.jl">Franklin Github</a></td>
+      <td style = "text-align: center;">1</td>
+      <td style = "text-align: center;">L</td>
+      <td style = "text-align: center;">\(\frac{1}{2}\)</td>
+      <td style = "text-align: center;"><a href="https://franklinjl.org">Franklin home page</a></td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">4</td>
+      <td style = "text-align: center;">Z</td>
+      <td style = "text-align: center;">\(a + b\)</td>
+      <td style = "text-align: center;"><a href="https://franklinjl.org">Franklin home page</a></td>
     </tr>
   </tbody>
 </table>
@@ -193,7 +193,7 @@ end</code></pre><pre><code class="plaintext code-output">*
 <p>You can look at <a href="https://github.com/tlienart/Franklin.jl/blob/master/demos/utils.jl"><code>utils.jl</code></a> for the definition of the <code>hfun</code> &#40;same as above&#41;, at <a href="https://github.com/tlienart/Franklin.jl/blob/master/demos/index.md"><code>index.md</code></a> to see how it&#39;s called and at <a href="https://github.com/tlienart/Franklin.jl/blob/master/demos/foo/content.md"><code>foo/content.md</code></a> for the content file. Finally you can also check out the <a href="https://github.com/tlienart/Franklin.jl/blob/master/demos/config.md"><code>config.md</code></a> file to see how the content page is ignored.</p>
 <h2 id="012_dates"><a href="#012_dates" class="header-anchor">&#40;012&#41; Dates</a></h2>
 <p>The date of last modification on the page is kept in the <code>fd_mtime_raw</code> internal page variable, there is also a pre-formatted <code>fd_mtime</code>.</p>
-<p>Last modified: 2023-04-27 or April 27, 2023</p>
+<p>Last modified: 2023-04-28 or April 28, 2023</p>
 <h2 id="011_showing_type_information"><a href="#011_showing_type_information" class="header-anchor">&#40;011&#41; showing type information</a></h2>
 <p>This is a short demo following a discussion on Slack, it shows three things:</p>
 <ul>
@@ -234,9 +234,19 @@ print&#40;s&#41;</code></pre><pre><code class="plaintext code-output">hello</cod
 </ul>
 <p>and that&#39;s it 🏁.</p>
 <h2 id="009_custom_environment_for_tikzcd"><a href="#009_custom_environment_for_tikzcd" class="header-anchor">&#40;009&#41; custom environment for TikzCD</a></h2>
-<blockquote>
-<p>TikzCDs is currently too disfunctional so the demo is commented out for now. Like TikzPicture, it&#39;s possible to make it work with Tectonic but Tectonic doesn&#39;t work on M* macs.</p>
-</blockquote>
+
+<p>Following up on <a href="#008_custom_environments_and_commands">#008</a>, here&#39;s a custom environment for Tikz diagrams using the <a href="https://github.com/JuliaTeX/TikzPictures.jl">TikzPictures.jl</a> package.</p>
+<p>Let&#39;s first see what you get for your effort:</p>
+<div class="small-imgc"><img src="/demos/assets/index/tcd1.svg" alt=""></div>
+<p>Cool&#33; Modulo a div class that shrinks the image a bit, the code that was used here is very nearly a copy-paste from an example in the <a href="https://ctan.kako-dev.de/graphics/pgf/contrib/tikz-cd/tikz-cd-doc.pdf">tikz-cd docs</a>, the only difference is one additional bracket with the file name &#40;here <code>tcd1</code>&#41;:</p>
+<pre><code class="language-plaintext">\begin&#123;tikzcd&#125;&#123;tcd1&#125;
+A \arrow&#91;r, &quot;\phi&quot;&#93; \arrow&#91;d, red&#93;
+  &amp; B \arrow&#91;d, &quot;\psi&quot; red&#93; \\
+  C \arrow&#91;r, red, &quot;\eta&quot; blue&#93;
+  &amp; D
+\end&#123;tikzcd&#125;</code></pre>
+<p>The corresponding <code>env_tikzcd</code> function is in the <code>utils.jl</code> file and is quite simple.</p>
+
 <h2 id="008_custom_environments_and_commands"><a href="#008_custom_environments_and_commands" class="header-anchor">&#40;008&#41; &#40;custom&#41; environments and commands</a></h2>
 <p>You can define new commands and new environments using essentially the same syntax as in LaTeX:</p>
 <pre><code class="language-plaintext">\newcommand&#123;\command&#125;&#91;nargs&#93;&#123;def&#125;
@@ -365,8 +375,8 @@ ls &#61; latexify&#40;empty_ary&#41; # this is an L string</code></pre>
 \[
 \left[
 \begin{array}{cc}
--9.1308705e-36 & -8.0439744e-36 \\
-4.5584e-41 & 4.5584e-41 \\
+-1.1161673e-27 & -2.20792e-11 \\
+4.5862e-41 & 4.5862e-41 \\
 \end{array}
 \right]
 \]
@@ -442,7 +452,7 @@ Liu Fengyun,liufengyun</code></pre>
 </ul>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: April 27, 2023. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
+    &copy; Thibaut Lienart. Last modified: April 28, 2023. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
   </div>
 </div>
 
