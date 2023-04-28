@@ -9,6 +9,7 @@ maxtoclevel = 3
 mathjax = false
 ignore = ["foo/content.md"]
 weave = false
+generate_sitemap = true
 
 isAppleARM = Sys.isapple() && Sys.ARCH === :aarch64
 
