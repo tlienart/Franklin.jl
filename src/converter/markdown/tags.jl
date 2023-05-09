@@ -38,10 +38,6 @@ function generate_tag_pages(refresh_tags=Set{String}())::Nothing
     set_var!(GLOBAL_VARS, "fd_tag_pages", TAG_PAGES; check=false)
     all_tags = collect(keys(TAG_PAGES))
 
-    for (k, v) in TAG_PAGES
-        println("i>> $k: $v")
-    end
-
     # some tags may have been given to refresh which don't have any
     # pages linking to them anymore, these tags will have to be cleaned up
     rm_tags = filter(t -> t ∉ all_tags, refresh_tags)
