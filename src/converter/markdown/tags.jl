@@ -15,9 +15,16 @@ function generate_tag_pages(refresh_tags=Set{String}())::Nothing
     # if there are no page tags, cleanup and finish
     PAGE_TAGS = globvar("fd_page_tags")
     isnothing(PAGE_TAGS) && return clean_tags()
-    # if there are page tags, eliminiate the pages that don't exist anymore
+
+    # if there are page tags, eliminate the pages that don't exist anymore
     for rpath in keys(PAGE_TAGS)
-        isfile(rpath * ".md") || delete!(PAGE_TAGS, rpath)
+        # check first the md path (default), but in some case the tag
+        # may have been collected from a raw file which may be in assets in
+        # which case the rpath includes the extension (.html)
+        # see: https://github.com/tlienart/Franklin.jl/discussions/1010
+        has_source  = isfile(rpath * ".md")
+        has_source |= isfile(replace(rpath, "/assets/" => "/_assets/" ))
+        has_source || delete!(PAGE_TAGS, rpath)
     end
     # if there's nothing left, clean up and finish
     isempty(PAGE_TAGS) && return clean_tags()
