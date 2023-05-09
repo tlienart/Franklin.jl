@@ -44,6 +44,7 @@ Add an entry to `SITEMAP_DICT`.
 """
 function add_sitemap_item(; html=false)
     loc = url_curpage()
+    endswith(loc, "404.html") && return nothing
     locvar(:sitemap_exclude)::Bool && return nothing
     if !html
         lastmod = locvar(:fd_mtime_raw)
