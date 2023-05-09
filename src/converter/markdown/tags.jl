@@ -15,10 +15,16 @@ function generate_tag_pages(refresh_tags=Set{String}())::Nothing
     # if there are no page tags, cleanup and finish
     PAGE_TAGS = globvar("fd_page_tags")
     isnothing(PAGE_TAGS) && return clean_tags()
-    # if there are page tags, eliminiate the pages that don't exist anymore
+
+    # if there are page tags, eliminate the pages that don't exist anymore
     for rpath in keys(PAGE_TAGS)
-        exts = [".md", globvar("tag_source_exts")...]
-        any(isfile(rpath * ext) for ext in exts) || delete!(PAGE_TAGS, rpath)
+        # check first the md path (default), but in some case the tag
+        # may have been collected from a raw file which may be in assets in
+        # which case the rpath includes the extension (.html)
+        # see: https://github.com/tlienart/Franklin.jl/discussions/1010
+        has_source  = isfile(rpath * ".md")
+        has_source |= isfile(replace(rpath, "/assets/" => "/_assets/" ))
+        has_source || delete!(PAGE_TAGS, rpath)
     end
     # if there's nothing left, clean up and finish
     isempty(PAGE_TAGS) && return clean_tags()
@@ -31,6 +37,10 @@ function generate_tag_pages(refresh_tags=Set{String}())::Nothing
     # store it in globvar
     set_var!(GLOBAL_VARS, "fd_tag_pages", TAG_PAGES; check=false)
     all_tags = collect(keys(TAG_PAGES))
+
+    for (k, v) in TAG_PAGES
+        println("i>> $k: $v")
+    end
 
     # some tags may have been given to refresh which don't have any
     # pages linking to them anymore, these tags will have to be cleaned up
