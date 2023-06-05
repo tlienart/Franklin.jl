@@ -3,7 +3,7 @@ function PY()
         ENV["PYTHON3"]
     else
         if Sys.iswindows()
-            if "" ∈ keys(ENV)
+            if "PYENV" ∈ keys(ENV)
                 return "python"
             end
             "py -3"
