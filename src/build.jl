@@ -3,6 +3,9 @@ function PY()
         ENV["PYTHON3"]
     else
         if Sys.iswindows()
+            if "" ∈ keys(ENV)
+                return "python"
+            end
             "py -3"
         else
             "python3"
@@ -31,7 +34,12 @@ end
 # highligh.js library; can be overridden from the outside which is useful for testing
 const HIGHLIGHTJS = Ref{String}("highlight.js")
 
-shell_try(com)::Bool = try success(com); catch; false; end
+shell_try(com)::Bool =
+    try
+        success(com)
+    catch
+        false
+    end
 
 #=
 Pre-rendering
