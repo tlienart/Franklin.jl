@@ -27,9 +27,9 @@ version = "0.1.7"
 
 [[deps.Blink]]
 deps = ["Base64", "Distributed", "HTTP", "JSExpr", "JSON", "Lazy", "Logging", "MacroTools", "Mustache", "Mux", "Pkg", "Reexport", "Sockets", "WebIO"]
-git-tree-sha1 = "88616b94aa805689cf12f74b2509410135c00f43"
+git-tree-sha1 = "f3f568766c0e3646501d257b039dd48f18aba887"
 uuid = "ad839575-38b3-5650-b840-f874b8c74a25"
-version = "0.12.6"
+version = "0.12.7"
 
 [[deps.ChainRulesCore]]
 deps = ["Compat", "LinearAlgebra", "SparseArrays"]
@@ -86,9 +86,9 @@ version = "1.0.1+0"
 
 [[deps.ConcurrentUtilities]]
 deps = ["Serialization", "Sockets"]
-git-tree-sha1 = "b306df2650947e9eb100ec125ff8c65ca2053d30"
+git-tree-sha1 = "96d823b94ba8d187a6d8f0826e731195a74b90e9"
 uuid = "f0e56b4a-5159-44fe-b623-3e5288b988bb"
-version = "2.1.1"
+version = "2.2.0"
 
 [[deps.Conda]]
 deps = ["Downloads", "JSON", "VersionParsing"]
@@ -97,9 +97,9 @@ uuid = "8f4d0f93-b110-5947-807f-2305c1781a2d"
 version = "1.8.0"
 
 [[deps.DataAPI]]
-git-tree-sha1 = "e8119c1a33d267e16108be441a287a6981ba1630"
+git-tree-sha1 = "8da84edb865b0b5b0100c0666a9bc9a0b71c553c"
 uuid = "9a962f9c-6df0-11e9-0e5d-c546b8b5ee8a"
-version = "1.14.0"
+version = "1.15.0"
 
 [[deps.DataValueInterfaces]]
 git-tree-sha1 = "bfc1187b79289637fa0ef6d4436ebdfe6905cbd6"
@@ -145,9 +145,9 @@ version = "0.8.4"
 
 [[deps.Franklin]]
 deps = ["Dates", "DelimitedFiles", "DocStringExtensions", "ExprTools", "FranklinTemplates", "HTTP", "Literate", "LiveServer", "Logging", "Markdown", "NodeJS", "OrderedCollections", "Pkg", "REPL", "Random", "TOML"]
-git-tree-sha1 = "a1cb7cf1e9dc56ebd17b1fce9e7f080ba9341b9e"
+git-tree-sha1 = "cf933084cfae62b47de01ae536920774a54a18a6"
 uuid = "713c75ef-9fc9-4b05-94a9-213340da978e"
-version = "0.10.83"
+version = "0.10.84"
 
 [[deps.FranklinTemplates]]
 deps = ["LiveServer"]
@@ -163,9 +163,9 @@ version = "0.5.0"
 
 [[deps.HTTP]]
 deps = ["Base64", "CodecZlib", "ConcurrentUtilities", "Dates", "Logging", "LoggingExtras", "MbedTLS", "NetworkOptions", "OpenSSL", "Random", "SimpleBufferStream", "Sockets", "URIs", "UUIDs"]
-git-tree-sha1 = "69182f9a2d6add3736b7a06ab6416aafdeec2196"
+git-tree-sha1 = "5e77dbf117412d4f164a464d610ee6050cc75272"
 uuid = "cd3eb016-35fb-5094-929b-558a96fad6f3"
-version = "1.8.0"
+version = "1.9.6"
 
 [[deps.Hiccup]]
 deps = ["MacroTools", "Test"]
@@ -175,9 +175,9 @@ version = "0.2.2"
 
 [[deps.IOCapture]]
 deps = ["Logging", "Random"]
-git-tree-sha1 = "f7be53659ab06ddc986428d3a9dcc95f6fa6705a"
+git-tree-sha1 = "d75853a0bdbfb1ac815478bacd89cd27b550ace6"
 uuid = "b5f81e59-6552-4d32-b1f0-c071b021bf89"
-version = "0.2.2"
+version = "0.2.3"
 
 [[deps.InteractiveUtils]]
 deps = ["Markdown"]
@@ -268,15 +268,15 @@ version = "2.14.0"
 
 [[deps.LiveServer]]
 deps = ["HTTP", "MIMEs", "Pkg", "Sockets"]
-git-tree-sha1 = "b0db05c042a7c54bb858f9846a4ca39ac15f8c44"
+git-tree-sha1 = "557e48aa71f59cedd2c079f2e82a7f4a14fb96ee"
 uuid = "16fef848-5104-11e9-1b77-fb7a48bbb589"
-version = "1.1.1"
+version = "1.1.2"
 
 [[deps.LogExpFunctions]]
 deps = ["ChainRulesCore", "ChangesOfVariables", "DocStringExtensions", "InverseFunctions", "IrrationalConstants", "LinearAlgebra"]
-git-tree-sha1 = "0a1b7c2863e44523180fdb3146534e265a91870b"
+git-tree-sha1 = "c3ce8e7420b3a6e071e0fe4745f5d4300e37b13f"
 uuid = "2ab3a3ac-af41-5b50-aa03-7779005ae688"
-version = "0.3.23"
+version = "0.3.24"
 
 [[deps.Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
@@ -365,9 +365,9 @@ version = "1.4.1"
 
 [[deps.OpenSSL_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "6cc6366a14dbe47e5fc8f3cbe2816b1185ef5fc4"
+git-tree-sha1 = "cae3153c7f6cf3f069a853883fd1919a6e5bab5b"
 uuid = "458c3c95-2e84-50aa-8efc-19380b2a3a95"
-version = "3.0.8+0"
+version = "3.0.9+0"
 
 [[deps.OpenSpecFun_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "Libdl", "Pkg"]
@@ -387,10 +387,10 @@ uuid = "d96e819e-fc66-5662-9728-84c9c7592b0a"
 version = "0.12.3"
 
 [[deps.Parsers]]
-deps = ["Dates", "SnoopPrecompile"]
-git-tree-sha1 = "478ac6c952fddd4399e71d4779797c538d0ff2bf"
+deps = ["Dates", "PrecompileTools", "UUIDs"]
+git-tree-sha1 = "a5aef8d4a6e8d81f171b2bd4be5265b01384c74c"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.5.8"
+version = "2.5.10"
 
 [[deps.Pidfile]]
 deps = ["FileWatching", "Test"]
@@ -417,9 +417,9 @@ version = "0.18.10"
 
 [[deps.PrecompileTools]]
 deps = ["Preferences"]
-git-tree-sha1 = "259e206946c293698122f63e2b513a7c99a244e8"
+git-tree-sha1 = "9673d39decc5feece56ef3940e5dafba15ba0f81"
 uuid = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
-version = "1.1.1"
+version = "1.1.2"
 
 [[deps.Preferences]]
 deps = ["TOML"]
@@ -473,12 +473,6 @@ uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
 git-tree-sha1 = "874e8867b33a00e784c8a7e4b60afe9e037b74e1"
 uuid = "777ac1f9-54b0-4bf8-805c-2214025038e7"
 version = "1.1.0"
-
-[[deps.SnoopPrecompile]]
-deps = ["Preferences"]
-git-tree-sha1 = "e760a70afdcd461cf01a575947738d359234665c"
-uuid = "66db9d55-30c0-4569-8b51-7e840670fc0c"
-version = "1.0.3"
 
 [[deps.Sockets]]
 uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
@@ -559,9 +553,9 @@ version = "1.3.0"
 
 [[deps.WebIO]]
 deps = ["AssetRegistry", "Base64", "Distributed", "FunctionalCollections", "JSON", "Logging", "Observables", "Pkg", "Random", "Requires", "Sockets", "UUIDs", "WebSockets", "Widgets"]
-git-tree-sha1 = "976d0738247f155d0dcd77607edea644f069e1e9"
+git-tree-sha1 = "0eef0765186f7452e52236fa42ca8c9b3c11c6e3"
 uuid = "0f1e0344-ec1d-5b48-a673-e5cf874b6c29"
-version = "0.8.20"
+version = "0.8.21"
 
 [[deps.WebSockets]]
 deps = ["Base64", "Dates", "HTTP", "Logging", "Sockets"]
