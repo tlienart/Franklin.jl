@@ -212,7 +212,8 @@ Rules:
 function should_ignore(fpath::AS, files2ignore::Vector,
                        dirs2ignore::Vector)::Bool
     # fpath is necessarily an absolute path so can strip the folder part
-    fpath = fpath[length(path(:folder))+length(PATH_SEP)+1:end] |> unixify
+    fpath = fpath[length(path(:folder))+length(PATH_SEP)+1:end]
+    fpath = unixify(fpath; allow_noext=true)
     if any(c -> c isa Regex ? match(c, fpath) !== nothing : c == fpath,
                files2ignore)
         return true
