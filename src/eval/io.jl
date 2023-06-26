@@ -11,15 +11,17 @@ $(SIGNATURES)
 Internal function to take a relative path and return a unix version of the path
 (if it isn't already). Used in [`resolve_rpath`](@ref).
 """
-function unixify(rpath::AS)::AS
+function unixify(rpath::AS; allow_noext::Bool=false)::AS
     # if empty, return "/"
     isempty(rpath) && return "/"
     # if windows, replace "\\" by "/"
     Sys.isunix() || (rpath = replace(rpath, "\\" => "/"))
     # if it's a path to a dot file, like path/.gitignore, return (issue #1001)
-    startswith(splitdir(rpath)[2], ".") && return rpath
+    startswith(splitdir(rpath)[2], ".") && return rpath  
     # if it has an extension e.g.: /blah.txt, return
     isempty(splitext(rpath)[2]) || return rpath
+    # if an extension-less path is allowed, return (issue #1031)
+    allow_noext && return rpath
     # if it doesn't have an extension, check if it ends with `/` e.g. : /blah/
     # if it doesn't end with "/", add one and return
     endswith(rpath, "/") || return rpath * "/"
