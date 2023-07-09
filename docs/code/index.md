@@ -277,6 +277,41 @@ savefig(joinpath(@OUTPUT, "sinc.svg")) # hide
 
 **Note**: If you wish to use `Plots.jl` and deploy to GitHub pages, you will need to modify the `.github/workflows/Deploy.yml` by adding `env: GKSwstype: "100"` before the ` - name: Build and Deploy` line. [Here](https://github.com/storopoli/Bayesian-Julia/blob/master/.github/workflows/Deploy.yml) is an example.
 
+### Auto and REPL mode
+
+You can use `!` and `>` to indicate respectively a code that should be run automatically
+and the output appended immediately after, or the same but with a REPL-style display:
+
+````plaintext
+```!
+x = 5
+y = x^2
+```
+````
+
+for instance gives:
+
+```!
+x = 5
+y = x^2
+```
+
+In a similar way:
+
+````plaintext
+```>
+x = 5
+y = x^2
+```
+````
+
+gives
+
+```>
+x = 5
+y = x^2
+```
+
 ### Troubleshooting
 
 A few things can go wrong when attempting to use and evaluate code blocks.
