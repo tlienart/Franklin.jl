@@ -19,7 +19,7 @@
         </code></pre>
         
         <p>some explanation</p>
-        <pre><code class="language-julia julia-repl">
+        <pre><code class="language-julia-repl">
         julia> z &#61; y * 2
         24
         </code></pre>
