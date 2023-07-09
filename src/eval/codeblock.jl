@@ -9,8 +9,8 @@ $SIGNATURES
 Take a fenced code block and return a tuple with the language, the relative
 path (if any) and the code.
 """
-function parse_fenced_block(ss::SubString, shortcut=false)::Tuple
-    if shortcut
+function parse_fenced_block(ss::SubString; shortcut=false, repl=false)::Tuple
+    if shortcut || repl
         lang  = locvar(:lang)::String
         cntr  = locvar(:fd_evalc)::Int
         rpath = "_ceval_$cntr"
@@ -86,9 +86,9 @@ Helper function to process the content of a code block.
 Return the html corresponding to the code block, possibly after having
 evaluated the code.
 """
-function resolve_code_block(ss::SubString; shortcut=false)::String
+function resolve_code_block(ss::SubString; shortcut=false, repl=false)::String
     # 1. what kind of code is it
-    lang, rpath, code = parse_fenced_block(ss, shortcut)
+    lang, rpath, code = parse_fenced_block(ss; shortcut, repl)
     # 1.a if no rpath is given, code should not be evaluated
     isnothing(rpath) && return html_code(code, lang)
     # 1.b if not julia code, eval is not supported
@@ -105,10 +105,11 @@ function resolve_code_block(ss::SubString; shortcut=false)::String
     # languages, can't do the module trick so will need to keep track
     # of that virtually. There will need to be a branching over lang=="julia"
     # vs rest here.
+    repl_code_chunks = Pair{String,String}[]
 
     # 2. here we have Julia code, assess whether to run it or not
     # if not, just return the code as a html block
-    if should_eval(code, rpath)
+    if shortcut || repl || should_eval(code, rpath)
         # 3. here we have code that should be (re)evaluated
         # >> retrieve the modulename, the module may not exist
         # (& may not need to)
@@ -117,6 +118,7 @@ function resolve_code_block(ss::SubString; shortcut=false)::String
         mod = ismodule(modname) ?
                 getfield(Main, Symbol(modname)) :
                 newmodule(modname)
+        
         # >> retrieve the code paths
         cp = form_codepaths(rpath)
         # >> write the code to file
@@ -129,22 +131,54 @@ function resolve_code_block(ss::SubString; shortcut=false)::String
         out = ifelse(locvar(:auto_code_path)::Bool, cp.out_dir, bk)
         isdir(out) || mkpath(out)
         cd(out)
-        # >> eval the code in the relevant module (this creates output/)
-        res = run_code(mod, code, cp.out_path; strip_code=false)
-        cd(bk)
-        # >> write res to file
-        # >> this weird thing with QuoteNode is to make sure that the proper
-        #    "show" method is called...
-        io = IOBuffer()
-        Core.eval(mod, quote show($(io), "text/plain", $(QuoteNode(res))) end)
-        write(cp.res_path, take!(io))
+
+        if repl
+            # imitating https://github.com/JuliaLang/julia/blob/fe2eeadc0b382508bef7e77ab517789ea844e708/stdlib/REPL/src/REPL.jl#L429-L430
+            chunk_code = ""
+            chunk_ast = nothing
+            for line in split(code, r"\r?\n", keepempty=false)
+                chunk_code *= line * "\n"
+                chunk_ast   = Base.parse_input_line(chunk_code)
+                if (isa(chunk_ast, Expr) && chunk_ast.head === :incomplete)
+                    continue
+                else
+                    # we have a complete chunk of code
+                    # >> eval the code in the relevant module (this creates output/)
+                    res = run_code(mod, chunk_code, cp.out_path; strip_code=false)
+                    cd(bk)
+                    # >> write res to string (see further down)
+                    io = IOBuffer()
+                    Core.eval(mod, quote show($(io), "text/plain", $(QuoteNode(res))) end)
+                    push!(repl_code_chunks,
+                        chunk_code => String(take!(io))
+                    )
+                    # reset for the next chunk
+                    chunk_code = ""
+                    chunk_ast = nothing
+                end
+            end
+        else
+            # >> eval the code in the relevant module (this creates output/)
+            res = run_code(mod, code, cp.out_path; strip_code=false)
+            cd(bk)
+            # >> write res to file
+            # >> this weird thing with QuoteNode is to make sure that the proper
+            #    "show" method is called...
+            io = IOBuffer()
+            Core.eval(mod, quote show($(io), "text/plain", $(QuoteNode(res))) end)
+            write(cp.res_path, take!(io))
+        end
         # >> since we've evaluated a code block, toggle scope as stale
         set_var!(LOCAL_VARS, "fd_eval", true)
     end
-    # >> finally return as html
-    if locvar(:showall)::Bool || shortcut
+    # >> finally return as html either with or without output
+    # --- with
+    if repl
+        return html_repl_code(repl_code_chunks)
+    elseif shortcut || locvar(:showall)::Bool
         return html_code(code, lang) *
                 reprocess("\\show{$rpath}", [GLOBAL_LXDEFS["\\show"]])
     end
+    # --- without
     return html_code(code, lang)
 end
