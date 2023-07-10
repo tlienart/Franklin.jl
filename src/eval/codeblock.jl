@@ -209,7 +209,8 @@ function resolve_code_block(
             push!(repl_code_chunks,
                 code => replace(Markdown.html(r),
                     "<a href=\"@ref\">" => "",
-                    "</code></a>" => "</code>"
+                    "</code></a>" => "</code>",
+                    "language-jldoctest" => "language-julia-repl"
                 )
             )
 

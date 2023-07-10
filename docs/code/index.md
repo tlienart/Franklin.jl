@@ -312,6 +312,78 @@ x = 5
 y = x^2
 ```
 
+**Shell, Pkg, Help**, these modes are also experimentally supported:
+
+_Pkg mode_ :
+
+````
+```]
+st
+```
+````
+
+gives
+
+```]
+st
+```
+
+_Shell mode_ :
+
+````
+```;
+echo "hello!"
+```
+````
+
+gives 
+
+```;
+echo "hello!"
+```
+
+~~~
+<style>
+.julia-help {
+    background-color: #fffee0;
+    padding: 10px;
+    font-style: italic;
+}
+.julia-help h1,h2,h3 {
+    font-size: 1em;
+    font-weight: 500;
+}
+</style>
+~~~
+
+_Help mode_ :
+
+````
+```?
+im
+```
+````
+
+```?
+im
+```
+
+**Note**: for the `help` mode above, the output is HTML corresponding to the julia
+docs, it's wrapped in a `julia-help` div which you should style, the above style
+for instance corresponds to the following CSS:
+
+```css
+.julia-help {
+    background-color: #fffee0;
+    padding: 10px;
+    font-style: italic;
+}
+.julia-help h1,h2,h3 {
+    font-size: 1em;
+    font-weight: 500;
+}
+```
+
 ### Troubleshooting
 
 A few things can go wrong when attempting to use and evaluate code blocks.
