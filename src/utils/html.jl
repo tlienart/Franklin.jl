@@ -116,7 +116,7 @@ html_code_inline(c::AS) = "<code>$c</code>"
 function html_repl_code(chunks::Vector{Pair{String,String}})::String
     isempty(chunks) && return ""
     io = IOBuffer()
-    println(io, "<pre><code class=\"language-julia-repl\">")
+    print(io, "<pre><code class=\"language-julia-repl\">")
     for (code, result) in chunks
         println(io, "julia> " * htmlesc(strip(code)))
         println(io, result)

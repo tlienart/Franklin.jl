@@ -11,8 +11,7 @@
     """ |> fd2html
 
     @test isapproxstr(s, """
-        <pre><code class="language-julia-repl">
-        julia> x &#61; 5
+        <pre><code class="language-julia-repl">julia> x &#61; 5
         5
         julia> y &#61; 7 &#43; x
         12
