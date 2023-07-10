@@ -1,4 +1,4 @@
-@testset "parse fenced" begin
+@testset "repl" begin
     s = """
     ```>
     x = 5
@@ -23,4 +23,43 @@
         24
         </code></pre>
         """)
+end
+
+@testset "help" begin
+    s = """
+    ```?
+    im
+    ```
+    """ |> fd2html
+
+    @test occursin("""
+        <pre><code class="language-julia-repl">help?> im
+        </code></pre>
+        <div class="julia-help">
+        <pre><code>im</code></pre>
+        <p>The imaginary unit.</p>
+        """, s)
+end
+
+@testset "shell" begin
+    s = """
+        ```;
+        echo "foo"
+        ```
+        """ |> fd2html
+    @test isapproxstr(s, """
+        <pre><code class="language-julia-repl">shell> echo &quot;foo&quot;
+        "foo"
+        </code></pre>
+        """)
+end
+
+@testset "pkg" begin
+    s = """
+        ```]
+        st
+        ```
+        """ |> fd2html
+    @test occursin("""<pre><code class="language-julia-repl">pkg> st
+    Project Franklin""", s)
 end

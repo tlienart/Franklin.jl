@@ -87,10 +87,13 @@ const MD_TOKENS = LittleDict{Char, Vector{TokenFinder}}(
              ],
     '`'  => [ isexactly("`",  ('`',), false)  => :CODE_SINGLE, # `⎵
               isexactly("``", ('`',), false)  => :CODE_DOUBLE, # ``⎵*
-              # 3+ can be named
               isexactly("```",   SPACE_CHAR) => :CODE_TRIPLE,  # ```⎵*
               isexactly("```!",  SPACE_CHAR) => :CODE_TRIPLE!, # ```!⎵*
               isexactly("```>",  SPACE_CHAR) => :CODE_REPL,    # ```>⎵*
+              isexactly("```?",  SPACE_CHAR) => :CODE_HELP,    # ```?⎵*
+              isexactly("```;",  SPACE_CHAR) => :CODE_SHELL,   # ```;⎵*
+              isexactly("```]",  SPACE_CHAR) => :CODE_PKG,     # ```]⎵*
+              # 3+ can be named
               is_language(3)                 => :CODE_LANG3,   # ```lang*
               isexactly("````",  SPACE_CHAR) => :CODE_QUAD,    # ````⎵*
               is_language(4)                 => :CODE_LANG4,   # ````lang*
@@ -150,6 +153,9 @@ const MD_OCB = [
     OCProto(:CODE_BLOCK_LANG, :CODE_LANG5,   (:CODE_PENTA,)   ),
     OCProto(:CODE_BLOCK!,     :CODE_TRIPLE!, (:CODE_TRIPLE,)  ),
     OCProto(:CODE_REPL,       :CODE_REPL,    (:CODE_TRIPLE,)  ),
+    OCProto(:CODE_HELP,       :CODE_HELP,    (:CODE_TRIPLE,)  ),
+    OCProto(:CODE_SHELL,      :CODE_SHELL,   (:CODE_TRIPLE,)  ),
+    OCProto(:CODE_PKG,        :CODE_PKG,     (:CODE_TRIPLE,)  ),
     OCProto(:CODE_BLOCK,      :CODE_TRIPLE,  (:CODE_TRIPLE,)  ),
     OCProto(:CODE_BLOCK,      :CODE_QUAD,    (:CODE_QUAD,)    ),
     OCProto(:CODE_BLOCK,      :CODE_PENTA,   (:CODE_PENTA,)   ),
@@ -263,6 +269,9 @@ const CODE_BLOCKS_NAMES = (
     :CODE_BLOCK,
     :CODE_BLOCK!,
     :CODE_REPL,
+    :CODE_HELP,
+    :CODE_PKG,
+    :CODE_SHELL,
     :CODE_BLOCK_IND
 )
 

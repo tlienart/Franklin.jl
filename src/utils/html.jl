@@ -113,15 +113,28 @@ html_code_inline(c::AS) = "<code>$c</code>"
 """
     html_repl_code
 """
-function html_repl_code(chunks::Vector{Pair{String,String}})::String
+function html_repl_code(chunks::Vector{Pair{String,String}}, s::Symbol)::String
     isempty(chunks) && return ""
     io = IOBuffer()
     print(io, "<pre><code class=\"language-julia-repl\">")
-    for (code, result) in chunks
-        println(io, "julia> " * htmlesc(strip(code)))
+    prefix = s == :repl ? "julia> " :
+             s == :help ? "help?> " :
+             s == :pkg ? "pkg> " :
+             "shell> "
+    if s == :help
+        code, result = chunks[1]
+        println(io, prefix * htmlesc(strip(code)))
+        println(io, "</code></pre>")
+        println(io, "<div class=\"julia-help\">")
         println(io, result)
+        println(io, "</div>")
+    else
+        for (code, result) in chunks
+            println(io, prefix * htmlesc(strip(code)))
+            println(io, result)
+        end
+        println(io, "</code></pre>")
     end
-    println(io, "</code></pre>")
     return String(take!(io))
 end
 

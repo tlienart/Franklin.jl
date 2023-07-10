@@ -9,8 +9,10 @@ $SIGNATURES
 Take a fenced code block and return a tuple with the language, the relative
 path (if any) and the code.
 """
-function parse_fenced_block(ss::SubString; shortcut=false, repl=false)::Tuple
-    if shortcut || repl
+function parse_fenced_block(ss::SubString; shortcut=false,
+            repl=false, shell=false, pkg=false, help=false)::Tuple
+
+    if any((shortcut, repl, shell, pkg, help))
         lang  = locvar(:lang)::String
         cntr  = locvar(:fd_evalc)::Int
         rpath = "_ceval_$cntr"
@@ -86,9 +88,16 @@ Helper function to process the content of a code block.
 Return the html corresponding to the code block, possibly after having
 evaluated the code.
 """
-function resolve_code_block(ss::SubString; shortcut=false, repl=false)::String
+function resolve_code_block(
+            ss::SubString;
+            shortcut=false,
+            repl=false,
+            pkg=false,
+            shell=false,
+            help=false
+        )::String
     # 1. what kind of code is it
-    lang, rpath, code = parse_fenced_block(ss; shortcut, repl)
+    lang, rpath, code = parse_fenced_block(ss; shortcut, repl, pkg, shell, help)
     # 1.a if no rpath is given, code should not be evaluated
     isnothing(rpath) && return html_code(code, lang)
     # 1.b if not julia code, eval is not supported
@@ -109,7 +118,7 @@ function resolve_code_block(ss::SubString; shortcut=false, repl=false)::String
 
     # 2. here we have Julia code, assess whether to run it or not
     # if not, just return the code as a html block
-    if shortcut || repl || should_eval(code, rpath)
+    if any((shortcut, repl, shell, help, pkg)) || should_eval(code, rpath)
         # 3. here we have code that should be (re)evaluated
         # >> retrieve the modulename, the module may not exist
         # (& may not need to)
@@ -157,6 +166,53 @@ function resolve_code_block(ss::SubString; shortcut=false, repl=false)::String
                     chunk_ast = nothing
                 end
             end
+        
+        # NOTE: shell, pkg, and help mode are currently fairly rudimentary
+        # and should be considered experimental
+
+        elseif shell
+            a = tempname()
+            open(a, "w") do outf
+                redirect_stdout(outf) do
+                    Base.repl_cmd(Cmd(string.(split(code))), nothing)
+                end
+            end
+            push!(repl_code_chunks,
+                code => read(a, String)
+            )
+
+        elseif pkg
+            # NOTE: this is very elementary, doesn't consider any `--` arguments
+            # etc.
+            # assume single line, first thing = what, rest = args
+            verb, args... = split(code)
+            if verb == "st"
+                verb = "status"
+            elseif verb == "remove"
+                verb = "rm"
+            end
+            io = IOBuffer()
+            fun = getproperty(Pkg, Symbol(verb))
+            if isempty(args)
+                fun(; io)
+            else
+                fun(args; io)
+            end
+            push!(repl_code_chunks,
+                code => String(take!(io))
+            )
+
+        elseif help
+            # NOTE: this is pretty crap there should be a better way to just
+            # reproduce what `?` but the code for the Docs module is opaque to me.
+            r = eval(Meta.parse("@doc $code"))
+            push!(repl_code_chunks,
+                code => replace(Markdown.html(r),
+                    "<a href=\"@ref\">" => "",
+                    "</code></a>" => "</code>"
+                )
+            )
+
         else
             # >> eval the code in the relevant module (this creates output/)
             res = run_code(mod, code, cp.out_path; strip_code=false)
@@ -173,8 +229,10 @@ function resolve_code_block(ss::SubString; shortcut=false, repl=false)::String
     end
     # >> finally return as html either with or without output
     # --- with
-    if repl
-        return html_repl_code(repl_code_chunks)
+    if any((repl, shell, help, pkg))
+        s = repl ? :repl : shell ? :shell : help ? :help : :pkg
+        return html_repl_code(repl_code_chunks, s)
+    
     elseif shortcut || locvar(:showall)::Bool
         return html_code(code, lang) *
                 reprocess("\\show{$rpath}", [GLOBAL_LXDEFS["\\show"]])
