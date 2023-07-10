@@ -158,8 +158,11 @@ function resolve_code_block(
                     # >> write res to string (see further down)
                     io = IOBuffer()
                     Core.eval(mod, quote show($(io), "text/plain", $(QuoteNode(res))) end)
+                    stdout_str = read(cp.out_path, String)
+                    res_str = String(take!(io))
+                    res_str = ifelse(res_str == "nothing", "", res_str * "\n")
                     push!(repl_code_chunks,
-                        chunk_code => String(take!(io))
+                        chunk_code => stdout_str * res_str
                     )
                     # reset for the next chunk
                     chunk_code = ""
