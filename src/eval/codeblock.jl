@@ -178,7 +178,7 @@ function resolve_code_block(
                 end
             end
             push!(repl_code_chunks,
-                code => read(a, String)
+                code => String(strip(read(a, String)))
             )
 
         elseif pkg

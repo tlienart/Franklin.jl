@@ -60,6 +60,6 @@ end
         st
         ```
         """ |> fd2html
-    @test occursin("""<pre><code class="language-julia-repl">pkg> st
-    Project Franklin""", s)
+    @test occursin("""<pre><code class="language-julia-repl">pkg> st""", s)
+    @test occursin("""Status `""", s)
 end
