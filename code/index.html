@@ -120,7 +120,7 @@
     <span style="font-size:24px;font-weight:300;">Franklin makes it easy to insert code and the result of running the code; Julia code can be evaluated on the fly.</span>
     
 <div class="blank"></div>
-<div class="franklin-toc"><ol><li><a href="#overview">Overview</a><ol><li><a href="#inserting_code">Inserting code</a></li><li><a href="#evaluating_code">Evaluating code</a></li></ol></li><li><a href="#live_evaluation_julia">Live evaluation &#40;Julia&#41;</a><ol><li><a href="#more_on_paths">More on paths</a></li><li><a href="#inserting_the_output">Inserting the output</a></li><li><a href="#hiding_lines">Hiding lines</a></li><li><a href="#projecttoml">Project.toml</a></li><li><a href="#plots">Plots</a></li><li><a href="#troubleshooting">Troubleshooting</a></li></ol></li><li><a href="#offline_evaluation_any_language">Offline evaluation &#40;any language&#41;</a><ol><li><a href="#inserting_code__2">Inserting code</a></li><li><a href="#plain-text_output">Plain-text output</a></li><li><a href="#plot_output">Plot output</a></li><li><a href="#slicing_up">Slicing up</a></li></ol></li></ol></div>
+<div class="franklin-toc"><ol><li><a href="#overview">Overview</a><ol><li><a href="#inserting_code">Inserting code</a></li><li><a href="#evaluating_code">Evaluating code</a></li></ol></li><li><a href="#live_evaluation_julia">Live evaluation &#40;Julia&#41;</a><ol><li><a href="#more_on_paths">More on paths</a></li><li><a href="#inserting_the_output">Inserting the output</a></li><li><a href="#hiding_lines">Hiding lines</a></li><li><a href="#projecttoml">Project.toml</a></li><li><a href="#plots">Plots</a></li><li><a href="#auto_and_repl_mode">Auto and REPL mode</a></li><li><a href="#troubleshooting">Troubleshooting</a></li></ol></li><li><a href="#offline_evaluation_any_language">Offline evaluation &#40;any language&#41;</a><ol><li><a href="#inserting_code__2">Inserting code</a></li><li><a href="#plain-text_output">Plain-text output</a></li><li><a href="#plot_output">Plot output</a></li><li><a href="#slicing_up">Slicing up</a></li></ol></li></ol></div>
 <h2 id="overview"><a href="#overview" class="header-anchor">Overview</a></h2>
 <h3 id="inserting_code"><a href="#inserting_code" class="header-anchor">Inserting code</a></h3>
 <p>As per Common Mark specifications, you have multiple ways of inserting code:</p>
@@ -281,6 +281,104 @@ end</code></pre>
 <img src="/assets/code/code/output/sinc.svg" alt="">
 <p><strong>Note</strong>: observe that here everything is done with relative paths, <code>pyplot1</code> is placed in the <code>/assets/</code> folder relatively to the path of the current page and the <code>\fig</code> since it&#39;s given a path that doesn&#39;t start with <code>/</code> or <code>./</code> will also look in that folder to try to find a figure which starts with the name <code>sinc</code>. See also <a href="#more_on_paths">more about paths</a>.</p>
 <p><strong>Note</strong>: If you wish to use <code>Plots.jl</code> and deploy to GitHub pages, you will need to modify the <code>.github/workflows/Deploy.yml</code> by adding <code>env: GKSwstype: &quot;100&quot;</code> before the <code>- name: Build and Deploy</code> line. <a href="https://github.com/storopoli/Bayesian-Julia/blob/master/.github/workflows/Deploy.yml">Here</a> is an example.</p>
+<h3 id="auto_and_repl_mode"><a href="#auto_and_repl_mode" class="header-anchor">Auto and REPL mode</a></h3>
+<p>You can use <code>&#33;</code> and <code>&gt;</code> to indicate respectively a code that should be run automatically and the output appended immediately after, or the same but with a REPL-style display:</p>
+<pre><code class="language-plaintext">&#96;&#96;&#96;&#33;
+x &#61; 5
+y &#61; x^2
+&#96;&#96;&#96;</code></pre>
+<p>for instance gives:</p>
+<pre><code class="language-julia">x &#61; 5
+y &#61; x^2</code></pre><pre><code class="plaintext code-output">25</code></pre>
+<p>In a similar way:</p>
+<pre><code class="language-plaintext">&#96;&#96;&#96;&gt;
+x &#61; 5
+y &#61; x^2
+&#96;&#96;&#96;</code></pre>
+<p>gives</p>
+<pre><code class="language-julia-repl">julia> x &#61; 5
+5
+
+julia> y &#61; x^2
+25
+
+</code></pre>
+
+<p><strong>Shell, Pkg, Help</strong>, these modes are also experimentally supported:</p>
+<p><em>Pkg mode</em> :</p>
+<pre><code class="language-julia">&#96;&#96;&#96;&#93;
+st
+&#96;&#96;&#96;</code></pre>
+<p>gives</p>
+<pre><code class="language-julia-repl">&#40;docs&#41; pkg&gt; st
+Status `~/work/Franklin.jl/Franklin.jl/docs/Project.toml`
+  [713c75ef] Franklin v0.10.85
+  [f0f68f2c] PlotlyJS v0.18.10
+  [438e738f] PyCall v1.96.1
+  [d330b81b] PyPlot v2.11.1
+  [37e2e46d] LinearAlgebra
+  [9a3f8284] Random
+
+</code></pre>
+
+<p><em>Shell mode</em> : &#40;<strong>note</strong>: in a multi-line setting, each line is assumed to be a separate command&#41;</p>
+<pre><code class="language-julia">&#96;&#96;&#96;;
+echo &quot;hello&#33;&quot;
+date
+&#96;&#96;&#96;</code></pre>
+<p>gives </p>
+<pre><code class="language-julia-repl">shell> echo &quot;hello&#33;&quot;
+"hello!"
+
+shell> date
+Tue Jul 11 12:19:30 UTC 2023
+
+</code></pre>
+
+
+<style>
+.julia-help {
+    background-color: #fffee0;
+    padding: 10px;
+    font-style: italic;
+}
+.julia-help h1,h2,h3 {
+    font-size: 1em;
+    font-weight: 500;
+}
+</style>
+
+<p><em>Help mode</em> : &#40;<strong>note</strong>: only single line cell blocks will work properly&#41;</p>
+<pre><code class="language-julia">&#96;&#96;&#96;?
+im
+&#96;&#96;&#96;</code></pre>
+<pre><code class="language-julia-repl">help?> im
+</code></pre>
+<div class="julia-help">
+<pre><code>im</code></pre>
+<p>The imaginary unit.</p>
+<p>See also: <code>imag</code>, <code>angle</code>, <code>complex</code>.</p>
+<h1>Examples</h1>
+<pre><code class="language-julia-repl">julia&gt; im * im
+-1 &#43; 0im
+
+julia&gt; &#40;2.0 &#43; 3im&#41;^2
+-5.0 &#43; 12.0im</code></pre>
+
+
+
+</div>
+
+<p><strong>Note</strong>: for the <code>help</code> mode above, the output is HTML corresponding to the julia docs, it&#39;s wrapped in a <code>julia-help</code> div which you should style, the above style for instance corresponds to the following CSS:</p>
+<pre><code class="language-css">.julia-help &#123;
+    background-color: #fffee0;
+    padding: 10px;
+    font-style: italic;
+&#125;
+.julia-help h1,h2,h3 &#123;
+    font-size: 1em;
+    font-weight: 500;
+&#125;</code></pre>
 <h3 id="troubleshooting"><a href="#troubleshooting" class="header-anchor">Troubleshooting</a></h3>
 <p>A few things can go wrong when attempting to use and evaluate code blocks. The first thing to do when no output is shown or when an error appears is to make sure that:</p>
 <div class="tlist"><ol>
@@ -351,7 +449,7 @@ include&#40;&quot;script2.jl&quot;&#41;</code></pre>
 <p>The structure in the <code>generate_results.jl</code> effectively means that all your code is run as one big script. This also means that if you want to slice some of your code into several parts and show intermediate outputs &#40;e.g. plots&#41;, you can just do that by having a <code>script_1_p1.jl</code>, <code>script_1_p2.jl</code> etc. and then just use <code>\input</code> multiple times.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: June 26, 2023. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: July 11, 2023. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
