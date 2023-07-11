@@ -83,6 +83,26 @@ end
         "foo"
         </code></pre>
         """)
+    # multiline
+    s = """
+        ```;
+        echo abc
+        echo "abc"
+        abc -12
+        ```
+        """ |> fd2html
+    @test isapproxstr(s, """
+        <pre><code class="language-julia-repl">shell> echo abc
+        abc
+        
+        shell> echo &quot;abc&quot;
+        "abc"
+        
+        shell> abc -12
+        zsh:1: command not found: abc
+        
+        </code></pre>
+        """)
 end
 
 @testset "pkg" begin

@@ -174,15 +174,19 @@ function resolve_code_block(
         # and should be considered experimental
 
         elseif shell
-            a = tempname()
-            open(a, "w") do outf
-                redirect_stdout(outf) do
-                    Base.repl_cmd(Cmd(string.(split(code))), nothing)
+            for line in split(code, '\n', keepempty=false)
+                a = tempname()
+                open(a, "w") do outf
+                    redirect_stdout(outf) do
+                        redirect_stderr(outf) do
+                            Base.repl_cmd(Cmd(string.(split(line))), nothing)
+                        end
+                    end
                 end
+                push!(repl_code_chunks,
+                    line => String(strip(read(a, String))) * "\n"
+                )
             end
-            push!(repl_code_chunks,
-                code => String(strip(read(a, String)))
-            )
 
         elseif pkg
             # NOTE: this is very elementary, doesn't consider any `--` arguments
