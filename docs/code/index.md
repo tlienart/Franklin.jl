@@ -358,7 +358,7 @@ date
 </style>
 ~~~
 
-_Help mode_ :
+_Help mode_ : (**note**: only single line cell blocks will work properly)
 
 ````
 ```?
