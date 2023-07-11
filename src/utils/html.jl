@@ -129,10 +129,15 @@ function html_repl_code(chunks::Vector{Pair{String,String}}, s::Symbol)::String
         println(io, result)
         println(io, "</div>")
     else
-        for (code, result) in chunks
+        for (code, result) in chunks[1:end-1]
             println(io, prefix * htmlesc(strip(code)))
             println(io, result)
         end
+        # last chunk; we want to avoid a stray empty line, note the `print`.
+        code, result = chunks[end]
+        println(io, prefix * htmlesc(strip(code)))
+        print(io, result)
+        # close the block
         println(io, "</code></pre>")
     end
     return String(take!(io))
