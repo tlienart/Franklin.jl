@@ -191,6 +191,7 @@ function resolve_code_block(
         elseif pkg
             for line in split(code, '\n', keepempty=false)
                 a = tempname()
+                pname = splitpath(Pkg.project().path)[end-1]
                 open(a, "w") do outf
                     redirect_stdout(outf) do
                         redirect_stderr(outf) do
@@ -199,7 +200,7 @@ function resolve_code_block(
                     end
                 end
                 push!(repl_code_chunks,
-                    line => String(strip(read(a, String))) * "\n"
+                    "($(pname)) pkg> " * line => String(strip(read(a, String))) * "\n"
                 )
             end
 

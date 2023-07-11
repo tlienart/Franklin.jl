@@ -120,13 +120,13 @@ end
 
     # first block
     @test occursin(
-        """pkg> activate --temp""", s
+        """pkg&gt; activate --temp""", s
     )
     @test occursin(
-        """pkg> add StableRNGs\nResolving package versions...""", s
+        """pkg&gt; add StableRNGs\nResolving package versions...""", s
     )
     @test occursin(
-        """pkg> st\nStatus""", s
+        """pkg&gt; st\nStatus""", s
     )
 
     # second block uses StableRNG

@@ -119,7 +119,7 @@ function html_repl_code(chunks::Vector{Pair{String,String}}, s::Symbol)::String
     print(io, "<pre><code class=\"language-julia-repl\">")
     prefix = s == :repl ? "julia> " :
              s == :help ? "help?> " :
-             s == :pkg ? "($(splitpath(Pkg.project().path)[end-1])) pkg> " :
+             s == :pkg ? "" : # the project name is recuperated in resolve_block
              "shell> "
     if s == :help
         code, result = chunks[1]
