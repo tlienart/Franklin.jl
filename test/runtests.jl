@@ -56,6 +56,7 @@ include("eval/codeblock.jl")
 include("eval/eval.jl")
 include("eval/integration.jl")
 include("eval/extras.jl")
+include("eval/repl.jl")
 
 # LATEX
 println("LATEX")

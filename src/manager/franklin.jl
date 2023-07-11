@@ -106,9 +106,11 @@ function serve(; clear::Bool             = false,
 
     # check if a Project.toml file is available, if so activate the folder
     flag_env = false
+
     if isfile(joinpath(FOLDER_PATH[], "Project.toml"))
         Pkg.activate(".")
         flag_env = true
+        set_var!(GLOBAL_VARS, "_has_base_project", true)
     end
 
     # construct the set of files to watch
@@ -210,11 +212,14 @@ function fd_fullpass(watched_files::NamedTuple, join_to_prepath::String="")::Int
     # reset global page variables and latex definitions
     # NOTE: need to keep track of pre-path if specified, see optimize
     prepath = get(GLOBAL_VARS, "prepath", "")
+    has_base_project = globvar(:_has_base_project)
+
     def_GLOBAL_VARS!()
     def_GLOBAL_LXDEFS!()
     empty!.((RSS_ITEMS, SITEMAP_DICT))
     # reinsert prepath if specified
     isempty(prepath) || (GLOBAL_VARS["prepath"] = prepath)
+    set_var!(GLOBAL_VARS, "_has_base_project", has_base_project)
 
     # process configuration file (see also `process_mddefs!`)
     # note the order (utils the config) is important, see also #774

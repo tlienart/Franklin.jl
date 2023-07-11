@@ -174,6 +174,19 @@ function convert_and_write(root::String, file::String, head::String,
     # conversion
     content = convert_md(read(fpath, String))
 
+    # check if the active project has changed, if so change it back
+    blackhole = IOBuffer()
+    if globvar(:_has_base_project)::Bool
+        if Pkg.project().path != joinpath(FOLDER_PATH[], "Project.toml")
+            Pkg.activate(".", io=blackhole)
+        end
+    else
+        if isnothing(match(r"v\d\.\d+", splitpath(Pkg.project().path)[end-1]))
+            Pkg.activate(io=blackhole)
+        end
+    end
+
+
     # adding document variables to the dictionary
     # note that some won't change and so it's not necessary to do this every
     # time but it takes negligible time to do this so ¯\_(ツ)_/¯
