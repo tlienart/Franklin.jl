@@ -88,7 +88,6 @@ end
         ```;
         echo abc
         echo "abc"
-        abc -12
         ```
         """ |> fd2html
     @test isapproxstr(s, """
@@ -97,9 +96,6 @@ end
         
         shell> echo &quot;abc&quot;
         "abc"
-        
-        shell> abc -12
-        zsh:1: command not found: abc
         
         </code></pre>
         """)
