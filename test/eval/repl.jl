@@ -108,9 +108,36 @@ end
 @testset "pkg" begin
     s = """
         ```]
+        activate --temp
+        add StableRNGs
         st
         ```
+
+        this is now in the activated stuff
+
+        ```!
+        using StableRNGs
+        round(rand(StableRNG(1)), sigdigits=3)
+        ```
+
         """ |> fd2html
-    @test occursin("""<pre><code class="language-julia-repl">pkg> st""", s)
-    @test occursin("""Status `""", s)
+
+    # first block
+    @test occursin(
+        """pkg> activate --temp""", s
+    )
+    @test occursin(
+        """pkg> add StableRNGs\nResolving package versions...""", s
+    )
+    @test occursin(
+        """pkg> st\nStatus""", s
+    )
+
+    # second block uses StableRNG
+    @test occursin(
+        """<pre><code class="language-julia">using StableRNGs
+        round&#40;rand&#40;StableRNG&#40;1&#41;&#41;, sigdigits&#61;3&#41;</code></pre><pre><code class="plaintext code-output">0.585</code></pre>""",
+        s
+    )
+    Pkg.activate()
 end

@@ -70,6 +70,8 @@ const GLOBAL_VARS_DEFAULT = [
     # -----------------------------------------------------
     # LEGACY
     "div_content" => dpair(""), # see build_page
+    #
+    "_has_base_project" => dpair(false),
     ]
 
 const GLOBAL_VARS_ALIASES = LittleDict(

@@ -189,25 +189,19 @@ function resolve_code_block(
             end
 
         elseif pkg
-            # NOTE: this is very elementary, doesn't consider any `--` arguments
-            # etc.
-            # assume single line, first thing = what, rest = args
-            verb, args... = split(code)
-            if verb == "st"
-                verb = "status"
-            elseif verb == "remove"
-                verb = "rm"
+            for line in split(code, '\n', keepempty=false)
+                a = tempname()
+                open(a, "w") do outf
+                    redirect_stdout(outf) do
+                        redirect_stderr(outf) do
+                            Pkg.REPLMode.pkgstr(string(line))
+                        end
+                    end
+                end
+                push!(repl_code_chunks,
+                    line => String(strip(read(a, String))) * "\n"
+                )
             end
-            io = IOBuffer()
-            fun = getproperty(Pkg, Symbol(verb))
-            if isempty(args)
-                fun(; io)
-            else
-                fun(args; io)
-            end
-            push!(repl_code_chunks,
-                code => String(take!(io))
-            )
 
         elseif help
             # NOTE: this is pretty crap there should be a better way to just

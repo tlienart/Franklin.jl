@@ -109,6 +109,7 @@ function serve(; clear::Bool             = false,
     if isfile(joinpath(FOLDER_PATH[], "Project.toml"))
         Pkg.activate(".")
         flag_env = true
+        set_var!(GLOBAL_VARS, "_has_base_project", true)
     end
 
     # construct the set of files to watch
