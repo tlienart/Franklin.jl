@@ -9,7 +9,7 @@ $SIGNATURES
 Take a fenced code block and return a tuple with the language, the relative
 path (if any) and the code.
 """
-function parse_fenced_block(ss::SubString; shortcut=false,
+function parse_fenced_block(ss::SubString, scut=false; shortcut=scut, # scut for legacy #1037
             repl=false, shell=false, pkg=false, help=false)::Tuple
 
     if any((shortcut, repl, shell, pkg, help))
