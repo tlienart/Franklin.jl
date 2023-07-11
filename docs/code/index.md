@@ -328,11 +328,12 @@ gives
 st
 ```
 
-_Shell mode_ :
+_Shell mode_ : (**note**: in a multi-line setting, each line is assumed to be a separate command)
 
 ````
 ```;
 echo "hello!"
+date
 ```
 ````
 
@@ -340,6 +341,7 @@ gives
 
 ```;
 echo "hello!"
+date
 ```
 
 ~~~
