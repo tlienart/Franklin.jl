@@ -20,6 +20,7 @@ Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 TOML = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
+minify_jll = "7dd700f0-7fa2-5578-8ac1-d309908db794"
 
 [compat]
 DocStringExtensions = "0.8, 0.9"
