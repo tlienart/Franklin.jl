@@ -163,7 +163,7 @@ end
 
 # -----------------------------------------------------------------------------
 
-include("build.jl") # check if user has Node/minify
+include("build.jl") # check if user has Node
 
 include("regexes.jl")
 

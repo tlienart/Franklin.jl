@@ -179,8 +179,6 @@ Those two steps _may_ lead to faster loading pages.
 Note that in order to run them, you will need a couple of external dependencies as mentioned in the [installation section](/index.html#installing_optional_extras).
 
 \note{
-  The minifier script (an external python lib) used is far from perfect and can break your website, generally speaking, if things work locally but not when you deploy, try disabling it with `optimize(minify=false)`.
-
   Also note that if you use GitHub or GitLab pages, the minification is not needed as these platforms compress the pages themselves.
 }
 

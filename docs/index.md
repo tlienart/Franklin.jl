@@ -54,11 +54,7 @@ You can also inspect the file `menu1.md` which offers more examples of what Fran
 ## Installing optional extras
 
 Franklin allows a post-processing step to compress HTML and CSS and pre-render code blocks and math environments.
-This requires a couple of dependencies:
-@@tlist
-* [`python3`](https://www.python.org/downloads/) for the minification of the site,
-* [`node.js`](https://nodejs.org/en/) for the pre-rendering of KaTeX and code highlighting.
-@@
+Minifcation is handled via Taco de Wolff's [Minify](https://pkg.go.dev/github.com/tdewolff/Minify/cmd/minify) package, which is already included. Pre-rendering of KaTeX and code highlighting requires [`node.js`](https://nodejs.org/en/) as an installed dependency.
 You will then need to install `highlight.js`, which you should do from Julia using the [NodeJS.jl](https://github.com/davidanthoff/NodeJS.jl) package:
 
 ```julia-repl
@@ -68,8 +64,6 @@ julia> run(`sudo $(npm_cmd()) install highlight.js`)
 
 **Note**: a key advantage of using `NodeJS` for this instead of using `npm` yourself is that it puts the libraries in the "right place" for Julia to find them.
 
-Assuming you have `python3`, Franklin will try to install the python package [`css_html_js_minify`](https://github.com/juancarlospaco/css-html-js-minify) if via `pip3`.
-
 \note{
-  You **don't have to** install these libraries and you can safely ignore any message suggesting you install those. Also note that if you do want this but it doesn't work locally due to some `node` weirdness or related, things will likely still work if you use GitHub to deploy.
+  You **don't have to** install the external libraries and you can safely ignore any message suggesting you install those. Also note that if you do want this but it doesn't work locally due to some `node` weirdness or related, things will likely still work if you use GitHub to deploy.
 }

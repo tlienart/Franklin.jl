@@ -33,7 +33,7 @@ Go to [Franklin's main website](https://franklinjl.org). For users already famil
 ### Important notes
 
 * if, upon deployment, your website doesn't seem to apply CSS, you likely forgot a step, please [see here](https://franklinjl.org/workflow/deploy/#creating_a_repo_on_github).
-* it is currently recommended to **switch off** pre-rendering and minification (you can do this by passing `prerender=false, minify=false` to the `optimize(...)` call in your deploy script), the corresponding logic will be removed in future version of Franklin as it's tricky to maintain and caused too many issues.
+* it is currently recommended to **switch off** pre-rendering (you can do this by passing `prerender=false` to the `optimize(...)` call in your deploy script), the corresponding logic will be removed in future version of Franklin as it's tricky to maintain and caused too many issues.
 * if you're getting warning messages about some JS library not being found on your computer, you can safely ignore this.
 
 ## Key features
@@ -149,5 +149,4 @@ While Franklin broadly supports standard Markdown there are a few things that ma
 
 * KaTeX is [MIT licensed](https://github.com/KaTeX/KaTeX/blob/master/LICENSE),
 * Node's is essentially [MIT licensed](https://github.com/nodejs/node/blob/master/LICENSE),
-* css-html-js-minify is [LGPL licensed](https://github.com/juancarlospaco/css-html-js-minify/blob/master/LICENCE.lgpl.txt),
 * highlight.js is [BSD licensed](https://github.com/highlightjs/highlight.js/blob/master/LICENSE).
