@@ -103,8 +103,12 @@ function optimize(;
             start = time()
             mmsg = rpad("→ Minifying *.[html|css] files...", 35)
             print(mmsg)
-           # succ = success(`$([e for e in split(PY())]) $FD_PY_MIN_NAME`)
-            # remove the script file
+            for (rootpath, _, files) in walkdir("__site")
+                if rootpath != "__site/assets"
+                    files = filter(endswith(r"^.*\.(html|css|js|json|svg|xml)$"), files)
+                    foreach(file -> success(`$(minify()) -o $(joinpath(rootpath, file)) $(joinpath(rootpath, file))`), files)
+                end
+            end   
             print_final(mmsg, start)
     end
 

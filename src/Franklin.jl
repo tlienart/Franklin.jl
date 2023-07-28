@@ -11,6 +11,7 @@ using OrderedCollections
 using Pkg
 using DocStringExtensions: SIGNATURES, TYPEDEF
 using TOML
+using minify_jll
 
 import Logging
 import LiveServer
