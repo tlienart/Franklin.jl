@@ -100,21 +100,12 @@ function optimize(;
     # Minification
     #
     if minify && (succ || no_fail_prerender)
-        if FD_CAN_MINIFY()
             start = time()
             mmsg = rpad("→ Minifying *.[html|css] files...", 35)
             print(mmsg)
-            # copy the script to the current dir
-            path_to = joinpath(dirname(pathof(Franklin)),
-                                "scripts", "minify.py")
-            py_script = read(path_to, String)
-            write(FD_PY_MIN_NAME, py_script)
-            # run it
-            succ = success(`$([e for e in split(PY())]) $FD_PY_MIN_NAME`)
+           # succ = success(`$([e for e in split(PY())]) $FD_PY_MIN_NAME`)
             # remove the script file
-            rm(FD_PY_MIN_NAME)
             print_final(mmsg, start)
-        end
     end
 
     # if not dev or preview, the /stable/ path was overwritten and we copy that

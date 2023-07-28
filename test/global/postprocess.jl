@@ -24,13 +24,11 @@
     @test isfile(joinpath("__site", "css", "franklin.css"))
 
     # ---------------
-    if Franklin.FD_CAN_MINIFY()
         presize1 = stat(joinpath("__site", "css", "basic.css")).size
         presize2 = stat(joinpath("__site", "index.html")).size
         optimize(prerender=false)
         @test stat(joinpath("__site", "css", "basic.css")).size < presize1
         @test stat(joinpath("__site", "index.html")).size < presize2
-    end
     # ---------------
     # verify all links (XXX)
     # Franklin.verify_links()

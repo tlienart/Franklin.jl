@@ -82,15 +82,3 @@ function FD_HAS_PY3()
 end
 FD_HAS_PIP3() = shell_try(`$([e for e in split(PIP())]) -V`)
 
-function FD_CAN_MINIFY()
-    r = FD_HAS_PY3() && FD_HAS_PIP3()
-    r || return r
-    r = (success(`$([e for e in split(PY())]) -c "import css_html_js_minify"`) ||
-         success(`$([e for e in split(PIP())]) install css_html_js_minify`))
-    if !r
-        @warn """Couldn't find css_html_js_minify (`$([e for e in split(PY())]) -m "import css_html_js_minify"` failed). Will not minify.
-
-        Note: css_html_js_minify is required for minification, but is not necessary to run Franklin (cf docs)."""
-    end
-    return r
-end
