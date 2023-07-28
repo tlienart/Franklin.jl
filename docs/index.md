@@ -54,7 +54,7 @@ You can also inspect the file `menu1.md` which offers more examples of what Fran
 ## Installing optional extras
 
 Franklin allows a post-processing step to compress HTML and CSS and pre-render code blocks and math environments.
-Minifcation is handled via Taco de Wolff's [Minify](https://pkg.go.dev/github.com/tdewolff/Minify/cmd/minify) package, which is already included. Pre-rendering of KaTeX and code highlighting requires [`node.js`](https://nodejs.org/en/) as an installed dependency.
+Minifcation is handled via Taco de Wolff's [Minify](https://pkg.go.dev/github.com/tdewolff/Minify/cmd/minify) package, which is already included. Pre-rendering of KaTeX and code highlighting requires [`node.js`](https://nodejs.org/en/) as an external dependency.
 You will then need to install `highlight.js`, which you should do from Julia using the [NodeJS.jl](https://github.com/davidanthoff/NodeJS.jl) package:
 
 ```julia-repl
