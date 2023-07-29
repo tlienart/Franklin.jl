@@ -1,5 +1,3 @@
-const FD_PY_MIN_NAME = ".__py_tmp_minscript.py"
-
 """
 $(SIGNATURES)
 
@@ -106,7 +104,13 @@ function optimize(;
             for (rootpath, _, files) in walkdir("__site")
                 if rootpath != "__site/assets"
                     files = filter(endswith(r"^.*\.(html|css|js|json|svg|xml)$"), files)
-                    foreach(file -> success(`$(minify()) -o $(joinpath(rootpath, file)) $(joinpath(rootpath, file))`), files)
+                    for file in files
+                        filepath = joinpath(rootpath, file)
+                        if !success(`$(minify_jll.minify()) -o $(filepath) $(filepath)`)
+                            succ = false
+                            break                            
+                        end
+                    end
                 end
             end   
             print_final(mmsg, start)
