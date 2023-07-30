@@ -1,3 +1,6 @@
+#=
+This function currently sits unused, but may prove useful when some future python
+dependency may be added for extended Franklin.jl functionality.
 function PY()
     if "PYTHON3" ∈ keys(ENV)
         ENV["PYTHON3"]
@@ -12,6 +15,8 @@ function PY()
         end
     end
 end
+This function currently sits unused, but may prove useful when some future python
+dependency may be added for extended Franklin.jl functionality.
 function PIP()
     if "PIP3" ∈ keys(ENV)
         ENV["PIP3"]
@@ -23,6 +28,7 @@ function PIP()
         end
     end
 end
+=#
 function NODE()
     if "NODE" ∈ keys(ENV)
         ENV["NODE"]
@@ -31,7 +37,7 @@ function NODE()
     end
 end
 
-# highligh.js library; can be overridden from the outside which is useful for testing
+# highlight.js library; can be overridden from the outside which is useful for testing
 const HIGHLIGHTJS = Ref{String}("highlight.js")
 
 shell_try(com)::Bool = try success(com); catch; false; end
@@ -66,11 +72,10 @@ let r = nothing # Hack to only run the checks once per call to Franklin.optimize
 end
 
 #=
-Minification
-- We use `css_html_js_minify`. To use it, you need python3 and to install it.
-- Here we check there is python3, and pip3, and then if we fail to import, we try to
+This function currently sits unused, but may prove useful when some future python
+dependency may be added for extended Franklin.jl functionality.
+Here we check there is python3, and pip3, and then if we fail to import, we try to
 use pip3 to install it.
-=#
 function FD_HAS_PY3()
     r = shell_try(`$([e for e in split(PY())]) -V`)
     if !r
@@ -81,4 +86,4 @@ function FD_HAS_PY3()
     return r
 end
 FD_HAS_PIP3() = shell_try(`$([e for e in split(PIP())]) -V`)
-
+=#
