@@ -19,8 +19,8 @@ Deploying the website is trivial on an existing web server, via GitHub or Gitlab
 The contents of the `__site` folder can simply be deployed to a path on an existing server as follows.
 Supposing you wish your site to appear at `http://my.example.com/path/to/my/franklin/site/`.  You would take the following steps:
 
-* Prepare the `__site` directory by running `optimize(prepath="/path/to/my/franklin/site/", minify=false)`.
-Franklin.jl does not use relative links, so this step is needed to ensure that the links between site elements are correct. (The `minify = false` argument is optional but is currently recommended.)
+* Prepare the `__site` directory by running `optimize(prepath="/path/to/my/franklin/site/")`.
+Franklin.jl does not use relative links, so this step is needed to ensure that the links between site elements are correct.
 
 * Copy the contents of the `__site` directory to the target location using your chosen method (for example, using [rsync](https://en.wikipedia.org/wiki/Rsync)).
  
