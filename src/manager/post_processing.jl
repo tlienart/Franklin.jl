@@ -98,22 +98,22 @@ function optimize(;
     # Minification
     #
     if minify && (succ || no_fail_prerender)
-            start = time()
-            mmsg = rpad("→ Minifying *.[html|css] files...", 35)
-            print(mmsg)
-            for (rootpath, _, files) in walkdir("__site")
-                if rootpath != "__site/assets"
-                    files = filter(endswith(r"^.*\.(html|css|js|json|svg|xml)$"), files)
-                    for file in files
-                        filepath = joinpath(rootpath, file)
-                        if !success(`$(minify_jll.minify()) -o $(filepath) $(filepath)`)
-                            succ = false
-                            break                            
-                        end
+        start = time()
+        mmsg = rpad("→ Minifying *.[html|css] files...", 35)
+        print(mmsg)
+        for (rootpath, _, files) in walkdir("__site")
+            if rootpath != "__site/assets"
+                files = filter(endswith(r"^.*\.(html|css|js|json|svg|xml)$"), files)
+                for file in files
+                    filepath = joinpath(rootpath, file)
+                    if !success(`$(minify_jll.minify()) -o $(filepath) $(filepath)`)
+                        succ = false
+                        break                            
                     end
                 end
-            end   
-            print_final(mmsg, start)
+            end
+        end   
+        print_final(mmsg, start)
     end
 
     # if not dev or preview, the /stable/ path was overwritten and we copy that
