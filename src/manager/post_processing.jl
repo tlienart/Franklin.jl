@@ -14,8 +14,8 @@ Does a full pass followed by a pre-rendering and minification step.
                        not update `/stable/` and `/dev/`.
 * `prerender=true`: whether to pre-render katex and highlight.js (requires
                      `node.js`)
-* `minify=true`:    whether to minify output (requires `python3` and
-                     `css_html_js_minify`)
+* `minify=true`:    whether to minify output (html, css, js, json, svg, and
+                     xml files are supported)
 * `sig=false`:      whether to return an integer indicating success (see
                      [`publish`](@ref))
 * `clear=false`:    whether to clear the output dir and thereby regenerate
