@@ -170,9 +170,9 @@ version = "0.3.0"
 
 [[deps.Compat]]
 deps = ["Dates", "LinearAlgebra", "UUIDs"]
-git-tree-sha1 = "5ce999a19f4ca23ea484e92a1774a61b8ca4cf8e"
+git-tree-sha1 = "e460f044ca8b99be31d35fe54fc33a5c33dd8ed7"
 uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "4.8.0"
+version = "4.9.0"
 
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -226,9 +226,9 @@ version = "1.6.1"
 
 [[deps.DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
-git-tree-sha1 = "cf25ccb972fec4e4817764d01c82386ae94f77b4"
+git-tree-sha1 = "3dbd312d370723b6bb43ba9d02fc36abade4518d"
 uuid = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
-version = "0.18.14"
+version = "0.18.15"
 
 [[deps.DataValueInterfaces]]
 git-tree-sha1 = "bfc1187b79289637fa0ef6d4436ebdfe6905cbd6"
@@ -278,10 +278,10 @@ deps = ["Random", "Serialization", "Sockets"]
 uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 
 [[deps.Distributions]]
-deps = ["ChainRulesCore", "DensityInterface", "FillArrays", "LinearAlgebra", "PDMats", "Printf", "QuadGK", "Random", "SparseArrays", "SpecialFunctions", "Statistics", "StatsAPI", "StatsBase", "StatsFuns", "Test"]
-git-tree-sha1 = "e76a3281de2719d7c81ed62c6ea7057380c87b1d"
+deps = ["ChainRulesCore", "DensityInterface", "FillArrays", "LinearAlgebra", "PDMats", "Printf", "QuadGK", "Random", "SpecialFunctions", "Statistics", "StatsAPI", "StatsBase", "StatsFuns", "Test"]
+git-tree-sha1 = "27a18994a5991b1d2e2af7833c4f8ecf9af6b9ea"
 uuid = "31c24e10-a181-5473-b8eb-7969acd0382f"
-version = "0.25.98"
+version = "0.25.99"
 
 [[deps.DocStringExtensions]]
 deps = ["LibGit2"]
@@ -1053,9 +1053,9 @@ version = "1.4.1"
 
 [[deps.OpenSSL_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "1aa4b74f80b01c6bc2b89992b861b5f210e665b5"
+git-tree-sha1 = "bbb5c2115d63c2f1451cb70e5ef75e8fe4707019"
 uuid = "458c3c95-2e84-50aa-8efc-19380b2a3a95"
-version = "1.1.21+0"
+version = "1.1.22+0"
 
 [[deps.OpenSpecFun_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "Libdl", "Pkg"]
@@ -1612,9 +1612,9 @@ version = "0.4.1"
 
 [[deps.Unitful]]
 deps = ["ConstructionBase", "Dates", "InverseFunctions", "LinearAlgebra", "Random"]
-git-tree-sha1 = "786e80c8ae3ed0c69b2e9799dac321d2cdbccd89"
+git-tree-sha1 = "1cd9b6d3f637988ca788007b7466c132feebe263"
 uuid = "1986cc42-f94f-5a68-af5c-568840ba703d"
-version = "1.16.0"
+version = "1.16.1"
 
 [[deps.UnitfulLatexify]]
 deps = ["LaTeXStrings", "Latexify", "Unitful"]
