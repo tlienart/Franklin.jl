@@ -86,6 +86,11 @@ function write_page(output_path::AS, content::AS;
     )
     set_var!(LOCAL_VARS, "fd_full_url", full_url)
 
+    if FD_ENV[:FINAL_PASS] && locvar(:draft)
+        isfile(output_path) && rm(output_path)
+        return
+    end
+
     # NOTE
     #   - output_path is assumed to exist // see form_output_path
     #   - head/pgfoot/foot === nothing --> read (see franklin.jl)

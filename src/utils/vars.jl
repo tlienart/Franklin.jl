@@ -113,6 +113,7 @@ const LOCAL_VARS_DEFAULT = [
     "tags"          => dpair(String[]),
     "prerender"     => dpair(true),     # allow specific switch
     "slug"          => dpair(""),       # allow specific target url eg: aa/bb/cc
+    "draft"         => dpair(false),    # page will not be generated at built time if true
     # -----------------
     # TABLE OF CONTENTS
     "mintoclevel" => dpair(1),   # set to 2 to ignore h1
