@@ -39,9 +39,9 @@ version = "0.7.2"
 
 [[deps.ColorSchemes]]
 deps = ["ColorTypes", "ColorVectorSpace", "Colors", "FixedPointNumbers", "PrecompileTools", "Random"]
-git-tree-sha1 = "dd3000d954d483c1aad05fe1eb9e6a715c97013e"
+git-tree-sha1 = "d9a8f86737b665e15a9641ecbac64deef9ce6724"
 uuid = "35d6a980-a343-548e-a6ea-1d62b119f2f4"
-version = "3.22.0"
+version = "3.23.0"
 
 [[deps.ColorTypes]]
 deps = ["FixedPointNumbers", "Random"]
@@ -239,9 +239,9 @@ uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[deps.Literate]]
 deps = ["Base64", "IOCapture", "JSON", "REPL"]
-git-tree-sha1 = "1c4418beaa6664041e0f9b48f0710f57bff2fcbe"
+git-tree-sha1 = "a1a0d4ff9f785a2184baca7a5c89e664f144143d"
 uuid = "98b081ad-f1c9-55d3-8b20-4c87d4299306"
-version = "2.14.0"
+version = "2.14.1"
 
 [[deps.LiveServer]]
 deps = ["HTTP", "LoggingExtras", "MIMEs", "Pkg", "Sockets", "Test"]
@@ -484,9 +484,9 @@ uuid = "3bb67fe8-82b1-5028-8e26-92a6c54297fa"
 version = "0.9.13"
 
 [[deps.URIs]]
-git-tree-sha1 = "074f993b0ca030848b897beff716d93aca60f06a"
+git-tree-sha1 = "b7a5e99f24892b6824a954199a45e9ffcc1c70f0"
 uuid = "5c2747f8-b7ea-4ff2-ba2e-563bfd36b1d4"
-version = "1.4.2"
+version = "1.5.0"
 
 [[deps.UUIDs]]
 deps = ["Random", "SHA"]
