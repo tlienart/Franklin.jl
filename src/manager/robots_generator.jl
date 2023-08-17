@@ -26,8 +26,9 @@ function robots_generator()
     dst = joinpath(path(:site), "robots.txt")
     isfile(dst) && rm(dst)
     io = IOBuffer()
+    sitemap_file = splitext(globvar(:sitemap_file))[1] * ".xml"
     globvar(:generate_sitemap)::Bool && println(io, """
-        Sitemap: $(joinpath(globvar(:website_url)::String, "sitemap.xml"))
+        Sitemap: $(joinpath(globvar(:website_url)::String, sitemap_file))
         """)
     print(io, """
         User-agent: *
