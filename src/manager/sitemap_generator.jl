@@ -67,7 +67,8 @@ $SIGNATURES
 Generate a `sitemap.xml`, if one already exists, it will be replaced.
 """
 function sitemap_generator()
-    dst = joinpath(path(:site), "sitemap.xml")
+    sitemap_file = splitext(globvar(:sitemap_file))[1] * ".xml"
+    dst = joinpath(path(:site), sitemap_file)
     isfile(dst) && rm(dst)
     io = IOBuffer()
     println(io, """

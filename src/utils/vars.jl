@@ -47,6 +47,7 @@ const GLOBAL_VARS_DEFAULT = [
     "rss_full_content"    => dpair(false),
     # Sitemap
     "generate_sitemap" => dpair(true),
+    "sitemap_file"     => dpair("sitemap"),
     # div names
     "content_tag"       => dpair("div"),
     "content_class"     => dpair("franklin-content"),
@@ -82,6 +83,8 @@ const GLOBAL_VARS_ALIASES = LittleDict(
     "rss_website_url"   => "website_url",
     "rss_website_descr" => "website_description",
     "website_descr"     => "website_description",
+    "rss_filename"      => "rss_file",
+    "sitemap_filename"  => "sitemap_file",
     )
 
 """
