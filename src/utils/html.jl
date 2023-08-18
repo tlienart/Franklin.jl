@@ -116,7 +116,8 @@ html_code_inline(c::AS) = "<code>$c</code>"
 function html_repl_code(chunks::Vector{Pair{String,String}}, s::Symbol)::String
     isempty(chunks) && return ""
     io = IOBuffer()
-    print(io, "<pre><code class=\"language-julia-repl\">")
+    class = "julia-repl" * ifelse(s == :repl, "", "-$s")
+    print(io, "<pre><code class=\"language-julia-repl $class\">")
     prefix = s == :repl ? "julia> " :
              s == :help ? "help?> " :
              s == :pkg ? "" : # the project name is recuperated in resolve_block
