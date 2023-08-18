@@ -133,9 +133,9 @@ version = "0.8.4"
 
 [[deps.Franklin]]
 deps = ["Dates", "DelimitedFiles", "DocStringExtensions", "ExprTools", "FranklinTemplates", "HTTP", "Literate", "LiveServer", "Logging", "Markdown", "NodeJS", "OrderedCollections", "Pkg", "REPL", "Random", "TOML"]
-git-tree-sha1 = "09a2c57f06091f81038029343c2b8c26318ccacf"
+git-tree-sha1 = "0d57a8bd07414f2aa45a6382a8f9e6b3e47621d7"
 uuid = "713c75ef-9fc9-4b05-94a9-213340da978e"
-version = "0.10.88"
+version = "0.10.89"
 
 [[deps.FranklinTemplates]]
 deps = ["LiveServer"]
@@ -177,10 +177,10 @@ uuid = "82899510-4779-5014-852e-03e436cf321d"
 version = "1.0.0"
 
 [[deps.JLLWrappers]]
-deps = ["Preferences"]
-git-tree-sha1 = "abc9885a7ca2052a736a600f7fa66209f96506e1"
+deps = ["Artifacts", "Preferences"]
+git-tree-sha1 = "7e5d6779a1e09a36db2a7b6cff50942a0a7d0fca"
 uuid = "692b3bcd-3c85-4b1f-b108-f13ce0eb3210"
-version = "1.4.1"
+version = "1.5.0"
 
 [[deps.JSExpr]]
 deps = ["JSON", "MacroTools", "Observables", "WebIO"]
@@ -309,9 +309,9 @@ version = "1.2.0"
 
 [[deps.NodeJS]]
 deps = ["Pkg"]
-git-tree-sha1 = "905224bbdd4b555c69bb964514cfa387616f0d3a"
+git-tree-sha1 = "bf1f49fd62754064bc42490a8ddc2aa3694a8e7a"
 uuid = "2bd173c7-0d6d-553b-b6af-13a54713934c"
-version = "1.3.0"
+version = "2.0.0"
 
 [[deps.Observables]]
 git-tree-sha1 = "6862738f9796b3edc1c09d0890afce4eca9e7e93"
@@ -399,9 +399,9 @@ version = "1.96.1"
 
 [[deps.PyPlot]]
 deps = ["Colors", "LaTeXStrings", "PyCall", "Sockets", "Test", "VersionParsing"]
-git-tree-sha1 = "92e7ca803b579b8b817f004e74b205a706d9a974"
+git-tree-sha1 = "9220a9dae0369f431168d60adab635f88aca7857"
 uuid = "d330b81b-6aea-500a-939a-2ce795aea3ee"
-version = "2.11.1"
+version = "2.11.2"
 
 [[deps.REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
