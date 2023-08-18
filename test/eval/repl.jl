@@ -67,7 +67,7 @@ end
         <pre><code class="language-julia-repl julia-repl-help">help?> im
         </code></pre>
         <div class="julia-help">
-        <pre><code>im</code></pre>
+        <pre><code class="language-julia">im</code></pre>
         <p>The imaginary unit.</p>
         """, s)
 end
