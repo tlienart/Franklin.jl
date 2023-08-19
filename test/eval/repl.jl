@@ -11,7 +11,7 @@
     """ |> fd2html
 
     @test isapproxstr(s, """
-        <pre><code class="language-julia-repl">julia> x &#61; 5
+        <pre><code class="language-julia-repl julia-repl">julia> x &#61; 5
         5
 
         julia> y &#61; 7 &#43; x
@@ -20,7 +20,7 @@
         </code></pre>
         
         <p>some explanation</p>
-        <pre><code class="language-julia-repl">
+        <pre><code class="language-julia-repl julia-repl">
         julia> z &#61; y * 2
         24
 
@@ -34,7 +34,7 @@
     ```
     """ |> fd2html
     @test isapproxstr(s, """
-        <pre><code class="language-julia-repl">julia> println&#40;&quot;hello&quot;&#41;
+        <pre><code class="language-julia-repl julia-repl">julia> println&#40;&quot;hello&quot;&#41;
         hello
         
         julia> x &#61; 5
@@ -49,7 +49,7 @@
     ```
     """ |> fd2html
     @test isapproxstr(s, """
-        <pre><code class="language-julia-repl">julia> x &#61; 5;
+        <pre><code class="language-julia-repl julia-repl">julia> x &#61; 5;
 
         </code></pre>
         """
@@ -64,10 +64,10 @@ end
     """ |> fd2html
 
     @test occursin("""
-        <pre><code class="language-julia-repl">help?> im
+        <pre><code class="language-julia-repl julia-repl-help">help?> im
         </code></pre>
         <div class="julia-help">
-        <pre><code>im</code></pre>
+        <pre><code class="language-julia">im</code></pre>
         <p>The imaginary unit.</p>
         """, s)
 end
@@ -79,7 +79,7 @@ end
         ```
         """ |> fd2html
     @test isapproxstr(s, """
-        <pre><code class="language-julia-repl">shell> echo &quot;foo&quot;
+        <pre><code class="language-julia-repl julia-repl-shell">shell> echo &quot;foo&quot;
         "foo"
         </code></pre>
         """)
@@ -91,7 +91,7 @@ end
         ```
         """ |> fd2html
     @test isapproxstr(s, """
-        <pre><code class="language-julia-repl">shell> echo abc
+        <pre><code class="language-julia-repl julia-repl-shell">shell> echo abc
         abc
         
         shell> echo &quot;abc&quot;
