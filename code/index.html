@@ -296,7 +296,7 @@ x &#61; 5
 y &#61; x^2
 &#96;&#96;&#96;</code></pre>
 <p>gives</p>
-<pre><code class="language-julia-repl">julia> x &#61; 5
+<pre><code class="language-julia-repl julia-repl">julia> x &#61; 5
 5
 
 julia> y &#61; x^2
@@ -309,9 +309,9 @@ julia> y &#61; x^2
 st
 &#96;&#96;&#96;</code></pre>
 <p>gives</p>
-<pre><code class="language-julia-repl">&#40;docs&#41; pkg&gt; st
+<pre><code class="language-julia-repl julia-repl-pkg">&#40;docs&#41; pkg&gt; st
 Status `~/work/Franklin.jl/Franklin.jl/docs/Project.toml`
-  [713c75ef] Franklin v0.10.89
+  [713c75ef] Franklin v0.10.90
   [f0f68f2c] PlotlyJS v0.18.10
   [438e738f] PyCall v1.96.1
   [d330b81b] PyPlot v2.11.2
@@ -325,11 +325,11 @@ echo &quot;hello&#33;&quot;
 date
 &#96;&#96;&#96;</code></pre>
 <p>gives </p>
-<pre><code class="language-julia-repl">shell> echo &quot;hello&#33;&quot;
+<pre><code class="language-julia-repl julia-repl-shell">shell> echo &quot;hello&#33;&quot;
 "hello!"
 
 shell> date
-Fri Aug 18 11:59:48 UTC 2023
+Sat Aug 19 09:37:42 UTC 2023
 </code></pre>
 
 
@@ -349,10 +349,10 @@ Fri Aug 18 11:59:48 UTC 2023
 <pre><code class="language-julia">&#96;&#96;&#96;?
 im
 &#96;&#96;&#96;</code></pre>
-<pre><code class="language-julia-repl">help?> im
+<pre><code class="language-julia-repl julia-repl-help">help?> im
 </code></pre>
 <div class="julia-help">
-<pre><code>im</code></pre>
+<pre><code class="language-julia">im</code></pre>
 <p>The imaginary unit.</p>
 <p>See also: <code>imag</code>, <code>angle</code>, <code>complex</code>.</p>
 <h1>Examples</h1>
@@ -446,7 +446,7 @@ include&#40;&quot;script2.jl&quot;&#41;</code></pre>
 <p>The structure in the <code>generate_results.jl</code> effectively means that all your code is run as one big script. This also means that if you want to slice some of your code into several parts and show intermediate outputs &#40;e.g. plots&#41;, you can just do that by having a <code>script_1_p1.jl</code>, <code>script_1_p2.jl</code> etc. and then just use <code>\input</code> multiple times.</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: August 18, 2023. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+    &copy; Thibaut Lienart. Last modified: August 19, 2023. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
   </div>
 </div>
 </div><!-- CONTENT ENDS HERE -->
