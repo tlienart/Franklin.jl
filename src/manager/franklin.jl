@@ -135,7 +135,7 @@ function serve(; clear::Bool             = false,
         nomess || println("→ Starting the server...")
         coreloopfun = (cntr, fw) -> fd_loop(cntr, fw, watched_files)
         # start the liveserver in the current directory
-        live_server_dir = "__site"
+        live_server_dir = path(:site)
         LiveServer.setverbose(verb)
         LiveServer.serve(
             port=port,

@@ -76,7 +76,7 @@ function optimize(;
             c = "stable"
         end
         join_to_prepath = c
-        PATHS[:site] = joinpath(PATHS[:folder], "__site", c)
+        PATHS[:site] = joinpath(PATHS[:site], c)
         PATHS[:tag]  = joinpath(PATHS[:site], "tag")
         mkpath(PATHS[:site])
         no_set_paths = true

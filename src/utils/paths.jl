@@ -48,7 +48,7 @@ function set_paths!()::LittleDict{Symbol,String}
     # functions such as Franklin.publish point to the right dirs/files.
 
     PATHS[:folder]   = normpath(FOLDER_PATH[])
-    PATHS[:site]     = joinpath(PATHS[:folder], "__site")    # mandatory
+    PATHS[:site]     = joinpath(PATHS[:folder], globvar("site_path")) # mandatory
     PATHS[:assets]   = joinpath(PATHS[:folder], "_assets")   # mandatory
     PATHS[:css]      = joinpath(PATHS[:folder], "_css")      # mandatory
     PATHS[:layout]   = joinpath(PATHS[:folder], "_layout")   # mandatory
