@@ -172,20 +172,27 @@ function hfun_toc(params::Vector{String})::String
     isempty(headers) && return ""
     baselvl = minimum(h[3] for h in values(headers)) - 1
     curlvl  = baselvl
+    curskip = curlvl
     for (rs, h) ∈ headers
         lvl = h[3]
+        sep = abs(lvl - curlvl)
+        skipped_lvl = sep ∉ [0, 1]
+        skip = skipped_lvl ? sep - 1 : 0
+        if skip != 0
+            curskip = skip
+        end
         if lvl ≤ curlvl
             # Close previous list item
             inner *= "</li>"
             # Close additional sublists for each level eliminated
-            for i = curlvl-1:-1:lvl
+            for i = fill(nothing, curlvl - lvl - skip)
                 inner *= "</ol></li>"
             end
             # Reopen for this list item
             inner *= "<li>"
         elseif lvl > curlvl
             # Open additional sublists for each level added
-            for i = curlvl+1:lvl
+            for i = fill(nothing, lvl - curlvl - skip)
                 inner *= "<ol><li>"
             end
         end
@@ -194,7 +201,7 @@ function hfun_toc(params::Vector{String})::String
         # At this point, number of sublists (<ol><li>) open equals curlvl
     end
     # Close remaining lists, as if going down to the base level
-    for i = curlvl-1:-1:baselvl
+    for i = fill(nothing, curlvl - baselvl + curskip)
         inner *= "</li></ol>"
     end
     toc = "<div class=\"franklin-toc\">" * inner * "</div>"
