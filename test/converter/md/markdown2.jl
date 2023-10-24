@@ -43,7 +43,7 @@ end
           <ol>
             <li><a href="#hello_fd">Hello <code>fd</code></a>
               <ol>
-                <li>
+                <li style="list-style-type: none;">
                   <ol>
                     <li><a href="#weirdly_nested">weirdly nested</a></li>
                   </ol>

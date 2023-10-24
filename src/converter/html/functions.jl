@@ -185,13 +185,17 @@ function hfun_toc(params::Vector{String})::String
             # Close previous list item
             inner *= "</li>"
             # Close additional sublists for each level eliminated
-            for i = fill(nothing, curlvl - lvl - skip)
+            for i = fill(nothing, curlvl - lvl)
                 inner *= "</ol></li>"
             end
             # Reopen for this list item
             inner *= "<li>"
         elseif lvl > curlvl
             # Open additional sublists for each level added
+            for i = fill(nothing, skip)
+                # hide marker for the empty nested sublists
+                inner *= "<ol><li style=\"list-style-type: none;\">"
+            end
             for i = fill(nothing, lvl - curlvl - skip)
                 inner *= "<ol><li>"
             end
