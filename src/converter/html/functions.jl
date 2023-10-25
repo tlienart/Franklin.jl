@@ -170,13 +170,46 @@ function hfun_toc(params::Vector{String})::String
     inner   = ""
     headers = filter(p -> min ≤ p.second[3] ≤ max, PAGE_HEADERS)
     isempty(headers) && return ""
+    levels = [h[3] for (rs,h) ∈ headers]
+
+    # find index of the top-most ancestor of each family
+    top_lvl_ancestor_idx = Vector{Int}(undef, length(levels))
+    for (i, lvl) in enumerate(levels)
+        if i == 1
+            top_lvl_ancestor_idx[i] = 1
+        else
+            a = i
+            for ai in reverse(1:i-1)
+                if lvl > levels[ai]
+                    a = ai
+                    break
+                end
+            end
+            top_lvl_ancestor_idx[i] = a
+        end
+    end
+
+    # get all the levels of the members in a family
+    families = map(top_lvl_idx->levels[findall(top_lvl_ancestor_idx .== top_lvl_idx)], top_lvl_ancestor_idx)
+
+    # indicate the smallest level (that which will be the most left aligned)
+    top_most_lvl = minimum(levels[top_lvl_ancestor_idx])
+
+    # get offset of level relative to the left-most level (i.e., the min.)
+    ancestor_offset_relative_to_min = map(member->top_most_lvl - member[1], families)
+
+    # indicators if any members of the family should be nested with empty bullets
+    make_empty_nest = map(fam_diff->any(fam_diff .< 0), diff.(families))
+
     baselvl = minimum(h[3] for h in values(headers)) - 1
-    curlvl  = baselvl
-    curskip = curlvl
-    for (rs, h) ∈ headers
+    curlvl = first(families)[1] - 1
+    curskip = 0
+
+    for (li, (rs, h)) ∈ enumerate(headers)
         lvl = h[3]
         sep = abs(lvl - curlvl)
         skipped_lvl = sep ∉ [0, 1]
+        make_empty = make_empty_nest[li]
         skip = skipped_lvl ? sep - 1 : 0
         if skip != 0
             curskip = skip
@@ -185,27 +218,30 @@ function hfun_toc(params::Vector{String})::String
             # Close previous list item
             inner *= "</li>"
             # Close additional sublists for each level eliminated
-            for i = fill(nothing, curlvl - lvl)
+            close_length = make_empty ? curlvl - lvl : curlvl - lvl - skip
+            for i = fill(nothing, close_length)
                 inner *= "</ol></li>"
             end
             # Reopen for this list item
             inner *= "<li>"
         elseif lvl > curlvl
             # Open additional sublists for each level added
-            for i = fill(nothing, skip)
+            if make_empty
                 # hide marker for the empty nested sublists
-                inner *= "<ol><li style=\"list-style-type: none;\">"
+                for i = fill(nothing, skip)
+                    inner *= "<ol><li style=\"list-style-type: none;\">"
+                end
             end
             for i = fill(nothing, lvl - curlvl - skip)
                 inner *= "<ol><li>"
             end
         end
         inner *= html_ahref_key(rs, h[1])
-        curlvl = lvl
+        curlvl = lvl + ancestor_offset_relative_to_min[li]
         # At this point, number of sublists (<ol><li>) open equals curlvl
     end
     # Close remaining lists, as if going down to the base level
-    for i = fill(nothing, curlvl - baselvl + curskip)
+    for i = fill(nothing, curlvl - baselvl + curskip + sum(ancestor_offset_relative_to_min))
         inner *= "</li></ol>"
     end
     toc = "<div class=\"franklin-toc\">" * inner * "</div>"
