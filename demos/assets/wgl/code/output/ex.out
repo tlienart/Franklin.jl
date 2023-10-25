@@ -1,6 +1,6 @@
 MethodError: no method matching show(::IOBuffer, ::MIME{Symbol("text/html")}, ::Nothing)
 Closest candidates are:
   show(::IO, ::Union{MIME{Symbol("text/html")}, MIME{Symbol("application/prs.juno.plotpane+html")}}, !Matched::JSServe.App) at ~/.julia/packages/JSServe/h2asi/src/display.jl:60
+  show(::IO, !Matched::AbstractString, ::Any) at multimedia.jl:111
   show(::IO, !Matched::MIME{Symbol("text/tab-separated-values")}, ::Any) at /opt/hostedtoolcache/julia/1.8.5/x64/share/julia/stdlib/v1.8/DelimitedFiles/src/DelimitedFiles.jl:830
-  show(::IO, ::MIME{Symbol("text/html")}, !Matched::Union{Hyperscript.Node, Hyperscript.Pretty}) at ~/.julia/packages/Hyperscript/IZSb2/src/Hyperscript.jl:169
   ...
