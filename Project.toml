@@ -38,7 +38,7 @@ Logging = "1"
 Markdown = "1"
 Pkg = "1"
 REPL = "1"
-Random = "1"
+Random = "<0.0.1, 1"
 
 [extras]
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
