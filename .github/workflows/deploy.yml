@@ -19,7 +19,7 @@ jobs:
     - name: Install Julia
       uses: julia-actions/setup-julia@v1
       with:
-        version: 1.8
+        version: '1'
     - run: julia -e '
             using Pkg;
             Pkg.add(Pkg.PackageSpec(name="NodeJS"));
