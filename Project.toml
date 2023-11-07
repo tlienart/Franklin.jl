@@ -22,6 +22,7 @@ Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 TOML = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
 
 [compat]
+DelimitedFiles = "1"
 DocStringExtensions = "0.8, 0.9"
 ExprTools = "0.1"
 FranklinTemplates = "0.10"
