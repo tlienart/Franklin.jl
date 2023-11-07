@@ -149,29 +149,29 @@
 <p>For instance you might prefer:</p>
 <pre><code class="language-julia">x &#61; randn&#40;10&#41;
 x&#91;1:3&#93;</code></pre><pre><code class="plaintext code-output">3-element Vector{Float64}:
-  0.5605912279305578
- -0.20013604375863464
- -1.3918031560808932</code></pre>
+ 0.5169924742744907
+ 0.2510652599875924
+ 0.907746298789623</code></pre>
 <p>to just</p>
 <pre><code class="language-julia">x &#61; randn&#40;10&#41;</code></pre><pre><code class="plaintext code-output">10-element Vector{Float64}:
-  0.26648981845779685
-  1.1974279343783343
- -0.4801597865493338
- -1.4354618772838263
-  0.3617351215525892
-  0.04101155652006695
-  0.08541762550442122
-  0.8544583087381054
- -0.35750761939345505
-  0.19864816061535753</code></pre>
+  0.8836805438714498
+ -0.8569436913169972
+ -2.5679068262564724
+ -0.3217505958149767
+  1.3354509579551308
+ -1.2553187750041763
+ -0.17165398273699914
+ -0.3883069397985091
+ -0.8549547349814424
+ -0.8430896736434238</code></pre>
 <p>You can also use <code>@show</code> or <code>println</code> to show specific things beyond the last line</p>
 <pre><code class="language-julia">x &#61; rand&#40;10&#41;
 println&#40;sum&#40;x&#41;&#41;
-y &#61; 5</code></pre><pre><code class="plaintext code-output">6.0388567952192505
+y &#61; 5</code></pre><pre><code class="plaintext code-output">4.447187383625338
 5</code></pre>
 <p>if the last line is a <code>@show</code> or <code>print</code> then only that is shown:</p>
 <pre><code class="language-julia">x &#61; randn&#40;10&#41;
-@show x&#91;1&#93;</code></pre><pre><code class="plaintext code-output">x[1] = 0.6705681126759816
+@show x&#91;1&#93;</code></pre><pre><code class="plaintext code-output">x[1] = 0.5341629949950634
 </code></pre>
 <p>The <code>literate_mds &#61; true</code> mode adds support for using literal markdown strings, <code>md&quot;&quot;&quot; ... &quot;&quot;&quot;</code>, for the markdown sections, a feature introduced in <a href="https://fredrikekre.github.io/Literate.jl/v2/fileformat/#Multiline-comments-and-markdown-strings">Literate v2.9</a>. For example</p>
 <pre><code class="language-md">md&quot;&quot;&quot;
