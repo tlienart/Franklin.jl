@@ -26,6 +26,9 @@ function parse_fenced_block(ss::SubString, scut=false; shortcut=scut, # scut for
         reg = startswith(ss, "`````") ? CODE_5_PAT :
               startswith(ss, "````")  ? CODE_4_PAT : CODE_3_PAT
         m     = match(reg, ss)
+        if m === nothing
+            throw(ArgumentError("Could not match codeblock:\n$ss"))
+        end
         lang  = m.captures[1]
         rpath = m.captures[2]
         code  = strip(m.captures[3])
