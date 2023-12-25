@@ -47,17 +47,17 @@ Start by installing  `gh-pages` with `npm`:
 $> npm install gh-pages
 ```
 
-Using the package [NodeJS.jl](https://github.com/davidanthoff/NodeJS.jl) it is then easy to use `gh-pages` to push the generated notebooks to a folder on the `gh-pages` branch:
+Using the package [NodeJS_18_jll](https://github.com/JuliaBinaryWrappers/NodeJS_18_jll.jl) it is then easy to use `gh-pages` to push the generated notebooks to a folder on the `gh-pages` branch:
 
 ```julia
-using NodeJS
+using NodeJS_18_jll
 
 JS_GHP = """
     var ghpages = require('gh-pages');
     ghpages.publish('generated/', function(err) {});
     """
 
-run(`$(nodejs_cmd()) -e $JS_GHP`)
+run(`$(node()) -e $JS_GHP`)
 ```
 
 Now these generated files are available on that branch without polluting your `master` branch.

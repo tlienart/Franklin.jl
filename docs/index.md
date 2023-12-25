@@ -59,14 +59,14 @@ This requires a couple of dependencies:
 * [`python3`](https://www.python.org/downloads/) for the minification of the site,
 * [`node.js`](https://nodejs.org/en/) for the pre-rendering of KaTeX and code highlighting.
 @@
-You will then need to install `highlight.js`, which you should do from Julia using the [NodeJS.jl](https://github.com/davidanthoff/NodeJS.jl) package:
+You will then need to install `highlight.js`, which you should do from Julia using the [NodeJS_18_jll](https://github.com/JuliaBinaryWrappers/NodeJS_18_jll.jl) package:
 
 ```julia-repl
-julia> using NodeJS
-julia> run(`sudo $(npm_cmd()) install highlight.js`)
+julia> using NodeJS_18_jll
+julia> run(`sudo $(node()) $npm install highlight.js`)
 ```
 
-**Note**: a key advantage of using `NodeJS` for this instead of using `npm` yourself is that it puts the libraries in the "right place" for Julia to find them.
+**Note**: a key advantage of using `NodeJS_18_jll` for this instead of using `npm` yourself is that it puts the libraries in the "right place" for Julia to find them.
 
 Assuming you have `python3`, Franklin will try to install the python package [`css_html_js_minify`](https://github.com/juancarlospaco/css-html-js-minify) if via `pip3`.
 

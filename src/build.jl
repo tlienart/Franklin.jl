@@ -27,7 +27,7 @@ function NODE()
     if "NODE" ∈ keys(ENV)
         ENV["NODE"]
     else
-        NodeJS.nodejs_cmd()
+        NodeJS_18_jll.node()
     end
 end
 
