@@ -15,7 +15,7 @@ using TOML
 import Logging
 import LiveServer
 import Base.push!
-import NodeJS
+import NodeJS_18_jll
 import Literate
 import HTTP
 import Random

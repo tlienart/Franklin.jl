@@ -22,8 +22,8 @@ jobs:
         version: '1'
     - run: julia -e '
             using Pkg;
-            Pkg.add(Pkg.PackageSpec(name="NodeJS"));
-            using NodeJS;
+            Pkg.add(Pkg.PackageSpec(name="NodeJS_18_jll"));
+            using NodeJS_18_jll;
             run(`$(npm_cmd()) install lunr`);
             run(`$(npm_cmd()) install cheerio`);
             Pkg.add(Pkg.PackageSpec(name="Franklin", rev="master"));
