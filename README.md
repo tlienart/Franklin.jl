@@ -138,6 +138,7 @@ While Franklin broadly supports standard Markdown there are a few things that ma
 
 * [LiveServer.jl](https://github.com/asprionj/LiveServer.jl) a package authored with [Jonas Asprion](https://github.com/asprionj) to render and watch the content of a local folder in the browser.
 * [FranklinTemplates.jl](https://github.com/tlienart/FranklinTemplates.jl) the repositories where Franklin themes/templates are developed.
+* [Xranklin.jl](https://github.com/tlienart/Xranklin.jl) experimental repo for a refactoring of Franklin.jl
 
 ## Licenses
 
