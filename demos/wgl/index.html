@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   
   
-    <link rel="stylesheet" href="/demos/libs/highlight/github.min.css">
-
-  	<script src="/demos/libs/clipboard.min.js"></script>
-  
   <link rel="stylesheet" href="/demos/css/franklin.css">
   <link rel="stylesheet" href="/demos/css/extras.css">
   
@@ -18,25 +14,11 @@
 
 <!-- Content appended here -->
 <div class="franklin-content">
-<pre><code class="language-julia">using WGLMakie, JSServe
-io &#61; IOBuffer&#40;&#41;
-println&#40;io, &quot;~~~&quot;&#41;
-show&#40;io, MIME&quot;text/html&quot;&#40;&#41;, Page&#40;exportable&#61;true, offline&#61;true&#41;&#41;
-app &#61; JSServe.App&#40;&#41; do
-    return DOM.div&#40;
-        scatter&#40;1:4&#41;,
-        surface&#40;rand&#40;4, 4&#41;&#41;,
-        JSServe.Slider&#40;1:3&#41;
-    &#41;
-end
-show&#40;io, MIME&quot;text/html&quot;&#40;&#41;, app&#41;
-println&#40;io, &quot;~~~&quot;&#41;
-println&#40;String&#40;take&#33;&#40;io&#41;&#41;&#41;</code></pre>
-MethodError: no method matching show&#40;::IOBuffer, ::MIME&#123;Symbol&#40;&quot;text/html&quot;&#41;&#125;, ::Nothing&#41;</p>
-<p>Closest candidates are:   show&#40;::IO, ::Union&#123;MIME&#123;Symbol&#40;&quot;text/html&quot;&#41;&#125;, MIME&#123;Symbol&#40;&quot;application/prs.juno.plotpane&#43;html&quot;&#41;}}, &#33;Matched::JSServe.App&#41;    @ JSServe ~/.julia/packages/JSServe/BRpDB/src/display.jl:60   show&#40;::IO, ::MIME&#123;Symbol&#40;&quot;text/html&quot;&#41;&#125;, &#33;Matched::Union&#123;Hyperscript.Node, Hyperscript.Pretty&#125;&#41;    @ Hyperscript ~/.julia/packages/Hyperscript/IZSb2/src/Hyperscript.jl:169   show&#40;::IO, ::MIME&#123;Symbol&#40;&quot;text/html&quot;&#41;&#125;, &#33;Matched::WidgetsBase.AbstractWidget&#41;    @ JSServe ~/.julia/packages/JSServe/BRpDB/src/widgets.jl:251   ...
+<p>WGLMakie &#43; JSServe doesn&#39;t support static export well at the moment, there used to be a demo here but we removed it. See <a href="https://github.com/MakieOrg/Makie.jl/issues/3027">this issue</a>.</p>
+<p>–&gt;</p>
 <div class="page-foot">
   <div class="copyright">
-    &copy; Thibaut Lienart. Last modified: November 28, 2023. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
+    &copy; Thibaut Lienart. Last modified: April 16, 2024. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
   </div>
 </div>
 
@@ -59,72 +41,6 @@ MethodError: no method matching show&#40;::IOBuffer, ::MIME&#123;Symbol&#40;&quo
 </script>
 <!-- End collapsible button example --></div><!-- CONTENT ENDS HERE -->
     
-    
-        <script src="/demos/libs/highlight/highlight.pack.js"></script>
-<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
-
-        <!-- http://tutsplus.github.io/clipboard/ -->
-
-<script>
-(function(){
-
-	// Get the elements.
-	// - the 'pre' element.
-	// - the 'div' with the 'paste-content' id.
-
-	var pre = document.getElementsByTagName('pre');
-
-	// Add a copy button in the 'pre' element.
-	// which only has the className of 'language-' or ' hljs'(if enable highlight.js pre-render).
-
-	for (var i = 0; i < pre.length; i++) {
-		var tag_name = pre[i].children[0].className
-            	var isLanguage = tag_name.startsWith('language-') || tag_name.endsWith(' hljs');
-		if ( isLanguage ) {
-			var button           = document.createElement('button');
-					button.className = 'copy-button';
-					button.textContent = 'Copy';
-
-					pre[i].appendChild(button);
-		}
-	};
-
-	// Run Clipboard
-
-	var copyCode = new Clipboard('.copy-button', {
-		target: function(trigger) {
-			return trigger.previousElementSibling;
-    }
-	});
-
-	// On success:
-	// - Change the "Copy" text to "Copied".
-	// - Swap it to "Copy" in 2s.
-	// - Lead user to the "contenteditable" area with Velocity scroll.
-
-	copyCode.on('success', function(event) {
-		event.clearSelection();
-		event.trigger.textContent = 'Copied';
-		window.setTimeout(function() {
-			event.trigger.textContent = 'Copy';
-		}, 2000);
-
-	});
-
-	// On error (Safari):
-	// - Change the  "Press Ctrl+C to copy"
-	// - Swap it to "Copy" in 2s.
-
-	copyCode.on('error', function(event) {
-		event.trigger.textContent = 'Press "Ctrl + C" to copy';
-		window.setTimeout(function() {
-			event.trigger.textContent = 'Copy';
-		}, 5000);
-	});
-
-})();
-</script>
-
     
   </body>
 </html>
