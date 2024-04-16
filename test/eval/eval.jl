@@ -206,12 +206,18 @@ end
         global h
         h = s |> seval
     end
+    # error messages changed slightly
+    if VERSION < v"1.10"
+        estr = "sqrt will only return a complex result if called with a complex argument. Try sqrt(Complex(x))."
+    else
+        estr = "sqrt was called with a negative real argument but will only return a complex result if called with a complex argument. Try sqrt(Complex(x))."
+    end
     @test h // """
                 <p>Simple code:</p>
                 <pre><code class="language-julia">$(F.htmlesc(raw"""sqrt(-1)"""))</code></pre>
                 <p>then:</p>
                 <pre><code class="plaintext code-output">DomainError with -1.0:
-                sqrt will only return a complex result if called with a complex argument. Try sqrt(Complex(x)).
+                $estr
                 </code></pre>
                 <p>done.</p>"""
     @test occursin("'DomainError' when", s)

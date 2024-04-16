@@ -1,7 +1,8 @@
 [deps]
-DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 DSP = "717857b8-e6f2-59f4-9121-6e50c889abd2"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
+Franklin = "713c75ef-9fc9-4b05-94a9-213340da978e"
 JSServe = "824d6782-a2ef-11e9-3a09-e5662e0c26f9"
 Latexify = "23fbe1c1-3f47-55db-b15f-69d7ec21a316"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"

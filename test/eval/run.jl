@@ -15,7 +15,9 @@
     exs = F.parse_code(c)
     @test exs[1] == :(a = 7)
     @test exs[2].head == :incomplete
-    @test exs[2].args[1] == "incomplete: premature end of input"
+    if VERSION < v"1.10"
+        @test exs[2].args[1] == "incomplete: premature end of input"
+    end
     # empty code
     c = ""
     exs = F.parse_code(c)

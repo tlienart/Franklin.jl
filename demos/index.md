@@ -2,7 +2,7 @@
 title = "Franklin FAQ"
 tags = ["index"]
 auto_code_path = true
-has_math = true
+hasmath = true
 +++
 
 # Franklin Demos
@@ -29,11 +29,10 @@ and [`PrettyTables.jl`](https://github.com/ronisbr/PrettyTables.jl).
 The following `Dataframe`: 
 
 ```julia
-val = rand(1:10, 5)
-tag = rand('A':'Z', 5)
-math = rand(["\$a + b\$", "\$\\frac{1}{2}\$", "\$\\sqrt{2\\pi}\$"], 5)
-website = rand(["[Franklin home page](https://franklinjl.org)", "[Franklin Github](https://github.com/tlienart/Franklin.jl)"], 5)
-DataFrame(; val, tag, math, website)
+val = [1,2,3,4]
+tag = ['a','b','c','d']
+math = ["\$x\$", "\$y^2\$", "\$\\sqrt{z}\$", "\$\\Omega\$"]
+DataFrame(; val, tag, math)
 ```
 
 will be rendered as:
@@ -41,6 +40,8 @@ will be rendered as:
 {{ render_table }}
 
 This done via a `hfun_render_table` which can be found in [`utils.jl`](https://github.com/tlienart/Franklin.jl/blob/master/demos/utils.jl).
+
+
 
 ## (018) collapsible block
 How to make a section expand when clicked, so that content is initially hidden? (Based on [this html guide](https://www.w3schools.com/howto/howto_js_collapsible.asp).)
@@ -119,6 +120,7 @@ lists
 And all other stuff processed by Franklin!
 }
 
+
 ## (017) making cells work in their own path
 
 Currently if you're saving a figure in a code block, you need to specify where to place that figure, if you don't it will go in the current directory which is the main site directory, typically you don't want that, so one trick is to use the `@OUTPUT` macro like so:
@@ -159,6 +161,7 @@ Note that it requires WebGL to work which might not be enabled on all browsers.
 ## (015) Using Weave
 
 [Here's a page](/weave/) where the content is generated from a [Weave.jl](https://github.com/JunoLab/Weave.jl).
+
 
 ## (014) Using MathJax
 

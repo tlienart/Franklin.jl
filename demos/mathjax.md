@@ -1,4 +1,6 @@
-@def mathjax = true
++++
+mathjax = true
++++
 
 # Mathjax v3
 
