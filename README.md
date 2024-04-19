@@ -73,6 +73,7 @@ Some examples of websites using Franklin (_if you're using Franklin with a publi
 * [Bayesian-Julia](https://storopoli.github.io/Bayesian-Julia/) A set of Tutorials on how to do Bayesian statistics using Turing ([repo](https://github.com/storopoli/Bayesian-Julia))
 * [Jose Storopoli's website](https://storopoli.io/) personal website with bootstrap buttons along with FontAwesome and Academicons icons ([repo](https://git.sr.ht/~storopoli/storopoli.io))
 * [ETH Zurich's Solving PDEs in parallel on GPUs with Julia](https://eth-vaw-glaciology.github.io/course-101-0250-00/) course website
+* [Julia Package Comparisons](https://juliapackagecomparisons.github.io/) is a website to help Julia users discover and choose between packages. ([repo](https://github.com/JuliaPackageComparisons/JuliaPackageComparisons.github.io))
 
 **Custom templates** (i.e. migrating an existing design)
 * The [Julia website](https://julialang.org), including the blog, are deployed using Franklin ([repo](https://github.com/JuliaLang/www.julialang.org))
@@ -138,6 +139,7 @@ While Franklin broadly supports standard Markdown there are a few things that ma
 
 * [LiveServer.jl](https://github.com/asprionj/LiveServer.jl) a package authored with [Jonas Asprion](https://github.com/asprionj) to render and watch the content of a local folder in the browser.
 * [FranklinTemplates.jl](https://github.com/tlienart/FranklinTemplates.jl) the repositories where Franklin themes/templates are developed.
+* [Xranklin.jl](https://github.com/tlienart/Xranklin.jl) experimental repo for a refactoring of Franklin.jl
 
 ## Licenses
 

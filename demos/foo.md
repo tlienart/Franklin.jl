@@ -1,5 +1,7 @@
-@def tags = ["foo"]
-@def var = 5
++++
+tags = ["foo"]
+var = 5
++++
 
 # Foo page
 
